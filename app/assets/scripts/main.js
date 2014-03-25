@@ -1,6 +1,7 @@
 (function(){
     /*jshint -W080 */
     'use strict';
+    // FOOOOOO!!!!
 
     var __C6_BUILD_VERSION__ = window.__C6_BUILD_VERSION__ = undefined,
         __C6_APP_BASE_URL__ = window.__C6_APP_BASE_URL__ = __C6_BUILD_VERSION__ || 'assets',
