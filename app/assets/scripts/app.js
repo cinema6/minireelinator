@@ -36,7 +36,8 @@
                     'SteppedEase',
                     'Strong'
                 ],
-                googleAnalytics: 'ga'
+                googleAnalytics: 'ga',
+                crypto: 'CryptoJS'
             };
 
             angular.forEach(config, function(value, key) {
@@ -55,6 +56,17 @@
                 }
             });
         }])
+
+        .config(['$sceDelegateProvider',
+        function( $sceDelegateProvider ) {
+            $sceDelegateProvider.resourceUrlWhitelist([
+                'self',
+                '*://www.youtube.com/**',
+                '*://player.vimeo.com/**',
+                '*://www.dailymotion.com/**'
+            ]);
+        }])
+
         .config(['c6UrlMakerProvider', 'c6Defines',
         function( c6UrlMakerProvider ,  c6Defines ) {
             c6UrlMakerProvider.location(c6Defines.kBaseUrl,'default');
@@ -62,6 +74,93 @@
                 return 'local';
             }())] ,'video');
         }])
+
+        .config(['cinema6Provider','c6UrlMakerProvider',
+        function( cinema6Provider , c6UrlMakerProvider ) {
+            var FixtureAdapter = cinema6Provider.adapters.fixture;
+
+            FixtureAdapter.config = {
+                jsonSrc: c6UrlMakerProvider.makeUrl('mock/fixtures.json')
+            };
+
+            cinema6Provider.useAdapter(FixtureAdapter);
+        }])
+
+        .config(['c6StateProvider','c6UrlMakerProvider',
+        function( c6StateProvider , c6UrlMakerProvider ) {
+            var assets = c6UrlMakerProvider.makeUrl.bind(c6UrlMakerProvider);
+
+            c6StateProvider
+                .state('manager', {
+                    controller: 'ManagerController',
+                    controllerAs: 'ManagerCtrl',
+                    templateUrl: assets('views/manager.html'),
+                    model:  ['cinema6',
+                    function( cinema6 ) {
+                        return cinema6.db.findAll('currentUser')
+                            .then(function(currentUsers) {
+                                var user = currentUsers[0];
+
+                                return cinema6.db.findAll('experience', { appUri: 'rumble', org: user.org });
+                            });
+                    }]
+                })
+                .state('editor', {
+                    controller: 'EditorController',
+                    controllerAs: 'EditorCtrl',
+                    templateUrl: assets('views/editor.html'),
+                    model:  ['cinema6','c6StateParams','MiniReelService',
+                    function( cinema6 , c6StateParams , MiniReelService ) {
+                        return MiniReelService.open(c6StateParams.id);
+                    }],
+                    children: {
+                        editCard: {
+                            controller: 'EditCardController',
+                            controllerAs: 'EditCardCtrl',
+                            templateUrl: assets('views/editor/edit_card.html'),
+                            model:  ['c6StateParams','MiniReelService',
+                            function( c6StateParams , MiniReelService ) {
+                                var minireel = this.cParent.cModel;
+
+                                return MiniReelService.findCard(
+                                    minireel.data.deck,
+                                    c6StateParams.id
+                                );
+                            }]
+                        },
+                        newCard: {
+                            templateUrl: assets('views/editor/new_card.html'),
+                            model:  ['MiniReelService',
+                            function( MiniReelService ) {
+                                return MiniReelService.createCard();
+                            }],
+                            children: {
+                                type: {
+                                    controller: 'NewCardTypeController',
+                                    controllerAs: 'NewCardTypeCtrl',
+                                    templateUrl: assets('views/editor/new_card/type.html'),
+                                    model: [function() {
+                                        return this.cParent.cModel;
+                                    }]
+                                },
+                                edit: {
+                                    controller: 'NewCardEditController',
+                                    controllerAs: 'NewCardEditCtrl',
+                                    templateUrl: assets('views/editor/new_card/edit.html'),
+                                    model:  ['c6StateParams','MiniReelService',
+                                    function( c6StateParams , MiniReelService ) {
+                                        var card = this.cParent.cModel;
+
+                                        return MiniReelService.setCardType(card, c6StateParams.type);
+                                    }]
+                                }
+                            }
+                        }
+                    }
+                })
+                .index('manager');
+        }])
+
         .controller('AppController', ['$scope', '$log', 'cinema6', 'gsap',
         function                     ( $scope ,  $log ,  cinema6 ,  gsap ) {
             var self = this;

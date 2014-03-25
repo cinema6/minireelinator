@@ -1,0 +1,19 @@
+<h3>Edit Card</h3>
+<c6-alias model="NewCardEditCtrl.model" as="card">
+    <form>
+        <label class="field">
+            Title:
+            <input type="text" ng-model="card.title">
+        </label>
+        <label class="field">
+            Note:
+            <textarea ng-model="card.note"></textarea>
+        </label>
+        <label class="field">
+            Video URL:
+            <input type="text" ng-model="NewCardEditCtrl.videoUrl">
+        </label>
+        <button ng-click="NewCardEditCtrl.save()">Save</button>
+    </form>
+    <video-preview service="{{card.data.service}}" videoid="{{card.data.videoid}}"></video-preview>
+</c6-alias>

@@ -1,0 +1,13 @@
+<c6-alias model="EditorCtrl.model" as="minireel">
+    <h1>{{minireel.title}}</h1>
+    <ul>
+        <li class="card" ng-repeat="this in minireel.data.deck">
+            <h3>{{this.title}}</h3>
+            <button ng-click="EditorCtrl.editCard(this)">Edit</button>
+        </li>
+        <li>
+            <button ng-click="EditorCtrl.newCard()">New Card</button>
+        </li>
+    </ul>
+</c6-alias>
+<c6-view></c6-view>

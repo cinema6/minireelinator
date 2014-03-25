@@ -34,18 +34,26 @@
                 };
 
                 module('c6.ui', function($provide) {
-                    $provide.factory('cinema6', function($q) {
-                        cinema6 = {
-                            init: jasmine.createSpy('cinema6.init()'),
-                            getSession: jasmine.createSpy('cinema6.getSiteSession()').andCallFake(function() {
-                                return cinema6._.getSessionResult.promise;
-                            }),
-                            _: {
-                                getSessionResult: $q.defer()
-                            }
+                    $provide.provider('cinema6', function() {
+                        this.adapters = {
+                            fixture: [function() {}]
                         };
 
-                        return cinema6;
+                        this.useAdapter = jasmine.createSpy('cinema6Provider.useAdapter()');
+
+                        this.$get = function($q) {
+                            cinema6 = {
+                                init: jasmine.createSpy('cinema6.init()'),
+                                getSession: jasmine.createSpy('cinema6.getSiteSession()').and.callFake(function() {
+                                    return cinema6._.getSessionResult.promise;
+                                }),
+                                _: {
+                                    getSessionResult: $q.defer()
+                                }
+                            };
+
+                            return cinema6;
+                        };
                     });
                 });
 
@@ -76,7 +84,7 @@
 
             describe('cinema6 integration', function() {
                 beforeEach(function() {
-                    cinema6.init.mostRecentCall.args[0].setup(appData);
+                    cinema6.init.calls.mostRecent().args[0].setup(appData);
                 });
 
                 it('should initialize a session with cinema6', function() {

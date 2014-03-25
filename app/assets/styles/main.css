@@ -1,2 +1,12 @@
 /* overall css stylesheet */
 html { height: 100%; width: 100%;}
+
+.card {
+    display: inline-block;
+    border: solid grey 1px;
+    margin: 0 5px; padding: 2px;
+}
+
+.field {
+    display: block;
+}

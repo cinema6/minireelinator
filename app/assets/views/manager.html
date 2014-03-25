@@ -1,0 +1,24 @@
+<main c6-alias="ManagerCtrl.model as minireels">
+    <nav>
+        <ul>
+            <li><button>Create New</button></li>
+        </ul>
+    </nav>
+    <ul>
+        <li ng-repeat="this in minireels">
+            <article>
+                <header>
+                    <h4>{{this.title}}</h4>
+                    <small>Unpublished</small>
+                </header>
+                <p>{{this.summary}}</p>
+                <form>
+                    <button ng-click="ManagerCtrl.edit(this)">Edit</button>
+                    <button>Copy</button>
+                    <button>Delete</button>
+                </form>
+            </article>
+        </li>
+    </ul>
+    <p ng-show="!minireels.length">You have no Mini Reels. Would you like to <a>create one?</a></p>
+</main>

@@ -1,0 +1,5 @@
+<div ng-switch="service" ng-if="!!videoid">
+    <iframe ng-switch-when="youtube" width="420" height="315" src="{{'//www.youtube.com/embed/' + videoid + '?rel=0'}}" frameborder="0" allowfullscreen></iframe>
+    <iframe ng-switch-when="vimeo" src="{{'//player.vimeo.com/video/' + videoid}}" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+    <iframe ng-switch-when="dailymotion" frameborder="0" width="480" height="270" src="{{'http://www.dailymotion.com/embed/video/' + videoid}}" allowfullscreen></iframe>
+</div>

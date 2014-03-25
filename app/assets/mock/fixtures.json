@@ -1,0 +1,1035 @@
+{
+    "experience": [
+        {
+            "id": "e-80fcd03196b3d2",
+            "uri": "rumble",
+            "appUriPrefix": "<%= settings.appUrl %>",
+            "appUri": "rumble",
+            "title": "Rumble Video",
+            "subtitle": "You choose",
+            "summary": "Pick the best",
+            "img": {},
+            "org": "o-d1f0be2ea473cb",
+            "data": {
+                "id": "r-738c2403d83ddc",
+                "ballots": [
+                    {
+                        "id": "rb-01eb03bc062c15",
+                        "choices": [
+                            {
+                                "button": "Good",
+                                "most": "The Goodest video"
+                            },
+                            {
+                                "button": "Bad",
+                                "most": "The Badest video"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "rb-716ffbdfc356af",
+                        "choices": [
+                            {
+                                "button": "Catchy",
+                                "most": "The Goodest video"
+                            },
+                            {
+                                "button": "Painful",
+                                "most": "The Badest video"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "rb-d1f60e2d64a0ba",
+                        "choices": [
+                            {
+                                "button": "Too Cool",
+                                "most": "The Goodest video"
+                            },
+                            {
+                                "button": "Too Geeky",
+                                "most": "The Badest video"
+                            }
+                        ]
+                    }
+                ],
+                "conversations": [
+                    {
+                        "id": "rcv-f9efca48d85143",
+                        "comments": [
+                            {
+                                "user": {
+                                    "pic": "josh.png",
+                                    "name": "Josh Minzner",
+                                    "isFriend": true
+                                },
+                                "date": "1390945596",
+                                "message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed ultricies turpis. Praesent rutrum blandit nisl, ac adipiscing ante. Integer lectus lectus, ultricies nec orci a, condimentum cursus dolor."
+                            },
+                            {
+                                "user": {
+                                    "pic": "steph.png",
+                                    "name": "Steph Stober",
+                                    "isFriend": true
+                                },
+                                "date": "1389822391",
+                                "message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed ultricies turpis. Praesent rutrum blandit nisl, ac adipiscing ante. Integer lectus lectus, ultricies nec orci a, condimentum cursus dolor."
+                            },
+                            {
+                                "user": {
+                                    "pic": "johnny.png",
+                                    "name": "Johnny Testmonkey"
+                                },
+                                "date": "1388353591",
+                                "message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed ultricies turpis. Praesent rutrum blandit nisl, ac adipiscing ante. Integer lectus lectus, ultricies nec orci a, condimentum cursus dolor."
+                            }
+                        ]
+                    }
+                ],
+                "deck": [
+                    {
+                        "id": "rc-22119a8cf9f755",
+                        "type": "youtube",
+                        "title": "Epic Sax Guy",
+                        "note": "He's back, and saxier than ever.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot",
+                            "comments"
+                        ],
+                        "voting": [
+                            0.63,
+                            0.31,
+                            0.06
+                        ],
+                        "data": {
+                            "videoid": "gy1B3agGNxw",
+                            "start": 42,
+                            "end": 130,
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-716ffbdfc356af",
+                        "conversationId": "rcv-f9efca48d85143"
+                    },
+                    {
+                        "id": "rc-2d46a04b21b073",
+                        "type": "vast",
+                        "ad": true,
+                        "modules": [
+                            "displayAd"
+                        ],
+                        "data": {
+                            "autoplay": true
+                        },
+                        "displayAd": "http://2.bp.blogspot.com/-TlM_3FT89Y0/UMzLr7kVykI/AAAAAAAACjs/lKrdhgp6OQg/s1600/brad-turner.jpg"
+                    },
+                    {
+                        "id": "rc-4770a2d7f85ce0",
+                        "type": "dailymotion",
+                        "title": "Kristen Stewart for Channel",
+                        "note": "Psychotic glamour",
+                        "source": "DailyMotion",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.77,
+                            0.19,
+                            0.04
+                        ],
+                        "data": {
+                            "videoid": "x18b09a",
+                            "related": 0
+                        },
+                        "ballotId": "rb-01eb03bc062c15"
+                    },
+                    {
+                        "id": "rc-e489d1c6359fb3",
+                        "type": "vimeo",
+                        "title": "Aquatic paradise",
+                        "note": "How may we help you?",
+                        "source": "Vimeo",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.83,
+                            0.14,
+                            0.03
+                        ],
+                        "data": {
+                            "videoid": "81766071",
+                            "start": 35,
+                            "end": 45
+                        },
+                        "ballotId": "rb-01eb03bc062c15"
+                    },
+                    {
+                        "id": "rc-e2947c9bec017e",
+                        "type": "youtube",
+                        "title": "Geek cool",
+                        "note": "Doctor Who #11 meets #4",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.87,
+                            0.11,
+                            0.02
+                        ],
+                        "data": {
+                            "videoid": "Cn9yJrrm2tk",
+                            "rel": 0,
+                            "modestbranding": 1,
+                            "end": 18
+                        },
+                        "ballotId": "rb-d1f60e2d64a0ba"
+                    },
+                    {
+                        "id": "rc-99b87ea709d7ac",
+                        "type": "dailymotion",
+                        "title": "Farting dogs",
+                        "note": "Enough said",
+                        "source": "DailyMotion",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.89,
+                            0.09,
+                            0.02
+                        ],
+                        "data": {
+                            "videoid": "xorbb7",
+                            "related": 0
+                        },
+                        "ballotId": "rb-01eb03bc062c15"
+                    },
+                    {
+                        "id": "rc-235d41cde02032",
+                        "type": "miniReel",
+                        "data": {
+                            "message": "Check out these other MiniReels!",
+                            "query": {
+                                "id": [
+                                    "1",
+                                    "2",
+                                    "3"
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "e-220f09b2398217",
+            "uri": "gopro",
+            "appUriPrefix": "<%= settings.appUrl %>",
+            "appUri": "rumble",
+            "title": "The 15 Most Amazing GoPro Videos Ever Recorded",
+            "subtitle": "",
+            "summary": "GoPro cameras are the only tech inventions we were introduced to in 2013 that we think deserve to continue trending in 2014. These handy-dandy cameras are perfect for just about any activity, including skydiving, surfing, or rescuing a baby kitten from a tree.",
+            "org": "o-d1f0be2ea473cb",
+            "data": {
+                "id": "r-ea8caee7de7582",
+                "ballots": [
+                    {
+                        "id": "rb-8e76295e41625f",
+                        "choices": [
+                            {
+                                "button": "Way Rad",
+                                "most": "The Goodest video"
+                            },
+                            {
+                                "button": "Way Lame",
+                                "most": "The Badest video"
+                            }
+                        ]
+                    }
+                ],
+                "deck": [
+                    {
+                        "id": "rc-22119a8cf9f755",
+                        "type": "youtube",
+                        "title": "F18 Fighter",
+                        "note": "This guy recorded himself in an F18 fighter jet.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.81,
+                            0.19
+                        ],
+                        "data": {
+                            "videoid": "IqVPwcvgOWQ",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-8e76295e41625f"
+                    },
+                    {
+                        "id": "rc-337f092e881524",
+                        "type": "youtube",
+                        "title": "Lions",
+                        "note": "If you ever get the chance to hang out with lions, record it.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.74,
+                            0.26
+                        ],
+                        "data": {
+                            "videoid": "MNCzSfv4hX8",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-8e76295e41625f"
+                    },
+                    {
+                        "id": "rc-facb167546a4ff",
+                        "type": "youtube",
+                        "title": "Vetical Skydive",
+                        "note": "Vertical skydiving looks like a breeze, doesn't it?",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.95,
+                            0.05
+                        ],
+                        "data": {
+                            "videoid": "HrqXTHCGVEo",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-8e76295e41625f"
+                    },
+                    {
+                        "id": "rc-4b9dc6b9651428",
+                        "type": "youtube",
+                        "title": "Canyon Backflip",
+                        "note": "Kelly McGarry flips over a 72-foot-long canyon gap.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.65,
+                            0.35
+                        ],
+                        "data": {
+                            "videoid": "x76VEPXYaI0",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-8e76295e41625f"
+                    },
+                    {
+                        "id": "rc-9b524d0c0535db",
+                        "type": "youtube",
+                        "title": "Afghanistan",
+                        "note": "Six months in Afghanistan in a two-minute video.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.7,
+                            0.3
+                        ],
+                        "data": {
+                            "videoid": "af2m0gf6TtA",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-8e76295e41625f"
+                    },
+                    {
+                        "id": "rc-828007b55441ca",
+                        "type": "youtube",
+                        "title": "Waterski Breakdancing",
+                        "note": "Yes, there is such a thing as waterski-breakdancing.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.9,
+                            0.1
+                        ],
+                        "data": {
+                            "videoid": "GdEKSyad_rk",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-8e76295e41625f"
+                    },
+                    {
+                        "id": "rc-4ea854fd34d960",
+                        "type": "youtube",
+                        "title": "Cat Bike Guy",
+                        "note": "This guy rides all around Philly with his cat on his shoulder.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.82,
+                            0.18
+                        ],
+                        "data": {
+                            "videoid": "T8F8WR2rzPA",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-8e76295e41625f"
+                    },
+                    {
+                        "id": "rc-392f3546f0cfc3",
+                        "type": "vast",
+                        "ad": true,
+                        "modules": [],
+                        "data": {
+                            "autoplay": true
+                        }
+                    },
+                    {
+                        "id": "rc-77d0ea2794cc6b",
+                        "type": "youtube",
+                        "title": "Avalanche Cliff Jump",
+                        "note": "You're going to want to add avalanche cliff jumping to your bucket list.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.97,
+                            0.03
+                        ],
+                        "data": {
+                            "videoid": "SwbP9WLX3fY",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-8e76295e41625f"
+                    },
+                    {
+                        "id": "rc-389f9dea3498d2",
+                        "type": "youtube",
+                        "title": "Toy Robot in Space",
+                        "note": "Who said sending a toy robot to space was impossible?!",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.67,
+                            0.33
+                        ],
+                        "data": {
+                            "videoid": "ZCAnLxRvNNc",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-8e76295e41625f"
+                    },
+                    {
+                        "id": "rc-065050baf27d98",
+                        "type": "youtube",
+                        "title": "Flash Flood Biker",
+                        "note": "Genius biker thinks he can make it through a flood on his motorcycle.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.78,
+                            0.22
+                        ],
+                        "data": {
+                            "videoid": "pOoy7_l2EbI",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-8e76295e41625f"
+                    },
+                    {
+                        "id": "rc-3194c992829ad5",
+                        "type": "youtube",
+                        "title": "Seagull GoPro Thief!",
+                        "note": "Oh, what about the time a seagull stole a GoPro? Insane.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.9,
+                            0.1
+                        ],
+                        "data": {
+                            "videoid": "rIu5B3Fsstg",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-8e76295e41625f"
+                    },
+                    {
+                        "id": "rc-974e99904a58fd",
+                        "type": "youtube",
+                        "title": "Rattlesnake Attack!",
+                        "note": "Want to see what an angry rattlesnake looks like?",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.86,
+                            0.14
+                        ],
+                        "data": {
+                            "videoid": "oEG1V7rkIK8",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-8e76295e41625f"
+                    },
+                    {
+                        "id": "rc-0518f251954d3d",
+                        "type": "youtube",
+                        "title": "Rope-Swing!",
+                        "note": "Rope-swinging from a moving boat sounds like fun.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.75,
+                            0.25
+                        ],
+                        "data": {
+                            "videoid": "zqIjZFV4YAU",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-8e76295e41625f"
+                    },
+                    {
+                        "id": "rc-3502759494071f",
+                        "type": "youtube",
+                        "title": "Kitten Rescue!",
+                        "note": "The world's greatest fireman rescues a kitten.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.98,
+                            0.02
+                        ],
+                        "data": {
+                            "videoid": "CjB_oVeq8Lo",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-8e76295e41625f"
+                    },
+                    {
+                        "id": "rc-3502759494071f",
+                        "type": "youtube",
+                        "title": "Red Sox Victory!",
+                        "note": "Shane Victorino captures the moment the Red Sox won the World Series.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.64,
+                            0.36
+                        ],
+                        "data": {
+                            "videoid": "eesJwsJoczY",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-8e76295e41625f"
+                    },
+                    {
+                        "id": "rc-ee5f1c11d8d42f",
+                        "type": "miniReel",
+                        "data": {
+                            "message": "Now check out...",
+                            "query": {
+                                "id": [
+                                    "1",
+                                    "2",
+                                    "3"
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "e-d222ba38f50e09",
+            "uri": "superbowl",
+            "appUriPrefix": "<%= settings.appUrl %>",
+            "appUri": "rumble",
+            "title": "The 10 Greatest Super Bowl Plays Of All Time",
+            "subtitle": "",
+            "summary": "From touchdowns, to big hits, spectacular catches and defensive stops, the highest level of competition never disappoints. To really appreciate what this Super Bowl will bring us on Sunday, it's important to remember some of the greatness of the past.",
+            "org": "o-d1f0be2ea473cb",
+            "data": {
+                "id": "r-a798237d2e522f",
+                "ballots": [
+                    {
+                        "id": "rb-f59f9c044594e7",
+                        "choices": [
+                            {
+                                "button": "All Skill",
+                                "most": "The Goodest video"
+                            },
+                            {
+                                "button": "All Luck",
+                                "most": "The Badest video"
+                            }
+                        ]
+                    }
+                ],
+                "deck": [
+                    {
+                        "id": "rc-080fb573e704cf",
+                        "type": "youtube",
+                        "title": "John Elway's \"Helicopter\" Scramble Spin",
+                        "note": "Before Peyton Manning was breaking passing records out in Denver, it was John Elway who called the shots as the Broncos legendary signal caller from 1983 to 1998.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.81,
+                            0.19
+                        ],
+                        "data": {
+                            "videoid": "WpJaJM4Cy8o",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-f59f9c044594e7"
+                    },
+                    {
+                        "id": "rc-7311404ad44b52",
+                        "type": "youtube",
+                        "title": "Desmond Howard's 100-yard Touchdown Return",
+                        "note": "It doesn't feel like too long ago when Desmond Howard was in the NFL returning kicks and scoring touchdowns, as we most remember his signature moment in Super Bowl XXXI when he returned a second-half kickoff return for a touchdown.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.74,
+                            0.26
+                        ],
+                        "data": {
+                            "videoid": "-T1D_H-vOSA",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-f59f9c044594e7"
+                    },
+                    {
+                        "id": "rc-df375fb28cc776",
+                        "type": "youtube",
+                        "title": "Marcus Allen's 74-yard Cutback Touchdown Run",
+                        "note": "Marcus Allen put on one of the most impressive Super Bowl performances of all time in 1984 when he ran for 191 yards and two touchdowns.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.95,
+                            0.05
+                        ],
+                        "data": {
+                            "videoid": "oPrm4PpOStA",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-f59f9c044594e7"
+                    },
+                    {
+                        "id": "rc-4f9cb78c41dcd9",
+                        "type": "youtube",
+                        "title": "John Riggins Scores On 4th And 1",
+                        "note": "Back when power running was actually a thing in the NFL, Redskins back John Riggins showed us what real football looks like when he bulldozed his way to a 43-yard score on a pivotal 4th and 1 situation.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.65,
+                            0.35
+                        ],
+                        "data": {
+                            "videoid": "u_Hrv5TNb2Y",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-f59f9c044594e7"
+                    },
+                    {
+                        "id": "rc-b0f8f58e21f202",
+                        "type": "youtube",
+                        "title": "Devin Hester's Kickoff Return To Start The Game",
+                        "note": "Devin Hester tore the lid off Super Bowl XLI by returning the opening kickoff for a touchdown, putting the Bears up 7-0 over the Colts in just the opening seconds of the game.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.7,
+                            0.3
+                        ],
+                        "data": {
+                            "videoid": "MVT91mNMS8A",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-f59f9c044594e7"
+                    },
+                    {
+                        "id": "rc-ca8adce82b632f",
+                        "type": "youtube",
+                        "title": "Joe Montana's Game-Winning Drive And TD Pass To John Taylor",
+                        "note": "During the final drive of Super Bowl XXIII, we saw the best of Joe Montana and the 49ers.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.9,
+                            0.1
+                        ],
+                        "data": {
+                            "videoid": "O-5mLe8n9QI",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-f59f9c044594e7"
+                    },
+                    {
+                        "id": "rc-cd2a90ac077d87",
+                        "type": "youtube",
+                        "title": "Mike Jones Tackles Kevin Dyson At The 1-Yard Line To Save The Game",
+                        "note": "After a miraculous scramble and throw on 3rd and 5 with just 22 seconds left to play, McNair set his team up to win it all, when receiver Kevin Dyson got denied by linebacker Mike Jones right at the goal line.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.82,
+                            0.18
+                        ],
+                        "data": {
+                            "videoid": "xKaGdvnQUz4",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-f59f9c044594e7"
+                    },
+                    {
+                        "id": "rc-392f3546f0cfc3",
+                        "type": "vast",
+                        "ad": true,
+                        "modules": [],
+                        "data": {
+                            "autoplay": true
+                        }
+                    },
+                    {
+                        "id": "rc-cd6b62c0bf1025",
+                        "type": "youtube",
+                        "title": "Santonio Holmes' Game-Winning, Toe-Drag Touchdown",
+                        "note": "When healthy, Santonio Holmes is an elite receiver. His Super Bowl XLIII matchup against Larry Fitzgerald was one for the ages, as the two went blow-for-blow with huge performances.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.97,
+                            0.03
+                        ],
+                        "data": {
+                            "videoid": "lmvQVz1-bOU",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-f59f9c044594e7"
+                    },
+                    {
+                        "id": "rc-ef6ffe2bab25f5",
+                        "type": "youtube",
+                        "title": "Eli Manning's Evasion And David Tyree's Impossible Helmet Catch",
+                        "note": "Eli Manning's tenacity was just as big a part of this play as David Tyree's unbelievable catch itself. Coming from behind late in the game, the Giants pulled the upset victory over the Patriots thanks to the grit of one of the game's most unlikely heroes.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.67,
+                            0.33
+                        ],
+                        "data": {
+                            "videoid": "27XeNefwABw",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-f59f9c044594e7"
+                    },
+                    {
+                        "id": "rc-7c2c6b5040f21b",
+                        "type": "youtube",
+                        "title": "James Harrison's 100-yard Interception Return For Touchdown",
+                        "note": "James Harrison's 100-yard interception return for a touchdown right before the half of Super Bowl XLIII could be the greatest football play of all time.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.78,
+                            0.22
+                        ],
+                        "data": {
+                            "videoid": "RqnQwKAI4OE",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-f59f9c044594e7"
+                    },
+                    {
+                        "id": "rc-1a327c199e4387",
+                        "type": "miniReel",
+                        "data": {
+                            "message": "Now check out...",
+                            "query": {
+                                "id": [
+                                    "1",
+                                    "2",
+                                    "3"
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "e-0bf9209b8cf08f",
+            "uri": "wrestling",
+            "appUriPrefix": "<%= settings.appUrl %>",
+            "appUri": "rumble",
+            "title": "The 7 Most Legendary Pro Wrestling Intros Of All Time",
+            "subtitle": "",
+            "summary": "Nothing electrifies a crowd like a good wrestling entrance. Finishing moves are cool, but most of them don't even hurt!",
+            "org": "o-d1f0be2ea473cb",
+            "data": {
+                "id": "r-ea8caee7de7582",
+                "ballots": [
+                    {
+                        "id": "rb-148edd87e67134",
+                        "choices": [
+                            {
+                                "button": "Hulk-Strong",
+                                "most": "The Goodest video"
+                            },
+                            {
+                                "button": "Too Weak",
+                                "most": "The Badest video"
+                            }
+                        ]
+                    }
+                ],
+                "deck": [
+                    {
+                        "id": "rc-0c4d7938b6fe3c",
+                        "type": "youtube",
+                        "title": "The Brood",
+                        "note": "Before there was \"Twilight\" or any of these dumbass vampire shows on TV, there was The Brood.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.81,
+                            0.19
+                        ],
+                        "data": {
+                            "videoid": "E0q7PPu_NIg",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-148edd87e67134"
+                    },
+                    {
+                        "id": "rc-29bd38a14dc46b",
+                        "type": "youtube",
+                        "title": "Rey Mysterio",
+                        "note": "Rey Mysterio is notoriously a sneaky, little bastard. You never know when he's going to pop up, but once he does, the minuscule Mexican emerges from under and hops up like a little chupacabra.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.74,
+                            0.26
+                        ],
+                        "data": {
+                            "videoid": "SrliMvIPALU",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-148edd87e67134"
+                    },
+                    {
+                        "id": "rc-9e477d23518112",
+                        "type": "youtube",
+                        "title": "Kane",
+                        "note": "No wrestler can intimidate like Kane. Not only did we have no idea what his face looked like for over a decade, but he always came out disheveled and looking like he was just finishing some terrible, cannibalistic act.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.95,
+                            0.05
+                        ],
+                        "data": {
+                            "videoid": "Z5lMOIFAJVI",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-148edd87e67134"
+                    },
+                    {
+                        "id": "rc-e1919a486fccfb",
+                        "type": "youtube",
+                        "title": "Eddie Guerrero",
+                        "note": "Coming down with the straight cholo music bumping in his lowrider with the fuzzy dice and hydraulics, Eddie was one of the greatest entertainers of his time.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.65,
+                            0.35
+                        ],
+                        "data": {
+                            "videoid": "5oJtvopJoAU",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-148edd87e67134"
+                    },
+                    {
+                        "id": "rc-11df958a25966d",
+                        "type": "vast",
+                        "ad": true,
+                        "modules": [],
+                        "data": {
+                            "autoplay": true
+                        }
+                    },
+                    {
+                        "id": "rc-2d991b6317e23d",
+                        "type": "youtube",
+                        "title": "Stacy Keibler",
+                        "note": "Stacy Keibler is one of the most stunning women ever to grace the ring, which makes sense considering that she was able to go beyond her career and become a model and an actress.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.7,
+                            0.3
+                        ],
+                        "data": {
+                            "videoid": "HBq-FYvAFmk",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-148edd87e67134"
+                    },
+                    {
+                        "id": "rc-26eb95e7e9d2ca",
+                        "type": "youtube",
+                        "title": "The Rock",
+                        "note": "The Rock is the most electrifying man in sports entertainment. But it's not just his theme song or routine that make him special, as he just has one of the craziest auras in the world.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.9,
+                            0.1
+                        ],
+                        "data": {
+                            "videoid": "GQly9YfEhpA",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-148edd87e67134"
+                    },
+                    {
+                        "id": "rc-cf6102c95f8d91",
+                        "type": "youtube",
+                        "title": "Degeneration X",
+                        "note": "DX has the best entrance of all time. Straight up. Starting off with the infamous \"Are you ready?\" line, you already know what time it is once the lights turn green.",
+                        "source": "YouTube",
+                        "modules": [
+                            "ballot"
+                        ],
+                        "voting": [
+                            0.82,
+                            0.18
+                        ],
+                        "data": {
+                            "videoid": "MNhe8ghamyE",
+                            "rel": 0,
+                            "modestbranding": 1
+                        },
+                        "ballotId": "rb-148edd87e67134"
+                    },
+                    {
+                        "id": "rc-b4b209132e2674",
+                        "type": "miniReel",
+                        "data": {
+                            "message": "Now check out...",
+                            "query": {
+                                "id": [
+                                    "1",
+                                    "2",
+                                    "3"
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "currentUser": [
+        {
+            "id": "u-c67a1678f06c1d",
+            "username": "jtestmonkey",
+            "org": "o-d1f0be2ea473cb",
+            "status": "active"
+        }
+    ]
+}
