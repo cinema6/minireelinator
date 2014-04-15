@@ -76,6 +76,47 @@
             }())] ,'video');
         }])
 
+        .config(['c6BrowserInfoProvider',
+        function( c6BrowserInfoProvider ) {
+            c6BrowserInfoProvider
+                .augmentProfile(['$window', 'c6UserAgent',
+                function        ( $window ,  c6UserAgent ) {
+                    var screen = $window.screen,
+                        width = screen.width,
+                        height = screen.height,
+                        pixels = width * height;
+
+                    this.flash = (function() {
+                        try {
+                            var flashObject = new $window.ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+
+                            return !!flashObject;
+                        } catch(e) {
+                            return !!$window.navigator.mimeTypes['application/x-shockwave-flash'];
+                        }
+                    })();
+
+                    this.device = (function() {
+                        var touch = this.touch;
+
+                        if (pixels <= 518400) {
+                            return 'phone';
+                        } else if (pixels <= 786432) {
+                            if (touch) {
+                                return 'tablet';
+                            } else {
+                                return 'netbook';
+                            }
+                        } else {
+                            return 'desktop';
+                        }
+                    }).call(this);
+
+                    this.autoplay = !c6UserAgent.device.isMobile();
+
+                }]);
+        }])
+
         .config(['cinema6Provider','c6UrlMakerProvider',
         function( cinema6Provider , c6UrlMakerProvider ) {
             var FixtureAdapter = cinema6Provider.adapters.fixture;
