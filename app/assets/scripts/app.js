@@ -88,7 +88,8 @@
 
                     this.flash = (function() {
                         try {
-                            var flashObject = new $window.ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+                            var flashObject = new $window
+                                .ActiveXObject('ShockwaveFlash.ShockwaveFlash');
 
                             return !!flashObject;
                         } catch(e) {
