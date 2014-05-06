@@ -75,3 +75,4 @@
   * [FEATURE]: User can now upload custom splash images
   * [FIX]: Added states for "Publish Changes" button : 'alert', 'waiting', 'confirm', and 'disabled'
   * [FIX]: Added special alert area at top of page to show special messages
+* *[/Beta1.rc15]*
