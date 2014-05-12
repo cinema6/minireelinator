@@ -138,3 +138,4 @@
   * [FIX]: Complete re-working of how minireels are saved to the
     backend; Fixes issue with data falling out-of-sync and race
     conditions causing data to be overwritten
+* *[/Beta1.rc21]*
