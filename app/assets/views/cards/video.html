@@ -32,7 +32,7 @@
         </div>
     </div>
     <div ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id]" class="card__contextBar">
-        <a href="#" title="Preview This Card" ng-click="previewCard({ card: $this, evtSrc: $event })">Preview This Card</a>
+        <a href="#" title="Preview This Slide" ng-click="previewCard({ card: $this, evtSrc: $event })">Preview This Slide</a>
     </div>
 </div><!--
 --><div id="drop-zone-{{$this.id}}" data-title="{{$this.title}}" ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id] && $index !== (deck.length - 1)" c6-drag-zone="Ctrl.enableDrop" class="card__drop-zone">&nbsp;</div><!--

@@ -139,3 +139,5 @@
     backend; Fixes issue with data falling out-of-sync and race
     conditions causing data to be overwritten
 * *[/Beta1.rc21]*
+* *[Beta1.rc22]*
+  * [FIX]: dom elements updated to accommodate various new cards - ad and recap

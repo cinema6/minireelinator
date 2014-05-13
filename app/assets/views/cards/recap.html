@@ -1,38 +1,22 @@
-<div class="card__container card--{{$this.type}}"
+<div class="card__container card--recap"
     ng-class="{
         'card__container--dragging': DragCtrl.currentDrags[0] === DragCtrl.draggables[$this.id]
     }"
     id="container-{{$this.id}}"
     c6-drag-zone>
     <span ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id]">
-        <h4 class="card__type">{{$index + 1}}. {{$this.label}}</h4>
-        <button ng-show="$index !== (deck.length - 1)" ng-click="deleteCard({ card: $this, evtSrc: $event })" class="card__deleteBtn" type="button" title="Delete Card">
-            <span class="ui__xSmall ui__xSmall--white sprite--alpha"><span class="ir">Delete Card</span></span>
-        </button>
+        <h4 class="card__type">{{$index + 1}}. Recap Slide</h4>
     </span>
     <div id="{{$this.id}}" data-title="{{$this.title}}" c6-draggable="$index !== (deck.length - 1)" ng-click="editCard({ card: $this, evtSrc: $event })" class="card__item">
-        <div class="card__statusIndicator">
-            <span class="ui__editToolTip">
-                <span class="ui__edit sprite--alpha"><span class="ir">Edit</span></span>
-                Edit
-            </span>
-        </div>
-        <div class="card__imgBox">
-            <div class="miniReel__imgBox"
-                ng-style="{'background-image': 'url(' + (Ctrl.getThumbs($this).large || '') + ')'}">
-                &nbsp;
-            </div>
-        </div>
+        <h1 class="card__title"><span class="card__titleText">Recap Slide</span></h1>
+        <div class="card__img sprite--fff">&nbsp;</div>
         <div class="card__body">
-            <div class="card__copy">
-                <h1 class="card__title"><span class="card__titleText">{{$this.title}}</span></h1>
-                <p class="card__summary">{{$this.note}}</p>
-            </div>
             <div class="ui__divider--pause">&hellip;</div>
+            <p class="card__summary">A list of each video as well as the results of each questionnaire (when applicable) will accompany the recap slide.</p>
         </div>
     </div>
     <div ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id]" class="card__contextBar">
-        <a href="#" title="Preview This Card" ng-click="previewCard({ card: $this, evtSrc: $event })">Preview This Card</a>
+        <a href="#" title="Preview This Slide" ng-click="previewCard({ card: $this, evtSrc: $event })">Preview This Slide</a>
     </div>
 </div><!--
 --><div id="drop-zone-{{$this.id}}" data-title="{{$this.title}}" ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id] && $index !== (deck.length - 1)" c6-drag-zone="Ctrl.enableDrop" class="card__drop-zone">&nbsp;</div><!--
