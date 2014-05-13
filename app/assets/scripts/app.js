@@ -374,7 +374,7 @@
                             }],
                             afterModel: ['model','$q','c6State',
                             function    ( model , $q , c6State ) {
-                                var types = ['intro', 'video', 'videoBallot'];
+                                var types = ['video', 'videoBallot', 'ad'];
 
                                 if(types.indexOf(model.type) < 0) {
                                     c6State.goTo('editor');
@@ -395,6 +395,14 @@
                                     ballot = {
                                         name: 'Questionnaire',
                                         sref: 'editor.editCard.ballot'
+                                    },
+                                    adServer = {
+                                        name: 'Server Settings',
+                                        sref: 'editor.editCard.server'
+                                    },
+                                    adSkip = {
+                                        name: 'Skip Settings',
+                                        sref: 'editor.editCard.skip'
                                     };
 
                                 controller.model = model;
@@ -404,9 +412,11 @@
                                         return [copy, video];
                                     case 'videoBallot':
                                         return [copy, video, ballot];
+                                    case 'ad':
+                                        return [adServer, adSkip];
 
                                     default:
-                                        return [copy];
+                                        return [];
                                     }
                                 }());
                             }],
@@ -441,6 +451,22 @@
 
                                             return $q.reject('Card doesn\'t support ballots.');
                                         }
+                                    }]
+                                },
+                                server: {
+                                    controller: 'GenericController',
+                                    controllerAs: 'EditCardServerCtrl',
+                                    templateUrl: assets('views/editor/edit_card/server.html'),
+                                    model:  [function() {
+                                        return this.cParent.cModel;
+                                    }]
+                                },
+                                skip: {
+                                    controller: 'GenericController',
+                                    controllerAs: 'EditCardSkipCtrl',
+                                    templateUrl: assets('views/editor/edit_card/skip.html'),
+                                    model:  [function() {
+                                        return this.cParent.cModel;
                                     }]
                                 }
                             }

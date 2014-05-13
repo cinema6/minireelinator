@@ -13,10 +13,18 @@
                 EditCardCtrl;
 
             var model,
+                tabs,
                 appDataDeferred,
                 appData;
 
             beforeEach(function() {
+                tabs = [
+                    {
+                        name: 'Foo',
+                        sref: 'editor.editCard.foo'
+                    }
+                ];
+
                 model = {
                     note: null,
                     data: {
@@ -71,6 +79,7 @@
                     $controller = $injector.get('$controller');
                     $q = $injector.get('$q');
                     c6State = $injector.get('c6State');
+                    spyOn(c6State, 'goTo');
 
                     cinema6 = $injector.get('cinema6');
                     appDataDeferred = $q.defer();
@@ -88,11 +97,10 @@
                         };
                         EditCardCtrl = $controller('EditCardController', { $scope: $scope, cModel: model });
                         EditCardCtrl.model = model;
+                        EditCardCtrl.tabs = tabs;
                         $scope.EditCardCtrl = EditCardCtrl;
                     });
                 });
-
-                spyOn(c6State, 'goTo');
             });
 
             it('should exist', function() {
@@ -168,6 +176,7 @@
                             $scope.$apply(function() {
                                 $scope.EditorCtrl = EditorCtrl;
                                 EditCardCtrl = $controller('EditCardController', { $scope: $scope });
+                                EditCardCtrl.tabs = tabs;
                                 EditCardCtrl.model = model;
                                 $scope.EditCardCtrl = EditCardCtrl;
                             });
@@ -313,6 +322,18 @@
             });
 
             describe('$watchers', function() {
+                describe('this.tabs', function() {
+                    it('should go to the first tab on initialization', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith(tabs[0].sref);
+                        c6State.goTo.calls.reset();
+
+                        $scope.$apply(function() {
+                            EditCardCtrl.tabs = [];
+                        });
+                        expect(c6State.goTo).not.toHaveBeenCalled();
+                    });
+                });
+
                 describe('this.model.data.service', function() {
                     describe('when changing to dailymotion', function() {
                         beforeEach(function() {

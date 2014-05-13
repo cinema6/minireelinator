@@ -78,7 +78,7 @@
 
                     badModel = {
                         id: 'rc-036a2e0b648f3d',
-                        type: 'ad'
+                        type: 'links'
                     };
 
                     spyOn(c6State, 'goTo');
@@ -113,6 +113,14 @@
                     video = {
                         name: 'Video Content',
                         sref: 'editor.editCard.video'
+                    },
+                    adServer = {
+                        name: 'Server Settings',
+                        sref: 'editor.editCard.server'
+                    },
+                    adSkip = {
+                        name: 'Skip Settings',
+                        sref: 'editor.editCard.skip'
                     };
 
                 beforeEach(function() {
@@ -139,14 +147,14 @@
                     });
                 });
 
-                describe('on all cards', function() {
+                describe('on typeless cards', function() {
                     beforeEach(function() {
                         model.type = null;
                         updateControllerModel();
                     });
 
-                    it('should only enable the "copy" tab', function() {
-                        expect(controller.tabs).toEqual([copy]);
+                    it('should not enable any tabs', function() {
+                        expect(controller.tabs).toEqual([]);
                     });
                 });
 
@@ -169,6 +177,17 @@
 
                     it('should enable the "copy" and "video" tabs', function() {
                         expect(controller.tabs).toEqual([copy, video]);
+                    });
+                });
+
+                describe('on ad cards', function() {
+                    beforeEach(function() {
+                        model.type = 'ad';
+                        updateControllerModel();
+                    });
+
+                    it('should enable the "server" and "skip" tabs', function() {
+                        expect(controller.tabs).toEqual([adServer, adSkip]);
                     });
                 });
             });

@@ -280,7 +280,7 @@
 //                if (evtSrc){
 //                    AppCtrl.sendPageEvent('Editor','Click','Edit Card',self.pageObject);
 //                }
-                c6State.goTo('editor.editCard.copy', { cardId: card.id });
+                c6State.goTo('editor.editCard', { cardId: card.id });
             };
 
             this.newCard = function(insertionIndex/*,evtSrc*/) {
@@ -517,7 +517,14 @@
                                             MiniReelService , cinema6 ) {
             var self = this,
                 c = c6Computed($scope),
-                EditorCtrl = $scope.EditorCtrl;
+                EditorCtrl = $scope.EditorCtrl,
+                removeInitWatcher = $scope.$watch(
+                    function() { return self.tabs; },
+                    function(tabs) {
+                        c6State.goTo(tabs[0].sref);
+                        removeInitWatcher();
+                    }
+                );
 
             this.limits = {
                 copy: Infinity

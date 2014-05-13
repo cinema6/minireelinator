@@ -275,7 +275,7 @@
                     });
 
                     it('should transition to the editor.editCard.video state', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('editor.editCard.copy', { cardId: 'rc-c98312239510db' });
+                        expect(c6State.goTo).toHaveBeenCalledWith('editor.editCard', { cardId: 'rc-c98312239510db' });
                     });
                 });
 
