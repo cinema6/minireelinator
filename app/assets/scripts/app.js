@@ -395,6 +395,14 @@
                                     ballot = {
                                         name: 'Questionnaire',
                                         sref: 'editor.editCard.ballot'
+                                    },
+                                    adServer = {
+                                        name: 'Server Settings',
+                                        sref: 'editor.editCard.server'
+                                    },
+                                    adSkip = {
+                                        name: 'Skip Settings',
+                                        sref: 'editor.editCard.skip'
                                     };
 
                                 controller.model = model;
@@ -404,9 +412,11 @@
                                         return [copy, video];
                                     case 'videoBallot':
                                         return [copy, video, ballot];
+                                    case 'ad':
+                                        return [adServer, adSkip];
 
                                     default:
-                                        return [copy];
+                                        return [];
                                     }
                                 }());
                             }],
