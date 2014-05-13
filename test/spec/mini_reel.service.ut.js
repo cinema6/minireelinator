@@ -281,6 +281,7 @@
                                 note: null,
                                 label: 'Video',
                                 ad: false,
+                                view: 'video',
                                 data: {
                                     service: null,
                                     videoid: null,
@@ -296,6 +297,7 @@
                                 note: null,
                                 label: 'Video + Questionnaire',
                                 ad: false,
+                                view: 'video',
                                 data: {
                                     service: null,
                                     videoid: null,
@@ -315,6 +317,7 @@
                                 note: null,
                                 label: 'Advertisement',
                                 ad: true,
+                                view: 'ad',
                                 data: {
                                     autoplay: false,
                                     publisher: false
@@ -328,6 +331,7 @@
                                 note: null,
                                 label: 'Suggested Links',
                                 ad: false,
+                                view: 'links',
                                 data: {
                                     links: []
                                 }
@@ -363,6 +367,7 @@
                                 note: null,
                                 label: null,
                                 ad: false,
+                                view: null,
                                 data: {}
                             });
                         });
@@ -382,6 +387,7 @@
                                 title: null,
                                 note: null,
                                 label: 'Video',
+                                view: 'video',
                                 ad: false,
                                 data: {
                                     service: null,
@@ -399,6 +405,7 @@
                                 title: null,
                                 note: null,
                                 label: 'Video + Questionnaire',
+                                view: 'video',
                                 ad: false,
                                 data: {
                                     service: null,
@@ -420,6 +427,7 @@
                                 title: 'Advertisement',
                                 note: null,
                                 label: 'Advertisement',
+                                view: 'ad',
                                 ad: true,
                                 data: {
                                     autoplay: false,
@@ -435,6 +443,7 @@
                                 title: 'Advertisement', // this is a result of the default ad title being set
                                 note: null,
                                 label: 'Suggested Links',
+                                view: 'links',
                                 ad: false,
                                 data: {
                                     links: []
@@ -629,6 +638,7 @@
                                 note: 'Blah blah blah',
                                 label: 'Video',
                                 ad: false,
+                                view: 'video',
                                 data: {
                                     service: 'youtube',
                                     videoid: '47tfg8734',
@@ -644,6 +654,7 @@
                                 note: 'Blah blah blah',
                                 label: 'Video + Questionnaire',
                                 ad: false,
+                                view: 'video',
                                 data: {
                                     service: 'vimeo',
                                     videoid: '48hfrei49',
@@ -666,6 +677,7 @@
                                 note: 'Blah blah blah',
                                 label: 'Video + Questionnaire',
                                 ad: false,
+                                view: 'video',
                                 data: {
                                     service: 'dailymotion',
                                     videoid: 'vfu85f5',
@@ -688,6 +700,7 @@
                                 note: 'Blah blah blah',
                                 label: 'Video',
                                 ad: false,
+                                view: 'video',
                                 data: {
                                     service: 'youtube',
                                     videoid: 'fn4378r4d',
@@ -705,6 +718,7 @@
                                 note: null,
                                 label: 'Advertisement',
                                 ad: true,
+                                view: 'ad',
                                 data: {
                                     autoplay: true,
                                     publisher: true
@@ -717,6 +731,7 @@
                                 note: null,
                                 label: 'Advertisement',
                                 ad: true,
+                                view: 'ad',
                                 data: {
                                     autoplay: false,
                                     publisher: false
@@ -732,6 +747,7 @@
                                 note: 'Blah blah blah',
                                 label: 'Suggested Links',
                                 ad: false,
+                                view: 'links',
                                 data: minireel.data.deck[8].data
                             });
 
@@ -746,6 +762,7 @@
                                 note: null,
                                 label: 'Recap',
                                 ad: false,
+                                view: 'recap',
                                 data: {}
                             });
                         });
@@ -849,6 +866,7 @@
                                                 note: null,
                                                 type: 'recap',
                                                 label: 'Recap',
+                                                view: 'recap',
                                                 ad: false,
                                                 data: {}
                                             }

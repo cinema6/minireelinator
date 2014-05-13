@@ -513,6 +513,16 @@
                             return null;
                         }
                     },
+                    view: function() {
+                        switch (this.type) {
+                        case 'video':
+                        case 'videoBallot':
+                            return 'video';
+
+                        default:
+                            return this.type;
+                        }
+                    },
                     ad: function(card) {
                         return card.ad || card.type === 'ad';
                     }
