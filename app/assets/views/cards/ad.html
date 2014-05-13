@@ -1,11 +1,11 @@
-<div class="card__container card--{{$this.type}}"
+<div class="card__container card--ad"
     ng-class="{
         'card__container--dragging': DragCtrl.currentDrags[0] === DragCtrl.draggables[$this.id]
     }"
     id="container-{{$this.id}}"
     c6-drag-zone>
     <span ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id]">
-        <h4 class="card__type">{{$index + 1}}. {{$this.label}}</h4>
+        <h4 class="card__type">{{$index + 1}}. Advertisement Slide</h4>
         <button ng-show="$index !== (deck.length - 1)" ng-click="deleteCard({ card: $this, evtSrc: $event })" class="card__deleteBtn" type="button" title="Delete Card">
             <span class="ui__xSmall ui__xSmall--white sprite--alpha"><span class="ir">Delete Card</span></span>
         </button>
@@ -18,21 +18,27 @@
             </span>
         </div>
         <div class="card__imgBox">
-            <div class="miniReel__imgBox"
-                ng-style="{'background-image': 'url(' + (Ctrl.getThumbs($this).large || '') + ')'}">
+            <div class="card__img sprite--fff">
                 &nbsp;
             </div>
         </div>
         <div class="card__body">
             <div class="card__copy">
-                <h1 class="card__title"><span class="card__titleText">{{$this.title}}</span></h1>
-                <p class="card__summary">{{$this.note}}</p>
+                <h1 class="card__title"><span class="card__titleText">Advertisement Slide</span></h1>
+                <p class="card__summary">
+                    Served by: <br>
+                    <strong>Publisher Ad Server with Cinema6 fallback</strong>
+                </p>
+                <p class="card__summary">
+                    Skip Availability: <br>
+                    <strong>After 6 Seconds</strong>
+                </p>
             </div>
             <div class="ui__divider--pause">&hellip;</div>
         </div>
     </div>
     <div ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id]" class="card__contextBar">
-        <a href="#" title="Preview This Card" ng-click="previewCard({ card: $this, evtSrc: $event })">Preview This Card</a>
+        <a href="#" title="Preview This Slide" ng-click="previewCard({ card: $this, evtSrc: $event })">Preview This Slide</a>
     </div>
 </div><!--
 --><div id="drop-zone-{{$this.id}}" data-title="{{$this.title}}" ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id] && $index !== (deck.length - 1)" c6-drag-zone="Ctrl.enableDrop" class="card__drop-zone">&nbsp;</div><!--

@@ -1,12 +1,12 @@
 <c6-alias model="EditCardCopyCtrl.model" as="card">
     <form>
         <label class="field field--noBreak field--smMargin clearfix">
-            <span class="modal__label">Card Title: </span>
+            <span class="modal__label">Slide Title: </span>
             <input ng-model="card.title" type="text" class="modal__textBox" ng-model="card.title">
             <span class="field__context"><strong>({{card.title.length}} of 100 max characters recommended)</strong></span>
         </label>
         <label class="field">
-            <span ng-show="EditCardCtrl.limits.copy < Infinity" class="modal__label">Card Copy: <strong class="field__context">({{card.note.length}} of {{EditCardCtrl.limits.copy}} max characters)</strong></span>
+            <span ng-show="EditCardCtrl.limits.copy < Infinity" class="modal__label">Slide Copy: <strong class="field__context">({{card.note.length}} of {{EditCardCtrl.limits.copy}} max characters)</strong></span>
             <textarea ng-model="card.note" class="modal__textarea modal__cardCopy"></textarea>
         </label>
     </form>
