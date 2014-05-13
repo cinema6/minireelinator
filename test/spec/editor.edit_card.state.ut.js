@@ -78,7 +78,7 @@
 
                     badModel = {
                         id: 'rc-036a2e0b648f3d',
-                        type: 'ad'
+                        type: 'links'
                     };
 
                     spyOn(c6State, 'goTo');

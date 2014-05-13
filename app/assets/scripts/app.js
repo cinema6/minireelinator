@@ -374,7 +374,7 @@
                             }],
                             afterModel: ['model','$q','c6State',
                             function    ( model , $q , c6State ) {
-                                var types = ['intro', 'video', 'videoBallot'];
+                                var types = ['video', 'videoBallot', 'ad'];
 
                                 if(types.indexOf(model.type) < 0) {
                                     c6State.goTo('editor');
@@ -451,6 +451,22 @@
 
                                             return $q.reject('Card doesn\'t support ballots.');
                                         }
+                                    }]
+                                },
+                                server: {
+                                    controller: 'GenericController',
+                                    controllerAs: 'EditCardServerCtrl',
+                                    templateUrl: assets('views/editor/edit_card/server.html'),
+                                    model:  [function() {
+                                        return this.cParent.cModel;
+                                    }]
+                                },
+                                skip: {
+                                    controller: 'GenericController',
+                                    controllerAs: 'EditCardSkipCtrl',
+                                    templateUrl: assets('views/editor/edit_card/skip.html'),
+                                    model:  [function() {
+                                        return this.cParent.cModel;
                                     }]
                                 }
                             }
