@@ -59,7 +59,7 @@
                 $scope.$apply(function() {
                     $container = $compile([
                         '<ul>',
-                        '    <li render-deck="deck" parent-test>{{$index}}: {{this.title}}</li>',
+                        '    <li render-deck="deck" parent-test>{{$index}}: {{$this.title}}</li>',
                         '</ul>'
                     ].join('\n'))($scope);
                 });
@@ -75,7 +75,7 @@
                 }());
             });
 
-            it('should repeat the DOM element for every item in the collection, making each item available as "this"', function() {
+            it('should repeat the DOM element for every item in the collection, making each item available as "$this"', function() {
                 var $lis = $container.find('li');
 
                 expect($lis.length).toBe(5);
@@ -96,7 +96,7 @@
                 expect($lis.length).toBe(6);
                 expect($lis.eq(2).text()).toBe('2: Card A');
                 forEach($lis, function(li, listIndex) {
-                    var id = $(li).scope().this.id,
+                    var id = $(li).scope().$this.id,
                         index = id.match(/(rc-)(\w)/)[2].toUpperCase(),
                         element = domElements[id];
 

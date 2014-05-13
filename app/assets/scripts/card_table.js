@@ -290,7 +290,7 @@
                     function CardView(data) {
                         var cardScope = scope.$new();
 
-                        cardScope.this = data;
+                        cardScope.$this = data;
 
                         this.$element = transclude(cardScope, function($clone) {
                             $parent.append($clone);
