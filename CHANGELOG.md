@@ -1,5 +1,7 @@
 # MiniReelinator
 
+* *[Beta3.rc1]*
+
 ## Beta2 (May 14, 2014)
 * *[Beta2.rc1]*
   * [FIX]: Ad slide modals added
