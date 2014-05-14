@@ -560,12 +560,29 @@
                     .wizard__choice:hover .diagram__videoBallotType {
                         background-position:-31.0625em -20.8125em;
                     }
+                .diagram__adType {
+                    background-position:-37.125em -16.625em;
+                }
+                    .wizard__choice:hover .diagram__adType {
+                        background-position:-37.125em -20.8125em;
+                    }
             .wizard__group--small .wizard__copy {
                 left:10.25em;
             }
                 .wizard__group--small .wizard__title,
                 .wizard__group--small .wizard__p {
                     margin:0;
+                }
+
+            .wizard__group .wizard__choice--imgLess,
+            .wizard__choice--imgLess .wizard__hitarea {
+                height:3em;
+            }
+                .wizard__choice--imgLess .wizard__copy {
+                    left:3em;
+                }
+                .wizard__choice--imgLess .modal__radioBtn {
+                    margin-top:-10px;
                 }
 
 /*  ==========================================================================

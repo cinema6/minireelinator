@@ -25,6 +25,18 @@
                     <p class="wizard__p">Editorial content with video, followed by a questionnaire.</p>
                 </div>
             </li>
+
+            <li class="wizard__choice">
+                <input id="cardType_ad" type="radio" 
+                    name="minireel-category" value="ad"
+                    class="modal__radioBtn" ng-model="NewCardCtrl.type" />
+                <label class="wizard__hitarea" for="cardType_ad"><span class="ir">Advertisement Card</span></label>
+                <div class="wizard__diagram sprite--fff diagram__adType">&nbsp;</div>
+                <div class="wizard__copy">
+                    <h2 class="wizard__title">Advertisement Card</h2>
+                    <p class="wizard__p">Advertisement content will be displayed before the next video in the series.</p>
+                </div>
+            </li>
         </ul>
 
     </form>

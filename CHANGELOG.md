@@ -2,6 +2,8 @@
 
 ## Beta2 (May 14, 2014)
 * *[Beta2.rc1]*
+  * [FIX]: Ad slide modals added
+  * [FIX]: Ad option added to new card modal
   * [FEATURE]: The "New Card" card is now always displayed before the
     recap card
   * [FEATURE]: Ad Cards, Video Cards and Recap cards now have a unique
