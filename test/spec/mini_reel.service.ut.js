@@ -397,6 +397,11 @@
                                 }
                             });
 
+                            videoCard.data.service = 'youtube';
+                            videoCard.data.videoid = '12345';
+                            videoCard.data.start = 10;
+                            videoCard.data.end = 45;
+
                             videoBallotCard = MiniReelService.setCardType(card, 'videoBallot');
                             expect(videoBallotCard).toBe(card);
                             expect(videoBallotCard).toEqual({
@@ -408,10 +413,10 @@
                                 view: 'video',
                                 ad: false,
                                 data: {
-                                    service: null,
-                                    videoid: null,
-                                    start: null,
-                                    end: null,
+                                    service: 'youtube',
+                                    videoid: '12345',
+                                    start: 10,
+                                    end: 45,
                                     ballot: {
                                         prompt: null,
                                         choices: []

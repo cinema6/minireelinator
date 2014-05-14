@@ -534,8 +534,9 @@
                     service: function(data, key, card) {
                         var type = card.type;
 
-                        return type.search(/^(youtube|dailymotion|vimeo)$/) > -1 ?
-                            type : null;
+                        return data.service ||
+                            (type.search(/^(youtube|dailymotion|vimeo)$/) > -1 ?
+                                type : null);
                     },
                     videoid: copy(null),
                     start: trimmer(),
