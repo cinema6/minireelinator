@@ -7,8 +7,10 @@
                 $scope,
                 $controller,
                 c6State,
+                c6StateParams,
                 cinema6,
                 $q,
+                MiniReelService,
                 EditorCtrl,
                 EditCardCtrl;
 
@@ -86,12 +88,26 @@
                     spyOn(cinema6, 'getAppData')
                         .and.returnValue(appDataDeferred.promise);
 
+                    c6StateParams = $injector.get('c6StateParams');
+                    MiniReelService = $injector.get('MiniReelService');
+
                     $scope = $rootScope.$new();
                     $scope.$apply(function() {
                         $scope.EditorCtrl = EditorCtrl = {
                             model: {
                                 data: {
-                                    mode: 'full'
+                                    mode: 'full',
+                                    deck: [
+                                        {
+                                            id: 'rc-44b7277334f900'
+                                        },
+                                        {
+                                            id: 'rc-9bc990dd4ad17a'
+                                        },
+                                        {
+                                            id: 'rc-2f3c9133f3cbb3'
+                                        }
+                                    ]
                                 }
                             }
                         };
@@ -111,16 +127,103 @@
                 describe('save()', function() {
                     beforeEach(function() {
                         spyOn($scope, '$emit').and.callThrough();
-
-                        EditCardCtrl.save();
+                        spyOn(EditCardCtrl, 'setIdealType');
+                        c6StateParams.insertionIndex = 1;
                     });
 
-                    it('should $emit the "updateCard" event', function() {
-                        expect($scope.$emit).toHaveBeenCalledWith('updateCard', model);
+                    describe('if the card is already in the deck', function() {
+                        beforeEach(function() {
+                            model.id = 'rc-9bc990dd4ad17a';
+
+                            EditCardCtrl.save();
+                        });
+
+                        it('should set the ideal card type', function() {
+                            expect(EditCardCtrl.setIdealType).toHaveBeenCalled();
+                        });
+
+                        it('should update the card in the deck with its properties', function() {
+                            expect(EditorCtrl.model.data.deck[1]).toEqual(model);
+                            expect(EditorCtrl.model.data.deck[1]).not.toBe(model);
+                        });
+
+                        it('should goTo the editor state', function() {
+                            expect(c6State.goTo).toHaveBeenCalledWith('editor');
+                        });
                     });
 
-                    it('should goTo the editor state', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('editor');
+                    describe('if the card is not in the deck', function() {
+                        beforeEach(function() {
+                            model.id = 'rc-c2177fddc0b8c7';
+
+                            EditCardCtrl.save();
+                        });
+
+                        it('should set the ideal card type', function() {
+                            expect(EditCardCtrl.setIdealType).toHaveBeenCalled();
+                        });
+
+                        it('should insert the model into the deck at the insertionIndex', function() {
+                            expect(EditorCtrl.model.data.deck[1]).toBe(model);
+                            expect(EditorCtrl.model.data.deck.length).toBe(4);
+                        });
+
+                        it('should goTo the editor state', function() {
+                            expect(c6State.goTo).toHaveBeenCalledWith('editor');
+                        });
+                    });
+                });
+
+                describe('setIdealType()', function() {
+                    it('should not mess with anything that is not a videoBallot card', function() {
+                        ['ad', 'recap', 'video', 'links'].forEach(function(type) {
+                            EditCardCtrl.model.type = type;
+
+                            EditCardCtrl.setIdealType();
+
+                            expect(EditCardCtrl.model.type).toBe(type);
+                        });
+                    });
+
+                    describe('with a videoBallot type', function() {
+                        beforeEach(function() {
+                            EditCardCtrl.model.type = 'videoBallot';
+                        });
+
+                        describe('if user has chosen two prompts', function() {
+                            beforeEach(function() {
+                                EditCardCtrl.model.data.ballot = {
+                                    choices: [
+                                        'Hot',
+                                        'Not'
+                                    ]
+                                };
+
+                                EditCardCtrl.setIdealType();
+                            });
+
+                            it('should not change anything', function() {
+                                expect(EditCardCtrl.model.type).toBe('videoBallot');
+                            });
+                        });
+
+                        describe('if the user has not chosen two prompts', function() {
+                            beforeEach(function() {
+                                EditCardCtrl.model.data.ballot = {
+                                    choices: [
+                                        'Hot'
+                                    ]
+                                };
+
+                                spyOn(MiniReelService, 'setCardType').and.callThrough();
+                                EditCardCtrl.setIdealType();
+                            });
+
+                            it('should make the card a video card', function() {
+                                expect(MiniReelService.setCardType).toHaveBeenCalledWith(EditCardCtrl.model, 'video');
+                                expect(EditCardCtrl.model.type).toBe('video');
+                            });
+                        });
                     });
                 });
             });

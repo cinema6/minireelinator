@@ -370,7 +370,8 @@
                                     copy(MiniReelService.findCard(
                                         minireel.data.deck,
                                         c6StateParams.cardId
-                                    ));
+                                    )) ||
+                                    c6StateParams.card;
                             }],
                             afterModel: ['model','$q','c6State',
                             function    ( model , $q , c6State ) {
@@ -409,7 +410,6 @@
                                 controller.tabs = (function() {
                                     switch (model.type) {
                                     case 'video':
-                                        return [copy, video];
                                     case 'videoBallot':
                                         return [copy, video, ballot];
                                     case 'ad':
@@ -441,7 +441,14 @@
                                     controller: 'GenericController',
                                     controllerAs: 'EditCardBallotCtrl',
                                     templateUrl: assets('views/editor/edit_card/ballot.html'),
-                                    model:  [function() {
+                                    model:  ['MiniReelService',
+                                    function( MiniReelService ) {
+                                        var card = this.cParent.cModel;
+
+                                        if (card.type === 'video') {
+                                            MiniReelService.setCardType(card, 'videoBallot');
+                                        }
+
                                         return this.cParent.cModel.data.ballot;
                                     }],
                                     afterModel: ['model','$q','c6State',
