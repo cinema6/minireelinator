@@ -8,6 +8,9 @@
     recap card
   * [FEATURE]: Ad Cards, Video Cards and Recap cards now have a unique
     view in the deck
+  * [FEATURE]: A questionnaire can now be added at any time to any video
+    card
+* *[/Beta2.rc1]*
 
 ## Beta1 (April 29, 2014)
 * Added a changelog
