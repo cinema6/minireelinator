@@ -50,6 +50,7 @@
                         }
                     };
                     c6StateParams.cardId = 'rc-036a2e0b648f3d';
+                    c6StateParams.card = {};
                 });
 
                 it('should return the current model if there is already one', function() {
@@ -64,6 +65,12 @@
 
                     expect(model).toEqual(card);
                     expect(model).not.toBe(card);
+                });
+
+                it('should use the reference to the c6StateParams card if one is provided', function() {
+                    c6StateParams.cardId = 'rc-fa679e80268c16';
+
+                    expect($injector.invoke(EditCardState.model, EditCardState)).toBe(c6StateParams.card);
                 });
             });
 

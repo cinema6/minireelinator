@@ -370,7 +370,8 @@
                                     copy(MiniReelService.findCard(
                                         minireel.data.deck,
                                         c6StateParams.cardId
-                                    ));
+                                    )) ||
+                                    c6StateParams.card;
                             }],
                             afterModel: ['model','$q','c6State',
                             function    ( model , $q , c6State ) {

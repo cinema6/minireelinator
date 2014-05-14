@@ -13,9 +13,12 @@
                 c6State,
                 cinema6,
                 EditorService,
+                MiniReelService,
                 ConfirmDialogService,
                 AppCtrl,
                 EditorCtrl;
+
+            var lastCreatedCard;
 
             var cModel;
 
@@ -38,7 +41,20 @@
                     }
                 };
 
-                module('c6.mrmaker');
+                module('c6.mrmaker', function($provide) {
+                    $provide.decorator('MiniReelService', function($delegate) {
+                        var createCard = $delegate.createCard;
+
+                        $delegate.createCard = jasmine.createSpy('MiniReelService.createCard()')
+                            .and.callFake(function() {
+                                lastCreatedCard = createCard.apply($delegate, arguments);
+
+                                return lastCreatedCard;
+                            });
+
+                        return $delegate;
+                    });
+                });
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
@@ -50,6 +66,7 @@
                         dirty: false,
                         inFlight: false
                     };
+                    MiniReelService = $injector.get('MiniReelService');
                     ConfirmDialogService = $injector.get('ConfirmDialogService');
                     $timeout = $injector.get('$timeout');
                     cinema6 = $injector.get('cinema6');
@@ -286,8 +303,16 @@
                         EditorCtrl.newCard(3);
                     });
 
-                    it('should transition to the editor.newCard.type state', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('editor.newCard', { insertionIndex: 3 });
+                    it('should create a new card', function() {
+                        expect(MiniReelService.createCard).toHaveBeenCalledWith('videoBallot');
+                    });
+
+                    it('should transition to the editor.editCard state', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith('editor.editCard', {
+                            cardId: lastCreatedCard.id,
+                            insertionIndex: 3,
+                            card: lastCreatedCard
+                        });
                     });
                 });
 
@@ -562,45 +587,6 @@
             });
 
             describe('events', function() {
-                describe('addCard', function() {
-                    var card;
-
-                    beforeEach(function() {
-                        card = {};
-
-                        $childScope.$emit('addCard', card, 1);
-                    });
-
-                    it('should insert the card into the deck at the provided index', function() {
-                        var deck = cModel.data.deck;
-
-                        expect(deck[1]).toBe(card);
-                    });
-                });
-
-                describe('updateCard', function() {
-                    var card;
-
-                    beforeEach(function() {
-                        card = {
-                            id: 'rc-2ba11eda2b2300',
-                            title: 'foo',
-                            note: 'bar',
-                            data: {
-                                videoid:'abc',
-                                service: 'vimeo'
-                            }
-                        };
-
-                        $scope.$emit('updateCard', card);
-                    });
-
-                    it('should copy the properties of the provided card to the actual card in the deck', function() {
-                        expect(cModel.data.deck[1]).toEqual(card);
-                        expect(cModel.data.deck[1]).not.toBe(card);
-                    });
-                });
-
                 describe('$destroy', function() {
                     var saveDeferred;
 

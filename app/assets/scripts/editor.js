@@ -198,8 +198,10 @@
 
         .controller('EditorController', ['c6State','$scope','EditorService','cinema6',
                                          'ConfirmDialogService','c6Debounce','$q','$log',
+                                         'MiniReelService',
         function                        ( c6State , $scope , EditorService , cinema6 ,
-                                          ConfirmDialogService , c6Debounce , $q , $log ) {
+                                          ConfirmDialogService , c6Debounce , $q , $log ,
+                                          MiniReelService ) {
             var self = this,
                 AppCtrl = $scope.AppCtrl,
                 saveAfterTenSeconds = c6Debounce(function() {
@@ -287,7 +289,13 @@
 //                if (evtSrc){
 //                    AppCtrl.sendPageEvent('Editor','Click','New Card',self.pageObject);
 //                }
-                c6State.goTo('editor.newCard', { insertionIndex: insertionIndex });
+                var card = MiniReelService.createCard('videoBallot');
+
+                c6State.goTo('editor.editCard', {
+                    cardId: card.id,
+                    insertionIndex: insertionIndex,
+                    card: card
+                });
             };
 
             this.deleteCard = function(card/*,evtSrc*/) {
@@ -415,18 +423,6 @@
                 saveAfterTenSeconds();
             });
 
-            $scope.$on('addCard', function(event, card, index) {
-                self.model.data.deck.splice(index, 0, card);
-            });
-
-            $scope.$on('updateCard', function(event, cardProxy) {
-                var card = self.model.data.deck.filter(function(card) {
-                    return card.id === cardProxy.id;
-                })[0];
-
-                copy(cardProxy, card);
-            });
-
             $scope.$on('$destroy', function() {
                 function save() {
                     if (shouldAutoSave()) {
@@ -512,9 +508,9 @@
         }])
 
         .controller('EditCardController', ['$scope','c6Computed','c6State','VideoService',
-                                           'MiniReelService','cinema6',
+                                           'MiniReelService','cinema6','c6StateParams',
         function                          ( $scope , c6Computed , c6State , VideoService ,
-                                            MiniReelService , cinema6 ) {
+                                            MiniReelService , cinema6 , c6StateParams ) {
             var self = this,
                 c = c6Computed($scope),
                 EditorCtrl = $scope.EditorCtrl,
@@ -557,7 +553,16 @@
             VideoService.createVideoUrl(c, this, 'EditCardCtrl');
 
             this.save = function() {
-                $scope.$emit('updateCard', this.model);
+                var deck = EditorCtrl.model.data.deck,
+                    index = deck.map(function(card) {
+                        return card.id;
+                    }).indexOf(this.model.id);
+
+                if (index > -1) {
+                    copy(this.model, deck[index]);
+                } else {
+                    deck.splice(c6StateParams.insertionIndex, 0, this.model);
+                }
 
                 c6State.goTo('editor');
             };
