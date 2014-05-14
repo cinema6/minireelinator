@@ -1,5 +1,12 @@
 # MiniReelinator
 
+## Beta2 (May 14, 2014)
+* *[Beta2.rc1]*
+  * [FEATURE]: The "New Card" card is now always displayed before the
+    recap card
+  * [FEATURE]: Ad Cards, Video Cards and Recap cards now have a unique
+    view in the deck
+
 ## Beta1 (April 29, 2014)
 * Added a changelog
 * Initial release of MRinator
@@ -139,5 +146,3 @@
     backend; Fixes issue with data falling out-of-sync and race
     conditions causing data to be overwritten
 * *[/Beta1.rc21]*
-* *[Beta1.rc22]*
-  * [FIX]: dom elements updated to accommodate various new cards - ad and recap
