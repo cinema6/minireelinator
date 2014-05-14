@@ -34,8 +34,4 @@
     <div ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id]" class="card__contextBar">
         <a href="#" title="Preview This Slide" ng-click="previewCard({ card: $this, evtSrc: $event })">Preview This Slide</a>
     </div>
-</div><!--
---><div id="drop-zone-{{$this.id}}" data-title="{{$this.title}}" ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id] && $index !== (deck.length - 1)" c6-drag-zone="Ctrl.enableDrop" class="card__drop-zone">&nbsp;</div><!--
---><div class="new__container" ng-hide="DragCtrl.currentDrags.length" ng-style="{ visibility: $index === (deck.length - 1) ? 'hidden' : '' }">
-    <button ng-click="addCard({ index: $index + 1, evtSrc: $event })" class="new__button ui__add sprite--alpha" id="zone-{{$this.id}}" data-index={{$index}}><span class="ir">Add Here</span></button>
 </div>
