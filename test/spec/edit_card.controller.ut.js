@@ -28,6 +28,7 @@
                 ];
 
                 model = {
+                    title: null,
                     note: null,
                     data: {
                         service: 'youtube',
@@ -229,6 +230,116 @@
             });
 
             describe('properties', function() {
+                function onlyEmpty(key) {
+                    ['title', 'note'].forEach(function(prop) {
+                        if (prop !== key) {
+                            model[prop] = 'Filled';
+                        } else {
+                            model[prop] = null;
+                        }
+                    });
+
+                    ['service', 'videoid'].forEach(function(prop) {
+                        if (prop !== key) {
+                            model.data[prop] = 'Filled';
+                        } else {
+                            model.data[prop] = null;
+                        }
+                    });
+                }
+
+                describe('copyComplete', function() {
+                    function copyComplete() {
+                        return EditCardCtrl.copyComplete;
+                    }
+
+                    describe('on non video cards', function() {
+                        beforeEach(function() {
+                            model.type = 'foo';
+                        });
+
+                        it('should be undefined', function() {
+                            expect(copyComplete()).toBeUndefined();
+                        });
+                    });
+
+                    ['video', 'videoBallot'].forEach(function(type) {
+                        describe('on a ' + type + ' card', function() {
+                            beforeEach(function() {
+                                model.type = type;
+                            });
+
+                            it('should be true if the title and note are not falsy', function() {
+                                onlyEmpty('title');
+                                expect(copyComplete()).toBe(false);
+
+                                onlyEmpty('note');
+                                expect(copyComplete()).toBe(false);
+
+                                onlyEmpty('foo');
+                                expect(copyComplete()).toBe(true);
+                            });
+                        });
+                    });
+                });
+
+                describe('videoComplete', function() {
+                    function videoComplete() {
+                        return EditCardCtrl.videoComplete;
+                    }
+
+                    describe('on non video cards', function() {
+                        beforeEach(function() {
+                            model.type = 'foo';
+                        });
+
+                        it('should be undefined', function() {
+                            expect(videoComplete()).toBeUndefined();
+                        });
+                    });
+
+                    ['video', 'videoBallot'].forEach(function(type) {
+                        describe('on a ' + type + ' card', function() {
+                            beforeEach(function() {
+                                model.type = type;
+                            });
+
+                            it('should be true if the service and videoid are not falsy', function() {
+                                onlyEmpty('service');
+                                expect(videoComplete()).toBe(false);
+
+                                onlyEmpty('videoid');
+                                expect(videoComplete()).toBe(false);
+
+                                onlyEmpty('foo');
+                                expect(videoComplete()).toBe(true);
+                            });
+                        });
+                    });
+                });
+
+                describe('primaryButtonAction', function() {
+                    describe('if the card can be saved', function() {
+                        beforeEach(function() {
+                            Object.defineProperty(EditCardCtrl, 'canSave', {
+                                value: true
+                            });
+                        });
+
+                        describe('the text', function() {
+                            describe('if the minireel is not published', function() {
+                                beforeEach(function() {
+                                    EditorCtrl.model.status = 'pending';
+                                });
+
+                                it('should be "Save"', function() {
+                                    expect(EditorCtrl.primaryButtonAction.text).toBe('Save');
+                                });
+                            });
+                        });
+                    });
+                });
+
                 describe('canSave', function() {
                     function canSave() {
                         return EditCardCtrl.canSave;
@@ -245,23 +356,75 @@
                         model.note = result;
                     }
 
-                    it('should be true as long as the note\'s length is less than the limit on copy', function() {
-                        expect(canSave()).toBe(true);
+                    describe('on a video or videoBallot card', function() {
+                        beforeEach(function() {
+                            model.type = 'video';
+                        });
 
-                        setLength(10);
-                        expect(canSave()).toBe(true);
+                        describe('if the card is filled out', function() {
+                            beforeEach(function() {
+                                model.title = 'Foo';
+                                model.note = 'Note.';
+                                model.data.service = 'youtube';
+                                model.data.videoid = 'abc';
+                            });
 
-                        setLength(10000);
-                        expect(canSave()).toBe(true);
+                            it('should be true as long as the note\'s length is less than the limit on copy', function() {
+                                expect(canSave()).toBe(true);
 
-                        EditCardCtrl.limits.copy = 50;
-                        expect(canSave()).toBe(false);
+                                setLength(10);
+                                expect(canSave()).toBe(true);
 
-                        setLength(50);
-                        expect(canSave()).toBe(true);
+                                setLength(10000);
+                                expect(canSave()).toBe(true);
 
-                        setLength(51);
-                        expect(canSave()).toBe(false);
+                                EditCardCtrl.limits.copy = 50;
+                                expect(canSave()).toBe(false);
+
+                                model.type = 'videoBallot';
+                                setLength(50);
+                                expect(canSave()).toBe(true);
+
+                                setLength(51);
+                                expect(canSave()).toBe(false);
+                            });
+                        });
+
+                        describe('if the card is not totally filled out', function() {
+
+                            beforeEach(function() {
+                                onlyEmpty('title');
+                            });
+
+                            it('should be false', function() {
+                                expect(canSave()).toBe(false);
+
+                                onlyEmpty('note');
+                                expect(canSave()).toBe(false);
+
+                                onlyEmpty('service');
+                                expect(canSave()).toBe(false);
+
+                                onlyEmpty('videoid');
+                                expect(canSave()).toBe(false);
+
+                                onlyEmpty('foo');
+                                expect(canSave()).toBe(true);
+                            });
+                        });
+                    });
+
+                    describe('on any other card', function() {
+                        beforeEach(function() {
+                            model.type = 'foo';
+                            EditCardCtrl.limits.copy = 50;
+
+                            setLength(100);
+                        });
+
+                        it('should be true', function() {
+                            expect(canSave()).toBe(true);
+                        });
                     });
                 });
 

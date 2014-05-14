@@ -539,8 +539,47 @@
 
             Object.defineProperties(this, {
                 canSave: {
+                    configurable: true,
                     get: function() {
-                        return (this.model.note || '').length <= this.limits.copy;
+                        switch (this.model.type) {
+                        case 'video':
+                        case 'videoBallot':
+                            return [this.copyComplete, this.videoComplete].indexOf(false) < 0 &&
+                                ((this.model.note || '').length <= this.limits.copy);
+
+                        default:
+                            return true;
+                        }
+                    }
+                },
+                copyComplete: {
+                    get: function() {
+                        var model = this.model;
+
+                        switch (this.model.type) {
+                        case 'video':
+                        case 'videoBallot':
+                            return ['title', 'note'].map(function(prop) {
+                                return !!model[prop];
+                            }).indexOf(false) < 0;
+                        default:
+                            return undefined;
+                        }
+                    }
+                },
+                videoComplete: {
+                    get: function() {
+                        var model = this.model;
+
+                        switch (this.model.type) {
+                        case 'video':
+                        case 'videoBallot':
+                            return ['service', 'videoid'].map(function(prop) {
+                                return !!model.data[prop];
+                            }).indexOf(false) < 0;
+                        default:
+                            return undefined;
+                        }
                     }
                 },
                 saveText: {
