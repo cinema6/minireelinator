@@ -552,11 +552,25 @@
 
             VideoService.createVideoUrl(c, this, 'EditCardCtrl');
 
+            this.setIdealType = function() {
+                var choices;
+
+                if (this.model.type !== 'videoBallot') { return; }
+
+                choices = this.model.data.ballot.choices;
+
+                if (!choices[0] || !choices[1]) {
+                    MiniReelService.setCardType(this.model, 'video');
+                }
+            };
+
             this.save = function() {
                 var deck = EditorCtrl.model.data.deck,
                     index = deck.map(function(card) {
                         return card.id;
                     }).indexOf(this.model.id);
+
+                this.setIdealType();
 
                 if (index > -1) {
                     copy(this.model, deck[index]);

@@ -183,7 +183,7 @@
                     });
 
                     it('should enable the "copy" and "video" tabs', function() {
-                        expect(controller.tabs).toEqual([copy, video]);
+                        expect(controller.tabs).toEqual([copy, video, ballot]);
                     });
                 });
 

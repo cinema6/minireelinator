@@ -410,7 +410,6 @@
                                 controller.tabs = (function() {
                                     switch (model.type) {
                                     case 'video':
-                                        return [copy, video];
                                     case 'videoBallot':
                                         return [copy, video, ballot];
                                     case 'ad':
