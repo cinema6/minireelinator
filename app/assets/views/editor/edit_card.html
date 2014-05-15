@@ -16,7 +16,7 @@
 
     <footer class="modal__btnFooter">
         <button class="modal__btn toolbar__delete" c6-sref="editor" title="Cancel">Cancel</button>
-        <button class="modal__btn" title="Save" ng-click="EditCardCtrl.save()" ng-disabled="!EditCardCtrl.canSave">{{EditCardCtrl.saveText}}</button>
+        <button class="modal__btn" title="{{EditCardCtrl.primaryButton.text}}" ng-click="EditCardCtrl.primaryButton.action()" ng-disabled="!EditCardCtrl.primaryButton.enabled">{{EditCardCtrl.primaryButton.text}}</button>
     </footer>
 </div>
 <div class="ui__overlay">&nbsp;</div>

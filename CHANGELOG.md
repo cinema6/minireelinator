@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[Beta3.rc1]*
+  * [FEATURE]: The save button in the edit card modal now changes text
+    and behavior to guide the user through creating a card
+
 ## Beta2 (May 14, 2014)
 * *[Beta2.rc1]*
   * [FIX]: Ad slide modals added

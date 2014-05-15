@@ -514,6 +514,7 @@
             var self = this,
                 c = c6Computed($scope),
                 EditorCtrl = $scope.EditorCtrl,
+                primaryButton = {},
                 removeInitWatcher = $scope.$watch(
                     function() { return self.tabs; },
                     function(tabs) {
@@ -539,13 +540,67 @@
 
             Object.defineProperties(this, {
                 canSave: {
+                    configurable: true,
                     get: function() {
-                        return (this.model.note || '').length <= this.limits.copy;
+                        switch (this.model.type) {
+                        case 'video':
+                        case 'videoBallot':
+                            return [this.copyComplete, this.videoComplete].indexOf(false) < 0 &&
+                                ((this.model.note || '').length <= this.limits.copy);
+
+                        default:
+                            return true;
+                        }
                     }
                 },
-                saveText: {
+                copyComplete: {
+                    configurable: true,
                     get: function() {
-                        return (EditorCtrl.model.status === 'active') ? 'Done' : 'Save';
+                        var model = this.model;
+
+                        switch (this.model.type) {
+                        case 'video':
+                        case 'videoBallot':
+                            return ['title'].map(function(prop) {
+                                return !!model[prop];
+                            }).indexOf(false) < 0;
+                        default:
+                            return undefined;
+                        }
+                    }
+                },
+                videoComplete: {
+                    get: function() {
+                        var model = this.model;
+
+                        switch (this.model.type) {
+                        case 'video':
+                        case 'videoBallot':
+                            return ['service', 'videoid'].map(function(prop) {
+                                return !!model.data[prop];
+                            }).indexOf(false) < 0;
+                        default:
+                            return undefined;
+                        }
+                    }
+                },
+                primaryButton: {
+                    get: function() {
+                        var state = c6State.current.name;
+
+                        if (this.canSave || state === 'editor.editCard.video') {
+                            return copy({
+                                text: EditorCtrl.model.status === 'active' ? 'Done' : 'Save',
+                                action: function() { self.save(); },
+                                enabled: this.canSave
+                            }, primaryButton);
+                        }
+
+                        return copy({
+                            text: 'Next',
+                            action: function() { c6State.goTo('editor.editCard.video'); },
+                            enabled: this.copyComplete
+                        }, primaryButton);
                     }
                 }
             });
