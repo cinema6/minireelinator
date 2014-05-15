@@ -12,6 +12,9 @@
     ::selection {
         background: #e900a4; text-shadow: none; color:#fff;
     }
+    strong {
+        font-weight:bold;
+    }
     p {
         margin: 1em 0;
     }
