@@ -514,6 +514,7 @@
             var self = this,
                 c = c6Computed($scope),
                 EditorCtrl = $scope.EditorCtrl,
+                primaryButton = {},
                 removeInitWatcher = $scope.$watch(
                     function() { return self.tabs; },
                     function(tabs) {
@@ -553,13 +554,14 @@
                     }
                 },
                 copyComplete: {
+                    configurable: true,
                     get: function() {
                         var model = this.model;
 
                         switch (this.model.type) {
                         case 'video':
                         case 'videoBallot':
-                            return ['title', 'note'].map(function(prop) {
+                            return ['title'].map(function(prop) {
                                 return !!model[prop];
                             }).indexOf(false) < 0;
                         default:
@@ -582,9 +584,23 @@
                         }
                     }
                 },
-                saveText: {
+                primaryButton: {
                     get: function() {
-                        return (EditorCtrl.model.status === 'active') ? 'Done' : 'Save';
+                        var state = c6State.current.name;
+
+                        if (this.canSave || state === 'editor.editCard.video') {
+                            return copy({
+                                text: EditorCtrl.model.status === 'active' ? 'Done' : 'Save',
+                                action: function() { self.save(); },
+                                enabled: this.canSave
+                            }, primaryButton);
+                        }
+
+                        return copy({
+                            text: 'Next',
+                            action: function() { c6State.goTo('editor.editCard.video'); },
+                            enabled: this.copyComplete
+                        }, primaryButton);
                     }
                 }
             });
