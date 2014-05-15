@@ -13,8 +13,9 @@
     <div class="modal__content">
         <c6-view></c6-view>
     </div>
-
+    
     <footer class="modal__btnFooter">
+        <span class="typo--attention">* Indicates required field</span>
         <button class="modal__btn toolbar__delete" c6-sref="editor" title="Cancel">Cancel</button>
         <button class="modal__btn" title="{{EditCardCtrl.primaryButton.text}}" ng-click="EditCardCtrl.primaryButton.action()" ng-disabled="!EditCardCtrl.primaryButton.enabled">{{EditCardCtrl.primaryButton.text}}</button>
     </footer>

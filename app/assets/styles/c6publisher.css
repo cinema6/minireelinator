@@ -75,6 +75,9 @@
     .typo--attention {
         color:#d61212;
     }
+    .typo--suggestion {
+        border-bottom:1px dotted #ccc;
+    }
 
 /*  ==========================================================================
     Helper classes
@@ -241,6 +244,11 @@
         }
             .modal__btnFooter--confirmation {
                 text-align: left;
+            }
+            .modal__btnFooter .typo--attention {
+                position:absolute; left:0;
+                font-size:0.75em; font-weight:bold;
+                margin:0.625rem 0 0 0;
             }
 
     /*  preview panel
@@ -1034,7 +1042,7 @@
         
     .card__drop-zone {
         display: inline-block;
-        width: 2px; height: 20.625rem;
+        width: 2px; height:21.25rem;
         vertical-align: top;
         margin: 3em 5px 0;
         border:0;
@@ -1173,7 +1181,7 @@
         .new__container--reordering {
             display: none !important;
         }
-        .new__button {
+        .new__button, .no__button {
             margin: auto; border:0; padding:0;
             font-size:1em;
             position: absolute; top:0; bottom:0; left:0; right:0;
@@ -1182,6 +1190,21 @@
             .new__button:hover {
                 background-position:-7.625em 0;
             }
+        .new__container--spacer .new__button {
+            display:none;
+        }
+        .no__button {
+            cursor:default; display:none;
+            width:2.25em; height:2.25em;
+            border-radius:50%; border:4px solid #dedede;
+            box-sizing:border-box;
+        }
+        .new__container--spacer .new__button {
+            display:none;
+        }
+        .new__container--spacer .no__button {
+            display:block;
+        }
 
     /*  ad card 
     ========================================================================== */
