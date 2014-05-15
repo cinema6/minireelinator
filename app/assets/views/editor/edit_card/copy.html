@@ -1,7 +1,7 @@
 <c6-alias model="EditCardCopyCtrl.model" as="card">
     <form>
         <label class="field field--noBreak field--smMargin clearfix">
-            <span class="modal__label">Slide Title: </span>
+            <span class="modal__label">Slide Title:<span class="typo--attention"><strong>*</strong></span> </span>
             <input ng-model="card.title" type="text" class="modal__textBox" ng-model="card.title">
             <span class="field__context"><strong>({{card.title.length}} of 100 max characters recommended)</strong></span>
         </label>
