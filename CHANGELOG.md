@@ -6,6 +6,8 @@
   * [FIX]: In the card deck, plus buttons have been restored along with a new view for when they are next to the "New Slide" card.
   * [FEATURE]: New Card Modals now have warning text to let users know that certain fields are mandatory
   * [FIX]: In the card deck, fixed issue where drop zone heights were smaller than card heights
+  * [FEATURE]: Added title prompt to New MR Creation Wizard
+  * [FEATURE]: Added error states to cards
 
 ## Beta2 (May 14, 2014)
 * *[Beta2.rc1]*
