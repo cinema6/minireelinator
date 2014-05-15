@@ -8,6 +8,7 @@
   * [FIX]: In the card deck, fixed issue where drop zone heights were smaller than card heights
   * [FEATURE]: Added title prompt to New MR Creation Wizard
   * [FEATURE]: Added error states to cards
+  * [FIX]: minireel type names updated to be more descriptive
 
 ## Beta2 (May 14, 2014)
 * *[Beta2.rc1]*
