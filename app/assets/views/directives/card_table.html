@@ -17,9 +17,17 @@
                     <h1 class="card__title"><span class="card__titleText">Create A New Slide</span></h1>
                 </div>
             </div><!--
+         --><div class="new__container moo--smells"
+                ng-if="$this.type === 'recap'"
+                ng-hide="DragCtrl.currentDrags.length">
+                <button ng-click="addCard({ index: $index + 1, evtSrc: $event })" class="new__button ui__add sprite--alpha" id="zone-{{$this.id}}" data-index={{$index}}><span class="ir">Add Here</span></button>
+            </div><!--
          --><ng-include src="'assets/views/cards/' + $this.view + '.html'"></ng-include><!--
          --><div id="drop-zone-{{$this.id}}" data-title="{{$this.title}}" ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id] && $index !== (deck.length - 1)" c6-drag-zone="Ctrl.enableDrop" class="card__drop-zone">&nbsp;</div><!--
-         --><div class="new__container" ng-hide="DragCtrl.currentDrags.length" ng-style="{ visibility: $index === (deck.length - 1) ? 'hidden' : '' }" ng-if="deck[$index + 1].type !== 'recap'">
+         --><div class="new__container"
+                ng-class="{'moo--smells': deck[$index + 1].type === 'recap'}"
+                ng-hide="DragCtrl.currentDrags.length"
+                ng-style="{ visibility: $index === (deck.length - 1) ? 'hidden' : '' }">
                 <button ng-click="addCard({ index: $index + 1, evtSrc: $event })" class="new__button ui__add sprite--alpha" id="zone-{{$this.id}}" data-index={{$index}}><span class="ir">Add Here</span></button>
             </div>
         </li>
