@@ -7,7 +7,7 @@
     <span ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id]">
         <h4 class="card__type">{{$index + 1}}. Recap Slide</h4>
     </span>
-    <div id="{{$this.id}}" data-title="{{$this.title}}" c6-draggable="$index !== (deck.length - 1)" ng-click="editCard({ card: $this, evtSrc: $event })" class="card__item">
+    <div id="{{$this.id}}" data-title="{{$this.title}}" c6-draggable="$index !== (deck.length - 1)" ng-click="EditorCtrl.editCard($this, $event)" class="card__item">
         <h1 class="card__title"><span class="card__titleText">Recap Slide</span></h1>
         <div class="card__img sprite--fff">&nbsp;</div>
         <div class="card__body">
@@ -16,6 +16,6 @@
         </div>
     </div>
     <div ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id]" class="card__contextBar">
-        <a href="#" title="Preview This Slide" ng-click="previewCard({ card: $this, evtSrc: $event })">Preview This Slide</a>
+        <a href="#" title="Preview This Slide" ng-click="EditorCtrl.previewMode($this, $event)">Preview This Slide</a>
     </div>
 </div>

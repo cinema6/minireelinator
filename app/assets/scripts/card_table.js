@@ -330,20 +330,15 @@
                 restrict: 'E',
                 templateUrl: c6UrlMaker('views/directives/card_table.html'),
                 controller: 'CardTableController',
-                controllerAs: 'Ctrl',
-                scope: {
-                    deck: '=',
-                    editCard: '&',
-                    addCard: '&',
-                    deleteCard: '&',
-                    previewCard: '&'
-                }
+                controllerAs: 'CardTableCtrl',
+                scope: true
             };
         }])
 
         .controller('CardTableController', ['$scope','$q','$interval','VideoThumbnailService',
         function                           ( $scope , $q , $interval , VideoThumbnailService ) {
             var self = this,
+                EditorCtrl = $scope.EditorCtrl,
                 forEach = angular.forEach;
 
             function getDragCtrl() {
@@ -401,7 +396,7 @@
 
                 function addCard(card) {
                     function reorder(zone) {
-                        var deck = $scope.deck,
+                        var deck = EditorCtrl.model.data.deck,
                             afterId = (zone.id.match(/rc-\w+/) || [])[0],
                             afterCard = null,
                             myCard = null,

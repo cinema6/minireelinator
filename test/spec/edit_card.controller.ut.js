@@ -95,6 +95,11 @@
                     $scope = $rootScope.$new();
                     $scope.$apply(function() {
                         $scope.EditorCtrl = EditorCtrl = {
+                            cardLimits: {
+                                copy: Infinity
+                            },
+                            errorForCard: jasmine.createSpy('EditorCtrl.errorForCard()')
+                                .and.returnValue(null),
                             model: {
                                 data: {
                                     mode: 'full',
@@ -405,16 +410,27 @@
                             });
 
                             describe('enabled', function() {
-                                [true, false].forEach(function(bool) {
-                                    describe('if copyComplete is ' + bool, function() {
+                                ['anything', null].forEach(function(error) {
+                                    describe('if the error is ' + error, function() {
                                         beforeEach(function() {
-                                            Object.defineProperty(EditCardCtrl, 'copyComplete', {
-                                                value: bool
-                                            });
+                                            EditorCtrl.errorForCard.and.returnValue(error);
                                         });
 
-                                        it('should be ' + bool, function() {
-                                            expect(EditCardCtrl.primaryButton.enabled).toBe(bool);
+                                        [true, false].forEach(function(bool) {
+                                            describe('if copyComplete is ' + bool, function() {
+                                                beforeEach(function() {
+                                                    Object.defineProperty(EditCardCtrl, 'copyComplete', {
+                                                        value: bool
+                                                    });
+                                                });
+
+                                                it('should be ' + bool && !error, function() {
+                                                    expect(EditCardCtrl.primaryButton.enabled).toBe(bool && !error);
+                                                    if (EditorCtrl.errorForCard.calls.count()) {
+                                                        expect(EditorCtrl.errorForCard.calls.mostRecent().args[0]).toBe(model);
+                                                    }
+                                                });
+                                            });
                                         });
                                     });
                                 });
@@ -475,17 +491,6 @@
                         return EditCardCtrl.canSave;
                     }
 
-                    function setLength(length) {
-                        var count = 0,
-                            result = '';
-
-                        for ( ; count < length; count++) {
-                            result += 'a';
-                        }
-
-                        model.note = result;
-                    }
-
                     describe('on a video or videoBallot card', function() {
                         beforeEach(function() {
                             model.type = 'video';
@@ -498,24 +503,22 @@
                                 model.data.videoid = 'abc';
                             });
 
-                            it('should be true as long as the note\'s length is less than the limit on copy', function() {
+                            it('should be true as long as there is no error for the card', function() {
                                 expect(canSave()).toBe(true);
 
-                                setLength(10);
-                                expect(canSave()).toBe(true);
-
-                                setLength(10000);
-                                expect(canSave()).toBe(true);
-
-                                EditCardCtrl.limits.copy = 50;
+                                EditorCtrl.errorForCard.and.returnValue('foo');
                                 expect(canSave()).toBe(false);
 
                                 model.type = 'videoBallot';
-                                setLength(50);
+                                EditorCtrl.errorForCard.and.returnValue(null);
                                 expect(canSave()).toBe(true);
 
-                                setLength(51);
+                                EditorCtrl.errorForCard.and.returnValue('bar');
                                 expect(canSave()).toBe(false);
+
+                                EditorCtrl.errorForCard.calls.all().forEach(function(call) {
+                                    expect(call.args[0]).toBe(model);
+                                });
                             });
                         });
 
@@ -546,69 +549,11 @@
                     describe('on any other card', function() {
                         beforeEach(function() {
                             model.type = 'foo';
-                            EditCardCtrl.limits.copy = 50;
-
-                            setLength(100);
+                            EditorCtrl.errorForCard.and.returnValue('sdgfg');
                         });
 
                         it('should be true', function() {
                             expect(canSave()).toBe(true);
-                        });
-                    });
-                });
-
-                describe('limits', function() {
-                    it('should have a liberal initial value', function() {
-                        expect(EditCardCtrl.limits).toEqual({
-                            copy: Infinity
-                        });
-                    });
-
-                    describe('when the appData is fetched', function() {
-                        function instantiate() {
-                            $scope = $rootScope.$new();
-
-                            $scope.$apply(function() {
-                                $scope.EditorCtrl = EditorCtrl;
-                                EditCardCtrl = $controller('EditCardController', { $scope: $scope });
-                                EditCardCtrl.tabs = tabs;
-                                EditCardCtrl.model = model;
-                                $scope.EditCardCtrl = EditCardCtrl;
-                            });
-
-                            return EditCardCtrl;
-                        }
-
-                        function setMode(mode) {
-                            EditorCtrl.model.data.mode = mode;
-                        }
-
-                        function resolve() {
-                            $scope.$apply(function() {
-                                appDataDeferred.resolve(appData);
-                            });
-                        }
-
-                        it('should set the limits based off of the mode', function() {
-                            resolve();
-                            expect(EditCardCtrl.limits).toEqual({
-                                copy: 420
-                            });
-
-                            setMode('light'); instantiate(); resolve();
-                            expect(EditCardCtrl.limits).toEqual({
-                                copy: 200
-                            });
-
-                            setMode('lightbox'); instantiate(); resolve();
-                            expect(EditCardCtrl.limits).toEqual({
-                                copy: Infinity
-                            });
-
-                            setMode('lightbox-ads'); instantiate(); resolve();
-                            expect(EditCardCtrl.limits).toEqual({
-                                copy: Infinity
-                            });
                         });
                     });
                 });
