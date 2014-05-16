@@ -204,6 +204,9 @@
                                           MiniReelService ) {
             var self = this,
                 AppCtrl = $scope.AppCtrl,
+                cardLimits = {
+                    copy: Infinity
+                },
                 saveAfterTenSeconds = c6Debounce(function() {
                     if (!shouldAutoSave()) { return; }
 
@@ -243,8 +246,37 @@
                             return result;
                         }());
                     }
+                },
+                cardLimits: {
+                    configurable: true,
+                    get: function() {
+                        var config = AppCtrl.config,
+                            mode;
+
+                        if (!config) { return cardLimits; }
+
+                        mode = MiniReelService.modeDataOf(
+                            this.model,
+                            config.data.modes
+                        );
+
+                        forEach(cardLimits, function(limit, prop) {
+                            cardLimits[prop] = mode.limits[prop] || Infinity;
+                        });
+
+                        return cardLimits;
+                    }
                 }
             });
+
+            this.errorForCard = function(card) {
+                var limit = this.cardLimits.copy,
+                    text = card.note || '';
+
+                return (text.length > limit) ?
+                    'Character limit exceeded (+' + (text.length - limit) + ').' :
+                    null;
+            };
 
             this.publish = function() {
                 ConfirmDialogService.display({
@@ -523,21 +555,6 @@
                     }
                 );
 
-            this.limits = {
-                copy: Infinity
-            };
-            cinema6.getAppData()
-                .then(function setLimits(data) {
-                    var mode = MiniReelService.modeDataOf(
-                        EditorCtrl.model,
-                        data.experience.data.modes
-                    );
-
-                    forEach(self.limits, function(limit, prop) {
-                        self.limits[prop] = mode.limits[prop] || Infinity;
-                    });
-                });
-
             Object.defineProperties(this, {
                 canSave: {
                     configurable: true,
@@ -546,7 +563,7 @@
                         case 'video':
                         case 'videoBallot':
                             return [this.copyComplete, this.videoComplete].indexOf(false) < 0 &&
-                                ((this.model.note || '').length <= this.limits.copy);
+                                !EditorCtrl.errorForCard(this.model);
 
                         default:
                             return true;
@@ -599,7 +616,7 @@
                         return copy({
                             text: 'Next',
                             action: function() { c6State.goTo('editor.editCard.video'); },
-                            enabled: this.copyComplete
+                            enabled: this.copyComplete && !EditorCtrl.errorForCard(this.model)
                         }, primaryButton);
                     }
                 }

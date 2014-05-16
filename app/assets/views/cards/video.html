@@ -6,24 +6,24 @@
     c6-drag-zone>
     <span ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id]">
         <h4 class="card__type">{{$index + 1}}. {{$this.label}}</h4>
-        <button ng-show="$index !== (deck.length - 1)" ng-click="deleteCard({ card: $this, evtSrc: $event })" class="card__deleteBtn" type="button" title="Delete Card">
+        <button ng-show="$index !== (deck.length - 1)" ng-click="EditorCtrl.deleteCard($this, $event)" class="card__deleteBtn" type="button" title="Delete Card">
             <span class="ui__xSmall ui__xSmall--white sprite--alpha"><span class="ir">Delete Card</span></span>
         </button>
     </span>
-    <div id="{{$this.id}}" data-title="{{$this.title}}" c6-draggable="$index !== (deck.length - 1)" ng-click="editCard({ card: $this, evtSrc: $event })" class="card__item">
-        <div class="card__statusIndicator">
+    <div id="{{$this.id}}" data-title="{{$this.title}}" c6-draggable="$index !== (deck.length - 1)" ng-click="EditorCtrl.editCard($this, $event)" class="card__item">
+        <div class="card__statusIndicator" ng-class="{'card__statusIndicator--error': !!EditorCtrl.errorForCard($this)}">
             <span class="ui__editToolTip">
                 <span class="ui__edit sprite--alpha"><span class="ir">Edit</span></span>
                 Edit
             </span>
             <div class="card__statusMsg">
                 <div class="ui__alert sprite--alpha"><span class="ir">Warning!</span></div>
-                <span class="statusText">Error message goes here</span>
+                <span class="statusText">{{EditorCtrl.errorForCard($this)}}</span>
             </div>
         </div>
         <div class="card__imgBox">
             <div class="miniReel__imgBox"
-                ng-style="{'background-image': 'url(' + (Ctrl.getThumbs($this).large || '') + ')'}">
+                ng-style="{'background-image': 'url(' + (CardTableCtrl.getThumbs($this).large || '') + ')'}">
                 &nbsp;
             </div>
         </div>
@@ -36,6 +36,6 @@
         </div>
     </div>
     <div ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id]" class="card__contextBar">
-        <a href="#" title="Preview This Slide" ng-click="previewCard({ card: $this, evtSrc: $event })">Preview This Slide</a>
+        <a href="#" title="Preview This Slide" ng-click="EditorCtrl.previewMode($this, $event)">Preview This Slide</a>
     </div>
 </div>

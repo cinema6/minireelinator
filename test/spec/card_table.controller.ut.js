@@ -10,6 +10,7 @@
                 $interval,
                 VideoThumbnailService,
                 DragCtrl,
+                EditorCtrl,
                 CardTableCtrl;
 
             var prototype = {
@@ -46,6 +47,13 @@
 
                     $scope = $rootScope.$new();
                     $scope.$apply(function() {
+                        EditorCtrl = $scope.EditorCtrl = {
+                            model: {
+                                data: {
+                                    deck: []
+                                }
+                            }
+                        };
                         CardTableCtrl = $controller('CardTableController', { $scope: $scope });
                         $scope.Ctrl = CardTableCtrl;
                     });
@@ -108,7 +116,7 @@
                 var card1, card2, card3, card4, card5,
                     zone0, zone1, zone2, zone3, zone4, zone5,
                     model1, model2, model3, model4, model5,
-                    watchDeck;
+                    watchDeck, deck;
 
                 beforeEach(function() {
                     watchDeck = jasmine.createSpy('$watch deck');
@@ -119,7 +127,7 @@
                     model4 = { id: 'rc-8c658546dc5c5f' };
                     model5 = { id: 'rc-bc717117888f80' };
 
-                    $scope.deck = [model1, model2, model3, model4, model5];
+                    deck = EditorCtrl.model.data.deck = [model1, model2, model3, model4, model5];
 
                     card1 = new Draggable('rc-7bc713f331ae68');
                     card2 = new Draggable('rc-b56ea317bbd92b');
@@ -151,24 +159,24 @@
                     $scope.$apply(function() {
                         $scope.DragCtrl = DragCtrl;
                     });
-                    $scope.$watchCollection('deck', watchDeck);
+                    $scope.$watchCollection('EditorCtrl.model.data.deck', watchDeck);
                 });
 
                 it('should reorder the deck so the dropped card is placed after the card of the zone it was dropped on', function() {
                     card3.emit('reorder', zone1);
-                    expect($scope.deck).toEqual([model1, model3, model2, model4, model5]);
+                    expect(deck).toEqual([model1, model3, model2, model4, model5]);
 
                     card2.emit('reorder', zone5);
-                    expect($scope.deck).toEqual([model1, model3, model4, model5, model2]);
+                    expect(deck).toEqual([model1, model3, model4, model5, model2]);
 
                     card1.emit('reorder', zone2);
-                    expect($scope.deck).toEqual([model3, model4, model5, model2, model1]);
+                    expect(deck).toEqual([model3, model4, model5, model2, model1]);
 
                     card2.emit('reorder', zone5);
-                    expect($scope.deck).toEqual([model3, model4, model5, model2, model1]);
+                    expect(deck).toEqual([model3, model4, model5, model2, model1]);
 
                     card5.emit('reorder', zone0);
-                    expect($scope.deck).toEqual([model5, model3, model4, model2, model1]);
+                    expect(deck).toEqual([model5, model3, model4, model2, model1]);
 
                     expect(watchDeck.calls.count()).toBe(4);
                 });
@@ -178,13 +186,13 @@
                         cardA = new Draggable('rc-5162b1e7e7e3b9'),
                         zoneA = new Zone('drop-zone-rc-5162b1e7e7e3b9');
 
-                    $scope.deck.splice(1, 0, modelA);
+                    deck.splice(1, 0, modelA);
 
                     DragCtrl.addDraggable(cardA);
                     DragCtrl.addZone(zoneA);
 
                     cardA.emit('reorder', zone4);
-                    expect($scope.deck).toEqual([model1, model2, model3, model4, modelA, model5]);
+                    expect(deck).toEqual([model1, model2, model3, model4, modelA, model5]);
                 });
             });
 
