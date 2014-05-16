@@ -2,11 +2,11 @@
     'use strict';
 
     define(['app'], function() {
-        describe('NewAutoplayState', function() {
+        describe('NewGeneralState', function() {
             var $injector,
                 c6State,
                 ManagerNewState,
-                NewAutoplayState;
+                NewGeneralState;
 
             beforeEach(function() {
                 module('c6.mrmaker');
@@ -16,12 +16,12 @@
 
                     c6State = $injector.get('c6State');
                     ManagerNewState = c6State.get('manager.new');
-                    NewAutoplayState = c6State.get('manager.new.autoplay');
+                    NewGeneralState = c6State.get('manager.new.general');
                 });
             });
 
             it('should exist', function() {
-                expect(NewAutoplayState).toEqual(jasmine.any(Object));
+                expect(NewGeneralState).toEqual(jasmine.any(Object));
             });
         });
     });
