@@ -110,22 +110,26 @@
 
         .controller('NewController', ['$scope','cModel','MiniReelService',
         function                     ( $scope , cModel , MiniReelService ) {
-            var self = this;
+            var self = this,
+                minireel = cModel.minireel;
 
             this.mode = MiniReelService.modeDataOf(
-                cModel.minireel,
+                minireel,
                 cModel.modes
             );
             this.category = MiniReelService.modeCategoryOf(
-                cModel.minireel,
+                minireel,
                 cModel.modes
             );
-            this.autoplay = cModel.minireel.data.autoplay;
+            this.autoplay = minireel.data.autoplay;
+            this.title = minireel.data.title;
 
             this.save = function() {
                 var data = this.model.minireel.data;
 
-                data.autoplay = this.autoplay;
+                ['autoplay', 'title'].forEach(function(prop) {
+                    data[prop] = self[prop];
+                });
                 data.mode = this.mode.value;
             };
 

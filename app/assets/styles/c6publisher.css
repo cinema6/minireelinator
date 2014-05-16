@@ -12,6 +12,9 @@
     ::selection {
         background: #e900a4; text-shadow: none; color:#fff;
     }
+    strong {
+        font-weight:bold;
+    }
     p {
         margin: 1em 0;
     }
@@ -76,7 +79,10 @@
         color:#d61212;
     }
     .typo--suggestion {
-        border-bottom:1px dotted #ccc;
+        border-bottom:1px dotted #ff7e00;
+    }
+    .typo--context {
+        color:#ff7e00;
     }
 
 /*  ==========================================================================
@@ -168,6 +174,11 @@
         background-position:-5.3125em 0; display: block;
         width:2.25em; height:2.25em;
     }
+    .ui__alert {
+        width:1.5rem; height:1.5rem;
+        display:block;
+        background-position:-7.6875rem -2.3125rem;
+    }
     .ui__divider--border {
         display: block; width:100%; height:1px; background:#eee;
         overflow: hidden;
@@ -211,6 +222,9 @@
             .ui__modal--confirmation .modal__title {
                 font-size:1.25em; font-weight:300;
             }
+        .modal__content .typo--context {
+            font-size:0.875em; margin:-1em 0 1rem 0;
+        }
         .modal__closeBtn {
             width:1.125em; height:1.125em;
             background-position:-1.5625em -0.875em;
@@ -242,7 +256,8 @@
             text-align: right;
             position:absolute; bottom:1.5em; left:1.5em; right:1.5em;
         }
-            .modal__btnFooter--confirmation {
+            .modal__btnFooter--confirmation,
+            .modal__btnFooter--altLayout {
                 text-align: left;
             }
             .modal__btnFooter .typo--attention {
@@ -615,10 +630,8 @@
             }
 
         .pageAlert__group .ui__alert {
-            width:1.5rem; height:1.5rem;
-            display:block; margin:-5px 0 0 0;
+            margin:-5px 0 0 0;
             position:absolute; top:0.75em; left:0.75em;
-            background-position:-7.6875rem -2.3125rem;
         }
 
 /*  ==========================================================================
@@ -1148,13 +1161,6 @@
                     border:1px solid #13a2ff;
                     background:#4a9cd1; background:rgba(74,156,209,0.25);
                 }
-                .card__statusIndicator--error {
-                    border:3px solid #d61212;
-                } 
-                    .card__statusIndicator--error:hover {
-                        border:3px solid #d61212;
-                        background:#ee1b1b; background:rgba(214,18,18,0.25);
-                    }
                     .card__statusIndicator .ui__editToolTip {
                         margin:-1em 0 0 -2em;
                         position:absolute; top:44%; left:50%;
@@ -1165,6 +1171,32 @@
                         .card__statusIndicator:hover .ui__editToolTip {
                             opacity:1;
                         }
+                    .card__statusMsg {
+                        display:none; color:#fff; text-align: center;
+                    }
+                .card__statusIndicator--error {
+                    border:3px solid #d61212;
+                    background:rgba(214,18,18,0.25);
+                } 
+                    .card__statusIndicator--error:hover {
+                        border:3px solid #d61212;
+                        background:#d61212; background:rgba(214,18,18,0.75);
+                    }
+                    .card__statusIndicator--error .ui__editToolTip {
+                        background:#d61212;
+                    }
+                    .card__statusIndicator--error .card__statusMsg {
+                        display: block;
+                    }
+                    .card__statusIndicator--error .ui__alert {
+                        margin:1em auto 0;
+                    }
+                    .card__statusIndicator--error .statusText {
+                        font-size:0.8125em; line-height:1.25; font-style: italic;
+                        background:#d61212;
+                        display: block;
+                        padding:0.5em 0; margin:0.5em 0 0 0;
+                    }
             .card__contextBar {
                 text-align: center; font-size:0.75em;
                 margin:0.4166em 0 0 0;

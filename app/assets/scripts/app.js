@@ -247,8 +247,8 @@
                 mode: {
                     templateUrl: assets('views/manager/new/mode.html')
                 },
-                autoplay: {
-                    templateUrl: assets('views/manager/new/autoplay.html')
+                general: {
+                    templateUrl: assets('views/manager/new/general.html')
                 }
             };
 

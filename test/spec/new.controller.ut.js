@@ -14,6 +14,7 @@
             beforeEach(function() {
                 minireel = {
                     data: {
+                        title: 'Awesome Videos, Brah!',
                         mode: 'full',
                         autoplay: false
                     }
@@ -89,18 +90,27 @@
                         expect(NewCtrl.autoplay).toBe(minireel.data.autoplay);
                     });
                 });
+
+                describe('title', function() {
+                    it('should be the title value of the minireel', function() {
+                        expect(NewCtrl.title).toBe(minireel.data.title);
+                    });
+                });
             });
 
             describe('save()', function() {
                 beforeEach(function() {
                     NewCtrl.mode = model.modes[0].modes[0];
                     NewCtrl.autoplay = true;
+                    NewCtrl.title = 'Sweet!';
 
                     NewCtrl.save();
                 });
 
-                it('should copy the autoplay setting to the minireel', function() {
-                    expect(minireel.data.autoplay).toBe(NewCtrl.autoplay);
+                ['title', 'autoplay'].forEach(function(prop) {
+                    it('should copy the ' + prop + ' setting to the minireel', function() {
+                        expect(minireel.data[prop]).toBe(NewCtrl[prop]);
+                    });
                 });
 
                 it('should copy the mode to the minreel', function() {

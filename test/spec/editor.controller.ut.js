@@ -102,6 +102,87 @@
             });
 */
             describe('properties', function() {
+                describe('cardLimits', function() {
+                    it('should have a liberal initial value', function() {
+                        expect(EditorCtrl.cardLimits).toEqual({
+                            copy: Infinity
+                        });
+                    });
+
+                    it('should return references to the same object', function() {
+                        expect(EditorCtrl.cardLimits).toBe(EditorCtrl.cardLimits);
+                    });
+
+                    describe('when the config is available', function() {
+                        function setMode(mode) {
+                            cModel.data.mode = mode;
+                        }
+
+                        beforeEach(function() {
+                            AppCtrl.config = {
+                                data: {
+                                    modes: [
+                                        {
+                                            modes: [
+                                                {
+                                                    name: 'Lightbox',
+                                                    value: 'lightbox',
+                                                    limits: {}
+                                                },
+                                                {
+                                                    name: 'Lightbox, with Companion Ad',
+                                                    value: 'lightbox-ads',
+                                                    limits: {}
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            modes: [
+                                                {
+                                                    name: 'Light Text',
+                                                    value: 'light',
+                                                    limits: {
+                                                        copy: 200
+                                                    }
+                                                },
+                                                {
+                                                    name: 'Heavy Text',
+                                                    value: 'full',
+                                                    limits: {
+                                                        copy: 420
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            };
+                        });
+
+                        it('should set the limits based off of the mode', function() {
+                            setMode('full');
+                            expect(EditorCtrl.cardLimits).toEqual({
+                                copy: 420
+                            });
+
+                            setMode('light');
+                            expect(EditorCtrl.cardLimits).toEqual({
+                                copy: 200
+                            });
+
+                            setMode('lightbox');
+                            expect(EditorCtrl.cardLimits).toEqual({
+                                copy: Infinity
+                            });
+
+                            setMode('lightbox-ads');
+                            expect(EditorCtrl.cardLimits).toEqual({
+                                copy: Infinity
+                            });
+                        });
+                    });
+                });
+
                 describe('minireelState', function() {
                     it('should be a reference to the EditorService\'s state', function() {
                         expect(EditorCtrl.minireelState).toBe(EditorService.state);
@@ -197,6 +278,29 @@
                 function dialog() {
                     return ConfirmDialogService.display.calls.mostRecent().args[0];
                 }
+
+                describe('errorForCard(card)', function() {
+                    function setLimits(limits) {
+                        Object.defineProperty(EditorCtrl, 'cardLimits', {
+                            value: limits
+                        });
+                    }
+
+                    function error() {
+                        return EditorCtrl.errorForCard.apply(EditorCtrl, arguments);
+                    }
+
+                    it('should be a friendly message if the card\'s note does not exceed the limit on copy', function() {
+                        setLimits({ copy: 10 });
+                        expect(error({ note: 'Hello' })).toBeNull();
+
+                        expect(error({ note: '12345678901' })).toBe('Character limit exceeded (+1).');
+                        expect(error({ note: null })).toBeNull();
+
+                        setLimits({ copy: 20 });
+                        expect(error({ note: '1234567890123456789012345' })).toBe('Character limit exceeded (+5).');
+                    });
+                });
 
                 describe('publish()', function() {
                     var publishDeferred;

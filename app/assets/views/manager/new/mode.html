@@ -1,4 +1,5 @@
 <h1 class="modal__title modal__title--lightboxWizard">Choose the MiniReel Type</h1>
+<p class="typo--context">These changes affect desktop experiences only.</p>
 <ul class="wizard__group">
     <li ng-repeat="$this in NewCtrl.category.modes" 
         class="wizard__choice"
@@ -18,8 +19,7 @@
         </div>
     </li>
 </ul>
-<p>* These changes only affect desktop experiences.</p>
-<footer class="modal__btnFooter">
+<footer class="modal__btnFooter modal__btnFooter--altLayout">
+    <button c6-sref="{{NewCtrl.baseState}}.general" class="modal__btn" type="button" title="Create MiniReel">Next Step</button>
     <button class="modal__btn toolbar__delete" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
-    <button c6-sref="{{NewCtrl.baseState}}.autoplay" class="modal__btn" type="button" title="Create MiniReel">Next Step</button>
 </footer>

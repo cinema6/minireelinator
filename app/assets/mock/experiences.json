@@ -14,14 +14,14 @@
                     "description": "When triggered, this MiniReel will open a lightbox on top of the web page.",
                     "modes": [
                         {
-                            "name": "No Companion Ad",
+                            "name": "Lightbox, without Companion Ad",
                             "value": "lightbox",
                             "description": "Simple video and text MiniReel. No character limits, the content space will scroll as needed.",
                             "limits": {},
                             "autoplayable": true
                         },
                         {
-                            "name": "With Companion Ad",
+                            "name": "Lightbox, with Companion Ad",
                             "disabled": true,
                             "value": "lightbox-ads",
                             "description": "A 300x250 ad will be displayed on every slide. No character limits, the content space will scroll as needed.",
@@ -36,7 +36,7 @@
                     "description": "When triggered, this MiniReel will display itself in the allotted content space of your website.",
                     "modes": [
                         {
-                            "name": "Light Text",
+                            "name": "Embedded, Light Text",
                             "value": "light",
                             "description": "Recommended for content that is light on text. Copy is limited to approximately 200 characters.",
                             "limits": {
@@ -45,7 +45,7 @@
                             "autoplayable": true
                         },
                         {
-                            "name": "Heavy Text",
+                            "name": "Embedded, Heavy Text",
                             "value": "full",
                             "description": "Provides more room for editorial content. Copy is limited to approximately 420 characters.",
                             "limits": {

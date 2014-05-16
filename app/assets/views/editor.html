@@ -99,12 +99,7 @@
         </div>
     </header>
 
-    <card-table deck="minireel.data.deck"
-        edit-card="EditorCtrl.editCard(card,evtSrc)"
-        add-card="EditorCtrl.newCard(index,evtSrc)"
-        delete-card="EditorCtrl.deleteCard(card,evtSrc)"
-        preview-card="EditorCtrl.previewMode(card,evtSrc)">
-    </card-table>
+    <card-table></card-table>
 
     <div ng-show="EditorCtrl.preview" ng-controller="PreviewController as PreviewCtrl" class="preview__group">
         <div ng-class="{ 'preview__container--fullscreen' : (PreviewCtrl.fullscreen), 'preview__container--desktop' : (PreviewCtrl.device === 'desktop'), 'preview__container--mobile' : (PreviewCtrl.device === 'phone') }" class="preview__container ui__modal">

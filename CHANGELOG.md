@@ -1,5 +1,10 @@
 # MiniReelinator
 
+* *[Beta4.rc1]*
+  * [FEATURE]: Added title prompt to New MR Creation Wizard
+  * [FEATURE]: Added error states to cards
+  * [FIX]: minireel type names updated to be more descriptive
+
 ## Beta3 (May 15, 2014)
 * *[Beta3.rc1]*
   * [FEATURE]: The save button in the edit card modal now changes text
