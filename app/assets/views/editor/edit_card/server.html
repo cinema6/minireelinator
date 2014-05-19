@@ -1,10 +1,9 @@
 <h1 class="modal__title modal__title--lightboxWizard">Which Ad Server Do You Want to Use?</h1>
-<p class="typo--context">This setting will affect the <strong>entire</strong> MiniReel.</p>
-<form>
+<form c6-alias="EditCardServerCtrl.model as card">
     <ul class="wizard__group wizard__group--small">
         <li class="wizard__choice wizard__choice--imgLess">
             <input id="server_publisherOnly" type="radio" 
-                name="minireel-category" value="serverPublisherOnly"
+                name="minireel-category" ng-model="card.data.source" value="publisher"
                 class="modal__radioBtn" />
             <label class="wizard__hitarea" for="server_publisherOnly"><span class="ir">Use My Ad Server Only</span></label>
             <div class="wizard__copy wizard__copy--imgLess">
@@ -14,7 +13,7 @@
         </li>
         <li class="wizard__choice wizard__choice--imgLess">
             <input id="server_publisherFirst" type="radio" 
-                name="minireel-category" value="serverPublisherFirst"
+                name="minireel-category" ng-model="card.data.source" value="publisher-cinema6"
                 class="modal__radioBtn" />
             <label class="wizard__hitarea" for="server_publisherFirst"><span class="ir">Use My Ad Server First, Cinema6 As Backup</span></label>
             <div class="wizard__copy">
@@ -24,7 +23,7 @@
         </li>
         <li class="wizard__choice wizard__choice--imgLess">
             <input id="server_cinema6Only" type="radio" 
-                name="minireel-category" value="serverCinema6Only"
+                name="minireel-category" ng-model="card.data.source" value="cinema6"
                 class="modal__radioBtn" />
             <label class="wizard__hitarea" for="server_cinema6Only"><span class="ir">Use Cinema6 Ad Server Only</span></label>
             <div class="wizard__copy">
@@ -34,7 +33,7 @@
         </li>
         <li class="wizard__choice wizard__choice--imgLess">
             <input id="server_cinema6First" type="radio" 
-                name="minireel-category" value="serverCinema6First"
+                name="minireel-category" ng-model="card.data.source" value="cinema6-publisher"
                 class="modal__radioBtn" />
             <label class="wizard__hitarea" for="server_cinema6First"><span class="ir">Use Cinema6 Ad Server First, My Ad Server As Backup</span></label>
             <div class="wizard__copy">
