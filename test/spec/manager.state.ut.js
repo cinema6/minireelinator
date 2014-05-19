@@ -83,7 +83,7 @@
                 });
 
                 it('should get all the minireels that are associated with the user\'s org', function() {
-                    expect(cinema6.db.findAll).toHaveBeenCalledWith('experience', { type: 'minireel', org: currentUser.org });
+                    expect(cinema6.db.findAll).toHaveBeenCalledWith('experience', { type: 'minireel', org: currentUser.org, sort: 'lastUpdated,-1' });
                 });
 
                 it('should return the model it already has if it has one', function() {
