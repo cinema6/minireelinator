@@ -102,7 +102,8 @@
                                 modules: ['displayAd'],
                                 data: {
                                     autoplay: true,
-                                    publisher: true
+                                    source: 'cinema6-publisher',
+                                    skip: false
                                 }
                             },
                             {
@@ -146,7 +147,8 @@
                                 modules: ['displayAd'],
                                 data: {
                                     autoplay: false,
-                                    publisher: false
+                                    source: 'publisher-cinema6',
+                                    skip: 6
                                 }
                             },
                             {
@@ -168,6 +170,17 @@
                                     choices: []
                                 },
                                 data: {}
+                            },
+                            {
+                                id: 'rc-5065695912f286',
+                                type: 'ad',
+                                ad: true,
+                                modules: ['displayAd'],
+                                data: {
+                                    autoplay: false,
+                                    source: 'publisher',
+                                    skip: true
+                                }
                             },
                             {
                                 id: 'rc-25c1f60b933186',
@@ -319,8 +332,9 @@
                                 ad: true,
                                 view: 'ad',
                                 data: {
-                                    autoplay: false,
-                                    publisher: false
+                                    autoplay: true,
+                                    source: 'publisher',
+                                    skip: 'anytime'
                                 }
                             });
 
@@ -435,8 +449,9 @@
                                 view: 'ad',
                                 ad: true,
                                 data: {
-                                    autoplay: false,
-                                    publisher: false
+                                    autoplay: true,
+                                    source: 'publisher',
+                                    skip: 'anytime'
                                 }
                             });
 
@@ -726,7 +741,8 @@
                                 view: 'ad',
                                 data: {
                                     autoplay: true,
-                                    publisher: true
+                                    source: 'cinema6-publisher',
+                                    skip: 'never'
                                 }
                             });
                             expect(deck[5]).toEqual({
@@ -739,13 +755,28 @@
                                 view: 'ad',
                                 data: {
                                     autoplay: false,
-                                    publisher: false
+                                    source: 'publisher-cinema6',
+                                    skip: 'delay'
+                                }
+                            });
+                            expect(deck[8]).toEqual({
+                                id: 'rc-5065695912f286',
+                                type: 'ad',
+                                title: 'Advertisement',
+                                note: null,
+                                label: 'Advertisement',
+                                ad: true,
+                                view: 'ad',
+                                data: {
+                                    autoplay: false,
+                                    source: 'publisher',
+                                    skip: 'anytime'
                                 }
                             });
                         });
 
                         it('should transpile the links cards', function() {
-                            expect(deck[8]).toEqual({
+                            expect(deck[9]).toEqual({
                                 id: 'rc-25c1f60b933186',
                                 type: 'links',
                                 title: 'If You Love Turtles',
@@ -753,14 +784,14 @@
                                 label: 'Suggested Links',
                                 ad: false,
                                 view: 'links',
-                                data: minireel.data.deck[8].data
+                                data: minireel.data.deck[9].data
                             });
 
-                            expect(deck[8].data.links).not.toBe(minireel.data.deck[8].data.links);
+                            expect(deck[9].data.links).not.toBe(minireel.data.deck[9].data.links);
                         });
 
                         it('should transpile the recap cards', function() {
-                            expect(deck[9]).toEqual({
+                            expect(deck[10]).toEqual({
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
                                 title: 'Recap',
