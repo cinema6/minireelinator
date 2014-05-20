@@ -1,8 +1,10 @@
 # MiniReelinator
 
+## Beta5 (May 20, 2014)
 * *[Beta5.rc1]*
   * MiniReels are now sorted with the last modified MiniReel appearing
     first
+* *[/Beta5.rc1]*
 
 ## Beta4 (May 16, 2014)
 * *[Beta4.rc1]*
