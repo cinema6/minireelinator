@@ -560,8 +560,16 @@
                         }
                     }),
                     ad: {
-                        autoplay: copy(false),
-                        publisher: copy(false)
+                        autoplay: copy(true),
+                        source: copy('publisher'),
+                        skip: function(data) {
+                            if (isUndefined(data.skip)) {
+                                return 'anytime';
+                            }
+
+                            return isNumber(data.skip) ? 'delay' :
+                                (data.skip ? 'anytime' : 'never');
+                        }
                     },
                     links: {
                         links: copy([])
@@ -765,7 +773,17 @@
                     },
                     ad: {
                         autoplay: copy(false),
-                        publisher: copy(false)
+                        source: copy('publisher'),
+                        skip: function(data) {
+                            switch (data.skip) {
+                            case 'anytime':
+                                return true;
+                            case 'never':
+                                return false;
+                            case 'delay':
+                                return 6;
+                            }
+                        }
                     },
                     links: {
                         links: copy([])
