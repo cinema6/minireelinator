@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[Beta5.rc1]*
+  * MiniReels are now sorted with the last modified MiniReel appearing
+    first
+
 ## Beta4 (May 16, 2014)
 * *[Beta4.rc1]*
   * [FEATURE]: Added title prompt to New MR Creation Wizard

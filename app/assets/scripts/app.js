@@ -265,7 +265,7 @@
 
                                 return cinema6.db.findAll(
                                     'experience',
-                                    { type: 'minireel', org: user.org }
+                                    { type: 'minireel', org: user.org, sort: 'lastUpdated,-1' }
                                 );
                             });
                     }],
