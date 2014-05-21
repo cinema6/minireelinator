@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[Beta6.rc1]*
+  * [FIX]: 'Create MiniReel' modals DOM update: 'General' tab added first, 'AutoPlay Settings' added to the end.
+* *[/Beta5.rc1]*
+
 ## Beta5 (May 20, 2014)
 * *[Beta5.rc1]*
   * MiniReels are now sorted with the last modified MiniReel appearing
