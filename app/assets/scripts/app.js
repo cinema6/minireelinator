@@ -665,11 +665,12 @@
 
         .controller('GenericController', noop)
 
-        .controller('AppController', [  '$scope','$log','cinema6','gsap',
-                                        'c6State', 'c6Defines', 'tracker',
-        function                     (  $scope , $log , cinema6 , gsap ,
-                                        c6State, c6Defines, tracker ) {
-            var self = this;
+        .controller('AppController', ['$scope','$log','cinema6','gsap','c6State','c6Defines',
+                                      'tracker','$window',
+        function                     ( $scope , $log , cinema6 , gsap , c6State , c6Defines ,
+                                       tracker , $window ) {
+            var self = this,
+                $parentWindow = jqLite($window.parent);
 
             $log.info('AppCtlr loaded.');
 
@@ -686,15 +687,23 @@
                 }
             });
 
-            c6State.on('stateChangeSuccess', function(state) {
-                self.trackStateChange(state);
-                cinema6.getSession()
-                    .then(function pingSession(session) {
-                        session.ping('stateChange', { name: state.name });
-                    });
-            });
+            this.screenSpace = {
+                width: null,
+                height: null
+            };
 
-            self.trackStateChange = function(state){
+            this.setScreenSpace = function() {
+                return cinema6.getSession()
+                    .then(function requestSpace(session) {
+                        return session.request('availableSpace');
+                    })
+                    .then(function setScreenSpace(space) {
+                        /* jshint boss:true */
+                        return self.screenSpace = space;
+                    });
+            };
+
+            this.trackStateChange = function(state){
                 $log.info('trackChange:',state.name);
                 if ((self.config === null) || (!state.templateUrl)){
                     return;
@@ -706,7 +715,7 @@
                 );
             };
 
-            self.sendPageEvent = function() {
+            this.sendPageEvent = function() {
                 if (self.config === null){
                     $log.error('Unable to send pageEvent for %1, config is null.',
                         arguments[0]);
@@ -720,7 +729,7 @@
                 tracker.event.apply(tracker,args);
             };
 
-            self.sendPageView = function(pageObject) {
+            this.sendPageView = function(pageObject) {
                 if (self.config === null){
                     $log.error('Unable to send pageView for %1, config is null.',
                         pageObject.page);
@@ -730,6 +739,19 @@
                 tracker.pageview('/' + self.config.uri + '/' + pageObject.page,
                     self.config.title + ' - ' + pageObject.title);
             };
+
+            c6State.on('stateChangeSuccess', function(state) {
+                self.trackStateChange(state);
+                cinema6.getSession()
+                    .then(function pingSession(session) {
+                        session.ping('stateChange', { name: state.name });
+                    });
+            });
+
+            $parentWindow.on('resize', function setScreenSpace() {
+                self.setScreenSpace();
+            });
+            this.setScreenSpace();
 
             $log.info('Initialize tracker with:',c6Defines.kTracker);
             tracker.create(c6Defines.kTracker.accountId,c6Defines.kTracker.config);
