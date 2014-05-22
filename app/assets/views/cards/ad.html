@@ -27,11 +27,20 @@
                 <h1 class="card__title"><span class="card__titleText">Advertisement Slide</span></h1>
                 <p class="card__summary">
                     Served by: <br>
-                    <strong>Publisher Ad Server with Cinema6 fallback</strong>
+                    <ng-switch on="$this.data.source">
+                        <strong ng-switch-when="cinema6">Cinema6 Ad Server</strong>
+                        <strong ng-switch-when="publisher">Publisher Ad Server</strong>
+                        <strong ng-switch-when="publisher-cinema6">Publisher Ad Server with Cinema6 fallback</strong>
+                        <strong ng-switch-when="cinema6-publisher">Cinema6 Ad Server with Publisher fallback</strong>
+                    </ng-switch>
                 </p>
                 <p class="card__summary">
                     Skip Availability: <br>
-                    <strong>After 6 Seconds</strong>
+                    <ng-switch on="$this.data.skip">
+                        <strong ng-switch-when="delay">After 6 Seconds</strong>
+                        <strong ng-switch-when="anytime">Anytime</strong>
+                        <strong ng-switch-when="never">Never</strong>
+                    </ng-switch>
                 </p>
             </div>
             <div class="ui__divider--pause">&hellip;</div>
