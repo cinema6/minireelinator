@@ -102,7 +102,9 @@
     <card-table></card-table>
 
     <div ng-show="EditorCtrl.preview" ng-controller="PreviewController as PreviewCtrl" class="preview__group">
-        <div ng-class="{ 'preview__container--fullscreen' : (PreviewCtrl.fullscreen), 'preview__container--desktop' : (PreviewCtrl.device === 'desktop'), 'preview__container--mobile' : (PreviewCtrl.device === 'phone') }" class="preview__container ui__modal">
+        <div ng-class="{ 'preview__container--fullscreen' : (PreviewCtrl.fullscreen), 'preview__container--desktop' : (PreviewCtrl.device === 'desktop'), 'preview__container--mobile' : (PreviewCtrl.device === 'phone') }"
+            class="preview__container ui__modal"
+            ng-style="{height: (PreviewCtrl.fullscreen && PreviewCtrl.device === 'desktop') ? '0px' : ''}">
             <h1 class="modal__title">Preview Mode</h1>
             <form class="preview__form">
                 <input id="previewMode_desktop" type="radio" ng-model="PreviewCtrl.device" value="desktop"
@@ -115,7 +117,12 @@
                 
                 <button class="modal__closeBtn sprite--alpha" ng-click="EditorCtrl.closePreview()"><span class="ir">Close</span></button>
             </form>
-            <iframe mr-preview="minireel" ng-src="{{PreviewCtrl.playerSrc}}" ng-class="{ 'preview__iframe--fullscreen' : (PreviewCtrl.fullscreen), 'preview__iframe--desktop' : (PreviewCtrl.device === 'desktop'), 'preview__iframe--mobile' : (PreviewCtrl.device === 'phone') }" class="preview__iframe"></iframe>
+            <iframe mr-preview="minireel"
+                ng-src="{{PreviewCtrl.playerSrc}}"
+                ng-style="{height: (PreviewCtrl.fullscreen && PreviewCtrl.device === 'desktop') ? (AppCtrl.screenSpace.height + 'px') : ''}"
+                ng-class="{ 'preview__iframe--fullscreen' : (PreviewCtrl.fullscreen), 'preview__iframe--desktop' : (PreviewCtrl.device === 'desktop'), 'preview__iframe--mobile' : (PreviewCtrl.device === 'phone') }"
+                class="preview__iframe">
+            </iframe>
         </div>
         <div class="ui__overlay">&nbsp;</div>
     </div>

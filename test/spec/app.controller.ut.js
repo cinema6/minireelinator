@@ -2,11 +2,14 @@
     'use strict';
 
     define(['app', 'templates'], function() {
+        var jqLite = angular.element;
+
         describe('AppController', function() {
             var $rootScope,
                 $scope,
                 $q,
                 c6State,
+                $window,
                 AppCtrl,
                 c6Defines,
                 tracker;
@@ -85,6 +88,7 @@
                     $rootScope = $injector.get('$rootScope');
                     $q = $injector.get('$q');
                     c6State = $injector.get('c6State');
+                    $window = $injector.get('$window');
 
                     $scope = $rootScope.$new();
                     AppCtrl = $controller('AppController', {
@@ -94,7 +98,9 @@
                     });
 
                     cinema6Session = c6EventEmitter({
-                        ping: jasmine.createSpy('session.ping()')
+                        ping: jasmine.createSpy('session.ping()'),
+                        request: jasmine.createSpy('session.request()')
+                            .and.returnValue($q.defer().promise)
                     });
                 });
             });
@@ -105,6 +111,18 @@
 
             it('should publish itself to the $scope', function() {
                 expect($scope.AppCtrl).toBe(AppCtrl);
+            });
+
+            it('should initialize the screenSpace', function() {
+                cinema6Session.request.and.returnValue($q.when({ width: 300, height: 200 }));
+                $scope.$apply(function() {
+                    cinema6._.getSessionDeferred.resolve(cinema6Session);
+                });
+
+                expect(AppCtrl.screenSpace).toEqual({
+                    width: 300,
+                    height: 200
+                });
             });
 
             describe('properties', function() {
@@ -127,6 +145,56 @@
                         expect(AppCtrl.config).toBe(appData.experience);
                     });
                 });
+
+                describe('screenSpace', function() {
+                    it('should be initialzied with minimal information', function() {
+                        expect(AppCtrl.screenSpace).toEqual({
+                            width: null,
+                            height: null
+                        });
+                    });
+                });
+            });
+
+            describe('methods', function() {
+                describe('setScreenSpace()', function() {
+                    var success;
+
+                    beforeEach(function() {
+                        success = jasmine.createSpy('success');
+
+                        cinema6.getSession.and.returnValue($q.when(cinema6Session));
+                        cinema6Session.request.and.returnValue($q.when({ width: 800, height: 450 }));
+
+                        $scope.$apply(function() {
+                            AppCtrl.setScreenSpace().then(success);
+                        });
+                    });
+
+                    it('should get the available space from cinema6 and set the screenSpace property with the result', function() {
+                        expect(cinema6Session.request).toHaveBeenCalledWith('availableSpace');
+                        expect(AppCtrl.screenSpace).toEqual({
+                            width: 800,
+                            height: 450
+                        });
+                        expect(success).toHaveBeenCalledWith(AppCtrl.screenSpace);
+                    });
+                });
+            });
+
+            describe('events', function() {
+                describe('$window resize', function() {
+                    beforeEach(function() {
+                        spyOn(AppCtrl, 'setScreenSpace');
+                    });
+
+                    it('should set the screen space', function() {
+                        var $parentWindow = jqLite($window.parent);
+
+                        $parentWindow.trigger('resize');
+                        expect(AppCtrl.setScreenSpace).toHaveBeenCalled();
+                    });
+                });
             });
 
             describe('cinema6 integration', function() {
@@ -147,6 +215,7 @@
                 describe('c6State: stateChangeSuccess', function() {
                     it('should ping the session', function() {
                         spyOn(AppCtrl,'trackStateChange');
+                        cinema6.getSession.calls.reset();
                         expect(cinema6.getSession).not.toHaveBeenCalled();
                         c6State.emit('stateChangeSuccess', c6State.get('manager'), null);
                         $rootScope.$apply(function() {
