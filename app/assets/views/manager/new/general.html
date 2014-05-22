@@ -6,19 +6,7 @@
     </label>
 </form>
 
-<br>
-
-<h1 class="modal__title modal__title--lightboxWizard">Should the MiniReel Autoplay?</h1>
-<p class="typo--context">These changes affect desktop experiences only.</p>
-<form c6-alias="NewCtrl.mode as config">
-    <input id="hasAutoplay" type="checkbox"
-    ng-model="NewCtrl.autoplay" ng-disabled="!config.autoplayable" />
-    <label for="hasAutoplay">
-        <span ng-show="config.autoplayable">Yes, all videos should play automatically.</span>
-        <span ng-show="!config.autoplayable">The <strong class="typo--attention">{{config.name}}</strong> MiniReel Type does not support autoplaying videos.</span>
-    </label>
-</form>
 <footer class="modal__btnFooter modal__btnFooter--altLayout">
-    <button c6-sref="editor" params="{ minireelId: NewCtrl.model.minireel.id }" ng-click="NewCtrl.save()" class="modal__btn toolbar__confirm" type="button" title="Done!">Done!</button>
+    <button c6-sref="{{NewCtrl.baseState}}.category" class="modal__btn" type="button" title="Next Step">Next Step</button>
     <button class="modal__btn toolbar__delete" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
 </footer>

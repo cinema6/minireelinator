@@ -241,14 +241,17 @@
             var assets = c6UrlMakerProvider.makeUrl.bind(c6UrlMakerProvider);
 
             var newSubstates = {
+                general: {
+                    templateUrl: assets('views/manager/new/general.html')
+                },
                 category: {
                     templateUrl: assets('views/manager/new/category.html')
                 },
                 mode: {
                     templateUrl: assets('views/manager/new/mode.html')
                 },
-                general: {
-                    templateUrl: assets('views/manager/new/general.html')
+                autoplay: {
+                    templateUrl: assets('views/manager/new/autoplay.html')
                 }
             };
 

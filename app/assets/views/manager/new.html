@@ -1,6 +1,11 @@
 <div class="ui__modal">
     <navigation class="tabNav__group">
         <ul class="tabNav__list clearfix">
+            <li ng-if="NewCtrl.returnState === 'manager'" class="tabNav__item">
+                <a c6-sref="{{NewCtrl.baseState}}.general"
+                    class="tabNav__link"
+                    title="Video Content">General Settings</a>
+            </li>
             <li class="tabNav__item">
                 <a c6-sref="{{NewCtrl.baseState}}.category"
                     class="tabNav__link tabNav__link--active" 
@@ -13,9 +18,9 @@
                     title="Video Content">MiniReel Type</a>
             </li>
             <li class="tabNav__item">
-                <a c6-sref="{{NewCtrl.baseState}}.general"
+                <a c6-sref="{{NewCtrl.baseState}}.autoplay"
                     class="tabNav__link"
-                    title="Video Content">General Settings</a>
+                    title="Video Content">AutoPlay Settings</a>
             </li>
         </ul>
         <button class="modal__closeBtn sprite--alpha" c6-sref="{{NewCtrl.returnState}}"><span class="ir">Close</span></button>
