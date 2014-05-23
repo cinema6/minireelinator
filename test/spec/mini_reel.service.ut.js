@@ -333,7 +333,7 @@
                                 view: 'ad',
                                 data: {
                                     autoplay: true,
-                                    source: 'publisher',
+                                    source: 'cinema6',
                                     skip: 'anytime'
                                 }
                             });
@@ -450,7 +450,7 @@
                                 ad: true,
                                 data: {
                                     autoplay: true,
-                                    source: 'publisher',
+                                    source: 'cinema6',
                                     skip: 'anytime'
                                 }
                             });
