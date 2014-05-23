@@ -29,13 +29,20 @@
                         mode: 'lightbox',
                         deck: [
                             {
-                                id: 'rc-e91e76c0ce486a'
+                                id: 'rc-e91e76c0ce486a',
+                                type: 'ad'
                             },
                             {
-                                id: 'rc-2ba11eda2b2300'
+                                id: 'rc-2ba11eda2b2300',
+                                type: 'video'
                             },
                             {
-                                id: 'rc-968f823aa61637'
+                                id: 'rc-968f823aa61637',
+                                type: 'videoBallot'
+                            },
+                            {
+                                id: 'rc-fbccf72de29c63',
+                                type: 'recap'
                             }
                         ]
                     }
@@ -77,7 +84,8 @@
                     AppCtrl = $scope.AppCtrl = {
                         sendPageView : jasmine.createSpy('AppCtrl.sendPageView'),
                         sendPageEvent : jasmine.createSpy('AppCtrl.sendPageEvent'),
-                        config: null
+                        config: null,
+                        user: null
                     };
                     $childScope = $scope.$new();
                     $scope.$apply(function() {
@@ -302,6 +310,67 @@
                     });
                 });
 
+                describe('canDeleteCard(card)', function() {
+                    var card;
+
+                    ['video', 'videoBallot'].forEach(function(type) {
+                        describe('for a ' + type + ' card', function() {
+                            beforeEach(function() {
+                                card = MiniReelService.createCard(type);
+                            });
+
+                            it('should be true', function() {
+                                expect(EditorCtrl.canDeleteCard(card)).toBe(true);
+                            });
+                        });
+                    });
+
+                    ['recap'].forEach(function(type) {
+                        describe(' for a ' + type + ' card', function() {
+                            beforeEach(function() {
+                                card = MiniReelService.createCard(type);
+                            });
+
+                            it('should be false', function() {
+                                expect(EditorCtrl.canDeleteCard(card)).toBe(false);
+                            });
+                        });
+                    });
+
+                    describe('for an ad card', function() {
+                        beforeEach(function() {
+                            card = MiniReelService.createCard('ad');
+
+                            EditorCtrl.model.data.deck.unshift(card);
+                        });
+
+                        it('should be false if the app config has not been loaded', function() {
+                            expect(EditorCtrl.canDeleteCard(card)).toBe(false);
+                        });
+
+                        it('should be true if the minAdCount is undefined', function() {
+                            AppCtrl.user = {
+                                org: {}
+                            };
+
+                            expect(EditorCtrl.canDeleteCard(card)).toBe(true);
+                        });
+
+                        it('should be true if the number of ad cards in the deck is greater than the org\'s min ad count', function() {
+                            AppCtrl.user = {
+                                org: {
+                                    minAdCount: 2
+                                }
+                            };
+
+                            expect(EditorCtrl.canDeleteCard(card)).toBe(false);
+
+                            EditorCtrl.model.data.deck.unshift(MiniReelService.createCard('ad'));
+                            expect(EditorCtrl.canDeleteCard(card)).toBe(true);
+                        });
+                    });
+                });
+
                 describe('publish()', function() {
                     var publishDeferred;
 
@@ -430,7 +499,7 @@
                     });
 
                     it('should not remove the card from the deck', function() {
-                        expect(cModel.data.deck.length).toBe(3);
+                        expect(cModel.data.deck.length).toBe(4);
                         expect(cModel.data.deck).toContain(card);
                     });
 
@@ -456,7 +525,7 @@
                         });
 
                         it('should remove the provided card from the deck', function() {
-                            expect(cModel.data.deck.length).toBe(2);
+                            expect(cModel.data.deck.length).toBe(3);
                             expect(cModel.data.deck).not.toContain(card);
                         });
                     });
