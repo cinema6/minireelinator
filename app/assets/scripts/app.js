@@ -5,7 +5,8 @@
     var noop = angular.noop,
         copy = angular.copy,
         forEach = angular.forEach,
-        jqLite = angular.element;
+        jqLite = angular.element,
+        extend = angular.extend;
 
     angular.module('c6.mrmaker', window$.c6.kModDeps)
         .constant('c6Defines', window$.c6)
@@ -663,6 +664,19 @@
         function         ( FileService ) {
             return function(file) {
                 return (file || null) && FileService.open(file).url;
+            };
+        }])
+
+        .service('appData', ['cinema6',
+        function            ( cinema6 ) {
+            var self = this,
+                promise = cinema6.getAppData()
+                    .then(function fulfill(data) {
+                        return extend(self, data);
+                    });
+
+            this.ensureFulfillment = function() {
+                return promise;
             };
         }])
 
