@@ -2,6 +2,8 @@
 
 * *[Beta6.rc1]*
   * [FIX]: 'Create MiniReel' modals DOM update: 'General' tab added first, 'AutoPlay Settings' added to the end.
+  * Ad server tab is only shown if the org is provisioned with their own
+    ad server
 
 ## Beta5 (May 20, 2014)
 * *[Beta5.rc1]*
