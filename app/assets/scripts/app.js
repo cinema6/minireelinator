@@ -366,6 +366,10 @@
                             controller: 'EditCardController',
                             controllerAs: 'EditCardCtrl',
                             templateUrl: assets('views/editor/edit_card.html'),
+                            beforeModel: ['appData',
+                            function     ( appData ) {
+                                return appData.ensureFulfillment();
+                            }],
                             model:  ['c6StateParams','MiniReelService',
                             function( c6StateParams , MiniReelService ) {
                                 var minireel = this.cParent.cModel;
@@ -387,8 +391,8 @@
                                     return $q.reject('Cannot edit this card');
                                 }
                             }],
-                            updateControllerModel: ['controller','model',
-                            function               ( controller , model ) {
+                            updateControllerModel: ['controller','model','appData',
+                            function               ( controller , model , appData ) {
                                 var copy = {
                                         name: 'Editorial Content',
                                         sref: 'editor.editCard.copy'
@@ -408,7 +412,8 @@
                                     adSkip = {
                                         name: 'Skip Settings',
                                         sref: 'editor.editCard.skip'
-                                    };
+                                    },
+                                    hasOwnAdServer = appData.user.org.enablePublisherAds;
 
                                 controller.model = model;
                                 controller.tabs = (function() {
@@ -417,7 +422,9 @@
                                     case 'videoBallot':
                                         return [copy, video, ballot];
                                     case 'ad':
-                                        return [adServer, adSkip];
+                                        return hasOwnAdServer ?
+                                            [adServer, adSkip] :
+                                            [adSkip];
 
                                     default:
                                         return [];
