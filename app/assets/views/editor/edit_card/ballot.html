@@ -9,7 +9,7 @@
             <span class="modal__label">Question</span>
             <span class="modal__textBoxHolder">
                 <input ng-model="ballot.prompt" maxlength="100" class="modal__textBox">
-                <span class="field__context typo--context">({{ballot.prompt.length}} of 100 max characters)</span>
+                <span class="field__context typo--context">({{ballot.prompt.length || 0}} of 100 max characters)</span>
             </span>
         </label>
         <label class="field field--noBreak clearfix" c6-alias="ballot.choices as choices">
