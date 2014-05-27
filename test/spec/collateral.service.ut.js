@@ -37,6 +37,7 @@
                             url: 'http://localhost:9000/f7394fn83'
                         };
                         experience = {
+                            id: 'e-cdbe0a2260e870',
                             data: {
                                 collateral: {}
                             }
@@ -58,9 +59,13 @@
                         });
                     });
 
+                    it('should name the file after the key', function() {
+                        expect(splashImageWrapper.name).toBe('splash');
+                    });
+
                     it('should upload the file to the collateral service', function() {
                         expect(FileService.open).toHaveBeenCalledWith(splashImage);
-                        expect(FileService.upload).toHaveBeenCalledWith('/api/collateral/files', [splashImageWrapper]);
+                        expect(FileService.upload).toHaveBeenCalledWith('/api/collateral/files/' + experience.id, [splashImageWrapper]);
                     });
 
                     it('should attach the progress state of the upload to the promise', function() {

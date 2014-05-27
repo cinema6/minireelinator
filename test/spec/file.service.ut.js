@@ -88,11 +88,14 @@
                     });
 
                     it('should create a wrapper for the file', function() {
-                        var file = {},
+                        var file = {
+                                name: 'foo.jpg'
+                            },
                             wrapper = FileService.open(file);
 
                         expect(wrapper.file).toBe(file);
                         expect(wrapper.url).toBe(url);
+                        expect(wrapper.name).toBe(file.name);
                     });
 
                     it('should return the same object if the same file is passed in', function() {
@@ -122,10 +125,11 @@
                     }
 
                     beforeEach(function() {
-                        files = [{}, {}, {}];
+                        files = [{ name: 'file1.jpg' }, { name: 'file2.jpg' }, { name: 'file3.jpg' }];
                         fileWrappers = files.map(function(file) {
                             return FileService.open(file);
                         });
+                        fileWrappers[1].name = 'custom.jpg';
 
                         success = jasmine.createSpy('upload success');
                         failure = jasmine.createSpy('upload failure');
@@ -139,7 +143,7 @@
 
                     it('should create form data and append the files', function() {
                         fileWrappers.forEach(function(wrapper, index) {
-                            expect(formData.append).toHaveBeenCalledWith('image' + index, wrapper.file);
+                            expect(formData.append).toHaveBeenCalledWith('image' + index, wrapper.file, wrapper.name);
                         });
                     });
 
