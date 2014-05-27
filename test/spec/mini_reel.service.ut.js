@@ -816,7 +816,10 @@
 
                             appData = {
                                 user: {
-                                    org: 'o-17593d7a2bf294',
+                                    org: {
+                                        id: 'o-17593d7a2bf294',
+                                        minAdCount: 3
+                                    },
                                     branding: 'elitedaily'
                                 }
                             };
@@ -887,6 +890,10 @@
                             });
 
                             it('should initialize a new minireel', function() {
+                                var adCard = MiniReelService.createCard('ad');
+
+                                delete adCard.id;
+
                                 expect(cinema6.db.create).toHaveBeenCalledWith('experience', {
                                     type: 'minireel',
                                     org: 'o-17593d7a2bf294',
@@ -896,6 +903,9 @@
                                         mode: 'lightbox',
                                         branding: appData.user.branding,
                                         deck: [
+                                            jasmine.objectContaining(adCard),
+                                            jasmine.objectContaining(adCard),
+                                            jasmine.objectContaining(adCard),
                                             {
                                                 id: jasmine.any(String),
                                                 title: 'Recap',

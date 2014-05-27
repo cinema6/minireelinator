@@ -2,6 +2,10 @@
 
 * *[Beta6.rc1]*
   * [FIX]: 'Create MiniReel' modals DOM update: 'General' tab added first, 'AutoPlay Settings' added to the end.
+  * Ad cards are now auto-added when creating a new MiniReel to meet the
+    org's minAdCount
+  * Ad cards will not be deleteable when the org's minAdCount is
+    reached
 
 ## Beta5 (May 20, 2014)
 * *[Beta5.rc1]*

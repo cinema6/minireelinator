@@ -278,6 +278,27 @@
                     null;
             };
 
+            this.canDeleteCard = function(card) {
+                switch (card.type) {
+                case 'ad':
+                    return (function() {
+                        var deck = this.model.data.deck,
+                            totalAdCards = deck.filter(function(card) {
+                                return card.type === 'ad';
+                            }).length,
+                            minAdCount = AppCtrl.user ?
+                                (AppCtrl.user.org.minAdCount || 0) :
+                                Infinity;
+
+                        return totalAdCards > minAdCount;
+                    }.call(this));
+                case 'recap':
+                    return false;
+                default:
+                    return true;
+                }
+            };
+
             this.publish = function() {
                 ConfirmDialogService.display({
                     prompt: 'Are you sure you want to make this MiniReel public?',
