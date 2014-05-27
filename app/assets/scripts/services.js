@@ -64,8 +64,9 @@
                 }
 
                 file = FileService.open(file);
+                file.name = key;
 
-                promise = FileService.upload('/api/collateral/files', [file])
+                promise = FileService.upload('/api/collateral/files/' + experience.id, [file])
                     .then(setResult, null, updateProgress);
 
                 return promise;
@@ -83,6 +84,7 @@
             function FileWrapper(file) {
                 this.file = file;
                 this.url = URL.createObjectURL(file);
+                this.name = file.name;
             }
             FileWrapper.prototype = {
                 close: function() {
@@ -109,7 +111,7 @@
                     xhr = new XMLHttpRequest();
 
                 forEach(fileWrappers, function(wrapper, index) {
-                    data.append('image' + index, wrapper.file);
+                    data.append('image' + index, wrapper.file, wrapper.name);
                 });
 
                 xhr.open('POST', url);
