@@ -6,7 +6,7 @@
     c6-drag-zone>
     <span ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id]">
         <h4 class="card__type">{{$index + 1}}. Advertisement Slide</h4>
-        <button ng-show="$index !== (deck.length - 1)" ng-click="EditorCtrl.deleteCard($this, $event)" class="card__deleteBtn" type="button" title="Delete Card">
+        <button ng-show="EditorCtrl.canDeleteCard($this)" ng-click="EditorCtrl.deleteCard($this, $event)" class="card__deleteBtn" type="button" title="Delete Card">
             <span class="ui__xSmall ui__xSmall--white sprite--alpha"><span class="ir">Delete Card</span></span>
         </button>
     </span>

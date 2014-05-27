@@ -269,7 +269,7 @@
 
                                 return cinema6.db.findAll(
                                     'experience',
-                                    { type: 'minireel', org: user.org, sort: 'lastUpdated,-1' }
+                                    { type: 'minireel', org: user.org.id, sort: 'lastUpdated,-1' }
                                 );
                             });
                     }],
@@ -699,10 +699,12 @@
             $log.info('AppCtlr loaded.');
 
             this.config = null;
+            this.user = null;
             cinema6.getAppData()
                 .then(function setControllerProps(appData) {
                     $log.info('My current user is:',appData.user);
                     self.config = appData.experience;
+                    self.user = appData.user;
                 });
 
             cinema6.init({

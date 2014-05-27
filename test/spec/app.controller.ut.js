@@ -48,7 +48,8 @@
                     },
                     profile: {
                         raf: {}
-                    }
+                    },
+                    user: {}
                 };
 
                 module('c6.ui', function($provide) {
@@ -143,6 +144,20 @@
                         });
 
                         expect(AppCtrl.config).toBe(appData.experience);
+                    });
+                });
+
+                describe('user', function() {
+                    it('should initially be null', function() {
+                        expect(AppCtrl.user).toBeNull();
+                    });
+
+                    it('should be the current user when the appData is fetched', function() {
+                        $scope.$apply(function() {
+                            cinema6._.getAppDataDeferred.resolve(appData);
+                        });
+
+                        expect(AppCtrl.user).toBe(appData.user);
                     });
                 });
 

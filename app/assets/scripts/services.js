@@ -857,15 +857,24 @@
                     return $q.when(toCopy ? toCopy.pojoify() :
                         {
                             type: 'minireel',
-                            org: user.org,
+                            org: user.org.id,
                             appUri: 'rumble',
                             data: {
                                 title: 'Untitled',
                                 mode: 'lightbox',
                                 branding: user.branding,
-                                deck: [
-                                    self.createCard('recap')
-                                ]
+                                deck: (function() {
+                                    var deck = [],
+                                        count = 0;
+
+                                    for ( ; count < user.org.minAdCount; count++) {
+                                        deck.push(self.createCard('ad'));
+                                    }
+
+                                    deck.push(self.createCard('recap'));
+
+                                    return deck;
+                                }())
                             }
                         });
                 }
