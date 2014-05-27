@@ -561,7 +561,7 @@
                     }),
                     ad: {
                         autoplay: copy(true),
-                        source: copy('publisher'),
+                        source: copy('cinema6'),
                         skip: function(data) {
                             if (isUndefined(data.skip)) {
                                 return 'anytime';

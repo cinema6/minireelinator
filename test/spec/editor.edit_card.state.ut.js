@@ -8,7 +8,9 @@
                 $rootScope,
                 $injector,
                 c6StateParams,
-                c6State;
+                c6State,
+                appData,
+                $q;
 
             beforeEach(function() {
                 module('c6.mrmaker');
@@ -16,10 +18,19 @@
                 inject(function(_$injector_) {
                     $injector = _$injector_;
                     $rootScope = $injector.get('$rootScope');
+                    appData = $injector.get('appData');
+                    $q = $injector.get('$q');
 
                     c6State = $injector.get('c6State');
                     c6StateParams = $injector.get('c6StateParams');
                 });
+
+                spyOn(appData, 'ensureFulfillment').and.returnValue($q.when(appData));
+                appData.user = {
+                    org: {
+                        enablePublisherAds: true
+                    }
+                };
 
                 EditorState = c6State.get('editor');
                 EditCardState = c6State.get('editor.editCard');
@@ -27,6 +38,18 @@
 
             it('should exist', function() {
                 expect(EditCardState).toEqual(jasmine.any(Object));
+            });
+
+            describe('beforeModel()', function() {
+                var result;
+
+                beforeEach(function() {
+                    result = $injector.invoke(EditCardState.beforeModel, EditCardState);
+                });
+
+                it('should return the promise of appData.ensureFulfillment()', function() {
+                    expect(result).toBe(appData.ensureFulfillment());
+                });
             });
 
             describe('model()', function() {
@@ -195,6 +218,13 @@
 
                     it('should enable the "server" and "skip" tabs', function() {
                         expect(controller.tabs).toEqual([adServer, adSkip]);
+                    });
+
+                    it('should only enable the "skip" tab if enablePublisherAds is false', function() {
+                        appData.user.org.enablePublisherAds = false;
+                        updateControllerModel();
+
+                        expect(controller.tabs).toEqual([adSkip]);
                     });
                 });
             });

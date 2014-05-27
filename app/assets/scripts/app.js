@@ -5,7 +5,8 @@
     var noop = angular.noop,
         copy = angular.copy,
         forEach = angular.forEach,
-        jqLite = angular.element;
+        jqLite = angular.element,
+        extend = angular.extend;
 
     angular.module('c6.mrmaker', window$.c6.kModDeps)
         .constant('c6Defines', window$.c6)
@@ -365,6 +366,10 @@
                             controller: 'EditCardController',
                             controllerAs: 'EditCardCtrl',
                             templateUrl: assets('views/editor/edit_card.html'),
+                            beforeModel: ['appData',
+                            function     ( appData ) {
+                                return appData.ensureFulfillment();
+                            }],
                             model:  ['c6StateParams','MiniReelService',
                             function( c6StateParams , MiniReelService ) {
                                 var minireel = this.cParent.cModel;
@@ -386,8 +391,8 @@
                                     return $q.reject('Cannot edit this card');
                                 }
                             }],
-                            updateControllerModel: ['controller','model',
-                            function               ( controller , model ) {
+                            updateControllerModel: ['controller','model','appData',
+                            function               ( controller , model , appData ) {
                                 var copy = {
                                         name: 'Editorial Content',
                                         sref: 'editor.editCard.copy'
@@ -407,7 +412,8 @@
                                     adSkip = {
                                         name: 'Skip Settings',
                                         sref: 'editor.editCard.skip'
-                                    };
+                                    },
+                                    hasOwnAdServer = appData.user.org.enablePublisherAds;
 
                                 controller.model = model;
                                 controller.tabs = (function() {
@@ -416,7 +422,9 @@
                                     case 'videoBallot':
                                         return [copy, video, ballot];
                                     case 'ad':
-                                        return [adServer, adSkip];
+                                        return hasOwnAdServer ?
+                                            [adServer, adSkip] :
+                                            [adSkip];
 
                                     default:
                                         return [];
@@ -663,6 +671,19 @@
         function         ( FileService ) {
             return function(file) {
                 return (file || null) && FileService.open(file).url;
+            };
+        }])
+
+        .service('appData', ['cinema6',
+        function            ( cinema6 ) {
+            var self = this,
+                promise = cinema6.getAppData()
+                    .then(function fulfill(data) {
+                        return extend(self, data);
+                    });
+
+            this.ensureFulfillment = function() {
+                return promise;
             };
         }])
 
