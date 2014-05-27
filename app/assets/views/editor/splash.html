@@ -1,38 +1,64 @@
 <div class="ui__modal" c6-alias="EditorSplashCtrl.model as minireel">
-    <h1 class="modal__title">Choose An Image For Your MiniReel</h1>
-    <button class="modal__closeBtn sprite--alpha" c6-sref="editor"><span class="ir">Close</span></button>
-    <form class="coverUploader__group">
-        <div class="coverUploader__imgBox" c6-bg-img="{{(EditorSplashCtrl.splash | image) || minireel.data.collateral.splash}}">
-            <!--<input class="coverUploader__fileDrop" type="file">-->
-        </div>
-        <div class="coverUploader__copy">
-            <!--<p>Upload your image or drag and drop it into the image space on the left.</p>-->
+    <navigation class="tabNav__group clearfix">
+        <h1 class="tabNav__title">Thumbnail Settings</h1>
+        <ul class="tabNav__list clearfix">
+            <li class="tabNav__item">
+                <a c6-sref="{{NewCtrl.baseState}}.general"
+                    class="tabNav__link"
+                    title="Video Content">
+                    <span class="tabNav__icon">
+                        <span class="ui__checkSmall sprite--alpha">&nbsp;</span>
+                    </span>
+                    <span class="tabNav__tabName">Source Type</span>
+                </a>
+            </li>
+            <li class="tabNav__item">
+                <a c6-sref="{{NewCtrl.baseState}}.general"
+                    class="tabNav__link" 
+                    title="Editorial Content">
+                    <span class="tabNav__icon">!</span>
+                    <span class="tabNav__tabName">Image Settings</span>
+                </a>
+            </li>
+        </ul>
+        <button class="modal__closeBtn sprite--alpha" c6-sref="{{NewCtrl.returnState}}"><span class="ir">Close</span></button>
+    </navigation>
 
-            <input class="coverUploader__filePath" ng-model="EditorSplashCtrl.splash" type="file">
-            <div class="coverUploader__controls">
-                <div ng-show="!!EditorSplashCtrl.currentUpload" c6-alias="EditorSplashCtrl.currentUpload.progress as progress">
-                    <div class="progressBar">
-                        <div ng-style="{ width: (progress.complete | percent) }" class="progressBar__status">&nbsp;</div>
+    <div class="modal__viewHolder">
+
+        <div class="modal__content modal__editor-coverImg clearfix">
+            <ul class="wizard__group">
+                <li class="wizard__choice">
+                    <input id="source-generate" type="radio" 
+                        name="coverImg-source"
+                        class="modal__radioBtn" />
+                    <label class="wizard__hitarea" for="source-generate"><span class="ir">Auto-Generated Image</span></label>
+                    <div class="wizard__diagram sprite--fff diagram__{{$this.value}}">&nbsp;</div>
+                    <div class="wizard__copy">
+                        <h2 class="wizard__title">Auto-Generated Image</h2>
+                        <p class="wizard__p">The thumbnail for your MiniReel will be generated using screen shots from your videos.</p>
                     </div>
-                    <p class="progressBar__statusText">
-                        Loading {{(progress.uploaded / 1024) | number:0}} kb of {{(progress.total / 1024) | number:0}} kb
-                    </p>
-                </div>
-                <p class="typo--attention" ng-show="EditorSplashCtrl.fileTooBig">The file you selected is too large. It must be under {{EditorSplashCtrl.maxFileSize / 1024}} kb.</p>
-                <button ng-click="EditorSplashCtrl.upload()" ng-show="!!EditorSplashCtrl.splash && !EditorSplashCtrl.fileTooBig" class="coverUploader__button toolbar__btn">Upload</button>
-            </div>
-
-            <ul class="coverUploader__helpTips">
-                <li>Images should be 600 pixels by 600 pixels.</li>
-                <li>Images should be less than {{EditorSplashCtrl.maxFileSize / 1024}} kb in filesize.</li>
-                <li>Keep in mind that in some situations, the edges of the image may get cut off.</li>
+                </li>
+                <li class="wizard__choice">
+                    <input id="source-upload" type="radio" 
+                        name="coverImg-source"
+                        class="modal__radioBtn" />
+                    <label class="wizard__hitarea" for="source-upload"><span class="ir">Auto-Generated Image</span></label>
+                    <div class="wizard__diagram sprite--fff diagram__{{$this.value}}">&nbsp;</div>
+                    <div class="wizard__copy">
+                        <h2 class="wizard__title">Upload Your Own</h2>
+                        <p class="wizard__p">You can upload your own thumbnail for the MiniReel.</p>
+                    </div>
+                </li>
             </ul>
         </div>
-    </form>
 
+    </div>
+
+    <div class="modal__fineprint typo--context">* blah</div>
     <footer class="modal__btnFooter">
-        <button class="modal__btn toolbar__delete" title="Cancel" c6-sref="editor">Cancel</button>
-        <button class="modal__btn" title="Save" ng-click="EditorSplashCtrl.save()" ng-disabled="!EditorSplashCtrl.allowSave">Save</button>
+        <button class="modal__btn modal__btn--first toolbar__delete" title="Cancel" c6-sref="editor">Cancel</button>
+        <button class="modal__btn modal__btn--last" title="Save">Next Step</button>
     </footer>
 </div>
 <div class="ui__overlay">&nbsp;</div>

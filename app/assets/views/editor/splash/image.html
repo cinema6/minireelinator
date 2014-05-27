@@ -1,0 +1,30 @@
+<div class="modal__content modal__editor-coverImg clearfix">
+    <form class="coverUploader__group">
+        <div class="coverUploader__imgBox" c6-bg-img="{{(EditorSplashCtrl.splash | image) || minireel.data.collateral.splash}}">
+            <!--<input class="coverUploader__fileDrop" type="file">-->
+        </div>
+        <div class="coverUploader__copy">
+            <!--<p>Upload your image or drag and drop it into the image space on the left.</p>-->
+
+            <input class="coverUploader__filePath" ng-model="EditorSplashCtrl.splash" type="file">
+            <div class="coverUploader__controls">
+                <div ng-show="!!EditorSplashCtrl.currentUpload" c6-alias="EditorSplashCtrl.currentUpload.progress as progress">
+                    <div class="progressBar">
+                        <div ng-style="{ width: (progress.complete | percent) }" class="progressBar__status">&nbsp;</div>
+                    </div>
+                    <p class="progressBar__statusText">
+                        Loading {{(progress.uploaded / 1024) | number:0}} kb of {{(progress.total / 1024) | number:0}} kb
+                    </p>
+                </div>
+                <p class="typo--attention" ng-show="EditorSplashCtrl.fileTooBig">The file you selected is too large. It must be under {{EditorSplashCtrl.maxFileSize / 1024}} kb.</p>
+                <button ng-click="EditorSplashCtrl.upload()" ng-show="!!EditorSplashCtrl.splash && !EditorSplashCtrl.fileTooBig" class="coverUploader__button toolbar__btn">Upload</button>
+            </div>
+
+            <ul class="coverUploader__helpTips">
+                <li>Images should be 600 pixels by 600 pixels.</li>
+                <li>Images should be less than {{EditorSplashCtrl.maxFileSize / 1024}} kb in filesize.</li>
+                <li>Keep in mind that in some situations, the edges of the image may get cut off.</li>
+            </ul>
+        </div>
+    </form>
+</div>

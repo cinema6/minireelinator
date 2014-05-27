@@ -1,0 +1,15 @@
+<div class="modal__content modal__editor-coverImg clearfix">
+    <ul class="wizard__group">
+        <li class="wizard__choice">
+            <input id="category-{{$this.value}}" type="radio" 
+                name="minireel-category" ng-value="$this"
+                class="modal__radioBtn" ng-model="NewCtrl.category" />
+            <label class="wizard__hitarea" for="category-{{$this.value}}"><span class="ir">Lightbox</span></label>
+            <div class="wizard__diagram sprite--fff diagram__{{$this.value}}">&nbsp;</div>
+            <div class="wizard__copy">
+                <h2 class="wizard__title">{{$this.name}} <span class="typo--context">*</span></h2>
+                <p class="wizard__p">{{$this.description}}</p>
+            </div>
+        </li>
+    </ul>
+</div>
