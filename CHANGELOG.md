@@ -3,6 +3,8 @@
 * *[Beta7.rc1]*
   * [FIX]: Character count of 0 is shown before the user types anything
     (instead of an empty space)
+  * Upload collateral assets by experience and name assets by the key
+    they're stored on the collateral object with (i.e. "splash")
 
 ## Beta6 (May 27, 2014)
 * *[Beta6.rc1]*
