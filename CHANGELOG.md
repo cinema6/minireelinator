@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[Beta7.rc1]*
+  * Upload collateral assets by experience and name assets by the key
+    they're stored on the collateral object with (i.e. "splash")
+
 ## Beta6 (May 27, 2014)
 * *[Beta6.rc1]*
   * [FIX]: 'Create MiniReel' modals DOM update: 'General' tab added first, 'AutoPlay Settings' added to the end.
