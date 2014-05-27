@@ -5,18 +5,18 @@
 </div>
 <form c6-alias="EditCardBallotCtrl.model as ballot">
     <label class="field">
-        <span class="modal__label">Question: <strong class="field__context">({{ballot.prompt.length}} of 100 max characters)</strong></span> 
+        <span class="modal__label">Question: <strong class="field__context">({{ballot.prompt.length || 0}} of 100 max characters)</strong></span> 
         <input ng-model="ballot.prompt" maxlength="100" class="modal__textBox">
     </label>
     <label class="field field--noBreak clearfix" c6-alias="ballot.choices as choices">
         <span class="modal__label"><em class="typo--suggestion">Option 1:</em></span> 
         <input class="modal__textBox modal__textBox--short" ng-model="choices[0]" maxlength="40">
-        <span class="field__context field__context--short"><strong>({{choices[0].length}} of 40 max characters)</strong></span> 
+        <span class="field__context field__context--short"><strong>({{choices[0].length || 0}} of 40 max characters)</strong></span> 
     </label>
     <label class="field field--noBreak clearfix" c6-alias="ballot.choices as choices">
         <span class="modal__label"><em class="typo--suggestion">Option 2:</em></span> 
         <input class="modal__textBox modal__textBox--short" ng-model="choices[1]" maxlength="40">
-        <span class="field__context field__context--short"><strong>({{choices[1].length}} of 40 max characters)</strong></span> 
+        <span class="field__context field__context--short"><strong>({{choices[1].length || 0}} of 40 max characters)</strong></span> 
     </label>
 </form>
 

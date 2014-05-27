@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[Beta7.rc1]*
+  * [FIX]: Character count of 0 is shown before the user types anything
+    (instead of an empty space)
+
 ## Beta6 (May 27, 2014)
 * *[Beta6.rc1]*
   * [FIX]: 'Create MiniReel' modals DOM update: 'General' tab added first, 'AutoPlay Settings' added to the end.
