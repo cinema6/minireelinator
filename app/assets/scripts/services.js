@@ -64,8 +64,9 @@
                 }
 
                 file = FileService.open(file);
+                file.name = key;
 
-                promise = FileService.upload('/api/collateral/files', [file])
+                promise = FileService.upload('/api/collateral/files/' + experience.id, [file])
                     .then(setResult, null, updateProgress);
 
                 return promise;
@@ -83,6 +84,7 @@
             function FileWrapper(file) {
                 this.file = file;
                 this.url = URL.createObjectURL(file);
+                this.name = file.name;
             }
             FileWrapper.prototype = {
                 close: function() {
@@ -109,7 +111,7 @@
                     xhr = new XMLHttpRequest();
 
                 forEach(fileWrappers, function(wrapper, index) {
-                    data.append('image' + index, wrapper.file);
+                    data.append('image' + index, wrapper.file, wrapper.name);
                 });
 
                 xhr.open('POST', url);
@@ -561,7 +563,7 @@
                     }),
                     ad: {
                         autoplay: copy(true),
-                        source: copy('publisher'),
+                        source: copy('cinema6'),
                         skip: function(data) {
                             if (isUndefined(data.skip)) {
                                 return 'anytime';
@@ -857,15 +859,24 @@
                     return $q.when(toCopy ? toCopy.pojoify() :
                         {
                             type: 'minireel',
-                            org: user.org,
+                            org: user.org.id,
                             appUri: 'rumble',
                             data: {
                                 title: 'Untitled',
                                 mode: 'lightbox',
                                 branding: user.branding,
-                                deck: [
-                                    self.createCard('recap')
-                                ]
+                                deck: (function() {
+                                    var deck = [],
+                                        count = 0;
+
+                                    for ( ; count < user.org.minAdCount; count++) {
+                                        deck.push(self.createCard('ad'));
+                                    }
+
+                                    deck.push(self.createCard('recap'));
+
+                                    return deck;
+                                }())
                             }
                         });
                 }

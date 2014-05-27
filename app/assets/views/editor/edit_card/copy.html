@@ -7,14 +7,14 @@
             </span>
             <span class="modal__textBoxHolder">
                 <input ng-model="card.title" type="text" class="modal__textBox" ng-model="card.title">
-                <span class="field__context typo--context">({{card.title.length}} of 100 max characters recommended)</span>
+                <span class="field__context typo--context">({{card.title.length || 0}} of 100 max characters recommended)</span>
             </span>
         </label>
         <label class="field field--noBreak">
             <span ng-show="EditorCtrl.cardLimits.copy < Infinity" class="modal__label">Slide Copy </span>
             <span class="modal__textBoxHolder">
                 <textarea ng-model="card.note" class="modal__textarea modal__cardCopy"></textarea>
-                <span class="field__context typo--context">({{card.note.length}} of {{EditorCtrl.cardLimits.copy}} max characters)</span>
+                <span class="field__context typo--context">({{card.note.length || 0}} of {{EditorCtrl.cardLimits.copy}} max characters)</span>
             </span>
         </label>
     </form>

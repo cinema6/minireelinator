@@ -3,7 +3,10 @@
         "id": "u-d0370cc7b7de61",
         "username": "josh@cinema6.com",
         "status": "active",
-        "org": "o-d1f0be2ea473cb",
+        "org": {
+            "id": "o-d1f0be2ea473cb",
+            "minAdCount": 3
+        },
         "applications": [
            "e-51ae37625cb57f"
         ],
@@ -36,7 +39,9 @@
         "id": "e2e-light-user",
         "username": "suzyTestmonkey",
         "status": "active",
-        "org": "e2e-org",
+        "org": {
+            "id": "e2e-org"
+        },
         "applications": [
            "e-51ae3762df84dk"
         ],

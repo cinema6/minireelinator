@@ -1,7 +1,21 @@
 # MiniReelinator
 
+* *[Beta7.rc1]*
+  * [FIX]: Character count of 0 is shown before the user types anything
+    (instead of an empty space)
+  * Upload collateral assets by experience and name assets by the key
+    they're stored on the collateral object with (i.e. "splash")
+
+## Beta6 (May 27, 2014)
 * *[Beta6.rc1]*
   * [FIX]: 'Create MiniReel' modals DOM update: 'General' tab added first, 'AutoPlay Settings' added to the end.
+  * Ad server tab is only shown if the org is provisioned with their own
+    ad server
+  * Ad cards are now auto-added when creating a new MiniReel to meet the
+    org's minAdCount
+  * Ad cards will not be deleteable when the org's minAdCount is
+    reached
+* *[/Beta6.rc1]*
 
 ## Beta5 (May 20, 2014)
 * *[Beta5.rc1]*
