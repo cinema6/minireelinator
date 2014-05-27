@@ -1,23 +1,33 @@
 <div class="ui__modal">
-    <navigation class="tabNav__group">
+    <navigation class="tabNav__group clearfix">
+        <h1 class="tabNav__title">Slide Settings</h1>
         <ul class="tabNav__list clearfix">
             <li ng-repeat="tab in EditCardCtrl.tabs" class="tabNav__item">
                 <a c6-sref="{{tab.sref}}"
                     class="tabNav__link" 
-                    title="{{tab.name}}">{{tab.name}}</a>
+                    title="{{tab.name}}">
+                    <span class="tabNav__icon">
+                        <span class="ui__checkSmall sprite--alpha">&nbsp;</span>
+                    </span>
+                    <span class="tabNav__tabName">{{tab.name}} 
+                        <strong class="typo--attention">*</strong>
+                    </span>
+                </a>
             </li>
         </ul>
         <button class="modal__closeBtn sprite--alpha" c6-sref="editor"><span class="ir">Close</span></button>
     </navigation>
 
-    <div class="modal__content">
+    <div class="modal__viewHolder">
         <c6-view></c6-view>
     </div>
     
     <footer class="modal__btnFooter">
-        <span class="typo--attention">* Indicates required field</span>
-        <button class="modal__btn toolbar__delete" c6-sref="editor" title="Cancel">Cancel</button>
-        <button class="modal__btn" title="{{EditCardCtrl.primaryButton.text}}" ng-click="EditCardCtrl.primaryButton.action()" ng-disabled="!EditCardCtrl.primaryButton.enabled">{{EditCardCtrl.primaryButton.text}}</button>
+        <button class="modal__btn modal__btn--first toolbar__delete" c6-sref="editor" title="Cancel">Cancel</button>
+        <button class="modal__btn modal__btn--last" title="{{EditCardCtrl.primaryButton.text}}" ng-click="EditCardCtrl.primaryButton.action()" ng-disabled="!EditCardCtrl.primaryButton.enabled">{{EditCardCtrl.primaryButton.text}}</button>
+        <div class="guideText">
+            <span class="typo--attention">* Indicates required field.</span>
+        </div>
     </footer>
 </div>
 <div class="ui__overlay">&nbsp;</div>

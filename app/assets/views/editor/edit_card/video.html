@@ -1,14 +1,20 @@
 <c6-alias model="EditCardVideoCtrl.model" as="card">
+<div class="modal__content modal__editor-slide">
     <form>
-        <label class="field field--noBreak field--smMargin clearfix">
-            <span class="modal__label">Video URL:<span class="typo--attention"><strong>*</strong></span></span>
-            <input type="text" class="modal__textBox" ng-model="EditCardCtrl.videoUrl">
-            <span class="field__context">Supported Sources: 
-            	<a href="http://www.youtube.com" title="YouTube" target="_blank">YouTube</a>, 
-				<a href="http://www.vimeo.com" title="Vimeo" target="_blank">Vimeo</a>,
-				<a href="http://www.dailymotion.com" title="Daily Motion" target="_blank">Daily Motion</a>
-			</span>
+        <label class="field field--noBreak clearfix">
+            <span class="modal__label">
+                Video URL <span class="typo--attention">*</span>
+            </span>
+            <span class="modal__textBoxHolder">
+                <input type="text" class="modal__textBox" ng-model="EditCardCtrl.videoUrl">
+                <span class="field__context">Supported Sources: 
+                    <a href="http://www.youtube.com" title="YouTube" target="_blank">YouTube</a>, 
+                    <a href="http://www.vimeo.com" title="Vimeo" target="_blank">Vimeo</a>,
+                    <a href="http://www.dailymotion.com" title="Daily Motion" target="_blank">Daily Motion</a>
+                </span>
+            </span>
         </label>
     </form>
         <video-preview service="{{card.data.service}}" videoid="{{card.data.videoid}}" start="card.data.start" end="card.data.end"></video-preview>
+</div>
 </c6-alias>
