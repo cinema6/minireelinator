@@ -1,10 +1,69 @@
-<div class="embedCode__header">
-    <label for="embedtype">Embed Code:</label>
-    <select ng-model="Ctrl.mode" ng-options="mode.value as mode.name for mode in Ctrl.modes" class="embedCode__selector" name="embedtype"></select>
-    <div c6-alias="Ctrl.size as size" ng-show="Ctrl.mode === 'custom'" class="embedCode__customSizeDimensions">
-        <input ng-model="size.width" class="textBox" type="text" value="Width"> x
-        <input ng-model="size.height" class="textBox" type="text" value="Height">
+<div class="embedPreview__group embedPreview__group--lightbox">
+    <label class="embed__label" for="embed-type">Embed Code Type:</label>
+    <select class="embed__selector" name="embed-type" id="embed-type">
+        <option value="text-only">Text Only</option>
+        <option value="image-only">Image Only</option>
+        <option value="image-text-overlay">Image with Text Overlay</option>
+        <option value="horizontal-stack">Horizontal Stack</option>
+        <option value="vertical-stack">Vertical Stack</option>
+    </select>
+    <div class="embedPreview">
+
+
+<!--embed template start-->
+<style>
+    .ir {
+        background-color: transparent;
+        border: 0; width:0; height:0;
+        overflow: hidden; display: block; position:absolute;
+    }
+    .mr-splash__group {
+        width:100%; height:0;
+        padding:0 0 100% 0;
+        background:url('/__dirname/app/assets/img/default_square.jpg') 50% 50% / cover no-repeat;
+        position:relative;
+    }
+    .mr-splash__start {
+        position:absolute;
+        width:100%; height:100%;
+        background:50% 50% / cover no-repeat;
+        cursor:pointer;
+        border:0; padding:0; margin:0;
+    }
+    .mr-splash__copy {
+        position:absolute; bottom:0; left:0; right:0;
+        padding:12px 6px; color:#fff;
+        background:#000; background:rgba(0,0,0,0.55);
+    }
+    .mr-title {
+        font-size:1.125em; line-height:1.5; font-weight:normal;
+        margin:0;
+    }
+</style>
+
+<div class="mr-splash__group">
+    <button id="start" type="button"
+        class="mr-splash__start"
+        style="background-image:url('http://farm6.staticflickr.com/5533/14006384980_7d70c9cd63_b.jpg');">
+        <span class="mr-splash__copy">
+            <h1 class="mr-title">title</h1>
+        </span>
+    </button>
+</div>
+<!--embed template end-->
+
+
     </div>
 </div>
-<textarea ng-model="Ctrl.code" name="" id="" class="embedCode__snippet" cols="30" rows="10"></textarea>
-<p class="embedCode__tip"><strong><span class="typo--attention">*</span> Responsive Auto-Fit</strong> embedding will automatically resize the MiniReel widget to fit nicely into your page. This is the recommended embedding method.</p>
+<div class="embedCode__group">
+    <div class="embedCode__header">
+        <label class="embed__label" for="embed-size">Embed Code Size:</label>
+        <select ng-model="Ctrl.mode" ng-options="mode.value as mode.name for mode in Ctrl.modes" class="embed__selector" name="embed-size" id="embed-size"></select>
+        <div c6-alias="Ctrl.size as size" ng-show="Ctrl.mode === 'custom'" class="embedCode__customSizeDimensions">
+            <input ng-model="size.width" class="textBox" type="text" value="Width"> x
+            <input ng-model="size.height" class="textBox" type="text" value="Height">
+        </div>
+    </div>
+    <textarea ng-model="Ctrl.code" name="" id="" class="embedCode__snippet" cols="30" rows="10"></textarea>
+    <p class="embedCode__tip"><strong><span class="typo--attention">*</span> Responsive Auto-Fit</strong> embedding will automatically resize the MiniReel widget to fit nicely into your page. This is the recommended embedding method.</p>
+</div>
