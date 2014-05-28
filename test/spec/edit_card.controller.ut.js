@@ -24,6 +24,14 @@
                     {
                         name: 'Foo',
                         sref: 'editor.editCard.foo'
+                    },
+                    {
+                        name: 'Copy',
+                        sref: 'editor.editCard.copy'
+                    },
+                    {
+                        name: 'Video',
+                        sref: 'editor.editCard.video'
                     }
                 ];
 
@@ -253,6 +261,27 @@
                     });
                 }
 
+                describe('currentTab', function() {
+                    describe('if the current state is not represented by a tab', function() {
+                        beforeEach(function() {
+                            c6State.current = { name: 'editor.editCard.server' };
+                        });
+
+                        it('should be null', function() {
+                            expect(EditCardCtrl.currentTab).toBeNull();
+                        });
+                    });
+
+                    describe('if the current state is represented by a tab', function() {
+                        it('should be that tab', function() {
+                            tabs.forEach(function(tab) {
+                                c6State.current = { name: tab.sref };
+                                expect(EditCardCtrl.currentTab).toBe(tab);
+                            });
+                        });
+                    });
+                });
+
                 describe('copyComplete', function() {
                     function copyComplete() {
                         return EditCardCtrl.copyComplete;
@@ -323,7 +352,114 @@
                     });
                 });
 
-                describe('primaryButtonAction', function() {
+                describe('negativeButton', function() {
+                    var tabs = [
+                        {
+                            sref: 'editor.editCard.copy'
+                        },
+                        {
+                            sref: 'editor.editCard.video'
+                        },
+                        {
+                            sref: 'editor.editCard.ballot'
+                        }
+                    ];
+
+                    tabs.forEach(function(tab, index) {
+                        describe('when the state is ' + tab.sref, function() {
+                            beforeEach(function() {
+                                EditCardCtrl.tabs = tabs;
+                                Object.defineProperty(EditCardCtrl, 'currentTab', {
+                                    value: tab
+                                });
+                            });
+
+                            it('should always return the same object', function() {
+                                expect(EditCardCtrl.negativeButton).toBe(EditCardCtrl.negativeButton);
+                            });
+
+                            describe('if the card is not new', function() {
+                                beforeEach(function() {
+                                    EditCardCtrl.isNew = false;
+                                });
+
+                                describe('text', function() {
+                                    it('should be "Cancel"', function() {
+                                        expect(EditCardCtrl.negativeButton.text).toBe('Cancel');
+                                    });
+                                });
+
+                                describe('action()', function() {
+                                    beforeEach(function() {
+                                        EditCardCtrl.negativeButton.action();
+                                    });
+
+                                    it('should go back to the editor state', function() {
+                                        expect(c6State.goTo).toHaveBeenCalledWith('editor');
+                                    });
+                                });
+
+                                describe('enabled', function() {
+                                    it('should be true', function() {
+                                        expect(EditCardCtrl.negativeButton.enabled).toBe(true);
+                                    });
+                                });
+                            });
+
+                            describe('if the card is new', function() {
+                                beforeEach(function() {
+                                    EditCardCtrl.isNew = true;
+                                });
+
+                                if (index === 0) {
+                                    describe('on the first card', function() {
+                                        describe('text', function() {
+                                            it('should be "Cancel"', function() {
+                                                expect(EditCardCtrl.negativeButton.text).toBe('Cancel');
+                                            });
+                                        });
+
+                                        describe('action()', function() {
+                                            beforeEach(function() {
+                                                EditCardCtrl.negativeButton.action();
+                                            });
+
+                                            it('should go back to the editor state', function() {
+                                                expect(c6State.goTo).toHaveBeenCalledWith('editor');
+                                            });
+                                        });
+
+                                        describe('enabled', function() {
+                                            it('should be true', function() {
+                                                expect(EditCardCtrl.negativeButton.enabled).toBe(true);
+                                            });
+                                        });
+                                    });
+                                } else {
+                                    describe('on subsequent cards', function() {
+                                        describe('text', function() {
+                                            it('should be "Prev Step"', function() {
+                                                expect(EditCardCtrl.negativeButton.text).toBe('Prev Step');
+                                            });
+                                        });
+
+                                        describe('action', function() {
+                                            beforeEach(function() {
+                                                EditCardCtrl.negativeButton.action();
+                                            });
+
+                                            it('should go back to the prev tab', function() {
+                                                expect(c6State.goTo).toHaveBeenCalledWith(tabs[index - 1].sref);
+                                            });
+                                        });
+                                    });
+                                }
+                            });
+                        });
+                    });
+                });
+
+                describe('primaryButton', function() {
                     beforeEach(function() {
                         c6State.current = c6State.get('editor.editCard.server');
                     });
@@ -356,7 +492,7 @@
                                 });
 
                                 it('should be "Done"', function() {
-                                    expect(EditCardCtrl.primaryButton.text).toBe('Done');
+                                    expect(EditCardCtrl.primaryButton.text).toBe('I\'m Done!');
                                 });
                             });
                         });
@@ -395,7 +531,7 @@
 
                             describe('the text', function() {
                                 it('should be "Next"', function() {
-                                    expect(EditCardCtrl.primaryButton.text).toBe('Next');
+                                    expect(EditCardCtrl.primaryButton.text).toBe('Next Step');
                                 });
                             });
 
@@ -437,49 +573,51 @@
                             });
                         });
 
-                        describe('on the editor.editCard.video state', function() {
-                            beforeEach(function() {
-                                c6State.current = c6State.get('editor.editCard.video');
-                            });
-
-                            describe('the text', function() {
-                                describe('if the minireel is not published', function() {
-                                    beforeEach(function() {
-                                        EditorCtrl.model.status = 'pending';
-                                    });
-
-                                    it('should be "Save"', function() {
-                                        expect(EditCardCtrl.primaryButton.text).toBe('Save');
-                                    });
-                                });
-
-                                describe('if the minireel is published', function() {
-                                    beforeEach(function() {
-                                        EditorCtrl.model.status = 'active';
-                                    });
-
-                                    it('should be "Done"', function() {
-                                        expect(EditCardCtrl.primaryButton.text).toBe('Done');
-                                    });
-                                });
-                            });
-
-                            describe('the action', function() {
+                        ['editor.editCard.video', 'editor.editCard.ballot'].forEach(function(state) {
+                            describe('on the ' + state + ' state', function() {
                                 beforeEach(function() {
-                                    spyOn(EditCardCtrl, 'save');
-
-                                    EditCardCtrl.primaryButton.action();
+                                    c6State.current = c6State.get(state);
                                 });
 
-                                it('should call "save()"', function() {
-                                    expect(EditCardCtrl.save).toHaveBeenCalled();
-                                    expect(EditCardCtrl.save.calls.mostRecent().object).toBe(EditCardCtrl);
-                                });
-                            });
+                                describe('the text', function() {
+                                    describe('if the minireel is not published', function() {
+                                        beforeEach(function() {
+                                            EditorCtrl.model.status = 'pending';
+                                        });
 
-                            describe('enabled', function() {
-                                it('should be false', function() {
-                                    expect(EditCardCtrl.primaryButton.enabled).toBe(false);
+                                        it('should be "Save"', function() {
+                                            expect(EditCardCtrl.primaryButton.text).toBe('Save');
+                                        });
+                                    });
+
+                                    describe('if the minireel is published', function() {
+                                        beforeEach(function() {
+                                            EditorCtrl.model.status = 'active';
+                                        });
+
+                                        it('should be "Done"', function() {
+                                            expect(EditCardCtrl.primaryButton.text).toBe('I\'m Done!');
+                                        });
+                                    });
+                                });
+
+                                describe('the action', function() {
+                                    beforeEach(function() {
+                                        spyOn(EditCardCtrl, 'save');
+
+                                        EditCardCtrl.primaryButton.action();
+                                    });
+
+                                    it('should call "save()"', function() {
+                                        expect(EditCardCtrl.save).toHaveBeenCalled();
+                                        expect(EditCardCtrl.save.calls.mostRecent().object).toBe(EditCardCtrl);
+                                    });
+                                });
+
+                                describe('enabled', function() {
+                                    it('should be false', function() {
+                                        expect(EditCardCtrl.primaryButton.enabled).toBe(false);
+                                    });
                                 });
                             });
                         });

@@ -568,6 +568,7 @@
                 c = c6Computed($scope),
                 EditorCtrl = $scope.EditorCtrl,
                 primaryButton = {},
+                negativeButton = {},
                 removeInitWatcher = $scope.$watch(
                     function() { return self.tabs; },
                     function(tabs) {
@@ -577,6 +578,14 @@
                 );
 
             Object.defineProperties(this, {
+                currentTab: {
+                    configurable: true,
+                    get: function() {
+                        return this.tabs.filter(function(tab) {
+                            return tab.sref === c6State.current.name;
+                        })[0] || null;
+                    }
+                },
                 canSave: {
                     configurable: true,
                     get: function() {
@@ -626,19 +635,37 @@
                     get: function() {
                         var state = c6State.current.name;
 
-                        if (this.canSave || state === 'editor.editCard.video') {
+                        if (this.canSave || /^(editor.editCard.(video|ballot))$/.test(state)) {
                             return copy({
-                                text: EditorCtrl.model.status === 'active' ? 'Done' : 'Save',
+                                text: EditorCtrl.model.status === 'active' ? 'I\'m Done!' : 'Save',
                                 action: function() { self.save(); },
                                 enabled: this.canSave
                             }, primaryButton);
                         }
 
                         return copy({
-                            text: 'Next',
+                            text: 'Next Step',
                             action: function() { c6State.goTo('editor.editCard.video'); },
                             enabled: this.copyComplete && !EditorCtrl.errorForCard(this.model)
                         }, primaryButton);
+                    }
+                },
+                negativeButton: {
+                    get: function() {
+                        var prevTab = self.tabs[self.tabs.indexOf(self.currentTab) - 1];
+
+                        return copy({
+                            text: (this.isNew && !!prevTab) ?
+                                'Prev Step' : 'Cancel',
+                            action: this.isNew ?
+                                function() {
+                                    c6State.goTo((prevTab || { sref: 'editor' }).sref);
+                                } :
+                                function() {
+                                    c6State.goTo('editor');
+                                },
+                            enabled: true
+                        }, negativeButton);
                     }
                 }
             });
