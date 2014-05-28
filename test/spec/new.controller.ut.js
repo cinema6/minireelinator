@@ -6,6 +6,7 @@
             var $rootScope,
                 $scope,
                 $controller,
+                c6State,
                 NewCtrl;
 
             var model,
@@ -59,11 +60,27 @@
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
                     $controller = $injector.get('$controller');
+                    c6State = $injector.get('c6State');
 
                     $scope = $rootScope.$new();
                     $scope.$apply(function() {
                         NewCtrl = $controller('NewController', { $scope: $scope, cModel: model });
                         NewCtrl.model = model;
+                        NewCtrl.tabs = [
+                            {
+                                sref: 'general'
+                            },
+                            {
+                                sref: 'category'
+                            },
+                            {
+                                sref: 'mode'
+                            },
+                            {
+                                sref: 'autoplay'
+                            }
+                        ];
+                        NewCtrl.baseState = 'manager.new';
                     });
                 });
             });
@@ -96,25 +113,67 @@
                         expect(NewCtrl.title).toBe(minireel.data.title);
                     });
                 });
+
+                describe('currentTab', function() {
+                    describe('if there is no tab for the current state', function() {
+                        beforeEach(function() {
+                            c6State.current = { name: 'manager.new.foo' };
+                        });
+
+                        it('should be null', function() {
+                            expect(NewCtrl.currentTab).toBeNull();
+                        });
+                    });
+
+                    describe('if there is a tab for the current state', function() {
+                        it('should be the tab for the current state', function() {
+                            NewCtrl.tabs.forEach(function(tab) {
+                                c6State.current = { name: 'manager.new.' + tab.sref };
+
+                                expect(NewCtrl.currentTab).toBe(tab);
+                            });
+                        });
+                    });
+                });
             });
 
-            describe('save()', function() {
-                beforeEach(function() {
-                    NewCtrl.mode = model.modes[0].modes[0];
-                    NewCtrl.autoplay = true;
-                    NewCtrl.title = 'Sweet!';
+            describe('methods', function() {
+                describe('save()', function() {
+                    beforeEach(function() {
+                        NewCtrl.mode = model.modes[0].modes[0];
+                        NewCtrl.autoplay = true;
+                        NewCtrl.title = 'Sweet!';
 
-                    NewCtrl.save();
-                });
+                        NewCtrl.save();
+                    });
 
-                ['title', 'autoplay'].forEach(function(prop) {
-                    it('should copy the ' + prop + ' setting to the minireel', function() {
-                        expect(minireel.data[prop]).toBe(NewCtrl[prop]);
+                    ['title', 'autoplay'].forEach(function(prop) {
+                        it('should copy the ' + prop + ' setting to the minireel', function() {
+                            expect(minireel.data[prop]).toBe(NewCtrl[prop]);
+                        });
+                    });
+
+                    it('should copy the mode to the minreel', function() {
+                        expect(minireel.data.mode).toBe(NewCtrl.mode.value);
                     });
                 });
 
-                it('should copy the mode to the minreel', function() {
-                    expect(minireel.data.mode).toBe(NewCtrl.mode.value);
+                describe('isAsFarAs(tab)', function() {
+                    beforeEach(function() {
+                        Object.defineProperty(NewCtrl, 'currentTab', {
+                            value: NewCtrl.tabs[1]
+                        });
+                    });
+
+                    it('should be true if the currentTab is, or comes before, the currentTab', function() {
+                        NewCtrl.tabs.forEach(function(tab, index) {
+                            if (index <= 1) {
+                                expect(NewCtrl.isAsFarAs(tab)).toBe(true);
+                            } else {
+                                expect(NewCtrl.isAsFarAs(tab)).toBe(false);
+                            }
+                        });
+                    });
                 });
             });
 

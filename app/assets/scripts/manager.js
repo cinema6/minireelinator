@@ -108,8 +108,8 @@
                 });
         }])
 
-        .controller('NewController', ['$scope','cModel','MiniReelService',
-        function                     ( $scope , cModel , MiniReelService ) {
+        .controller('NewController', ['$scope','cModel','MiniReelService','c6State',
+        function                     ( $scope , cModel , MiniReelService , c6State ) {
             var self = this,
                 minireel = cModel.minireel;
 
@@ -123,6 +123,24 @@
             );
             this.autoplay = minireel.data.autoplay;
             this.title = minireel.data.title;
+
+            Object.defineProperties(this, {
+                currentTab: {
+                    configurable: true,
+                    get: function() {
+                        var state = c6State.current.name
+                            .replace(this.baseState + '.', '');
+
+                        return this.tabs.reduce(function(result, next) {
+                            return state === next.sref ? next : result;
+                        }, null);
+                    }
+                }
+            });
+
+            this.isAsFarAs = function(tab) {
+                return this.tabs.indexOf(tab) <= this.tabs.indexOf(this.currentTab);
+            };
 
             this.save = function() {
                 var data = this.model.minireel.data;

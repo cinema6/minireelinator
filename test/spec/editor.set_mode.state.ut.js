@@ -14,6 +14,33 @@
             var minireel,
                 appData;
 
+            var tabs = {
+                general: {
+                    name: 'Title Settings',
+                    sref: 'general',
+                    visits: 0,
+                    requiredVisits: 0
+                },
+                category: {
+                    name: 'Lightbox Settings',
+                    sref: 'category',
+                    visits: 0,
+                    requiredVisits: 0
+                },
+                mode: {
+                    name: 'MiniReel Type',
+                    sref: 'mode',
+                    visits: 0,
+                    requiredVisits: 0
+                },
+                autoplay: {
+                    name: 'Autoplay',
+                    sref: 'autoplay',
+                    visits: 0,
+                    requiredVisits: 0
+                }
+            };
+
             beforeEach(function() {
                 minireel = {};
                 appData = {
@@ -125,6 +152,14 @@
 
                 it('should set the controller\'s baseState to "editor.setMode"', function() {
                     expect(controller.baseState).toBe('editor.setMode');
+                });
+
+                it('should enable all but the first tab', function() {
+                    expect(controller.tabs).toEqual([
+                        jasmine.objectContaining(tabs.category),
+                        jasmine.objectContaining(tabs.mode),
+                        jasmine.objectContaining(tabs.autoplay)
+                    ]);
                 });
             });
         });
