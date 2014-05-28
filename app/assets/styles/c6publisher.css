@@ -178,6 +178,30 @@
         .ui__checkSmall--white {
             background-position:-2.125em 0;
         }
+    .ui__textIconSmall {
+        width:0.75em; height:0.75em;
+        background-position:-0.8125em -3.8125em;
+        display:block;
+    }
+        .ui__textIconSmall--white {
+            background-position:0 -3.8125em;
+        }
+    .ui__playIconSmall {
+        width:0.75em; height:0.75em;
+        background-position:-2.4375em -3.8125em;
+        display:block;
+    }
+        .ui__playIconSmall--white {
+            background-position:-1.625em -3.8125em;
+        }
+    .ui__ballotIconSmall {
+        width:1.3125em; height:0.75em;
+        background-position:-4.625em -3.8125em;
+        display:block;
+    }
+        .ui__ballotIconSmall--white {
+            background-position:-3.25em -3.8125em;
+        }
     .ui__add {
         background-position:-5.3125em 0; display: block;
         width:2.25em; height:2.25em;
@@ -405,11 +429,28 @@
                     .tabNav__icon .ui__checkSmall {
                         display: block;
                         margin:0.4375em auto 0;
-                        background-position:-2.125em 0;
                     }
-                    .tabNav__link.c6-active .ui__checkSmall {
-                        background-position:-3.0625em 0;
+                        .tabNav__link.c6-active .ui__checkSmall {
+                            background-position:-3.0625em 0;
+                        }
+                    .tabNav__icon .ui__textIconSmall {
+                        margin:0.375em auto 0;
                     }
+                        .tabNav__link.c6-active .ui__textIconSmall {
+                            background-position:-0.8125em -3.8125em;
+                        }
+                    .tabNav__icon .ui__playIconSmall {
+                        margin:0.375em auto 0;
+                    }
+                        .tabNav__link.c6-active .ui__playIconSmall {
+                            background-position:-2.4375em -3.8125em;
+                        }
+                    .tabNav__icon .ui__ballotIconSmall {
+                        margin:0.375em auto 0;
+                    }
+                        .tabNav__link.c6-active .ui__ballotIconSmall {
+                            background-position:-4.625em -3.8125em;
+                        }
                 .tabNav__tabName {
                     display: block;
                     margin:0.125em 0 0 0;
@@ -499,12 +540,12 @@
         }   
             .field--noBreak .modal__label {
                 float:left; width:9rem;
+                margin:0.125rem 0 0 0;
             }
             .field--noBreak .modal__textBoxHolder {
                 float:right; width:36.5rem;
             }
             .field--noBreak .field__context--short {
-                float:left; margin:5px 0 0 0.5em;
                 width:auto;
             }
         .modal__label {
@@ -539,10 +580,10 @@
         }
             .modal__textBox--short,
             .field--noBreak .modal__textBox--short {
-                width:22.5rem; float:left;
+                width:22.5rem;
             }
         .modal__textarea {
-            width:100%; padding:0.5em 0.75em;
+            width:100%;
             font-size:1rem;
         }
             .modal__cardCopy {
