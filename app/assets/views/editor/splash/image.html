@@ -1,30 +1,39 @@
 <div class="modal__content modal__editor-coverImg clearfix">
-    <form class="coverUploader__group">
-        <div class="coverUploader__imgBox" c6-bg-img="{{(EditorSplashCtrl.splash | image) || minireel.data.collateral.splash}}">
-            <!--<input class="coverUploader__fileDrop" type="file">-->
+    <form class="imgSettings__group">
+        <div class="imgSettings__imgHolder">
+            <div class="imgSettings__imgBox imgSettings__imgBox--square" c6-bg-img="{{(EditorSplashCtrl.splash | image) || minireel.data.collateral.splash}}">
+                &nbsp;
+            </div>
         </div>
-        <div class="coverUploader__copy">
-            <!--<p>Upload your image or drag and drop it into the image space on the left.</p>-->
-
-            <input class="coverUploader__filePath" ng-model="EditorSplashCtrl.splash" type="file">
-            <div class="coverUploader__controls">
-                <div ng-show="!!EditorSplashCtrl.currentUpload" c6-alias="EditorSplashCtrl.currentUpload.progress as progress">
-                    <div class="progressBar">
-                        <div ng-style="{ width: (progress.complete | percent) }" class="progressBar__status">&nbsp;</div>
+        <div class="imgSettings__copy">
+            <div class="coverUploader__group">
+                <label class="modal__label" for="img-upload">Upload Your Image</label>
+                <input id="img-upload" class="coverUploader__filePath" ng-model="EditorSplashCtrl.splash" type="file">
+                <div class="coverUploader__controls">
+                    <div ng-show="!!EditorSplashCtrl.currentUpload" c6-alias="EditorSplashCtrl.currentUpload.progress as progress">
+                        <div class="progressBar">
+                            <div ng-style="{ width: (progress.complete | percent) }" class="progressBar__status">&nbsp;</div>
+                        </div>
+                        <p class="progressBar__statusText">
+                            Loading {{(progress.uploaded / 1024) | number:0}} kb of {{(progress.total / 1024) | number:0}} kb
+                        </p>
                     </div>
-                    <p class="progressBar__statusText">
-                        Loading {{(progress.uploaded / 1024) | number:0}} kb of {{(progress.total / 1024) | number:0}} kb
-                    </p>
+                    <p class="typo--attention" ng-show="EditorSplashCtrl.fileTooBig">The file you selected is too large. It must be under {{EditorSplashCtrl.maxFileSize / 1024}} kb.</p>
+                    <button ng-click="EditorSplashCtrl.upload()" ng-show="!!EditorSplashCtrl.splash && !EditorSplashCtrl.fileTooBig" class="coverUploader__button toolbar__btn">Upload</button>
                 </div>
-                <p class="typo--attention" ng-show="EditorSplashCtrl.fileTooBig">The file you selected is too large. It must be under {{EditorSplashCtrl.maxFileSize / 1024}} kb.</p>
-                <button ng-click="EditorSplashCtrl.upload()" ng-show="!!EditorSplashCtrl.splash && !EditorSplashCtrl.fileTooBig" class="coverUploader__button toolbar__btn">Upload</button>
+                <ul class="coverUploader__helpTips">
+                    <li>For best results, images should be at least 600 pixels wide.</li>
+                    <li>Images should be less than {{EditorSplashCtrl.maxFileSize / 1024}} kb in filesize.</li>
+                </ul>
             </div>
 
-            <ul class="coverUploader__helpTips">
-                <li>Images should be 600 pixels by 600 pixels.</li>
-                <li>Images should be less than {{EditorSplashCtrl.maxFileSize / 1024}} kb in filesize.</li>
-                <li>Keep in mind that in some situations, the edges of the image may get cut off.</li>
-            </ul>
+            <label class="modal__label" for="aspect-ratio">Desired Aspect Ratio</label>
+            <select id="aspect-ratio" class="modal__selector">
+                <option value="volvo">Square (1:1)</option>
+                <option value="saab">Medium Rectangle (6:5)</option>
+                <option value="opel">Video Rectangle (3:2)</option>
+                <option value="audi">Widescreen Rectangle (16:9)</option>
+            </select>
         </div>
     </form>
 </div>

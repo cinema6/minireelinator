@@ -21,41 +21,13 @@
                 </a>
             </li>
         </ul>
-        <button class="modal__closeBtn sprite--alpha" c6-sref="{{NewCtrl.returnState}}"><span class="ir">Close</span></button>
+        <button class="modal__closeBtn sprite--alpha" c6-sref="editor"><span class="ir">Close</span></button>
     </navigation>
 
     <div class="modal__viewHolder">
-
-        <div class="modal__content modal__editor-coverImg clearfix">
-            <ul class="wizard__group">
-                <li class="wizard__choice">
-                    <input id="source-generate" type="radio" 
-                        name="coverImg-source"
-                        class="modal__radioBtn" />
-                    <label class="wizard__hitarea" for="source-generate"><span class="ir">Auto-Generated Image</span></label>
-                    <div class="wizard__diagram sprite--fff diagram__{{$this.value}}">&nbsp;</div>
-                    <div class="wizard__copy">
-                        <h2 class="wizard__title">Auto-Generated Image</h2>
-                        <p class="wizard__p">The thumbnail for your MiniReel will be generated using screen shots from your videos.</p>
-                    </div>
-                </li>
-                <li class="wizard__choice">
-                    <input id="source-upload" type="radio" 
-                        name="coverImg-source"
-                        class="modal__radioBtn" />
-                    <label class="wizard__hitarea" for="source-upload"><span class="ir">Auto-Generated Image</span></label>
-                    <div class="wizard__diagram sprite--fff diagram__{{$this.value}}">&nbsp;</div>
-                    <div class="wizard__copy">
-                        <h2 class="wizard__title">Upload Your Own</h2>
-                        <p class="wizard__p">You can upload your own thumbnail for the MiniReel.</p>
-                    </div>
-                </li>
-            </ul>
-        </div>
-
+        <c6-view></c6-view>
     </div>
 
-    <div class="modal__fineprint typo--context">* blah</div>
     <footer class="modal__btnFooter">
         <button class="modal__btn modal__btn--first toolbar__delete" title="Cancel" c6-sref="editor">Cancel</button>
         <button class="modal__btn modal__btn--last" title="Save">Next Step</button>

@@ -1,36 +1,37 @@
-<h1 class="modal__title modal__title--lightboxWizard">When Can Users Skip the Ad?</h1>
-<form c6-alias="EditCardSkipCtrl.model as card">
-    <ul class="wizard__group wizard__group--small">
-        <li class="wizard__choice wizard__choice--imgLess">
-            <input id="skip_anytime" type="radio" 
-                name="minireel-category" ng-model="card.data.skip" value="anytime"
-                class="modal__radioBtn" />
-            <label class="wizard__hitarea" for="skip_anytime"><span class="ir">Skip Anytime</span></label>
-            <div class="wizard__copy wizard__copy--imgLess">
-                <h2 class="wizard__title">Skip Anytime</h2>
-                <p class="wizard__p">Allow skip at any time.</p>
-            </div>
-        </li>
-        <li class="wizard__choice wizard__choice--imgLess">
-            <input id="skip_delayed" type="radio" 
-                name="minireel-category" ng-model="card.data.skip" value="delay"
-                class="modal__radioBtn" />
-            <label class="wizard__hitarea" for="skip_delayed"><span class="ir">Delayed Skip</span></label>
-            <div class="wizard__copy">
-                <h2 class="wizard__title">Delayed Skip</h2>
-                <p class="wizard__p">Allow skip after 6 seconds.</p>
-            </div>
-        </li>
-        <li class="wizard__choice wizard__choice--imgLess">
-            <input id="skip_never" type="radio" 
-                name="minireel-category" ng-model="card.data.skip" value="never"
-                class="modal__radioBtn" />
-            <label class="wizard__hitarea" for="skip_never"><span class="ir">Never Skip</span></label>
-            <div class="wizard__copy">
-                <h2 class="wizard__title">Never Skip</h2>
-                <p class="wizard__p">Skip is disabled until the user reaches the end of the ad.</p>
-            </div>
-        </li>
-    </ul>
+<div class="modal__content modal__editor-ad">
+    <form c6-alias="EditCardSkipCtrl.model as card">
+        <ul class="wizard__group wizard__group--small">
+            <li class="wizard__choice wizard__choice--imgLess">
+                <input id="skip_anytime" type="radio" 
+                    name="minireel-category" ng-model="card.data.skip" value="anytime"
+                    class="modal__radioBtn" />
+                <label class="wizard__hitarea" for="skip_anytime"><span class="ir">Skip Anytime</span></label>
+                <div class="wizard__copy wizard__copy--imgLess">
+                    <h2 class="wizard__title">Skip Anytime</h2>
+                    <p class="wizard__p">Allow skip at any time.</p>
+                </div>
+            </li>
+            <li class="wizard__choice wizard__choice--imgLess">
+                <input id="skip_delayed" type="radio" 
+                    name="minireel-category" ng-model="card.data.skip" value="delay"
+                    class="modal__radioBtn" />
+                <label class="wizard__hitarea" for="skip_delayed"><span class="ir">Delayed Skip</span></label>
+                <div class="wizard__copy">
+                    <h2 class="wizard__title">Delayed Skip</h2>
+                    <p class="wizard__p">Allow skip after 6 seconds.</p>
+                </div>
+            </li>
+            <li class="wizard__choice wizard__choice--imgLess">
+                <input id="skip_never" type="radio" 
+                    name="minireel-category" ng-model="card.data.skip" value="never"
+                    class="modal__radioBtn" />
+                <label class="wizard__hitarea" for="skip_never"><span class="ir">Never Skip</span></label>
+                <div class="wizard__copy">
+                    <h2 class="wizard__title">Never Skip</h2>
+                    <p class="wizard__p">Skip is disabled until the user reaches the end of the ad.</p>
+                </div>
+            </li>
+        </ul>
 
-</form>
+    </form>
+</div>

@@ -304,7 +304,9 @@
                 .modal__editor-mr-general .modal__textBox {
                     padding:0.5em;
                 }
-            .modal__editor-mr-category {
+            .modal__editor-mr-category,
+            .modal__editor-coverImg,
+            .modal__editor-ad {
                 padding:3em 0 0 0;
             }
 
@@ -413,36 +415,39 @@
                     margin:0.125em 0 0 0;
                 }
     
-    /*  cover image uploader
+    /*  image settings / uploader
     ========================================================================== */
-        .coverUploader__group {
-            margin:1em 0 0 0;
+        .imgSettings__group {
+            margin:0;
         }
-            .coverUploader__imgBox {
-                width:300px; height:300px;
+            .imgSettings__imgHolder {
+                width:18.75em; position:absolute;
+            }
+            .imgSettings__imgBox {
+                width:100%; height:0;
                 position:absolute;
                 background:#ccc url('../img/default_square.jpg') 50% 50% / cover no-repeat;
             }
-            .coverUploader__copy {
+                .imgSettings__imgBox--square {
+                    padding-bottom:100%;
+                }
+                .imgSettings__imgBox--medRect {
+                    padding-bottom:83.333%;
+                }
+                .imgSettings__imgBox--vidRect {
+                    padding-bottom:66.667%;
+                }
+                .imgSettings__imgBox--widescreen {
+                    padding-bottom:56.25%;
+                }
+            .imgSettings__copy {
                 margin-left:324px;
             }
-                .coverUploader__helpTips {
-                    font-size:0.875em; line-height: 1.25;
-                    padding:1em 0 0 2em; list-style: disc;
+                .imgSettings__group .modal__label {
+                    margin-bottom:0.1875em;
                 }
-                    .coverUploader__helpTips li {
-                        margin:0.5em 0;
-                    }
-                .crop__landscape {
-                    font-weight:700; color:green;
-                }
-                .crop__portrait {
-                    font-weight:700; color:blue;
-                }
-                .progressBar__statusText {
-                    font-size:0.75em;
-                    margin:0.25em 0 1em;
-                }
+                
+
                 .coverUploader__filePath {
                     display: block;
                     padding:0; margin:0;
@@ -452,33 +457,39 @@
                         background:#eff9ff;
                     }
                 .coverUploader__controls {
-                    height:9.375em;
+                    height:6.1875em;
                 }
+                    .coverUploader__group .progressBar__statusText {
+                        font-size:0.75em;
+                        margin:0.25em 0 1em;
+                    }
                     .coverUploader__controls .coverUploader__button {
                         margin:0.75em 0 0 0;
                     }
                     .coverUploader__controls .typo--attention {
                         margin:0.25em 0 0 0;
                     }
-                .coverUploader__fileDrop {
-                    display: block;
-                    position:absolute; z-index: 5;
-                    width:100%; height:100%;
-                    opacity:0; cursor:pointer;
-                    border:0; margin:0; padding:0;
-                }
-                .progressBar {
+                .coverUploader__group .progressBar {
                     border-radius:3px;
                     height:0.5em; overflow: hidden;
                     background:#ccc;
                     margin:0.875em 0 0.25em 0;
                 }
-                    .progressBar__status {
+                    .coverUploader__group .progressBar__status {
                         background:#72ad25;
                     }
-                    .progressBar__statusText {
+                    .coverUploader__group .progressBar__statusText {
                         margin:0;
                     }
+                .coverUploader__helpTips {
+                    font-size:0.875em; line-height: 1.25;
+                    padding:0 0 0 2em; margin:0 0 1.25rem 0;
+                    list-style: disc;
+                }
+                    .coverUploader__helpTips li {
+                        margin:0.5em 0;
+                    }
+                
 
 
     /*  modal forms
@@ -540,6 +551,14 @@
                 font-family: 'museo-sans', Arial, Helvetica, sans-serif;
                 display: block;
             }
+        .modal__selector {
+            margin:0;
+            box-sizing:border-box;
+            border:1px solid #b0b0b0;
+            padding:0.3125rem 0.375rem 0.375rem;
+            background:#f4f4f4;
+            color:#646464; font-size:0.875em;
+        }
 
     /*  minireel wizard
     ========================================================================== */
@@ -558,11 +577,18 @@
             .wizard__diagram {
                 height:7.5em;
             }
+            .wizard__choice--textOnly {
+                padding:0.8125em 0 0 0;
+            }
             .wizard__hitarea {
                 width:100%; display: block;
                 cursor:pointer;
                 position:absolute; top:0; left:0; z-index: 2;
             }
+                .wizard__choice--textOnly,
+                .wizard__choice--textOnly .wizard__hitarea {
+                    height:4.5em;
+                }
             .wizard__diagram {
                 width:11.25em;
                 position:absolute; top:0; left:3em;
@@ -583,6 +609,9 @@
             .wizard__copy {
                 position:absolute; top:0; left:15.375em;
             }
+                .wizard__choice--textOnly .wizard__copy {
+                    left:3em;
+                }
                 .wizard__copy .wizard__title {
                     font-size:1.125em; color:#444; font-weight:700;
                     margin:5px 0;
@@ -590,7 +619,7 @@
                 }
                 .wizard__copy .wizard__p {
                     font-size:1em; color:#646464; font-weight:100;
-                    margin:11px 0;
+                    margin:5px 0;
                 }
                 .wizard__choice:hover .wizard__title {
                     color:#13a2ff;
@@ -698,13 +727,27 @@
             margin-bottom:0; padding-bottom:1px;
         }
         .pageHeader__coverImg {
-            width:7.5em; height:7.5em;
-            background:#ccc url('../img/default_square.jpg') 50% 50% / cover no-repeat;
+            width:7.5em;
             margin:0.5em 0 0 0;
             position:absolute;
             cursor:pointer;
-            overflow: hidden;
         }
+            .pageHeader__coverImg .miniReel__imgBox {
+                height:0;
+                background:#ccc url('../img/default_square.jpg') 50% 50% / cover no-repeat;
+            }
+            .pageHeader__coverImg .miniReel__imgBox--square {
+                    padding:0 0 100%;
+                }
+                .pageHeader__coverImg .miniReel__imgBox--medRect {
+                    padding:0 0 83.333%;
+                }
+                .pageHeader__coverImg .miniReel__imgBox--vidRect {
+                    padding:0 0 66.667%;
+                }
+                .pageHeader__coverImg .miniReel__imgBox--widescreen {
+                    padding:0 0 56.25%;
+                }
             .coverImg__edit {
                 width:100%; height:100%;
                 position:absolute; top:0;
@@ -1295,7 +1338,7 @@
     /*  ad card 
     ========================================================================== */
     .card--ad .card__img {
-        background-position:-50em 0;
+        background-position:-36.875em 0;
     }
 
     /*  recap card
@@ -1305,7 +1348,7 @@
         padding:0 0.75em;
     }
         .card--recap .card__img {
-            background-position:-50em -9.625em;
+            background-position:-23.75em -0.625em;
             width:12em; height:10.5em;
             position:static;
             margin:0.6875em 0 0 0;
