@@ -5,8 +5,8 @@
             {{dialog.message}}
         </div>
         <footer class="modal__btnFooter modal__btnFooter--confirmation">
-            <button class="modal__btn toolbar__confirm" ng-click="dialog.onAffirm()" title="{{dialog.affirm}}">{{dialog.affirm}}</button>
-            <button class="modal__btn toolbar__neutral" ng-click="dialog.onCancel()" title="{{dialog.cancel}}">{{dialog.cancel}}</button>
+            <button class="modal__btn modal__btn--last toolbar__confirm" ng-click="dialog.onAffirm()" title="{{dialog.affirm}}">{{dialog.affirm}}</button>
+            <button class="modal__btn modal__btn--first toolbar__neutral" ng-click="dialog.onCancel()" title="{{dialog.cancel}}">{{dialog.cancel}}</button>
         </footer>
         <button ng-click="dialog.onDismiss()" class="modal__closeBtn sprite--alpha"><span class="ir">Close</span></button>
     </div>

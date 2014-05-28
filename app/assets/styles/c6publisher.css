@@ -240,7 +240,7 @@
             margin:0.25em 0 0 0; color:#848484;
         }
         .ui__modal--confirmation .modal__closeBtn {
-            margin:-0.5em -0.5em 0 0;
+            margin:-0.5em 0 0 0;
         }
 
     /*  shared modal styles
@@ -346,6 +346,7 @@
     ========================================================================== */
         .preview__container {
             -webkit-transition: all 0.5s; transition: all 0.5s;
+            padding:1.5em;
         }
             .preview__container--mobile {
                 width:20em; height:39.25em;
@@ -354,6 +355,12 @@
             .preview__container--desktop {
                 width: 43.75em; height: 39.5em;
                 margin:-21.625em 0 0 -23.375em;
+            }
+            .preview__container .modal__title {
+                margin:-0.5em 0 0.25em;
+            }
+            .preview__container .modal__closeBtn {
+                top:0.75em;
             }
             .preview__iframe {
                 border: 0;

@@ -5,6 +5,8 @@
     (instead of an empty space)
   * Upload collateral assets by experience and name assets by the key
     they're stored on the collateral object with (i.e. "splash")
+  * [FEATURE]: Added new styles for modal windows
+  * [FEATURE]: Added interface DOM updates for splash and embed code options
 
 ## Beta6 (May 27, 2014)
 * *[Beta6.rc1]*
