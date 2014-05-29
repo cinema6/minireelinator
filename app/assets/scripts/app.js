@@ -393,25 +393,40 @@
                             }],
                             updateControllerModel: ['controller','model','appData',
                             function               ( controller , model , appData ) {
+                                var deck = this.cParent.cModel.data.deck;
+
                                 var copy = {
                                         name: 'Editorial Content',
-                                        sref: 'editor.editCard.copy'
+                                        sref: 'editor.editCard.copy',
+                                        icon: 'text',
+                                        required: true
                                     },
                                     video = {
                                         name: 'Video Content',
-                                        sref: 'editor.editCard.video'
+                                        sref: 'editor.editCard.video',
+                                        icon: 'play',
+                                        required: true
                                     },
                                     ballot = {
                                         name: 'Questionnaire',
-                                        sref: 'editor.editCard.ballot'
+                                        sref: 'editor.editCard.ballot',
+                                        icon: 'ballot',
+                                        required: false,
+                                        customRequiredText: [
+                                            'Indicates required field (to include a questionnaire)'
+                                        ].join('')
                                     },
                                     adServer = {
                                         name: 'Server Settings',
-                                        sref: 'editor.editCard.server'
+                                        sref: 'editor.editCard.server',
+                                        icon: null,
+                                        required: false
                                     },
                                     adSkip = {
                                         name: 'Skip Settings',
-                                        sref: 'editor.editCard.skip'
+                                        sref: 'editor.editCard.skip',
+                                        icon: null,
+                                        required: false
                                     },
                                     hasOwnAdServer = appData.user.org.enablePublisherAds;
 
@@ -430,6 +445,9 @@
                                         return [];
                                     }
                                 }());
+                                controller.isNew = !deck.filter(function(card) {
+                                    return card.id === model.id;
+                                })[0];
                             }],
                             children: {
                                 copy: {
