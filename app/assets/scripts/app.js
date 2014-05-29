@@ -331,7 +331,7 @@
                             controllerAs: 'EditorSplashCtrl',
                             templateUrl: assets('views/editor/splash.html'),
                             model:  [function() {
-                                return copy(this.cParent.cModel);
+                                return this.cModel || copy(this.cParent.cModel);
                             }],
                             children: {
                                 image: {

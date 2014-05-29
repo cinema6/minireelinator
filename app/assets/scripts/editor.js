@@ -495,25 +495,82 @@
         }])
 
         .controller('EditorSplashController', ['$scope','FileService','CollateralService',
-                                               'c6State','$log',
+                                               'c6State','$log','cModel','$q',
         function                              ( $scope , FileService , CollateralService ,
-                                                c6State , $log ) {
+                                                c6State , $log , cModel , $q ) {
             var self = this,
                 EditorCtrl = $scope.EditorCtrl;
 
+            function tabBySref(sref) {
+                return self.tabs.reduce(function(result, next) {
+                    return next.sref === sref ? next : result;
+                }, null);
+            }
+
+            function incrementTabVisits(state) {
+                tabBySref(state.name).visits++;
+            }
+
             $log = ($log.context || function() { return $log; })('EditorSplashCtrl');
 
+            this.tabs = [
+                {
+                    name: 'Source Type',
+                    sref: 'editor.splash.source',
+                    visits: 0,
+                    requiredVisits: 0
+                },
+                {
+                    name: 'Image Settings',
+                    sref: 'editor.splash.image',
+                    visits: 0,
+                    requiredVisits: 0
+                }
+            ];
+            this.splashSrc = cModel.data.collateral.splash;
             this.maxFileSize = 307200;
             this.splash = null;
             this.currentUpload = null;
-            this.allowSave = false;
             Object.defineProperties(this, {
                 fileTooBig: {
+                    configurable: true,
                     get: function() {
                         return ((this.splash || {}).size || 0) > this.maxFileSize;
                     }
+                },
+                currentTab: {
+                    configurable: true,
+                    get: function() {
+                        return this.tabs.reduce(function(result, next) {
+                            return next.sref === c6State.current.name ?
+                                next : result;
+                        }, null);
+                    }
                 }
             });
+
+            this.isAsFarAs = function(tab) {
+                var tabs = this.tabs;
+
+                return tabs.indexOf(tab) <= tabs.indexOf(this.currentTab);
+            };
+
+            this.tabIsValid = function(tab) {
+                if (!tab) { return tab; }
+
+                switch (tab.sref) {
+                case 'editor.splash.image':
+                    switch (this.model.data.splash.source) {
+                    case 'generated':
+                        return this.isAsFarAs(tab);
+                    case 'specified':
+                        return this.isAsFarAs(tab) && !!this.splash && !this.fileTooBig;
+                    }
+                    break;
+                default:
+                    return this.isAsFarAs(tab);
+                }
+            };
 
             this.upload = function() {
                 var upload;
@@ -525,10 +582,7 @@
                     this.model
                 );
 
-                upload
-                    .then(function allowSave() {
-                        self.allowSave = true;
-                    })
+                return upload
                     .finally(function cleanup() {
                         $log.info('Uploaded completed!');
                         self.currentUpload = null;
@@ -538,26 +592,54 @@
             this.save = function() {
                 var data = EditorCtrl.model.data;
 
-                $log.info('Saving data: ', this.model);
-                copy(this.model.data.collateral, data.collateral || (data.collateral = {}));
-                $log.info('Save complete: ', EditorCtrl.model);
+                return (!!this.splash ? this.upload() : $q.when(this.model))
+                    .then(function copyData(minireel) {
+                        $log.info('Saving data: ', minireel);
+                        copy(minireel.data.collateral, data.collateral);
+                        copy(minireel.data.splash, data.splash);
+                        $log.info('Save complete: ', EditorCtrl.model);
 
-                c6State.goTo('editor');
+                        c6State.goTo('editor');
+
+                        return EditorCtrl.model;
+                    });
             };
 
+            c6State.on('stateChangeSuccess', incrementTabVisits);
+
             $scope.$on('$destroy', function() {
+                c6State.removeListener('stateChangeSuccess', incrementTabVisits);
+
                 if (!self.splash) { return; }
 
                 FileService.open(self.splash).close();
             });
 
             $scope.$watch(function() { return self.splash; }, function(newImage, oldImage) {
-                self.allowSave = false;
+                var file;
+
+                if (!newImage) { return; }
+                file = FileService.open(newImage);
+
+                self.splashSrc = file.url;
 
                 if (!oldImage) { return; }
 
                 FileService.open(oldImage).close();
             });
+
+            $scope.$watch(
+                function() { return self.model.data.splash.source; },
+                function(source, prevSource) {
+                    var imageTab;
+
+                    if (source === prevSource) { return; }
+                    imageTab = tabBySref('editor.splash.image');
+
+                    imageTab.requiredVisits = imageTab.visits + 1;
+                    self.splashSrc = null;
+                }
+            );
         }])
 
         .controller('EditCardController', ['$scope','c6Computed','c6State','VideoService',

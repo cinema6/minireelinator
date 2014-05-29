@@ -1,12 +1,13 @@
-<div class="modal__content modal__editor-coverImg clearfix">
+<div class="modal__content modal__editor-coverImg clearfix" c6-alias="EditorSplashCtrl.model.data as data">
     <form class="imgSettings__group">
         <div class="imgSettings__imgHolder">
-            <div class="imgSettings__imgBox imgSettings__imgBox--square" c6-bg-img="{{(EditorSplashCtrl.splash | image) || minireel.data.collateral.splash}}">
+            <div class="imgSettings__imgBox
+                imgSettings__imgBox--{{data.splash.ratio}}" c6-bg-img="{{EditorSplashCtrl.splashSrc}}">
                 &nbsp;
             </div>
         </div>
         <div class="imgSettings__copy">
-            <div class="coverUploader__group">
+            <div class="coverUploader__group" ng-if="data.splash.source === 'specified'">
                 <label class="modal__label" for="img-upload">Upload Your Image</label>
                 <input id="img-upload" class="coverUploader__filePath" ng-model="EditorSplashCtrl.splash" type="file">
                 <div class="coverUploader__controls">
@@ -19,7 +20,6 @@
                         </p>
                     </div>
                     <p class="typo--attention" ng-show="EditorSplashCtrl.fileTooBig">The file you selected is too large. It must be under {{EditorSplashCtrl.maxFileSize / 1024}} kb.</p>
-                    <button ng-click="EditorSplashCtrl.upload()" ng-show="!!EditorSplashCtrl.splash && !EditorSplashCtrl.fileTooBig" class="coverUploader__button toolbar__btn">Upload</button>
                 </div>
                 <ul class="coverUploader__helpTips">
                     <li>For best results, images should be at least 600 pixels wide.</li>
@@ -28,16 +28,17 @@
             </div>
 
             <label class="modal__label" for="aspect-ratio">Desired Aspect Ratio</label>
-            <select id="aspect-ratio" class="modal__selector">
-                <option value="square">Square (1:1)</option>
-                <option value="medRect">Medium Rectangle (6:5)</option>
-                <option value="vidRect">Video Rectangle (3:2)</option>
-                <option value="widescreen">Widescreen Rectangle (16:9)</option>
+            <select ng-model="data.splash.ratio" id="aspect-ratio" class="modal__selector">
+                <option value="1-1">Square (1:1)</option>
+                <option value="6-5">Medium Rectangle (6:5)</option>
+                <option value="6-4">Video Rectangle (3:2)</option>
+                <option value="16-9">Widescreen Rectangle (16:9)</option>
             </select>
         </div>
     </form>
 </div>
 <footer class="modal__btnFooter">
     <button class="modal__btn modal__btn--first toolbar__delete" title="Cancel" c6-sref="editor">Cancel</button>
-    <button class="modal__btn modal__btn--last" title="Done" ng-click="EditorSplashCtrl.save()">I'm Done!</button>
+    <button class="modal__btn modal__btn--last" title="Done"
+        ng-click="EditorSplashCtrl.save()" ng-disabled="!EditorSplashCtrl.tabIsValid(EditorSplashCtrl.currentTab)">I'm Done!</button>
 </footer>

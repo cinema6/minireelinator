@@ -58,6 +58,10 @@
                         autoplay: true,
                         election: 'el-76506623bf22d9',
                         branding: 'elitedaily',
+                        splash: {
+                            source: 'specified',
+                            ratio: '3-2'
+                        },
                         collateral: {
                             splash: 'splash.jpg'
                         },
@@ -608,6 +612,27 @@
                             deck = result.data.deck;
                         });
 
+                        describe('if it is missing a collateral hash or splash hash', function() {
+                            beforeEach(function() {
+                                delete minireel.data.collateral;
+                                delete minireel.data.splash;
+
+                                $rootScope.$apply(function() {
+                                    result = MiniReelService.convertForEditor(minireel);
+                                });
+                            });
+
+                            it('should create default ones', function() {
+                                expect(result.data.collateral).toEqual({
+                                    splash: null
+                                });
+                                expect(result.data.splash).toEqual({
+                                    ratio: '1-1',
+                                    source: 'generated'
+                                });
+                            });
+                        });
+
                         it('should support copying onto a provided object', function() {
                             var object = {
                                     invalidProp: 'blah',
@@ -902,6 +927,13 @@
                                         title: 'Untitled',
                                         mode: 'lightbox',
                                         branding: appData.user.branding,
+                                        splash: {
+                                            source: 'generated',
+                                            ratio: '1-1'
+                                        },
+                                        collateral: {
+                                            splash: null
+                                        },
                                         deck: [
                                             jasmine.objectContaining(adCard),
                                             jasmine.objectContaining(adCard),

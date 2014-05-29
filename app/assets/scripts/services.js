@@ -696,7 +696,10 @@
                     branding: minireel.data.branding,
                     autoplay: minireel.data.autoplay,
                     election: minireel.data.election,
-                    collateral: minireel.data.collateral,
+                    collateral: minireel.data.collateral ||
+                        { splash: null },
+                    splash: minireel.data.splash ||
+                        { ratio: '1-1', source: 'generated' },
                     deck: minireel.data.deck.map(function(card) {
                         return makeCard(card);
                     })
@@ -865,6 +868,13 @@
                                 title: 'Untitled',
                                 mode: 'lightbox',
                                 branding: user.branding,
+                                splash: {
+                                    source: 'generated',
+                                    ratio: '1-1'
+                                },
+                                collateral: {
+                                    splash: null
+                                },
                                 deck: (function() {
                                     var deck = [],
                                         count = 0;

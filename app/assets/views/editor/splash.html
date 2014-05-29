@@ -2,22 +2,15 @@
     <navigation class="tabNav__group clearfix">
         <h1 class="tabNav__title">Thumbnail Settings</h1>
         <ul class="tabNav__list clearfix">
-            <li class="tabNav__item">
-                <a c6-sref="editor.splash.source"
+            <li ng-repeat="tab in EditorSplashCtrl.tabs" class="tabNav__item">
+                <a c6-sref="{{tab.sref}}"
                     class="tabNav__link"
-                    title="Video Content">
+                    title="{{tab.name}}">
                     <span class="tabNav__icon">
-                        <span class="ui__checkSmall sprite--alpha">&nbsp;</span>
+                        <span ng-show="EditorSplashCtrl.tabIsValid(tab)" class="ui__checkSmall sprite--alpha">&nbsp;</span>
+                        <span ng-show="tab.visits < tab.requiredVisits">!</span>
                     </span>
-                    <span class="tabNav__tabName">Source Type</span>
-                </a>
-            </li>
-            <li class="tabNav__item">
-                <a c6-sref="editor.splash.image"
-                    class="tabNav__link" 
-                    title="Editorial Content">
-                    <span class="tabNav__icon">!</span>
-                    <span class="tabNav__tabName">Image Settings</span>
+                    <span class="tabNav__tabName">{{tab.name}}</span>
                 </a>
             </li>
         </ul>
