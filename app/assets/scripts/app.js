@@ -332,7 +332,19 @@
                             templateUrl: assets('views/editor/splash.html'),
                             model:  [function() {
                                 return copy(this.cParent.cModel);
-                            }]
+                            }],
+                            children: {
+                                image: {
+                                    controller: 'GenericController',
+                                    controllerAs: 'SplashImageCtrl',
+                                    templateUrl: assets('views/editor/splash/image.html')
+                                },
+                                source: {
+                                    controller: 'GenericController',
+                                    controllerAs: 'SplashSourceCtrl',
+                                    templateUrl: assets('views/editor/splash/source.html')
+                                }
+                            }
                         },
                         setMode: {
                             controller: 'NewController',
