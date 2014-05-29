@@ -1,6 +1,7 @@
 # MiniReelinator
 
 * *[Beta7.rc1]*
+  * New MiniReels are no longer given a title of "Untitled"
   * [FIX]: Character count of 0 is shown before the user types anything
     (instead of an empty space)
   * Upload collateral assets by experience and name assets by the key
