@@ -175,6 +175,57 @@
                         });
                     });
                 });
+
+                describe('tabIsValid', function() {
+                    var tab;
+
+                    beforeEach(function() {
+                        spyOn(NewCtrl, 'isAsFarAs');
+                    });
+
+                    describe('on the "general" tab', function() {
+                        beforeEach(function() {
+                            tab = NewCtrl.tabs[0];
+                        });
+
+                        describe('if there is no title', function() {
+                            beforeEach(function() {
+                                NewCtrl.title = '';
+                            });
+
+                            it('should be false', function() {
+                                expect(NewCtrl.tabIsValid(tab)).toBe(false);
+                            });
+                        });
+
+                        describe('if there is a title', function() {
+                            beforeEach(function() {
+                                NewCtrl.title = 'Foo!';
+                            });
+
+                            it('should be true', function() {
+                                expect(NewCtrl.tabIsValid(tab)).toBe(true);
+                            });
+                        });
+                    });
+
+                    [1, 2, 3].forEach(function(index) {
+                        describe('on the tab at index: ' + index, function() {
+                            [true, false].forEach(function(bool) {
+                                describe('if isAsFarAs(tab) returns ' + bool, function() {
+                                    beforeEach(function() {
+                                        tab = NewCtrl.tabs[index];
+                                        NewCtrl.isAsFarAs.and.returnValue(bool);
+                                    });
+
+                                    it('should return ' + bool, function() {
+                                        expect(NewCtrl.tabIsValid(tab)).toBe(bool);
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
             });
 
             describe('$watchers', function() {

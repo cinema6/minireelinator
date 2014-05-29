@@ -7,7 +7,7 @@
                     class="tabNav__link"
                     title="{{tab.title}}">
                     <span class="tabNav__icon">
-                        <span ng-show="NewCtrl.isAsFarAs(tab)" class="ui__checkSmall ui__checkSmall--white sprite--alpha">&nbsp;</span>
+                        <span ng-show="NewCtrl.tabIsValid(tab)" class="ui__checkSmall ui__checkSmall--white sprite--alpha">&nbsp;</span>
                         <span ng-show="tab.visits < tab.requiredVisits">!</span>
                     </span>
                     <span class="tabNav__tabName">{{tab.name}}</span>

@@ -142,6 +142,15 @@
                 return this.tabs.indexOf(tab) <= this.tabs.indexOf(this.currentTab);
             };
 
+            this.tabIsValid = function(tab) {
+                switch (tab.sref) {
+                case 'general':
+                    return !!this.title;
+                default:
+                    return this.isAsFarAs(tab);
+                }
+            };
+
             this.save = function() {
                 var data = this.model.minireel.data;
 
