@@ -899,7 +899,7 @@
                                     org: 'o-17593d7a2bf294',
                                     appUri: 'rumble',
                                     data: {
-                                        title: 'Untitled',
+                                        title: null,
                                         mode: 'lightbox',
                                         branding: appData.user.branding,
                                         deck: [
