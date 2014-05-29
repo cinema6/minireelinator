@@ -113,6 +113,19 @@
             var self = this,
                 minireel = cModel.minireel;
 
+            function tabBySref(sref) {
+                return self.tabs.reduce(function(result, next) {
+                    return next.sref === sref ? next : result;
+                }, null);
+            }
+
+            function incrementTabVisits(state) {
+                var name = state.name
+                    .replace(self.baseState + '.', '');
+
+                tabBySref(name).visits++;
+            }
+
             this.mode = MiniReelService.modeDataOf(
                 minireel,
                 cModel.modes
@@ -160,16 +173,31 @@
                 data.mode = this.mode.value;
             };
 
-            $scope.$watch(function() { return self.category; }, function(category, prevCategory) {
-                if (category === prevCategory) { return; }
+            c6State.on('stateChangeSuccess', incrementTabVisits);
 
-                self.mode = self.category.modes[0];
+            $scope.$on('$destroy', function() {
+                c6State.removeListener('stateChangeSuccess', incrementTabVisits);
             });
 
-            $scope.$watch(function() { return self.mode; }, function(mode) {
-                var minireel = self.model.minireel;
+            $scope.$watch(function() { return self.category; }, function(category, prevCategory) {
+                var modeTab;
+
+                if (category === prevCategory) { return; }
+                modeTab = tabBySref('mode');
+
+                self.mode = self.category.modes[0];
+                modeTab.requiredVisits = modeTab.visits + 1;
+            });
+
+            $scope.$watch(function() { return self.mode; }, function(mode, prevMode) {
+                var minireel = self.model.minireel,
+                    autoplayTab = tabBySref('autoplay');
 
                 self.autoplay = mode.autoplayable && minireel.data.autoplay;
+
+                if (mode.autoplayable !== prevMode.autoplayable) {
+                    autoplayTab.requiredVisits = autoplayTab.visits + 1;
+                }
             });
         }]);
 }());

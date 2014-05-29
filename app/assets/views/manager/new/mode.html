@@ -26,5 +26,5 @@
 <footer class="modal__btnFooter">
     <button class="modal__btn modal__btn--first" c6-sref="{{NewCtrl.baseState}}.category" title="Previous Step">Prev Step</button>
     <button c6-sref="{{NewCtrl.baseState}}.autoplay" class="modal__btn modal__btn--last" type="button" title="Next Step">Next Step</button>
-    <div class="guideText">Step 2 of 3</div>
+    <div class="guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</div>
 </footer>
