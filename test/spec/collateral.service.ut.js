@@ -5,6 +5,7 @@
         describe('CollateralService', function() {
             var $rootScope,
                 $q,
+                $httpBackend,
                 CollateralService,
                 FileService;
 
@@ -15,6 +16,7 @@
                     $rootScope = $injector.get('$rootScope');
                     FileService = $injector.get('FileService');
                     $q = $injector.get('$q');
+                    $httpBackend = $injector.get('$httpBackend');
 
                     CollateralService = $injector.get('CollateralService');
                 });
@@ -25,6 +27,52 @@
             });
 
             describe('methods', function() {
+                describe('generateCollage(options)', function() {
+                    var experience, thumbs,
+                        success;
+
+                    beforeEach(function() {
+                        success = jasmine.createSpy('generateCollage() success');
+
+                        thumbs = [
+                            'thumbs1.jpg',
+                            'thumb2.jpg',
+                            'thumb3.jpg'
+                        ];
+
+                        experience = {
+                            id: 'e-1d22cdbb354859',
+                            data: {
+                                collateral: {}
+                            }
+                        };
+
+                        $httpBackend.expectPOST('/api/collateral/splash/' + experience.id, {
+                            name: 'splash',
+                            size: {
+                                width: 600,
+                                height: 600 * (9 / 16)
+                            },
+                            ratio: '16-9',
+                            thumbs: thumbs
+                        }).respond(201, 'collateral/' + experience.id + '/splash');
+
+                        CollateralService.generateCollage({
+                            name: 'splash',
+                            ratio: [16,9],
+                            width: 600,
+                            thumbs: thumbs,
+                            experience: experience
+                        }).then(success);
+
+                        $httpBackend.flush();
+                    });
+
+                    it('should resolve to the path of the generated image', function() {
+                        expect(success).toHaveBeenCalledWith('/collateral/' + experience.id + '/splash');
+                    });
+                });
+
                 describe('set(key, file, experience)', function() {
                     var experience, splashImage,
                         uploadDeferred, splashImageWrapper,

@@ -8,6 +8,8 @@
         describe('MiniReelService', function() {
             var MiniReelService,
                 VoteService,
+                CollateralService,
+                VideoThumbnailService,
                 $rootScope,
                 cinema6,
                 $q;
@@ -42,6 +44,8 @@
                     VoteService = $injector.get('VoteService');
                     cinema6 = $injector.get('cinema6');
                     $q = $injector.get('$q');
+                    CollateralService = $injector.get('CollateralService');
+                    VideoThumbnailService = $injector.get('VideoThumbnailService');
                 });
 
                 minireel = cinema6.db.create('experience', {
@@ -1024,6 +1028,112 @@
                             expect(result).toBe(minireel);
                             expect(result.data).not.toBe(converted.data);
                             expect(minireel.data.deck[0].title).toBe('New Title');
+                        });
+                    });
+
+                    describe('generateSplash(minireel)', function() {
+                        var success, failure,
+                            generateCollageDeferred,
+                            minireel, thumbs;
+
+                        beforeEach(function() {
+                            success = jasmine.createSpy('success');
+                            failure = jasmine.createSpy('failure');
+
+                            thumbs = [
+                                {
+                                    small: '123--small.jpg',
+                                    large: '123--large.jpg',
+                                    ensureFulfillment: jasmine.createSpy('thumb.ensureFulfillment()')
+                                        .and.callFake(function() {
+                                            return $q.when(this);
+                                        })
+                                },
+                                {
+                                    small: null,
+                                    large: null,
+                                    ensureFulfillment: jasmine.createSpy('thumb.ensureFulfillment()')
+                                        .and.callFake(function() {
+                                            return $q.when(this);
+                                        })
+                                },
+                                {
+                                    small: 'abc--small.jpg',
+                                    large: 'abc--large.jpg',
+                                    ensureFulfillment: jasmine.createSpy('thumb.ensureFulfillment()')
+                                        .and.callFake(function() {
+                                            return $q.when(this);
+                                        })
+                                },
+                                {
+                                    small: '123abc--small.jpg',
+                                    large: '123abc--large.jpg',
+                                    ensureFulfillment: jasmine.createSpy('thumb.ensureFulfillment()')
+                                        .and.callFake(function() {
+                                            return $q.when(this);
+                                        })
+                                },
+                                {
+                                    small: null,
+                                    large: null,
+                                    ensureFulfillment: jasmine.createSpy('thumb.ensureFulfillment()')
+                                        .and.callFake(function() {
+                                            return $q.when(this);
+                                        })
+                                }
+                            ];
+
+                            minireel = {
+                                data: {
+                                    deck: [
+                                        {
+                                            data: {
+                                                service: 'youtube',
+                                                videoid: '123'
+                                            }
+                                        },
+                                        {
+                                            data: {}
+                                        },
+                                        {
+                                            data: {
+                                                service: 'vimeo',
+                                                videoid: 'abc'
+                                            }
+                                        },
+                                        {
+                                            data: {
+                                                service: 'dailymotion',
+                                                videoid: '123abc'
+                                            }
+                                        },
+                                        {
+                                            data: {}
+                                        }
+                                    ]
+                                }
+                            };
+
+                            generateCollageDeferred = $q.defer();
+
+                            spyOn(CollateralService, 'generateCollage').and.returnValue(generateCollageDeferred.promise);
+                            spyOn(VideoThumbnailService, 'getThumbsFor').and.callFake(function(service, videoid) {
+                                var card = minireel.data.deck.reduce(function(result, next) {
+                                    return next.data.videoid === videoid ? next : result;
+                                }, null);
+
+                                return thumbs[minireel.data.deck.indexOf(card)];
+                            });
+
+                            $rootScope.$apply(function() {
+                                MiniReelService.generateSplash(minireel).then(success, failure);
+                            });
+                        });
+
+                        it('should fetch and download all of the thumbs for the videos in the minireel', function() {
+                            thumbs.forEach(function(thumb) {
+                                expect(thumb.ensureFulfillment).toHaveBeenCalled();
+                            });
                         });
                     });
                 });

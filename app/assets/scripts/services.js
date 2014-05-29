@@ -43,8 +43,8 @@
             };
         }])
 
-        .service('CollateralService', ['FileService',
-        function                      ( FileService ) {
+        .service('CollateralService', ['FileService','$http',
+        function                      ( FileService , $http ) {
             this.set = function(key, file, experience) {
                 var promise;
 
@@ -70,6 +70,26 @@
                     .then(setResult, null, updateProgress);
 
                 return promise;
+            };
+
+            this.generateCollage = function(options) {
+                var experience = options.experience,
+                    name = options.name,
+                    ratio = options.ratio,
+                    width = options.width,
+                    thumbs = options.thumbs;
+
+                return $http.post('/api/collateral/splash/' + experience.id, {
+                    name: name,
+                    size: {
+                        width: width,
+                        height: width * (ratio[1] / ratio[0])
+                    },
+                    ratio: ratio.join('-'),
+                    thumbs: thumbs
+                }).then(function returnHref(response) {
+                    return '/' + response.data;
+                });
             };
         }])
 
