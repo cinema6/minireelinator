@@ -14,5 +14,5 @@
 <footer class="modal__btnFooter">
     <button class="modal__btn modal__btn--first" c6-sref="{{NewCtrl.baseState}}.mode" title="Previous Step">Prev Step</button>
     <button c6-sref="editor" params="{ minireelId: NewCtrl.model.minireel.id }" ng-click="NewCtrl.save()" class="modal__btn modal__btn--last toolbar__confirm" type="button" title="Done!">I&rsquo;m Done!</button>
-    <div class="guideText">Step 3 of 3</div>
+    <div class="guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</div>
 </footer>

@@ -9,6 +9,6 @@
 <div class="modal__fineprint typo--attention">* Indicates required field.</div>
 <footer class="modal__btnFooter">
     <button class="modal__btn modal__btn--first toolbar__delete" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
-    <button c6-sref="{{NewCtrl.baseState}}.category" class="modal__btn modal__btn--last" type="button" title="Next Step">Next Step</button>
-    <div class="guideText">Step 1 of 3</div>
+    <button c6-sref="{{NewCtrl.baseState}}.category" ng-disabled="!NewCtrl.title" class="modal__btn modal__btn--last" type="button" title="Next Step">Next Step</button>
+    <div class="guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</div>
 </footer>

@@ -862,7 +862,7 @@
                             org: user.org.id,
                             appUri: 'rumble',
                             data: {
-                                title: 'Untitled',
+                                title: null,
                                 mode: 'lightbox',
                                 branding: user.branding,
                                 deck: (function() {
@@ -882,10 +882,11 @@
                 }
 
                 function createMinireel(template) {
-                    var minireel = cinema6.db.create('experience', template);
+                    var minireel = cinema6.db.create('experience', template),
+                        title = minireel.data.title;
 
                     delete minireel.id;
-                    minireel.data.title += toCopy ? ' (copy)' : '';
+                    minireel.data.title = toCopy ? (title + ' (copy)') : null;
                     minireel.status = 'pending';
 
                     return minireel;

@@ -241,6 +241,13 @@
         function( c6StateProvider , c6UrlMakerProvider ) {
             var assets = c6UrlMakerProvider.makeUrl.bind(c6UrlMakerProvider);
 
+            function Tab(name, sref) {
+                this.name = name;
+                this.sref = sref;
+                this.visits = 0;
+                this.requiredVisits = 0;
+            }
+
             var newSubstates = {
                 general: {
                     templateUrl: assets('views/manager/new/general.html')
@@ -254,6 +261,13 @@
                 autoplay: {
                     templateUrl: assets('views/manager/new/autoplay.html')
                 }
+            };
+
+            var newTabs = {
+                general: new Tab('Title Settings', 'general'),
+                category: new Tab('Lightbox Settings', 'category'),
+                mode: new Tab('MiniReel Type', 'mode'),
+                autoplay: new Tab('Autoplay', 'autoplay')
             };
 
             c6StateProvider
@@ -308,6 +322,12 @@
 
                                 controller.returnState = 'manager';
                                 controller.baseState = 'manager.new';
+                                controller.tabs = [
+                                    newTabs.general,
+                                    newTabs.category,
+                                    newTabs.mode,
+                                    newTabs.autoplay
+                                ];
                             }],
                             children: copy(newSubstates)
                         }
@@ -359,6 +379,11 @@
 
                                 controller.returnState = 'editor';
                                 controller.baseState = 'editor.setMode';
+                                controller.tabs = [
+                                    newTabs.category,
+                                    newTabs.mode,
+                                    newTabs.autoplay
+                                ];
                             }],
                             children: copy(newSubstates)
                         },

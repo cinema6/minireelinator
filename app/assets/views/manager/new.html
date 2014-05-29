@@ -2,39 +2,15 @@
     <navigation class="tabNav__group clearfix">
         <h1 class="tabNav__title">MiniReel Settings</h1>
         <ul class="tabNav__list clearfix">
-            <li ng-if="NewCtrl.returnState === 'manager'" class="tabNav__item">
-                <a c6-sref="{{NewCtrl.baseState}}.general"
+            <li ng-repeat="tab in NewCtrl.tabs" class="tabNav__item">
+                <a c6-sref="{{NewCtrl.baseState}}.{{tab.sref}}"
                     class="tabNav__link"
-                    title="Video Content">
+                    title="{{tab.title}}">
                     <span class="tabNav__icon">
-                        <span class="ui__checkSmall ui__checkSmall--white sprite--alpha">&nbsp;</span>
+                        <span ng-show="NewCtrl.tabIsValid(tab)" class="ui__checkSmall ui__checkSmall--white sprite--alpha">&nbsp;</span>
+                        <span ng-show="tab.visits < tab.requiredVisits">!</span>
                     </span>
-                    <span class="tabNav__tabName">Title Settings</span>
-                </a>
-            </li>
-            <li class="tabNav__item">
-                <a c6-sref="{{NewCtrl.baseState}}.category"
-                    class="tabNav__link" 
-                    title="Editorial Content">
-                    <span class="tabNav__icon">!</span>
-                    <span class="tabNav__tabName">Lightbox Settings</span>
-                </a>
-            </li>
-            <li class="tabNav__item">
-                <a c6-sref="{{NewCtrl.baseState}}.mode"
-                    params="{ newModeValue: NewCtrl.category }"
-                    class="tabNav__link"
-                    title="Video Content">
-                    <span class="tabNav__icon">!</span>
-                    <span class="tabNav__tabName">MiniReel Type</span>
-                </a>
-            </li>
-            <li class="tabNav__item">
-                <a c6-sref="{{NewCtrl.baseState}}.autoplay"
-                    class="tabNav__link"
-                    title="Video Content">
-                    <span class="tabNav__icon">!</span>
-                    <span class="tabNav__tabName">AutoPlay</span>
+                    <span class="tabNav__tabName">{{tab.name}}</span>
                 </a>
             </li>
         </ul>
