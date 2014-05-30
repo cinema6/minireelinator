@@ -9,9 +9,9 @@
         <div class="imgSettings__copy">
             <div class="coverUploader__group" ng-if="data.splash.source === 'specified'">
                 <label class="modal__label" for="img-upload">Upload Your Image</label>
-                <input id="img-upload" class="coverUploader__filePath" ng-model="EditorSplashCtrl.splash" type="file">
+                <input id="img-upload" class="coverUploader__filePath" ng-model="SplashImageCtrl.splash" type="file">
                 <div class="coverUploader__controls">
-                    <div ng-show="!!EditorSplashCtrl.currentUpload" c6-alias="EditorSplashCtrl.currentUpload.progress as progress">
+                    <div ng-show="!!SplashImageCtrl.currentUpload" c6-alias="SplashImageCtrl.currentUpload.progress as progress">
                         <div class="progressBar">
                             <div ng-style="{ width: (progress.complete | percent) }" class="progressBar__status">&nbsp;</div>
                         </div>
@@ -19,11 +19,11 @@
                             Loading {{(progress.uploaded / 1024) | number:0}} kb of {{(progress.total / 1024) | number:0}} kb
                         </p>
                     </div>
-                    <p class="typo--attention" ng-show="EditorSplashCtrl.fileTooBig">The file you selected is too large. It must be under {{EditorSplashCtrl.maxFileSize / 1024}} kb.</p>
+                    <p class="typo--attention" ng-show="SplashImageCtrl.fileTooBig">The file you selected is too large. It must be under {{SplashImageCtrl.maxFileSize / 1024}} kb.</p>
                 </div>
                 <ul class="coverUploader__helpTips">
                     <li>For best results, images should be at least 600 pixels wide.</li>
-                    <li>Images should be less than {{EditorSplashCtrl.maxFileSize / 1024}} kb in filesize.</li>
+                    <li>Images should be less than {{SplashImageCtrl.maxFileSize / 1024}} kb in filesize.</li>
                 </ul>
             </div>
 
@@ -40,5 +40,5 @@
 <footer class="modal__btnFooter">
     <button class="modal__btn modal__btn--first toolbar__delete" title="Cancel" c6-sref="editor">Cancel</button>
     <button class="modal__btn modal__btn--last" title="Done"
-        ng-click="EditorSplashCtrl.save()" ng-disabled="!EditorSplashCtrl.tabIsValid(EditorSplashCtrl.currentTab)">I'm Done!</button>
+        ng-click="SplashImageCtrl.save()" ng-disabled="!EditorSplashCtrl.tabIsValid(EditorSplashCtrl.currentTab) || SplashImageCtrl.fileTooBig">I'm Done!</button>
 </footer>

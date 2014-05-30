@@ -8,11 +8,8 @@
                 $controller,
                 $q,
                 c6State,
-                FileService,
                 CollateralService,
                 EditorSplashCtrl;
-
-            var EditorCtrl;
 
             var minireel;
 
@@ -38,23 +35,7 @@
                     CollateralService = $injector.get('CollateralService');
                     c6State = $injector.get('c6State');
 
-                    FileService = $injector.get('FileService');
-                    spyOn(FileService, 'open').and.returnValue({ url: '' });
-
                     $scope = $rootScope.$new();
-                    $scope.EditorCtrl = EditorCtrl = {
-                        model: {
-                            data: {
-                                collateral: {
-                                    splash: null
-                                },
-                                splash: {
-                                    source: 'generated',
-                                    ratio: '1-1'
-                                }
-                            }
-                        }
-                    };
                     $scope.$apply(function() {
                         EditorSplashCtrl = $controller('EditorSplashController', { $scope: $scope, cModel: minireel });
                         EditorSplashCtrl.model = minireel;
@@ -70,58 +51,6 @@
                 describe('splashSrc', function() {
                     it('should be the minireel\'s splash src', function() {
                         expect(EditorSplashCtrl.splashSrc).toBe(minireel.data.collateral.splash);
-                    });
-                });
-
-                describe('maxFileSize', function() {
-                    it('should be 307200', function() {
-                        expect(EditorSplashCtrl.maxFileSize).toBe(307200);
-                    });
-                });
-
-                describe('splash', function() {
-                    it('should be null', function() {
-                        expect(EditorSplashCtrl.splash).toBeNull();
-                    });
-                });
-
-                describe('currentUpload', function() {
-                    it('should be null', function() {
-                        expect(EditorSplashCtrl.splash).toBeNull();
-                    });
-                });
-
-                describe('fileTooBig', function() {
-                    beforeEach(function() {
-                        EditorSplashCtrl.maxFileSize = 204800;
-                    });
-
-                    it('should not throw any errors if there is no file', function() {
-                        expect(function() {
-                            return EditorSplashCtrl.fileTooBig;
-                        }).not.toThrow();
-                    });
-
-                    describe('if there is a file', function() {
-                        beforeEach(function() {
-                            EditorSplashCtrl.splash = {
-                                size: 102400
-                            };
-                        });
-
-                        it('should be true if the file\'s size is greater than the max size', function() {
-                            function tooBig() {
-                                return EditorSplashCtrl.fileTooBig;
-                            }
-
-                            expect(tooBig()).toBe(false);
-
-                            EditorSplashCtrl.splash.size = 204800;
-                            expect(tooBig()).toBe(false);
-
-                            EditorSplashCtrl.splash.size = 204801;
-                            expect(tooBig()).toBe(true);
-                        });
                     });
                 });
 
@@ -252,29 +181,17 @@
 
                                     describe('if there is a splash', function() {
                                         beforeEach(function() {
-                                            EditorSplashCtrl.splash = {};
+                                            EditorSplashCtrl.splashSrc = 'test.jpg';
                                         });
 
-                                        [true, false].forEach(function(tooBig) {
-                                            describe('if fileTooBig is ' + tooBig, function() {
-                                                var result = !tooBig && bool;
-
-                                                beforeEach(function() {
-                                                    Object.defineProperty(EditorSplashCtrl, 'fileTooBig', {
-                                                        value: tooBig
-                                                    });
-                                                });
-
-                                                it('should be ' + result, function() {
-                                                    expect(EditorSplashCtrl.tabIsValid(tab)).toBe(result);
-                                                });
-                                            });
+                                        it('should be ' + bool, function() {
+                                            expect(EditorSplashCtrl.tabIsValid(tab)).toBe(bool);
                                         });
                                     });
 
                                     describe('if there is no splash', function() {
                                         beforeEach(function() {
-                                            EditorSplashCtrl.splash = null;
+                                            EditorSplashCtrl.splashSrc = null;
                                         });
 
                                         it('should be false', function() {
@@ -283,133 +200,6 @@
                                     });
                                 });
                             });
-                        });
-                    });
-                });
-
-                describe('upload()', function() {
-                    var setDeferred,
-                        success;
-
-                    beforeEach(function() {
-                        success = jasmine.createSpy('upload() success');
-                        setDeferred = $q.defer();
-
-                        spyOn(CollateralService, 'set')
-                            .and.returnValue(setDeferred.promise);
-
-                        EditorSplashCtrl.splash = {};
-
-                        $scope.$apply(function() {
-                            EditorSplashCtrl.upload().then(success);
-                        });
-                    });
-
-                    it('should set the user-selected file as the minireel\'s splash image', function() {
-                        expect(CollateralService.set).toHaveBeenCalledWith('splash', EditorSplashCtrl.splash, minireel);
-                    });
-
-                    it('should put the result of the set method on iteself', function() {
-                        expect(EditorSplashCtrl.currentUpload).toBe(setDeferred.promise);
-                    });
-
-                    describe('after the upload completes', function() {
-                        beforeEach(function() {
-                            $scope.$apply(function() {
-                                setDeferred.resolve(minireel);
-                            });
-                        });
-
-                        it('should null-out the currentUpload property', function() {
-                            expect(EditorSplashCtrl.currentUpload).toBeNull();
-                        });
-
-                        it('should resolve to the minireel', function() {
-                            expect(success).toHaveBeenCalledWith(minireel);
-                        });
-                    });
-
-                    describe('if the upload fails', function() {
-                        beforeEach(function() {
-                            $scope.$apply(function() {
-                                setDeferred.reject({});
-                            });
-                        });
-
-                        it('should null-out the currentUpload property', function() {
-                            expect(EditorSplashCtrl.currentUpload).toBeNull();
-                        });
-                    });
-                });
-
-                describe('save', function() {
-                    var originalData,
-                        uploadDeferred,
-                        success;
-
-                    beforeEach(function() {
-                        success = jasmine.createSpy('save() success');
-                        uploadDeferred = $q.defer();
-                        spyOn(c6State, 'goTo');
-                        spyOn(EditorSplashCtrl, 'upload').and.returnValue(uploadDeferred.promise);
-
-                        EditorSplashCtrl.splash = {};
-
-                        originalData = EditorCtrl.model.data;
-                        $scope.$apply(function() {
-                            EditorSplashCtrl.save().then(success);
-                        });
-                    });
-
-                    describe('if there is no splash', function() {
-                        beforeEach(function() {
-                            EditorSplashCtrl.upload.calls.reset();
-                            success.calls.reset();
-
-                            EditorSplashCtrl.splash = null;
-
-                            $scope.$apply(function() {
-                                EditorSplashCtrl.save().then(success);
-                            });
-                        });
-
-                        it('should not upload anything', function() {
-                            expect(EditorSplashCtrl.upload).not.toHaveBeenCalled();
-                            expect(success).toHaveBeenCalled();
-                        });
-                    });
-
-                    it('should upload the splash image', function() {
-                        expect(EditorSplashCtrl.upload).toHaveBeenCalled();
-                    });
-
-                    describe('after the upload completes', function() {
-                        beforeEach(function() {
-                            expect(EditorCtrl.model.data.collateral).not.toEqual(minireel.data.collateral);
-                            expect(EditorCtrl.model.data.splash).not.toEqual(minireel.data.splash);
-                            expect(c6State.goTo).not.toHaveBeenCalled();
-
-                            $scope.$apply(function() {
-                                uploadDeferred.resolve(minireel);
-                            });
-                        });
-
-                        it('should copy the collateral hash of its model to the EditorCtrl\'s model', function() {
-                            expect(EditorCtrl.model.data.collateral).toEqual(minireel.data.collateral);
-                            expect(EditorCtrl.model.data).toBe(originalData);
-                        });
-
-                        it('should copy the splash object', function() {
-                            expect(EditorCtrl.model.data.splash).toEqual(minireel.data.splash);
-                            expect(EditorCtrl.model.data).toBe(originalData);
-                        });
-
-                        it('should transition back to the editor', function() {
-                            expect(c6State.goTo).toHaveBeenCalledWith('editor');
-                        });
-
-                        it('should resolve the promsise', function() {
-                            expect(success).toHaveBeenCalledWith(EditorCtrl.model);
                         });
                     });
                 });
@@ -448,40 +238,6 @@
                         });
                     });
                 });
-
-                describe('$destroy', function() {
-                    function trigger() {
-                        $scope.$emit('$destroy');
-                    }
-
-                    describe('if the user did not select an image', function() {
-                        beforeEach(trigger);
-
-                        it('should do nothing', function() {
-                            expect(FileService.open).not.toHaveBeenCalled();
-                        });
-                    });
-
-                    describe('if the user did select an image', function() {
-                        var wrapper;
-
-                        beforeEach(function() {
-                            wrapper = {
-                                close: jasmine.createSpy('wrapper.close()')
-                            };
-
-                            EditorSplashCtrl.splash = {};
-                            FileService.open.and.returnValue(wrapper);
-
-                            trigger();
-                        });
-
-                        it('should close the file', function() {
-                            expect(FileService.open).toHaveBeenCalledWith(EditorSplashCtrl.splash);
-                            expect(wrapper.close).toHaveBeenCalled();
-                        });
-                    });
-                });
             });
 
             describe('$watchers', function() {
@@ -508,43 +264,6 @@
                     });
                 });
 
-                describe('this.splash', function() {
-                    it('should set the splashSrc to the url of the opened file', function() {
-                        var file,
-                            wrapper = {
-                                url: 'blah.jpg'
-                            };
-
-                        FileService.open.and.returnValue(wrapper);
-
-                        $scope.$apply(function() {
-                            EditorSplashCtrl.splash = file = {};
-                        });
-                        expect(EditorSplashCtrl.splashSrc).toBe(wrapper.url);
-                    });
-
-                    it('should close a file if it is no longer the user-selected file', function() {
-                        var file,
-                            wrapper = {
-                                close: jasmine.createSpy('wrapper.close()')
-                            };
-
-                        expect(FileService.open).not.toHaveBeenCalled();
-
-                        FileService.open.and.returnValue(wrapper);
-                        $scope.$apply(function() {
-                            EditorSplashCtrl.splash = file = {};
-                        });
-
-                        expect(wrapper.close).not.toHaveBeenCalled();
-
-                        $scope.$apply(function() {
-                            EditorSplashCtrl.splash = file = {};
-                        });
-                        expect(FileService.open).toHaveBeenCalledWith(file);
-                        expect(wrapper.close).toHaveBeenCalled();
-                    });
-                });
             });
         });
     });
