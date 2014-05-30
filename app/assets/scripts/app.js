@@ -334,15 +334,15 @@
                                 return this.cModel || copy(this.cParent.cModel);
                             }],
                             children: {
-                                image: {
-                                    controller: 'GenericController',
-                                    controllerAs: 'SplashImageCtrl',
-                                    templateUrl: assets('views/editor/splash/image.html')
-                                },
                                 source: {
                                     controller: 'GenericController',
                                     controllerAs: 'SplashSourceCtrl',
                                     templateUrl: assets('views/editor/splash/source.html')
+                                },
+                                image: {
+                                    controller: 'SplashImageController',
+                                    controllerAs: 'SplashImageCtrl',
+                                    templateUrl: assets('views/editor/splash/image.html')
                                 }
                             }
                         },

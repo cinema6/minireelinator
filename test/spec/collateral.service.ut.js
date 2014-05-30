@@ -7,6 +7,7 @@
                 $q,
                 $httpBackend,
                 CollateralService,
+                VideoThumbnailService,
                 FileService;
 
             beforeEach(function() {
@@ -17,6 +18,7 @@
                     FileService = $injector.get('FileService');
                     $q = $injector.get('$q');
                     $httpBackend = $injector.get('$httpBackend');
+                    VideoThumbnailService = $injector.get('VideoThumbnailService');
 
                     CollateralService = $injector.get('CollateralService');
                 });
@@ -27,49 +29,98 @@
             });
 
             describe('methods', function() {
-                describe('generateCollage(options)', function() {
-                    var experience, thumbs,
+                describe('generateCollage(minireel, name, width)', function() {
+                    var minireel, thumbs,
                         success;
+
+                    function Thumb(card) {
+                        this.small = card ?
+                            (card.data.videoid + '--small.jpg') :
+                            null;
+
+                        this.large = card ?
+                            (card.data.videoid + '--large.jpg') :
+                            null;
+
+                        this.ensureFulfillment = jasmine.createSpy('thumb.ensureFulfillment()')
+                            .and.callFake(function() {
+                                return $q.when(this);
+                            });
+                    }
 
                     beforeEach(function() {
                         success = jasmine.createSpy('generateCollage() success');
 
-                        thumbs = [
-                            'thumbs1.jpg',
-                            'thumb2.jpg',
-                            'thumb3.jpg'
-                        ];
-
-                        experience = {
-                            id: 'e-1d22cdbb354859',
+                        minireel = {
+                            id: 'e-ef657e8ea90c84',
                             data: {
-                                collateral: {}
+                                splash: {
+                                    ratio: '16-9'
+                                },
+                                deck: [
+                                    {
+                                        data: {
+                                            service: 'youtube',
+                                            videoid: '123'
+                                        }
+                                    },
+                                    {
+                                        data: {
+                                            service: 'vimeo',
+                                            videoid: 'abc'
+                                        }
+                                    },
+                                    {
+                                        data: {}
+                                    },
+                                    {
+                                        data: {
+                                            service: 'dailymotion',
+                                            videoid: 'abc123'
+                                        }
+                                    },
+                                    {
+                                        data: {}
+                                    }
+                                ]
                             }
                         };
 
-                        $httpBackend.expectPOST('/api/collateral/splash/' + experience.id, {
+                        thumbs = {
+                            '123': new Thumb(minireel.data.deck[0]),
+                            'abc': new Thumb(minireel.data.deck[1]),
+                            'abc123': new Thumb(minireel.data.deck[3])
+                        };
+
+                        spyOn(VideoThumbnailService, 'getThumbsFor').and.callFake(function(service, videoid) {
+                            return thumbs[videoid] || new Thumb();
+                        });
+
+                        $httpBackend.expectPOST('/api/collateral/splash/' + minireel.id, {
                             name: 'splash',
                             size: {
                                 width: 600,
                                 height: 600 * (9 / 16)
                             },
                             ratio: '16-9',
-                            thumbs: thumbs
-                        }).respond(201, 'collateral/' + experience.id + '/splash');
+                            thumbs: Object.keys(thumbs).map(function(key) {
+                                return thumbs[key].large;
+                            })
+                        }).respond(201, 'collateral/' + minireel.id + '/splash');
 
-                        CollateralService.generateCollage({
-                            name: 'splash',
-                            ratio: [16,9],
-                            width: 600,
-                            thumbs: thumbs,
-                            experience: experience
-                        }).then(success);
+                        CollateralService.generateCollage(minireel, 'splash', 600).then(success);
 
                         $httpBackend.flush();
                     });
 
+                    it('should make sure every ThumbModel is fulfilled', function() {
+                        Object.keys(thumbs).forEach(function(key) {
+                            expect(thumbs[key].ensureFulfillment).toHaveBeenCalled();
+                        });
+                    });
+
                     it('should resolve to the path of the generated image', function() {
-                        expect(success).toHaveBeenCalledWith('/collateral/' + experience.id + '/splash');
+                        expect(success).toHaveBeenCalledWith('/collateral/' + minireel.id + '/splash');
                     });
                 });
 

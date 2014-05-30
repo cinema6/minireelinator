@@ -43,8 +43,8 @@
             };
         }])
 
-        .service('CollateralService', ['FileService','$http',
-        function                      ( FileService , $http ) {
+        .service('CollateralService', ['FileService','$http','VideoThumbnailService','$q',
+        function                      ( FileService , $http , VideoThumbnailService , $q ) {
             this.set = function(key, file, experience) {
                 var promise;
 
@@ -72,24 +72,40 @@
                 return promise;
             };
 
-            this.generateCollage = function(options) {
-                var experience = options.experience,
-                    name = options.name,
-                    ratio = options.ratio,
-                    width = options.width,
-                    thumbs = options.thumbs;
+            this.generateCollage = function(minireel, name, width) {
+                var ratio = minireel.data.splash.ratio.split('-');
 
-                return $http.post('/api/collateral/splash/' + experience.id, {
-                    name: name,
-                    size: {
-                        width: width,
-                        height: width * (ratio[1] / ratio[0])
-                    },
-                    ratio: ratio.join('-'),
-                    thumbs: thumbs
-                }).then(function returnHref(response) {
-                    return '/' + response.data;
-                });
+                function fetchThumbs(minireel) {
+                    return $q.all(minireel.data.deck.map(function(card) {
+                        return VideoThumbnailService.getThumbsFor(
+                            card.data.service,
+                            card.data.videoid
+                        ).ensureFulfillment();
+                    })).then(function map(thumbs) {
+                        return thumbs.map(function(thumb) {
+                            return thumb.large;
+                        }).filter(function(src) {
+                            return !!src;
+                        });
+                    });
+                }
+
+                function generateCollage(thumbs) {
+                    return $http.post('/api/collateral/splash/' + minireel.id, {
+                        name: name,
+                        size: {
+                            width: width,
+                            height: width * (ratio[1] / ratio[0])
+                        },
+                        ratio: ratio.join('-'),
+                        thumbs: thumbs
+                    }).then(function returnHref(response) {
+                        return '/' + response.data;
+                    });
+                }
+
+                return fetchThumbs(minireel)
+                    .then(generateCollage);
             };
         }])
 
@@ -251,9 +267,15 @@
                 this.small = null;
                 this.large = null;
 
-                promise.then(function setThumbs(thumbs) {
+                this.ensureFulfillment = function() {
+                    return promise;
+                };
+
+                promise = promise.then(function setThumbs(thumbs) {
                     self.small = thumbs.small;
                     self.large = thumbs.large;
+
+                    return self;
                 });
             }
 

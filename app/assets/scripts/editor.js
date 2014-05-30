@@ -642,6 +642,37 @@
             );
         }])
 
+        .controller('SplashImageController', ['$scope','CollateralService',
+        function                             ( $scope , CollateralService ) {
+            var EditorSplashCtrl = $scope.EditorSplashCtrl;
+            var self = this,
+                minireel = EditorSplashCtrl.model,
+                splash = minireel.data.splash;
+
+            this.isGenerating = false;
+
+            this.generateSplash = function(permanent) {
+                this.isGenerating = true;
+
+                return CollateralService.generateCollage(
+                    minireel,
+                    'splash' + (permanent ? '' : ('--' + splash.ratio)),
+                    600
+                ).then(function setSplashSrc(src) {
+                    EditorSplashCtrl.splashSrc = src;
+
+                    return src;
+                })
+                .finally(function setFlag() {
+                    self.isGenerating = false;
+                });
+            };
+
+            if (!EditorSplashCtrl.splashSrc && splash.source === 'generated') {
+                this.generateSplash(false);
+            }
+        }])
+
         .controller('EditCardController', ['$scope','c6Computed','c6State','VideoService',
                                            'MiniReelService','cinema6','c6StateParams',
         function                          ( $scope , c6Computed , c6State , VideoService ,
