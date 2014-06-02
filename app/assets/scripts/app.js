@@ -351,8 +351,20 @@
                             controllerAs: 'EditorSplashCtrl',
                             templateUrl: assets('views/editor/splash.html'),
                             model:  [function() {
-                                return copy(this.cParent.cModel);
-                            }]
+                                return this.cModel || copy(this.cParent.cModel);
+                            }],
+                            children: {
+                                source: {
+                                    controller: 'GenericController',
+                                    controllerAs: 'SplashSourceCtrl',
+                                    templateUrl: assets('views/editor/splash/source.html')
+                                },
+                                image: {
+                                    controller: 'SplashImageController',
+                                    controllerAs: 'SplashImageCtrl',
+                                    templateUrl: assets('views/editor/splash/image.html')
+                                }
+                            }
                         },
                         setMode: {
                             controller: 'NewController',
@@ -544,6 +556,11 @@
                     }
                 })
                 .index('manager');
+        }])
+
+        .config(['CollateralServiceProvider',
+        function( CollateralServiceProvider ) {
+            CollateralServiceProvider.defaultCollageWidth(600);
         }])
 
         .service('c6Runner', ['$timeout',

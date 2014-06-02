@@ -27,6 +27,9 @@
                     id: 'e-53ae461c63b015',
                     data: {
                         mode: 'lightbox',
+                        collateral: {
+                            splash: null
+                        },
                         deck: [
                             {
                                 id: 'rc-e91e76c0ce486a',
@@ -110,6 +113,32 @@
             });
 */
             describe('properties', function() {
+                describe('splashSrc', function() {
+                    describe('if collateral.splash is null', function() {
+                        beforeEach(function() {
+                            cModel.data.collateral.splash = null;
+                        });
+
+                        it('should be null', function() {
+                            expect(EditorCtrl.splashSrc).toBeNull();
+                        });
+                    });
+
+                    describe('if collateral.splash is not null', function() {
+                        beforeEach(function() {
+                            cModel.data.collateral.splash = '/collateral/foo.jpg';
+                        });
+
+                        it('should be the splash source with the cacheBuster', function() {
+                            [1, 2, 3, 4, 5].forEach(function(num) {
+                                EditorCtrl.cacheBuster = num;
+
+                                expect(EditorCtrl.splashSrc).toBe(cModel.data.collateral.splash + '?cb=' + num);
+                            });
+                        });
+                    });
+                });
+
                 describe('cardLimits', function() {
                     it('should have a liberal initial value', function() {
                         expect(EditorCtrl.cardLimits).toEqual({
@@ -215,6 +244,12 @@
                     });
                 });
 
+                describe('cacheBuster', function() {
+                    it('should be 0', function() {
+                        expect(EditorCtrl.cacheBuster).toBe(0);
+                    });
+                });
+
                 describe('prettyMode', function() {
                     describe('if the AppCtrl has no config', function() {
                         it('should be null', function() {
@@ -286,6 +321,16 @@
                 function dialog() {
                     return ConfirmDialogService.display.calls.mostRecent().args[0];
                 }
+
+                describe('bustCache()', function() {
+                    it('should increment this.cacheBuster', function() {
+                        [1, 2, 3, 4, 5].forEach(function(num) {
+                            EditorCtrl.bustCache();
+
+                            expect(EditorCtrl.cacheBuster).toBe(num);
+                        });
+                    });
+                });
 
                 describe('errorForCard(card)', function() {
                     function setLimits(limits) {
@@ -641,6 +686,7 @@
 
                         EditorCtrl.dismissDirtyWarning = true;
                         spyOn(EditorService, 'sync').and.returnValue($q.when(cModel));
+                        spyOn(EditorCtrl, 'bustCache');
 
                         $scope.$apply(function() {
                             EditorCtrl.save().then(success);
@@ -661,6 +707,10 @@
 
                         it('should set dismissDirtyWarning to false', function() {
                             expect(EditorCtrl.dismissDirtyWarning).toBe(false);
+                        });
+
+                        it('should bust the cache', function() {
+                            expect(EditorCtrl.bustCache).toHaveBeenCalled();
                         });
 
                         it('should resolve the promise', function() {

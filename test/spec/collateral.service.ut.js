@@ -5,16 +5,23 @@
         describe('CollateralService', function() {
             var $rootScope,
                 $q,
+                $httpBackend,
+                CollateralServiceProvider,
                 CollateralService,
+                VideoThumbnailService,
                 FileService;
 
             beforeEach(function() {
-                module('c6.mrmaker');
+                module('c6.mrmaker', function($injector) {
+                    CollateralServiceProvider = $injector.get('CollateralServiceProvider');
+                });
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
                     FileService = $injector.get('FileService');
                     $q = $injector.get('$q');
+                    $httpBackend = $injector.get('$httpBackend');
+                    VideoThumbnailService = $injector.get('VideoThumbnailService');
 
                     CollateralService = $injector.get('CollateralService');
                 });
@@ -25,6 +32,121 @@
             });
 
             describe('methods', function() {
+                describe('generateCollage(minireel, name, width)', function() {
+                    var minireel, thumbs,
+                        success;
+
+                    function Thumb(card) {
+                        this.small = card ?
+                            (card.data.videoid + '--small.jpg') :
+                            null;
+
+                        this.large = card ?
+                            (card.data.videoid + '--large.jpg') :
+                            null;
+
+                        this.ensureFulfillment = jasmine.createSpy('thumb.ensureFulfillment()')
+                            .and.callFake(function() {
+                                return $q.when(this);
+                            });
+                    }
+
+                    beforeEach(function() {
+                        success = jasmine.createSpy('generateCollage() success');
+
+                        minireel = {
+                            id: 'e-ef657e8ea90c84',
+                            data: {
+                                splash: {
+                                    ratio: '16-9'
+                                },
+                                deck: [
+                                    {
+                                        data: {
+                                            service: 'youtube',
+                                            videoid: '123'
+                                        }
+                                    },
+                                    {
+                                        data: {
+                                            service: 'vimeo',
+                                            videoid: 'abc'
+                                        }
+                                    },
+                                    {
+                                        data: {}
+                                    },
+                                    {
+                                        data: {
+                                            service: 'dailymotion',
+                                            videoid: 'abc123'
+                                        }
+                                    },
+                                    {
+                                        data: {}
+                                    }
+                                ]
+                            }
+                        };
+
+                        thumbs = {
+                            '123': new Thumb(minireel.data.deck[0]),
+                            'abc': new Thumb(minireel.data.deck[1]),
+                            'abc123': new Thumb(minireel.data.deck[3])
+                        };
+
+                        spyOn(VideoThumbnailService, 'getThumbsFor').and.callFake(function(service, videoid) {
+                            return thumbs[videoid] || new Thumb();
+                        });
+
+                        $httpBackend.expectPOST('/api/collateral/splash/' + minireel.id, {
+                            name: 'splash',
+                            size: {
+                                width: 600,
+                                height: 600 * (9 / 16)
+                            },
+                            ratio: '16-9',
+                            thumbs: Object.keys(thumbs).map(function(key) {
+                                return thumbs[key].large;
+                            })
+                        }).respond(201, 'collateral/' + minireel.id + '/splash');
+
+                        CollateralService.generateCollage(minireel, 'splash', 600).then(success);
+
+                        $httpBackend.flush();
+                    });
+
+                    it('should make sure every ThumbModel is fulfilled', function() {
+                        Object.keys(thumbs).forEach(function(key) {
+                            expect(thumbs[key].ensureFulfillment).toHaveBeenCalled();
+                        });
+                    });
+
+                    it('should resolve to the path of the generated image', function() {
+                        expect(success).toHaveBeenCalledWith('/collateral/' + minireel.id + '/splash');
+                    });
+
+                    it('should allow a default width to be configured', function() {
+                        $httpBackend.expectPOST('/api/collateral/splash/' + minireel.id, {
+                            name: 'foo',
+                            size: {
+                                width: 800,
+                                height: 800 * (9 / 16)
+                            },
+                            ratio: '16-9',
+                            thumbs: Object.keys(thumbs).map(function(key) {
+                                return thumbs[key].large;
+                            })
+                        }).respond(201, 'collateral/' + minireel.id + '/splash');
+
+                        CollateralServiceProvider.defaultCollageWidth(800);
+
+                        CollateralService.generateCollage(minireel, 'foo');
+
+                        $httpBackend.flush();
+                    });
+                });
+
                 describe('set(key, file, experience)', function() {
                     var experience, splashImage,
                         uploadDeferred, splashImageWrapper,

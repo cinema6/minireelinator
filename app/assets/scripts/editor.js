@@ -32,8 +32,8 @@
             };
         }])
 
-        .service('EditorService', ['MiniReelService','$q','c6AsyncQueue',
-        function                  ( MiniReelService , $q , c6AsyncQueue ) {
+        .service('EditorService', ['MiniReelService','$q','c6AsyncQueue','CollateralService',
+        function                  ( MiniReelService , $q , c6AsyncQueue , CollateralService ) {
             var _private = {},
                 queue = c6AsyncQueue();
 
@@ -142,14 +142,32 @@
             };
 
             this.sync = queue.wrap(function() {
-                var minireel = _private.minireel;
+                var minireel = _private.minireel,
+                    proxy = _private.proxy;
+
+                function syncWithCollateral() {
+                    if (proxy.data.splash.source === 'specified') {
+                        return $q.when(proxy);
+                    }
+
+                    return CollateralService.generateCollage(proxy, 'splash')
+                        .then(function store(src) {
+                            proxy.data.collateral.splash = src;
+                        })
+                        .catch(function rescue() {
+                            return proxy;
+                        });
+                }
 
                 if (!minireel) {
                     return rejectNothingOpen();
                 }
 
-                return syncToMinireel()
-                    .save()
+                return syncWithCollateral()
+                    .then(syncToMinireel)
+                    .then(function save(minireel) {
+                        return minireel.save();
+                    })
                     .then(syncToProxy);
             }, this);
 
@@ -225,6 +243,7 @@
             this.editTitle = false;
             this.dismissDirtyWarning = false;
             this.minireelState = EditorService.state;
+            this.cacheBuster = 0;
 
             Object.defineProperties(this, {
                 prettyMode: {
@@ -266,8 +285,19 @@
 
                         return cardLimits;
                     }
+                },
+                splashSrc: {
+                    get: function() {
+                        var splash = this.model.data.collateral.splash;
+
+                        return splash && (splash + '?cb=' + this.cacheBuster);
+                    }
                 }
             });
+
+            this.bustCache = function() {
+                this.cacheBuster++;
+            };
 
             this.errorForCard = function(card) {
                 var limit = this.cardLimits.copy,
@@ -414,6 +444,7 @@
                         $log.info('MiniReel save success!', minireel);
 
                         self.dismissDirtyWarning = false;
+                        self.bustCache();
 
                         return minireel;
                     });
@@ -494,55 +525,185 @@
         //    AppCtrl.sendPageView(this.pageObject);
         }])
 
-        .controller('EditorSplashController', ['$scope','FileService','CollateralService',
-                                               'c6State','$log',
-        function                              ( $scope , FileService , CollateralService ,
-                                                c6State , $log ) {
-            var self = this,
-                EditorCtrl = $scope.EditorCtrl;
+        .controller('EditorSplashController', ['$scope','c6State','$log','cModel',
+        function                              ( $scope , c6State , $log , cModel ) {
+            var self = this;
+
+            function tabBySref(sref) {
+                return self.tabs.reduce(function(result, next) {
+                    return next.sref === sref ? next : result;
+                }, null);
+            }
+
+            function incrementTabVisits(state) {
+                tabBySref(state.name).visits++;
+            }
 
             $log = ($log.context || function() { return $log; })('EditorSplashCtrl');
 
+            this.tabs = [
+                {
+                    name: 'Source Type',
+                    sref: 'editor.splash.source',
+                    visits: 0,
+                    requiredVisits: 0
+                },
+                {
+                    name: 'Image Settings',
+                    sref: 'editor.splash.image',
+                    visits: 0,
+                    requiredVisits: 0
+                }
+            ];
+            this.splashSrc = cModel.data.collateral.splash;
+            Object.defineProperties(this, {
+                currentTab: {
+                    configurable: true,
+                    get: function() {
+                        return this.tabs.reduce(function(result, next) {
+                            return next.sref === c6State.current.name ?
+                                next : result;
+                        }, null);
+                    }
+                }
+            });
+
+            this.isAsFarAs = function(tab) {
+                var tabs = this.tabs;
+
+                return tabs.indexOf(tab) <= tabs.indexOf(this.currentTab);
+            };
+
+            this.tabIsValid = function(tab) {
+                if (!tab) { return tab; }
+
+                switch (tab.sref) {
+                case 'editor.splash.image':
+                    switch (this.model.data.splash.source) {
+                    case 'generated':
+                        return this.isAsFarAs(tab);
+                    case 'specified':
+                        return this.isAsFarAs(tab) && !!this.splashSrc;
+                    }
+                    break;
+                default:
+                    return this.isAsFarAs(tab);
+                }
+            };
+
+            c6State.on('stateChangeSuccess', incrementTabVisits);
+
+            $scope.$on('$destroy', function() {
+                c6State.removeListener('stateChangeSuccess', incrementTabVisits);
+            });
+
+            $scope.$watch(
+                function() { return self.model.data.splash.source; },
+                function(source, prevSource) {
+                    var imageTab;
+
+                    if (source === prevSource) { return; }
+                    imageTab = tabBySref('editor.splash.image');
+
+                    imageTab.requiredVisits = imageTab.visits + 1;
+                    self.splashSrc = null;
+                    self.model.data.collateral.splash = null;
+                }
+            );
+        }])
+
+        .controller('SplashImageController', ['$scope','CollateralService','$log','$q','c6State',
+                                              'FileService',
+        function                             ( $scope , CollateralService , $log , $q , c6State ,
+                                               FileService ) {
+            var EditorCtrl = $scope.EditorCtrl,
+                EditorSplashCtrl = $scope.EditorSplashCtrl;
+            var self = this,
+                minireel = EditorSplashCtrl.model,
+                splash = minireel.data.splash;
+
+            $log = ($log.context || function() { return $log; })('EditorSplashCtrl');
+
+            this.isGenerating = false;
             this.maxFileSize = 307200;
             this.splash = null;
             this.currentUpload = null;
-            this.allowSave = false;
             Object.defineProperties(this, {
                 fileTooBig: {
+                    configurable: true,
                     get: function() {
                         return ((this.splash || {}).size || 0) > this.maxFileSize;
                     }
                 }
             });
 
-            this.upload = function() {
+            this.uploadSplash = function() {
                 var upload;
 
                 $log.info('Upload started: ', this.splash);
                 this.currentUpload = upload = CollateralService.set(
                     'splash',
                     this.splash,
-                    this.model
+                    EditorSplashCtrl.model
                 );
 
-                upload
-                    .then(function allowSave() {
-                        self.allowSave = true;
-                    })
+                return upload
                     .finally(function cleanup() {
                         $log.info('Uploaded completed!');
                         self.currentUpload = null;
                     });
             };
 
+            this.generateSplash = function(permanent) {
+                this.isGenerating = true;
+
+                return CollateralService.generateCollage(
+                    minireel,
+                    'splash' + (permanent ? '' : ('--' + splash.ratio))
+                ).then(function setSplashSrc(src) {
+                    EditorSplashCtrl.splashSrc = src;
+
+                    return src;
+                })
+                .finally(function setFlag() {
+                    self.isGenerating = false;
+                });
+            };
+
             this.save = function() {
                 var data = EditorCtrl.model.data;
 
-                $log.info('Saving data: ', this.model);
-                copy(this.model.data.collateral, data.collateral || (data.collateral = {}));
-                $log.info('Save complete: ', EditorCtrl.model);
+                function handleImageAsset() {
+                    switch (splash.source) {
+                    case 'specified':
+                        return !!self.splash ?
+                            self.uploadSplash() :
+                            $q.when(minireel);
+                    case 'generated':
+                        return self.generateSplash(true)
+                            .then(function save(src) {
+                                minireel.data.collateral.splash = src;
 
-                c6State.goTo('editor');
+                                return minireel;
+                            })
+                            .catch(function fix() {
+                                return minireel;
+                            });
+                    }
+                }
+
+                return handleImageAsset()
+                    .then(function copyData(minireel) {
+                        $log.info('Saving data: ', minireel);
+                        copy(minireel.data.collateral, data.collateral);
+                        copy(minireel.data.splash, data.splash);
+                        $log.info('Save complete: ', EditorCtrl.model);
+
+                        c6State.goTo('editor');
+                        EditorCtrl.bustCache();
+
+                        return EditorCtrl.model;
+                    });
             };
 
             $scope.$on('$destroy', function() {
@@ -552,12 +713,29 @@
             });
 
             $scope.$watch(function() { return self.splash; }, function(newImage, oldImage) {
-                self.allowSave = false;
+                var file;
+
+                if (!newImage) { return; }
+                file = FileService.open(newImage);
+
+                EditorSplashCtrl.splashSrc = file.url;
 
                 if (!oldImage) { return; }
 
                 FileService.open(oldImage).close();
             });
+
+            $scope.$watch(function() { return splash.ratio; }, function(ratio, prevRatio) {
+                if (ratio === prevRatio) { return; }
+
+                if (splash.source === 'generated') {
+                    self.generateSplash(false);
+                }
+            });
+
+            if (!EditorSplashCtrl.splashSrc && splash.source === 'generated') {
+                this.generateSplash(false);
+            }
         }])
 
         .controller('EditCardController', ['$scope','c6Computed','c6State','VideoService',
