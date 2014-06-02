@@ -6,7 +6,8 @@
         copy = angular.copy,
         forEach = angular.forEach,
         jqLite = angular.element,
-        extend = angular.extend;
+        extend = angular.extend,
+        isDefined = angular.isDefined;
 
     angular.module('c6.mrmaker', window$.c6.kModDeps)
         .constant('c6Defines', window$.c6)
@@ -80,6 +81,7 @@
                 'assets' + c6Defines.kExpUrl :
                 c6Defines.kExpUrl
             ), 'app');
+            c6UrlMakerProvider.location(c6Defines.kCollateralUrl, 'collateral');
         }])
 
         .constant('VoteAdapter', ['$http','config','$q',
@@ -292,9 +294,9 @@
                             controller: 'GenericController',
                             controllerAs: 'ManagerEmbedCtrl',
                             templateUrl: assets('views/manager/embed.html'),
-                            model:  ['c6StateParams',
-                            function( c6StateParams ) {
-                                return c6StateParams.minireelId;
+                            model:  ['c6StateParams','cinema6',
+                            function( c6StateParams , cinema6 ) {
+                                return cinema6.db.find('experience', c6StateParams.minireelId);
                             }]
                         },
                         new: {
@@ -854,15 +856,17 @@
                 controller: 'EmbedCodeController',
                 controllerAs: 'Ctrl',
                 scope: {
-                    minireelId: '@'
+                    minireel: '=',
+                    splashSrc: '@'
                 }
             };
         }])
 
-        .controller('EmbedCodeController', ['$scope','cinema6',
-        function                           ( $scope , cinema6 ) {
+        .controller('EmbedCodeController', ['$scope','cinema6','$attrs','c6UrlMaker','$sce',
+        function                           ( $scope , cinema6 , $attrs , c6UrlMaker , $sce ) {
             var self = this;
 
+            this.readOnly = isDefined($attrs.readonly);
             this.modes = [
                 {
                     name: 'Responsive Auto-fit *',
@@ -889,17 +893,39 @@
             Object.defineProperties(this, {
                 code: {
                     get: function() {
-                        return '<script src="' +
-                            this.c6EmbedSrc +
-                            '" data-exp="' +
-                            $scope.minireelId +
-                            '"' + (this.mode === 'custom' ?
+                        var minireel = $scope.minireel,
+                            splash = minireel.data.splash;
+
+                        return '<script src="' + this.c6EmbedSrc + '"' +
+                            ' data-exp="' + minireel.id + '"' +
+                            ' data-:title="' + btoa(minireel.data.title) + '"' +
+                            ' data-splash="' +
+                                splash.theme + ':' + splash.ratio.split('-').join('/') +
+                            '"' +
+                            (this.mode === 'custom' ?
                                 (' data-width="' +
                                     this.size.width +
                                     '" data-height="' +
                                     this.size.height + '"') :
                                 '') +
                             '></script>';
+                    }
+                },
+                splashSrc: {
+                    get: function() {
+                        var minireel = $scope.minireel,
+                            splash = minireel.data.splash;
+
+                        return $sce.trustAsResourceUrl(c6UrlMaker(
+                            (
+                                'splash/' +
+                                splash.theme + '/' + splash.ratio + '.html?' +
+                                'title=' + encodeURIComponent(minireel.data.title) + '&' +
+                                'exp=' + encodeURIComponent(minireel.id) + '&' +
+                                'splash=' + encodeURIComponent($scope.splashSrc)
+                            ),
+                            'collateral'
+                        ));
                     }
                 }
             });

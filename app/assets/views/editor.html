@@ -107,4 +107,4 @@
 </c6-alias>
 <c6-view></c6-view>
 
-<embed-code ng-show="EditorCtrl.model.status === 'active'" minireel-id="{{EditorCtrl.model.id}}" class="embed__group container clearifx"></embed-code>
+<embed-code ng-if="EditorCtrl.model.status === 'active'" minireel="EditorCtrl.model" splash-src="EditorCtrl.splashSrc" class="embed__group container clearifx"></embed-code>

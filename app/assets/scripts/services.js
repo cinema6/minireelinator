@@ -759,7 +759,7 @@
                     collateral: minireel.data.collateral ||
                         { splash: null },
                     splash: minireel.data.splash ||
-                        { ratio: '1-1', source: 'generated' },
+                        { ratio: '1-1', source: 'generated', theme: 'img-only' },
                     deck: minireel.data.deck.map(function(card) {
                         return makeCard(card);
                     })
@@ -930,7 +930,8 @@
                                 branding: user.branding,
                                 splash: {
                                     source: 'generated',
-                                    ratio: '1-1'
+                                    ratio: '1-1',
+                                    theme: 'img-only'
                                 },
                                 collateral: {
                                     splash: null

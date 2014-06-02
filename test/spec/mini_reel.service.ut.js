@@ -632,7 +632,8 @@
                                 });
                                 expect(result.data.splash).toEqual({
                                     ratio: '1-1',
-                                    source: 'generated'
+                                    source: 'generated',
+                                    theme: 'img-only'
                                 });
                             });
                         });
@@ -933,7 +934,8 @@
                                         branding: appData.user.branding,
                                         splash: {
                                             source: 'generated',
-                                            ratio: '1-1'
+                                            ratio: '1-1',
+                                            theme: 'img-only'
                                         },
                                         collateral: {
                                             splash: null

@@ -1,9 +1,9 @@
-<div class="embedPreview__group embedPreview__group--lightbox">
+<div ng-if="!Ctrl.readOnly" class="embedPreview__group embedPreview__group--lightbox">
     <label class="embed__label" for="embed-type">Embed Code Type:</label>
-    <select class="embed__selector" name="embed-type" id="embed-type">
+    <select ng-model="minireel.data.splash.theme" class="embed__selector" name="embed-type" id="embed-type">
         <option value="text-only">Text Only</option>
-        <option value="image-only">Image Only</option>
-        <option value="image-text-overlay">Image with Text Overlay</option>
+        <option value="img-only">Image Only</option>
+        <option value="img-text-overlay">Image with Text Overlay</option>
         <option value="horizontal-stack">Horizontal Stack</option>
         <option value="vertical-stack">Vertical Stack</option>
     </select>
@@ -12,43 +12,16 @@
 
 <!--embed template start-->
 <style>
-    .ir {
-        background-color: transparent;
-        border: 0; width:0; height:0;
-        overflow: hidden; display: block; position:absolute;
-    }
     .mr-splash__group {
         width:100%; height:0;
         padding:0 0 100% 0;
         background:url('/__dirname/app/assets/img/default_square.jpg') 50% 50% / cover no-repeat;
         position:relative;
     }
-    .mr-splash__start {
-        position:absolute;
-        width:100%; height:100%;
-        background:50% 50% / cover no-repeat;
-        cursor:pointer;
-        border:0; padding:0; margin:0;
-    }
-    .mr-splash__copy {
-        position:absolute; bottom:0; left:0; right:0;
-        padding:12px 6px; color:#fff;
-        background:#000; background:rgba(0,0,0,0.55);
-    }
-    .mr-title {
-        font-size:1.125em; line-height:1.5; font-weight:normal;
-        margin:0;
-    }
 </style>
 
 <div class="mr-splash__group">
-    <button id="start" type="button"
-        class="mr-splash__start"
-        style="background-image:url('http://farm6.staticflickr.com/5533/14006384980_7d70c9cd63_b.jpg');">
-        <span class="mr-splash__copy">
-            <h1 class="mr-title">title</h1>
-        </span>
-    </button>
+    <iframe ng-src="{{Ctrl.splashSrc}}" width="100%" height="100%"></iframe>
 </div>
 <!--embed template end-->
 
