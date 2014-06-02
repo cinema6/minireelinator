@@ -44,6 +44,12 @@
                     expect(model).toEqual(EditorState.cModel);
                     expect(model).not.toBe(EditorState.cModel);
                 });
+
+                it('should reuse a model if it already has one', function() {
+                    EditorSplashState.cModel = {};
+
+                    expect($injector.invoke(EditorSplashState.model, EditorSplashState)).toBe(EditorSplashState.cModel);
+                });
             });
         });
     });

@@ -163,6 +163,26 @@
                                 expect(result.large).toBe('large.jpg');
                             });
 
+                            describe('ensureFulfillment()', function() {
+                                it('should return the same promise every time', function() {
+                                    expect(result.ensureFulfillment()).toBe(result.ensureFulfillment());
+                                });
+
+                                it('should resolve to "this" when the thumbs are fetched', function() {
+                                    var success = jasmine.createSpy('ensureFulfillment() success')
+                                        .and.callFake(function(model) {
+                                            ['small', 'large'].forEach(function(size) {
+                                                expect(model[size]).toBe(size + '.jpg');
+                                            });
+                                        });
+
+                                    result.ensureFulfillment().then(success);
+
+                                    $rootScope.$digest();
+                                    expect(success).toHaveBeenCalledWith(result);
+                                });
+                            });
+
                             it('should cache the model', function() {
                                 expect(VideoThumbnailService.getThumbsFor('youtube', '12345')).toBe(result);
 

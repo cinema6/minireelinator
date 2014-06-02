@@ -10,7 +10,7 @@
         isFunction = angular.isFunction,
         fromJson = angular.fromJson;
 
-    angular.module('c6.mrmaker')
+    angular.module('c6.mrmaker.services', ['c6.ui'])
         .factory('c6AsyncQueue', ['$q',
         function                 ( $q ) {
             function Queue() {
@@ -43,34 +43,88 @@
             };
         }])
 
-        .service('CollateralService', ['FileService',
-        function                      ( FileService ) {
-            this.set = function(key, file, experience) {
-                var promise;
+        .provider('CollateralService', [function() {
+            var defaultCollageWidth = null;
 
-                function setResult(response) {
-                    var data = experience.data;
-
-                    (data.collateral || (data.collateral = {}))[key] =
-                        '/' + response.data[0].path;
-
-                    return experience;
-                }
-
-                function updateProgress(progress) {
-                    promise.progress = progress;
-
-                    return progress;
-                }
-
-                file = FileService.open(file);
-                file.name = key;
-
-                promise = FileService.upload('/api/collateral/files/' + experience.id, [file])
-                    .then(setResult, null, updateProgress);
-
-                return promise;
+            this.defaultCollageWidth = function(width) {
+                defaultCollageWidth = width;
             };
+
+            this.$get = ['FileService','$http','VideoThumbnailService','$q',
+            function    ( FileService , $http , VideoThumbnailService , $q ) {
+                function CollateralService() {
+                    this.set = function(key, file, experience) {
+                        var promise;
+
+                        function setResult(response) {
+                            var data = experience.data;
+
+                            (data.collateral || (data.collateral = {}))[key] =
+                                '/' + response.data[0].path;
+
+                            return experience;
+                        }
+
+                        function updateProgress(progress) {
+                            promise.progress = progress;
+
+                            return progress;
+                        }
+
+                        file = FileService.open(file);
+                        file.name = key;
+
+                        promise = FileService.upload(
+                            '/api/collateral/files/' + experience.id,
+                            [file]
+                        ).then(setResult, null, updateProgress);
+
+                        return promise;
+                    };
+
+                    this.generateCollage = function(minireel, name, width) {
+                        var ratio = minireel.data.splash.ratio.split('-');
+
+                        /* jshint expr:true */
+                        (width || (width = defaultCollageWidth));
+                        /* jshint expr:false */
+
+                        function fetchThumbs(minireel) {
+                            return $q.all(minireel.data.deck.map(function(card) {
+                                return VideoThumbnailService.getThumbsFor(
+                                    card.data.service,
+                                    card.data.videoid
+                                ).ensureFulfillment();
+                            })).then(function map(thumbs) {
+                                return thumbs.map(function(thumb) {
+                                    return thumb.large;
+                                }).filter(function(src) {
+                                    return !!src;
+                                });
+                            });
+                        }
+
+                        function generateCollage(thumbs) {
+                            return $http.post('/api/collateral/splash/' + minireel.id, {
+                                name: name,
+                                size: {
+                                    width: width,
+                                    height: width * (ratio[1] / ratio[0])
+                                },
+                                ratio: ratio.join('-'),
+                                thumbs: thumbs
+                            }).then(function returnHref(response) {
+                                return '/' + response.data;
+                            });
+                        }
+
+                        return fetchThumbs(minireel)
+                            .then(generateCollage);
+                    };
+                }
+
+                return new CollateralService();
+            }];
         }])
 
         .service('FileService', ['$window','$q','$rootScope',
@@ -231,9 +285,15 @@
                 this.small = null;
                 this.large = null;
 
-                promise.then(function setThumbs(thumbs) {
+                this.ensureFulfillment = function() {
+                    return promise;
+                };
+
+                promise = promise.then(function setThumbs(thumbs) {
                     self.small = thumbs.small;
                     self.large = thumbs.large;
+
+                    return self;
                 });
             }
 
@@ -696,7 +756,10 @@
                     branding: minireel.data.branding,
                     autoplay: minireel.data.autoplay,
                     election: minireel.data.election,
-                    collateral: minireel.data.collateral,
+                    collateral: minireel.data.collateral ||
+                        { splash: null },
+                    splash: minireel.data.splash ||
+                        { ratio: '1-1', source: 'generated' },
                     deck: minireel.data.deck.map(function(card) {
                         return makeCard(card);
                     })
@@ -865,6 +928,13 @@
                                 title: null,
                                 mode: 'lightbox',
                                 branding: user.branding,
+                                splash: {
+                                    source: 'generated',
+                                    ratio: '1-1'
+                                },
+                                collateral: {
+                                    splash: null
+                                },
                                 deck: (function() {
                                     var deck = [],
                                         count = 0;
