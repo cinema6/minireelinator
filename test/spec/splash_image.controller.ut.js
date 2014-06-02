@@ -62,7 +62,8 @@
                                         ratio: '16-9'
                                     }
                                 }
-                            }
+                            },
+                            bustCache: jasmine.createSpy('EditorCtrl.bustCache()')
                         };
                         SplashImageCtrl = $controller('SplashImageController', { $scope: $scope });
                     });
@@ -134,7 +135,7 @@
                         });
 
                         it('should generate a splash image', function() {
-                            expect(CollateralService.generateCollage).toHaveBeenCalledWith(minireel, 'splash--1-1', 600);
+                            expect(CollateralService.generateCollage).toHaveBeenCalledWith(minireel, 'splash--1-1');
                         });
 
                         it('should set isGenerating to true', function() {
@@ -294,7 +295,7 @@
                         });
 
                         it('should generate a collage with the name "splash"', function() {
-                            expect(CollateralService.generateCollage).toHaveBeenCalledWith(minireel, 'splash', 600);
+                            expect(CollateralService.generateCollage).toHaveBeenCalledWith(minireel, 'splash');
                         });
                     });
 
@@ -304,7 +305,7 @@
                         });
 
                         it('should generate a collage with the name "splash--ratio"', function() {
-                            expect(CollateralService.generateCollage).toHaveBeenCalledWith(minireel, 'splash--1-1', 600);
+                            expect(CollateralService.generateCollage).toHaveBeenCalledWith(minireel, 'splash--1-1');
                         });
                     });
                 });
@@ -464,7 +465,7 @@
                             expect(c6State.goTo).not.toHaveBeenCalled();
 
                             $scope.$apply(function() {
-                                uploadDeferred.resolve(minireel);
+                                generateDeferred.resolve('/collateral/src/foo.jpg');
                             });
                         });
 
@@ -480,6 +481,10 @@
 
                         it('should transition back to the editor', function() {
                             expect(c6State.goTo).toHaveBeenCalledWith('editor');
+                        });
+
+                        it('should bust the caches', function() {
+                            expect(EditorCtrl.bustCache).toHaveBeenCalled();
                         });
 
                         it('should resolve the promsise', function() {

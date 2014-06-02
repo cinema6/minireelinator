@@ -515,6 +515,11 @@
                 .index('manager');
         }])
 
+        .config(['CollateralServiceProvider',
+        function( CollateralServiceProvider ) {
+            CollateralServiceProvider.defaultCollageWidth(600);
+        }])
+
         .service('c6Runner', ['$timeout',
         function             ( $timeout ) {
             this.runOnce = function(fn, waitTime) {

@@ -6,12 +6,15 @@
             var $rootScope,
                 $q,
                 $httpBackend,
+                CollateralServiceProvider,
                 CollateralService,
                 VideoThumbnailService,
                 FileService;
 
             beforeEach(function() {
-                module('c6.mrmaker');
+                module('c6.mrmaker', function($injector) {
+                    CollateralServiceProvider = $injector.get('CollateralServiceProvider');
+                });
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
@@ -121,6 +124,26 @@
 
                     it('should resolve to the path of the generated image', function() {
                         expect(success).toHaveBeenCalledWith('/collateral/' + minireel.id + '/splash');
+                    });
+
+                    it('should allow a default width to be configured', function() {
+                        $httpBackend.expectPOST('/api/collateral/splash/' + minireel.id, {
+                            name: 'foo',
+                            size: {
+                                width: 800,
+                                height: 800 * (9 / 16)
+                            },
+                            ratio: '16-9',
+                            thumbs: Object.keys(thumbs).map(function(key) {
+                                return thumbs[key].large;
+                            })
+                        }).respond(201, 'collateral/' + minireel.id + '/splash');
+
+                        CollateralServiceProvider.defaultCollageWidth(800);
+
+                        CollateralService.generateCollage(minireel, 'foo');
+
+                        $httpBackend.flush();
                     });
                 });
 

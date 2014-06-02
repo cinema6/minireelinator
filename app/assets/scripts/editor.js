@@ -32,8 +32,8 @@
             };
         }])
 
-        .service('EditorService', ['MiniReelService','$q','c6AsyncQueue',
-        function                  ( MiniReelService , $q , c6AsyncQueue ) {
+        .service('EditorService', ['MiniReelService','$q','c6AsyncQueue','CollateralService',
+        function                  ( MiniReelService , $q , c6AsyncQueue , CollateralService ) {
             var _private = {},
                 queue = c6AsyncQueue();
 
@@ -142,14 +142,32 @@
             };
 
             this.sync = queue.wrap(function() {
-                var minireel = _private.minireel;
+                var minireel = _private.minireel,
+                    proxy = _private.proxy;
+
+                function syncWithCollateral() {
+                    if (proxy.data.splash.source === 'specified') {
+                        return $q.when(proxy);
+                    }
+
+                    return CollateralService.generateCollage(proxy, 'splash')
+                        .then(function store(src) {
+                            proxy.data.collateral.splash = src;
+                        })
+                        .catch(function rescue() {
+                            return proxy;
+                        });
+                }
 
                 if (!minireel) {
                     return rejectNothingOpen();
                 }
 
-                return syncToMinireel()
-                    .save()
+                return syncWithCollateral()
+                    .then(syncToMinireel)
+                    .then(function save(minireel) {
+                        return minireel.save();
+                    })
                     .then(syncToProxy);
             }, this);
 
@@ -225,6 +243,7 @@
             this.editTitle = false;
             this.dismissDirtyWarning = false;
             this.minireelState = EditorService.state;
+            this.cacheBuster = 0;
 
             Object.defineProperties(this, {
                 prettyMode: {
@@ -266,8 +285,19 @@
 
                         return cardLimits;
                     }
+                },
+                splashSrc: {
+                    get: function() {
+                        var splash = this.model.data.collateral.splash;
+
+                        return splash && (splash + '?cb=' + this.cacheBuster);
+                    }
                 }
             });
+
+            this.bustCache = function() {
+                this.cacheBuster++;
+            };
 
             this.errorForCard = function(card) {
                 var limit = this.cardLimits.copy,
@@ -414,6 +444,7 @@
                         $log.info('MiniReel save success!', minireel);
 
                         self.dismissDirtyWarning = false;
+                        self.bustCache();
 
                         return minireel;
                     });
@@ -627,8 +658,7 @@
 
                 return CollateralService.generateCollage(
                     minireel,
-                    'splash' + (permanent ? '' : ('--' + splash.ratio)),
-                    600
+                    'splash' + (permanent ? '' : ('--' + splash.ratio))
                 ).then(function setSplashSrc(src) {
                     EditorSplashCtrl.splashSrc = src;
 
@@ -669,6 +699,7 @@
                         $log.info('Save complete: ', EditorCtrl.model);
 
                         c6State.goTo('editor');
+                        EditorCtrl.bustCache();
 
                         return EditorCtrl.model;
                     });
