@@ -107,31 +107,6 @@
                     });
                 });
 
-                describe('splashSrc', function() {
-                    function assert() {
-                        expect(EmbedCodeCtrl.splashSrc.$$unwrapTrustedValue()).toBe([
-                            '/collateral/splash/',
-                            $scope.minireel.data.splash.theme,
-                            '/',
-                            $scope.minireel.data.splash.ratio,
-                            '.html?',
-                            'title=' + encodeURIComponent($scope.minireel.data.title) + '&',
-                            'exp=' + encodeURIComponent($scope.minireel.id) + '&',
-                            'splash=' + encodeURIComponent($scope.splashSrc)
-                        ].join(''));
-                    }
-
-                    it('should created based on the MiniReel\'s splash settings', function() {
-                        assert();
-
-                        $scope.minireel.data.splash.theme = 'img-only';
-                        $scope.minireel.data.splash.ratio = '1-1';
-                        $scope.minireel.data.title = 'New Title!';
-
-                        assert();
-                    });
-                });
-
                 describe('code', function() {
                     beforeEach(function() {
                         EmbedCodeCtrl.c6EmbedSrc = 'embed.js';

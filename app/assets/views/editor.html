@@ -101,10 +101,15 @@
                 ng-class="{ 'preview__iframe--fullscreen' : (PreviewCtrl.fullscreen), 'preview__iframe--desktop' : (PreviewCtrl.device === 'desktop'), 'preview__iframe--mobile' : (PreviewCtrl.device === 'phone') }"
                 class="preview__iframe">
             </iframe>
+            <iframe ng-src="{{EditorCtrl.model | splashPageSrc }}"
+                splash-page
+                width="100%"
+                height="100%">
+            </iframe>
         </div>
         <div class="ui__overlay">&nbsp;</div>
     </div>
 </c6-alias>
 <c6-view></c6-view>
 
-<embed-code ng-if="EditorCtrl.model.status === 'active'" minireel="EditorCtrl.model" splash-src="EditorCtrl.splashSrc" class="embed__group container clearifx"></embed-code>
+<embed-code ng-if="EditorCtrl.model.status === 'active'" minireel="EditorCtrl.model" splash-src="{{EditorCtrl.splashSrc}}" class="embed__group container clearifx"></embed-code>
