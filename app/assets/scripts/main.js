@@ -15,7 +15,9 @@
     c6.kLogLevels = (c6.kDebug) ? ['error','warn','log','info'] : [];
     c6.kModDeps = ['c6.mrmaker.services', 'c6.ui', 'c6.state', 'c6.log', 'c6.drag', 'ngAnimate'];
     c6.kExpUrl = '/apps';
-    c6.kCollateralUrl = '/collateral';
+    c6.kCollateralUrl = c6.kLocal ?
+        'http://staging.cinema6.com/collateral' :
+        '/collateral';
     c6.kTracker  = {
         accountId : 'UA-44457821-1',
         config    : (c6.kLocal) ? { 'cookieDomain' : 'none' } : 'auto'

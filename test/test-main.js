@@ -23,6 +23,7 @@
         cdn: 'http://foo.cinema6.com/media/app'
     };
     c6.kModDeps = ['c6.mrmaker.services', 'c6.ui', 'c6.state', 'c6.drag', 'c6.log'];
+    c6.kCollateralUrl = '/collateral';
 
     packageRequest.onload = function(event) {
         var settings = JSON.parse(event.target.response),

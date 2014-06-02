@@ -23,7 +23,8 @@
                 "branding": "elitedaily",
                 "splash": {
                     "source": "generated",
-                    "ratio": "1-1"
+                    "ratio": "1-1",
+                    "theme": "img-only"
                 },
                 "deck": [
                     {
@@ -187,7 +188,8 @@
                 "branding": "elitedaily",
                 "splash": {
                     "source": "specified",
-                    "ratio": "6-5"
+                    "ratio": "6-5",
+                    "theme": "img-only"
                 },
                 "deck": [
                     {
@@ -550,7 +552,8 @@
                 "branding": "elitedaily",
                 "splash": {
                     "source": "specified",
-                    "ratio": "6-4"
+                    "ratio": "6-4",
+                    "theme": "img-only"
                 },
                 "deck": [
                     {
@@ -803,7 +806,8 @@
                 "branding": "elitedaily",
                 "splash": {
                     "source": "generated",
-                    "ratio": "16-9"
+                    "ratio": "16-9",
+                    "theme": "img-only"
                 },
                 "deck": [
                     {

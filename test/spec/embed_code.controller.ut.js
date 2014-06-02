@@ -10,9 +10,12 @@
                 cinema6,
                 EmbedCodeCtrl;
 
-            var getAppDataDeferred;
+            var getAppDataDeferred,
+                $attrs;
 
             beforeEach(function() {
+                $attrs = {};
+
                 module('c6.mrmaker');
 
                 inject(function($injector) {
@@ -25,8 +28,21 @@
                     spyOn(cinema6, 'getAppData').and.returnValue(getAppDataDeferred.promise);
 
                     $scope = $rootScope.$new();
-                    $scope.minireelId = 'e-0277a8c7564f87';
-                    EmbedCodeCtrl = $controller('EmbedCodeController', { $scope: $scope });
+                    $scope.minireel = {
+                        id: 'e-0277a8c7564f87',
+                        data: {
+                            splash: {
+                                theme: 'img-text-overlay',
+                                ratio: '6-4'
+                            },
+                            collateral: {
+                                splash: '/collateral/foo.jpg'
+                            },
+                            title: 'This is the Title!'
+                        }
+                    };
+                    $scope.splashSrc = '/collateral/foo.jpg?cb=0';
+                    EmbedCodeCtrl = $controller('EmbedCodeController', { $scope: $scope, $attrs: $attrs });
                 });
             });
 
@@ -35,6 +51,32 @@
             });
 
             describe('properties', function() {
+                describe('readOnly', function() {
+                    describe('if the readonly attr is undefined', function() {
+                        beforeEach(function() {
+                            delete $attrs.readonly;
+
+                            EmbedCodeCtrl = $controller('EmbedCodeController', { $scope: $scope, $attrs: $attrs });
+                        });
+
+                        it('should be false', function() {
+                            expect(EmbedCodeCtrl.readOnly).toBe(false);
+                        });
+                    });
+
+                    describe('if the readonly attr is defined', function() {
+                        beforeEach(function() {
+                            $attrs.readonly = '';
+
+                            EmbedCodeCtrl = $controller('EmbedCodeController', { $scope: $scope, $attrs: $attrs });
+                        });
+
+                        it('should be true', function() {
+                            expect(EmbedCodeCtrl.readOnly).toBe(true);
+                        });
+                    });
+                });
+
                 describe('mode', function() {
                     it('should be initialized as responsive', function() {
                         expect(EmbedCodeCtrl.mode).toBe('responsive');
@@ -65,6 +107,31 @@
                     });
                 });
 
+                describe('splashSrc', function() {
+                    function assert() {
+                        expect(EmbedCodeCtrl.splashSrc.$$unwrapTrustedValue()).toBe([
+                            '/collateral/splash/',
+                            $scope.minireel.data.splash.theme,
+                            '/',
+                            $scope.minireel.data.splash.ratio,
+                            '.html?',
+                            'title=' + encodeURIComponent($scope.minireel.data.title) + '&',
+                            'exp=' + encodeURIComponent($scope.minireel.id) + '&',
+                            'splash=' + encodeURIComponent($scope.splashSrc)
+                        ].join(''));
+                    }
+
+                    it('should created based on the MiniReel\'s splash settings', function() {
+                        assert();
+
+                        $scope.minireel.data.splash.theme = 'img-only';
+                        $scope.minireel.data.splash.ratio = '1-1';
+                        $scope.minireel.data.title = 'New Title!';
+
+                        assert();
+                    });
+                });
+
                 describe('code', function() {
                     beforeEach(function() {
                         EmbedCodeCtrl.c6EmbedSrc = 'embed.js';
@@ -73,7 +140,7 @@
                     describe('if the size is responsive', function() {
                         it('should be a responsive embed code', function() {
                             expect(EmbedCodeCtrl.code).toBe(
-                                '<script src="embed.js" data-exp="e-0277a8c7564f87"></script>'
+                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4"></script>'
                             );
                         });
                     });
@@ -85,7 +152,7 @@
 
                         it('should be an explicit embed code', function() {
                             expect(EmbedCodeCtrl.code).toBe(
-                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-width="650" data-height="522"></script>'
+                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-width="650" data-height="522"></script>'
                             );
                         });
 
@@ -94,7 +161,7 @@
                             EmbedCodeCtrl.size.width = 400;
 
                             expect(EmbedCodeCtrl.code).toBe(
-                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-width="400" data-height="300"></script>'
+                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-width="400" data-height="300"></script>'
                             );
                         });
                     });
