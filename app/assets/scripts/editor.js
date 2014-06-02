@@ -607,6 +607,7 @@
 
                     imageTab.requiredVisits = imageTab.visits + 1;
                     self.splashSrc = null;
+                    self.model.data.collateral.splash = null;
                 }
             );
         }])

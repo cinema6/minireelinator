@@ -262,6 +262,10 @@
                     it('should nullify the splashSrc', function() {
                         expect(EditorSplashCtrl.splashSrc).toBeNull();
                     });
+
+                    it('should nullify the collateral.splash', function() {
+                        expect(minireel.data.collateral.splash).toBeNull();
+                    });
                 });
 
             });
