@@ -503,17 +503,29 @@
                     describe('publish(minireel)', function() {
                         var result,
                             success,
-                            saveDeferred;
+                            saveDeferred,
+                            updateVoteDeferred;
 
                         beforeEach(function() {
                             saveDeferred = $q.defer();
+                            updateVoteDeferred = $q.defer();
                             success = jasmine.createSpy('success');
+                            spyOn(VoteService, 'update').and
+                                .returnValue(updateVoteDeferred.promise);
 
                             spyOn(minireel, 'save').and.returnValue(saveDeferred.promise);
 
                             $rootScope.$apply(function() {
                                 result = MiniReelService.publish(minireel).then(success);
                             });
+                            
+                            $rootScope.$apply(function() {
+                                updateVoteDeferred.resolve(minireel);
+                            });
+                        });
+
+                        it('should call VoteService.update',function(){
+                            expect(VoteService.update).toHaveBeenCalledWith(minireel);
                         });
 
                         it('should set the minireel\'s status to "active"', function() {
