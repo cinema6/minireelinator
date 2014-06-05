@@ -43,7 +43,7 @@
 
                     CollateralService = $injector.get('CollateralService');
                     spyOn(CollateralService, 'generateCollage')
-                        .and.returnValue($q.when(null));
+                        .and.returnValue($q.defer().promise);
 
                     $scope = $rootScope.$new();
                     $scope.$apply(function() {
@@ -111,20 +111,6 @@
                         minireel.data.splash.source = 'generated';
                     });
 
-                    describe('if there is a splashSrc', function() {
-                        beforeEach(function() {
-                            EditorSplashCtrl.splashSrc = 'barry.jpg';
-
-                            $scope.$apply(function() {
-                                SplashImageCtrl = $controller('SplashImageController', { $scope: $scope });
-                            });
-                        });
-
-                        it('should not generate a splash image', function() {
-                            expect(CollateralService.generateCollage).not.toHaveBeenCalled();
-                        });
-                    });
-
                     describe('if there is no splashSrc', function() {
                         beforeEach(function() {
                             EditorSplashCtrl.splashSrc = null;
@@ -135,7 +121,7 @@
                         });
 
                         it('should generate a splash image', function() {
-                            expect(CollateralService.generateCollage).toHaveBeenCalledWith(minireel, 'splash--1-1');
+                            expect(CollateralService.generateCollage).toHaveBeenCalledWith(minireel, 'splash', null, true);
                         });
 
                         it('should set isGenerating to true', function() {
@@ -145,16 +131,15 @@
                         describe('after the image is generated', function() {
                             beforeEach(function() {
                                 $scope.$apply(function() {
-                                    generateCollageDeferred.resolve('/collateral/blah/splash--1-1');
+                                    generateCollageDeferred.resolve({
+                                        '1-1': '/collateral/blah/splash--1-1',
+                                        '16-9': '/collateral/blah/splash--16-9'
+                                    });
                                 });
                             });
 
                             it('should set isGenerating to false', function() {
                                 expect(SplashImageCtrl.isGenerating).toBe(false);
-                            });
-
-                            it('should set the splashSrc to the result', function() {
-                                expect(EditorSplashCtrl.splashSrc).toBe('/collateral/blah/splash--1-1');
                             });
                         });
 
@@ -175,8 +160,8 @@
 
             describe('properties', function() {
                 describe('isGenerating', function() {
-                    it('should be false', function() {
-                        expect(SplashImageCtrl.isGenerating).toBe(false);
+                    it('should be a boolean', function() {
+                        expect(SplashImageCtrl.isGenerating).toEqual(jasmine.any(Boolean));
                     });
                 });
 
@@ -231,6 +216,50 @@
                         });
                     });
                 });
+
+                describe('splashSrc', function() {
+                    describe('if the splash is specified', function() {
+                        beforeEach(function() {
+                            minireel.data.splash.source = 'specified';
+                        });
+
+                        it('should return the splashSrc', function() {
+                            expect(SplashImageCtrl.splashSrc).toBe(EditorSplashCtrl.splashSrc);
+                        });
+                    });
+
+                    describe('if the splash src is generated', function() {
+                        beforeEach(function() {
+                            minireel.data.splash.source = 'generated';
+
+                            SplashImageCtrl.generatedSrcs = {
+                                '1-1': 'splash--1-1',
+                                '6-5': 'splash--6-5',
+                                '6-4': 'splash--6-4',
+                                '16-9': 'splash--16-9'
+                            };
+                        });
+
+                        it('should return the generated splash for that ratio', function() {
+                            ['1-1', '6-5', '6-4', '16-9'].forEach(function(ratio) {
+                                minireel.data.splash.ratio = ratio;
+
+                                expect(SplashImageCtrl.splashSrc).toBe(SplashImageCtrl.generatedSrcs[ratio]);
+                            });
+                        });
+                    });
+                });
+
+                describe('generatedSrcs', function() {
+                    it('should be empty', function() {
+                        expect(SplashImageCtrl.generatedSrcs).toEqual({
+                            '1-1': null,
+                            '6-5': null,
+                            '6-4': null,
+                            '16-9': null
+                        });
+                    });
+                });
             });
 
             describe('methods', function() {
@@ -255,15 +284,29 @@
                                 expect(SplashImageCtrl.isGenerating).toBe(true);
                             });
 
+                            it('should generate a collage with allRatios set to ' + !bool, function() {
+                                expect(CollateralService.generateCollage).toHaveBeenCalledWith(minireel, 'splash', null, !bool);
+                            });
+
                             describe('with success', function() {
+                                var result;
+
                                 beforeEach(function() {
+                                    result = {
+                                        '1-1': '/collateral/foo--1-1',
+                                        '6-5': '/collateral/foo--6-5',
+                                        '6-4': '/collateral/foo--6-4',
+                                        '16-9': '/collateral/foo--16-9'
+                                    };
+
                                     $scope.$apply(function() {
-                                        generateCollageDeferred.resolve('/collateral/foo.jpg');
+                                        generateCollageDeferred.resolve(result);
                                     });
                                 });
 
-                                it('should set the splashSrc to the result', function() {
-                                    expect(EditorSplashCtrl.splashSrc).toBe('/collateral/foo.jpg');
+                                it('should copy the results data to the generatedSrcs', function() {
+                                    expect(SplashImageCtrl.generatedSrcs).toEqual(result);
+                                    expect(SplashImageCtrl.generatedSrcs).not.toBe(result);
                                 });
 
                                 it('should set isGenerating to false', function() {
@@ -271,7 +314,7 @@
                                 });
 
                                 it('should resolve to the src', function() {
-                                    expect(success).toHaveBeenCalledWith('/collateral/foo.jpg');
+                                    expect(success).toHaveBeenCalledWith(result);
                                 });
                             });
 
@@ -286,26 +329,6 @@
                                     expect(SplashImageCtrl.isGenerating).toBe(false);
                                 });
                             });
-                        });
-                    });
-
-                    describe('if permanent is true', function() {
-                        beforeEach(function() {
-                            SplashImageCtrl.generateSplash(true);
-                        });
-
-                        it('should generate a collage with the name "splash"', function() {
-                            expect(CollateralService.generateCollage).toHaveBeenCalledWith(minireel, 'splash');
-                        });
-                    });
-
-                    describe('if permanent is false', function() {
-                        beforeEach(function() {
-                            SplashImageCtrl.generateSplash(false);
-                        });
-
-                        it('should generate a collage with the name "splash--ratio"', function() {
-                            expect(CollateralService.generateCollage).toHaveBeenCalledWith(minireel, 'splash--1-1');
                         });
                     });
                 });
@@ -365,7 +388,7 @@
                     });
                 });
 
-                describe('save', function() {
+                describe('save()', function() {
                     var originalData,
                         uploadDeferred, generateDeferred,
                         success;
@@ -444,7 +467,12 @@
                         describe('if the upload succeeds', function() {
                             beforeEach(function() {
                                 $scope.$apply(function() {
-                                    generateDeferred.resolve('/collateral/test/splash.jpg');
+                                    generateDeferred.resolve({
+                                        '1-1': '/collateral/test/splash.jpg',
+                                        toString: function() {
+                                            return this['1-1'];
+                                        }
+                                    });
                                 });
                             });
 
@@ -566,44 +594,6 @@
                         });
                         expect(FileService.open).toHaveBeenCalledWith(file);
                         expect(wrapper.close).toHaveBeenCalled();
-                    });
-                });
-
-                describe('minireel.data.splash.ratio', function() {
-                    beforeEach(function() {
-                        spyOn(SplashImageCtrl, 'generateSplash');
-                    });
-
-                    ['6-5', '6-4', '16-9'].forEach(function(ratio) {
-                        describe('with ratio: ' + ratio, function() {
-                            describe('if the source is specififed', function() {
-                                beforeEach(function() {
-                                    minireel.data.splash.source = 'specified';
-
-                                    $scope.$apply(function() {
-                                        minireel.data.splash.ratio = ratio;
-                                    });
-                                });
-
-                                it('should not generate a splash image', function() {
-                                    expect(SplashImageCtrl.generateSplash).not.toHaveBeenCalled();
-                                });
-                            });
-
-                            describe('if the source is generated', function() {
-                                beforeEach(function() {
-                                    minireel.data.splash.source = 'generated';
-
-                                    $scope.$apply(function() {
-                                        minireel.data.splash.ratio = ratio;
-                                    });
-                                });
-
-                                it('should generate a preview', function() {
-                                    expect(SplashImageCtrl.generateSplash).toHaveBeenCalledWith(false);
-                                });
-                            });
-                        });
                     });
                 });
             });

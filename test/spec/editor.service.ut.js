@@ -703,7 +703,12 @@
                                 describe('if the generation succeeds', function() {
                                     beforeEach(function() {
                                         $rootScope.$apply(function() {
-                                            generateCollageDeferred.resolve('/collateral/e-123/splash');
+                                            generateCollageDeferred.resolve({
+                                                '16-9': '/collateral/e-123/splash',
+                                                toString: function() {
+                                                    return this['16-9'];
+                                                }
+                                            });
                                         });
                                     });
 

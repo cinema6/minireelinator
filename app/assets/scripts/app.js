@@ -562,7 +562,9 @@
 
         .config(['CollateralServiceProvider',
         function( CollateralServiceProvider ) {
-            CollateralServiceProvider.defaultCollageWidth(600);
+            CollateralServiceProvider
+                .defaultCollageWidth(600)
+                .ratios(['1-1', '6-5', '6-4', '16-9']);
         }])
 
         .service('c6Runner', ['$timeout',

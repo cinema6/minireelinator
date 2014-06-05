@@ -153,8 +153,8 @@
                     }
 
                     return CollateralService.generateCollage(proxy, 'splash')
-                        .then(function store(src) {
-                            proxy.data.collateral.splash = src;
+                        .then(function store(data) {
+                            proxy.data.collateral.splash = data.toString();
                         })
                         .catch(function rescue() {
                             return proxy;
@@ -630,11 +630,27 @@
             this.maxFileSize = 307200;
             this.splash = null;
             this.currentUpload = null;
+            this.generatedSrcs = {
+                '1-1': null,
+                '6-5': null,
+                '6-4': null,
+                '16-9': null
+            };
             Object.defineProperties(this, {
                 fileTooBig: {
                     configurable: true,
                     get: function() {
                         return ((this.splash || {}).size || 0) > this.maxFileSize;
+                    }
+                },
+                splashSrc: {
+                    get: function() {
+                        switch (splash.source) {
+                        case 'specified':
+                            return EditorSplashCtrl.splashSrc;
+                        case 'generated':
+                            return this.generatedSrcs[splash.ratio];
+                        }
                     }
                 }
             });
@@ -659,17 +675,15 @@
             this.generateSplash = function(permanent) {
                 this.isGenerating = true;
 
-                return CollateralService.generateCollage(
-                    minireel,
-                    'splash' + (permanent ? '' : ('--' + splash.ratio))
-                ).then(function setSplashSrc(src) {
-                    EditorSplashCtrl.splashSrc = src;
+                return CollateralService.generateCollage(minireel, 'splash', null, !permanent)
+                    .then(function setSplashSrc(data) {
+                        copy(data, self.generatedSrcs);
 
-                    return src;
-                })
-                .finally(function setFlag() {
-                    self.isGenerating = false;
-                });
+                        return data;
+                    })
+                    .finally(function setFlag() {
+                        self.isGenerating = false;
+                    });
             };
 
             this.save = function() {
@@ -683,8 +697,8 @@
                             $q.when(minireel);
                     case 'generated':
                         return self.generateSplash(true)
-                            .then(function save(src) {
-                                minireel.data.collateral.splash = src;
+                            .then(function save(data) {
+                                minireel.data.collateral.splash = data.toString();
 
                                 return minireel;
                             })
@@ -727,15 +741,7 @@
                 FileService.open(oldImage).close();
             });
 
-            $scope.$watch(function() { return splash.ratio; }, function(ratio, prevRatio) {
-                if (ratio === prevRatio) { return; }
-
-                if (splash.source === 'generated') {
-                    self.generateSplash(false);
-                }
-            });
-
-            if (!EditorSplashCtrl.splashSrc && splash.source === 'generated') {
+            if (splash.source === 'generated') {
                 this.generateSplash(false);
             }
         }])
