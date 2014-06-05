@@ -44,15 +44,37 @@
         }])
 
         .provider('CollateralService', [function() {
-            var defaultCollageWidth = null;
+            var defaultCollageWidth = null,
+                ratios = [];
 
             this.defaultCollageWidth = function(width) {
                 defaultCollageWidth = width;
+
+                return this;
+            };
+
+            this.ratios = function(ratioData) {
+                ratios = ratioData;
+
+                return this;
             };
 
             this.$get = ['FileService','$http','VideoThumbnailService','$q',
             function    ( FileService , $http , VideoThumbnailService , $q ) {
                 function CollateralService() {
+                    function CollageResult(response) {
+                        forEach(response, function(data) {
+                            this[data.ratio] = '/' + data.path;
+                        }, this);
+                    }
+                    CollageResult.prototype = {
+                        toString: function() {
+                            return Object.keys(this).map(function(ratio) {
+                                return this[ratio];
+                            }, this).join(',');
+                        }
+                    };
+
                     this.set = function(key, file, experience) {
                         var promise;
 
@@ -82,7 +104,7 @@
                         return promise;
                     };
 
-                    this.generateCollage = function(minireel, name, width) {
+                    this.generateCollage = function(minireel, name, width, allRatios) {
                         var ratio = minireel.data.splash.ratio.split('-');
 
                         /* jshint expr:true */
@@ -106,15 +128,28 @@
 
                         function generateCollage(thumbs) {
                             return $http.post('/api/collateral/splash/' + minireel.id, {
-                                name: name,
-                                size: {
-                                    width: width,
-                                    height: width * (ratio[1] / ratio[0])
-                                },
-                                ratio: ratio.join('-'),
+                                sizes: allRatios ?
+                                ratios.map(function(ratio) {
+                                    var ratioData = ratio.split('-');
+
+                                    return {
+                                        name: name + '--' + ratio,
+                                        width: width,
+                                        height: width * (ratioData[1] / ratioData[0]),
+                                        ratio: ratio
+                                    };
+                                }) :
+                                [
+                                    {
+                                        name: name,
+                                        width: width,
+                                        height: width * (ratio[1] / ratio[0]),
+                                        ratio: ratio.join('-')
+                                    }
+                                ],
                                 thumbs: thumbs
-                            }).then(function returnHref(response) {
-                                return '/' + response.data;
+                            }).then(function returnResult(response) {
+                                return new CollageResult(response.data);
                             });
                         }
 

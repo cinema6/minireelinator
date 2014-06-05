@@ -32,7 +32,7 @@
             });
 
             describe('methods', function() {
-                describe('generateCollage(minireel, name, width)', function() {
+                describe('generateCollage(minireel, name, width, allRatios)', function() {
                     var minireel, thumbs,
                         success;
 
@@ -100,16 +100,25 @@
                         });
 
                         $httpBackend.expectPOST('/api/collateral/splash/' + minireel.id, {
-                            name: 'splash',
-                            size: {
-                                width: 600,
-                                height: 600 * (9 / 16)
-                            },
-                            ratio: '16-9',
+                            sizes: [
+                                {
+                                    name: 'splash',
+                                    width: 600,
+                                    height: 600 * (9 / 16),
+                                    ratio: '16-9'
+                                }
+                            ],
                             thumbs: Object.keys(thumbs).map(function(key) {
                                 return thumbs[key].large;
                             })
-                        }).respond(201, 'collateral/' + minireel.id + '/splash');
+                        }).respond(201, [
+                            {
+                                path: 'collateral/' + minireel.id + '/splash',
+                                code: 201,
+                                ratio: '16-9',
+                                name: 'splash'
+                            }
+                        ]);
 
                         CollateralService.generateCollage(minireel, 'splash', 600).then(success);
 
@@ -123,27 +132,87 @@
                     });
 
                     it('should resolve to the path of the generated image', function() {
-                        expect(success).toHaveBeenCalledWith('/collateral/' + minireel.id + '/splash');
+                        expect(success).toHaveBeenCalledWith({
+                            '16-9': '/collateral/' + minireel.id + '/splash'
+                        });
+                        expect(success.calls.mostRecent().args[0].toString()).toBe(
+                            '/collateral/' + minireel.id + '/splash'
+                        );
                     });
 
                     it('should allow a default width to be configured', function() {
                         $httpBackend.expectPOST('/api/collateral/splash/' + minireel.id, {
-                            name: 'foo',
-                            size: {
-                                width: 800,
-                                height: 800 * (9 / 16)
-                            },
-                            ratio: '16-9',
+                            sizes: [
+                                {
+                                    name: 'foo',
+                                    width: 800,
+                                    height: 800 * (9 / 16),
+                                    ratio: '16-9',
+                                }
+                            ],
                             thumbs: Object.keys(thumbs).map(function(key) {
                                 return thumbs[key].large;
                             })
-                        }).respond(201, 'collateral/' + minireel.id + '/splash');
+                        }).respond(201, [
+                            {
+                                name: 'foo',
+                                ratio: '16-9',
+                                path: 'collateral/' + minireel.id + '/foo',
+                                code: 201
+                            }
+                        ]);
 
                         CollateralServiceProvider.defaultCollageWidth(800);
 
                         CollateralService.generateCollage(minireel, 'foo');
 
                         $httpBackend.flush();
+                    });
+
+                    it('should offer the option to generate all image ratios', function() {
+                        var ratios = ['1-1', '6-5', '6-4', '16-9'];
+
+                        CollateralServiceProvider.ratios(ratios);
+
+                        $httpBackend.expectPOST('/api/collateral/splash/' + minireel.id, {
+                            sizes: ratios.map(function(ratio) {
+                                ratio = ratio.split('-');
+
+                                return {
+                                    name: 'splash--' + ratio.join('-'),
+                                    width: 600,
+                                    height: 600 * (ratio[1] / ratio[0]),
+                                    ratio: ratio.join('-')
+                                };
+                            }),
+                            thumbs: Object.keys(thumbs).map(function(key) {
+                                return thumbs[key].large;
+                            })
+                        }).respond(201, ratios.map(function(ratio) {
+                            return {
+                                name: 'splash--' + ratio,
+                                ratio: ratio,
+                                code: 201,
+                                path: 'collateral/e-123/splash--' + ratio
+                            };
+                        }));
+
+                        CollateralService.generateCollage(minireel, 'splash', 600, true).then(success);
+
+                        $httpBackend.flush();
+
+                        expect(success).toHaveBeenCalledWith((function() {
+                            var hash = {};
+
+                            ratios.forEach(function(ratio) {
+                                hash[ratio] = '/collateral/e-123/splash--' + ratio;
+                            });
+
+                            return hash;
+                        }()));
+                        expect(success.calls.mostRecent().args[0].toString()).toBe(ratios.map(function(ratio) {
+                            return '/collateral/e-123/splash--' + ratio;
+                        }).join(','));
                     });
                 });
 
