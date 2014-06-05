@@ -2,7 +2,7 @@
 
 * *[Beta7.rc2] (June 5, 2014)
   * Add some logging to the minireelinator initialize and update methods.
-* *[/Beta7.rc1]*
+* *[/Beta7.rc2]*
 
 * *[Beta7.rc1] (June 5, 2014)
   * [FIX]: Character count of 0 is shown before the user types anything
