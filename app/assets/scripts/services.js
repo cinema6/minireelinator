@@ -157,8 +157,8 @@
             };
         }])
 
-        .service('VoteService', ['cinema6','$q',
-        function                ( cinema6, $q ) {
+        .service('VoteService', ['cinema6','$q','$log',
+        function                ( cinema6, $q, $log ) {
             function hasElectionData(deck){
                 var hasData = false;
                 forEach(deck,function(card){
@@ -166,6 +166,7 @@
                         ((card.modules || []).indexOf('ballot') >= 0) &&
                         (card.ballot) &&
                         (card.ballot.choices)) {
+                        $log.info('Card has ballot data:',card);
                         hasData = true;
                     }
                 });
@@ -227,9 +228,12 @@
             }
 
             this.initialize = function(minireel) {
+                $log.info('Attempt initialize minireel election');
                 if (hasElectionData(minireel.data.deck) === false){
+                    $log.info('Minireel has no election data, return without create');
                     return $q.when(null);
                 }
+                $log.info('Minireel has election data, create');
                 return cinema6.db.create('election', generateData(minireel.data.deck))
                     .save()
                     .then(function attachId(election) {
@@ -240,9 +244,12 @@
             };
 
             this.update = function(minireel) {
+                $log.info('Attempt update minireel election: ' + minireel.data.election);
                 if (hasElectionData(minireel.data.deck) === false){
+                    $log.info('Minireel has no election data, return without update');
                     return $q.when(null);
                 }
+                $log.info('Minireel has no election data, update');
                 return cinema6.db.findAll('election', { id: minireel.data.election })
                     .then(function updateElection(elections) {
                         return generateData(minireel.data.deck, elections[0]);
