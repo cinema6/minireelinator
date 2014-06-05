@@ -100,7 +100,7 @@
                         });
 
                         $httpBackend.expectPOST('/api/collateral/splash/' + minireel.id, {
-                            sizes: [
+                            imageSpecs: [
                                 {
                                     name: 'splash',
                                     width: 600,
@@ -142,7 +142,7 @@
 
                     it('should allow a default width to be configured', function() {
                         $httpBackend.expectPOST('/api/collateral/splash/' + minireel.id, {
-                            sizes: [
+                            imageSpecs: [
                                 {
                                     name: 'foo',
                                     width: 800,
@@ -175,7 +175,7 @@
                         CollateralServiceProvider.ratios(ratios);
 
                         $httpBackend.expectPOST('/api/collateral/splash/' + minireel.id, {
-                            sizes: ratios.map(function(ratio) {
+                            imageSpecs: ratios.map(function(ratio) {
                                 ratio = ratio.split('-');
 
                                 return {

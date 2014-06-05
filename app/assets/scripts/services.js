@@ -128,7 +128,7 @@
 
                         function generateCollage(thumbs) {
                             return $http.post('/api/collateral/splash/' + minireel.id, {
-                                sizes: allRatios ?
+                                imageSpecs: allRatios ?
                                 ratios.map(function(ratio) {
                                     var ratioData = ratio.split('-');
 
