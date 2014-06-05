@@ -736,6 +736,21 @@
             };
         }])
 
+        .filter('splashPageSrc', ['$sce','c6UrlMaker',
+        function                 ( $sce , c6UrlMaker ) {
+            return function(minireel, splashSrc) {
+                var splash = minireel.data.splash;
+
+                return $sce.trustAsResourceUrl(c6UrlMaker(
+                    ('splash/' + splash.theme + '/' + splash.ratio + '.html?' +
+                        'exp=' + encodeURIComponent(minireel.id) + '&' +
+                        'title=' + encodeURIComponent(minireel.data.title) + '&' +
+                        'splash=' + encodeURIComponent(splashSrc || minireel.data.collateral.splash)
+                    ),
+                'collateral'));
+            };
+        }])
+
         .service('appData', ['cinema6',
         function            ( cinema6 ) {
             var self = this,
@@ -862,8 +877,8 @@
             };
         }])
 
-        .controller('EmbedCodeController', ['$scope','cinema6','$attrs','c6UrlMaker','$sce',
-        function                           ( $scope , cinema6 , $attrs , c6UrlMaker , $sce ) {
+        .controller('EmbedCodeController', ['$scope','cinema6','$attrs',
+        function                           ( $scope , cinema6 , $attrs ) {
             var self = this;
 
             this.readOnly = isDefined($attrs.readonly);
@@ -909,23 +924,6 @@
                                     this.size.height + '"') :
                                 '') +
                             '></script>';
-                    }
-                },
-                splashSrc: {
-                    get: function() {
-                        var minireel = $scope.minireel,
-                            splash = minireel.data.splash;
-
-                        return $sce.trustAsResourceUrl(c6UrlMaker(
-                            (
-                                'splash/' +
-                                splash.theme + '/' + splash.ratio + '.html?' +
-                                'title=' + encodeURIComponent(minireel.data.title) + '&' +
-                                'exp=' + encodeURIComponent(minireel.id) + '&' +
-                                'splash=' + encodeURIComponent($scope.splashSrc)
-                            ),
-                            'collateral'
-                        ));
                     }
                 }
             });

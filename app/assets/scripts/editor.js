@@ -5,7 +5,9 @@
         equals = angular.equals,
         copy = angular.copy,
         forEach = angular.forEach,
-        isDefined = angular.isDefined;
+        isDefined = angular.isDefined,
+        jqLite = angular.element,
+        fromJson = angular.fromJson;
 
     angular.module('c6.mrmaker')
         .animation('.toolbar__publish', ['$timeout',
@@ -923,6 +925,7 @@
                     }
                 };
 
+            this.active = false;
             // set a default device mode
             this.device = 'desktop';
             this.fullscreen = false;
@@ -966,7 +969,8 @@
                             // this will send the most updated experience
                             // whenever the MR player is (re)loaded
                             experience: experience,
-                            profile: profile
+                            profile: profile,
+                            preload: true
                         }
                     });
                 });
@@ -976,13 +980,23 @@
                 // we remember it, and if they change the mode
                 // and the app reloads, it's going to call back
                 // and see if it still needs to go to that card
-                session.on('mrPreview:getCard', function(data, respond) {
-                    respond(card);
-                });
+                session
+                    .on('mrPreview:getCard', function(data, respond) {
+                        respond(card);
+                    })
+                    .on('fullscreenMode', function(bool) {
+                        self.fullscreen = bool;
+                        $scope.$digest();
+                    })
+                    .on('open', function() {
+                        self.active = true;
+                    })
+                    .on('close', function() {
+                        self.active = false;
+                    });
 
-                session.on('fullscreenMode', function(bool) {
-                    self.fullscreen = bool;
-                    $scope.$digest();
+                $scope.$on('mrPreview:splashClick', function() {
+                    self.active = true;
                 });
 
                 // register another listener within the init handler
@@ -1023,6 +1037,7 @@
 
                 $scope.$on('mrPreview:reset', function() {
                     card = null;
+                    self.active = false;
                     session.ping('mrPreview:reset');
                 });
 
@@ -1036,7 +1051,58 @@
                     profile.device = newDevice;
                     self.fullscreen = false;
                 });
+
+                $scope.$watch(function() {
+                    return self.active;
+                }, function(active) {
+                    if (active) {
+                        $scope.$broadcast('mrPreview:splashHide');
+                        session.ping('show');
+                    } else {
+                        $scope.$broadcast('mrPreview:splashShow');
+                        session.ping('hide');
+                    }
+                });
             });
+        }])
+
+        .directive('splashPage', ['$window',
+        function                 ( $window ) {
+            return {
+                link: function(scope, $element) {
+                    var $$window = jqLite($window),
+                        splash = $element.prop('contentWindow');
+
+                    function tellSplash(message) {
+                        splash.postMessage(message, '*');
+                    }
+
+                    function handleMessage(event) {
+                        var data;
+                        try {
+                            data = fromJson(event.originalEvent.data);
+                        } catch (e) {
+                            data = {};
+                        }
+
+                        if (data.event !== 'click') { return; }
+
+                        scope.$emit('mrPreview:splashClick');
+                    }
+
+                    $$window.on('message', handleMessage);
+
+                    scope.$on('$destroy', function() {
+                        $$window.off('message', handleMessage);
+                    });
+                    scope.$on('mrPreview:splashShow', function() {
+                        tellSplash('show');
+                    });
+                    scope.$on('mrPreview:splashHide', function() {
+                        tellSplash('hide');
+                    });
+                }
+            };
         }])
 
         .directive('mrPreview', ['postMessage',
