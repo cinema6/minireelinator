@@ -142,35 +142,43 @@
             };
 
             this.sync = queue.wrap(function() {
-                var minireel = _private.minireel,
-                    proxy    = _private.proxy;
+                var minireel = _private.minireel;
 
-                function syncWithElection() {
-                    if (minireel.status !== 'active'){
-                        return $q.when(true);
+                function syncWithElection(miniReel) {
+                    if (miniReel.status !== 'active'){
+                        return $q.when(miniReel);
                     }
 
-                    // Need to get the proxy data into a format that the
-                    // VoteService can comprehend
-                    var pendingMr = _private.syncToMinireel({},{ data : {} },proxy);
-
-                    if (minireel.data.election) {
-                        return VoteService.update(pendingMr);
+                    if (miniReel.data.election) {
+                        return VoteService
+                            .update(miniReel)
+                            .then(function(){
+                                return miniReel;   
+                            });
                     }
 
-                    return VoteService.initialize(pendingMr);
+                    return VoteService
+                        .initialize(miniReel)
+                        .then(function(){
+                            return miniReel;   
+                        });
                 }
 
                 if (!minireel) {
                     return rejectNothingOpen();
                 }
                 
-                return syncWithElection()
-                       .then(syncToMinireel)
+                return $q.when(syncToMinireel())
+                       .then(syncWithElection)
                        .then(function save(minireel){
                             return minireel.save();
                         })
-                       .then(syncToProxy);
+                       .then(syncToProxy)
+                       .then(function updateElection(proxy){
+                            // See comment in publish
+                            proxy.data.election = minireel.data.election;
+                            return proxy;
+                       });
             }, this);
 
             this.publish = queue.wrap(function() {

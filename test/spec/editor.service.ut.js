@@ -708,7 +708,8 @@
                             var proxy;
 
                             beforeEach(function() {
-                                spyOn(MiniReelService, 'convertForPlayer').and.callThrough();
+                                minireel.status = 'active';
+                                delete minireel.data.election;
 
                                 $rootScope.$apply(function() {
                                     proxy = EditorService.open(minireel);
@@ -717,9 +718,6 @@
                                 proxy.data.title = 'Here is a New Title!';
                                 proxy.data.mode = 'light';
                                 proxy.data.deck.splice(1, 1);
-
-                                minireel.status = 'active';
-                                delete minireel.data.election;
                             });
 
                             describe('and election init succeeds',function(){
@@ -753,10 +751,8 @@
                         });
                         describe('if republishing an open minireel with election',function(){
                             var proxy;
-
                             beforeEach(function() {
-                                spyOn(MiniReelService, 'convertForPlayer').and.callThrough();
-
+                                minireel.status = 'active';
                                 $rootScope.$apply(function() {
                                     proxy = EditorService.open(minireel);
                                 });
@@ -765,12 +761,9 @@
                                 proxy.data.mode = 'light';
                                 proxy.data.deck.splice(1, 1);
 
-                                minireel.status = 'active';
                                 $rootScope.$apply(function() {
                                     EditorService.sync().then(success);
                                 });
-
-                                MiniReelService.convertForEditor.calls.reset();
                             });
 
                             it('should update the election with election set and status active',function(){
