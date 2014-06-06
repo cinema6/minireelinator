@@ -32,8 +32,8 @@
             };
         }])
 
-        .service('EditorService', ['MiniReelService','$q','c6AsyncQueue',
-        function                  ( MiniReelService , $q , c6AsyncQueue ) {
+        .service('EditorService', ['MiniReelService','$q','c6AsyncQueue','VoteService',
+        function                  ( MiniReelService , $q , c6AsyncQueue, VoteService ) {
             var _private = {},
                 queue = c6AsyncQueue();
 
@@ -147,10 +147,32 @@
                 if (!minireel) {
                     return rejectNothingOpen();
                 }
+                
+                function saveElection(minireel) {
+                    function returnMiniReel(){
+                        return minireel;
+                    }
 
-                return syncToMinireel()
-                    .save()
-                    .then(syncToProxy);
+                    if (minireel.status !== 'active'){
+                        return returnMiniReel();
+                    }
+
+                    if (minireel.data.election) {
+                        return VoteService.update(minireel)
+                            .then(returnMiniReel);
+                    }
+
+                    return VoteService.initialize(minireel)
+                        .then(returnMiniReel);
+                }
+
+                function syncAndSave(){
+                    return syncToMinireel().save();
+                }
+                
+                return $q.when(saveElection(minireel))
+                         .then(syncAndSave)
+                         .then(syncToProxy);
             }, this);
 
             this.publish = queue.wrap(function() {
