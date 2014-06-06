@@ -13,7 +13,7 @@
             },
             upload: [
                 {
-                    src: '<%= settings.distDir %>/**',
+                    src: ['<%= settings.distDir %>/**','!<%= settings.distDir %>/index.html'],
                     dest: '<%= settings.s3.test.app %>',
                     rel : '<%= settings.distDir %>/',
                     options: {
@@ -57,7 +57,7 @@
             },
             upload: [
                 {
-                    src: '<%= settings.distDir %>/**',
+                    src: ['<%= settings.distDir %>/**','!<%= settings.distDir %>/index.html'],
                     dest: '<%= settings.s3.production.app %>',
                     rel : '<%= settings.distDir %>/',
                     options: {
