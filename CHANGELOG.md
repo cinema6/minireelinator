@@ -1,5 +1,10 @@
 # MiniReelinator
 
+* *[Beta7.rc3] (June 6, 2014)
+  * Fixed election save when miniReel is re-published
+  * Updated s3 upload to not upload index.html until after the other files have been uploaded
+* *[/Beta7.rc3]*
+
 * *[Beta7.rc2] (June 5, 2014)
   * Add some logging to the minireelinator initialize and update methods.
 * *[/Beta7.rc2]*
