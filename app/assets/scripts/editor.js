@@ -32,8 +32,8 @@
             };
         }])
 
-        .service('EditorService', ['MiniReelService','$q','c6AsyncQueue',
-        function                  ( MiniReelService , $q , c6AsyncQueue ) {
+        .service('EditorService', ['MiniReelService','$q','c6AsyncQueue','VoteService',
+        function                  ( MiniReelService , $q , c6AsyncQueue, VoteService ) {
             var _private = {},
                 queue = c6AsyncQueue();
 
@@ -144,13 +144,41 @@
             this.sync = queue.wrap(function() {
                 var minireel = _private.minireel;
 
+                function syncWithElection(miniReel) {
+                    if (miniReel.status !== 'active'){
+                        return $q.when(miniReel);
+                    }
+
+                    if (miniReel.data.election) {
+                        return VoteService
+                            .update(miniReel)
+                            .then(function(){
+                                return miniReel;
+                            });
+                    }
+
+                    return VoteService
+                        .initialize(miniReel)
+                        .then(function(){
+                            return miniReel;
+                        });
+                }
+
                 if (!minireel) {
                     return rejectNothingOpen();
                 }
-
-                return syncToMinireel()
-                    .save()
-                    .then(syncToProxy);
+                
+                return $q.when(syncToMinireel())
+                       .then(syncWithElection)
+                       .then(function save(minireel){
+                            return minireel.save();
+                        })
+                       .then(syncToProxy)
+                       .then(function updateElection(proxy){
+                            // See comment in publish
+                            proxy.data.election = minireel.data.election;
+                            return proxy;
+                        });
             }, this);
 
             this.publish = queue.wrap(function() {
