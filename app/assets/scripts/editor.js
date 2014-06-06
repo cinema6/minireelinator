@@ -153,14 +153,14 @@
                         return VoteService
                             .update(miniReel)
                             .then(function(){
-                                return miniReel;   
+                                return miniReel;
                             });
                     }
 
                     return VoteService
                         .initialize(miniReel)
                         .then(function(){
-                            return miniReel;   
+                            return miniReel;
                         });
                 }
 
@@ -178,7 +178,7 @@
                             // See comment in publish
                             proxy.data.election = minireel.data.election;
                             return proxy;
-                       });
+                        });
             }, this);
 
             this.publish = queue.wrap(function() {
