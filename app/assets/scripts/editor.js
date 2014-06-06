@@ -144,35 +144,28 @@
             this.sync = queue.wrap(function() {
                 var minireel = _private.minireel;
 
+                function syncWithElection() {
+                    if (minireel.status !== 'active'){
+                        return $q.when(true);
+                    }
+
+                    if (minireel.data.election) {
+                        return VoteService.update(minireel);
+                    }
+
+                    return VoteService.initialize(minireel);
+                }
+
                 if (!minireel) {
                     return rejectNothingOpen();
                 }
                 
-                function saveElection(minireel) {
-                    function returnMiniReel(){
-                        return minireel;
-                    }
-
-                    if (minireel.status !== 'active'){
-                        return returnMiniReel();
-                    }
-
-                    if (minireel.data.election) {
-                        return VoteService.update(minireel)
-                            .then(returnMiniReel);
-                    }
-
-                    return VoteService.initialize(minireel)
-                        .then(returnMiniReel);
-                }
-
-                function syncAndSave(){
-                    return syncToMinireel().save();
-                }
-                
-                return $q.when(saveElection(minireel))
-                         .then(syncAndSave)
-                         .then(syncToProxy);
+                return syncWithElection()
+                       .then(syncToMinireel)
+                       .then(function save(minireel){
+                            return minireel.save();
+                        })
+                       .then(syncToProxy);
             }, this);
 
             this.publish = queue.wrap(function() {
