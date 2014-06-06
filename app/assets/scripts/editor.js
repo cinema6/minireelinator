@@ -142,18 +142,23 @@
             };
 
             this.sync = queue.wrap(function() {
-                var minireel = _private.minireel;
+                var minireel = _private.minireel,
+                    proxy    = _private.proxy;
 
                 function syncWithElection() {
                     if (minireel.status !== 'active'){
                         return $q.when(true);
                     }
 
+                    // Need to get the proxy data into a format that the
+                    // VoteService can comprehend
+                    var pendingMr = _private.syncToMinireel({},{ data : {} },proxy);
+
                     if (minireel.data.election) {
-                        return VoteService.update(minireel);
+                        return VoteService.update(pendingMr);
                     }
 
-                    return VoteService.initialize(minireel);
+                    return VoteService.initialize(pendingMr);
                 }
 
                 if (!minireel) {

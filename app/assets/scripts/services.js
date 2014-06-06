@@ -223,7 +223,7 @@
                         delete election.ballot[id];
                     }
                 });
-                
+            
                 return election;
             }
 
