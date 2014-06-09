@@ -11,6 +11,29 @@
         fromJson = angular.fromJson;
 
     angular.module('c6.mrmaker.services', ['c6.ui'])
+        .factory('requireCJS', ['$http','$cacheFactory','$q',
+        function               ( $http , $cacheFactory , $q ) {
+            var cache = $cacheFactory('requireCJS');
+
+            return function(src) {
+                return $q.when(
+                    cache.get(src) ||
+                    cache.put(src, $http.get(src)
+                        .then(function getModule(response) {
+                            var module = {
+                                exports: {}
+                            };
+
+                            /* jshint evil:true */
+                            eval(response.data);
+                            /* jshint evil:false */
+
+                            return module.exports;
+                        }))
+                );
+            };
+        }])
+
         .factory('c6AsyncQueue', ['$q',
         function                 ( $q ) {
             function Queue() {

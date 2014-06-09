@@ -98,14 +98,15 @@
             <iframe mr-preview="minireel"
                 ng-src="{{PreviewCtrl.playerSrc}}"
                 ng-style="{height: (PreviewCtrl.fullscreen && PreviewCtrl.device === 'desktop') ? (AppCtrl.screenSpace.height + 'px') : ''}"
-                ng-class="{ 'preview__iframe--fullscreen' : (PreviewCtrl.fullscreen), 'preview__iframe--desktop' : (PreviewCtrl.device === 'desktop'), 'preview__iframe--mobile' : (PreviewCtrl.device === 'phone') }"
+                ng-class="{
+                    'preview__iframe--fullscreen': (PreviewCtrl.fullscreen),
+                    'preview__iframe--desktop': (PreviewCtrl.device === 'desktop'),
+                    'preview__iframe--mobile': (PreviewCtrl.device === 'phone'),
+                    'preview__iframe--inactive': !PreviewCtrl.active
+                }"
                 class="preview__iframe">
             </iframe>
-            <iframe ng-src="{{EditorCtrl.model | splashPageSrc }}"
-                splash-page
-                width="100%"
-                height="100%">
-            </iframe>
+            <div splash-page="EditorCtrl.model" splash-src="{{EditorCtrl.splashSrc}}"></div>
         </div>
         <div class="ui__overlay">&nbsp;</div>
     </div>

@@ -11,14 +11,10 @@
                 return splashPageSrcFilter.apply(null, arguments).$$unwrapTrustedValue();
             }
 
-            function result(splashSrc) {
-                var splash = minireel.data.splash,
-                    collateral = minireel.data.collateral;
+            function result() {
+                var splash = minireel.data.splash;
 
-                return '/collateral/splash/' + splash.theme + '/' + splash.ratio + '.html?' +
-                    'exp=' + encodeURIComponent(minireel.id) + '&' +
-                    'title=' + encodeURIComponent(minireel.data.title) + '&' +
-                    'splash=' + encodeURIComponent(splashSrc || collateral.splash);
+                return '/collateral/splash/' + splash.theme + '/' + splash.ratio + '.html';
             }
 
             beforeEach(function() {
@@ -49,12 +45,6 @@
 
             it('should generate the src of the splash page given a minireel', function() {
                 expect(filter(minireel)).toBe(result());
-            });
-
-            it('should use the provided splashSrc if provided', function() {
-                var splash = '/collateral/e-123/splash?cb=1';
-
-                expect(filter(minireel, splash)).toBe(result(splash));
             });
         });
     });

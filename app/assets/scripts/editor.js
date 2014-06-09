@@ -6,8 +6,7 @@
         copy = angular.copy,
         forEach = angular.forEach,
         isDefined = angular.isDefined,
-        jqLite = angular.element,
-        fromJson = angular.fromJson;
+        noop = angular.noop;
 
     angular.module('c6.mrmaker')
         .animation('.toolbar__publish', ['$timeout',
@@ -1100,40 +1099,55 @@
             });
         }])
 
-        .directive('splashPage', ['$window',
-        function                 ( $window ) {
+        .directive('splashPage', ['c6UrlMaker','requireCJS',
+        function                 ( c6UrlMaker , requireCJS ) {
             return {
+                templateUrl: c6UrlMaker('views/directives/splash_page.html'),
+                scope: {
+                    minireel: '=splashPage',
+                    splashSrc: '@'
+                },
                 link: function(scope, $element) {
-                    var $$window = jqLite($window),
-                        splash = $element.prop('contentWindow');
+                    var delegate = null;
 
-                    function tellSplash(message) {
-                        splash.postMessage(message, '*');
+                    function callDelegate(method) {
+                        ((delegate || {})[method] || noop)();
                     }
 
-                    function handleMessage(event) {
-                        var data;
-                        try {
-                            data = fromJson(event.originalEvent.data);
-                        } catch (e) {
-                            data = {};
+                    Object.defineProperties(scope, {
+                        title: {
+                            get: function() {
+                                return scope.minireel.data.title;
+                            }
+                        },
+                        splash: {
+                            get: function() {
+                                return scope.splashSrc || scope.minireel.data.collateral.splash;
+                            }
                         }
+                    });
+                    scope.splashLoad = function() {
+                        requireCJS(c6UrlMaker('splash/splash.js', 'collateral'))
+                            .then(function bind(splashJS) {
+                                var c6 = {
+                                        loadExperience: function() {
+                                            scope.$apply(function() {
+                                                scope.$emit('mrPreview:splashClick');
+                                            });
+                                        }
+                                    },
+                                    settings = {},
+                                    splash = $element.find('ng-include')[0];
 
-                        if (data.event !== 'click') { return; }
+                                delegate = splashJS(c6, settings, splash) || null;
+                            });
+                    };
 
-                        scope.$emit('mrPreview:splashClick');
-                    }
-
-                    $$window.on('message', handleMessage);
-
-                    scope.$on('$destroy', function() {
-                        $$window.off('message', handleMessage);
+                    scope.$on('mrPreview:splashHide', function() {
+                        callDelegate('didHide');
                     });
                     scope.$on('mrPreview:splashShow', function() {
-                        tellSplash('show');
-                    });
-                    scope.$on('mrPreview:splashHide', function() {
-                        tellSplash('hide');
+                        callDelegate('didShow');
                     });
                 }
             };
