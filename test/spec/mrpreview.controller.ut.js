@@ -536,6 +536,8 @@
                             $scope.$emit('mrPreview:initExperience', experience, session);
                             $scope.$emit('mrPreview:updateExperience', updatedExperience);
 
+                            PreviewController.active = true;
+
                             $scope.$apply(function() {
                                 PreviewController.device = 'desktop';
                             });
@@ -547,6 +549,10 @@
 
                         it('should leave fullscreen', function() {
                             expect(PreviewController.fullscreen).toBe(false);
+                        });
+
+                        it('should set active to false', function() {
+                            expect(PreviewController.active).toBe(false);
                         });
 
                         it('should cause the playerSrc to change', function() {
