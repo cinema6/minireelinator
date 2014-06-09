@@ -120,19 +120,20 @@
                         file.name = key;
 
                         promise = FileService.upload(
-                            '/api/collateral/files/' + experience.id,
+                            '/api/collateral/files/' + experience.id + '?noCache=true',
                             [file]
                         ).then(setResult, null, updateProgress);
 
                         return promise;
                     };
 
-                    this.generateCollage = function(minireel, name, width, allRatios) {
-                        var ratio = minireel.data.splash.ratio.split('-');
-
-                        /* jshint expr:true */
-                        (width || (width = defaultCollageWidth));
-                        /* jshint expr:false */
+                    this.generateCollage = function(options) {
+                        var minireel = options.minireel,
+                            name = options.name,
+                            width = options.width || defaultCollageWidth,
+                            allRatios = options.allRatios,
+                            cache = isUndefined(options.cache) ? true : options.cache,
+                            ratio = minireel.data.splash.ratio.split('-');
 
                         function fetchThumbs(minireel) {
                             return $q.all(minireel.data.deck.map(function(card) {
@@ -171,6 +172,10 @@
                                     }
                                 ],
                                 thumbs: thumbs
+                            }, {
+                                params: cache ? null : {
+                                    noCache: true
+                                }
                             }).then(function returnResult(response) {
                                 return new CollageResult(response.data);
                             });

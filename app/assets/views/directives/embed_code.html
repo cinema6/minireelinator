@@ -9,10 +9,11 @@
     </select>
     <div class="embedPreview">
         <div class="mr-splash__group" splash-page="minireel"></div>
+        <div class="mr-splashBlocker">&nbsp;</div>
     </div>
 </div>
 <div class="embedCode__group">
-    <div class="embedCode__header">
+    <div ng-if="!Ctrl.readOnly" class="embedCode__header">
         <label class="embed__label" for="embed-size">Embed Code Size:</label>
         <select ng-model="Ctrl.mode" ng-options="mode.value as mode.name for mode in Ctrl.modes" class="embed__selector" name="embed-size" id="embed-size"></select>
         <div c6-alias="Ctrl.size as size" ng-show="Ctrl.mode === 'custom'" class="embedCode__customSizeDimensions">
@@ -21,5 +22,5 @@
         </div>
     </div>
     <textarea ng-model="Ctrl.code" name="" id="" class="embedCode__snippet" cols="30" rows="10"></textarea>
-    <p class="embedCode__tip"><strong><span class="typo--attention">*</span> Responsive Auto-Fit</strong> embedding will automatically resize the MiniReel widget to fit nicely into your page. This is the recommended embedding method.</p>
+    <p ng-if="!Ctrl.readOnly" class="embedCode__tip"><strong><span class="typo--attention">*</span> Responsive Auto-Fit</strong> embedding will automatically resize the MiniReel widget to fit nicely into your page. This is the recommended embedding method.</p>
 </div>

@@ -235,6 +235,9 @@
         top:50%; 
         */
     }
+        .ui__modal--embed {
+            padding:1.5em 2.25em;
+        }
         .ui__modal--confirmation {
             width:28em; height:10em;
             margin:0 0 0 -15.5em;
@@ -356,18 +359,12 @@
             padding:1.5em;
         }
             .preview__container--mobile {
-                width:20em; height:39.25em;
+                width:20em; height:622px;
                 margin:0 0 0 -11.5em;
-                /* vertically centered modal
-                margin:-21.5em 0 0 -11.5em;
-                */
             }
             .preview__container--desktop {
-                width: 43.75em; height: 39.5em;
+                width: 43.75em; height: 752px;
                 margin:0 0 0 -23.375em;
-                /* vertically centered modal
-                margin:-21.625em 0 0 -23.375em;
-                */
             }
             .preview__container .modal__title {
                 margin:-0.5em 0 0.25em;
@@ -375,8 +372,11 @@
             .preview__container .modal__closeBtn {
                 top:0.75em;
             }
+            .preview__iframeHolder {
+                width:100%; height:700px;
+            }
             .preview__iframe {
-                border: 0;
+                border: 0; display: block;
             }
                 .preview__iframe--mobile {
                     width:20em;
@@ -392,8 +392,11 @@
                         background:white;
                     }
                 .preview__iframe--inactive {
-                    height: 0px;
+                    display:none;
                 }
+            .preview__splashHolder--inactive {
+                display: none;
+            }
             .preview__form {
                 margin:0 0 0.5em 0;
             }
@@ -1552,9 +1555,14 @@
             margin:0 0 0.375em;
         }
         .embedPreview {
-            width:100%; height:300px;
-            background:blue;
+            width:100%;
+            position:relative;
         }
+            .mr-splashBlocker {
+                position:absolute; z-index:5; 
+                top:0; left:0; bottom:0; right:0;
+                min-height:300px;
+            }
         .embedPreview__group .embed__selector {
             width:100%; margin:0 0 1em 0;
         }
