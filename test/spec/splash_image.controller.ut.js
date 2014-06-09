@@ -121,7 +121,12 @@
                         });
 
                         it('should generate a splash image', function() {
-                            expect(CollateralService.generateCollage).toHaveBeenCalledWith(minireel, 'splash', null, true);
+                            expect(CollateralService.generateCollage).toHaveBeenCalledWith({
+                                minireel: minireel,
+                                name: 'splash',
+                                allRatios: true,
+                                cache: false
+                            });
                         });
 
                         it('should set isGenerating to true', function() {
@@ -285,7 +290,12 @@
                             });
 
                             it('should generate a collage with allRatios set to ' + !bool, function() {
-                                expect(CollateralService.generateCollage).toHaveBeenCalledWith(minireel, 'splash', null, !bool);
+                                expect(CollateralService.generateCollage).toHaveBeenCalledWith({
+                                    minireel: minireel,
+                                    name: 'splash',
+                                    allRatios: !bool,
+                                    cache: false
+                                });
                             });
 
                             describe('with success', function() {
