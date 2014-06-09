@@ -124,7 +124,8 @@
                             expect(CollateralService.generateCollage).toHaveBeenCalledWith({
                                 minireel: minireel,
                                 name: 'splash',
-                                allRatios: true
+                                allRatios: true,
+                                cache: false
                             });
                         });
 
@@ -292,7 +293,8 @@
                                 expect(CollateralService.generateCollage).toHaveBeenCalledWith({
                                     minireel: minireel,
                                     name: 'splash',
-                                    allRatios: !bool
+                                    allRatios: !bool,
+                                    cache: false
                                 });
                             });
 

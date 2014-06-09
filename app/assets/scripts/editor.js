@@ -708,7 +708,8 @@
                 return CollateralService.generateCollage({
                     minireel: minireel,
                     name: 'splash',
-                    allRatios: !permanent
+                    allRatios: !permanent,
+                    cache: false
                 }).then(function setSplashSrc(data) {
                     copy(data, self.generatedSrcs);
 
