@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## Beta8 (June 9, 2014)
 * *[Beta8.rc1]*
   * New MiniReels are no longer given a title of "Untitled"
   * [FIX]: Temporarily aligned modal dialogues to fixed height from top
@@ -7,7 +8,9 @@
   * Added splash preview click blocker so that splash preview next to embed code does not trigger
   * Fixed preview modal positioning
   * Fixed content flow based modals for previews added
+* *[/Beta8.rc1]*
 
+## Beta7 (June 6, 2014)
 * *[Beta7.rc3] (June 6, 2014)
   * Fixed election save when miniReel is re-published
   * Updated s3 upload to not upload index.html until after the other files have been uploaded
