@@ -1,12 +1,14 @@
-<h1 class="modal__title modal__title--lightboxWizard">What is the Title of this MiniReel?</h1>
-<form c6-alias="NewCtrl.mode as config">
-    <label class="field field--noBreak clearfix">
-        <span class="modal__label">Title:</span>
-        <input type="text" class="modal__textBox" ng-model="NewCtrl.title">
-    </label>
-</form>
-
-<footer class="modal__btnFooter modal__btnFooter--altLayout">
-    <button c6-sref="{{NewCtrl.baseState}}.category" class="modal__btn" type="button" title="Next Step">Next Step</button>
-    <button class="modal__btn toolbar__delete" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
+<div class="modal__content modal__editor-mr-general clearfix">
+    <form c6-alias="NewCtrl.mode as config">
+        <label class="field clearfix">
+            <span class="modal__title">Please provide a Title for your MiniReel <span class="typo--attention">*</span></span>
+            <input type="text" class="modal__textBox" ng-model="NewCtrl.title">
+        </label>
+    </form>
+</div>
+<div class="modal__fineprint typo--attention">* Indicates required field.</div>
+<footer class="modal__btnFooter">
+    <button class="modal__btn modal__btn--first toolbar__delete" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
+    <button c6-sref="{{NewCtrl.baseState}}.category" ng-disabled="!NewCtrl.title" class="modal__btn modal__btn--last" type="button" title="Next Step">Next Step</button>
+    <div class="guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</div>
 </footer>

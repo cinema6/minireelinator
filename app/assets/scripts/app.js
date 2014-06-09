@@ -6,7 +6,8 @@
         copy = angular.copy,
         forEach = angular.forEach,
         jqLite = angular.element,
-        extend = angular.extend;
+        extend = angular.extend,
+        isDefined = angular.isDefined;
 
     angular.module('c6.mrmaker', window$.c6.kModDeps)
         .constant('c6Defines', window$.c6)
@@ -80,6 +81,7 @@
                 'assets' + c6Defines.kExpUrl :
                 c6Defines.kExpUrl
             ), 'app');
+            c6UrlMakerProvider.location(c6Defines.kCollateralUrl, 'collateral');
         }])
 
         .constant('VoteAdapter', ['$http','config','$q',
@@ -241,6 +243,13 @@
         function( c6StateProvider , c6UrlMakerProvider ) {
             var assets = c6UrlMakerProvider.makeUrl.bind(c6UrlMakerProvider);
 
+            function Tab(name, sref) {
+                this.name = name;
+                this.sref = sref;
+                this.visits = 0;
+                this.requiredVisits = 0;
+            }
+
             var newSubstates = {
                 general: {
                     templateUrl: assets('views/manager/new/general.html')
@@ -254,6 +263,13 @@
                 autoplay: {
                     templateUrl: assets('views/manager/new/autoplay.html')
                 }
+            };
+
+            var newTabs = {
+                general: new Tab('Title Settings', 'general'),
+                category: new Tab('Lightbox Settings', 'category'),
+                mode: new Tab('MiniReel Type', 'mode'),
+                autoplay: new Tab('Autoplay', 'autoplay')
             };
 
             c6StateProvider
@@ -278,9 +294,9 @@
                             controller: 'GenericController',
                             controllerAs: 'ManagerEmbedCtrl',
                             templateUrl: assets('views/manager/embed.html'),
-                            model:  ['c6StateParams',
-                            function( c6StateParams ) {
-                                return c6StateParams.minireelId;
+                            model:  ['c6StateParams','cinema6',
+                            function( c6StateParams , cinema6 ) {
+                                return cinema6.db.find('experience', c6StateParams.minireelId);
                             }]
                         },
                         new: {
@@ -308,6 +324,12 @@
 
                                 controller.returnState = 'manager';
                                 controller.baseState = 'manager.new';
+                                controller.tabs = [
+                                    newTabs.general,
+                                    newTabs.category,
+                                    newTabs.mode,
+                                    newTabs.autoplay
+                                ];
                             }],
                             children: copy(newSubstates)
                         }
@@ -331,8 +353,20 @@
                             controllerAs: 'EditorSplashCtrl',
                             templateUrl: assets('views/editor/splash.html'),
                             model:  [function() {
-                                return copy(this.cParent.cModel);
-                            }]
+                                return this.cModel || copy(this.cParent.cModel);
+                            }],
+                            children: {
+                                source: {
+                                    controller: 'GenericController',
+                                    controllerAs: 'SplashSourceCtrl',
+                                    templateUrl: assets('views/editor/splash/source.html')
+                                },
+                                image: {
+                                    controller: 'SplashImageController',
+                                    controllerAs: 'SplashImageCtrl',
+                                    templateUrl: assets('views/editor/splash/image.html')
+                                }
+                            }
                         },
                         setMode: {
                             controller: 'NewController',
@@ -359,6 +393,11 @@
 
                                 controller.returnState = 'editor';
                                 controller.baseState = 'editor.setMode';
+                                controller.tabs = [
+                                    newTabs.category,
+                                    newTabs.mode,
+                                    newTabs.autoplay
+                                ];
                             }],
                             children: copy(newSubstates)
                         },
@@ -393,25 +432,40 @@
                             }],
                             updateControllerModel: ['controller','model','appData',
                             function               ( controller , model , appData ) {
+                                var deck = this.cParent.cModel.data.deck;
+
                                 var copy = {
                                         name: 'Editorial Content',
-                                        sref: 'editor.editCard.copy'
+                                        sref: 'editor.editCard.copy',
+                                        icon: 'text',
+                                        required: true
                                     },
                                     video = {
                                         name: 'Video Content',
-                                        sref: 'editor.editCard.video'
+                                        sref: 'editor.editCard.video',
+                                        icon: 'play',
+                                        required: true
                                     },
                                     ballot = {
                                         name: 'Questionnaire',
-                                        sref: 'editor.editCard.ballot'
+                                        sref: 'editor.editCard.ballot',
+                                        icon: 'ballot',
+                                        required: false,
+                                        customRequiredText: [
+                                            'Indicates required field (to include a questionnaire)'
+                                        ].join('')
                                     },
                                     adServer = {
                                         name: 'Server Settings',
-                                        sref: 'editor.editCard.server'
+                                        sref: 'editor.editCard.server',
+                                        icon: null,
+                                        required: false
                                     },
                                     adSkip = {
                                         name: 'Skip Settings',
-                                        sref: 'editor.editCard.skip'
+                                        sref: 'editor.editCard.skip',
+                                        icon: null,
+                                        required: false
                                     },
                                     hasOwnAdServer = appData.user.org.enablePublisherAds;
 
@@ -430,6 +484,9 @@
                                         return [];
                                     }
                                 }());
+                                controller.isNew = !deck.filter(function(card) {
+                                    return card.id === model.id;
+                                })[0];
                             }],
                             children: {
                                 copy: {
@@ -501,6 +558,13 @@
                     }
                 })
                 .index('manager');
+        }])
+
+        .config(['CollateralServiceProvider',
+        function( CollateralServiceProvider ) {
+            CollateralServiceProvider
+                .defaultCollageWidth(600)
+                .ratios(['1-1', '6-5', '3-2', '16-9']);
         }])
 
         .service('c6Runner', ['$timeout',
@@ -674,6 +738,17 @@
             };
         }])
 
+        .filter('splashPageSrc', ['$sce','c6UrlMaker',
+        function                 ( $sce , c6UrlMaker ) {
+            return function(minireel) {
+                var splash = minireel.data.splash;
+
+                return $sce.trustAsResourceUrl(c6UrlMaker(
+                    ('splash/' + splash.theme + '/' + splash.ratio + '.html'),
+                'collateral'));
+            };
+        }])
+
         .service('appData', ['cinema6',
         function            ( cinema6 ) {
             var self = this,
@@ -794,15 +869,17 @@
                 controller: 'EmbedCodeController',
                 controllerAs: 'Ctrl',
                 scope: {
-                    minireelId: '@'
+                    minireel: '=',
+                    splashSrc: '@'
                 }
             };
         }])
 
-        .controller('EmbedCodeController', ['$scope','cinema6',
-        function                           ( $scope , cinema6 ) {
+        .controller('EmbedCodeController', ['$scope','cinema6','$attrs',
+        function                           ( $scope , cinema6 , $attrs ) {
             var self = this;
 
+            this.readOnly = isDefined($attrs.readonly);
             this.modes = [
                 {
                     name: 'Responsive Auto-fit *',
@@ -829,11 +906,16 @@
             Object.defineProperties(this, {
                 code: {
                     get: function() {
-                        return '<script src="' +
-                            this.c6EmbedSrc +
-                            '" data-exp="' +
-                            $scope.minireelId +
-                            '"' + (this.mode === 'custom' ?
+                        var minireel = $scope.minireel,
+                            splash = minireel.data.splash;
+
+                        return '<script src="' + this.c6EmbedSrc + '"' +
+                            ' data-exp="' + minireel.id + '"' +
+                            ' data-:title="' + btoa(minireel.data.title) + '"' +
+                            ' data-splash="' +
+                                splash.theme + ':' + splash.ratio.split('-').join('/') +
+                            '"' +
+                            (this.mode === 'custom' ?
                                 (' data-width="' +
                                     this.size.width +
                                     '" data-height="' +

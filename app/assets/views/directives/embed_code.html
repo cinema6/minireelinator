@@ -1,10 +1,26 @@
-<div class="embedCode__header">
-    <label for="embedtype">Embed Code:</label>
-    <select ng-model="Ctrl.mode" ng-options="mode.value as mode.name for mode in Ctrl.modes" class="embedCode__selector" name="embedtype"></select>
-    <div c6-alias="Ctrl.size as size" ng-show="Ctrl.mode === 'custom'" class="embedCode__customSizeDimensions">
-        <input ng-model="size.width" class="textBox" type="text" value="Width"> x
-        <input ng-model="size.height" class="textBox" type="text" value="Height">
+<div ng-if="!Ctrl.readOnly" class="embedPreview__group embedPreview__group--lightbox">
+    <label class="embed__label" for="embed-type">Embed Code Type:</label>
+    <select ng-model="minireel.data.splash.theme" class="embed__selector" name="embed-type" id="embed-type">
+        <option value="text-only">Text Only</option>
+        <option value="img-only">Image Only</option>
+        <option value="img-text-overlay">Image with Text Overlay</option>
+        <option value="horizontal-stack">Horizontal Stack</option>
+        <option value="vertical-stack">Vertical Stack</option>
+    </select>
+    <div class="embedPreview">
+        <div class="mr-splash__group" splash-page="minireel"></div>
+        <div class="mr-splashBlocker">&nbsp;</div>
     </div>
 </div>
-<textarea ng-model="Ctrl.code" name="" id="" class="embedCode__snippet" cols="30" rows="10"></textarea>
-<p class="embedCode__tip"><strong><span class="typo--attention">*</span> Responsive Auto-Fit</strong> embedding will automatically resize the MiniReel widget to fit nicely into your page. This is the recommended embedding method.</p>
+<div class="embedCode__group">
+    <div ng-if="!Ctrl.readOnly" class="embedCode__header">
+        <label class="embed__label" for="embed-size">Embed Code Size:</label>
+        <select ng-model="Ctrl.mode" ng-options="mode.value as mode.name for mode in Ctrl.modes" class="embed__selector" name="embed-size" id="embed-size"></select>
+        <div c6-alias="Ctrl.size as size" ng-show="Ctrl.mode === 'custom'" class="embedCode__customSizeDimensions">
+            <input ng-model="size.width" class="textBox" type="text" value="Width"> x
+            <input ng-model="size.height" class="textBox" type="text" value="Height">
+        </div>
+    </div>
+    <textarea ng-model="Ctrl.code" name="" id="" class="embedCode__snippet" cols="30" rows="10"></textarea>
+    <p ng-if="!Ctrl.readOnly" class="embedCode__tip"><strong><span class="typo--attention">*</span> Responsive Auto-Fit</strong> embedding will automatically resize the MiniReel widget to fit nicely into your page. This is the recommended embedding method.</p>
+</div>

@@ -62,13 +62,19 @@
                         autoplay: false,
                         deck: [
                             {
-                                id: '1'
+                                id: '1',
+                                type: 'video',
+                                data: {}
                             },
                             {
-                                id: '2'
+                                id: '2',
+                                type: 'ad',
+                                data: {}
                             },
                             {
-                                id: '3'
+                                id: '3',
+                                type: 'video',
+                                data: {}
                             }
                         ]
                     }
@@ -96,7 +102,6 @@
             });
 
             describe('properties', function() {
-
                 function controller() {
                     $scope = $rootScope.$new();
                     $scope.$apply(function() {
@@ -105,6 +110,12 @@
 
                     return PreviewController;
                 }
+
+                describe('active', function() {
+                    it('should be false', function() {
+                        expect(PreviewController.active).toBe(false);
+                    });
+                });
 
                 describe('playerSrc', function() {
                     describe('when developing locally', function() {
@@ -219,7 +230,50 @@
                 });
             });
 
+            describe('session events', function() {
+                beforeEach(function() {
+                    $scope.$emit('mrPreview:initExperience', experience, session);
+                });
+
+                describe('open', function() {
+                    beforeEach(function() {
+                        PreviewController.active = false;
+                        session.emit('open');
+                    });
+
+                    it('should set active to true', function() {
+                        expect(PreviewController.active).toBe(true);
+                    });
+                });
+
+                describe('close', function() {
+                    beforeEach(function() {
+                        PreviewController.active = true;
+                        session.emit('close');
+                    });
+
+                    it('should set active to false', function() {
+                        expect(PreviewController.active).toBe(false);
+                    });
+                });
+            });
+
             describe('$scope listeners', function() {
+                describe('mrPreview:splashClick', function() {
+                    beforeEach(function() {
+                        $scope.$emit('mrPreview:splashClick');
+                        expect(PreviewController.active).toBe(false);
+
+                        spyOn(MiniReelService, 'convertForPlayer').and.returnValue(experience);
+                        $scope.$emit('mrPreview:initExperience', experience, session);
+                        $scope.$emit('mrPreview:splashClick');
+                    });
+
+                    it('should set "active" to true', function() {
+                        expect(PreviewController.active).toBe(true);
+                    });
+                });
+
                 describe('mrPreview:initExperience', function() {
                     var dataSentToPlayer;
 
@@ -233,9 +287,9 @@
                         expect(session.experience).toEqual(experience);
                     });
 
-                    it('should register three session listeners', function() {
+                    it('should register five session listeners', function() {
                         expect(session.on).toHaveBeenCalledWith(jasmine.any(String), jasmine.any(Function));
-                        expect(session.on.calls.count()).toBe(3);
+                        expect(session.on.calls.count()).toBe(5);
                     });
 
                     describe('handshake request', function() {
@@ -316,12 +370,18 @@
 
                 describe('mrPreview:reset', function() {
                     beforeEach(function() {
+                        PreviewController.active = true;
                         spyOn(MiniReelService, 'convertForPlayer').and.returnValue(experience);
                         $scope.$emit('mrPreview:initExperience', experience, session);
                     });
                     it('should tell the player to reset', function() {
                         $scope.$emit('mrPreview:reset');
                         expect(session.ping.calls.argsFor(0)[0]).toBe('mrPreview:reset');
+                    });
+
+                    it('should set active to false', function() {
+                        $scope.$emit('mrPreview:reset');
+                        expect(PreviewController.active).toBe(false);
                     });
 
                     describe('if a card has been previewed then reset it', function() {
@@ -391,6 +451,49 @@
             });
 
             describe('$watcher', function() {
+                describe('active', function() {
+                    function set(bool) {
+                        $scope.$apply(function() {
+                            PreviewController.active = bool;
+                        });
+                    }
+
+                    beforeEach(function() {
+                        set(undefined);
+
+                        $scope.$emit('mrPreview:initExperience', experience, session);
+                        spyOn($scope, '$broadcast').and.callThrough();
+                    });
+
+                    describe('if true', function() {
+                        beforeEach(function() {
+                            set(true);
+                        });
+
+                        it('should tell the splash page it is being hidden', function() {
+                            expect($scope.$broadcast).toHaveBeenCalledWith('mrPreview:splashHide');
+                        });
+
+                        it('should tell the experience it is being shown', function() {
+                            expect(session.ping).toHaveBeenCalledWith('show');
+                        });
+                    });
+
+                    describe('if false', function() {
+                        beforeEach(function() {
+                            set(false);
+                        });
+
+                        it('should tell the splash page it is being shown', function() {
+                            expect($scope.$broadcast).toHaveBeenCalledWith('mrPreview:splashShow');
+                        });
+
+                        it('should tell the experience it is being hidden', function() {
+                            expect(session.ping).toHaveBeenCalledWith('hide');
+                        });
+                    });
+                });
+
                 describe('device', function() {
                     describe('when the device has been changed', function() {
                         var dataSentToPlayer, updatedExperience, emitCount;
@@ -433,6 +536,8 @@
                             $scope.$emit('mrPreview:initExperience', experience, session);
                             $scope.$emit('mrPreview:updateExperience', updatedExperience);
 
+                            PreviewController.active = true;
+
                             $scope.$apply(function() {
                                 PreviewController.device = 'desktop';
                             });
@@ -444,6 +549,10 @@
 
                         it('should leave fullscreen', function() {
                             expect(PreviewController.fullscreen).toBe(false);
+                        });
+
+                        it('should set active to false', function() {
+                            expect(PreviewController.active).toBe(false);
                         });
 
                         it('should cause the playerSrc to change', function() {

@@ -21,6 +21,11 @@
                     "splash": "http://www.reactiongifs.us/wp-content/uploads/2013/11/brent_rambo_approves.gif"
                 },
                 "branding": "elitedaily",
+                "splash": {
+                    "source": "generated",
+                    "ratio": "1-1",
+                    "theme": "img-only"
+                },
                 "deck": [
                     {
                         "id": "rc-22119a8cf9f755",
@@ -181,6 +186,11 @@
                 "title": "The 15 Most Amazing GoPro Videos Ever Recorded",
                 "mode": "light",
                 "branding": "elitedaily",
+                "splash": {
+                    "source": "specified",
+                    "ratio": "6-5",
+                    "theme": "img-only"
+                },
                 "deck": [
                     {
                         "id": "rc-22119a8cf9f755",
@@ -532,6 +542,11 @@
                 "title": "The 10 Greatest Super Bowl Plays Of All Time",
                 "mode": "lightbox",
                 "branding": "elitedaily",
+                "splash": {
+                    "source": "specified",
+                    "ratio": "6-4",
+                    "theme": "img-only"
+                },
                 "deck": [
                     {
                         "id": "rc-080fb573e704cf",
@@ -781,6 +796,11 @@
                 "title": "The 7 Most Legendary Pro Wrestling Intros Of All Time",
                 "mode": "full",
                 "branding": "elitedaily",
+                "splash": {
+                    "source": "generated",
+                    "ratio": "16-9",
+                    "theme": "img-only"
+                },
                 "deck": [
                     {
                         "id": "rc-0c4d7938b6fe3c",

@@ -9,16 +9,15 @@
     </div>
     <header class="pageHeader pageHeader--editor container">
         &lsaquo; <a href="" ng-click="EditorCtrl.backToDashboard()" class="mainNav__link" title="Dashboard">Back to the Dashboard</a>
-        <div c6-sref="editor.splash" class="pageHeader__coverImg">
-            <div class="miniReel__imgBox"
-                c6-bg-img="{{minireel.data.collateral.splash}}">
-                &nbsp;
-            </div>
-            <div class="coverImg__edit">
-                <span class="ui__editToolTip">
-                    <span class="ui__edit sprite--alpha"><span class="ir">Edit</span></span>
-                    Edit
-                </span>
+        <div c6-sref="editor.splash.source" class="pageHeader__coverImg">
+            <div class="miniReel__imgBox miniReel__imgBox--{{minireel.data.splash.ratio}}"
+                c6-bg-img="{{EditorCtrl.splashSrc}}">
+                <div class="coverImg__edit">
+                    <span class="ui__editToolTip">
+                        <span class="ui__edit sprite--alpha"><span class="ir">Edit</span></span>
+                        Edit
+                    </span>
+                </div>
             </div>
         </div>
         <div class="pageHeader__titlePane">
@@ -72,27 +71,6 @@
                             <span class="pubState sprite--alpha">&nbsp;</span>
                             <span class="pubText">Publish Changes</span>
                         </button>
-
-                        <!--<button ng-click="EditorCtrl.save()" 
-                        class="toolbar__btn toolbar__confirm toolbar__publish toolbar__publish--waiting" 
-                        type="button">
-                            <span class="pubState sprite--alpha">&nbsp;</span>
-                            <span class="pubText">Publishing...</span>
-                        </button>
-                        
-                        <button ng-click="EditorCtrl.save()" 
-                        class="toolbar__btn toolbar__confirm toolbar__publish toolbar__publish--confirm" 
-                        type="button">
-                            <span class="pubState sprite--alpha">&nbsp;</span>
-                            <span class="pubText">Publish Changes</span>
-                        </button>
-
-                        <button ng-click="EditorCtrl.save()" 
-                        class="toolbar__btn toolbar__confirm toolbar__publish toolbar__publish--disabled" 
-                        type="button">
-                            <span class="pubState sprite--alpha">&nbsp;</span>
-                            <span class="pubText">Publish Changes</span>
-                        </button>-->
                     </li>
                 </ul>
             </div>
@@ -117,16 +95,27 @@
                 
                 <button class="modal__closeBtn sprite--alpha" ng-click="EditorCtrl.closePreview()"><span class="ir">Close</span></button>
             </form>
-            <iframe mr-preview="minireel"
-                ng-src="{{PreviewCtrl.playerSrc}}"
-                ng-style="{height: (PreviewCtrl.fullscreen && PreviewCtrl.device === 'desktop') ? (AppCtrl.screenSpace.height + 'px') : ''}"
-                ng-class="{ 'preview__iframe--fullscreen' : (PreviewCtrl.fullscreen), 'preview__iframe--desktop' : (PreviewCtrl.device === 'desktop'), 'preview__iframe--mobile' : (PreviewCtrl.device === 'phone') }"
-                class="preview__iframe">
-            </iframe>
+            <div class="preview__iframeHolder">
+                <iframe mr-preview="minireel"
+                    ng-src="{{PreviewCtrl.playerSrc}}"
+                    ng-style="{height: (PreviewCtrl.fullscreen && PreviewCtrl.device === 'desktop') ? (AppCtrl.screenSpace.height + 'px') : ''}"
+                    ng-class="{
+                        'preview__iframe--fullscreen': (PreviewCtrl.fullscreen),
+                        'preview__iframe--desktop': (PreviewCtrl.device === 'desktop'),
+                        'preview__iframe--mobile': (PreviewCtrl.device === 'phone'),
+                        'preview__iframe--inactive': !PreviewCtrl.active
+                    }"
+                    class="preview__iframe">
+                </iframe>
+                <div ng-class="{
+                        'preview__splashHolder--inactive': PreviewCtrl.active
+                    }"
+                    class="preview__splashHolder" splash-page="EditorCtrl.model" splash-src="{{EditorCtrl.splashSrc}}"></div>
+            </div>
         </div>
         <div class="ui__overlay">&nbsp;</div>
     </div>
 </c6-alias>
 <c6-view></c6-view>
 
-<embed-code ng-show="EditorCtrl.model.status === 'active'" minireel-id="{{EditorCtrl.model.id}}" class="embedCode__group container"></embed-code>
+<embed-code ng-if="EditorCtrl.model.status === 'active'" minireel="EditorCtrl.model" splash-src="{{EditorCtrl.splashSrc}}" class="embed__group container clearifx"></embed-code>

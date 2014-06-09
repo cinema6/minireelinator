@@ -1,14 +1,18 @@
-<h1 class="modal__title modal__title--lightboxWizard">Should the MiniReel Autoplay?</h1>
-<p class="typo--context">These changes affect desktop experiences only.</p>
-<form c6-alias="NewCtrl.mode as config">
-    <input id="hasAutoplay" type="checkbox"
-    ng-model="NewCtrl.autoplay" ng-disabled="!config.autoplayable" />
-    <label for="hasAutoplay">
-        <span ng-show="config.autoplayable">Yes, all videos should play automatically.</span>
-        <span ng-show="!config.autoplayable">The <strong class="typo--attention">{{config.name}}</strong> MiniReel Type does not support autoplaying videos.</span>
-    </label>
-</form>
-<footer class="modal__btnFooter modal__btnFooter--altLayout">
-    <button c6-sref="editor" params="{ minireelId: NewCtrl.model.minireel.id }" ng-click="NewCtrl.save()" class="modal__btn toolbar__confirm" type="button" title="Done!">Done!</button>
-    <button class="modal__btn toolbar__delete" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
+<div class="modal__content modal__editor-mr-category clearfix">
+    <form c6-alias="NewCtrl.mode as config">
+        <input id="hasAutoplay" type="checkbox"
+        ng-model="NewCtrl.autoplay" ng-disabled="!config.autoplayable" />
+        <label for="hasAutoplay">
+            <span ng-show="config.autoplayable">All videos should play automatically.</span>
+            <span ng-show="!config.autoplayable">The <strong class="typo--attention">{{config.name}}</strong> MiniReel Type does not support autoplaying videos.</span>
+        </label>
+    </form>
+</div>
+<div class="modal__fineprint typo--context">
+    * These changes affect desktop experiences only.
+</div>
+<footer class="modal__btnFooter">
+    <button class="modal__btn modal__btn--first" c6-sref="{{NewCtrl.baseState}}.mode" title="Previous Step">Prev Step</button>
+    <button c6-sref="editor" params="{ minireelId: NewCtrl.model.minireel.id }" ng-click="NewCtrl.save()" class="modal__btn modal__btn--last toolbar__confirm" type="button" title="Done!">I&rsquo;m Done!</button>
+    <div class="guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</div>
 </footer>

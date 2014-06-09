@@ -1,14 +1,22 @@
 <c6-alias model="EditCardCopyCtrl.model" as="card">
+<div class="modal__content modal__editor-slide">
     <form>
-        <label class="field field--noBreak field--smMargin clearfix">
-            <span class="modal__label">Slide Title:<span class="typo--attention"><strong>*</strong></span> </span>
-            <input ng-model="card.title" type="text" class="modal__textBox" ng-model="card.title">
-            <span class="field__context"><strong>({{card.title.length || 0}} of 100 max characters recommended)</strong></span>
+        <label class="field field--noBreak clearfix">
+            <span class="modal__label">
+                Slide Title <span class="typo--attention">*</span>
+            </span>
+            <span class="modal__textBoxHolder">
+                <input ng-model="card.title" type="text" class="modal__textBox" ng-model="card.title">
+                <span class="field__context typo--context">({{card.title.length || 0}} of 100 max characters recommended)</span>
+            </span>
         </label>
-        <label class="field">
-            <span ng-show="EditorCtrl.cardLimits.copy < Infinity"
-                class="modal__label">Slide Copy: <strong class="field__context">({{card.note.length || 0}} of {{EditorCtrl.cardLimits.copy}} max characters)</strong></span>
-            <textarea ng-model="card.note" class="modal__textarea modal__cardCopy"></textarea>
+        <label class="field field--noBreak">
+            <span ng-show="EditorCtrl.cardLimits.copy < Infinity" class="modal__label">Slide Copy </span>
+            <span class="modal__textBoxHolder">
+                <textarea ng-model="card.note" class="modal__textarea modal__cardCopy"></textarea>
+                <span class="field__context typo--context">({{card.note.length || 0}} of {{EditorCtrl.cardLimits.copy}} max characters)</span>
+            </span>
         </label>
     </form>
+</div>
 </c6-alias>

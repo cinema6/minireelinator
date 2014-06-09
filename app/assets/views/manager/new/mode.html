@@ -1,25 +1,30 @@
-<h1 class="modal__title modal__title--lightboxWizard">Choose the MiniReel Type</h1>
-<p class="typo--context">These changes affect desktop experiences only.</p>
-<ul class="wizard__group">
-    <li ng-repeat="$this in NewCtrl.category.modes" 
-        class="wizard__choice"
-        ng-class="{'wizard__choice--disabled': $this.disabled}">
-        <div class="wizard__disabler" ng-if="$this.disabled">
-            <h3 class="disabler__title">Coming Soon</h3>
-        </div>
-        <input id="mode-{{$this.value}}" type="radio" 
-            ng-disabled="$this.disabled"
-            name="minireel-mode" ng-value="$this"
-            class="modal__radioBtn" ng-model="NewCtrl.mode"/>
-        <label class="wizard__hitarea" for="mode-{{$this.value}}"><span class="ir">{{$this.name}}</span></label>
-        <div class="wizard__diagram sprite--fff diagram__{{$this.value}}">&nbsp;</div>
-        <div class="wizard__copy">
-            <h2 class="wizard__title">{{$this.name}}</h2>
-            <p class="wizard__p">{{$this.description}}</p>
-        </div>
-    </li>
-</ul>
-<footer class="modal__btnFooter modal__btnFooter--altLayout">
-    <button c6-sref="{{NewCtrl.baseState}}.autoplay" class="modal__btn" type="button" title="Create MiniReel">Next Step</button>
-    <button class="modal__btn toolbar__delete" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
+<div class="modal__content modal__editor-mr-category clearfix">
+    <ul class="wizard__group">
+        <li ng-repeat="$this in NewCtrl.category.modes" 
+            class="wizard__choice"
+            ng-class="{'wizard__choice--disabled': $this.disabled}">
+            <div class="wizard__disabler" ng-if="$this.disabled">
+                <h3 class="disabler__title">Coming Soon</h3>
+            </div>
+            <input id="mode-{{$this.value}}" type="radio" 
+                ng-disabled="$this.disabled"
+                name="minireel-mode" ng-value="$this"
+                class="modal__radioBtn" ng-model="NewCtrl.mode"/>
+            <label class="wizard__hitarea" for="mode-{{$this.value}}"><span class="ir">{{$this.name}}</span></label>
+            <div class="wizard__diagram sprite--fff diagram__{{$this.value}}">&nbsp;</div>
+            <div class="wizard__copy">
+                <h2 class="wizard__title">{{$this.name}} <span class="typo--context">*</span></h2>
+                <p class="wizard__p">{{$this.description}}</p>
+            </div>
+        </li>
+    </ul>
+</div>
+<div class="modal__fineprint typo--context">
+    ! Making changes on this tab may affect settings on other tabs. <br>
+    * These changes affect desktop experiences only.
+</div>
+<footer class="modal__btnFooter">
+    <button class="modal__btn modal__btn--first" c6-sref="{{NewCtrl.baseState}}.category" title="Previous Step">Prev Step</button>
+    <button c6-sref="{{NewCtrl.baseState}}.autoplay" class="modal__btn modal__btn--last" type="button" title="Next Step">Next Step</button>
+    <div class="guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</div>
 </footer>

@@ -1,23 +1,32 @@
-<div class="modal__instructions">
-    <p>
-        Questionnaires are an optional way to present a poll along with the video. To include a Questionnaire, fill in the <em class="typo--suggestion">Option 1</em> and <em class="typo--suggestion">Option 2</em> fields below. The Question field is not mandatory.
-    </p>
-</div>
-<form c6-alias="EditCardBallotCtrl.model as ballot">
-    <label class="field">
-        <span class="modal__label">Question: <strong class="field__context">({{ballot.prompt.length || 0}} of 100 max characters)</strong></span> 
-        <input ng-model="ballot.prompt" maxlength="100" class="modal__textBox">
-    </label>
-    <label class="field field--noBreak clearfix" c6-alias="ballot.choices as choices">
-        <span class="modal__label"><em class="typo--suggestion">Option 1:</em></span> 
-        <input class="modal__textBox modal__textBox--short" ng-model="choices[0]" maxlength="40">
-        <span class="field__context field__context--short"><strong>({{choices[0].length || 0}} of 40 max characters)</strong></span> 
-    </label>
-    <label class="field field--noBreak clearfix" c6-alias="ballot.choices as choices">
-        <span class="modal__label"><em class="typo--suggestion">Option 2:</em></span> 
-        <input class="modal__textBox modal__textBox--short" ng-model="choices[1]" maxlength="40">
-        <span class="field__context field__context--short"><strong>({{choices[1].length || 0}} of 40 max characters)</strong></span> 
-    </label>
-</form>
+<div class="modal__content modal__editor-slide-ballot">
+    <div class="modal__instructions">
+        <p>
+            Questionnaires are an optional way to present a poll along with the video. To include a Questionnaire, fill in the <label for="option1"><strong>Option 1</strong></label> and <label for="option2"><strong>Option 2</strong></label> fields below. The Question field is not mandatory.
+        </p>
+    </div>
+    <form c6-alias="EditCardBallotCtrl.model as ballot">
+        <label class="field field--noBreak clearfix">
+            <span class="modal__label">Question</span>
+            <span class="modal__textBoxHolder">
+                <input ng-model="ballot.prompt" maxlength="100" class="modal__textBox">
+                <span class="field__context typo--context">({{ballot.prompt.length || 0}} of 100 max characters)</span>
+            </span>
+        </label>
+        <label class="field field--noBreak clearfix" c6-alias="ballot.choices as choices">
+            <span class="modal__label">Option 1 <span class="typo--attention">*</span></span>
+            <span class="modal__textBoxHolder">
+                <input id="option1" class="modal__textBox modal__textBox--short" ng-model="choices[0]" maxlength="40">
+                <span class="field__context field__context--short typo--context">({{choices[0].length || 0}} of 40 max characters)</span> 
+            </span>
+        </label>
+        <label class="field field--noBreak clearfix" c6-alias="ballot.choices as choices">
+            <span class="modal__label">Option 2 <span class="typo--attention">*</span></span>
+            <span class="modal__textBoxHolder">
+                <input id="option2" class="modal__textBox modal__textBox--short" ng-model="choices[1]" maxlength="40">
+                <span class="field__context field__context--short typo--context">({{choices[1].length || 0}} of 40 max characters)</span>
+            </span>
+        </label>
+    </form>
 
-<p>To remove a Questionnaire, leave the <em class="typo--suggestion">Option 1</em> and <em class="typo--suggestion">Option 2</em> fields empty.</p>
+    <p>To remove a Questionnaire, leave the <label for="option1"><strong>Option 1</strong></label> and <label for="option2"><strong>Option 2</strong></label> fields empty.</p>
+</div>

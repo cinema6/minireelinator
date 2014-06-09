@@ -1,0 +1,34 @@
+<div c6-alias="EditorSplashCtrl.model.data as data" class="modal__content modal__editor-coverImg clearfix">
+    <ul class="wizard__group">
+        <li class="wizard__choice wizard__choice--textOnly">
+            <input id="source-generate"
+                type="radio"
+                name="coverImg-source"
+                class="modal__radioBtn"
+                ng-model="data.splash.source"
+                value="generated" />
+            <label class="wizard__hitarea" for="source-generate"><span class="ir">Auto-Generated Image</span></label>
+            <div class="wizard__copy">
+                <h2 class="wizard__title">Auto-Generated Image</h2>
+                <p class="wizard__p">The thumbnail for your MiniReel will be generated using screen shots from your videos.</p>
+            </div>
+        </li>
+        <li class="wizard__choice wizard__choice--textOnly">
+            <input id="source-upload"
+                type="radio"
+                name="coverImg-source"
+                class="modal__radioBtn"
+                ng-model="data.splash.source"
+                value="specified" />
+            <label class="wizard__hitarea" for="source-upload"><span class="ir">Auto-Generated Image</span></label>
+            <div class="wizard__copy">
+                <h2 class="wizard__title">Upload Your Own</h2>
+                <p class="wizard__p">You can upload your own thumbnail for the MiniReel.</p>
+            </div>
+        </li>
+    </ul>
+</div>
+<footer class="modal__btnFooter">
+    <button class="modal__btn modal__btn--first toolbar__delete" title="Cancel" c6-sref="editor">Cancel</button>
+    <button class="modal__btn modal__btn--last" title="Next Step" c6-sref="editor.splash.image">Next Step</button>
+</footer>

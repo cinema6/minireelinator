@@ -9,7 +9,7 @@
             "c6EmbedSrc": "//lib.cinema6.com/c6embed/v0.7.0-0-g495dfa0/c6embed.min.js",
             "modes": [
                 {
-                    "name": "Yes, view in a lightbox.",
+                    "name": "View in a lightbox",
                     "value": "lightbox",
                     "description": "When triggered, this MiniReel will open a lightbox on top of the web page.",
                     "modes": [
@@ -31,7 +31,7 @@
                     ]
                 },
                 {
-                    "name": "No, view within the web page.",
+                    "name": "View within the web page",
                     "value": "inline",
                     "description": "When triggered, this MiniReel will display itself in the allotted content space of your website.",
                     "modes": [

@@ -8,6 +8,8 @@
         describe('MiniReelService', function() {
             var MiniReelService,
                 VoteService,
+                CollateralService,
+                VideoThumbnailService,
                 $rootScope,
                 cinema6,
                 $q;
@@ -42,6 +44,8 @@
                     VoteService = $injector.get('VoteService');
                     cinema6 = $injector.get('cinema6');
                     $q = $injector.get('$q');
+                    CollateralService = $injector.get('CollateralService');
+                    VideoThumbnailService = $injector.get('VideoThumbnailService');
                 });
 
                 minireel = cinema6.db.create('experience', {
@@ -58,6 +62,10 @@
                         autoplay: true,
                         election: 'el-76506623bf22d9',
                         branding: 'elitedaily',
+                        splash: {
+                            source: 'specified',
+                            ratio: '3-2'
+                        },
                         collateral: {
                             splash: 'splash.jpg'
                         },
@@ -620,6 +628,28 @@
                             deck = result.data.deck;
                         });
 
+                        describe('if it is missing a collateral hash or splash hash', function() {
+                            beforeEach(function() {
+                                delete minireel.data.collateral;
+                                delete minireel.data.splash;
+
+                                $rootScope.$apply(function() {
+                                    result = MiniReelService.convertForEditor(minireel);
+                                });
+                            });
+
+                            it('should create default ones', function() {
+                                expect(result.data.collateral).toEqual({
+                                    splash: null
+                                });
+                                expect(result.data.splash).toEqual({
+                                    ratio: '1-1',
+                                    source: 'generated',
+                                    theme: 'img-only'
+                                });
+                            });
+                        });
+
                         it('should support copying onto a provided object', function() {
                             var object = {
                                     invalidProp: 'blah',
@@ -911,9 +941,17 @@
                                     org: 'o-17593d7a2bf294',
                                     appUri: 'rumble',
                                     data: {
-                                        title: 'Untitled',
+                                        title: null,
                                         mode: 'lightbox',
                                         branding: appData.user.branding,
+                                        splash: {
+                                            source: 'generated',
+                                            ratio: '1-1',
+                                            theme: 'img-only'
+                                        },
+                                        collateral: {
+                                            splash: null
+                                        },
                                         deck: [
                                             jasmine.objectContaining(adCard),
                                             jasmine.objectContaining(adCard),

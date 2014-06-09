@@ -5,7 +5,8 @@
         equals = angular.equals,
         copy = angular.copy,
         forEach = angular.forEach,
-        isDefined = angular.isDefined;
+        isDefined = angular.isDefined,
+        noop = angular.noop;
 
     angular.module('c6.mrmaker')
         .animation('.toolbar__publish', ['$timeout',
@@ -33,7 +34,9 @@
         }])
 
         .service('EditorService', ['MiniReelService','$q','c6AsyncQueue','VoteService',
-        function                  ( MiniReelService , $q , c6AsyncQueue, VoteService ) {
+                                   'CollateralService',
+        function                  ( MiniReelService , $q , c6AsyncQueue , VoteService ,
+                                    CollateralService ) {
             var _private = {},
                 queue = c6AsyncQueue();
 
@@ -142,7 +145,25 @@
             };
 
             this.sync = queue.wrap(function() {
-                var minireel = _private.minireel;
+                var minireel = _private.minireel,
+                    proxy = _private.proxy;
+
+                function syncWithCollateral() {
+                    if (proxy.data.splash.source === 'specified') {
+                        return $q.when(proxy);
+                    }
+
+                    return CollateralService.generateCollage({
+                        minireel: proxy,
+                        name: 'splash',
+                        cache: proxy.status === 'active'
+                    }).then(function store(data) {
+                        proxy.data.collateral.splash = data.toString();
+                    })
+                    .catch(function rescue() {
+                        return proxy;
+                    });
+                }
 
                 function syncWithElection(miniReel) {
                     if (miniReel.status !== 'active'){
@@ -167,8 +188,9 @@
                 if (!minireel) {
                     return rejectNothingOpen();
                 }
-                
-                return $q.when(syncToMinireel())
+
+                return syncWithCollateral()
+                        .then(syncToMinireel)
                        .then(syncWithElection)
                        .then(function save(minireel){
                             return minireel.save();
@@ -253,6 +275,7 @@
             this.editTitle = false;
             this.dismissDirtyWarning = false;
             this.minireelState = EditorService.state;
+            this.cacheBuster = 0;
 
             Object.defineProperties(this, {
                 prettyMode: {
@@ -294,8 +317,19 @@
 
                         return cardLimits;
                     }
+                },
+                splashSrc: {
+                    get: function() {
+                        var splash = this.model.data.collateral.splash;
+
+                        return splash && (splash + '?cb=' + this.cacheBuster);
+                    }
                 }
             });
+
+            this.bustCache = function() {
+                this.cacheBuster++;
+            };
 
             this.errorForCard = function(card) {
                 var limit = this.cardLimits.copy,
@@ -442,6 +476,7 @@
                         $log.info('MiniReel save success!', minireel);
 
                         self.dismissDirtyWarning = false;
+                        self.bustCache();
 
                         return minireel;
                     });
@@ -522,55 +557,203 @@
         //    AppCtrl.sendPageView(this.pageObject);
         }])
 
-        .controller('EditorSplashController', ['$scope','FileService','CollateralService',
-                                               'c6State','$log',
-        function                              ( $scope , FileService , CollateralService ,
-                                                c6State , $log ) {
-            var self = this,
-                EditorCtrl = $scope.EditorCtrl;
+        .controller('EditorSplashController', ['$scope','c6State','$log','cModel',
+        function                              ( $scope , c6State , $log , cModel ) {
+            var self = this;
+
+            function tabBySref(sref) {
+                return self.tabs.reduce(function(result, next) {
+                    return next.sref === sref ? next : result;
+                }, null);
+            }
+
+            function incrementTabVisits(state) {
+                tabBySref(state.name).visits++;
+            }
 
             $log = ($log.context || function() { return $log; })('EditorSplashCtrl');
 
-            this.maxFileSize = 307200;
-            this.splash = null;
-            this.currentUpload = null;
-            this.allowSave = false;
+            this.tabs = [
+                {
+                    name: 'Source Type',
+                    sref: 'editor.splash.source',
+                    visits: 0,
+                    requiredVisits: 0
+                },
+                {
+                    name: 'Image Settings',
+                    sref: 'editor.splash.image',
+                    visits: 0,
+                    requiredVisits: 0
+                }
+            ];
+            this.splashSrc = cModel.data.collateral.splash;
             Object.defineProperties(this, {
-                fileTooBig: {
+                currentTab: {
+                    configurable: true,
                     get: function() {
-                        return ((this.splash || {}).size || 0) > this.maxFileSize;
+                        return this.tabs.reduce(function(result, next) {
+                            return next.sref === c6State.current.name ?
+                                next : result;
+                        }, null);
                     }
                 }
             });
 
-            this.upload = function() {
+            this.isAsFarAs = function(tab) {
+                var tabs = this.tabs;
+
+                return tabs.indexOf(tab) <= tabs.indexOf(this.currentTab);
+            };
+
+            this.tabIsValid = function(tab) {
+                if (!tab) { return tab; }
+
+                switch (tab.sref) {
+                case 'editor.splash.image':
+                    switch (this.model.data.splash.source) {
+                    case 'generated':
+                        return this.isAsFarAs(tab);
+                    case 'specified':
+                        return this.isAsFarAs(tab) && !!this.splashSrc;
+                    }
+                    break;
+                default:
+                    return this.isAsFarAs(tab);
+                }
+            };
+
+            c6State.on('stateChangeSuccess', incrementTabVisits);
+
+            $scope.$on('$destroy', function() {
+                c6State.removeListener('stateChangeSuccess', incrementTabVisits);
+            });
+
+            $scope.$watch(
+                function() { return self.model.data.splash.source; },
+                function(source, prevSource) {
+                    var imageTab;
+
+                    if (source === prevSource) { return; }
+                    imageTab = tabBySref('editor.splash.image');
+
+                    imageTab.requiredVisits = imageTab.visits + 1;
+                    self.splashSrc = null;
+                    self.model.data.collateral.splash = null;
+                }
+            );
+        }])
+
+        .controller('SplashImageController', ['$scope','CollateralService','$log','$q','c6State',
+                                              'FileService',
+        function                             ( $scope , CollateralService , $log , $q , c6State ,
+                                               FileService ) {
+            var EditorCtrl = $scope.EditorCtrl,
+                EditorSplashCtrl = $scope.EditorSplashCtrl;
+            var self = this,
+                minireel = EditorSplashCtrl.model,
+                splash = minireel.data.splash;
+
+            $log = ($log.context || function() { return $log; })('EditorSplashCtrl');
+
+            this.isGenerating = false;
+            this.maxFileSize = 307200;
+            this.splash = null;
+            this.currentUpload = null;
+            this.generatedSrcs = {
+                '1-1': null,
+                '6-5': null,
+                '6-4': null,
+                '16-9': null
+            };
+            Object.defineProperties(this, {
+                fileTooBig: {
+                    configurable: true,
+                    get: function() {
+                        return ((this.splash || {}).size || 0) > this.maxFileSize;
+                    }
+                },
+                splashSrc: {
+                    get: function() {
+                        switch (splash.source) {
+                        case 'specified':
+                            return EditorSplashCtrl.splashSrc;
+                        case 'generated':
+                            return this.generatedSrcs[splash.ratio];
+                        }
+                    }
+                }
+            });
+
+            this.uploadSplash = function() {
                 var upload;
 
                 $log.info('Upload started: ', this.splash);
                 this.currentUpload = upload = CollateralService.set(
                     'splash',
                     this.splash,
-                    this.model
+                    EditorSplashCtrl.model
                 );
 
-                upload
-                    .then(function allowSave() {
-                        self.allowSave = true;
-                    })
+                return upload
                     .finally(function cleanup() {
                         $log.info('Uploaded completed!');
                         self.currentUpload = null;
                     });
             };
 
+            this.generateSplash = function(permanent) {
+                this.isGenerating = true;
+
+                return CollateralService.generateCollage({
+                    minireel: minireel,
+                    name: 'splash',
+                    allRatios: !permanent,
+                    cache: false
+                }).then(function setSplashSrc(data) {
+                    copy(data, self.generatedSrcs);
+
+                    return data;
+                })
+                .finally(function setFlag() {
+                    self.isGenerating = false;
+                });
+            };
+
             this.save = function() {
                 var data = EditorCtrl.model.data;
 
-                $log.info('Saving data: ', this.model);
-                copy(this.model.data.collateral, data.collateral || (data.collateral = {}));
-                $log.info('Save complete: ', EditorCtrl.model);
+                function handleImageAsset() {
+                    switch (splash.source) {
+                    case 'specified':
+                        return !!self.splash ?
+                            self.uploadSplash() :
+                            $q.when(minireel);
+                    case 'generated':
+                        return self.generateSplash(true)
+                            .then(function save(data) {
+                                minireel.data.collateral.splash = data.toString();
 
-                c6State.goTo('editor');
+                                return minireel;
+                            })
+                            .catch(function fix() {
+                                return minireel;
+                            });
+                    }
+                }
+
+                return handleImageAsset()
+                    .then(function copyData(minireel) {
+                        $log.info('Saving data: ', minireel);
+                        copy(minireel.data.collateral, data.collateral);
+                        copy(minireel.data.splash, data.splash);
+                        $log.info('Save complete: ', EditorCtrl.model);
+
+                        c6State.goTo('editor');
+                        EditorCtrl.bustCache();
+
+                        return EditorCtrl.model;
+                    });
             };
 
             $scope.$on('$destroy', function() {
@@ -580,12 +763,21 @@
             });
 
             $scope.$watch(function() { return self.splash; }, function(newImage, oldImage) {
-                self.allowSave = false;
+                var file;
+
+                if (!newImage) { return; }
+                file = FileService.open(newImage);
+
+                EditorSplashCtrl.splashSrc = file.url;
 
                 if (!oldImage) { return; }
 
                 FileService.open(oldImage).close();
             });
+
+            if (splash.source === 'generated') {
+                this.generateSplash(false);
+            }
         }])
 
         .controller('EditCardController', ['$scope','c6Computed','c6State','VideoService',
@@ -596,6 +788,7 @@
                 c = c6Computed($scope),
                 EditorCtrl = $scope.EditorCtrl,
                 primaryButton = {},
+                negativeButton = {},
                 removeInitWatcher = $scope.$watch(
                     function() { return self.tabs; },
                     function(tabs) {
@@ -605,6 +798,14 @@
                 );
 
             Object.defineProperties(this, {
+                currentTab: {
+                    configurable: true,
+                    get: function() {
+                        return this.tabs.filter(function(tab) {
+                            return tab.sref === c6State.current.name;
+                        })[0] || null;
+                    }
+                },
                 canSave: {
                     configurable: true,
                     get: function() {
@@ -654,19 +855,37 @@
                     get: function() {
                         var state = c6State.current.name;
 
-                        if (this.canSave || state === 'editor.editCard.video') {
+                        if (this.canSave || /^(editor.editCard.(video|ballot))$/.test(state)) {
                             return copy({
-                                text: EditorCtrl.model.status === 'active' ? 'Done' : 'Save',
+                                text: EditorCtrl.model.status === 'active' ? 'I\'m Done!' : 'Save',
                                 action: function() { self.save(); },
                                 enabled: this.canSave
                             }, primaryButton);
                         }
 
                         return copy({
-                            text: 'Next',
+                            text: 'Next Step',
                             action: function() { c6State.goTo('editor.editCard.video'); },
                             enabled: this.copyComplete && !EditorCtrl.errorForCard(this.model)
                         }, primaryButton);
+                    }
+                },
+                negativeButton: {
+                    get: function() {
+                        var prevTab = self.tabs[self.tabs.indexOf(self.currentTab) - 1];
+
+                        return copy({
+                            text: (this.isNew && !!prevTab) ?
+                                'Prev Step' : 'Cancel',
+                            action: this.isNew ?
+                                function() {
+                                    c6State.goTo((prevTab || { sref: 'editor' }).sref);
+                                } :
+                                function() {
+                                    c6State.goTo('editor');
+                                },
+                            enabled: true
+                        }, negativeButton);
                     }
                 }
             });
@@ -746,6 +965,7 @@
                     }
                 };
 
+            this.active = false;
             // set a default device mode
             this.device = 'desktop';
             this.fullscreen = false;
@@ -789,7 +1009,8 @@
                             // this will send the most updated experience
                             // whenever the MR player is (re)loaded
                             experience: experience,
-                            profile: profile
+                            profile: profile,
+                            preload: true
                         }
                     });
                 });
@@ -799,13 +1020,23 @@
                 // we remember it, and if they change the mode
                 // and the app reloads, it's going to call back
                 // and see if it still needs to go to that card
-                session.on('mrPreview:getCard', function(data, respond) {
-                    respond(card);
-                });
+                session
+                    .on('mrPreview:getCard', function(data, respond) {
+                        respond(card);
+                    })
+                    .on('fullscreenMode', function(bool) {
+                        self.fullscreen = bool;
+                        $scope.$digest();
+                    })
+                    .on('open', function() {
+                        self.active = true;
+                    })
+                    .on('close', function() {
+                        self.active = false;
+                    });
 
-                session.on('fullscreenMode', function(bool) {
-                    self.fullscreen = bool;
-                    $scope.$digest();
+                $scope.$on('mrPreview:splashClick', function() {
+                    self.active = true;
                 });
 
                 // register another listener within the init handler
@@ -846,6 +1077,7 @@
 
                 $scope.$on('mrPreview:reset', function() {
                     card = null;
+                    self.active = false;
                     session.ping('mrPreview:reset');
                 });
 
@@ -858,8 +1090,75 @@
                     // we just prepare the profile for the refresh handshake call
                     profile.device = newDevice;
                     self.fullscreen = false;
+                    self.active = false;
+                });
+
+                $scope.$watch(function() {
+                    return self.active;
+                }, function(active) {
+                    if (active) {
+                        $scope.$broadcast('mrPreview:splashHide');
+                        session.ping('show');
+                    } else {
+                        $scope.$broadcast('mrPreview:splashShow');
+                        session.ping('hide');
+                    }
                 });
             });
+        }])
+
+        .directive('splashPage', ['c6UrlMaker','requireCJS',
+        function                 ( c6UrlMaker , requireCJS ) {
+            return {
+                templateUrl: c6UrlMaker('views/directives/splash_page.html'),
+                scope: {
+                    minireel: '=splashPage',
+                    splashSrc: '@'
+                },
+                link: function(scope, $element) {
+                    var delegate = null;
+
+                    function callDelegate(method) {
+                        ((delegate || {})[method] || noop)();
+                    }
+
+                    Object.defineProperties(scope, {
+                        title: {
+                            get: function() {
+                                return scope.minireel.data.title;
+                            }
+                        },
+                        splash: {
+                            get: function() {
+                                return scope.splashSrc || scope.minireel.data.collateral.splash;
+                            }
+                        }
+                    });
+                    scope.splashLoad = function() {
+                        requireCJS(c6UrlMaker('splash/splash.js', 'collateral'))
+                            .then(function bind(splashJS) {
+                                var c6 = {
+                                        loadExperience: function() {
+                                            scope.$apply(function() {
+                                                scope.$emit('mrPreview:splashClick');
+                                            });
+                                        }
+                                    },
+                                    settings = {},
+                                    splash = $element.find('ng-include')[0];
+
+                                delegate = splashJS(c6, settings, splash) || null;
+                            });
+                    };
+
+                    scope.$on('mrPreview:splashHide', function() {
+                        callDelegate('didHide');
+                    });
+                    scope.$on('mrPreview:splashShow', function() {
+                        callDelegate('didShow');
+                    });
+                }
+            };
         }])
 
         .directive('mrPreview', ['postMessage',

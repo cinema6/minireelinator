@@ -12,6 +12,7 @@
                 MiniReelService,
                 VoteService,
                 EditorService,
+                CollateralService,
                 _private;
 
             var minireel,
@@ -66,6 +67,7 @@
                     MiniReelService = $injector.get('MiniReelService');
                     VoteService = $injector.get('VoteService');
                     cinema6 = $injector.get('cinema6');
+                    CollateralService = $injector.get('CollateralService');
 
                     EditorService = $injector.get('EditorService');
                     _private = EditorService._private;
@@ -88,6 +90,9 @@
                         branding: 'elitedaily',
                         collateral: {
                             splash: 'splash.jpg'
+                        },
+                        splash: {
+                            source: 'specified'
                         },
                         deck: [
                             {
@@ -627,10 +632,14 @@
                         });
 
                         describe('if there is an open MiniReel', function() {
-                            var proxy;
+                            var proxy,
+                                generateCollageDeferred;
 
                             beforeEach(function() {
+                                generateCollageDeferred = $q.defer();
+
                                 spyOn(MiniReelService, 'convertForPlayer').and.callThrough();
+                                spyOn(CollateralService, 'generateCollage').and.returnValue(generateCollageDeferred.promise);
 
                                 $rootScope.$apply(function() {
                                     proxy = EditorService.open(minireel);
@@ -659,6 +668,100 @@
 
                             it('should convert the editorMinireel to the player Minireel', function() {
                                 expect(MiniReelService.convertForPlayer).toHaveBeenCalledWith(_private.editorMinireel, minireel);
+                            });
+
+                            describe('if the splash.source is specified', function() {
+                                beforeEach(function() {
+                                    proxy.data.splash.source = 'specified';
+
+                                    $rootScope.$apply(function() {
+                                        EditorService.sync().then(success);
+                                    });
+                                });
+
+                                it('should not generate a splash image', function() {
+                                    expect(CollateralService.generateCollage).not.toHaveBeenCalled();
+                                });
+                            });
+
+                            describe('if the splash.source is generated', function() {
+                                beforeEach(function() {
+                                    minireel.save.calls.reset();
+                                    $rootScope.$apply(function() {
+                                        saveDeferred.resolve(minireel);
+                                    });
+
+                                    proxy.data.splash.source = 'generated';
+
+                                    $rootScope.$apply(function() {
+                                        EditorService.sync().then(success);
+                                    });
+                                    expect(minireel.save).not.toHaveBeenCalled();
+                                });
+
+                                it('should generate a splash image', function() {
+                                    expect(CollateralService.generateCollage).toHaveBeenCalledWith({
+                                        minireel: proxy,
+                                        name: 'splash',
+                                        cache: false
+                                    });
+                                });
+
+                                describe('if the minireel is published', function() {
+                                    beforeEach(function() {
+                                        $rootScope.$apply(function() {
+                                            generateCollageDeferred.reject('ERROR');
+                                        });
+
+                                        _private.editorMinireel.status = 'active';
+
+                                        CollateralService.generateCollage.calls.reset();
+                                        $rootScope.$apply(function() {
+                                            EditorService.sync().then(success);
+                                        });
+                                    });
+
+                                    it('should cache the image', function() {
+                                        expect(CollateralService.generateCollage).toHaveBeenCalledWith({
+                                            minireel: proxy,
+                                            name: 'splash',
+                                            cache: true
+                                        });
+                                    });
+                                });
+
+                                describe('if the generation fails', function() {
+                                    beforeEach(function() {
+                                        $rootScope.$apply(function() {
+                                            generateCollageDeferred.reject('ERROR');
+                                        });
+                                    });
+
+                                    it('should still save the minireel', function() {
+                                        expect(minireel.save).toHaveBeenCalled();
+                                    });
+                                });
+
+                                describe('if the generation succeeds', function() {
+                                    beforeEach(function() {
+                                        $rootScope.$apply(function() {
+                                            generateCollageDeferred.resolve({
+                                                '16-9': '/collateral/e-123/splash',
+                                                toString: function() {
+                                                    return this['16-9'];
+                                                }
+                                            });
+                                        });
+                                    });
+
+                                    it('should set the collateral splash as the generated image', function() {
+                                        expect(proxy.data.collateral.splash).toBe('/collateral/e-123/splash');
+                                    });
+
+                                    it('should save the minireel', function() {
+                                        expect(minireel.save).toHaveBeenCalled();
+                                    });
+                                });
                             });
 
                             it('should save the MiniReel', function() {

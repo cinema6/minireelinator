@@ -108,10 +108,23 @@
                 });
         }])
 
-        .controller('NewController', ['$scope','cModel','MiniReelService',
-        function                     ( $scope , cModel , MiniReelService ) {
+        .controller('NewController', ['$scope','cModel','MiniReelService','c6State',
+        function                     ( $scope , cModel , MiniReelService , c6State ) {
             var self = this,
                 minireel = cModel.minireel;
+
+            function tabBySref(sref) {
+                return self.tabs.reduce(function(result, next) {
+                    return next.sref === sref ? next : result;
+                }, null);
+            }
+
+            function incrementTabVisits(state) {
+                var name = state.name
+                    .replace(self.baseState + '.', '');
+
+                tabBySref(name).visits++;
+            }
 
             this.mode = MiniReelService.modeDataOf(
                 minireel,
@@ -124,6 +137,33 @@
             this.autoplay = minireel.data.autoplay;
             this.title = minireel.data.title;
 
+            Object.defineProperties(this, {
+                currentTab: {
+                    configurable: true,
+                    get: function() {
+                        var state = c6State.current.name
+                            .replace(this.baseState + '.', '');
+
+                        return this.tabs.reduce(function(result, next) {
+                            return state === next.sref ? next : result;
+                        }, null);
+                    }
+                }
+            });
+
+            this.isAsFarAs = function(tab) {
+                return this.tabs.indexOf(tab) <= this.tabs.indexOf(this.currentTab);
+            };
+
+            this.tabIsValid = function(tab) {
+                switch (tab.sref) {
+                case 'general':
+                    return !!this.title;
+                default:
+                    return this.isAsFarAs(tab);
+                }
+            };
+
             this.save = function() {
                 var data = this.model.minireel.data;
 
@@ -133,16 +173,31 @@
                 data.mode = this.mode.value;
             };
 
-            $scope.$watch(function() { return self.category; }, function(category, prevCategory) {
-                if (category === prevCategory) { return; }
+            c6State.on('stateChangeSuccess', incrementTabVisits);
 
-                self.mode = self.category.modes[0];
+            $scope.$on('$destroy', function() {
+                c6State.removeListener('stateChangeSuccess', incrementTabVisits);
             });
 
-            $scope.$watch(function() { return self.mode; }, function(mode) {
-                var minireel = self.model.minireel;
+            $scope.$watch(function() { return self.category; }, function(category, prevCategory) {
+                var modeTab;
+
+                if (category === prevCategory) { return; }
+                modeTab = tabBySref('mode');
+
+                self.mode = self.category.modes[0];
+                modeTab.requiredVisits = modeTab.visits + 1;
+            });
+
+            $scope.$watch(function() { return self.mode; }, function(mode, prevMode) {
+                var minireel = self.model.minireel,
+                    autoplayTab = tabBySref('autoplay');
 
                 self.autoplay = mode.autoplayable && minireel.data.autoplay;
+
+                if (mode.autoplayable !== prevMode.autoplayable) {
+                    autoplayTab.requiredVisits = autoplayTab.visits + 1;
+                }
             });
         }]);
 }());

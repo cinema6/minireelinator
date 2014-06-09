@@ -2,6 +2,7 @@
     'use strict';
 
     define(['app'], function() {
+        /* global angular */
         describe('EditCardState', function() {
             var EditCardState,
                 EditorState,
@@ -33,6 +34,24 @@
                 };
 
                 EditorState = c6State.get('editor');
+                EditorState.cModel = {
+                    data: {
+                        deck: [
+                            {
+                                id: 'rc-19437ee278914e'
+                            },
+                            {
+                                id: 'rc-4d812b28c4292b'
+                            },
+                            {
+                                id: 'rc-036a2e0b648f3d'
+                            },
+                            {
+                                id: 'rc-16044f64448e0f'
+                            }
+                        ]
+                    }
+                };
                 EditCardState = c6State.get('editor.editCard');
             });
 
@@ -54,24 +73,6 @@
 
             describe('model()', function() {
                 beforeEach(function() {
-                    EditorState.cModel = {
-                        data: {
-                            deck: [
-                                {
-                                    id: 'rc-19437ee278914e'
-                                },
-                                {
-                                    id: 'rc-4d812b28c4292b'
-                                },
-                                {
-                                    id: 'rc-036a2e0b648f3d'
-                                },
-                                {
-                                    id: 'rc-16044f64448e0f'
-                                }
-                            ]
-                        }
-                    };
                     c6StateParams.cardId = 'rc-036a2e0b648f3d';
                     c6StateParams.card = {};
                 });
@@ -134,23 +135,34 @@
                 var model, controller,
                     copy = {
                         name: 'Editorial Content',
-                        sref: 'editor.editCard.copy'
+                        sref: 'editor.editCard.copy',
+                        icon: 'text',
+                        required: true
                     },
                     ballot = {
                         name: 'Questionnaire',
-                        sref: 'editor.editCard.ballot'
+                        sref: 'editor.editCard.ballot',
+                        icon: 'ballot',
+                        required: false,
+                        customRequiredText: jasmine.any(String)
                     },
                     video = {
                         name: 'Video Content',
-                        sref: 'editor.editCard.video'
+                        sref: 'editor.editCard.video',
+                        icon: 'play',
+                        required: true
                     },
                     adServer = {
                         name: 'Server Settings',
-                        sref: 'editor.editCard.server'
+                        sref: 'editor.editCard.server',
+                        icon: null,
+                        required: false
                     },
                     adSkip = {
                         name: 'Skip Settings',
-                        sref: 'editor.editCard.skip'
+                        sref: 'editor.editCard.skip',
+                        icon: null,
+                        required: false
                     };
 
                 beforeEach(function() {
@@ -174,6 +186,27 @@
 
                     it('should set the model as the controller\'s model property', function() {
                         expect(controller.model).toBe(model);
+                    });
+                });
+
+                describe('on a new card', function() {
+                    beforeEach(function() {
+                        updateControllerModel();
+                    });
+
+                    it('should set isNew to true', function() {
+                        expect(controller.isNew).toBe(true);
+                    });
+                });
+
+                describe('on an existing card', function() {
+                    it('should set isNew to false', function() {
+                        EditorState.cModel.data.deck.forEach(function(card) {
+                            model = angular.copy(card);
+                            updateControllerModel();
+
+                            expect(controller.isNew).toBe(false);
+                        });
                     });
                 });
 
