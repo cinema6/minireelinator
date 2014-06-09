@@ -9,137 +9,179 @@
             var $rootScope,
                 $scope,
                 $compile,
-                $window,
-                $$window;
+                $q,
+                $httpBackend;
+
+            var requireCJS,
+                splashJS,
+                delegate;
 
             var $splash,
-                postMessage;
+                scope;
 
             beforeEach(function() {
+                delegate = {
+                    didShow: jasmine.createSpy('delegate.didShow()'),
+                    didHide: jasmine.createSpy('delegate.didHide()')
+                };
+
+                splashJS = jasmine.createSpy('splashJS(c6, settings, splash)')
+                    .and.returnValue(delegate);
+
+                module('c6.mrmaker.services', function($provide) {
+                    $provide.value('requireCJS', jasmine.createSpy('requireCJS()')
+                        .and.callFake(function() {
+                            return $q.when(splashJS);
+                        }));
+                });
+
                 module('c6.mrmaker');
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
                     $compile = $injector.get('$compile');
-                    $window = $injector.get('$window');
+                    $httpBackend = $injector.get('$httpBackend');
+                    $q = $injector.get('$q');
+
+                    requireCJS = $injector.get('requireCJS');
 
                     $scope = $rootScope.$new();
-                    $$window = jqLite($window);
+                    $scope.model = {
+                        data: {
+                            title: 'Hello',
+                            splash: {
+                                ratio: '1-1',
+                                theme: 'img-text-overlay'
+                            },
+                            collateral: {
+                                splash: '/collateral/e-123/splash'
+                            }
+                        }
+                    };
+                    $scope.splashSrc = null;
                 });
 
-                $splash = jqLite('<iframe src="about:blank" splash-page></iframe>');
+                $splash = jqLite('<div splash-page="model" splash-src="{{splashSrc}}"></div>');
 
                 $('body').append($splash);
-                postMessage = spyOn($splash.prop('contentWindow'), 'postMessage').and.callThrough();
+
+                $httpBackend.expectGET('/collateral/splash/img-text-overlay/1-1.html')
+                    .respond(200, '');
 
                 $scope.$apply(function() {
                     $compile($splash)($scope);
                 });
+                scope = $splash.isolateScope();
+
+                $httpBackend.flush();
             });
 
             afterEach(function() {
                 $splash.remove();
             });
 
-            describe('events', function() {
-                describe('mrPreview:splashShow', function() {
-                    beforeEach(function() {
-                        $scope.$broadcast('mrPreview:splashShow');
-                    });
+            it('should set up an isolate scope with bindings', function() {
+                expect(scope.title).toBe($scope.model.data.title);
+                $scope.model.data.title = 'Foo';
+                expect(scope.title).toBe($scope.model.data.title);
 
-                    it('should post the "show" message to the splash page', function() {
-                        expect(postMessage).toHaveBeenCalledWith('show', '*');
+                expect(scope.splash).toBe($scope.model.data.collateral.splash);
+                $scope.model.data.collateral.splash = '/collateral/null';
+                expect(scope.splash).toBe($scope.model.data.collateral.splash);
+            });
+
+            it('should bind the src to a provided value if one is provided', function() {
+                $scope.$apply(function() {
+                    $scope.splashSrc = '/collateral/foo?cb=1';
+                });
+                expect(scope.splash).toBe($scope.splashSrc);
+            });
+
+            describe('when splashLoad() is called', function() {
+                beforeEach(function() {
+                    splashJS.calls.reset();
+                    $scope.$apply(function() {
+                        scope.splashLoad();
                     });
                 });
 
-                describe('mrPreview:splashHide', function() {
+                it('should get the splashJS', function() {
+                    expect(requireCJS).toHaveBeenCalledWith('/collateral/splash/splash.js');
+                });
+
+                it('should execute splashJS', function() {
+                    expect(splashJS).toHaveBeenCalledWith({ loadExperience: jasmine.any(Function) }, jasmine.any(Object), $splash.find('ng-include')[0]);
+                });
+
+                describe('when loadExperience() is called', function() {
+                    var c6;
+
                     beforeEach(function() {
-                        $scope.$broadcast('mrPreview:splashHide');
+                        c6 = splashJS.calls.mostRecent().args[0];
+
+                        spyOn(scope, '$emit').and.callThrough();
+                        spyOn(scope, '$apply').and.callThrough();
+
+                        c6.loadExperience();
                     });
 
-                    it('should post the "hide" message to the splash page', function() {
-                        expect(postMessage).toHaveBeenCalledWith('hide', '*');
+                    it('should $emit mrPreview:splashClick', function() {
+                        expect(scope.$emit).toHaveBeenCalledWith('mrPreview:splashClick');
+                        expect(scope.$apply).toHaveBeenCalled();
                     });
                 });
 
-                describe('message: { event: "click" }', function() {
-                    beforeEach(function() {
-                        var event = jqLite.Event('message');
-
-                        event.originalEvent = {
-                            data: JSON.stringify({
-                                exp: 'e-123',
-                                event: 'click'
-                            })
-                        };
-                        spyOn($scope, '$emit');
-                        $$window.trigger(event);
-                    });
-
-                    it('should $emit the mrPreview:splashClick event', function() {
-                        expect($scope.$emit).toHaveBeenCalledWith('mrPreview:splashClick');
-                    });
-
-                    describe('when the scope is $destroyed', function() {
+                describe('delegate', function() {
+                    describe('if there is no delegate', function() {
                         beforeEach(function() {
-                            var event = jqLite.Event('message');
+                            splashJS.and.returnValue(null);
 
-                            event.originalEvent = {
-                                data: JSON.stringify({
-                                    exp: 'e-123abc',
-                                    event: 'click'
-                                })
-                            };
-                            $scope.$emit.calls.reset();
-
-                            $scope.$destroy();
-                            $$window.trigger(event);
+                            $scope.$apply(function() {
+                                scope.splashLoad();
+                            });
                         });
 
-                        it('should not listen for messages anymore', function() {
-                            expect($scope.$emit).not.toHaveBeenCalled();
+                        it('should not throw any errors', function() {
+                            expect(function() {
+                                $scope.$broadcast('mrPreview:splashHide');
+                                $scope.$broadcast('mrPreview:splashShow');
+                            }).not.toThrow();
                         });
                     });
-                });
 
-                it('should not emit scope events for other messages', function() {
-                    var event = jqLite.Event('message');
+                    describe('when mrPreview:splashHide is $broadcast', function() {
+                        beforeEach(function() {
+                            $scope.$broadcast('mrPreview:splashHide');
+                        });
 
-                    event.originalEvent = {
-                        data: JSON.stringify({
-                            exp: 'e-123',
-                            event: 'drag'
-                        })
-                    };
-                    spyOn($scope, '$emit');
-                    $$window.trigger(event);
+                        it('should call didHide() on the delegate', function() {
+                            expect(delegate.didHide).toHaveBeenCalled();
+                        });
+                    });
 
-                    expect($scope.$emit).not.toHaveBeenCalled();
-                });
+                    describe('when mrPreview:splashShow is $broadcast', function() {
+                        beforeEach(function() {
+                            $scope.$broadcast('mrPreview:splashShow');
+                        });
 
-                it('should be able to handle other types of objects', function() {
-                    var event = jqLite.Event('message');
+                        it('should call didShow() on the delegate', function() {
+                            expect(delegate.didShow).toHaveBeenCalled();
+                        });
+                    });
 
-                    event.originalEvent = {
-                        data: JSON.stringify({
-                            __c6__: {
-                                event: 'foo'
-                            }
-                        })
-                    };
-                    expect(function() {
-                        $$window.trigger(event);
-                    }).not.toThrow();
-                });
+                    describe('if the delegate is missing methods', function() {
+                        beforeEach(function() {
+                            delete delegate.didShow;
+                            delete delegate.didHide;
+                        });
 
-                it('should be able to handle non-JSON messages', function() {
-                    var event = jqLite.Event('message');
-
-                    event.originalEvent = { data: 'Hey' };
-
-                    expect(function() {
-                        $$window.trigger(event);
-                    }).not.toThrow();
+                        it('should not throw any errors', function() {
+                            expect(function() {
+                                $scope.$broadcast('mrPreview:splashHide');
+                                $scope.$broadcast('mrPreview:splashShow');
+                            }).not.toThrow();
+                        });
+                    });
                 });
             });
         });

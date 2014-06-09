@@ -8,24 +8,7 @@
         <option value="vertical-stack">Vertical Stack</option>
     </select>
     <div class="embedPreview">
-
-
-<!--embed template start-->
-<style>
-    .mr-splash__group {
-        width:100%; height:0;
-        padding:0 0 100% 0;
-        background:url('/__dirname/app/assets/img/default_square.jpg') 50% 50% / cover no-repeat;
-        position:relative;
-    }
-</style>
-
-<div class="mr-splash__group">
-    <iframe ng-src="{{minireel | splashPageSrc:splashSrc}}" width="100%" height="100%"></iframe>
-</div>
-<!--embed template end-->
-
-
+        <div class="mr-splash__group" splash-page="minireel"></div>
     </div>
 </div>
 <div class="embedCode__group">

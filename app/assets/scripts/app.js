@@ -740,15 +740,11 @@
 
         .filter('splashPageSrc', ['$sce','c6UrlMaker',
         function                 ( $sce , c6UrlMaker ) {
-            return function(minireel, splashSrc) {
+            return function(minireel) {
                 var splash = minireel.data.splash;
 
                 return $sce.trustAsResourceUrl(c6UrlMaker(
-                    ('splash/' + splash.theme + '/' + splash.ratio + '.html?' +
-                        'exp=' + encodeURIComponent(minireel.id) + '&' +
-                        'title=' + encodeURIComponent(minireel.data.title) + '&' +
-                        'splash=' + encodeURIComponent(splashSrc || minireel.data.collateral.splash)
-                    ),
+                    ('splash/' + splash.theme + '/' + splash.ratio + '.html'),
                 'collateral'));
             };
         }])
