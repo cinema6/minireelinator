@@ -2,6 +2,9 @@
 
 * *[Beta8.rc1]*
   * New MiniReels are no longer given a title of "Untitled"
+  * Fixed MiniReel embed code modal styling when viewed from manager
+  * Added splash preview click blocker so that splash preview next to embed code does not trigger
+  * Fixed preview modal positioning
 
 * *[Beta7.rc3] (June 6, 2014)
   * Fixed election save when miniReel is re-published

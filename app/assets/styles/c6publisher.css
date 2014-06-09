@@ -231,6 +231,9 @@
         position:absolute; z-index:11; top:50%; left:50%;
         background:#fff;
     }
+        .ui__modal--embed {
+            padding:1.5em 2.25em;
+        }
         .ui__modal--confirmation {
             width:28em; height:10em;
             margin:-6.5em 0 0 -15.5em;
@@ -349,12 +352,12 @@
             padding:1.5em;
         }
             .preview__container--mobile {
-                width:20em; height:39.25em;
-                margin:-21.5em 0 0 -11.5em;
+                width:20em; height:622px;
+                margin:-20.9375em 0 0 -11.5em;
             }
             .preview__container--desktop {
-                width: 43.75em; height: 39.5em;
-                margin:-21.625em 0 0 -23.375em;
+                width: 43.75em; height: 752px;
+                margin:-25em 0 0 -23.375em;
             }
             .preview__container .modal__title {
                 margin:-0.5em 0 0.25em;
@@ -362,8 +365,11 @@
             .preview__container .modal__closeBtn {
                 top:0.75em;
             }
+            .preview__iframeHolder {
+                width:100%; height:700px;
+            }
             .preview__iframe {
-                border: 0;
+                border: 0; display: block;
             }
                 .preview__iframe--mobile {
                     width:20em;
@@ -379,8 +385,11 @@
                         background:white;
                     }
                 .preview__iframe--inactive {
-                    height: 0px;
+                    display:none;
                 }
+            .preview__splashHolder--inactive {
+                display: none;
+            }
             .preview__form {
                 margin:0 0 0.5em 0;
             }
@@ -1540,8 +1549,12 @@
         }
         .embedPreview {
             width:100%; height:300px;
-            background:blue;
+            position:relative;
         }
+            .mr-splashBlocker {
+                position:absolute; z-index:5; top:0; left:0;
+                width:100%; height:100%;
+            }
         .embedPreview__group .embed__selector {
             width:100%; margin:0 0 1em 0;
         }
