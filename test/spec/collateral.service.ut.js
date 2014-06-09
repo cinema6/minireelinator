@@ -32,7 +32,7 @@
             });
 
             describe('methods', function() {
-                describe('generateCollage(minireel, name, width, allRatios)', function() {
+                describe('generateCollage(options)', function() {
                     var minireel, thumbs,
                         success;
 
@@ -120,7 +120,11 @@
                             }
                         ]);
 
-                        CollateralService.generateCollage(minireel, 'splash', 600).then(success);
+                        CollateralService.generateCollage({
+                            minireel: minireel,
+                            name: 'splash',
+                            width: 600
+                        }).then(success);
 
                         $httpBackend.flush();
                     });
@@ -164,7 +168,42 @@
 
                         CollateralServiceProvider.defaultCollageWidth(800);
 
-                        CollateralService.generateCollage(minireel, 'foo');
+                        CollateralService.generateCollage({
+                            minireel: minireel,
+                            name: 'foo'
+                        });
+
+                        $httpBackend.flush();
+                    });
+
+                    it('should offer the option not to cache the image', function() {
+                        $httpBackend.expectPOST('/api/collateral/splash/' + minireel.id + '?noCache=true', {
+                            imageSpecs: [
+                                {
+                                    name: 'splash',
+                                    width: 800,
+                                    height: 800 * (9 / 16),
+                                    ratio: '16-9'
+                                }
+                            ],
+                            thumbs: Object.keys(thumbs).map(function(key) {
+                                return thumbs[key].large;
+                            })
+                        }).respond(201, [
+                            {
+                                name: 'splash',
+                                ratio: '16-9',
+                                path: 'collateral/' + minireel.id + '/splash',
+                                code: 201
+                            }
+                        ]);
+
+                        CollateralService.generateCollage({
+                            minireel: minireel,
+                            name: 'splash',
+                            cache: false,
+                            width: 800
+                        });
 
                         $httpBackend.flush();
                     });
@@ -197,7 +236,12 @@
                             };
                         }));
 
-                        CollateralService.generateCollage(minireel, 'splash', 600, true).then(success);
+                        CollateralService.generateCollage({
+                            minireel: minireel,
+                            name: 'splash',
+                            width: 600,
+                            allRatios: true
+                        }).then(success);
 
                         $httpBackend.flush();
 
@@ -256,7 +300,7 @@
 
                     it('should upload the file to the collateral service', function() {
                         expect(FileService.open).toHaveBeenCalledWith(splashImage);
-                        expect(FileService.upload).toHaveBeenCalledWith('/api/collateral/files/' + experience.id, [splashImageWrapper]);
+                        expect(FileService.upload).toHaveBeenCalledWith('/api/collateral/files/' + experience.id + '?noCache=true', [splashImageWrapper]);
                     });
 
                     it('should attach the progress state of the upload to the promise', function() {
