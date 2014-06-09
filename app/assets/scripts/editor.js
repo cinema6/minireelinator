@@ -1090,6 +1090,7 @@
                     // we just prepare the profile for the refresh handshake call
                     profile.device = newDevice;
                     self.fullscreen = false;
+                    self.active = false;
                 });
 
                 $scope.$watch(function() {
