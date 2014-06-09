@@ -10,6 +10,7 @@
                 $q,
                 cinema6,
                 MiniReelService,
+                VoteService,
                 EditorService,
                 CollateralService,
                 _private;
@@ -64,6 +65,7 @@
                     $rootScope = $injector.get('$rootScope');
                     $q = $injector.get('$q');
                     MiniReelService = $injector.get('MiniReelService');
+                    VoteService = $injector.get('VoteService');
                     cinema6 = $injector.get('cinema6');
                     CollateralService = $injector.get('CollateralService');
 
@@ -594,6 +596,8 @@
 
                     describe('sync()', function() {
                         var success, failure,
+                            initVoteDeferred,
+                            updateVoteDeferred,
                             saveDeferred;
 
                         beforeEach(function() {
@@ -601,7 +605,13 @@
                             failure = jasmine.createSpy('sync() failure');
 
                             saveDeferred = $q.defer();
+                            initVoteDeferred = $q.defer();
+                            updateVoteDeferred = $q.defer();
 
+                            spyOn(VoteService, 'initialize').and
+                                .returnValue(initVoteDeferred.promise);
+                            spyOn(VoteService, 'update').and
+                                .returnValue(updateVoteDeferred.promise);
                             spyOn(minireel, 'save').and.returnValue(saveDeferred.promise);
                         });
 
@@ -644,6 +654,11 @@
                                 });
 
                                 MiniReelService.convertForEditor.calls.reset();
+                            });
+
+                            it('should not save the election with status pending',function(){
+                                expect(VoteService.update).not.toHaveBeenCalled();
+                                expect(VoteService.initialize).not.toHaveBeenCalled();
                             });
 
                             it('should copy the data from the proxy to the editor minireel', function() {
@@ -764,6 +779,73 @@
                                     expect(success).toHaveBeenCalledWith(proxy);
                                 });
                             });
+                        });
+                        describe('if republishing an open minireel without election',function(){
+                            var proxy;
+
+                            beforeEach(function() {
+                                minireel.status = 'active';
+                                delete minireel.data.election;
+
+                                $rootScope.$apply(function() {
+                                    proxy = EditorService.open(minireel);
+                                });
+
+                                proxy.data.title = 'Here is a New Title!';
+                                proxy.data.mode = 'light';
+                                proxy.data.deck.splice(1, 1);
+                            });
+
+                            describe('and election init succeeds',function(){
+                                it('should init the election',function(){
+                                    $rootScope.$apply(function() {
+                                        EditorService.sync().then(success);
+                                        initVoteDeferred.resolve();
+                                    });
+                                    expect(VoteService.initialize).toHaveBeenCalled();
+                                });
+                                
+                                it('should save the MiniReel', function() {
+                                    $rootScope.$apply(function() {
+                                        EditorService.sync().then(success);
+                                        initVoteDeferred.resolve();
+                                    });
+                                    expect(minireel.save).toHaveBeenCalled();
+                                });
+                            });
+                            describe('and election init fails',function(){
+                                it('should save the MiniReel', function() {
+                                    $rootScope.$apply(function() {
+                                        EditorService.sync().then(success).catch(failure);
+                                        initVoteDeferred.reject('Failed!');
+                                    });
+                                    expect(minireel.save).not.toHaveBeenCalled();
+                                    expect(failure).toHaveBeenCalledWith('Failed!');
+                                });
+                            });
+
+                        });
+                        describe('if republishing an open minireel with election',function(){
+                            var proxy;
+                            beforeEach(function() {
+                                minireel.status = 'active';
+                                $rootScope.$apply(function() {
+                                    proxy = EditorService.open(minireel);
+                                });
+
+                                proxy.data.title = 'Here is a New Title!';
+                                proxy.data.mode = 'light';
+                                proxy.data.deck.splice(1, 1);
+
+                                $rootScope.$apply(function() {
+                                    EditorService.sync().then(success);
+                                });
+                            });
+
+                            it('should update the election with election set and status active',function(){
+                                expect(VoteService.update).toHaveBeenCalled();
+                            });
+
                         });
                     });
                 });

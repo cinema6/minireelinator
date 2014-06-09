@@ -246,8 +246,22 @@
             };
         }])
 
-        .service('VoteService', ['cinema6',
-        function                ( cinema6 ) {
+        .service('VoteService', ['cinema6','$q','$log',
+        function                ( cinema6, $q, $log ) {
+            function hasElectionData(deck){
+                var hasData = false;
+                forEach(deck,function(card){
+                    if ((!hasData) &&
+                        ((card.modules || []).indexOf('ballot') >= 0) &&
+                        (card.ballot) &&
+                        (card.ballot.choices)) {
+                        $log.info('Card has ballot data:',card);
+                        hasData = true;
+                    }
+                });
+                return hasData;
+            }
+
             function generateData(deck, election) {
                 function cardWithId(id) {
                     return deck.filter(function(card) {
@@ -259,6 +273,15 @@
                     ballot: {}
                 };
 
+                //TODO: remove useArrayStorage once we deploy new vote service
+                // new ballot items should always use array storage
+                var useArrayStorage = false;
+                forEach(election.ballot,function(vals){
+                    if ((useArrayStorage === false) && (angular.isArray(vals))){
+                        useArrayStorage = true;
+                    }
+                });
+                
                 delete election.id;
 
                 forEach(deck, function(card) {
@@ -268,14 +291,19 @@
                         return;
                     }
 
-                    item = election.ballot[card.id] || {};
+                    item = election.ballot[card.id] || (useArrayStorage ? [] : {});
 
-                    forEach(card.ballot.choices, function(choice) {
-                        item[choice] = item[choice] || 0;
+                    forEach(card.ballot.choices, function(choice,index) {
+                        if (angular.isArray(item)){
+                            item[index] = item[index] || 0;
+                        } else {
+                            item[choice] = item[choice] || 0;
+                        }
                     });
 
                     election.ballot[card.id] = item;
                 });
+                
                 forEach(Object.keys(election.ballot), function(id) {
                     var card = cardWithId(id),
                         shouldHaveBallot = !!card && (card.modules || []).indexOf('ballot') > -1;
@@ -284,11 +312,17 @@
                         delete election.ballot[id];
                     }
                 });
-
+            
                 return election;
             }
 
             this.initialize = function(minireel) {
+                $log.info('Attempt initialize minireel election');
+                if (hasElectionData(minireel.data.deck) === false){
+                    $log.info('Minireel has no election data, return without create');
+                    return $q.when(null);
+                }
+                $log.info('Minireel has election data, create');
                 return cinema6.db.create('election', generateData(minireel.data.deck))
                     .save()
                     .then(function attachId(election) {
@@ -299,12 +333,22 @@
             };
 
             this.update = function(minireel) {
+                $log.info('Attempt update minireel election: ' + minireel.data.election);
+                if (hasElectionData(minireel.data.deck) === false){
+                    $log.info('Minireel has no election data, return without update');
+                    return $q.when(null);
+                }
+                $log.info('Minireel has no election data, update');
                 return cinema6.db.findAll('election', { id: minireel.data.election })
                     .then(function updateElection(elections) {
                         return generateData(minireel.data.deck, elections[0]);
                     })
                     .then(function saveElection(election) {
-                        return election.save();
+                        if (election) {
+                            return election.save();
+                        } else {
+                            return null;
+                        }
                     });
             };
         }])
@@ -747,16 +791,21 @@
             };
 
             this.publish = function(minireel) {
-                function initializeElection(minireel) {
-                    if (minireel.data.election) { return minireel; }
+                function saveElection(minireel) {
+                    function returnMiniReel(){
+                        return minireel;
+                    }
+
+                    if (minireel.data.election) {
+                        return VoteService.update(minireel)
+                            .then(returnMiniReel);
+                    }
 
                     return VoteService.initialize(minireel)
-                        .then(function returnMiniReel() {
-                            return minireel;
-                        });
+                        .then(returnMiniReel);
                 }
 
-                return $q.when(initializeElection(minireel))
+                return $q.when(saveElection(minireel))
                     .then(function setActive(minireel) {
                         minireel.status = 'active';
 

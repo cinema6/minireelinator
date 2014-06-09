@@ -199,15 +199,7 @@
                         "note": "This guy recorded himself in an F18 fighter jet.",
                         "source": "YouTube",
                         "modules": [
-                            "ballot"
                         ],
-                        "ballot": {
-                            "prompt": "What did you think of this video?",
-                            "choices": [
-                                "Cool",
-                                "Boring"
-                            ]
-                        },
                         "data": {
                             "videoid": "IqVPwcvgOWQ",
                             "rel": 0,

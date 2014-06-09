@@ -1,13 +1,26 @@
 # MiniReelinator
 
-* *[Beta7.rc1]*
+* *[Beta8.rc1]*
   * New MiniReels are no longer given a title of "Untitled"
+
+* *[Beta7.rc3] (June 6, 2014)
+  * Fixed election save when miniReel is re-published
+  * Updated s3 upload to not upload index.html until after the other files have been uploaded
+* *[/Beta7.rc3]*
+
+* *[Beta7.rc2] (June 5, 2014)
+  * Add some logging to the minireelinator initialize and update methods.
+* *[/Beta7.rc2]*
+
+* *[Beta7.rc1] (June 5, 2014)
   * [FIX]: Character count of 0 is shown before the user types anything
     (instead of an empty space)
   * Upload collateral assets by experience and name assets by the key
-    they're stored on the collateral object with (i.e. "splash")
-  * [FEATURE]: Added new styles for modal windows
-  * [FEATURE]: Added interface DOM updates for splash and embed code options
+    they are  stored on the collateral object with (i.e. "splash")
+  * [FIX]: Minireelinator creating empty elections
+  * [FIX]: Minireelinator not updating election data when re-publishing
+  * [FIX]: Support handling updates on election with array based storage
+* *[/Beta7.rc1]*
 
 ## Beta6 (May 27, 2014)
 * *[Beta6.rc1]*

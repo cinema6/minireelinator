@@ -34,8 +34,10 @@
             };
         }])
 
-        .service('EditorService', ['MiniReelService','$q','c6AsyncQueue','CollateralService',
-        function                  ( MiniReelService , $q , c6AsyncQueue , CollateralService ) {
+        .service('EditorService', ['MiniReelService','$q','c6AsyncQueue','VoteService',
+                                   'CollateralService',
+        function                  ( MiniReelService , $q , c6AsyncQueue , VoteService ,
+                                    CollateralService ) {
             var _private = {},
                 queue = c6AsyncQueue();
 
@@ -161,16 +163,42 @@
                         });
                 }
 
+                function syncWithElection(miniReel) {
+                    if (miniReel.status !== 'active'){
+                        return $q.when(miniReel);
+                    }
+
+                    if (miniReel.data.election) {
+                        return VoteService
+                            .update(miniReel)
+                            .then(function(){
+                                return miniReel;
+                            });
+                    }
+
+                    return VoteService
+                        .initialize(miniReel)
+                        .then(function(){
+                            return miniReel;
+                        });
+                }
+
                 if (!minireel) {
                     return rejectNothingOpen();
                 }
-
+                
                 return syncWithCollateral()
-                    .then(syncToMinireel)
-                    .then(function save(minireel) {
-                        return minireel.save();
-                    })
-                    .then(syncToProxy);
+                        .then(syncToMinireel)
+                       .then(syncWithElection)
+                       .then(function save(minireel){
+                            return minireel.save();
+                        })
+                       .then(syncToProxy)
+                       .then(function updateElection(proxy){
+                            // See comment in publish
+                            proxy.data.election = minireel.data.election;
+                            return proxy;
+                        });
             }, this);
 
             this.publish = queue.wrap(function() {
