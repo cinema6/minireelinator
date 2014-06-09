@@ -700,7 +700,34 @@
                                 });
 
                                 it('should generate a splash image', function() {
-                                    expect(CollateralService.generateCollage).toHaveBeenCalledWith(proxy, 'splash');
+                                    expect(CollateralService.generateCollage).toHaveBeenCalledWith({
+                                        minireel: proxy,
+                                        name: 'splash',
+                                        cache: false
+                                    });
+                                });
+
+                                describe('if the minireel is published', function() {
+                                    beforeEach(function() {
+                                        $rootScope.$apply(function() {
+                                            generateCollageDeferred.reject('ERROR');
+                                        });
+
+                                        _private.editorMinireel.status = 'active';
+
+                                        CollateralService.generateCollage.calls.reset();
+                                        $rootScope.$apply(function() {
+                                            EditorService.sync().then(success);
+                                        });
+                                    });
+
+                                    it('should cache the image', function() {
+                                        expect(CollateralService.generateCollage).toHaveBeenCalledWith({
+                                            minireel: proxy,
+                                            name: 'splash',
+                                            cache: true
+                                        });
+                                    });
                                 });
 
                                 describe('if the generation fails', function() {

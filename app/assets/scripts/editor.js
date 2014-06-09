@@ -153,13 +153,16 @@
                         return $q.when(proxy);
                     }
 
-                    return CollateralService.generateCollage(proxy, 'splash')
-                        .then(function store(data) {
-                            proxy.data.collateral.splash = data.toString();
-                        })
-                        .catch(function rescue() {
-                            return proxy;
-                        });
+                    return CollateralService.generateCollage({
+                        minireel: proxy,
+                        name: 'splash',
+                        cache: proxy.status === 'active'
+                    }).then(function store(data) {
+                        proxy.data.collateral.splash = data.toString();
+                    })
+                    .catch(function rescue() {
+                        return proxy;
+                    });
                 }
 
                 function syncWithElection(miniReel) {
@@ -185,7 +188,7 @@
                 if (!minireel) {
                     return rejectNothingOpen();
                 }
-                
+
                 return syncWithCollateral()
                         .then(syncToMinireel)
                        .then(syncWithElection)
@@ -702,15 +705,18 @@
             this.generateSplash = function(permanent) {
                 this.isGenerating = true;
 
-                return CollateralService.generateCollage(minireel, 'splash', null, !permanent)
-                    .then(function setSplashSrc(data) {
-                        copy(data, self.generatedSrcs);
+                return CollateralService.generateCollage({
+                    minireel: minireel,
+                    name: 'splash',
+                    allRatios: !permanent
+                }).then(function setSplashSrc(data) {
+                    copy(data, self.generatedSrcs);
 
-                        return data;
-                    })
-                    .finally(function setFlag() {
-                        self.isGenerating = false;
-                    });
+                    return data;
+                })
+                .finally(function setFlag() {
+                    self.isGenerating = false;
+                });
             };
 
             this.save = function() {
