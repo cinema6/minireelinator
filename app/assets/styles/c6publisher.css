@@ -227,14 +227,21 @@
     }
     .ui__modal {
         width:46.5em; height:33.75em; 
-        padding:0 2.25em; margin:-16.875em 0 0 -25.5em;
-        position:absolute; z-index:11; top:50%; left:50%;
+        padding:0 2.25em; margin:0 0 0 -25.5em;
+        position:absolute; z-index:11; top:5em; left:50%;
         background:#fff;
+        /* vertical centered modal
+        margin:-16.875em 0 0 -23.5em;
+        top:50%; 
+        */
     }
         .ui__modal--confirmation {
             width:28em; height:10em;
-            margin:-6.5em 0 0 -15.5em;
+            margin:0 0 0 -15.5em;
             padding:1.5em;
+            /* vertical centered modal
+            margin:-6.5em 0 0 -15.5em;
+            */
         }
         .ui__modal--confirmation .modal__message {
             margin:0.25em 0 0 0; color:#848484;
@@ -350,11 +357,17 @@
         }
             .preview__container--mobile {
                 width:20em; height:39.25em;
+                margin:0 0 0 -11.5em;
+                /* vertically centered modal
                 margin:-21.5em 0 0 -11.5em;
+                */
             }
             .preview__container--desktop {
                 width: 43.75em; height: 39.5em;
+                margin:0 0 0 -23.375em;
+                /* vertically centered modal
                 margin:-21.625em 0 0 -23.375em;
+                */
             }
             .preview__container .modal__title {
                 margin:-0.5em 0 0.25em;

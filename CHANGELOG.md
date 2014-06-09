@@ -2,6 +2,7 @@
 
 * *[Beta8.rc1]*
   * New MiniReels are no longer given a title of "Untitled"
+  * [FIX]: Temporarily aligned modal dialogues to fixed height from top
 
 * *[Beta7.rc3] (June 6, 2014)
   * Fixed election save when miniReel is re-published
