@@ -6,6 +6,7 @@
   * Fixed MiniReel embed code modal styling when viewed from manager
   * Added splash preview click blocker so that splash preview next to embed code does not trigger
   * Fixed preview modal positioning
+  * Fixed content flow based modals for previews added
 
 * *[Beta7.rc3] (June 6, 2014)
   * Fixed election save when miniReel is re-published
