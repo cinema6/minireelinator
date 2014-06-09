@@ -564,7 +564,7 @@
         function( CollateralServiceProvider ) {
             CollateralServiceProvider
                 .defaultCollageWidth(600)
-                .ratios(['1-1', '6-5', '6-4', '16-9']);
+                .ratios(['1-1', '6-5', '3-2', '16-9']);
         }])
 
         .service('c6Runner', ['$timeout',
