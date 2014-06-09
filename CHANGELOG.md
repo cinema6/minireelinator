@@ -1,5 +1,7 @@
 # MiniReelinator
 
+  * [FIX]: Temporarily aligned modal dialogues to fixed height from top
+
 * *[Beta7.rc3] (June 6, 2014)
   * Fixed election save when miniReel is re-published
   * Updated s3 upload to not upload index.html until after the other files have been uploaded
