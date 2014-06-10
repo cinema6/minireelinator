@@ -432,7 +432,9 @@
                             }],
                             updateControllerModel: ['controller','model','appData',
                             function               ( controller , model , appData ) {
-                                var deck = this.cParent.cModel.data.deck;
+                                var deck = this.cParent.cModel.data.deck,
+                                    mode = this.cParent.cModel.data.mode,
+                                    adData = appData.user.org.waterfalls;
 
                                 var copy = {
                                         name: 'Editorial Content',
@@ -467,16 +469,28 @@
                                         icon: null,
                                         required: false
                                     },
-                                    hasOwnAdServer = appData.user.org.enablePublisherAds;
+                                    displayAd = {
+                                        name: 'Display Ad Settings',
+                                        sref: 'editor.editCard.displayAd',
+                                        icon: null,
+                                        required: false
+                                    },
+                                    hasOwnVideoAdServer = adData &&
+                                        (adData.video.length > 1),
+                                    hasOwnDisplayAdServer = adData &&
+                                        (adData.display.length > 1) &&
+                                        (mode === 'lightbox-ads');
 
                                 controller.model = model;
                                 controller.tabs = (function() {
                                     switch (model.type) {
                                     case 'video':
                                     case 'videoBallot':
-                                        return [copy, video, ballot];
+                                        return hasOwnDisplayAdServer ?
+                                            [copy, video, ballot, displayAd] :
+                                            [copy, video, ballot];
                                     case 'ad':
-                                        return hasOwnAdServer ?
+                                        return hasOwnVideoAdServer ?
                                             [adServer, adSkip] :
                                             [adSkip];
 
@@ -543,7 +557,34 @@
                                     model:  [function() {
                                         return this.cParent.cModel;
                                     }]
-                                }
+                                },
+                                displayAd: {
+                                    controller: 'GenericController',
+                                    controllerAs: 'EditCardDisplayAdCtrl',
+                                    templateUrl: assets('views/editor/edit_card/display_ad.html'),
+                                    beforeModel: ['appData',
+                                    function     ( appData ) {
+                                        return appData.ensureFulfillment();
+                                    }],
+                                    model:  [function() {
+                                        return this.cParent.cModel;
+                                    }],
+                                    updateControllerModel: ['controller','model', 'appData',
+                                    function               ( controller , model,  appData ) {
+                                        var allowedSources = appData.user.org.waterfalls.display,
+                                            sourceData = appData.experience.data.displayAdSources,
+                                            choices = [];
+
+                                        angular.forEach(sourceData, function(choice) {
+                                            if(allowedSources.indexOf(choice.value) > -1) {
+                                                choices.push(choice);
+                                            }
+                                        });
+
+                                        controller.choices = choices;
+                                        controller.model = model;
+                                    }]
+                                },
                             }
                         },
                         newCard: {
