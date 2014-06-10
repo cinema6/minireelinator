@@ -1,11 +1,10 @@
 # MiniReelinator
 
-  * [FIX]: loading animation added to splash modal
-  
 ## Beta8 (June 9, 2014)
 * *[Beta8.rc2]*
   * [FIX]: Splash page preview next to the embed code will be refreshed
     when the image is updated
+  * [FIX]: loading animation added to splash modal
 
 * *[Beta8.rc1]*
   * New MiniReels are no longer given a title of "Untitled"

@@ -3,8 +3,7 @@
         <div class="imgSettings__imgHolder">
             <div class="imgSettings__imgBox
                 imgSettings__imgBox--{{data.splash.ratio}}" c6-bg-img="{{SplashImageCtrl.splashSrc}}">
-                
-                <div class="c6mr-preloader__group">
+                <div class="c6mr-preloader__group" ng-if="!SplashImageCtrl.splashSrc && SplashImageCtrl.isGenerating">
                     <div class="c6mr-preloader">
                         <div class="c6mr-preloader__ring">
                             <div class="c6mr-preloader__orbit">
