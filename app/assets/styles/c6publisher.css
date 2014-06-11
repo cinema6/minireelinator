@@ -445,6 +445,9 @@
                     border:0;
                     color:#4a9cd1;
                 }
+                .tabNav__link--skinny {
+                    width:6rem;
+                }
 
                 .tabNav__icon {
                     display: block;

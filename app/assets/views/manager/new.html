@@ -4,7 +4,7 @@
         <ul class="tabNav__list clearfix">
             <li ng-repeat="tab in NewCtrl.tabs" class="tabNav__item">
                 <a c6-sref="{{NewCtrl.baseState}}.{{tab.sref}}"
-                    class="tabNav__link"
+                    class="tabNav__link tabNav__link--skinny"
                     title="{{tab.title}}">
                     <span class="tabNav__icon">
                         <span ng-show="NewCtrl.tabIsValid(tab)" class="ui__checkSmall ui__checkSmall--white sprite--alpha">&nbsp;</span>

@@ -267,7 +267,7 @@
 
             var newTabs = {
                 general: new Tab('Title Settings', 'general'),
-                category: new Tab('Lightbox Settings', 'category'),
+                category: new Tab('Lightbox', 'category'),
                 mode: new Tab('MiniReel Type', 'mode'),
                 autoplay: new Tab('Autoplay', 'autoplay')
             };
