@@ -137,7 +137,6 @@
                 minireel,
                 cModel.modes
             );
-            this.adChoices = MiniReelService.adChoicesOf(appData);
             this.autoplay = minireel.data.autoplay;
             this.title = minireel.data.title;
             this.displayAdSource = minireel.data.displayAdSource;
@@ -242,5 +241,10 @@
                     autoplayTab.requiredVisits = autoplayTab.visits + 1;
                 }
             });
+        }])
+
+        .controller('NewAdsController', ['MiniReelService', 'appData',
+        function                        ( MiniReelService ,  appData ) {
+            this.adChoices = MiniReelService.adChoicesOf(appData);
         }]);
 }());

@@ -2,7 +2,7 @@
     <form c6-alias="NewCtrl.mode as config">
         <div ng-if="config.value === 'lightbox-ads'">
             Show all the display ad stuff here!
-            <li ng-repeat="choice in NewCtrl.adChoices.display" class="wizard__choice wizard__choice--imgLess">
+            <li ng-repeat="choice in NewAdsCtrl.adChoices.display" class="wizard__choice wizard__choice--imgLess">
                 <input id="displayAd_{{choice.value}}" type="radio"
                     name="minireel-category" ng-model="NewCtrl.displayAdSource" ng-value="choice.value"
                     class="modal__radioBtn" />
@@ -17,7 +17,7 @@
     <form>
         <div>
             Show all the video ad stuff here!
-            <li ng-repeat="choice in NewCtrl.adChoices.video" class="wizard__choice wizard__choice--imgLess">
+            <li ng-repeat="choice in NewAdsCtrl.adChoices.video" class="wizard__choice wizard__choice--imgLess">
                 <input id="videoAd_{{choice.value}}" type="radio"
                     name="minireel-category" ng-model="NewCtrl.videoAdSource" ng-value="choice.value"
                     class="modal__radioBtn" />

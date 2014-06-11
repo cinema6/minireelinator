@@ -261,7 +261,13 @@
                     templateUrl: assets('views/manager/new/mode.html')
                 },
                 ads: {
-                    templateUrl: assets('views/manager/new/ads.html')
+                    controller: 'NewAdsController',
+                    controllerAs: 'NewAdsCtrl',
+                    templateUrl: assets('views/manager/new/ads.html'),
+                    afterModel: ['appData',
+                    function    ( appData ) {
+                        return appData.ensureFulfillment();
+                    }]
                 },
                 autoplay: {
                     templateUrl: assets('views/manager/new/autoplay.html')
