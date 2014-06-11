@@ -939,6 +939,16 @@
             );
         }])
 
+        .controller('EditCardDisplayAdController', ['appData','MiniReelService',
+        function                                   ( appData , MiniReelService ) {
+            this.choices = MiniReelService.adChoicesOf(appData);
+        }])
+
+        .controller('EditCardVideoAdController', ['appData','MiniReelService',
+        function                                 ( appData , MiniReelService ) {
+            this.choices = MiniReelService.adChoicesOf(appData);
+        }])
+
         .controller('NewCardController', ['$scope','c6State','c6StateParams','MiniReelService',
         function                         ( $scope , c6State , c6StateParams , MiniReelService ) {
             this.type = 'video';

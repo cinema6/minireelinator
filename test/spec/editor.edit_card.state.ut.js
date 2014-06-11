@@ -29,7 +29,10 @@
                 spyOn(appData, 'ensureFulfillment').and.returnValue($q.when(appData));
                 appData.user = {
                     org: {
-                        enablePublisherAds: true
+                        waterfalls: {
+                            video: ['cinema6','cinema6-publisher','publisher','publisher-cinema6'],
+                            display: ['cinema6','cinema6-publisher','publisher','publisher-cinema6']
+                        }
                     }
                 };
 
@@ -254,7 +257,7 @@
                     });
 
                     it('should only enable the "skip" tab if enablePublisherAds is false', function() {
-                        appData.user.org.enablePublisherAds = false;
+                        appData.user.org.waterfalls.video = [];
                         updateControllerModel();
 
                         expect(controller.tabs).toEqual([adSkip]);

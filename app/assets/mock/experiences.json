@@ -56,6 +56,28 @@
                     ]
                 }
             ],
+            "videoAdSources": [
+                {
+                    "name": "Use Cinema6 Ad Server Only",
+                    "value": "cinema6",
+                    "description": "Only the Cinema6 Ad Servers will be used."
+                },
+                {
+                    "name": "Use Cinema6 Ad Server First, My Ad Server As Backup",
+                    "value": "cinema6-publisher",
+                    "description": "The Cinema6 Ad Server is used as the primary server, with Your Ad Server as a fallback"
+                },
+                {
+                    "name": "Use My Ad Server Only",
+                    "value": "publisher",
+                    "description": "Only the Ad Servers approved by your company will be used."
+                },
+                {
+                    "name": "Use My Ad Server First, Cinema6 As Backup",
+                    "value": "publisher-cinema6",
+                    "description": "Your Ad Server is used as the primary server, with the Cinema6 Server as a fallback"
+                }
+            ],
             "displayAdSources": [
                 {
                     "name": "Cinema6 Only",

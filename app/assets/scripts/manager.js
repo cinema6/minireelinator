@@ -108,8 +108,8 @@
                 });
         }])
 
-        .controller('NewController', ['$scope','cModel','MiniReelService','c6State',
-        function                     ( $scope , cModel , MiniReelService , c6State ) {
+        .controller('NewController', ['$scope','cModel','MiniReelService','c6State', 'appData',
+        function                     ( $scope , cModel , MiniReelService , c6State ,  appData) {
             var self = this,
                 minireel = cModel.minireel;
 
@@ -134,8 +134,11 @@
                 minireel,
                 cModel.modes
             );
+            this.adChoices = MiniReelService.adChoicesOf(appData);
             this.autoplay = minireel.data.autoplay;
             this.title = minireel.data.title;
+            this.displayAdSource = minireel.data.displayAdSource;
+            this.videoAdSource = minireel.data.videoAdSource;
 
             Object.defineProperties(this, {
                 currentTab: {
@@ -170,7 +173,37 @@
                 ['autoplay', 'title'].forEach(function(prop) {
                     data[prop] = self[prop];
                 });
+
                 data.mode = this.mode.value;
+
+                ['displayAdSource','videoAdSource'].forEach(function(prop) {
+                    if(data[prop] !== self[prop]) {
+                        angular.forEach(data.deck, function(card) {
+                            if(prop === 'displayAdSource') {
+                                card[prop] = self[prop];
+                            } else if(card.type === 'ad') {
+                                card.data[prop] = self[prop];
+                            }
+                            data[prop] = self[prop];
+                        });
+                    }
+                });
+            };
+
+            this.nextTab = function() {
+                var index = this.tabs.indexOf(this.currentTab);
+
+                if(index+1 < this.tabs.length) {
+                    c6State.goTo(this.baseState + '.' + this.tabs[index+1].sref);
+                }
+            };
+
+            this.prevTab = function() {
+                var index = this.tabs.indexOf(this.currentTab);
+
+                if(index-1 > -1) {
+                    c6State.goTo(this.baseState + '.' + this.tabs[index-1].sref);
+                }
             };
 
             c6State.on('stateChangeSuccess', incrementTabVisits);

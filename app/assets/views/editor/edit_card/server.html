@@ -1,44 +1,14 @@
 <div class="modal__content modal__editor-ad">
     <form c6-alias="EditCardServerCtrl.model as card">
         <ul class="wizard__group wizard__group--small">
-            <li class="wizard__choice wizard__choice--imgLess">
-                <input id="server_publisherOnly" type="radio" 
-                    name="minireel-category" ng-model="card.data.source" value="publisher"
+            <li ng-repeat="choice in EditCardServerCtrl.choices.video" class="wizard__choice wizard__choice--imgLess">
+                <input id="server_{{choice.value}}" type="radio"
+                    name="minireel-category" ng-model="card.data.videoAdSource" ng-value="choice.value"
                     class="modal__radioBtn" />
-                <label class="wizard__hitarea" for="server_publisherOnly"><span class="ir">Use My Ad Server Only</span></label>
+                <label class="wizard__hitarea" for="server_{{choice.value}}"><span class="ir">{{choice.name}}</span></label>
                 <div class="wizard__copy wizard__copy--imgLess">
-                    <h2 class="wizard__title">Use My Ad Server Only</h2>
-                    <p class="wizard__p">Only the Ad Servers approved by your company will be used.</p>
-                </div>
-            </li>
-            <li class="wizard__choice wizard__choice--imgLess">
-                <input id="server_publisherFirst" type="radio" 
-                    name="minireel-category" ng-model="card.data.source" value="publisher-cinema6"
-                    class="modal__radioBtn" />
-                <label class="wizard__hitarea" for="server_publisherFirst"><span class="ir">Use My Ad Server First, Cinema6 As Backup</span></label>
-                <div class="wizard__copy">
-                    <h2 class="wizard__title">Use My Ad Server First, Cinema6 As Backup</h2>
-                    <p class="wizard__p">Your Ad Server is used as the primary server, with the Cinema6 Server as a fallback</p>
-                </div>
-            </li>
-            <li class="wizard__choice wizard__choice--imgLess">
-                <input id="server_cinema6Only" type="radio" 
-                    name="minireel-category" ng-model="card.data.source" value="cinema6"
-                    class="modal__radioBtn" />
-                <label class="wizard__hitarea" for="server_cinema6Only"><span class="ir">Use Cinema6 Ad Server Only</span></label>
-                <div class="wizard__copy">
-                    <h2 class="wizard__title">Use Cinema6 Ad Server Only</h2>
-                    <p class="wizard__p">Only the Cinema6 Ad Servers will be used.</p>
-                </div>
-            </li>
-            <li class="wizard__choice wizard__choice--imgLess">
-                <input id="server_cinema6First" type="radio" 
-                    name="minireel-category" ng-model="card.data.source" value="cinema6-publisher"
-                    class="modal__radioBtn" />
-                <label class="wizard__hitarea" for="server_cinema6First"><span class="ir">Use Cinema6 Ad Server First, My Ad Server As Backup</span></label>
-                <div class="wizard__copy">
-                    <h2 class="wizard__title">Use Cinema6 Ad Server First, My Ad Server As Backup</h2>
-                    <p class="wizard__p">The Cinema6 Ad Server is used as the primary server, with Your Ad Server as a fallback</p>
+                    <h2 class="wizard__title">{{choice.name}}</h2>
+                    <p class="wizard__p">{{choice.description}}</p>
                 </div>
             </li>
         </ul>

@@ -260,6 +260,9 @@
                 mode: {
                     templateUrl: assets('views/manager/new/mode.html')
                 },
+                ads: {
+                    templateUrl: assets('views/manager/new/ads.html')
+                },
                 autoplay: {
                     templateUrl: assets('views/manager/new/autoplay.html')
                 }
@@ -269,6 +272,7 @@
                 general: new Tab('Title Settings', 'general'),
                 category: new Tab('Lightbox Settings', 'category'),
                 mode: new Tab('MiniReel Type', 'mode'),
+                ads: new Tab('Ad Settings', 'ads'),
                 autoplay: new Tab('Autoplay', 'autoplay')
             };
 
@@ -318,6 +322,10 @@
                                         minireel: MiniReelService.create()
                                     });
                             }],
+                            afterModel: ['appData',
+                            function    ( appData ) {
+                                return appData.ensureFulfillment();
+                            }],
                             updateControllerModel: ['controller','model',
                             function               ( controller , model ) {
                                 controller.model = model;
@@ -328,6 +336,7 @@
                                     newTabs.general,
                                     newTabs.category,
                                     newTabs.mode,
+                                    newTabs.ads,
                                     newTabs.autoplay
                                 ];
                             }],
@@ -387,17 +396,32 @@
                                         minireel: this.cParent.cModel
                                     });
                             }],
-                            updateControllerModel: ['controller','model',
-                            function               ( controller , model ) {
+                            afterModel: ['appData',
+                            function    ( appData ) {
+                                return appData.ensureFulfillment();
+                            }],
+                            updateControllerModel: ['controller','model', 'appData',
+                            function               ( controller , model ,  appData ) {
+                                var waterfalls = appData.user.org.waterfalls;
+
                                 controller.model = model;
 
                                 controller.returnState = 'editor';
                                 controller.baseState = 'editor.setMode';
-                                controller.tabs = [
-                                    newTabs.category,
-                                    newTabs.mode,
-                                    newTabs.autoplay
-                                ];
+                                controller.tabs = waterfalls &&
+                                    (waterfalls.video.length > 1) ||
+                                    (waterfalls.display.length > 1) ?
+                                    [
+                                        newTabs.category,
+                                        newTabs.mode,
+                                        newTabs.ads,
+                                        newTabs.autoplay
+                                    ] :
+                                    [
+                                        newTabs.category,
+                                        newTabs.mode,
+                                        newTabs.autoplay
+                                    ];
                             }],
                             children: copy(newSubstates)
                         },
@@ -490,10 +514,14 @@
                                             [copy, video, ballot, displayAd] :
                                             [copy, video, ballot];
                                     case 'ad':
-                                        return hasOwnVideoAdServer ?
+                                        var tabs = hasOwnVideoAdServer ?
                                             [adServer, adSkip] :
                                             [adSkip];
 
+                                        if (hasOwnDisplayAdServer) {
+                                            tabs.push(displayAd);
+                                        }
+                                        return tabs;
                                     default:
                                         return [];
                                     }
@@ -543,11 +571,15 @@
                                     }]
                                 },
                                 server: {
-                                    controller: 'GenericController',
+                                    controller: 'EditCardVideoAdController',
                                     controllerAs: 'EditCardServerCtrl',
                                     templateUrl: assets('views/editor/edit_card/server.html'),
                                     model:  [function() {
                                         return this.cParent.cModel;
+                                    }],
+                                    afterModel: ['appData',
+                                    function    ( appData ) {
+                                        return appData.ensureFulfillment();
                                     }]
                                 },
                                 skip: {
@@ -559,30 +591,15 @@
                                     }]
                                 },
                                 displayAd: {
-                                    controller: 'GenericController',
+                                    controller: 'EditCardDisplayAdController',
                                     controllerAs: 'EditCardDisplayAdCtrl',
                                     templateUrl: assets('views/editor/edit_card/display_ad.html'),
-                                    beforeModel: ['appData',
-                                    function     ( appData ) {
-                                        return appData.ensureFulfillment();
-                                    }],
                                     model:  [function() {
                                         return this.cParent.cModel;
                                     }],
-                                    updateControllerModel: ['controller','model', 'appData',
-                                    function               ( controller , model,  appData ) {
-                                        var allowedSources = appData.user.org.waterfalls.display,
-                                            sourceData = appData.experience.data.displayAdSources,
-                                            choices = [];
-
-                                        angular.forEach(sourceData, function(choice) {
-                                            if(allowedSources.indexOf(choice.value) > -1) {
-                                                choices.push(choice);
-                                            }
-                                        });
-
-                                        controller.choices = choices;
-                                        controller.model = model;
+                                    afterModel: ['appData',
+                                    function    ( appData ) {
+                                        return appData.ensureFulfillment();
                                     }]
                                 },
                             }

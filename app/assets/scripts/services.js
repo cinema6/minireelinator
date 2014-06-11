@@ -694,7 +694,8 @@
                     },
                     ad: function(card) {
                         return card.ad || card.type === 'ad';
-                    }
+                    },
+                    displayAdSource: copy('cinema6')
                 };
 
                 // videoDataTemplate: this is the base template for all
@@ -730,7 +731,7 @@
                     }),
                     ad: {
                         autoplay: copy(true),
-                        source: copy('cinema6'),
+                        videoAdSource: copy('cinema6'),
                         skip: function(data) {
                             if (isUndefined(data.skip)) {
                                 return 'anytime';
@@ -796,6 +797,38 @@
                 });
 
                 return result;
+            };
+
+            this.adChoicesOf = function(data) {
+                var w = data.user.org.waterfalls,
+                    d = data.experience.data;
+
+                var allowedChoices = {
+                        video: w.video,
+                        display: w.display
+                    },
+                    choiceData = {
+                        video: d.videoAdSources,
+                        display: d.displayAdSources
+                    },
+                    choices = {
+                        video: [],
+                        display: []
+                    };
+
+                function addChoices(data, type) {
+                    angular.forEach(data, function(choice) {
+                        if(allowedChoices[type].indexOf(choice.value) > -1) {
+                            choices[type].push(choice);
+                        }
+                    });
+                }
+
+                angular.forEach(['video','display'], function(type) {
+                    addChoices(choiceData[type], type);
+                });
+
+                return choices;
             };
 
             this.findCard = function(deck, id) {
@@ -868,6 +901,8 @@
                     branding: minireel.data.branding,
                     autoplay: minireel.data.autoplay,
                     election: minireel.data.election,
+                    displayAdSource: minireel.data.displayAdSource,
+                    videoAdSource: minireel.data.videoAdSource,
                     collateral: minireel.data.collateral ||
                         { splash: null },
                     splash: minireel.data.splash ||
@@ -950,7 +985,7 @@
                     },
                     ad: {
                         autoplay: copy(false),
-                        source: copy('publisher'),
+                        videoAdSource: copy('publisher'),
                         skip: function(data) {
                             switch (data.skip) {
                             case 'anytime':
@@ -983,26 +1018,30 @@
                         },
                         ballot: function(card) {
                             return card.data.ballot;
-                        }
+                        },
+                        displayAdSource: copy('cinema6')
                     },
                     ad: {
                         id: copy(),
                         type: value('ad'),
                         ad: value(true),
-                        modules: value(['displayAd'])
+                        modules: value(['displayAd']),
+                        displayAdSource: copy('cinema6')
                     },
                     links: {
                         id: copy(),
                         type: value('links'),
                         title: copy(null),
                         note: copy(null),
+                        displayAdSource: copy('cinema6')
                     },
                     recap: {
                         id: copy(),
                         type: copy(),
                         title: copy(),
                         note: copy(),
-                        modules: value([])
+                        modules: value([]),
+                        displayAdSource: copy('cinema6')
                     }
                 };
 

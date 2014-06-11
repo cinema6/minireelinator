@@ -76,6 +76,7 @@
                                 title: 'The Slowest Turtle',
                                 note: 'Blah blah blah',
                                 source: 'YouTube',
+                                displayAdSource: 'cinema6',
                                 modules: [],
                                 data: {
                                     videoid: '47tfg8734',
@@ -92,6 +93,7 @@
                                 note: 'Blah blah blah',
                                 source: 'Vimeo',
                                 modules: ['ballot'],
+                                displayAdSource: 'cinema6',
                                 ballot: {
                                     prompt: 'Was it ugly?',
                                     choices: [
@@ -108,6 +110,7 @@
                                 type: 'ad',
                                 ad: true,
                                 modules: ['displayAd'],
+                                displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: true,
                                     source: 'cinema6-publisher',
@@ -121,6 +124,7 @@
                                 note: 'Blah blah blah',
                                 source: 'DailyMotion',
                                 modules: ['ballot'],
+                                displayAdSource: 'cinema6',
                                 ballot: {
                                     prompt: 'How smart was it?',
                                     choices: [
@@ -140,6 +144,7 @@
                                 note: 'Blah blah blah',
                                 source: 'YouTube',
                                 modules: [],
+                                displayAdSource: 'cinema6',
                                 data: {
                                     videoid: 'fn4378r4d',
                                     start: 0,
@@ -153,6 +158,7 @@
                                 type: 'ad',
                                 ad: true,
                                 modules: ['displayAd'],
+                                displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: false,
                                     source: 'publisher-cinema6',
@@ -165,6 +171,7 @@
                                 title: 'No video yet..',
                                 note: 'Lame...',
                                 modules: [],
+                                displayAdSource: 'cinema6',
                                 data: {}
                             },
                             {
@@ -173,6 +180,7 @@
                                 title: 'Vote on nothing!',
                                 note: 'Pretty meta, right?',
                                 modules: ['ballot'],
+                                displayAdSource: 'cinema6',
                                 ballot: {
                                     prompt: null,
                                     choices: []
@@ -184,6 +192,7 @@
                                 type: 'ad',
                                 ad: true,
                                 modules: ['displayAd'],
+                                displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: false,
                                     source: 'publisher',
@@ -195,6 +204,7 @@
                                 type: 'links',
                                 title: 'If You Love Turtles',
                                 note: 'Blah blah blah',
+                                displayAdSource: 'cinema6',
                                 data: {
                                     links: [
                                         {
@@ -220,6 +230,7 @@
                                 type: 'recap',
                                 title: 'Recap',
                                 note: null,
+                                displayAdSource: 'cinema6',
                                 modules: [],
                                 data: {}
                             }
@@ -303,6 +314,7 @@
                                 label: 'Video',
                                 ad: false,
                                 view: 'video',
+                                displayAdSource: 'cinema6',
                                 data: {
                                     service: null,
                                     videoid: null,
@@ -319,6 +331,7 @@
                                 label: 'Video + Questionnaire',
                                 ad: false,
                                 view: 'video',
+                                displayAdSource: 'cinema6',
                                 data: {
                                     service: null,
                                     videoid: null,
@@ -339,6 +352,7 @@
                                 label: 'Advertisement',
                                 ad: true,
                                 view: 'ad',
+                                displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: true,
                                     source: 'cinema6',
@@ -354,6 +368,7 @@
                                 label: 'Suggested Links',
                                 ad: false,
                                 view: 'links',
+                                displayAdSource: 'cinema6',
                                 data: {
                                     links: []
                                 }
@@ -390,6 +405,7 @@
                                 label: null,
                                 ad: false,
                                 view: null,
+                                displayAdSource: 'cinema6',
                                 data: {}
                             });
                         });
@@ -411,6 +427,7 @@
                                 label: 'Video',
                                 view: 'video',
                                 ad: false,
+                                displayAdSource: 'cinema6',
                                 data: {
                                     service: null,
                                     videoid: null,
@@ -434,6 +451,7 @@
                                 label: 'Video + Questionnaire',
                                 view: 'video',
                                 ad: false,
+                                displayAdSource: 'cinema6',
                                 data: {
                                     service: 'youtube',
                                     videoid: '12345',
@@ -456,6 +474,7 @@
                                 label: 'Advertisement',
                                 view: 'ad',
                                 ad: true,
+                                displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: true,
                                     source: 'cinema6',
@@ -473,6 +492,7 @@
                                 label: 'Suggested Links',
                                 view: 'links',
                                 ad: false,
+                                displayAdSource: 'cinema6',
                                 data: {
                                     links: []
                                 }
@@ -701,6 +721,7 @@
                                 label: 'Video',
                                 ad: false,
                                 view: 'video',
+                                displayAdSource: 'cinema6',
                                 data: {
                                     service: 'youtube',
                                     videoid: '47tfg8734',
@@ -717,6 +738,7 @@
                                 label: 'Video + Questionnaire',
                                 ad: false,
                                 view: 'video',
+                                displayAdSource: 'cinema6',
                                 data: {
                                     service: 'vimeo',
                                     videoid: '48hfrei49',
@@ -740,6 +762,7 @@
                                 label: 'Video + Questionnaire',
                                 ad: false,
                                 view: 'video',
+                                displayAdSource: 'cinema6',
                                 data: {
                                     service: 'dailymotion',
                                     videoid: 'vfu85f5',
@@ -763,6 +786,7 @@
                                 label: 'Video',
                                 ad: false,
                                 view: 'video',
+                                displayAdSource: 'cinema6',
                                 data: {
                                     service: 'youtube',
                                     videoid: 'fn4378r4d',
@@ -781,6 +805,7 @@
                                 label: 'Advertisement',
                                 ad: true,
                                 view: 'ad',
+                                displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: true,
                                     source: 'cinema6-publisher',
@@ -795,6 +820,7 @@
                                 label: 'Advertisement',
                                 ad: true,
                                 view: 'ad',
+                                displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: false,
                                     source: 'publisher-cinema6',
@@ -809,6 +835,7 @@
                                 label: 'Advertisement',
                                 ad: true,
                                 view: 'ad',
+                                displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: false,
                                     source: 'publisher',
@@ -826,6 +853,7 @@
                                 label: 'Suggested Links',
                                 ad: false,
                                 view: 'links',
+                                displayAdSource: 'cinema6',
                                 data: minireel.data.deck[9].data
                             });
 
@@ -841,6 +869,7 @@
                                 label: 'Recap',
                                 ad: false,
                                 view: 'recap',
+                                displayAdSource: 'cinema6',
                                 data: {}
                             });
                         });
@@ -964,6 +993,7 @@
                                                 label: 'Recap',
                                                 view: 'recap',
                                                 ad: false,
+                                                displayAdSource: 'cinema6',
                                                 data: {}
                                             }
                                         ]

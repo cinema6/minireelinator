@@ -988,6 +988,8 @@
                     "splash": "http://www.reactiongifs.us/wp-content/uploads/2013/11/brent_rambo_approves.gif"
                 },
                 "branding": "elitedaily",
+                "displayAdSource": "cinema6",
+                "videoAdSource": "cinema6",
                 "splash": {
                     "source": "generated",
                     "ratio": "1-1",
@@ -1028,9 +1030,9 @@
                             "displayAd"
                         ],
                         "data": {
-                            "autoplay": true
-                        },
-                        "displayAd": "http://2.bp.blogspot.com/-TlM_3FT89Y0/UMzLr7kVykI/AAAAAAAACjs/lKrdhgp6OQg/s1600/brad-turner.jpg"
+                            "autoplay": true,
+                            "videoAdSource": "cinema6"
+                        }
                     },
                     {
                         "id": "rc-4770a2d7f85ce0",
