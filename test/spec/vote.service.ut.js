@@ -212,22 +212,10 @@
                         beforeEach(function(){
                             electionData = {
                                 ballot: {
-                                    'rc-22119a8cf9f755': {
-                                        'Catchy': 0,
-                                        'Annoying': 0
-                                    },
-                                    'rc-4770a2d7f85ce0': {
-                                        'Funny': 0,
-                                        'Lame': 0
-                                    },
-                                    'rc-89094f9b7f8c93': {
-                                        'Cool': 0,
-                                        'Boring': 0
-                                    },
-                                    'rc-e2947c9bec017e': {
-                                        'Too Cool': 0,
-                                        'Too Geeky': 0
-                                    }
+                                    'rc-22119a8cf9f755': [0, 0],
+                                    'rc-4770a2d7f85ce0': [0, 0],
+                                    'rc-89094f9b7f8c93': [0, 0],
+                                    'rc-e2947c9bec017e': [0, 0]
                                 }
                             };
                             
