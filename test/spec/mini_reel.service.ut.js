@@ -5,7 +5,7 @@
         /* global angular:true */
         var copy = angular.copy;
 
-        describe('MiniReelService', function() {
+        ddescribe('MiniReelService', function() {
             var MiniReelService,
                 VoteService,
                 CollateralService,
@@ -59,6 +59,8 @@
                     data: {
                         title: 'My MiniReel',
                         mode: 'lightbox',
+                        displayAdSource: 'cinema6',
+                        videoAdSource: 'cinema6',
                         autoplay: true,
                         election: 'el-76506623bf22d9',
                         branding: 'elitedaily',
@@ -113,7 +115,7 @@
                                 displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: true,
-                                    source: 'cinema6-publisher',
+                                    videoAdSource: 'cinema6-publisher',
                                     skip: false
                                 }
                             },
@@ -161,7 +163,7 @@
                                 displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: false,
-                                    source: 'publisher-cinema6',
+                                    videoAdSource: 'publisher-cinema6',
                                     skip: 6
                                 }
                             },
@@ -195,7 +197,7 @@
                                 displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: false,
-                                    source: 'publisher',
+                                    videoAdSource: 'publisher',
                                     skip: true
                                 }
                             },
@@ -355,7 +357,7 @@
                                 displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: true,
-                                    source: 'cinema6',
+                                    videoAdSource: 'cinema6',
                                     skip: 'anytime'
                                 }
                             });
@@ -477,7 +479,7 @@
                                 displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: true,
-                                    source: 'cinema6',
+                                    videoAdSource: 'cinema6',
                                     skip: 'anytime'
                                 }
                             });
@@ -808,7 +810,7 @@
                                 displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: true,
-                                    source: 'cinema6-publisher',
+                                    videoAdSource: 'cinema6-publisher',
                                     skip: 'never'
                                 }
                             });
@@ -823,7 +825,7 @@
                                 displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: false,
-                                    source: 'publisher-cinema6',
+                                    videoAdSource: 'publisher-cinema6',
                                     skip: 'delay'
                                 }
                             });
@@ -838,7 +840,7 @@
                                 displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: false,
-                                    source: 'publisher',
+                                    videoAdSource: 'publisher',
                                     skip: 'anytime'
                                 }
                             });
@@ -958,6 +960,8 @@
                                     data: {
                                         title: null,
                                         mode: 'lightbox',
+                                        displayAdSource: 'cinema6',
+                                        videoAdSource: 'cinema6',
                                         branding: appData.user.branding,
                                         splash: {
                                             source: 'generated',
@@ -1032,7 +1036,8 @@
                             });
                             result = MiniReelService.convertForPlayer(converted);
 
-                            expect(result).toEqual(minireel);
+                            expect(Object.keys(result.data).length).toBe(Object.keys(minireel.data).length);
+                            expect(result.data).toEqual(minireel.data);
                             expect(result).not.toBe(minireel);
                         });
 

@@ -524,9 +524,6 @@
                                             [adServer, adSkip] :
                                             [adSkip];
 
-                                        if (hasOwnDisplayAdServer) {
-                                            tabs.push(displayAd);
-                                        }
                                         return tabs;
                                     default:
                                         return [];

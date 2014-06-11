@@ -923,7 +923,7 @@
                 return model;
             };
 
-            this.convertCard = function(card) {
+            this.convertCard = function(card, mode) {
                 var dataTemplates, cardBases, cardType, dataType,
                     newCard = {
                         data: {}
@@ -1014,7 +1014,11 @@
                             return camelSource(card.data.service);
                         },
                         modules: function(card) {
-                            return card.type === 'videoBallot' ? ['ballot'] : [];
+                            var modules = card.type === 'videoBallot' ? ['ballot'] : [];
+                            if(mode === 'lightbox-ads') {
+                                modules.push('displayAd');
+                            }
+                            return modules;
                         },
                         ballot: function(card) {
                             return card.data.ballot;
@@ -1040,7 +1044,9 @@
                         type: copy(),
                         title: copy(),
                         note: copy(),
-                        modules: value([]),
+                        modules: function() {
+                            return mode === 'lightbox-ads' ? ['displayAd'] : [];
+                        },
                         displayAdSource: copy('cinema6')
                     }
                 };
@@ -1137,7 +1143,7 @@
                     target.data[key] = value;
                 });
                 forEach(minireel.data.deck, function(card) {
-                    convertedDeck.push(self.convertCard(card));
+                    convertedDeck.push(self.convertCard(card, minireel.data.mode));
                 });
 
                 target.data.deck = convertedDeck;

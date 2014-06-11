@@ -43,13 +43,6 @@
 
             beforeEach(function() {
                 minireel = {};
-                appData = {
-                    experience: {
-                        data: {
-                            modes: []
-                        }
-                    }
-                };
 
                 module('c6.mrmaker');
 
@@ -59,6 +52,7 @@
                     c6State = $injector.get('c6State');
                     $rootScope = $injector.get('$rootScope');
                     $q = $injector.get('$q');
+                    appData = $injector.get('appData');
                     cinema6 = $injector.get('cinema6');
 
                     EditorState = c6State.get('editor');
@@ -68,6 +62,21 @@
                 EditorState.cModel = minireel;
 
                 spyOn(cinema6, 'getAppData').and.returnValue($q.when(appData));
+                spyOn(appData, 'ensureFulfillment').and.returnValue($q.when(appData));
+
+                appData.experience = {
+                    data: {
+                        modes: []
+                    }
+                };
+                appData.user = {
+                    org: {
+                        waterfalls: {
+                            video: [],
+                            display: []
+                        }
+                    }
+                };
             });
 
             it('should exist', function() {
