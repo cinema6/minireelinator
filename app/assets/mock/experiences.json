@@ -22,7 +22,7 @@
                         },
                         {
                             "name": "Lightbox, with Companion Ad",
-                            "disabled": true,
+                            "disabled": false,
                             "value": "lightbox-ads",
                             "description": "A 300x250 ad will be displayed on every slide. No character limits, the content space will scroll as needed.",
                             "limits": {},

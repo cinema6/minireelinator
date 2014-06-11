@@ -111,15 +111,12 @@
                 });
         }])
 
-<<<<<<< HEAD
         .controller('NewController', ['$scope','cModel','MiniReelService','c6State','$q','appData',
-        function                     ( $scope , cModel , MiniReelService , c6State , $q , appData) {
-=======
-        .controller('NewController', ['$scope','cModel','MiniReelService','c6State','$q',
-        function                     ( $scope , cModel , MiniReelService , c6State , $q ) {
->>>>>>> master
+        function                     ( $scope , cModel , MiniReelService , c6State , $q , appData ) {
             var self = this,
                 minireel = cModel.minireel;
+
+            console.log(minireel.data);
 
             function tabBySref(sref) {
                 return self.tabs.reduce(function(result, next) {

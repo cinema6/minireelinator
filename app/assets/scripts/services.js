@@ -1078,6 +1078,8 @@
                             data: {
                                 title: null,
                                 mode: 'lightbox',
+                                displayAdSource: 'cinema6',
+                                videoAdSource: 'cinema6',
                                 branding: user.branding,
                                 splash: {
                                     source: 'generated',
