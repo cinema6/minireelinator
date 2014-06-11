@@ -235,8 +235,9 @@
         top:50%; 
         */
     }
-        .ui__modal--embed {
-            padding:1.5em 2.25em;
+        .ui__modal--med {
+            padding:1.5em 2.25em; margin:0 0 0 -19.75em;
+            width:34em; height:15em;
         }
         .ui__modal--confirmation {
             width:28em; height:10em;
@@ -1573,6 +1574,10 @@
         float:left;
         width:calc(100% - 324px);
     }
+        .ui__modal--med .embedCode__group {
+            margin-top:0;
+            width:100%;
+        }
         .embedCode__group .embed__selector {
             width:12.5rem;
         }
