@@ -4,6 +4,7 @@
     define(['manager'], function() {
         describe('NewController', function() {
             var $rootScope,
+                $q,
                 $scope,
                 $controller,
                 c6State,
@@ -18,7 +19,11 @@
                         title: 'Awesome Videos, Brah!',
                         mode: 'full',
                         autoplay: false
-                    }
+                    },
+                    save: jasmine.createSpy('minireel.save()')
+                        .and.callFake(function() {
+                            $q.when(this);
+                        })
                 };
 
                 model = {
@@ -61,6 +66,7 @@
                     $rootScope = $injector.get('$rootScope');
                     $controller = $injector.get('$controller');
                     c6State = $injector.get('c6State');
+                    $q = $injector.get('$q');
 
                     $scope = $rootScope.$new();
                     $scope.$apply(function() {
@@ -188,10 +194,16 @@
 
             describe('methods', function() {
                 describe('save()', function() {
+                    var saveDeferred;
+
                     beforeEach(function() {
+                        saveDeferred = $q.defer();
+
                         NewCtrl.mode = model.modes[0].modes[0];
                         NewCtrl.autoplay = true;
                         NewCtrl.title = 'Sweet!';
+
+                        minireel.save.and.returnValue(saveDeferred.promise);
 
                         NewCtrl.save();
                     });
@@ -204,6 +216,25 @@
 
                     it('should copy the mode to the minreel', function() {
                         expect(minireel.data.mode).toBe(NewCtrl.mode.value);
+                    });
+
+                    it('should save the minireel', function() {
+                        expect(minireel.save).toHaveBeenCalled();
+                    });
+
+                    describe('after the save is finished', function() {
+                        beforeEach(function() {
+                            spyOn(c6State, 'goTo');
+
+                            $scope.$apply(function() {
+                                minireel.id = 'e-31ba4eaf5dc098';
+                                saveDeferred.resolve(minireel);
+                            });
+                        });
+
+                        it('should go to the editor', function() {
+                            expect(c6State.goTo).toHaveBeenCalledWith('editor', { minireelId: minireel.id });
+                        });
                     });
                 });
 

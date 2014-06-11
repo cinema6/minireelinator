@@ -174,6 +174,11 @@
                     data[prop] = self[prop];
                 });
                 data.mode = this.mode.value;
+
+                this.model.minireel.save()
+                    .then(function goToEditor(minireel) {
+                        c6State.goTo('editor', { minireelId: minireel.id });
+                    });
             };
 
             c6State.on('stateChangeSuccess', incrementTabVisits);
