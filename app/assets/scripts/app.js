@@ -270,7 +270,7 @@
 
             var newTabs = {
                 general: new Tab('Title Settings', 'general'),
-                category: new Tab('Lightbox Settings', 'category'),
+                category: new Tab('Lightbox', 'category'),
                 mode: new Tab('MiniReel Type', 'mode'),
                 ads: new Tab('Ad Settings', 'ads'),
                 autoplay: new Tab('Autoplay', 'autoplay')
@@ -951,8 +951,8 @@
             this.mode = this.modes[0].value;
 
             this.size = {
-                width: 650,
-                height: 522
+                width: '650px',
+                height: '522px'
             };
 
             this.c6EmbedSrc = null;

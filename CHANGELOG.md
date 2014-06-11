@@ -1,6 +1,23 @@
 # MiniReelinator
 
+* *[Beta9.rc1]*
+  * New elections are now created using arrays for storage
+    * **The Vote Service that supports storing elections as arrays must
+      be deployed**
+  * [FEATURE]: Skinny modal tabs added for case where we need more space.    
+
 ## Beta8 (June 9, 2014)
+* *[Beta8.rc4]*
+  * [FIX]: Unit (px/%) is now included in custom embed size
+  * [FIX]: MiniReel is only saved from the MiniReel modal if it has not
+    been saved yet
+* *[/Beta8.rc4]*
+
+* *[Beta8.rc3]*
+  * [FIX]: When creating a new minireel, the minireel is not saved to
+    the database until the user clicks "Done"
+* *[/Beta8.rc3]*
+
 * *[Beta8.rc2]*
   * [FIX]: Splash page preview next to the embed code will be refreshed
     when the image is updated

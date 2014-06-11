@@ -20,6 +20,9 @@
                         ConfirmDialogService.close();
 
                         return MiniReelService.create(minireel)
+                            .then(function save(minireel) {
+                                return minireel.save();
+                            })
                             .then(function editCopy(minireel) {
                                 c6State.goTo(
                                     'editor.setMode.category',
@@ -108,8 +111,13 @@
                 });
         }])
 
-        .controller('NewController', ['$scope','cModel','MiniReelService','c6State', 'appData',
-        function                     ( $scope , cModel , MiniReelService , c6State ,  appData) {
+<<<<<<< HEAD
+        .controller('NewController', ['$scope','cModel','MiniReelService','c6State','$q','appData',
+        function                     ( $scope , cModel , MiniReelService , c6State , $q , appData) {
+=======
+        .controller('NewController', ['$scope','cModel','MiniReelService','c6State','$q',
+        function                     ( $scope , cModel , MiniReelService , c6State , $q ) {
+>>>>>>> master
             var self = this,
                 minireel = cModel.minireel;
 
@@ -168,7 +176,8 @@
             };
 
             this.save = function() {
-                var data = this.model.minireel.data;
+                var minireel = this.model.minireel,
+                    data = minireel.data;
 
                 ['autoplay', 'title'].forEach(function(prop) {
                     data[prop] = self[prop];
@@ -188,6 +197,12 @@
                         });
                     }
                 });
+
+                (minireel.id ? $q.when(minireel) :
+                    minireel.save())
+                    .then(function goToEditor(minireel) {
+                        c6State.goTo('editor', { minireelId: minireel.id });
+                    });
             };
 
             this.nextTab = function() {

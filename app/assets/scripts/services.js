@@ -8,7 +8,8 @@
         isDefined = angular.isDefined,
         extend = angular.extend,
         isFunction = angular.isFunction,
-        fromJson = angular.fromJson;
+        fromJson = angular.fromJson,
+        isArray = angular.isArray;
 
     angular.module('c6.mrmaker.services', ['c6.ui'])
         .factory('requireCJS', ['$http','$cacheFactory','$q',
@@ -275,7 +276,7 @@
         }])
 
         .service('VoteService', ['cinema6','$q','$log',
-        function                ( cinema6, $q, $log ) {
+        function                ( cinema6 , $q , $log ) {
             function hasElectionData(deck){
                 var hasData = false;
                 forEach(deck,function(card){
@@ -291,6 +292,8 @@
             }
 
             function generateData(deck, election) {
+                var useArrayStorage = true;
+
                 function cardWithId(id) {
                     return deck.filter(function(card) {
                         return card.id === id;
@@ -301,15 +304,12 @@
                     ballot: {}
                 };
 
-                //TODO: remove useArrayStorage once we deploy new vote service
-                // new ballot items should always use array storage
-                var useArrayStorage = false;
                 forEach(election.ballot,function(vals){
-                    if ((useArrayStorage === false) && (angular.isArray(vals))){
-                        useArrayStorage = true;
+                    if ((useArrayStorage === true) && (!isArray(vals))){
+                        useArrayStorage = false;
                     }
                 });
-                
+
                 delete election.id;
 
                 forEach(deck, function(card) {
@@ -331,7 +331,7 @@
 
                     election.ballot[card.id] = item;
                 });
-                
+
                 forEach(Object.keys(election.ballot), function(id) {
                     var card = cardWithId(id),
                         shouldHaveBallot = !!card && (card.modules || []).indexOf('ballot') > -1;
@@ -340,7 +340,7 @@
                         delete election.ballot[id];
                     }
                 });
-            
+
                 return election;
             }
 
@@ -1116,10 +1116,7 @@
 
                 return cinema6.getAppData()
                     .then(fetchTemplate)
-                    .then(createMinireel)
-                    .then(function save(minireel) {
-                        return minireel.save();
-                    });
+                    .then(createMinireel);
             };
 
             this.convertForPlayer = function(minireel, target) {

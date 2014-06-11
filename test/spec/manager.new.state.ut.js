@@ -16,25 +16,25 @@
 
             var tabs = {
                 general: {
-                    name: 'Title Settings',
+                    name: jasmine.any(String),
                     sref: 'general',
                     visits: 0,
                     requiredVisits: 0
                 },
                 category: {
-                    name: 'Lightbox Settings',
+                    name: jasmine.any(String),
                     sref: 'category',
                     visits: 0,
                     requiredVisits: 0
                 },
                 mode: {
-                    name: 'MiniReel Type',
+                    name: jasmine.any(String),
                     sref: 'mode',
                     visits: 0,
                     requiredVisits: 0
                 },
                 autoplay: {
-                    name: 'Autoplay',
+                    name: jasmine.any(String),
                     sref: 'autoplay',
                     visits: 0,
                     requiredVisits: 0
