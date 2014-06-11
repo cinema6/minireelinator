@@ -127,12 +127,17 @@
                 describe('copy(minireel)', function() {
                     var minireel,
                         newMiniReel,
-                        newMiniReelDeferred;
+                        newMiniReelDeferred,
+                        saveDeferred;
 
                     beforeEach(function() {
+                        saveDeferred = $q.defer();
                         minireel = {};
                         newMiniReel = {
-                            id: 'e-a48e32a8c1a87f'
+                            save: jasmine.createSpy('newMiniReel.save()')
+                                .and.callFake(function() {
+                                    return saveDeferred.promise;
+                                })
                         };
                         newMiniReelDeferred = $q.defer();
 
@@ -177,8 +182,21 @@
                                 });
                             });
 
-                            it('should transition to the editor.setMode.category state', function() {
-                                expect(c6State.goTo).toHaveBeenCalledWith('editor.setMode.category', { minireelId: newMiniReel.id });
+                            it('should save the minireel', function() {
+                                expect(newMiniReel.save).toHaveBeenCalled();
+                            });
+
+                            describe('after the minireel is saved', function() {
+                                beforeEach(function() {
+                                    newMiniReel.id = 'e-28113695539bd2';
+                                    $scope.$apply(function() {
+                                        saveDeferred.resolve(newMiniReel);
+                                    });
+                                });
+
+                                it('should transition to the editor.setMode.category state', function() {
+                                    expect(c6State.goTo).toHaveBeenCalledWith('editor.setMode.category', { minireelId: newMiniReel.id });
+                                });
                             });
                         });
 

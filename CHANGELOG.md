@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## Beta8 (June 9, 2014)
+* *[Beta8.rc3]*
+  * [FIX]: When creating a new minireel, the minireel is not saved to
+    the database until the user clicks "Done"
+* *[/Beta8.rc3]*
+
 * *[Beta8.rc2]*
   * [FIX]: Splash page preview next to the embed code will be refreshed
     when the image is updated

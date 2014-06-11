@@ -873,12 +873,6 @@
                             spyOn(cinema6.db, 'create').and.callFake(function() {
                                 newModel = dbCreate.apply(cinema6.db, arguments);
 
-                                spyOn(newModel, 'save').and.callFake(function() {
-                                    expect(this.id).not.toBeDefined();
-
-                                    return saveDeferred.promise;
-                                });
-
                                 return newModel;
                             });
                         });
@@ -909,15 +903,7 @@
                                 });
                             });
 
-                            it('should save the minireel', function() {
-                                expect(newModel.save).toHaveBeenCalled();
-                            });
-
                             it('should resolve the promise after the minireel is saved', function() {
-                                $rootScope.$apply(function() {
-                                    saveDeferred.resolve(newModel);
-                                });
-
                                 expect(success).toHaveBeenCalledWith(newModel);
                                 expect(newModel.data.title).toBe('My MiniReel (copy)');
                                 expect(newModel.status).toBe('pending');
@@ -971,15 +957,7 @@
                                 });
                             });
 
-                            it('should save the minireel', function() {
-                                expect(newModel.save).toHaveBeenCalled();
-                            });
-
-                            it('should resolve the promise when the minireel is saved', function() {
-                                $rootScope.$apply(function() {
-                                    saveDeferred.resolve(newModel);
-                                });
-
+                            it('should resolve the promise', function() {
                                 expect(success).toHaveBeenCalledWith(newModel);
                                 expect(newModel.status).toBe('pending');
                             });

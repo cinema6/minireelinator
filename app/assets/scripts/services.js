@@ -1077,10 +1077,7 @@
 
                 return cinema6.getAppData()
                     .then(fetchTemplate)
-                    .then(createMinireel)
-                    .then(function save(minireel) {
-                        return minireel.save();
-                    });
+                    .then(createMinireel);
             };
 
             this.convertForPlayer = function(minireel, target) {
