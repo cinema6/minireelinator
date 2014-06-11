@@ -111,8 +111,8 @@
                 });
         }])
 
-        .controller('NewController', ['$scope','cModel','MiniReelService','c6State',
-        function                     ( $scope , cModel , MiniReelService , c6State ) {
+        .controller('NewController', ['$scope','cModel','MiniReelService','c6State','$q',
+        function                     ( $scope , cModel , MiniReelService , c6State , $q ) {
             var self = this,
                 minireel = cModel.minireel;
 
@@ -168,14 +168,16 @@
             };
 
             this.save = function() {
-                var data = this.model.minireel.data;
+                var minireel = this.model.minireel,
+                    data = minireel.data;
 
                 ['autoplay', 'title'].forEach(function(prop) {
                     data[prop] = self[prop];
                 });
                 data.mode = this.mode.value;
 
-                this.model.minireel.save()
+                (minireel.id ? $q.when(minireel) :
+                    minireel.save())
                     .then(function goToEditor(minireel) {
                         c6State.goTo('editor', { minireelId: minireel.id });
                     });

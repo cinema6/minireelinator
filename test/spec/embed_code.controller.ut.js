@@ -101,8 +101,8 @@
                 describe('size', function() {
                     it('should be initialized to a custom size', function() {
                         expect(EmbedCodeCtrl.size).toEqual({
-                            width: 650,
-                            height: 522
+                            width: '650px',
+                            height: '522px'
                         });
                     });
                 });
@@ -127,16 +127,16 @@
 
                         it('should be an explicit embed code', function() {
                             expect(EmbedCodeCtrl.code).toBe(
-                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-width="650" data-height="522"></script>'
+                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-width="650px" data-height="522px"></script>'
                             );
                         });
 
                         it('should update if the dimensions are updated', function() {
-                            EmbedCodeCtrl.size.height = 300;
-                            EmbedCodeCtrl.size.width = 400;
+                            EmbedCodeCtrl.size.height = '300px';
+                            EmbedCodeCtrl.size.width = '100%';
 
                             expect(EmbedCodeCtrl.code).toBe(
-                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-width="400" data-height="300"></script>'
+                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-width="100%" data-height="300px"></script>'
                             );
                         });
                     });
