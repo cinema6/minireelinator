@@ -20,6 +20,9 @@
                         ConfirmDialogService.close();
 
                         return MiniReelService.create(minireel)
+                            .then(function save(minireel) {
+                                return minireel.save();
+                            })
                             .then(function editCopy(minireel) {
                                 c6State.goTo(
                                     'editor.setMode.category',
