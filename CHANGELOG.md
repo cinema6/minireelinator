@@ -1,5 +1,10 @@
 # MiniReelinator
 
+* *[Beta9.rc1]*
+  * New elections are now created using arrays for storage
+    * **The Vote Service that supports storing elections as arrays must
+      be deployed**
+
 ## Beta8 (June 9, 2014)
 * *[Beta8.rc2]*
   * [FIX]: Splash page preview next to the embed code will be refreshed
