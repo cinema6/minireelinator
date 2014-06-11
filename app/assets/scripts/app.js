@@ -907,7 +907,8 @@
                 code: {
                     get: function() {
                         var minireel = $scope.minireel,
-                            splash = minireel.data.splash;
+                            splash = minireel.data.splash,
+                            branding = minireel.data.branding;
 
                         return '<script src="' + this.c6EmbedSrc + '"' +
                             ' data-exp="' + minireel.id + '"' +
@@ -920,6 +921,11 @@
                                     this.size.width +
                                     '" data-height="' +
                                     this.size.height + '"') :
+                                '') +
+                            (!!branding ?
+                                (' data-:branding="' +
+                                    btoa(branding) +
+                                    '"') :
                                 '') +
                             '></script>';
                     }
