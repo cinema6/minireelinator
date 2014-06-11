@@ -3,6 +3,9 @@
 ## Beta8 (June 9, 2014)
 * *[Beta8.rc4]*
   * [FIX]: Unit (px/%) is now included in custom embed size
+  * [FIX]: MiniReel is only saved from the MiniReel modal if it has not
+    been saved yet
+* *[/Beta8.rc4]*
 
 * *[Beta8.rc3]*
   * [FIX]: When creating a new minireel, the minireel is not saved to

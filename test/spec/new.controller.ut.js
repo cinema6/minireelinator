@@ -95,6 +95,7 @@
                             }
                         ];
                         NewCtrl.baseState = 'manager.new';
+                        NewCtrl.returnState = 'manager';
                     });
                 });
             });
@@ -204,6 +205,7 @@
                         NewCtrl.title = 'Sweet!';
 
                         minireel.save.and.returnValue(saveDeferred.promise);
+                        spyOn(c6State, 'goTo');
 
                         NewCtrl.save();
                     });
@@ -224,8 +226,6 @@
 
                     describe('after the save is finished', function() {
                         beforeEach(function() {
-                            spyOn(c6State, 'goTo');
-
                             $scope.$apply(function() {
                                 minireel.id = 'e-31ba4eaf5dc098';
                                 saveDeferred.resolve(minireel);
@@ -233,6 +233,20 @@
                         });
 
                         it('should go to the editor', function() {
+                            expect(c6State.goTo).toHaveBeenCalledWith('editor', { minireelId: minireel.id });
+                        });
+                    });
+
+                    describe('if the minireel already has an id', function() {
+                        beforeEach(function() {
+                            minireel.id = 'e-97a58a5eba29e0';
+
+                            $scope.$apply(function() {
+                                NewCtrl.save();
+                            });
+                        });
+
+                        it('should go right to the editor', function() {
                             expect(c6State.goTo).toHaveBeenCalledWith('editor', { minireelId: minireel.id });
                         });
                     });
