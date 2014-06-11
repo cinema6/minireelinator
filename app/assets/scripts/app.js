@@ -893,8 +893,8 @@
             this.mode = this.modes[0].value;
 
             this.size = {
-                width: 650,
-                height: 522
+                width: '650px',
+                height: '522px'
             };
 
             this.c6EmbedSrc = null;

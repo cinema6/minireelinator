@@ -1,6 +1,9 @@
 # MiniReelinator
 
 ## Beta8 (June 9, 2014)
+* *[Beta8.rc4]*
+  * [FIX]: Unit (px/%) is now included in custom embed size
+
 * *[Beta8.rc3]*
   * [FIX]: When creating a new minireel, the minireel is not saved to
     the database until the user clicks "Done"
