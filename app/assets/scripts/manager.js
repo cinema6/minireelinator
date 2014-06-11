@@ -116,8 +116,6 @@
             var self = this,
                 minireel = cModel.minireel;
 
-            console.log(minireel.data);
-
             function tabBySref(sref) {
                 return self.tabs.reduce(function(result, next) {
                     return next.sref === sref ? next : result;
