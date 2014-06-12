@@ -4,7 +4,8 @@
   * New elections are now created using arrays for storage
     * **The Vote Service that supports storing elections as arrays must
       be deployed**
-  * [FEATURE]: Skinny modal tabs added for case where we need more space.    
+  * [FEATURE]: Skinny modal tabs added for case where we need more space.
+  * [FEATURE]: Ad cards are now an option when creating a new card
 
 ## Beta8 (June 9, 2014)
 * *[Beta8.rc4]*
