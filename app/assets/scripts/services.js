@@ -1028,8 +1028,35 @@
             };
 
             this.create = function(toCopy) {
-                function fetchTemplate(appData) {
+                function getLastMinireel(appData) {
                     var user = appData.user;
+
+                    return $q.all({
+                        minireels: cinema6.db.findAll(
+                            'experience',
+                            {
+                                type: 'minireel',
+                                org: user.org.id,
+                                sort: 'lastUpdated,-1',
+                                limit: 1
+                            }
+                        ),
+                        user: user
+                    });
+                }
+
+                function fetchTemplate(data) {
+                    var lastMinireel = data.minireels[0] || {
+                            data: {
+                                splash: {
+                                    ratio: '1-1',
+                                    theme: 'img-only'
+                                }
+                            }
+                        },
+                        ratio = lastMinireel.data.splash.ratio,
+                        theme = lastMinireel.data.splash.theme,
+                        user = data.user;
 
                     return $q.when(toCopy ? toCopy.pojoify() :
                         {
@@ -1042,8 +1069,8 @@
                                 branding: user.branding,
                                 splash: {
                                     source: 'generated',
-                                    ratio: '1-1',
-                                    theme: 'img-only'
+                                    ratio: ratio,
+                                    theme: theme
                                 },
                                 collateral: {
                                     splash: null
@@ -1076,6 +1103,7 @@
                 }
 
                 return cinema6.getAppData()
+                    .then(getLastMinireel)
                     .then(fetchTemplate)
                     .then(createMinireel);
             };
