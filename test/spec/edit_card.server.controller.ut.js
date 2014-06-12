@@ -2,11 +2,11 @@
     'use strict';
 
     define(['editor'], function() {
-        describe('EditCardVideoAdController', function() {
+        describe('EditCardServerController', function() {
             var $rootScope,
                 $controller,
                 MiniReelService,
-                EditCardVideoAdController;
+                EditCardServerController;
 
             var adChoices;
 
@@ -45,18 +45,18 @@
                 spyOn(MiniReelService, 'adChoicesOf').and.returnValue(adChoices);
 
                 $rootScope.$apply(function() {
-                    EditCardVideoAdController = $controller('EditCardVideoAdController');
+                    EditCardServerController = $controller('EditCardServerController');
                 });
             });
 
             it('should exist', function() {
-                expect(EditCardVideoAdController).toEqual(jasmine.any(Object));
+                expect(EditCardServerController).toEqual(jasmine.any(Object));
             });
 
             describe('properties', function() {
                 describe('adChoices', function() {
                     it('should get an array of choices from the MiniReelService', function() {
-                        expect(EditCardVideoAdController.choices).toEqual(adChoices);
+                        expect(EditCardServerController.choices).toEqual(adChoices);
                     })
                 });
             });

@@ -1045,6 +1045,8 @@
                                             title: null,
                                             mode: 'lightbox',
                                             branding: appData.user.branding,
+                                            displayAdSource: 'cinema6',
+                                            videoAdSource: 'cinema6',
                                             splash: {
                                                 ratio: minireels[0].data.splash.ratio,
                                                 source: firstMiniReel.data.splash.source,

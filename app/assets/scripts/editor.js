@@ -944,7 +944,7 @@
             this.choices = MiniReelService.adChoicesOf(appData);
         }])
 
-        .controller('EditCardVideoAdController', ['appData','MiniReelService',
+        .controller('EditCardServerController', ['appData','MiniReelService',
         function                                 ( appData , MiniReelService ) {
             this.choices = MiniReelService.adChoicesOf(appData);
         }])

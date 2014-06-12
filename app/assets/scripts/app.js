@@ -586,7 +586,7 @@
                                     }]
                                 },
                                 server: {
-                                    controller: 'EditCardVideoAdController',
+                                    controller: 'EditCardServerController',
                                     controllerAs: 'EditCardServerCtrl',
                                     templateUrl: assets('views/editor/edit_card/server.html'),
                                     model:  [function() {
