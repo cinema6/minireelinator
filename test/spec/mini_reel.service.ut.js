@@ -861,6 +861,7 @@
 
                             appData = {
                                 user: {
+                                    id: 'u-5b67ee6000ce6f',
                                     org: {
                                         id: 'o-17593d7a2bf294',
                                         minAdCount: 3
@@ -997,7 +998,7 @@
                                 it('should be almost identical to the first one', function() {
                                     expect(cinema6.db.findAll).toHaveBeenCalledWith('experience', {
                                         type: 'minireel',
-                                        org: firstMiniReel.org,
+                                        user: appData.user.id,
                                         sort: 'lastUpdated,-1',
                                         limit: 1
                                     });

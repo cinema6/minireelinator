@@ -1032,15 +1032,12 @@
                     var user = appData.user;
 
                     return $q.all({
-                        minireels: cinema6.db.findAll(
-                            'experience',
-                            {
-                                type: 'minireel',
-                                org: user.org.id,
-                                sort: 'lastUpdated,-1',
-                                limit: 1
-                            }
-                        ),
+                        minireels: cinema6.db.findAll('experience', {
+                            type: 'minireel',
+                            user: user.id,
+                            sort: 'lastUpdated,-1',
+                            limit: 1
+                        }),
                         user: user
                     });
                 }
