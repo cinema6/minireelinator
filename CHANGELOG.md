@@ -9,6 +9,9 @@
   * [FIX]: Ad card option modals properly styled
   * The custom splash stylesheet for each publisher is now included when
     in the editor
+  * The embed code will now be configured for preloading on inline
+    display modes
+    * **v1.1.0 of c6embed must be deployed for this to work**
 
 ## Beta8 (June 9, 2014)
 * *[Beta8.rc4]*
