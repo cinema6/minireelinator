@@ -1,37 +1,41 @@
 <div class="ui__modal">
-    <h1 class="modal__title">New Slide : Choose Your Slide Type</h1>
-    <form>
-        <ul class="wizard__group wizard__group--small">
-            <li class="wizard__choice">
-                <input id="cardType_video" type="radio" 
-                    name="minireel-category" value="videoBallot"
-                    class="modal__radioBtn" ng-model="NewCardCtrl.type" />
-                <label class="wizard__hitarea" for="cardType_video"><span class="ir">Video</span></label>
-                <div class="wizard__diagram sprite--fff diagram__videoType">&nbsp;</div>
-                <div class="wizard__copy">
-                    <h2 class="wizard__title">Video</h2>
-                    <p class="wizard__p">Editorial content with video.</p>
-                </div>
-            </li>
+    <header class="titleBar__group clearfix">
+        <h1 class="titleBar__title">New Slide : Choose Your Slide Type</h1>
+        <button class="modal__closeBtn sprite--alpha" c6-sref="editor"><span class="ir">Close</span></button>
+    </header>
 
-            <li class="wizard__choice">
-                <input id="cardType_ad" type="radio" 
-                    name="minireel-category" value="ad"
-                    class="modal__radioBtn" ng-model="NewCardCtrl.type" />
-                <label class="wizard__hitarea" for="cardType_ad"><span class="ir">Advertisement Card</span></label>
-                <div class="wizard__diagram sprite--fff diagram__adType">&nbsp;</div>
-                <div class="wizard__copy">
-                    <h2 class="wizard__title">Advertisement Card</h2>
-                    <p class="wizard__p">Advertisement content will be displayed before the next video in the series.</p>
-                </div>
-            </li>
-        </ul>
+    <div class="modal__viewHolder">
+        <form class="modal__editor">
+            <ul class="wizard__group">
+                <li class="wizard__choice wizard__choice--textOnly">
+                    <input id="cardType_video" type="radio" 
+                        name="minireel-category" value="videoBallot"
+                        class="modal__radioBtn" ng-model="NewCardCtrl.type" />
+                    <label class="wizard__hitarea" for="cardType_video"><span class="ir">Video Slide</span></label>
+                    <div class="wizard__copy">
+                        <h2 class="wizard__title">Video Slide</h2>
+                        <p class="wizard__p">Editorial content with video.</p>
+                    </div>
+                </li>
 
-    </form>
-    <button class="modal__closeBtn sprite--alpha" c6-sref="editor"><span class="ir">Close</span></button>
+                <li class="wizard__choice wizard__choice--textOnly">
+                    <input id="cardType_ad" type="radio" 
+                        name="minireel-category" value="ad"
+                        class="modal__radioBtn" ng-model="NewCardCtrl.type" />
+                    <label class="wizard__hitarea" for="cardType_ad"><span class="ir">Advertisement Slide</span></label>
+                    <div class="wizard__copy">
+                        <h2 class="wizard__title">Advertisement Slide</h2>
+                        <p class="wizard__p">Advertisement content will be displayed before the next video in the series.</p>
+                    </div>
+                </li>
+            </ul>
+
+        </form>
+    </div>
+
     <footer class="modal__btnFooter">
-        <button class="modal__btn toolbar__delete" c6-sref="editor" title="Cancel">Cancel</button>
-        <button class="modal__btn" ng-click="NewCardCtrl.edit()" title="Next">Next</button>
+        <button class="modal__btn modal__btn--first toolbar__delete" c6-sref="editor" type="button" title="Cancel">Cancel</button>
+        <button class="modal__btn modal__btn--last" type="button" ng-click="NewCardCtrl.edit()" title="Next">Next</button>
     </footer>
 </div>
 <div class="ui__overlay">&nbsp;</div>
