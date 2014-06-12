@@ -908,6 +908,7 @@
                     get: function() {
                         var minireel = $scope.minireel,
                             splash = minireel.data.splash,
+                            branding = minireel.data.branding,
                             isInline = MiniReelService.modeCategoryOf(
                                 minireel,
                                 categories
@@ -928,6 +929,11 @@
                                     this.size.width +
                                     '" data-height="' +
                                     this.size.height + '"') :
+                                '') +
+                            (!!branding ?
+                                (' data-:branding="' +
+                                    btoa(branding) +
+                                    '"') :
                                 '') +
                             '></script>';
                     }

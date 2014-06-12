@@ -35,6 +35,7 @@
                     $scope.minireel = {
                         id: 'e-0277a8c7564f87',
                         data: {
+                            branding: 'elitedaily',
                             mode: 'lightbox',
                             splash: {
                                 theme: 'img-text-overlay',
@@ -181,8 +182,18 @@
                     describe('if the size is responsive', function() {
                         it('should be a responsive embed code', function() {
                             expect(EmbedCodeCtrl.code).toBe(
-                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4"></script>'
+                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-:branding="' + btoa('elitedaily') + '"></script>'
                             );
+                        });
+                    });
+
+                    describe('if there is no branding', function() {
+                        beforeEach(function() {
+                            delete $scope.minireel.data.branding;
+                        });
+
+                        it('should not include the branding', function() {
+                            expect(EmbedCodeCtrl.code).not.toContain('data-:branding="' + btoa('undefined') + '"');
                         });
                     });
 
@@ -193,7 +204,7 @@
 
                         it('should be an explicit embed code', function() {
                             expect(EmbedCodeCtrl.code).toBe(
-                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-width="650px" data-height="522px"></script>'
+                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-width="650px" data-height="522px" data-:branding="' + btoa('elitedaily') + '"></script>'
                             );
                         });
 
@@ -202,7 +213,7 @@
                             EmbedCodeCtrl.size.width = '100%';
 
                             expect(EmbedCodeCtrl.code).toBe(
-                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-width="100%" data-height="300px"></script>'
+                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-width="100%" data-height="300px" data-:branding="' + btoa('elitedaily') + '"></script>'
                             );
                         });
                     });
