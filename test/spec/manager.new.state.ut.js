@@ -19,25 +19,29 @@
                     name: jasmine.any(String),
                     sref: 'general',
                     visits: 0,
-                    requiredVisits: 0
+                    requiredVisits: 0,
+                    required: true
                 },
                 category: {
                     name: jasmine.any(String),
                     sref: 'category',
                     visits: 0,
-                    requiredVisits: 0
+                    requiredVisits: 0,
+                    required: false
                 },
                 mode: {
                     name: jasmine.any(String),
                     sref: 'mode',
                     visits: 0,
-                    requiredVisits: 0
+                    requiredVisits: 0,
+                    required: false
                 },
                 autoplay: {
                     name: jasmine.any(String),
                     sref: 'autoplay',
                     visits: 0,
-                    requiredVisits: 0
+                    requiredVisits: 0,
+                    required: false
                 }
             };
 

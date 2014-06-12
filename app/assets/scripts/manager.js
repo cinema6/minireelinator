@@ -114,7 +114,24 @@
         .controller('NewController', ['$scope','cModel','MiniReelService','c6State','$q',
         function                     ( $scope , cModel , MiniReelService , c6State , $q ) {
             var self = this,
-                minireel = cModel.minireel;
+                minireel = cModel.minireel,
+                setupTabs = $scope.$watch(function() { return self.tabs; }, function() {
+                    var general = tabBySref('general');
+
+                    if (general) {
+                        Object.defineProperties(general, {
+                            requiredVisits: {
+                                get: function() {
+                                    return self.title ?
+                                        this.visits :
+                                        this.visits + 1;
+                                }
+                            }
+                        });
+                    }
+
+                    setupTabs();
+                });
 
             function tabBySref(sref) {
                 return self.tabs.reduce(function(result, next) {
