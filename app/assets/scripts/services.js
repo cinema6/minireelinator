@@ -801,31 +801,15 @@
 
             this.adChoicesOf = function(data) {
                 var w = data.user.org.waterfalls,
-                    d = data.experience.data;
+                    d = data.experience.data,
+                    choices = {};
 
-                var allowedChoices = {
-                        video: w.video,
-                        display: w.display
-                    },
-                    choiceData = {
-                        video: d.videoAdSources,
-                        display: d.displayAdSources
-                    },
-                    choices = {
-                        video: [],
-                        display: []
-                    };
+                angular.forEach(w, function(waterfallArray, type) {
+                    var choiceKey = type + 'AdSources';
 
-                function addChoices(data, type) {
-                    angular.forEach(data, function(choice) {
-                        if(allowedChoices[type].indexOf(choice.value) > -1) {
-                            choices[type].push(choice);
-                        }
+                    choices[type] = d[choiceKey].filter(function(x) {
+                        return w[type].indexOf(x.value) > -1;
                     });
-                }
-
-                angular.forEach(['video','display'], function(type) {
-                    addChoices(choiceData[type], type);
                 });
 
                 return choices;
