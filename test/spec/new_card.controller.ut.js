@@ -16,9 +16,7 @@
             var model;
 
             beforeEach(function() {
-                model = {
-                    id: 'rc-80402f8fe32a47'
-                };
+                model = null;
 
                 module('c6.ui', function($provide) {
                     $provide.decorator('c6Computed', function($delegate) {
@@ -55,34 +53,36 @@
 
             describe('properties', function() {
                 describe('type', function() {
-                    it('should be initialized as "video"', function() {
-                        expect(NewCardCtrl.type).toBe('video');
+                    it('should be initialized as "videoBallot"', function() {
+                        expect(NewCardCtrl.type).toBe('videoBallot');
                     });
                 });
             });
 
             describe('methods', function() {
                 describe('edit()', function() {
+                    var card;
+
                     beforeEach(function() {
+                        card = {
+                            id: 'rc-39635762f9ab06'
+                        };
+
                         c6StateParams.insertionIndex = 4;
                         NewCardCtrl.type = 'blah';
-                        spyOn($scope, '$emit').and.callThrough();
                         spyOn(c6State, 'goTo');
-                        spyOn(MiniReelService, 'setCardType');
+                        spyOn(MiniReelService, 'createCard')
+                            .and.returnValue(card);
 
                         NewCardCtrl.edit();
                     });
 
-                    it('should convert the card to the current type', function() {
-                        expect(MiniReelService.setCardType).toHaveBeenCalledWith(model, 'blah');
-                    });
-
-                    it('should $emit a "addCard" event', function() {
-                        expect($scope.$emit).toHaveBeenCalledWith('addCard', model, 4);
+                    it('should create a card of the current type', function() {
+                        expect(MiniReelService.createCard).toHaveBeenCalledWith(NewCardCtrl.type);
                     });
 
                     it('should transition to the edit card state', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('editor.editCard.copy', { cardId: 'rc-80402f8fe32a47' });
+                        expect(c6State.goTo).toHaveBeenCalledWith('editor.editCard', { cardId: card.id, card: card });
                     });
                 });
             });

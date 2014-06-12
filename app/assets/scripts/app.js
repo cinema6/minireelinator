@@ -549,11 +549,7 @@
                         newCard: {
                             controller: 'NewCardController',
                             controllerAs: 'NewCardCtrl',
-                            templateUrl: assets('views/editor/new_card.html'),
-                            model: ['MiniReelService',
-                            function               ( MiniReelService ) {
-                                return this.cModel || MiniReelService.createCard();
-                            }]
+                            templateUrl: assets('views/editor/new_card.html')
                         }
                     }
                 })
@@ -773,6 +769,7 @@
 
             $log.info('AppCtlr loaded.');
 
+            this.branding = null;
             this.config = null;
             this.user = null;
             cinema6.getAppData()
