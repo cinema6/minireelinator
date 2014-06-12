@@ -248,10 +248,10 @@
 
         .controller('EditorController', ['c6State','$scope','EditorService','cinema6',
                                          'ConfirmDialogService','c6Debounce','$q','$log',
-                                         'MiniReelService',
+                                         'MiniReelService','cModel',
         function                        ( c6State , $scope , EditorService , cinema6 ,
                                           ConfirmDialogService , c6Debounce , $q , $log ,
-                                          MiniReelService ) {
+                                          MiniReelService , cModel ) {
             var self = this,
                 AppCtrl = $scope.AppCtrl,
                 cardLimits = {
@@ -544,11 +544,15 @@
                     return $q.when(self.model);
                 }
 
+                AppCtrl.branding = null;
+
                 save()
                     .then(function close() {
                         EditorService.close();
                     });
             });
+
+            AppCtrl.branding = cModel.data.branding;
 
         //    AppCtrl.sendPageView(this.pageObject);
         }])

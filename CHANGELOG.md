@@ -7,6 +7,8 @@
   * [FEATURE]: Skinny modal tabs added for case where we need more space.
   * [FEATURE]: Ad cards are now an option when creating a new card
   * [FIX]: Ad card option modals properly styled
+  * The custom splash stylesheet for each publisher is now included when
+    in the editor
 
 ## Beta8 (June 9, 2014)
 * *[Beta8.rc4]*
