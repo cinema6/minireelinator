@@ -17,6 +17,7 @@
   * Alerts are now shown in the "Title" tab of the MiniReel Modal
   * In the MiniReel Modal, the user cannot click "Done" if there is no
     title inputed
+  * [FEATURE]: Enable display and video ad control based on org privileges and minireel mode
 
 ## Beta8 (June 9, 2014)
 * *[Beta8.rc4]*
