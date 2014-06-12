@@ -773,6 +773,7 @@
 
             $log.info('AppCtlr loaded.');
 
+            this.branding = null;
             this.config = null;
             this.user = null;
             cinema6.getAppData()
