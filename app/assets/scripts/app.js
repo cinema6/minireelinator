@@ -872,9 +872,10 @@
             };
         }])
 
-        .controller('EmbedCodeController', ['$scope','cinema6','$attrs',
-        function                           ( $scope , cinema6 , $attrs ) {
-            var self = this;
+        .controller('EmbedCodeController', ['$scope','$attrs','MiniReelService','appData',
+        function                           ( $scope , $attrs , MiniReelService , appData ) {
+            var self = this,
+                categories = null;
 
             this.readOnly = isDefined($attrs.readonly);
             this.modes = [
@@ -895,16 +896,21 @@
             };
 
             this.c6EmbedSrc = null;
-            cinema6.getAppData()
+            appData.ensureFulfillment()
                 .then(function setC6EmbedSrc(data) {
                     self.c6EmbedSrc = data.experience.data.c6EmbedSrc;
+                    categories = data.experience.data.modes;
                 });
 
             Object.defineProperties(this, {
                 code: {
                     get: function() {
                         var minireel = $scope.minireel,
-                            splash = minireel.data.splash;
+                            splash = minireel.data.splash,
+                            isInline = MiniReelService.modeCategoryOf(
+                                minireel,
+                                categories
+                            ).value === 'inline';
 
                         return '<script src="' + this.c6EmbedSrc + '"' +
                             ' data-exp="' + minireel.id + '"' +
@@ -912,6 +918,10 @@
                             ' data-splash="' +
                                 splash.theme + ':' + splash.ratio.split('-').join('/') +
                             '"' +
+                            (isInline ?
+                                ' data-preload' :
+                                ''
+                            ) +
                             (this.mode === 'custom' ?
                                 (' data-width="' +
                                     this.size.width +

@@ -7,30 +7,35 @@
                 $scope,
                 $controller,
                 $q,
-                cinema6,
+                appData,
                 EmbedCodeCtrl;
 
-            var getAppDataDeferred,
+            var ensureFulfillmentDeferred,
                 $attrs;
 
             beforeEach(function() {
                 $attrs = {};
 
-                module('c6.mrmaker');
+                module('c6.mrmaker', function($provide) {
+                    $provide.value('appData', {
+                        ensureFulfillment: jasmine.createSpy('appData.ensureFulfillment()')
+                    });
+                });
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
                     $controller = $injector.get('$controller');
-                    cinema6 = $injector.get('cinema6');
+                    appData = $injector.get('appData');
                     $q = $injector.get('$q');
 
-                    getAppDataDeferred = $q.defer();
-                    spyOn(cinema6, 'getAppData').and.returnValue(getAppDataDeferred.promise);
+                    ensureFulfillmentDeferred = $q.defer();
+                    appData.ensureFulfillment.and.returnValue(ensureFulfillmentDeferred.promise);
 
                     $scope = $rootScope.$new();
                     $scope.minireel = {
                         id: 'e-0277a8c7564f87',
                         data: {
+                            mode: 'lightbox',
                             splash: {
                                 theme: 'img-text-overlay',
                                 ratio: '6-4'
@@ -108,8 +113,69 @@
                 });
 
                 describe('code', function() {
+                    function resolveAppData() {
+                        $scope.$apply(function() {
+                            ensureFulfillmentDeferred.resolve({
+                                experience: {
+                                    data: {
+                                        modes: [
+                                            {
+                                                value: 'lightbox',
+                                                modes: [
+                                                    {
+                                                        value: 'lightbox'
+                                                    },
+                                                    {
+                                                        value: 'lightbox-ads'
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                value: 'inline',
+                                                modes: [
+                                                    {
+                                                        value: 'full'
+                                                    },
+                                                    {
+                                                        value: 'light'
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                }
+                            });
+                        });
+                    }
+
                     beforeEach(function() {
                         EmbedCodeCtrl.c6EmbedSrc = 'embed.js';
+                    });
+
+                    ['lightbox', 'lightbox-ads'].forEach(function(mode) {
+                        describe('if the minireel mode is ' + mode, function() {
+                            beforeEach(function() {
+                                $scope.minireel.data.mode = mode;
+                                resolveAppData();
+                            });
+
+                            it('should not preload', function() {
+                                expect(EmbedCodeCtrl.code).not.toContain(' data-preload');
+                            });
+                        });
+                    });
+
+                    ['full', 'light'].forEach(function(mode) {
+                        describe('if the minireel mode is ' + mode, function() {
+                            beforeEach(function() {
+                                $scope.minireel.data.mode = mode;
+                                resolveAppData();
+                            });
+
+                            it('should preload', function() {
+                                expect(EmbedCodeCtrl.code).toContain(' data-preload');
+                            });
+                        });
                     });
 
                     describe('if the size is responsive', function() {
@@ -149,7 +215,7 @@
 
                     it('should be the value set in the experience when the appData is fetched', function() {
                         $scope.$apply(function() {
-                            getAppDataDeferred.resolve({
+                            ensureFulfillmentDeferred.resolve({
                                 experience: {
                                     data: {
                                         c6EmbedSrc: '//lib.cinema6.com/c6embed/v0.7.0-0-g495dfa0/c6embed.min.js'
