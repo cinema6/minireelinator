@@ -9,11 +9,15 @@
             "waterfalls": {
                 "video": [
                     "cinema6",
-                    "publisher"
+                    "publisher",
+                    "cinema6-publisher",
+                    "publisher-cinema6"
                 ],
                 "display": [
                     "cinema6",
-                    "cinema6-publisher"
+                    "publisher",
+                    "cinema6-publisher",
+                    "publisher-cinema6"
                 ]
             }
         },

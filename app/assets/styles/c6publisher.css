@@ -646,6 +646,9 @@
             -moz-box-sizing: border-box;
             box-sizing: border-box;
         }
+            .wizard__choice--ads {
+                margin:0 0 0.5em 0;
+            }
             .wizard__choice,
             .wizard__hitarea,
             .wizard__diagram {
@@ -695,6 +698,10 @@
                     font-size:1em; color:#646464; font-weight:100;
                     margin:5px 0;
                 }
+                    .wizard__choice--ads .wizard__copy .wizard__title,
+                    .wizard__choice--ads .wizard__copy .wizard__p {
+                        margin:0;
+                    }
                 .wizard__choice:hover .wizard__title {
                     color:#13a2ff;
                 }

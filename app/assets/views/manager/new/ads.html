@@ -1,33 +1,31 @@
-<div class="modal__content modal__editor-mr-ads clearfix">
+<div class="modal__content modal__editor clearfix">
     <form c6-alias="NewCtrl.mode as config">
-        <div ng-if="config.value === 'lightbox-ads'">
-            Show all the display ad stuff here!
-            <li ng-repeat="choice in NewAdsCtrl.adChoices.display" class="wizard__choice wizard__choice--imgLess">
+        <ul class="wizard__group" ng-if="config.value === 'lightbox-ads'">
+            <li ng-repeat="choice in NewAdsCtrl.adChoices.display" class="wizard__choice wizard__choice--textOnly wizard__choice--ads">
                 <input id="displayAd_{{choice.value}}" type="radio"
                     name="minireel-category" ng-model="NewCtrl.displayAdSource" ng-value="choice.value"
                     class="modal__radioBtn" />
                 <label class="wizard__hitarea" for="displayAd_{{choice.value}}"><span class="ir">{{choice.name}}</span></label>
-                <div class="wizard__copy wizard__copy--imgLess">
+                <div class="wizard__copy">
                     <h2 class="wizard__title">{{choice.name}}</h2>
                     <p class="wizard__p">{{choice.description}}</p>
                 </div>
             </li>
-        </div>
+        </ul>
     </form>
     <form>
-        <div>
-            Show all the video ad stuff here!
-            <li ng-repeat="choice in NewAdsCtrl.adChoices.video" class="wizard__choice wizard__choice--imgLess">
+        <ul class="wizard__group">
+            <li ng-repeat="choice in NewAdsCtrl.adChoices.video" class="wizard__choice wizard__choice--textOnly wizard__choice--ads">
                 <input id="videoAd_{{choice.value}}" type="radio"
                     name="minireel-category" ng-model="NewCtrl.videoAdSource" ng-value="choice.value"
                     class="modal__radioBtn" />
                 <label class="wizard__hitarea" for="videoAd_{{choice.value}}"><span class="ir">{{choice.name}}</span></label>
-                <div class="wizard__copy wizard__copy--imgLess">
+                <div class="wizard__copy">
                     <h2 class="wizard__title">{{choice.name}}</h2>
                     <p class="wizard__p">{{choice.description}}</p>
                 </div>
             </li>
-        </div>
+        </ul>
     </form>
 </div>
 <footer class="modal__btnFooter">
