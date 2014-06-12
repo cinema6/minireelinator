@@ -11,6 +11,9 @@
     in the editor
   * [FEATURE]: The splash ratio/theme of your last MiniReel is now
     used as the default when you create a new MiniReel
+  * The embed code will now be configured for preloading on inline
+    display modes
+    * **v1.1.0 of c6embed must be deployed for this to work**
 
 ## Beta8 (June 9, 2014)
 * *[Beta8.rc4]*
