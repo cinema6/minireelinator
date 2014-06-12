@@ -9,6 +9,8 @@
   * [FIX]: Ad card option modals properly styled
   * The custom splash stylesheet for each publisher is now included when
     in the editor
+  * [FEATURE]: The splash ratio/theme of your last MiniReel is now
+    used as the default when you create a new MiniReel
 
 ## Beta8 (June 9, 2014)
 * *[Beta8.rc4]*
