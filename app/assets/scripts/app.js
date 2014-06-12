@@ -332,19 +332,30 @@
                             function    ( appData ) {
                                 return appData.ensureFulfillment();
                             }],
-                            updateControllerModel: ['controller','model',
-                            function               ( controller , model ) {
+                            updateControllerModel: ['controller','model','appData',
+                            function               ( controller , model , appData ) {
+                                var waterfalls = appData.user.org.waterfalls;
+
                                 controller.model = model;
 
                                 controller.returnState = 'manager';
                                 controller.baseState = 'manager.new';
-                                controller.tabs = [
-                                    newTabs.general,
-                                    newTabs.category,
-                                    newTabs.mode,
-                                    newTabs.ads,
-                                    newTabs.autoplay
-                                ];
+                                controller.tabs = waterfalls &&
+                                    ((waterfalls.video.length > 1) ||
+                                    (waterfalls.display.length > 1)) ?
+                                    [
+                                        newTabs.general,
+                                        newTabs.category,
+                                        newTabs.mode,
+                                        newTabs.ads,
+                                        newTabs.autoplay
+                                    ] :
+                                    [
+                                        newTabs.general,
+                                        newTabs.category,
+                                        newTabs.mode,
+                                        newTabs.autoplay
+                                    ];
                             }],
                             children: copy(newSubstates)
                         }

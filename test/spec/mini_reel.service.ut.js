@@ -5,7 +5,7 @@
         /* global angular:true */
         var copy = angular.copy;
 
-        ddescribe('MiniReelService', function() {
+        describe('MiniReelService', function() {
             var MiniReelService,
                 VoteService,
                 CollateralService,
@@ -1055,6 +1055,66 @@
                             expect(result).toBe(minireel);
                             expect(result.data).not.toBe(converted.data);
                             expect(minireel.data.deck[0].title).toBe('New Title');
+                        });
+                    });
+
+                    describe('adChoicesOf(data)', function() {
+                        it('should return the correct choices for video and display ads', function() {
+                            var data = {
+                                experience: {
+                                    data: {
+                                        videoAdSources: [
+                                            {
+                                                value: 'cinema6',
+                                            },
+                                            {
+                                                value: 'cinema6-publisher',
+                                            },
+                                            {
+                                                value: 'publisher',
+                                            },
+                                            {
+                                                value: 'publisher-cinema6',
+                                            }
+                                        ],
+                                        displayAdSources: [
+                                            {
+                                                value: 'cinema6',
+                                            },
+                                            {
+                                                value: 'cinema6-publisher',
+                                            },
+                                            {
+                                                value: 'publisher',
+                                            },
+                                            {
+                                                value: 'publisher-cinema6',
+                                            }
+                                        ]
+                                    }
+                                },
+                                user: {
+                                    org: {
+                                        waterfalls: {
+                                            display: ['cinema6'],
+                                            video: ['cinema6']
+                                        }
+                                    }
+                                }
+                            };
+
+                            expect(MiniReelService.adChoicesOf(data)).toEqual({
+                                video: [{value:'cinema6'}],
+                                display: [{value:'cinema6'}]
+                            });
+
+                            data.user.org.waterfalls.display = ['cinema6','publisher','cinema6-publisher','publisher-cinema6'];
+
+                            expect(MiniReelService.adChoicesOf(data)).toEqual({
+                                video: [{value:'cinema6'}],
+                                display: [{value:'cinema6'}, {value:'cinema6-publisher'}, {value:'publisher'}, {value:'publisher-cinema6'}]
+                            })
+
                         });
                     });
                 });

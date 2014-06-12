@@ -33,6 +33,12 @@
                     visits: 0,
                     requiredVisits: 0
                 },
+                ads: {
+                    name: jasmine.any(String),
+                    sref: 'ads',
+                    visits: 0,
+                    requiredVisits: 0
+                },
                 autoplay: {
                     name: jasmine.any(String),
                     sref: 'autoplay',
@@ -169,6 +175,29 @@
                         jasmine.objectContaining(tabs.mode),
                         jasmine.objectContaining(tabs.autoplay)
                     ]);
+                });
+
+                describe('when ad server editing is enabled', function() {
+                    it('should', function() {
+                        appData.user = {
+                            org: {
+                                waterfalls: {
+                                    video: ['cinema6','publisher'],
+                                    display: ['cinema6','publisher']
+                                }
+                            }
+                        };
+                        $injector.invoke(SetModeState.updateControllerModel, SetModeState, {
+                            controller: controller,
+                            model: model
+                        });
+                        expect(controller.tabs).toEqual([
+                            jasmine.objectContaining(tabs.category),
+                            jasmine.objectContaining(tabs.mode),
+                            jasmine.objectContaining(tabs.ads),
+                            jasmine.objectContaining(tabs.autoplay)
+                        ]);
+                    });
                 });
             });
         });
