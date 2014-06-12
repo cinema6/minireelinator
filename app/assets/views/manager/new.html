@@ -10,7 +10,9 @@
                         <span ng-show="NewCtrl.tabIsValid(tab)" class="ui__checkSmall ui__checkSmall--white sprite--alpha">&nbsp;</span>
                         <span ng-show="tab.visits < tab.requiredVisits">!</span>
                     </span>
-                    <span class="tabNav__tabName">{{tab.name}}</span>
+                    <span class="tabNav__tabName">{{tab.name}}
+                        <strong ng-show="tab.required" class="typo--attention">*</strong>
+                    </span>
                 </a>
             </li>
         </ul>

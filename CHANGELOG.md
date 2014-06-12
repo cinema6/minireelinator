@@ -14,6 +14,9 @@
   * The embed code will now be configured for preloading on inline
     display modes
     * **v1.1.0 of c6embed must be deployed for this to work**
+  * Alerts are now shown in the "Title" tab of the MiniReel Modal
+  * In the MiniReel Modal, the user cannot click "Done" if there is no
+    title inputed
 
 ## Beta8 (June 9, 2014)
 * *[Beta8.rc4]*

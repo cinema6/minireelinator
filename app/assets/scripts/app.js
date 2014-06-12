@@ -243,11 +243,12 @@
         function( c6StateProvider , c6UrlMakerProvider ) {
             var assets = c6UrlMakerProvider.makeUrl.bind(c6UrlMakerProvider);
 
-            function Tab(name, sref) {
+            function Tab(name, sref, required) {
                 this.name = name;
                 this.sref = sref;
                 this.visits = 0;
                 this.requiredVisits = 0;
+                this.required = !!required;
             }
 
             var newSubstates = {
@@ -266,7 +267,7 @@
             };
 
             var newTabs = {
-                general: new Tab('Title Settings', 'general'),
+                general: new Tab('Title Settings', 'general', true),
                 category: new Tab('Lightbox', 'category'),
                 mode: new Tab('MiniReel Type', 'mode'),
                 autoplay: new Tab('Autoplay', 'autoplay')

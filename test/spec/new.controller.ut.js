@@ -2,7 +2,7 @@
     'use strict';
 
     define(['manager'], function() {
-        describe('NewController', function() {
+        ddescribe('NewController', function() {
             var $rootScope,
                 $q,
                 $scope,
@@ -146,6 +146,52 @@
             });
 
             describe('properties', function() {
+                describe('general tab requiredVisits', function() {
+                    var tab;
+
+                    beforeEach(function() {
+                        tab = NewCtrl.tabs[0];
+                    });
+
+                    describe('if there is a title', function() {
+                        beforeEach(function() {
+                            NewCtrl.title = 'Foo';
+                        });
+
+                        it('should be the same as the number of visits', function() {
+                            expect(tab.requiredVisits).toBe(tab.visits);
+                        });
+                    });
+
+                    describe('if there is no title', function() {
+                        beforeEach(function() {
+                            NewCtrl.title = '';
+                        });
+
+                        it('should be the number of visits + 1', function() {
+                            expect(tab.requiredVisits).toBe(tab.visits + 1);
+                        });
+                    });
+
+                    describe('if the general tab is not present', function() {
+                        var tabs;
+
+                        beforeEach(function() {
+                            tabs = NewCtrl.tabs.slice(1);
+                        });
+
+                        it('should not throw errors', function() {
+                            expect(function() {
+                                $scope.$apply(function() {
+                                    NewCtrl = $controller('NewController', { $scope: $scope, cModel: model });
+                                    NewCtrl.tabs = tabs;
+                                    NewCtrl.model = model;
+                                });
+                            }).not.toThrow();
+                        });
+                    });
+                });
+
                 describe('category', function() {
                     it('should be the category of the MiniReel', function() {
                         expect(NewCtrl.category).toBe(model.modes[1]);
