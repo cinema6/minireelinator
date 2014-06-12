@@ -5,6 +5,8 @@
     * **The Vote Service that supports storing elections as arrays must
       be deployed**
   * [FEATURE]: Skinny modal tabs added for case where we need more space.
+  * [FEATURE]: Ad cards are now an option when creating a new card
+  * [FIX]: Ad card option modals properly styled
   * The custom splash stylesheet for each publisher is now included when
     in the editor
 

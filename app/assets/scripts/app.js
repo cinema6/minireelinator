@@ -549,11 +549,7 @@
                         newCard: {
                             controller: 'NewCardController',
                             controllerAs: 'NewCardCtrl',
-                            templateUrl: assets('views/editor/new_card.html'),
-                            model: ['MiniReelService',
-                            function               ( MiniReelService ) {
-                                return this.cModel || MiniReelService.createCard();
-                            }]
+                            templateUrl: assets('views/editor/new_card.html')
                         }
                     }
                 })

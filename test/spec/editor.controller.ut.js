@@ -527,15 +527,9 @@
                         EditorCtrl.newCard(3);
                     });
 
-                    it('should create a new card', function() {
-                        expect(MiniReelService.createCard).toHaveBeenCalledWith('videoBallot');
-                    });
-
                     it('should transition to the editor.editCard state', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('editor.editCard', {
-                            cardId: lastCreatedCard.id,
-                            insertionIndex: 3,
-                            card: lastCreatedCard
+                        expect(c6State.goTo).toHaveBeenCalledWith('editor.newCard', {
+                            insertionIndex: 3
                         });
                     });
                 });

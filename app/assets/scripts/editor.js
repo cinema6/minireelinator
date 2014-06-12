@@ -404,12 +404,8 @@
 //                if (evtSrc){
 //                    AppCtrl.sendPageEvent('Editor','Click','New Card',self.pageObject);
 //                }
-                var card = MiniReelService.createCard('videoBallot');
-
-                c6State.goTo('editor.editCard', {
-                    cardId: card.id,
-                    insertionIndex: insertionIndex,
-                    card: card
+                c6State.goTo('editor.newCard', {
+                    insertionIndex: insertionIndex
                 });
             };
 
@@ -943,15 +939,14 @@
             );
         }])
 
-        .controller('NewCardController', ['$scope','c6State','c6StateParams','MiniReelService',
-        function                         ( $scope , c6State , c6StateParams , MiniReelService ) {
-            this.type = 'video';
+        .controller('NewCardController', ['c6State','c6StateParams','MiniReelService',
+        function                         ( c6State , c6StateParams , MiniReelService ) {
+            this.type = 'videoBallot';
 
             this.edit = function() {
-                MiniReelService.setCardType(this.model, this.type);
+                var card = MiniReelService.createCard(this.type);
 
-                $scope.$emit('addCard', this.model, c6StateParams.insertionIndex);
-                c6State.goTo('editor.editCard.copy', { cardId: this.model.id });
+                c6State.goTo('editor.editCard', { cardId: card.id, card: card });
             };
         }])
 
