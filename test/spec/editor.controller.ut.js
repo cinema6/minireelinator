@@ -26,6 +26,7 @@
                 cModel = {
                     id: 'e-53ae461c63b015',
                     data: {
+                        branding: 'urbantimes',
                         mode: 'lightbox',
                         collateral: {
                             splash: null
@@ -88,7 +89,8 @@
                         sendPageView : jasmine.createSpy('AppCtrl.sendPageView'),
                         sendPageEvent : jasmine.createSpy('AppCtrl.sendPageEvent'),
                         config: null,
-                        user: null
+                        user: null,
+                        branding: null
                     };
                     $childScope = $scope.$new();
                     $scope.$apply(function() {
@@ -103,6 +105,10 @@
 
             it('should exist', function() {
                 expect(EditorCtrl).toEqual(jasmine.any(Object));
+            });
+
+            it('should set the AppCtrl\'s branding to the minireel\'s branding', function() {
+                expect(AppCtrl.branding).toBe(cModel.data.branding);
             });
 /*
             describe('tracking', function(){
@@ -521,15 +527,9 @@
                         EditorCtrl.newCard(3);
                     });
 
-                    it('should create a new card', function() {
-                        expect(MiniReelService.createCard).toHaveBeenCalledWith('videoBallot');
-                    });
-
                     it('should transition to the editor.editCard state', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('editor.editCard', {
-                            cardId: lastCreatedCard.id,
-                            insertionIndex: 3,
-                            card: lastCreatedCard
+                        expect(c6State.goTo).toHaveBeenCalledWith('editor.newCard', {
+                            insertionIndex: 3
                         });
                     });
                 });
@@ -826,6 +826,10 @@
 
                     it('should save the minireel', function() {
                         expect(EditorCtrl.save).toHaveBeenCalled();
+                    });
+
+                    it('should set the AppCtrl branding back to null', function() {
+                        expect(AppCtrl.branding).toBeNull();
                     });
 
                     describe('after the save finishes', function() {

@@ -248,10 +248,10 @@
 
         .controller('EditorController', ['c6State','$scope','EditorService','cinema6',
                                          'ConfirmDialogService','c6Debounce','$q','$log',
-                                         'MiniReelService',
+                                         'MiniReelService','cModel',
         function                        ( c6State , $scope , EditorService , cinema6 ,
                                           ConfirmDialogService , c6Debounce , $q , $log ,
-                                          MiniReelService ) {
+                                          MiniReelService , cModel ) {
             var self = this,
                 AppCtrl = $scope.AppCtrl,
                 cardLimits = {
@@ -404,12 +404,8 @@
 //                if (evtSrc){
 //                    AppCtrl.sendPageEvent('Editor','Click','New Card',self.pageObject);
 //                }
-                var card = MiniReelService.createCard('videoBallot');
-
-                c6State.goTo('editor.editCard', {
-                    cardId: card.id,
-                    insertionIndex: insertionIndex,
-                    card: card
+                c6State.goTo('editor.newCard', {
+                    insertionIndex: insertionIndex
                 });
             };
 
@@ -548,11 +544,15 @@
                     return $q.when(self.model);
                 }
 
+                AppCtrl.branding = null;
+
                 save()
                     .then(function close() {
                         EditorService.close();
                     });
             });
+
+            AppCtrl.branding = cModel.data.branding;
 
         //    AppCtrl.sendPageView(this.pageObject);
         }])
@@ -949,15 +949,14 @@
             this.choices = MiniReelService.adChoicesOf(appData);
         }])
 
-        .controller('NewCardController', ['$scope','c6State','c6StateParams','MiniReelService',
-        function                         ( $scope , c6State , c6StateParams , MiniReelService ) {
-            this.type = 'video';
+        .controller('NewCardController', ['c6State','c6StateParams','MiniReelService',
+        function                         ( c6State , c6StateParams , MiniReelService ) {
+            this.type = 'videoBallot';
 
             this.edit = function() {
-                MiniReelService.setCardType(this.model, this.type);
+                var card = MiniReelService.createCard(this.type);
 
-                $scope.$emit('addCard', this.model, c6StateParams.insertionIndex);
-                c6State.goTo('editor.editCard.copy', { cardId: this.model.id });
+                c6State.goTo('editor.editCard', { cardId: card.id, card: card });
             };
         }])
 

@@ -243,11 +243,12 @@
         function( c6StateProvider , c6UrlMakerProvider ) {
             var assets = c6UrlMakerProvider.makeUrl.bind(c6UrlMakerProvider);
 
-            function Tab(name, sref) {
+            function Tab(name, sref, required) {
                 this.name = name;
                 this.sref = sref;
                 this.visits = 0;
                 this.requiredVisits = 0;
+                this.required = !!required;
             }
 
             var newSubstates = {
@@ -275,7 +276,7 @@
             };
 
             var newTabs = {
-                general: new Tab('Title Settings', 'general'),
+                general: new Tab('Title Settings', 'general', true),
                 category: new Tab('Lightbox', 'category'),
                 mode: new Tab('MiniReel Type', 'mode'),
                 ads: new Tab('Ad Settings', 'ads'),
@@ -621,11 +622,7 @@
                         newCard: {
                             controller: 'NewCardController',
                             controllerAs: 'NewCardCtrl',
-                            templateUrl: assets('views/editor/new_card.html'),
-                            model: ['MiniReelService',
-                            function               ( MiniReelService ) {
-                                return this.cModel || MiniReelService.createCard();
-                            }]
+                            templateUrl: assets('views/editor/new_card.html')
                         }
                     }
                 })
@@ -845,6 +842,7 @@
 
             $log.info('AppCtlr loaded.');
 
+            this.branding = null;
             this.config = null;
             this.user = null;
             cinema6.getAppData()
@@ -947,9 +945,10 @@
             };
         }])
 
-        .controller('EmbedCodeController', ['$scope','cinema6','$attrs',
-        function                           ( $scope , cinema6 , $attrs ) {
-            var self = this;
+        .controller('EmbedCodeController', ['$scope','$attrs','MiniReelService','appData',
+        function                           ( $scope , $attrs , MiniReelService , appData ) {
+            var self = this,
+                categories = null;
 
             this.readOnly = isDefined($attrs.readonly);
             this.modes = [
@@ -970,16 +969,21 @@
             };
 
             this.c6EmbedSrc = null;
-            cinema6.getAppData()
+            appData.ensureFulfillment()
                 .then(function setC6EmbedSrc(data) {
                     self.c6EmbedSrc = data.experience.data.c6EmbedSrc;
+                    categories = data.experience.data.modes;
                 });
 
             Object.defineProperties(this, {
                 code: {
                     get: function() {
                         var minireel = $scope.minireel,
-                            splash = minireel.data.splash;
+                            splash = minireel.data.splash,
+                            isInline = MiniReelService.modeCategoryOf(
+                                minireel,
+                                categories
+                            ).value === 'inline';
 
                         return '<script src="' + this.c6EmbedSrc + '"' +
                             ' data-exp="' + minireel.id + '"' +
@@ -987,6 +991,10 @@
                             ' data-splash="' +
                                 splash.theme + ':' + splash.ratio.split('-').join('/') +
                             '"' +
+                            (isInline ?
+                                ' data-preload' :
+                                ''
+                            ) +
                             (this.mode === 'custom' ?
                                 (' data-width="' +
                                     this.size.width +

@@ -4,7 +4,19 @@
   * New elections are now created using arrays for storage
     * **The Vote Service that supports storing elections as arrays must
       be deployed**
-  * [FEATURE]: Skinny modal tabs added for case where we need more space.    
+  * [FEATURE]: Skinny modal tabs added for case where we need more space.
+  * [FEATURE]: Ad cards are now an option when creating a new card
+  * [FIX]: Ad card option modals properly styled
+  * The custom splash stylesheet for each publisher is now included when
+    in the editor
+  * [FEATURE]: The splash ratio/theme of your last MiniReel is now
+    used as the default when you create a new MiniReel
+  * The embed code will now be configured for preloading on inline
+    display modes
+    * **v1.1.0 of c6embed must be deployed for this to work**
+  * Alerts are now shown in the "Title" tab of the MiniReel Modal
+  * In the MiniReel Modal, the user cannot click "Done" if there is no
+    title inputed
 
 ## Beta8 (June 9, 2014)
 * *[Beta8.rc4]*

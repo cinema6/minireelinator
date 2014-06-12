@@ -147,6 +147,12 @@
                     });
                 });
 
+                describe('branding', function() {
+                    it('should be null', function() {
+                        expect(AppCtrl.branding).toBeNull();
+                    });
+                });
+
                 describe('user', function() {
                     it('should initially be null', function() {
                         expect(AppCtrl.user).toBeNull();

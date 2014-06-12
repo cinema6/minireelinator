@@ -882,13 +882,17 @@
                             success,
                             newModel,
                             saveDeferred,
-                            appData;
+                            appData,
+                            minireels;
 
                         beforeEach(function() {
                             var dbCreate = cinema6.db.create;
 
+                            minireels = [];
+
                             appData = {
                                 user: {
+                                    id: 'u-5b67ee6000ce6f',
                                     org: {
                                         id: 'o-17593d7a2bf294',
                                         minAdCount: 3
@@ -896,6 +900,8 @@
                                     branding: 'elitedaily'
                                 }
                             };
+
+                            spyOn(cinema6.db, 'findAll').and.returnValue($q.when(minireels));
 
                             saveDeferred = $q.defer();
                             success = jasmine.createSpy('success');
@@ -994,6 +1000,67 @@
                             it('should resolve the promise', function() {
                                 expect(success).toHaveBeenCalledWith(newModel);
                                 expect(newModel.status).toBe('pending');
+                            });
+
+                            describe('if the user has a previous minireel', function() {
+                                var firstMiniReel;
+
+                                beforeEach(function() {
+                                    minireels = [
+                                        {
+                                            id: 'e-e9c896c460453d',
+                                            data: {
+                                                splash: {
+                                                    ratio: '6-5',
+                                                    source: 'specified',
+                                                    theme: 'text-only'
+                                                }
+                                            }
+                                        }
+                                    ];
+
+                                    firstMiniReel = success.calls.mostRecent().args[0];
+                                    success.calls.reset();
+
+                                    cinema6.db.findAll.and.returnValue($q.when(minireels));
+
+                                    $rootScope.$apply(function() {
+                                        MiniReelService.create().then(success);
+                                    });
+                                });
+
+                                it('should be almost identical to the first one', function() {
+                                    expect(cinema6.db.findAll).toHaveBeenCalledWith('experience', {
+                                        type: 'minireel',
+                                        user: appData.user.id,
+                                        sort: 'lastUpdated,-1',
+                                        limit: 1
+                                    });
+
+                                    expect(success).toHaveBeenCalledWith(jasmine.objectContaining({
+                                        type: 'minireel',
+                                        org: firstMiniReel.org,
+                                        appUri: 'rumble',
+                                        data: {
+                                            title: null,
+                                            mode: 'lightbox',
+                                            branding: appData.user.branding,
+                                            splash: {
+                                                ratio: minireels[0].data.splash.ratio,
+                                                source: firstMiniReel.data.splash.source,
+                                                theme: minireels[0].data.splash.theme
+                                            },
+                                            collateral: {
+                                                splash: null
+                                            },
+                                            deck: firstMiniReel.data.deck.map(function(card) {
+                                                card.id = jasmine.any(String);
+
+                                                return card;
+                                            })
+                                        }
+                                    }));
+                                });
                             });
                         });
                     });
