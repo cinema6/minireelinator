@@ -415,8 +415,8 @@
                                 controller.returnState = 'editor';
                                 controller.baseState = 'editor.setMode';
                                 controller.tabs = waterfalls &&
-                                    (waterfalls.video.length > 1) ||
-                                    (waterfalls.display.length > 1) ?
+                                    ((waterfalls.video.length > 1) ||
+                                    (waterfalls.display.length > 1)) ?
                                     [
                                         newTabs.category,
                                         newTabs.mode,

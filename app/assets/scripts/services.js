@@ -901,8 +901,8 @@
                     branding: minireel.data.branding,
                     autoplay: minireel.data.autoplay,
                     election: minireel.data.election,
-                    displayAdSource: minireel.data.displayAdSource,
-                    videoAdSource: minireel.data.videoAdSource,
+                    displayAdSource: minireel.data.displayAdSource || 'cinema6',
+                    videoAdSource: minireel.data.videoAdSource || 'cinema6',
                     collateral: minireel.data.collateral ||
                         { splash: null },
                     splash: minireel.data.splash ||

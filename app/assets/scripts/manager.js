@@ -111,8 +111,8 @@
                 });
         }])
 
-        .controller('NewController', ['$scope','cModel','MiniReelService','c6State','$q','appData',
-        function                     ( $scope , cModel , MiniReelService , c6State , $q , appData ) {
+        .controller('NewController', ['$scope','cModel','MiniReelService','c6State','$q',
+        function                     ( $scope , cModel , MiniReelService , c6State , $q ) {
             var self = this,
                 minireel = cModel.minireel;
 
@@ -180,11 +180,11 @@
                 data.mode = this.mode.value;
 
                 ['displayAdSource','videoAdSource'].forEach(function(prop) {
-                    if(data[prop] !== self[prop]) {
+                    if (data[prop] !== self[prop]) {
                         angular.forEach(data.deck, function(card) {
-                            if(prop === 'displayAdSource') {
+                            if (prop === 'displayAdSource') {
                                 card[prop] = self[prop];
-                            } else if(card.type === 'ad') {
+                            } else if (card.type === 'ad') {
                                 card.data[prop] = self[prop];
                             }
                             data[prop] = self[prop];
@@ -202,7 +202,7 @@
             this.nextTab = function() {
                 var index = this.tabs.indexOf(this.currentTab);
 
-                if(index+1 < this.tabs.length) {
+                if (index+1 < this.tabs.length) {
                     c6State.goTo(this.baseState + '.' + this.tabs[index+1].sref);
                 }
             };
@@ -210,7 +210,7 @@
             this.prevTab = function() {
                 var index = this.tabs.indexOf(this.currentTab);
 
-                if(index-1 > -1) {
+                if (index-1 > -1) {
                     c6State.goTo(this.baseState + '.' + this.tabs[index-1].sref);
                 }
             };
@@ -233,12 +233,18 @@
 
             $scope.$watch(function() { return self.mode; }, function(mode, prevMode) {
                 var minireel = self.model.minireel,
-                    autoplayTab = tabBySref('autoplay');
+                    autoplayTab = tabBySref('autoplay'),
+                    adsTab = tabBySref('ads');
 
                 self.autoplay = mode.autoplayable && minireel.data.autoplay;
 
                 if (mode.autoplayable !== prevMode.autoplayable) {
                     autoplayTab.requiredVisits = autoplayTab.visits + 1;
+                }
+
+                if ((mode.value === 'lightbox-ads' || prevMode.value === 'lightbox-ads') &&
+                    mode !== prevMode) {
+                    adsTab.requiredVisits = adsTab.visits + 1;
                 }
             });
         }])
