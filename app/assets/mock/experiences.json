@@ -60,22 +60,22 @@
                 {
                     "name": "Cinema6 Ad Server Only",
                     "value": "cinema6",
-                    "description": "Only the Cinema6 Ad Servers will be used."
+                    "description": "Only call the Cinema6 ad server"
                 },
                 {
-                    "name": "Cinema6 First, Mine As Backup",
+                    "name": "Cinema6 with Publisher Fallback",
                     "value": "cinema6-publisher",
-                    "description": "The Cinema6 Ad Server is used as the primary server, with Your Ad Server as a fallback"
+                    "description": "Try calling Cinema6 ad server first, but fall back to publisher ad tag"
                 },
                 {
-                    "name": "My Ad Server Only",
+                    "name": "Publisher Only",
                     "value": "publisher",
-                    "description": "Only the Ad Servers approved by your company will be used."
+                    "description": "Only call the Publisher's provided ad tag"
                 },
                 {
-                    "name": "Mine First, Cinema6 As Backup",
+                    "name": "Publisher with Cinema6 Fallback",
                     "value": "publisher-cinema6",
-                    "description": "Your Ad Server is used as the primary server, with the Cinema6 Server as a fallback"
+                    "description": "Try calling Publisher ad tag first, but fall back to Cinema6 ad server"
                 }
             ],
             "displayAdSources": [

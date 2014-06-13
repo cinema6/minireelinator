@@ -500,7 +500,7 @@
                                         ].join('')
                                     },
                                     adServer = {
-                                        name: 'Server Settings',
+                                        name: 'Video Ad Settings',
                                         sref: 'editor.editCard.server',
                                         icon: null,
                                         required: false
