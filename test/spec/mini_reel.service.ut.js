@@ -115,7 +115,7 @@
                                 displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: true,
-                                    videoAdSource: 'cinema6-publisher',
+                                    source: 'cinema6-publisher',
                                     skip: false
                                 }
                             },
@@ -163,7 +163,7 @@
                                 displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: false,
-                                    videoAdSource: 'publisher-cinema6',
+                                    source: 'publisher-cinema6',
                                     skip: 6
                                 }
                             },
@@ -197,7 +197,7 @@
                                 displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: false,
-                                    videoAdSource: 'publisher',
+                                    source: 'publisher',
                                     skip: true
                                 }
                             },
@@ -357,7 +357,7 @@
                                 displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: true,
-                                    videoAdSource: 'cinema6',
+                                    source: 'cinema6',
                                     skip: 'anytime'
                                 }
                             });
@@ -479,7 +479,7 @@
                                 displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: true,
-                                    videoAdSource: 'cinema6',
+                                    source: 'cinema6',
                                     skip: 'anytime'
                                 }
                             });
@@ -810,7 +810,7 @@
                                 displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: true,
-                                    videoAdSource: 'cinema6-publisher',
+                                    source: 'cinema6-publisher',
                                     skip: 'never'
                                 }
                             });
@@ -825,7 +825,7 @@
                                 displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: false,
-                                    videoAdSource: 'publisher-cinema6',
+                                    source: 'publisher-cinema6',
                                     skip: 'delay'
                                 }
                             });
@@ -840,7 +840,7 @@
                                 displayAdSource: 'cinema6',
                                 data: {
                                     autoplay: false,
-                                    videoAdSource: 'publisher',
+                                    source: 'publisher',
                                     skip: 'anytime'
                                 }
                             });
@@ -1182,8 +1182,7 @@
                             expect(MiniReelService.adChoicesOf(data)).toEqual({
                                 video: [{value:'cinema6'}],
                                 display: [{value:'cinema6'}, {value:'cinema6-publisher'}, {value:'publisher'}, {value:'publisher-cinema6'}]
-                            })
-
+                            });
                         });
                     });
                 });
