@@ -202,6 +202,22 @@
         .ui__ballotIconSmall--white {
             background-position:-3.25em -3.8125em;
         }
+    .ui__adIconSmall {
+        width:0.75em; height:0.75em;
+        background-position:-6.8125em -3.8125em;
+        display:block;
+    }
+        .ui__adIconSmall--white {
+            background-position:-6em -3.8125em;
+        }
+    .ui__skipIconSmall {
+        width:0.9375em; height:0.75em;
+        background-position:-8.625em -3.8125em;
+        display:block;
+    }
+        .ui__skipIconSmall--white {
+            background-position:-7.625em -3.8125em;
+        }
     .ui__add {
         background-position:-5.3125em 0; display: block;
         width:2.25em; height:2.25em;
@@ -342,7 +358,6 @@
                 .modal__editor-mr-general .modal__textBox {
                     padding:0.5em;
                 }
-
             .modal__editor-slide {
                 padding:1.5em 0 0 0;
             }
@@ -483,6 +498,18 @@
                     }
                         .tabNav__link.c6-active .ui__ballotIconSmall {
                             background-position:-4.625em -3.8125em;
+                        }
+                    .tabNav__icon .ui__adIconSmall {
+                        margin:0.375em auto 0;
+                    }
+                        .tabNav__link.c6-active .ui__adIconSmall {
+                            background-position:-6.8125em -3.8125em;
+                        }
+                    .tabNav__icon .ui__skipIconSmall {
+                        margin:0.375em auto 0;
+                    }
+                        .tabNav__link.c6-active .ui__skipIconSmall {
+                            background-position:-8.625em -3.8125em;
                         }
                 .tabNav__tabName {
                     display: block;

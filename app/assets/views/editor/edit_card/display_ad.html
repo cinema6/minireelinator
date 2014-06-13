@@ -1,7 +1,12 @@
-<div class="modal__content modal__editor">
+<div class="modal__content modal__editor-slide">
+    <div class="modal__instructions">
+        <p>
+            These settings apply only to the Display Ad attached to this slide.
+        </p>
+    </div>
     <form c6-alias="EditCardDisplayAdCtrl.model as card">
         <ul class="wizard__group">
-            <li ng-repeat="choice in EditCardDisplayAdCtrl.choices.display" class="wizard__choice wizard__choice--textOnly">
+            <li ng-repeat="choice in EditCardDisplayAdCtrl.choices.display" class="wizard__choice wizard__choice--textOnly wizard__choice--ads">
                 <input id="displayAd_{{choice.value}}" type="radio"
                     name="minireel-category" ng-model="card.displayAdSource" ng-value="choice.value"
                     class="modal__radioBtn" />

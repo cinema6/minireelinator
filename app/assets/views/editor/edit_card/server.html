@@ -1,12 +1,17 @@
-<div class="modal__content modal__editor">
+<div class="modal__content modal__editor-slide">
+    <div class="modal__instructions">
+        <p>
+            These settings apply only to the Video Ad attached to this slide.
+        </p>
+    </div>
     <form c6-alias="EditCardServerCtrl.model as card">
-        <ul class="wizard__group wizard__group--small">
-            <li ng-repeat="choice in EditCardServerCtrl.choices.video" class="wizard__choice wizard__choice--imgLess">
+        <ul class="wizard__group">
+            <li ng-repeat="choice in EditCardServerCtrl.choices.video" class="wizard__choice wizard__choice--textOnly wizard__choice--ads">
                 <input id="server_{{choice.value}}" type="radio"
                     name="minireel-category" ng-model="card.data.videoAdSource" ng-value="choice.value"
                     class="modal__radioBtn" />
                 <label class="wizard__hitarea" for="server_{{choice.value}}"><span class="ir">{{choice.name}}</span></label>
-                <div class="wizard__copy wizard__copy--imgLess">
+                <div class="wizard__copy">
                     <h2 class="wizard__title">{{choice.name}}</h2>
                     <p class="wizard__p">{{choice.description}}</p>
                 </div>
