@@ -8,7 +8,7 @@
         <ul class="wizard__group">
             <li ng-repeat="choice in EditCardServerCtrl.choices.video" class="wizard__choice wizard__choice--textOnly wizard__choice--ads">
                 <input id="server_{{choice.value}}" type="radio"
-                    name="minireel-category" ng-model="card.data.videoAdSource" ng-value="choice.value"
+                    name="minireel-category" ng-model="card.data.source" ng-value="choice.value"
                     class="modal__radioBtn" />
                 <label class="wizard__hitarea" for="server_{{choice.value}}"><span class="ir">{{choice.name}}</span></label>
                 <div class="wizard__copy">

@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## Beta9 (June 13, 2014)
+* *[Beta9.rc2]*
+  * [FIX]: Fixed an issue that caused ad cards created by the MiniReel
+    editor not to play
+
 * *[Beta9.rc1]*
   * New elections are now created using arrays for storage
     * **The Vote Service that supports storing elections as arrays must

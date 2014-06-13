@@ -202,7 +202,7 @@
                             if (prop === 'displayAdSource') {
                                 card[prop] = self[prop];
                             } else if (card.type === 'ad') {
-                                card.data[prop] = self[prop];
+                                card.data.source = self[prop];
                             }
                             data[prop] = self[prop];
                         });

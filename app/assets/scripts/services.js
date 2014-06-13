@@ -731,7 +731,7 @@
                     }),
                     ad: {
                         autoplay: copy(true),
-                        videoAdSource: copy('cinema6'),
+                        source: copy('cinema6'),
                         skip: function(data) {
                             if (isUndefined(data.skip)) {
                                 return 'anytime';
@@ -969,7 +969,7 @@
                     },
                     ad: {
                         autoplay: copy(false),
-                        videoAdSource: copy('publisher'),
+                        source: copy('cinema6'),
                         skip: function(data) {
                             switch (data.skip) {
                             case 'anytime':

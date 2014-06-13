@@ -29,7 +29,7 @@
                             {
                                 type: 'ad',
                                 data: {
-                                    videoAdSource: 'cinema6'
+                                    source: 'cinema6'
                                 }
                             }
                         ]
@@ -332,15 +332,15 @@
                                 NewCtrl.save();
 
                                 expect(minireel.data.videoAdSource).toBe('publisher');
-                                expect(minireel.data.deck[1].data.videoAdSource).toBe('publisher');
-                                expect(minireel.data.deck[0].data.videoAdSource).toBe(undefined);
+                                expect(minireel.data.deck[1].data.source).toBe('publisher');
+                                expect(minireel.data.deck[0].data.source).toBe(undefined);
                             });
                         });
 
                         describe('if it has not changed', function() {
                             it('should not update the ad cards', function() {
                                 expect(minireel.data.videoAdSource).toBe('cinema6');
-                                expect(minireel.data.deck[1].data.videoAdSource).toBe('cinema6');
+                                expect(minireel.data.deck[1].data.source).toBe('cinema6');
                             });
                         });
                     });
