@@ -156,21 +156,21 @@
                         required: true
                     },
                     adServer = {
-                        name: 'Server Settings',
+                        name: 'Video Ad Settings',
                         sref: 'editor.editCard.server',
-                        icon: null,
+                        icon: 'ad',
                         required: false
                     },
                     adSkip = {
                         name: 'Skip Settings',
                         sref: 'editor.editCard.skip',
-                        icon: null,
+                        icon: 'skip',
                         required: false
                     },
                     displayAd = {
                         name: 'Display Ad Settings',
                         sref: 'editor.editCard.displayAd',
-                        icon: null,
+                        icon: 'ad',
                         required: false
                     };
 
