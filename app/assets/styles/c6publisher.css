@@ -633,6 +633,10 @@
             background:#f4f4f4;
             color:#646464; font-size:0.875em;
         }
+        .form__adSettings {
+            float:left;
+            width:50%;
+        }
 
     /*  minireel wizard
     ========================================================================== */
@@ -646,6 +650,9 @@
             -moz-box-sizing: border-box;
             box-sizing: border-box;
         }
+            .wizard__choice--ads {
+                margin:0 0 0.5em 0;
+            }
             .wizard__choice,
             .wizard__hitarea,
             .wizard__diagram {
@@ -691,10 +698,18 @@
                     margin:5px 0;
                     -webkit-transition: color 0.5s; transition: color 0.5s;
                 }
+                    .form__adSettings .wizard__copy .wizard__title {
+                        margin:5px 0 0 0;
+                        font-size:1em;
+                    }
                 .wizard__copy .wizard__p {
                     font-size:1em; color:#646464; font-weight:100;
                     margin:5px 0;
                 }
+                    .form__adSettings .wizard__copy .wizard__p {
+                        margin:0;
+                        font-size:0.875em;
+                    }
                 .wizard__choice:hover .wizard__title {
                     color:#13a2ff;
                 }
