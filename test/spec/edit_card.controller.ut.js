@@ -111,6 +111,7 @@
                             model: {
                                 data: {
                                     mode: 'full',
+                                    displayAdSource: 'publisher-cinema6',
                                     deck: [
                                         {
                                             id: 'rc-44b7277334f900'
@@ -145,6 +146,16 @@
                         c6StateParams.insertionIndex = 1;
                     });
 
+                    function assertMutual() {
+                        it('should set the ideal card type', function() {
+                            expect(EditCardCtrl.setIdealType).toHaveBeenCalled();
+                        });
+
+                        it('should goTo the editor state', function() {
+                            expect(c6State.goTo).toHaveBeenCalledWith('editor');
+                        });
+                    }
+
                     describe('if the card is already in the deck', function() {
                         beforeEach(function() {
                             model.id = 'rc-9bc990dd4ad17a';
@@ -152,18 +163,12 @@
                             EditCardCtrl.save();
                         });
 
-                        it('should set the ideal card type', function() {
-                            expect(EditCardCtrl.setIdealType).toHaveBeenCalled();
-                        });
-
                         it('should update the card in the deck with its properties', function() {
                             expect(EditorCtrl.model.data.deck[1]).toEqual(model);
                             expect(EditorCtrl.model.data.deck[1]).not.toBe(model);
                         });
 
-                        it('should goTo the editor state', function() {
-                            expect(c6State.goTo).toHaveBeenCalledWith('editor');
-                        });
+                        assertMutual();
                     });
 
                     describe('if the card is not in the deck', function() {
@@ -173,18 +178,12 @@
                             EditCardCtrl.save();
                         });
 
-                        it('should set the ideal card type', function() {
-                            expect(EditCardCtrl.setIdealType).toHaveBeenCalled();
-                        });
-
                         it('should insert the model into the deck at the insertionIndex', function() {
                             expect(EditorCtrl.model.data.deck[1]).toBe(model);
                             expect(EditorCtrl.model.data.deck.length).toBe(4);
                         });
 
-                        it('should goTo the editor state', function() {
-                            expect(c6State.goTo).toHaveBeenCalledWith('editor');
-                        });
+                        assertMutual();
                     });
                 });
 
