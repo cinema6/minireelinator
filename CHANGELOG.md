@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## Beta9 (June 13, 2014)
 * *[Beta9.rc1]*
   * New elections are now created using arrays for storage
     * **The Vote Service that supports storing elections as arrays must
@@ -20,6 +21,7 @@
   * In the MiniReel Modal, the user cannot click "Done" if there is no
     title inputed
   * [FEATURE]: Enable display and video ad control based on org privileges and minireel mode
+* *[/Beta9.rc1]*
 
 ## Beta8 (June 9, 2014)
 * *[Beta8.rc4]*
