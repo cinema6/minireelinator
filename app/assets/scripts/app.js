@@ -474,8 +474,9 @@
                             }],
                             updateControllerModel: ['controller','model','appData',
                             function               ( controller , model , appData ) {
-                                var deck = this.cParent.cModel.data.deck,
-                                    mode = this.cParent.cModel.data.mode,
+                                var minireelData = this.cParent.cModel.data,
+                                    deck = minireelData.deck,
+                                    mode = minireelData.mode,
                                     adData = appData.user.org.waterfalls;
 
                                 var copy = {
@@ -522,6 +523,16 @@
                                     hasOwnDisplayAdServer = adData &&
                                         (adData.display.length > 1) &&
                                         (mode === 'lightbox-ads');
+
+                                model.displayAdSource = model.displayAdSource ||
+                                    minireelData.displayAdSource;
+
+                                switch (model.type) {
+                                case 'ad':
+                                    model.data.source = model.data.source ||
+                                        minireelData.videoAdSource;
+                                    break;
+                                }
 
                                 controller.model = model;
                                 controller.tabs = (function() {

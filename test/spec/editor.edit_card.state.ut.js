@@ -39,6 +39,8 @@
                 EditorState = c6State.get('editor');
                 EditorState.cModel = {
                     data: {
+                        displayAdSource: 'publisher-cinema6',
+                        videoAdSource: 'publisher',
                         deck: [
                             {
                                 id: 'rc-19437ee278914e'
@@ -176,7 +178,8 @@
 
                 beforeEach(function() {
                     model = {
-                        type: 'video'
+                        type: 'video',
+                        data: {}
                     };
                     controller = {};
                 });
@@ -195,6 +198,22 @@
 
                     it('should set the model as the controller\'s model property', function() {
                         expect(controller.model).toBe(model);
+                    });
+
+                    it('should set the model\'s displayAdSource to the MiniReel\'s displayAdSource', function() {
+                        expect(model.displayAdSource).toBe(EditorState.cModel.data.displayAdSource);
+                    });
+
+                    describe('if the card has a displayAdSource', function() {
+                        beforeEach(function() {
+                            model.displayAdSource = 'cinema6';
+
+                            updateControllerModel();
+                        });
+
+                        it('should not change the displayAdSource', function() {
+                            expect(model.displayAdSource).not.toBe(EditorState.cModel.data.displayAdSource);
+                        });
                     });
                 });
 
@@ -239,6 +258,10 @@
                     it('should enable the "copy", "ballot", and "video" tabs', function() {
                         expect(controller.tabs).toEqual([copy, video, ballot]);
                     });
+
+                    it('should not set data.source', function() {
+                        expect(model.data.source).toBeUndefined();
+                    });
                 });
 
                 describe('on video cards', function() {
@@ -249,6 +272,10 @@
 
                     it('should enable the "copy" and "video" tabs', function() {
                         expect(controller.tabs).toEqual([copy, video, ballot]);
+                    });
+
+                    it('should not set data.source', function() {
+                        expect(model.data.source).toBeUndefined();
                     });
                 });
 
@@ -267,6 +294,22 @@
                         updateControllerModel();
 
                         expect(controller.tabs).toEqual([adSkip]);
+                    });
+
+                    it('should set data.source to the minireel\'s videoAdSource', function() {
+                        expect(model.data.source).toBe(EditorState.cModel.data.videoAdSource);
+                    });
+
+                    describe('if the ad has a source', function() {
+                        beforeEach(function() {
+                            model.data.source = 'cinema6';
+
+                            updateControllerModel();
+                        });
+
+                        it('should not change the source', function() {
+                            expect(model.data.source).not.toBe(EditorState.cModel.data.videoAdSource);
+                        });
                     });
                 });
 
@@ -346,7 +389,7 @@
                             expect(controller.tabs).toEqual([adSkip]);
                         });
                     });
-                })
+                });
             });
         });
     });
