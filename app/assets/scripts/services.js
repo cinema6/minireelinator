@@ -695,7 +695,7 @@
                     ad: function(card) {
                         return card.ad || card.type === 'ad';
                     },
-                    displayAdSource: copy('cinema6')
+                    displayAdSource: copy(null)
                 };
 
                 // videoDataTemplate: this is the base template for all
@@ -731,7 +731,7 @@
                     }),
                     ad: {
                         autoplay: copy(true),
-                        source: copy('cinema6'),
+                        source: copy(null),
                         skip: function(data) {
                             if (isUndefined(data.skip)) {
                                 return 'anytime';

@@ -316,7 +316,7 @@
                                 label: 'Video',
                                 ad: false,
                                 view: 'video',
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {
                                     service: null,
                                     videoid: null,
@@ -333,7 +333,7 @@
                                 label: 'Video + Questionnaire',
                                 ad: false,
                                 view: 'video',
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {
                                     service: null,
                                     videoid: null,
@@ -354,10 +354,10 @@
                                 label: 'Advertisement',
                                 ad: true,
                                 view: 'ad',
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {
                                     autoplay: true,
-                                    source: 'cinema6',
+                                    source: null,
                                     skip: 'anytime'
                                 }
                             });
@@ -370,7 +370,7 @@
                                 label: 'Suggested Links',
                                 ad: false,
                                 view: 'links',
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {
                                     links: []
                                 }
@@ -407,7 +407,7 @@
                                 label: null,
                                 ad: false,
                                 view: null,
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {}
                             });
                         });
@@ -429,7 +429,7 @@
                                 label: 'Video',
                                 view: 'video',
                                 ad: false,
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {
                                     service: null,
                                     videoid: null,
@@ -453,7 +453,7 @@
                                 label: 'Video + Questionnaire',
                                 view: 'video',
                                 ad: false,
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {
                                     service: 'youtube',
                                     videoid: '12345',
@@ -476,10 +476,10 @@
                                 label: 'Advertisement',
                                 view: 'ad',
                                 ad: true,
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {
                                     autoplay: true,
-                                    source: 'cinema6',
+                                    source: null,
                                     skip: 'anytime'
                                 }
                             });
@@ -494,7 +494,7 @@
                                 label: 'Suggested Links',
                                 view: 'links',
                                 ad: false,
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {
                                     links: []
                                 }
@@ -989,7 +989,7 @@
                                                 label: 'Recap',
                                                 view: 'recap',
                                                 ad: false,
-                                                displayAdSource: 'cinema6',
+                                                displayAdSource: null,
                                                 data: {}
                                             }
                                         ]
