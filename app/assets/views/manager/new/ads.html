@@ -1,5 +1,5 @@
 <div class="modal__content modal__editor clearfix">
-    <form c6-alias="NewCtrl.mode as config">
+    <form c6-alias="NewCtrl.mode as config" class="form__adSettings">
         <ul class="wizard__group" ng-if="config.value === 'lightbox-ads'">
             <li ng-repeat="choice in NewAdsCtrl.adChoices.display" class="wizard__choice wizard__choice--textOnly wizard__choice--ads">
                 <input id="displayAd_{{choice.value}}" type="radio"
@@ -13,7 +13,7 @@
             </li>
         </ul>
     </form>
-    <form>
+    <form class="form__adSettings">
         <ul class="wizard__group">
             <li ng-repeat="choice in NewAdsCtrl.adChoices.video" class="wizard__choice wizard__choice--textOnly wizard__choice--ads">
                 <input id="videoAd_{{choice.value}}" type="radio"
