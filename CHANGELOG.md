@@ -4,6 +4,10 @@
 * *[Beta9.rc2]*
   * [FIX]: Fixed an issue that caused ad cards created by the MiniReel
     editor not to play
+  * [FIX]: New cards are created with the ad server settings of the
+    MiniReel
+  * [FIX]: The MiniReel ad server settings are determined by the
+    available waterfalls, not hardcoded to "cinema6"
 
 * *[Beta9.rc1]*
   * New elections are now created using arrays for storage

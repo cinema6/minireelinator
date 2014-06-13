@@ -316,7 +316,7 @@
                                 label: 'Video',
                                 ad: false,
                                 view: 'video',
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {
                                     service: null,
                                     videoid: null,
@@ -333,7 +333,7 @@
                                 label: 'Video + Questionnaire',
                                 ad: false,
                                 view: 'video',
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {
                                     service: null,
                                     videoid: null,
@@ -354,10 +354,10 @@
                                 label: 'Advertisement',
                                 ad: true,
                                 view: 'ad',
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {
                                     autoplay: true,
-                                    source: 'cinema6',
+                                    source: null,
                                     skip: 'anytime'
                                 }
                             });
@@ -370,7 +370,7 @@
                                 label: 'Suggested Links',
                                 ad: false,
                                 view: 'links',
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {
                                     links: []
                                 }
@@ -407,7 +407,7 @@
                                 label: null,
                                 ad: false,
                                 view: null,
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {}
                             });
                         });
@@ -429,7 +429,7 @@
                                 label: 'Video',
                                 view: 'video',
                                 ad: false,
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {
                                     service: null,
                                     videoid: null,
@@ -453,7 +453,7 @@
                                 label: 'Video + Questionnaire',
                                 view: 'video',
                                 ad: false,
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {
                                     service: 'youtube',
                                     videoid: '12345',
@@ -476,10 +476,10 @@
                                 label: 'Advertisement',
                                 view: 'ad',
                                 ad: true,
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {
                                     autoplay: true,
-                                    source: 'cinema6',
+                                    source: null,
                                     skip: 'anytime'
                                 }
                             });
@@ -494,7 +494,7 @@
                                 label: 'Suggested Links',
                                 view: 'links',
                                 ad: false,
-                                displayAdSource: 'cinema6',
+                                displayAdSource: null,
                                 data: {
                                     links: []
                                 }
@@ -895,7 +895,11 @@
                                     id: 'u-5b67ee6000ce6f',
                                     org: {
                                         id: 'o-17593d7a2bf294',
-                                        minAdCount: 3
+                                        minAdCount: 3,
+                                        waterfalls: {
+                                            display: ['publisher'],
+                                            video: ['cinema6-publisher']
+                                        }
                                     },
                                     branding: 'elitedaily'
                                 }
@@ -966,8 +970,8 @@
                                     data: {
                                         title: null,
                                         mode: 'lightbox',
-                                        displayAdSource: 'cinema6',
-                                        videoAdSource: 'cinema6',
+                                        displayAdSource: appData.user.org.waterfalls.display[0],
+                                        videoAdSource: appData.user.org.waterfalls.video[0],
                                         branding: appData.user.branding,
                                         splash: {
                                             source: 'generated',
@@ -989,7 +993,7 @@
                                                 label: 'Recap',
                                                 view: 'recap',
                                                 ad: false,
-                                                displayAdSource: 'cinema6',
+                                                displayAdSource: null,
                                                 data: {}
                                             }
                                         ]
@@ -1045,8 +1049,8 @@
                                             title: null,
                                             mode: 'lightbox',
                                             branding: appData.user.branding,
-                                            displayAdSource: 'cinema6',
-                                            videoAdSource: 'cinema6',
+                                            displayAdSource: appData.user.org.waterfalls.display[0],
+                                            videoAdSource: appData.user.org.waterfalls.video[0],
                                             splash: {
                                                 ratio: minireels[0].data.splash.ratio,
                                                 source: firstMiniReel.data.splash.source,
