@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## Beta9 (June 13, 2014)
+* *[Beta9.rc3]*
+  * Temporarily remove "Preview This Slide" from underneath the ad cards
+    until the player supports jumping right to them
+* *[/Beta9.rc3]*
+
 * *[Beta9.rc2]*
   * [FIX]: Fixed an issue that caused ad cards created by the MiniReel
     editor not to play
