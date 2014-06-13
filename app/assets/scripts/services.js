@@ -1082,18 +1082,19 @@
                         },
                         ratio = lastMinireel.data.splash.ratio,
                         theme = lastMinireel.data.splash.theme,
-                        user = data.user;
+                        user = data.user,
+                        org = user.org;
 
                     return $q.when(toCopy ? toCopy.pojoify() :
                         {
                             type: 'minireel',
-                            org: user.org.id,
+                            org: org.id,
                             appUri: 'rumble',
                             data: {
                                 title: null,
                                 mode: 'lightbox',
-                                displayAdSource: 'cinema6',
-                                videoAdSource: 'cinema6',
+                                displayAdSource: org.waterfalls.display[0],
+                                videoAdSource: org.waterfalls.video[0],
                                 branding: user.branding,
                                 splash: {
                                     source: 'generated',

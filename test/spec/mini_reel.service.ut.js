@@ -895,7 +895,11 @@
                                     id: 'u-5b67ee6000ce6f',
                                     org: {
                                         id: 'o-17593d7a2bf294',
-                                        minAdCount: 3
+                                        minAdCount: 3,
+                                        waterfalls: {
+                                            display: ['publisher'],
+                                            video: ['cinema6-publisher']
+                                        }
                                     },
                                     branding: 'elitedaily'
                                 }
@@ -966,8 +970,8 @@
                                     data: {
                                         title: null,
                                         mode: 'lightbox',
-                                        displayAdSource: 'cinema6',
-                                        videoAdSource: 'cinema6',
+                                        displayAdSource: appData.user.org.waterfalls.display[0],
+                                        videoAdSource: appData.user.org.waterfalls.video[0],
                                         branding: appData.user.branding,
                                         splash: {
                                             source: 'generated',
@@ -1045,8 +1049,8 @@
                                             title: null,
                                             mode: 'lightbox',
                                             branding: appData.user.branding,
-                                            displayAdSource: 'cinema6',
-                                            videoAdSource: 'cinema6',
+                                            displayAdSource: appData.user.org.waterfalls.display[0],
+                                            videoAdSource: appData.user.org.waterfalls.video[0],
                                             splash: {
                                                 ratio: minireels[0].data.splash.ratio,
                                                 source: firstMiniReel.data.splash.source,
