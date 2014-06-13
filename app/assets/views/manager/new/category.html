@@ -18,8 +18,8 @@
     * These changes affect desktop experiences only.
 </div>
 <footer class="modal__btnFooter">
-    <button ng-show="NewCtrl.currentTab !== NewCtrl.tabs[0]" class="modal__btn modal__btn--first" c6-sref="{{NewCtrl.baseState}}.general" title="Previous Step">Prev Step</button>
+    <button ng-show="NewCtrl.currentTab !== NewCtrl.tabs[0]" ng-click="NewCtrl.prevTab()" class="modal__btn modal__btn--first" title="Previous Step">Prev Step</button>
     <button ng-show="NewCtrl.currentTab === NewCtrl.tabs[0]" class="modal__btn modal__btn--first toolbar__delete" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
-    <button c6-sref="{{NewCtrl.baseState}}.mode" class="modal__btn modal__btn--last" type="button" title="Next Step">Next Step</button>
+    <button class="modal__btn modal__btn--last" type="button" ng-click="NewCtrl.nextTab()" title="Next Step">Next Step</button>
     <div class="guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</div>
 </footer>

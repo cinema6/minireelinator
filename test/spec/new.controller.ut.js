@@ -2,7 +2,7 @@
     'use strict';
 
     define(['manager'], function() {
-        ddescribe('NewController', function() {
+        describe('NewController', function() {
             var $rootScope,
                 $q,
                 $scope,
@@ -18,7 +18,21 @@
                     data: {
                         title: 'Awesome Videos, Brah!',
                         mode: 'full',
-                        autoplay: false
+                        autoplay: false,
+                        displayAdSource: 'cinema6',
+                        videoAdSource: 'cinema6',
+                        deck: [
+                            {
+                                displayAdSource: 'cinema6',
+                                data: {}
+                            },
+                            {
+                                type: 'ad',
+                                data: {
+                                    videoAdSource: 'cinema6'
+                                }
+                            }
+                        ]
                     },
                     save: jasmine.createSpy('minireel.save()')
                         .and.callFake(function() {
@@ -74,21 +88,31 @@
                         NewCtrl.model = model;
                         NewCtrl.tabs = [
                             {
+                                name: 'Title Settings',
                                 sref: 'general',
                                 requiredVisits: 3,
                                 visits: 3
                             },
                             {
+                                name: 'Lightbox',
                                 sref: 'category',
                                 requiredVisits: 10,
                                 visits: 10
                             },
                             {
+                                name: 'MiniReel Type',
                                 sref: 'mode',
                                 requiredVisits: 3,
                                 visits: 3
                             },
                             {
+                                name: 'Ad Settings',
+                                sref: 'ads',
+                                requiredVisits: 3,
+                                visits: 3
+                            },
+                            {
+                                name: 'Autoplay',
                                 sref: 'autoplay',
                                 requiredVisits: 5,
                                 visits: 5
@@ -216,6 +240,18 @@
                     });
                 });
 
+                describe('displayAdSource', function() {
+                    it('should be the displayAdSource value of the minireel', function() {
+                        expect(NewCtrl.displayAdSource).toBe(minireel.data.displayAdSource);
+                    });
+                });
+
+                describe('videoAdSource', function() {
+                    it('should be the videoAdSource value of the minireel', function() {
+                        expect(NewCtrl.videoAdSource).toBe(minireel.data.videoAdSource);
+                    });
+                });
+
                 describe('currentTab', function() {
                     describe('if there is no tab for the current state', function() {
                         beforeEach(function() {
@@ -270,6 +306,45 @@
                         expect(minireel.save).toHaveBeenCalled();
                     });
 
+                    describe('checks the displayAdSource', function() {
+                        describe('if it has changed', function() {
+                            it('should add the info to every card', function() {
+                                NewCtrl.displayAdSource = 'publisher';
+                                NewCtrl.save();
+
+                                expect(minireel.data.displayAdSource).toBe('publisher');
+                                expect(minireel.data.deck[0].displayAdSource).toBe('publisher');
+                            });
+                        });
+
+                        describe('if it has not changed', function() {
+                            it('should not update the property on any cards', function() {
+                                expect(minireel.data.displayAdSource).toBe('cinema6');
+                                expect(minireel.data.deck[0].displayAdSource).toBe('cinema6');
+                            });
+                        });
+                    });
+
+                    describe('checks the videoAdSource', function() {
+                        describe('if it has changed', function() {
+                            it('should update the property on the ad card only', function() {
+                                NewCtrl.videoAdSource = 'publisher';
+                                NewCtrl.save();
+
+                                expect(minireel.data.videoAdSource).toBe('publisher');
+                                expect(minireel.data.deck[1].data.videoAdSource).toBe('publisher');
+                                expect(minireel.data.deck[0].data.videoAdSource).toBe(undefined);
+                            });
+                        });
+
+                        describe('if it has not changed', function() {
+                            it('should not update the ad cards', function() {
+                                expect(minireel.data.videoAdSource).toBe('cinema6');
+                                expect(minireel.data.deck[1].data.videoAdSource).toBe('cinema6');
+                            });
+                        });
+                    });
+
                     describe('after the save is finished', function() {
                         beforeEach(function() {
                             $scope.$apply(function() {
@@ -294,6 +369,58 @@
 
                         it('should go right to the editor', function() {
                             expect(c6State.goTo).toHaveBeenCalledWith('editor', { minireelId: minireel.id });
+                        });
+                    });
+                });
+
+                describe('nextTab()', function() {
+                    describe('when there is a next tab', function() {
+                        it('should go to the next tab state', function() {
+                            spyOn(c6State, 'goTo');
+
+                            c6State.current = { name: 'manager.new.general' };
+
+                            NewCtrl.nextTab();
+
+                            expect(c6State.goTo).toHaveBeenCalledWith('manager.new.' + NewCtrl.tabs[1].sref);
+                        });
+                    });
+
+                    describe('when there is not a next tab', function() {
+                        it('should do nothing', function() {
+                            spyOn(c6State, 'goTo');
+
+                            c6State.current = { name: 'manager.new.autoplay' };
+
+                            NewCtrl.nextTab();
+
+                            expect(c6State.goTo).not.toHaveBeenCalled();
+                        });
+                    });
+                });
+
+                describe('prevTab()', function() {
+                    describe('when there is a previous tab', function() {
+                        it('should go to the next tab state', function() {
+                            spyOn(c6State, 'goTo');
+
+                            c6State.current = { name: 'manager.new.mode' };
+
+                            NewCtrl.prevTab();
+
+                            expect(c6State.goTo).toHaveBeenCalledWith('manager.new.' + NewCtrl.tabs[1].sref);
+                        });
+                    });
+
+                    describe('when there is not a next tab', function() {
+                        it('should do nothing', function() {
+                            spyOn(c6State, 'goTo');
+
+                            c6State.current = { name: 'manager.new.general' };
+
+                            NewCtrl.prevTab();
+
+                            expect(c6State.goTo).not.toHaveBeenCalled();
                         });
                     });
                 });
@@ -413,7 +540,7 @@
                         });
 
                         it('should bump up the requiredVisits of the autoplay tab', function() {
-                            expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits + 1);
+                            expect(NewCtrl.tabs[4].requiredVisits).toBe(NewCtrl.tabs[4].visits + 1);
                         });
                     });
 
@@ -433,7 +560,7 @@
                                 });
 
                                 it('should bump up the requiredVisits of the autoplay tab', function() {
-                                    expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits + 1);
+                                    expect(NewCtrl.tabs[4].requiredVisits).toBe(NewCtrl.tabs[4].visits + 1);
                                 });
                             });
                         });
@@ -444,13 +571,52 @@
                             $scope.$apply(function() {
                                 NewCtrl.mode = model.modes[0].modes[0];
                             });
-                            NewCtrl.tabs[3].requiredVisits = NewCtrl.tabs[3].visits;
+                            NewCtrl.tabs[4].requiredVisits = NewCtrl.tabs[4].visits;
                             $scope.$apply(function() {
                                 NewCtrl.mode = model.modes[0].modes[1];
                             });
                         });
 
                         it('should not bump up the requiredVisits of the autoplay tab', function() {
+                            expect(NewCtrl.tabs[4].requiredVisits).toBe(NewCtrl.tabs[4].visits);
+                        });
+                    });
+
+                    describe('when switching modes to lightbox-ads', function() {
+                        it('should bump up the requiredVisits of the ads tab', function() {
+                            $scope.$apply(function() {
+                                NewCtrl.mode = model.modes[0].modes[0];
+                            });
+                            $scope.$apply(function() {
+                                NewCtrl.mode = model.modes[0].modes[1];
+                            });
+
+                            expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits + 1);
+                        });
+                    });
+
+                    describe('when switching modes from lightbox-ads', function() {
+                        it('should bump up the requiredVisits of the ads tab', function() {
+                            $scope.$apply(function() {
+                                NewCtrl.mode = model.modes[0].modes[1];
+                            });
+                            $scope.$apply(function() {
+                                NewCtrl.mode = model.modes[0].modes[0];
+                            });
+
+                            expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits + 1);
+                        });
+                    });
+
+                    describe('when switching modes that do not effect display ads', function() {
+                        it('should bump up the requiredVisits of the ads tab', function() {
+                            $scope.$apply(function() {
+                                NewCtrl.mode = model.modes[1].modes[1];
+                            });
+                            $scope.$apply(function() {
+                                NewCtrl.mode = model.modes[1].modes[0];
+                            });
+
                             expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits);
                         });
                     });

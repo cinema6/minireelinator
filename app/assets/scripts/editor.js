@@ -939,6 +939,16 @@
             );
         }])
 
+        .controller('EditCardDisplayAdController', ['appData','MiniReelService',
+        function                                   ( appData , MiniReelService ) {
+            this.choices = MiniReelService.adChoicesOf(appData);
+        }])
+
+        .controller('EditCardServerController', ['appData','MiniReelService',
+        function                                 ( appData , MiniReelService ) {
+            this.choices = MiniReelService.adChoicesOf(appData);
+        }])
+
         .controller('NewCardController', ['c6State','c6StateParams','MiniReelService',
         function                         ( c6State , c6StateParams , MiniReelService ) {
             this.type = 'videoBallot';
@@ -1058,7 +1068,7 @@
                     }
 
                     if(newCard) {
-                        card = MiniReelService.convertCard(newCard);
+                        card = MiniReelService.convertCard(newCard, experience.data.mode);
                         session.ping('mrPreview:jumpToCard', card);
                     } else {
                         card = null;

@@ -202,6 +202,22 @@
         .ui__ballotIconSmall--white {
             background-position:-3.25em -3.8125em;
         }
+    .ui__adIconSmall {
+        width:0.75em; height:0.75em;
+        background-position:-6.8125em -3.8125em;
+        display:block;
+    }
+        .ui__adIconSmall--white {
+            background-position:-6em -3.8125em;
+        }
+    .ui__skipIconSmall {
+        width:0.9375em; height:0.75em;
+        background-position:-8.625em -3.8125em;
+        display:block;
+    }
+        .ui__skipIconSmall--white {
+            background-position:-7.625em -3.8125em;
+        }
     .ui__add {
         background-position:-5.3125em 0; display: block;
         width:2.25em; height:2.25em;
@@ -342,7 +358,6 @@
                 .modal__editor-mr-general .modal__textBox {
                     padding:0.5em;
                 }
-
             .modal__editor-slide {
                 padding:1.5em 0 0 0;
             }
@@ -483,6 +498,18 @@
                     }
                         .tabNav__link.c6-active .ui__ballotIconSmall {
                             background-position:-4.625em -3.8125em;
+                        }
+                    .tabNav__icon .ui__adIconSmall {
+                        margin:0.375em auto 0;
+                    }
+                        .tabNav__link.c6-active .ui__adIconSmall {
+                            background-position:-6.8125em -3.8125em;
+                        }
+                    .tabNav__icon .ui__skipIconSmall {
+                        margin:0.375em auto 0;
+                    }
+                        .tabNav__link.c6-active .ui__skipIconSmall {
+                            background-position:-8.625em -3.8125em;
                         }
                 .tabNav__tabName {
                     display: block;
@@ -633,6 +660,10 @@
             background:#f4f4f4;
             color:#646464; font-size:0.875em;
         }
+        .form__adSettings {
+            float:left;
+            width:50%;
+        }
 
     /*  minireel wizard
     ========================================================================== */
@@ -646,6 +677,9 @@
             -moz-box-sizing: border-box;
             box-sizing: border-box;
         }
+            .wizard__choice--ads {
+                margin:0 0 0.5em 0;
+            }
             .wizard__choice,
             .wizard__hitarea,
             .wizard__diagram {
@@ -691,10 +725,18 @@
                     margin:5px 0;
                     -webkit-transition: color 0.5s; transition: color 0.5s;
                 }
+                    .form__adSettings .wizard__copy .wizard__title {
+                        margin:5px 0 0 0;
+                        font-size:1em;
+                    }
                 .wizard__copy .wizard__p {
                     font-size:1em; color:#646464; font-weight:100;
                     margin:5px 0;
                 }
+                    .form__adSettings .wizard__copy .wizard__p {
+                        margin:0;
+                        font-size:0.875em;
+                    }
                 .wizard__choice:hover .wizard__title {
                     color:#13a2ff;
                 }

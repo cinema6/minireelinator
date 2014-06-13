@@ -12,7 +12,7 @@
     * These changes affect desktop experiences only.
 </div>
 <footer class="modal__btnFooter">
-    <button class="modal__btn modal__btn--first" c6-sref="{{NewCtrl.baseState}}.mode" title="Previous Step">Prev Step</button>
+    <button class="modal__btn modal__btn--first" ng-click="NewCtrl.prevTab()" title="Previous Step">Prev Step</button>
     <button ng-click="NewCtrl.save()" class="modal__btn modal__btn--last toolbar__confirm" type="button" title="Done!" ng-disabled="!NewCtrl.title">I&rsquo;m Done!</button>
     <div class="guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</div>
 </footer>

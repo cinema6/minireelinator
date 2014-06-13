@@ -5,7 +5,21 @@
         "status": "active",
         "org": {
             "id": "o-d1f0be2ea473cb",
-            "minAdCount": 3
+            "minAdCount": 3,
+            "waterfalls": {
+                "video": [
+                    "cinema6",
+                    "publisher",
+                    "cinema6-publisher",
+                    "publisher-cinema6"
+                ],
+                "display": [
+                    "cinema6",
+                    "publisher",
+                    "cinema6-publisher",
+                    "publisher-cinema6"
+                ]
+            }
         },
         "applications": [
            "e-51ae37625cb57f"

@@ -694,7 +694,8 @@
                     },
                     ad: function(card) {
                         return card.ad || card.type === 'ad';
-                    }
+                    },
+                    displayAdSource: copy('cinema6')
                 };
 
                 // videoDataTemplate: this is the base template for all
@@ -730,7 +731,7 @@
                     }),
                     ad: {
                         autoplay: copy(true),
-                        source: copy('cinema6'),
+                        videoAdSource: copy('cinema6'),
                         skip: function(data) {
                             if (isUndefined(data.skip)) {
                                 return 'anytime';
@@ -796,6 +797,22 @@
                 });
 
                 return result;
+            };
+
+            this.adChoicesOf = function(data) {
+                var w = data.user.org.waterfalls,
+                    d = data.experience.data,
+                    choices = {};
+
+                angular.forEach(w, function(waterfallArray, type) {
+                    var choiceKey = type + 'AdSources';
+
+                    choices[type] = d[choiceKey].filter(function(x) {
+                        return w[type].indexOf(x.value) > -1;
+                    });
+                });
+
+                return choices;
             };
 
             this.findCard = function(deck, id) {
@@ -868,6 +885,8 @@
                     branding: minireel.data.branding,
                     autoplay: minireel.data.autoplay,
                     election: minireel.data.election,
+                    displayAdSource: minireel.data.displayAdSource || 'cinema6',
+                    videoAdSource: minireel.data.videoAdSource || 'cinema6',
                     collateral: minireel.data.collateral ||
                         { splash: null },
                     splash: minireel.data.splash ||
@@ -888,7 +907,7 @@
                 return model;
             };
 
-            this.convertCard = function(card) {
+            this.convertCard = function(card, mode) {
                 var dataTemplates, cardBases, cardType, dataType,
                     newCard = {
                         data: {}
@@ -950,7 +969,7 @@
                     },
                     ad: {
                         autoplay: copy(false),
-                        source: copy('publisher'),
+                        videoAdSource: copy('publisher'),
                         skip: function(data) {
                             switch (data.skip) {
                             case 'anytime':
@@ -979,30 +998,40 @@
                             return camelSource(card.data.service);
                         },
                         modules: function(card) {
-                            return card.type === 'videoBallot' ? ['ballot'] : [];
+                            var modules = card.type === 'videoBallot' ? ['ballot'] : [];
+                            if(mode === 'lightbox-ads') {
+                                modules.push('displayAd');
+                            }
+                            return modules;
                         },
                         ballot: function(card) {
                             return card.data.ballot;
-                        }
+                        },
+                        displayAdSource: copy('cinema6')
                     },
                     ad: {
                         id: copy(),
                         type: value('ad'),
                         ad: value(true),
-                        modules: value(['displayAd'])
+                        modules: value(['displayAd']),
+                        displayAdSource: copy('cinema6')
                     },
                     links: {
                         id: copy(),
                         type: value('links'),
                         title: copy(null),
                         note: copy(null),
+                        displayAdSource: copy('cinema6')
                     },
                     recap: {
                         id: copy(),
                         type: copy(),
                         title: copy(),
                         note: copy(),
-                        modules: value([])
+                        modules: function() {
+                            return mode === 'lightbox-ads' ? ['displayAd'] : [];
+                        },
+                        displayAdSource: copy('cinema6')
                     }
                 };
 
@@ -1063,6 +1092,8 @@
                             data: {
                                 title: null,
                                 mode: 'lightbox',
+                                displayAdSource: 'cinema6',
+                                videoAdSource: 'cinema6',
                                 branding: user.branding,
                                 splash: {
                                     source: 'generated',
@@ -1121,7 +1152,7 @@
                     target.data[key] = value;
                 });
                 forEach(minireel.data.deck, function(card) {
-                    convertedDeck.push(self.convertCard(card));
+                    convertedDeck.push(self.convertCard(card, minireel.data.mode));
                 });
 
                 target.data.deck = convertedDeck;

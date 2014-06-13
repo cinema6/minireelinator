@@ -22,7 +22,7 @@
                         },
                         {
                             "name": "Lightbox, with Companion Ad",
-                            "disabled": true,
+                            "disabled": false,
                             "value": "lightbox-ads",
                             "description": "A 300x250 ad will be displayed on every slide. No character limits, the content space will scroll as needed.",
                             "limits": {},
@@ -54,6 +54,50 @@
                             "autoplayable": false
                         }
                     ]
+                }
+            ],
+            "videoAdSources": [
+                {
+                    "name": "Cinema6 Ad Server Only",
+                    "value": "cinema6",
+                    "description": "Only call the Cinema6 ad server"
+                },
+                {
+                    "name": "Cinema6 with Publisher Fallback",
+                    "value": "cinema6-publisher",
+                    "description": "Try calling Cinema6 ad server first, but fall back to publisher ad tag"
+                },
+                {
+                    "name": "Publisher Only",
+                    "value": "publisher",
+                    "description": "Only call the Publisher's provided ad tag"
+                },
+                {
+                    "name": "Publisher with Cinema6 Fallback",
+                    "value": "publisher-cinema6",
+                    "description": "Try calling Publisher ad tag first, but fall back to Cinema6 ad server"
+                }
+            ],
+            "displayAdSources": [
+                {
+                    "name": "Cinema6 Only",
+                    "value": "cinema6",
+                    "description": "Only call the Cinema6 ad server"
+                },
+                {
+                    "name": "Cinema6 with Publisher Fallback",
+                    "value": "cinema6-publisher",
+                    "description": "Try calling Cinema6 ad server first, but fall back to publisher ad tag"
+                },
+                {
+                    "name": "Publisher Only",
+                    "value": "publisher",
+                    "description": "Only call the Publisher's provided ad tag"
+                },
+                {
+                    "name": "Publisher with Cinema6 Fallback",
+                    "value": "publisher-cinema6",
+                    "description": "Try calling Publisher ad tag first, but fall back to Cinema6 ad server"
                 }
             ]
         }

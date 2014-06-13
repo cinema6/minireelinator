@@ -36,6 +36,12 @@
                     requiredVisits: 0,
                     required: false
                 },
+                ads: {
+                    name: jasmine.any(String),
+                    sref: 'ads',
+                    visits: 0,
+                    requiredVisits: 0
+                },
                 autoplay: {
                     name: jasmine.any(String),
                     sref: 'autoplay',
@@ -47,13 +53,6 @@
 
             beforeEach(function() {
                 minireel = {};
-                appData = {
-                    experience: {
-                        data: {
-                            modes: []
-                        }
-                    }
-                };
 
                 module('c6.mrmaker');
 
@@ -63,6 +62,7 @@
                     c6State = $injector.get('c6State');
                     $rootScope = $injector.get('$rootScope');
                     $q = $injector.get('$q');
+                    appData = $injector.get('appData');
                     cinema6 = $injector.get('cinema6');
 
                     EditorState = c6State.get('editor');
@@ -72,6 +72,21 @@
                 EditorState.cModel = minireel;
 
                 spyOn(cinema6, 'getAppData').and.returnValue($q.when(appData));
+                spyOn(appData, 'ensureFulfillment').and.returnValue($q.when(appData));
+
+                appData.experience = {
+                    data: {
+                        modes: []
+                    }
+                };
+                appData.user = {
+                    org: {
+                        waterfalls: {
+                            video: [],
+                            display: []
+                        }
+                    }
+                };
             });
 
             it('should exist', function() {
@@ -164,6 +179,29 @@
                         jasmine.objectContaining(tabs.mode),
                         jasmine.objectContaining(tabs.autoplay)
                     ]);
+                });
+
+                describe('when ad server editing is enabled', function() {
+                    it('should', function() {
+                        appData.user = {
+                            org: {
+                                waterfalls: {
+                                    video: ['cinema6','publisher'],
+                                    display: ['cinema6','publisher']
+                                }
+                            }
+                        };
+                        $injector.invoke(SetModeState.updateControllerModel, SetModeState, {
+                            controller: controller,
+                            model: model
+                        });
+                        expect(controller.tabs).toEqual([
+                            jasmine.objectContaining(tabs.category),
+                            jasmine.objectContaining(tabs.mode),
+                            jasmine.objectContaining(tabs.ads),
+                            jasmine.objectContaining(tabs.autoplay)
+                        ]);
+                    });
                 });
             });
         });

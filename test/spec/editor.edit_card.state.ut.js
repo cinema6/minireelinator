@@ -29,7 +29,10 @@
                 spyOn(appData, 'ensureFulfillment').and.returnValue($q.when(appData));
                 appData.user = {
                     org: {
-                        enablePublisherAds: true
+                        waterfalls: {
+                            video: ['cinema6','cinema6-publisher','publisher','publisher-cinema6'],
+                            display: ['cinema6','cinema6-publisher','publisher','publisher-cinema6']
+                        }
                     }
                 };
 
@@ -153,15 +156,21 @@
                         required: true
                     },
                     adServer = {
-                        name: 'Server Settings',
+                        name: 'Video Ad Settings',
                         sref: 'editor.editCard.server',
-                        icon: null,
+                        icon: 'ad',
                         required: false
                     },
                     adSkip = {
                         name: 'Skip Settings',
                         sref: 'editor.editCard.skip',
-                        icon: null,
+                        icon: 'skip',
+                        required: false
+                    },
+                    displayAd = {
+                        name: 'Display Ad Settings',
+                        sref: 'editor.editCard.displayAd',
+                        icon: 'ad',
                         required: false
                     };
 
@@ -254,12 +263,90 @@
                     });
 
                     it('should only enable the "skip" tab if enablePublisherAds is false', function() {
-                        appData.user.org.enablePublisherAds = false;
+                        appData.user.org.waterfalls.video = [];
                         updateControllerModel();
 
                         expect(controller.tabs).toEqual([adSkip]);
                     });
                 });
+
+                describe('in lighbox-ads mode', function() {
+                    beforeEach(function() {
+                        EditorState.cModel.data.mode = 'lightbox-ads';
+                    });
+
+                    describe('on a new card', function() {
+                        beforeEach(function() {
+                            updateControllerModel();
+                        });
+
+                        it('should set isNew to true', function() {
+                            expect(controller.isNew).toBe(true);
+                        });
+                    });
+
+                    describe('on an existing card', function() {
+                        it('should set isNew to false', function() {
+                            EditorState.cModel.data.deck.forEach(function(card) {
+                                model = angular.copy(card);
+                                updateControllerModel();
+
+                                expect(controller.isNew).toBe(false);
+                            });
+                        });
+                    });
+
+                    describe('on typeless cards', function() {
+                        beforeEach(function() {
+                            model.type = null;
+                            updateControllerModel();
+                        });
+
+                        it('should not enable any tabs', function() {
+                            expect(controller.tabs).toEqual([]);
+                        });
+                    });
+
+                    describe('on videoBallot cards', function() {
+                        beforeEach(function() {
+                            model.type = 'videoBallot';
+                            updateControllerModel();
+                        });
+
+                        it('should enable the "copy", "ballot", and "video" tabs', function() {
+                            expect(controller.tabs).toEqual([copy, video, ballot, displayAd]);
+                        });
+                    });
+
+                    describe('on video cards', function() {
+                        beforeEach(function() {
+                            model.type = 'video';
+                            updateControllerModel();
+                        });
+
+                        it('should enable the "copy" and "video" tabs', function() {
+                            expect(controller.tabs).toEqual([copy, video, ballot, displayAd]);
+                        });
+                    });
+
+                    describe('on ad cards', function() {
+                        beforeEach(function() {
+                            model.type = 'ad';
+                            updateControllerModel();
+                        });
+
+                        it('should enable the "server" and "skip" tabs', function() {
+                            expect(controller.tabs).toEqual([adServer, adSkip]);
+                        });
+
+                        it('should only enable the "skip" tab if enablePublisherAds is false', function() {
+                            appData.user.org.waterfalls.video = [];
+                            updateControllerModel();
+
+                            expect(controller.tabs).toEqual([adSkip]);
+                        });
+                    });
+                })
             });
         });
     });

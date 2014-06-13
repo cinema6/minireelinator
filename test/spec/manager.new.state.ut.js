@@ -36,6 +36,12 @@
                     requiredVisits: 0,
                     required: false
                 },
+                ads: {
+                    name: jasmine.any(String),
+                    sref: 'ads',
+                    visits: 0,
+                    requiredVisits: 0
+                },
                 autoplay: {
                     name: jasmine.any(String),
                     sref: 'autoplay',
@@ -47,13 +53,6 @@
 
             beforeEach(function() {
                 minireel = {};
-                appData = {
-                    experience: {
-                        data: {
-                            modes: []
-                        }
-                    }
-                };
 
                 module('c6.mrmaker');
 
@@ -64,13 +63,29 @@
                     $rootScope = $injector.get('$rootScope');
                     $q = $injector.get('$q');
                     cinema6 = $injector.get('cinema6');
+                    appData = $injector.get('appData');
                     MiniReelService = $injector.get('MiniReelService');
 
                     ManagerNewState = c6State.get('manager.new');
                 });
 
                 spyOn(cinema6, 'getAppData').and.returnValue($q.when(appData));
+                spyOn(appData, 'ensureFulfillment').and.returnValue($q.when(appData));
                 spyOn(MiniReelService, 'create').and.returnValue(minireel);
+
+                appData.experience = {
+                    data: {
+                        modes: []
+                    }
+                };
+                appData.user = {
+                    org: {
+                        waterfalls: {
+                            video: [],
+                            display: []
+                        }
+                    }
+                };
             });
 
             it('should exist', function() {
@@ -144,6 +159,30 @@
                         jasmine.objectContaining(tabs.mode),
                         jasmine.objectContaining(tabs.autoplay)
                     ]);
+                });
+
+                describe('when ad server editing is enabled', function() {
+                    it('should', function() {
+                        appData.user = {
+                            org: {
+                                waterfalls: {
+                                    video: ['cinema6','publisher'],
+                                    display: ['cinema6','publisher']
+                                }
+                            }
+                        };
+                        $injector.invoke(ManagerNewState.updateControllerModel, ManagerNewState, {
+                            controller: controller,
+                            model: model
+                        });
+                        expect(controller.tabs).toEqual([
+                            jasmine.objectContaining(tabs.general),
+                            jasmine.objectContaining(tabs.category),
+                            jasmine.objectContaining(tabs.mode),
+                            jasmine.objectContaining(tabs.ads),
+                            jasmine.objectContaining(tabs.autoplay)
+                        ]);
+                    });
                 });
             });
         });
