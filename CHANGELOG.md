@@ -8,6 +8,7 @@
     MiniReel
   * [FIX]: The MiniReel ad server settings are determined by the
     available waterfalls, not hardcoded to "cinema6"
+* *[/Beta9.rc2]*
 
 * *[Beta9.rc1]*
   * New elections are now created using arrays for storage
