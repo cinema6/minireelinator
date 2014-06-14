@@ -657,7 +657,7 @@
                         case 'ad':
                             return 'Advertisement';
                         case 'recap':
-                            return 'Recap';
+                            return null;
                         default:
                             return card.title || null;
                         }
@@ -907,8 +907,9 @@
                 return model;
             };
 
-            this.convertCard = function(card, mode) {
+            this.convertCard = function(card, minireel) {
                 var dataTemplates, cardBases, cardType, dataType,
+                    mode = minireel.data.mode,
                     newCard = {
                         data: {}
                     };
@@ -1026,7 +1027,9 @@
                     recap: {
                         id: copy(),
                         type: copy(),
-                        title: copy(),
+                        title: function() {
+                            return 'Recap of ' + minireel.data.title;
+                        },
                         note: copy(),
                         modules: function() {
                             return mode === 'lightbox-ads' ? ['displayAd'] : [];
@@ -1153,7 +1156,7 @@
                     target.data[key] = value;
                 });
                 forEach(minireel.data.deck, function(card) {
-                    convertedDeck.push(self.convertCard(card, minireel.data.mode));
+                    convertedDeck.push(self.convertCard(card, minireel));
                 });
 
                 target.data.deck = convertedDeck;
