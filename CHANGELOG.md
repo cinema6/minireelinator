@@ -5,6 +5,8 @@
   * [FIX]: New MiniReel button that appears when you have no MiniReels
     now links to the title tab of the New MiniReel modal rather than the
     Lightbox tab
+  * Temporarily disable ability to edit splash image when the MiniReel
+    is published
 
 * *[Beta9.rc3]*
   * Temporarily remove "Preview This Slide" from underneath the ad cards
