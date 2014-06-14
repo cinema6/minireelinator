@@ -9,6 +9,7 @@
     is published
   * Temporarily disable the auto-generation of a splash image when the
     user clicks "Publish" on an already-published MiniReel
+  * Recap cards are now given a title of "Recap of {{title}}"
 * *[/Beta9.rc4]*
 
 * *[Beta9.rc3]*

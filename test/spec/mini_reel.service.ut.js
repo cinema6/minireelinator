@@ -230,7 +230,7 @@
                             {
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
-                                title: 'Recap',
+                                title: 'Recap of My MiniReel',
                                 note: null,
                                 displayAdSource: 'cinema6',
                                 modules: [],
@@ -866,7 +866,7 @@
                             expect(deck[10]).toEqual({
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
-                                title: 'Recap',
+                                title: null,
                                 note: null,
                                 label: 'Recap',
                                 ad: false,
@@ -987,7 +987,7 @@
                                             jasmine.objectContaining(adCard),
                                             {
                                                 id: jasmine.any(String),
-                                                title: 'Recap',
+                                                title: null,
                                                 note: null,
                                                 type: 'recap',
                                                 label: 'Recap',
