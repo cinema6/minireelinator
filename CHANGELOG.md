@@ -7,6 +7,9 @@
     Lightbox tab
   * Temporarily disable ability to edit splash image when the MiniReel
     is published
+  * Temporarily disable the auto-generation of a splash image when the
+    user clicks "Publish" on an already-published MiniReel
+* *[/Beta9.rc4]*
 
 * *[Beta9.rc3]*
   * Temporarily remove "Preview This Slide" from underneath the ad cards

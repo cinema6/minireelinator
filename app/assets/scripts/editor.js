@@ -149,7 +149,8 @@
                     proxy = _private.proxy;
 
                 function syncWithCollateral() {
-                    if (proxy.data.splash.source === 'specified') {
+                    if (proxy.data.splash.source === 'specified' ||
+                        proxy.status === 'active') {
                         return $q.when(proxy);
                     }
 

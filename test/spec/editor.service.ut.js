@@ -721,7 +721,7 @@
                                         });
                                     });
 
-                                    it('should cache the image', function() {
+                                    xit('should cache the image', function() {
                                         expect(CollateralService.generateCollage).toHaveBeenCalledWith({
                                             minireel: proxy,
                                             name: 'splash',
