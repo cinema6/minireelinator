@@ -1069,7 +1069,7 @@
                     }
 
                     if(newCard) {
-                        card = MiniReelService.convertCard(newCard, experience.data.mode);
+                        card = MiniReelService.convertCard(newCard, experience);
                         session.ping('mrPreview:jumpToCard', card);
                     } else {
                         card = null;
