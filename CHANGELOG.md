@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## Beta9 (June 13, 2014)
+* *[Beta9.rc4]*
+  * [FIX]: New MiniReel button that appears when you have no MiniReels
+    now links to the title tab of the New MiniReel modal rather than the
+    Lightbox tab
+
 * *[Beta9.rc3]*
   * Temporarily remove "Preview This Slide" from underneath the ad cards
     until the player supports jumping right to them
