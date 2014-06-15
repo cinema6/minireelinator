@@ -373,7 +373,7 @@
             padding:1.5em;
         }
             .preview__container--mobile {
-                width:20em; height:auto;
+                width:20em; height:auto; min-height:38.875em;
                 margin:0 0 0 -11.5em;
             }
             .preview__container--desktop {

@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[Beta9.rc5]*
+  * [FIX]: Mobile preview modal min-height set
+
 ## Beta9 (June 13, 2014)
 * *[Beta9.rc4]*
   * [FIX]: New MiniReel button that appears when you have no MiniReels
