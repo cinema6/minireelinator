@@ -1,6 +1,6 @@
 # MiniReelinator
 
-* *[Beta9.rc5]*
+* *[Beta9.1.rc1]*
   * [FIX]: Mobile preview modal min-height set
 
 ## Beta9 (June 13, 2014)
