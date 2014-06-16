@@ -2,6 +2,9 @@
 
 * *[Beta9.1.rc1]*
   * [FIX]: Mobile preview modal min-height set
+  * [FIX]: Fix for an issue that would cause a user not to be able to
+    create a new MiniReel if the last MiniReel they made was created
+    pre-custom splash templates
 
 ## Beta9 (June 13, 2014)
 * *[Beta9.rc4]*

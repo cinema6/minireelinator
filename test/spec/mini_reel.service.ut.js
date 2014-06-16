@@ -1067,6 +1067,46 @@
                                         }
                                     }));
                                 });
+
+                                describe('if it is an old minireel', function() {
+                                    beforeEach(function() {
+                                        success.calls.reset();
+
+                                        delete minireels[0].data.splash;
+
+                                        $rootScope.$apply(function() {
+                                            MiniReelService.create().then(success);
+                                        });
+                                    });
+
+                                    it('should still succeed', function() {
+                                        expect(success).toHaveBeenCalledWith(jasmine.objectContaining({
+                                            type: 'minireel',
+                                            org: firstMiniReel.org,
+                                            appUri: 'rumble',
+                                            data: {
+                                                title: null,
+                                                mode: 'lightbox',
+                                                branding: appData.user.branding,
+                                                displayAdSource: appData.user.org.waterfalls.display[0],
+                                                videoAdSource: appData.user.org.waterfalls.video[0],
+                                                splash: {
+                                                    ratio: '1-1',
+                                                    source: 'generated',
+                                                    theme: 'img-only'
+                                                },
+                                                collateral: {
+                                                    splash: null
+                                                },
+                                                deck: firstMiniReel.data.deck.map(function(card) {
+                                                    card.id = jasmine.any(String);
+
+                                                    return card;
+                                                })
+                                            }
+                                        }));
+                                    });
+                                });
                             });
                         });
                     });
