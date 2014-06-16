@@ -1083,8 +1083,12 @@
                                 }
                             }
                         },
-                        ratio = lastMinireel.data.splash.ratio,
-                        theme = lastMinireel.data.splash.theme,
+                        splash = lastMinireel.data.splash || {
+                            ratio: '1-1',
+                            theme: 'img-only'
+                        },
+                        ratio = splash.ratio,
+                        theme = splash.theme,
                         user = data.user,
                         org = user.org;
 
