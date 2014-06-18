@@ -1045,9 +1045,9 @@
                     })
                     .on('close', function() {
                         self.active = false;
-                    })
-                    .on('mrPreview:closePreview', function() {
-                        $scope.$emit('mrPreview:closePreview');
+                        if(card) {
+                            $scope.$emit('mrPreview:closePreview');
+                        }
                     });
 
                 $scope.$on('mrPreview:splashClick', function() {
