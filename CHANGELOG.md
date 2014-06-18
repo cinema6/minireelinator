@@ -1,5 +1,11 @@
 # MiniReelinator
 
+## Beta9.2 (June 18, 2014)
+* *[Beta9.2.rc1]*
+  * [FIX]: Fix for an issue that caused the MR Preview to show the old
+    splash screen
+* *[/Beta9.2.rc1]*
+
 ## Beta9.1 (June 16, 2014)
 * *[Beta9.1.rc1]*
   * [FIX]: Mobile preview modal min-height set
