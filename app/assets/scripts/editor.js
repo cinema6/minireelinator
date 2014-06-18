@@ -444,7 +444,7 @@
             };
 
             this.closePreview = function() {
-                this.preview = false;
+                self.preview = false;
                 $scope.$broadcast('mrPreview:reset');
             };
 
@@ -535,6 +535,8 @@
 
                 saveAfterTenSeconds();
             });
+
+            $scope.$on('mrPreview:closePreview', self.closePreview);
 
             $scope.$on('$destroy', function() {
                 function save() {
@@ -1043,6 +1045,9 @@
                     })
                     .on('close', function() {
                         self.active = false;
+                    })
+                    .on('mrPreview:closePreview', function() {
+                        $scope.$emit('mrPreview:closePreview');
                     });
 
                 $scope.$on('mrPreview:splashClick', function() {
