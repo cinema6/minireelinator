@@ -84,6 +84,9 @@
                 services: {
                     deps: ['app']
                 },
+                'c6_state.old': {
+                    deps: ['angularMocks']
+                },
                 c6_state: {
                     deps: ['angularMocks']
                 },
