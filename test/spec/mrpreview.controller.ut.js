@@ -298,9 +298,14 @@
 
                             dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
 
-                            expect(dataSentToPlayer.success).toBe(true);
-                            expect(dataSentToPlayer.appData.experience).toEqual(experience);
-                            expect(dataSentToPlayer.appData.profile).toEqual(c6BrowserInfo.profile);
+                            expect(dataSentToPlayer).toEqual({
+                                success: true,
+                                appData: {
+                                    experience: experience,
+                                    profile: c6BrowserInfo.profile,
+                                    version: 1
+                                }
+                            });
                         });
                     });
 

@@ -1020,7 +1020,7 @@
                             // whenever the MR player is (re)loaded
                             experience: experience,
                             profile: profile,
-                            preload: true
+                            version: 1
                         }
                     });
                 });
