@@ -866,6 +866,21 @@
                         });
                     });
                 });
+
+                describe('mrPreview:closePreview', function() {
+                    it('should call closePreview method', function() {
+                        spyOn($scope, '$broadcast');
+
+                        EditorCtrl.preview = true;
+
+                        $scope.$apply(function() {
+                            $scope.$emit('mrPreview:closePreview');
+                        });
+
+                        expect($scope.$broadcast).toHaveBeenCalledWith('mrPreview:reset');
+                        expect(EditorCtrl.preview).toBe(false);
+                    });
+                });
             });
 
             describe('$watchers', function() {
