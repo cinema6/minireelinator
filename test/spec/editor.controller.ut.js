@@ -527,9 +527,20 @@
                         EditorCtrl.newCard(3);
                     });
 
-                    it('should transition to the editor.editCard state', function() {
+                    xit('should transition to the editor.editCard state', function() {
                         expect(c6State.goTo).toHaveBeenCalledWith('editor.newCard', {
                             insertionIndex: 3
+                        });
+                    });
+
+                    it('should create a new videoBallot card', function() {
+                        expect(MiniReelService.createCard).toHaveBeenCalledWith('videoBallot');
+                    });
+
+                    it('should transition to the editor.editCard state with the card and the insertionIndex', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith('editor.editCard', {
+                            insertionIndex: 3,
+                            card: lastCreatedCard
                         });
                     });
                 });

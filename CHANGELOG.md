@@ -1,7 +1,8 @@
 # MiniReelinator
 
-* *[Beta9.3.rc1]*
+* *[Beta10.rc1]*
   * [FIX]: Close the preview modal when a lightbox card preview is closed
+  * Ad card is no longer an option when inserting a card
 
 ## Beta9.2 (June 18, 2014)
 * *[Beta9.2.rc1]*
