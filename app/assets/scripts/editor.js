@@ -405,8 +405,16 @@
 //                if (evtSrc){
 //                    AppCtrl.sendPageEvent('Editor','Click','New Card',self.pageObject);
 //                }
-                c6State.goTo('editor.newCard', {
+
+                // TODO: Delete this code
+                /*c6State.goTo('editor.newCard', {
                     insertionIndex: insertionIndex
+                });*/
+                var card = MiniReelService.createCard('videoBallot');
+
+                c6State.goTo('editor.editCard', {
+                    insertionIndex: insertionIndex,
+                    card: card
                 });
             };
 
@@ -942,10 +950,10 @@
             );
         }])
 
-        .controller('EditCardDisplayAdController', ['appData','MiniReelService',
-        function                                   ( appData , MiniReelService ) {
-            this.choices = MiniReelService.adChoicesOf(appData);
-        }])
+        // .controller('EditCardDisplayAdController', ['appData','MiniReelService',
+        // function                                   ( appData , MiniReelService ) {
+        //     this.choices = MiniReelService.adChoicesOf(appData);
+        // }])
 
         .controller('EditCardServerController', ['appData','MiniReelService',
         function                                 ( appData , MiniReelService ) {

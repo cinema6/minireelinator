@@ -770,6 +770,21 @@
                 return card;
             }
 
+            function adCardFor(minireel) {
+                return {
+                    id: generateId('rc'),
+                    type: 'ad',
+                    ad: true,
+                    modules: ['displayAd'],
+                    displayAdSource: minireel.data.displayAdSource,
+                    data: {
+                        autoplay: true,
+                        source: minireel.data.videoAdSource,
+                        skip: minireel.data.videoAdSkip
+                    }
+                };
+            }
+
             this.modeCategoryOf = function(minireel, categories) {
                 var result = {},
                     modeValue = minireel && minireel.data.mode;
@@ -887,13 +902,18 @@
                     election: minireel.data.election,
                     displayAdSource: minireel.data.displayAdSource || 'cinema6',
                     videoAdSource: minireel.data.videoAdSource || 'cinema6',
+                    videoAdSkip: minireel.data.videoAdSkip || 6,
                     collateral: minireel.data.collateral ||
                         { splash: null },
                     splash: minireel.data.splash ||
                         { ratio: '1-1', source: 'generated', theme: 'img-only' },
-                    deck: minireel.data.deck.map(function(card) {
-                        return makeCard(card);
-                    })
+                    deck: minireel.data.deck.
+                        filter(function(card) {
+                            return card.type !== 'ad';
+                        })
+                        .map(function(card) {
+                            return makeCard(card);
+                        })
                 };
 
                 // Loop through the experience and copy everything but
@@ -905,6 +925,93 @@
                 });
 
                 return model;
+            };
+
+            this.create = function(toCopy) {
+                function getLastMinireel(appData) {
+                    var user = appData.user;
+
+                    return $q.all({
+                        minireels: cinema6.db.findAll('experience', {
+                            type: 'minireel',
+                            user: user.id,
+                            sort: 'lastUpdated,-1',
+                            limit: 1
+                        }),
+                        user: user
+                    });
+                }
+
+                function fetchTemplate(data) {
+                    var lastMinireel = data.minireels[0] || {
+                            data: {
+                                splash: {
+                                    ratio: '1-1',
+                                    theme: 'img-only'
+                                }
+                            }
+                        },
+                        splash = lastMinireel.data.splash || {
+                            ratio: '1-1',
+                            theme: 'img-only'
+                        },
+                        ratio = splash.ratio,
+                        theme = splash.theme,
+                        user = data.user,
+                        org = user.org;
+
+                    return $q.when(toCopy ? toCopy.pojoify() :
+                        {
+                            type: 'minireel',
+                            org: org.id,
+                            appUri: 'rumble',
+                            data: {
+                                title: null,
+                                mode: 'lightbox',
+                                displayAdSource: org.waterfalls.display[0],
+                                videoAdSource: org.waterfalls.video[0],
+                                videoAdSkip: org.videoAdSkip || 6,
+                                branding: user.branding,
+                                splash: {
+                                    source: 'generated',
+                                    ratio: ratio,
+                                    theme: theme
+                                },
+                                collateral: {
+                                    splash: null
+                                },
+                                // TODO: Delete this code
+                                deck: [/*(function() {
+                                    var deck = [],
+                                        count = 0;
+
+                                    for ( ; count < user.org.minAdCount; count++) {
+                                        deck.push(self.createCard('ad'));
+                                    }
+
+                        deck.push(*/self.createCard('recap')/*);
+
+                                    return deck;
+                          }())*/]
+                            }
+                        });
+                }
+
+                function createMinireel(template) {
+                    var minireel = cinema6.db.create('experience', template),
+                        title = minireel.data.title;
+
+                    delete minireel.id;
+                    minireel.data.title = toCopy ? (title + ' (copy)') : null;
+                    minireel.status = 'pending';
+
+                    return minireel;
+                }
+
+                return cinema6.getAppData()
+                    .then(getLastMinireel)
+                    .then(fetchTemplate)
+                    .then(createMinireel);
             };
 
             this.convertCard = function(card, minireel) {
@@ -1059,93 +1166,16 @@
                 return newCard;
             };
 
-            this.create = function(toCopy) {
-                function getLastMinireel(appData) {
-                    var user = appData.user;
-
-                    return $q.all({
-                        minireels: cinema6.db.findAll('experience', {
-                            type: 'minireel',
-                            user: user.id,
-                            sort: 'lastUpdated,-1',
-                            limit: 1
-                        }),
-                        user: user
-                    });
-                }
-
-                function fetchTemplate(data) {
-                    var lastMinireel = data.minireels[0] || {
-                            data: {
-                                splash: {
-                                    ratio: '1-1',
-                                    theme: 'img-only'
-                                }
-                            }
-                        },
-                        splash = lastMinireel.data.splash || {
-                            ratio: '1-1',
-                            theme: 'img-only'
-                        },
-                        ratio = splash.ratio,
-                        theme = splash.theme,
-                        user = data.user,
-                        org = user.org;
-
-                    return $q.when(toCopy ? toCopy.pojoify() :
-                        {
-                            type: 'minireel',
-                            org: org.id,
-                            appUri: 'rumble',
-                            data: {
-                                title: null,
-                                mode: 'lightbox',
-                                displayAdSource: org.waterfalls.display[0],
-                                videoAdSource: org.waterfalls.video[0],
-                                branding: user.branding,
-                                splash: {
-                                    source: 'generated',
-                                    ratio: ratio,
-                                    theme: theme
-                                },
-                                collateral: {
-                                    splash: null
-                                },
-                                deck: (function() {
-                                    var deck = [],
-                                        count = 0;
-
-                                    for ( ; count < user.org.minAdCount; count++) {
-                                        deck.push(self.createCard('ad'));
-                                    }
-
-                                    deck.push(self.createCard('recap'));
-
-                                    return deck;
-                                }())
-                            }
-                        });
-                }
-
-                function createMinireel(template) {
-                    var minireel = cinema6.db.create('experience', template),
-                        title = minireel.data.title;
-
-                    delete minireel.id;
-                    minireel.data.title = toCopy ? (title + ' (copy)') : null;
-                    minireel.status = 'pending';
-
-                    return minireel;
-                }
-
-                return cinema6.getAppData()
-                    .then(getLastMinireel)
-                    .then(fetchTemplate)
-                    .then(createMinireel);
-            };
-
             this.convertForPlayer = function(minireel, target) {
-                var convertedDeck = [];
+                var deck = minireel.data.deck,
+                    convertedDeck = deck.map(function(card) {
+                        return self.convertCard(card, minireel);
+                    }),
+                    videoCards = deck.filter(function(card) {
+                        return (/^video/).test(card.type);
+                    }),
+                    videoBeforeAd = videoCards[Math.min(1, videoCards.length - 1)],
+                    adInsertionIndex = deck.indexOf(videoBeforeAd) + 1;
 
                 target = target || {};
 
@@ -1159,9 +1189,10 @@
                 forEach(minireel.data, function(value, key) {
                     target.data[key] = value;
                 });
-                forEach(minireel.data.deck, function(card) {
-                    convertedDeck.push(self.convertCard(card, minireel));
-                });
+
+                if (videoBeforeAd) {
+                    convertedDeck.splice(adInsertionIndex, 0, adCardFor(minireel));
+                }
 
                 target.data.deck = convertedDeck;
 

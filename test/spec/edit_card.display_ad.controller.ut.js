@@ -2,7 +2,7 @@
     'use strict';
 
     define(['manager'], function() {
-        describe('EditCardDisplayAdController', function() {
+        xdescribe('EditCardDisplayAdController', function() {
             var $rootScope,
                 $controller,
                 MiniReelService,
