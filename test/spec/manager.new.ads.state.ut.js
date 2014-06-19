@@ -2,7 +2,7 @@
     'use strict';
 
     define(['app'], function() {
-        describe('NewAdsState', function() {
+        xdescribe('NewAdsState', function() {
             var $injector,
                 c6State,
                 ManagerNewState,
