@@ -32,7 +32,7 @@
                                     .state('Posts.Post.Comments', [function() {}]);
                             });
 
-                            describe('this.state()', function() {
+                            describe('this.state(state, mapFn)', function() {
                                 beforeEach(function() {
                                     c6StateProvider.map(function() {
                                         this.state('About');
@@ -55,6 +55,41 @@
                                     expect(posts.cParent).toBe(application);
                                     expect(postsPost.cParent).toBe(posts);
                                     expect(postsPostComments.cParent).toBe(postsPost);
+                                });
+                            });
+
+                            describe('this.route(route, state, mapFn)', function() {
+                                var about, posts, postsPost, postsPostComments, application;
+
+                                beforeEach(function() {
+                                    c6StateProvider.map(function() {
+                                        this.route('/about', 'About');
+                                        this.route('/posts', 'Posts', function() {
+                                            this.route('/:postId', 'Posts.Post', function() {
+                                                this.route('/comments', 'Posts.Post.Comments');
+                                            });
+                                        });
+                                    });
+
+                                    about = c6State.get('About');
+                                    posts = c6State.get('Posts');
+                                    postsPost = c6State.get('Posts.Post');
+                                    postsPostComments = c6State.get('Posts.Post.Comments');
+                                    application = c6State.get('Application');
+                                });
+
+                                it('should set up relationships between states', function() {
+                                    expect(about.cParent).toBe(application);
+                                    expect(posts.cParent).toBe(application);
+                                    expect(postsPost.cParent).toBe(posts);
+                                    expect(postsPostComments.cParent).toBe(postsPost);
+                                });
+
+                                it('should set cUrl to the full URL of the route', function() {
+                                    expect(about.cUrl).toBe('/about');
+                                    expect(posts.cUrl).toBe('/posts');
+                                    expect(postsPost.cUrl).toBe('/posts/:postId');
+                                    expect(postsPostComments.cUrl).toBe('/posts/:postId/comments');
                                 });
                             });
                         });

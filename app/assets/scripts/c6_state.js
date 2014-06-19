@@ -1,35 +1,43 @@
 (function() {
     'use strict';
 
+    function mixin(instance, constructor) {
+        var args = Array.prototype.slice.call(arguments, 2);
+
+        constructor.apply(instance, args);
+
+        return instance;
+    }
+
     angular.module('c6.state', [])
         .provider('c6State', [function() {
             var stateConstructors = {
                 Application: (function() {
                     var Application = function() {};
 
-                    Application.init = function() {
+                    Application.initializers = [function() {
                         this.cParent = null;
                         this.cModel = null;
                         this.cUrl = '/';
-
-                        return this;
-                    };
+                    }];
 
                     return Application;
                 }())
             };
 
             function C6State($injector) {
+                var self = this;
+
                 var states = {};
 
                 this.get = function(name) {
-                    var constructor = stateConstructors[name];
+                    var constructor = stateConstructors[name],
+                        initializers = constructor.initializers;
 
                     return states[name] ||
-                        (states[name] = constructor.init.call(
-                            $injector.instantiate(constructor),
-                            this
-                        ));
+                        (states[name] = initializers.reduce(function(state, initializer) {
+                            return mixin(state, initializer, self);
+                        }, $injector.instantiate(constructor)));
                 };
             }
 
@@ -41,21 +49,24 @@
                     var constructor = stateConstructors[name],
                         parent = this.parent;
 
-                    constructor.init = function(c6State) {
+                    constructor.initializers.push(function(c6State) {
                         this.cParent = c6State.get(parent);
                         this.cUrl = null;
                         this.cModel = null;
-
-                        return this;
-                    };
+                    });
 
                     if (mapFn) {
                         mapFn.call(new Mapper(name));
                     }
+                },
+                route: function(route, name, mapFn) {
+                    this.state(name, mapFn);
                 }
             };
 
             this.state = function(name, constructor) {
+                constructor.initializers = [];
+
                 stateConstructors[name] = constructor;
 
                 return this;
