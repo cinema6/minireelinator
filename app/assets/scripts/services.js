@@ -1115,7 +1115,8 @@
                                 collateral: {
                                     splash: null
                                 },
-                                deck: (function() {
+                                // TODO: Delete this code
+                                deck: [/*(function() {
                                     var deck = [],
                                         count = 0;
 
@@ -1123,10 +1124,10 @@
                                         deck.push(self.createCard('ad'));
                                     }
 
-                                    deck.push(self.createCard('recap'));
+                        deck.push(*/self.createCard('recap')/*);
 
                                     return deck;
-                                }())
+                          }())*/]
                             }
                         });
                 }

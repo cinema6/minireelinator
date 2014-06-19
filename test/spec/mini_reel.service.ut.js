@@ -959,9 +959,9 @@
                             });
 
                             it('should initialize a new minireel', function() {
-                                var adCard = MiniReelService.createCard('ad');
+                                /*var adCard = MiniReelService.createCard('ad');
 
-                                delete adCard.id;
+                                delete adCard.id;*/
 
                                 expect(cinema6.db.create).toHaveBeenCalledWith('experience', {
                                     type: 'minireel',
@@ -982,9 +982,9 @@
                                             splash: null
                                         },
                                         deck: [
+                                            /*jasmine.objectContaining(adCard),
                                             jasmine.objectContaining(adCard),
-                                            jasmine.objectContaining(adCard),
-                                            jasmine.objectContaining(adCard),
+                                            jasmine.objectContaining(adCard),*/
                                             {
                                                 id: jasmine.any(String),
                                                 title: null,
