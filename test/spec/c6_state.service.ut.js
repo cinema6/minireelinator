@@ -23,6 +23,44 @@
 
                 describe('@public', function() {
                     describe('methods', function() {
+                        describe('config(context, config)', function() {
+                            beforeEach(function() {
+                                c6StateProvider.state('Main', function() {});
+                            });
+
+                            describe('enableUrlRouting', function() {
+                                describe('when true', function() {
+                                    beforeEach(function() {
+                                        c6StateProvider.config('foo', {
+                                            rootState: 'Main',
+                                            enableUrlRouting: true
+                                        });
+                                    });
+
+                                    it('should make the root state\'s cUrl \'\'', function() {
+                                        c6State.in('foo', function() {
+                                            expect(c6State.get('Main').cUrl).toBe('');
+                                        });
+                                    });
+                                });
+
+                                describe('when false', function() {
+                                    beforeEach(function() {
+                                        c6StateProvider.config('foo', {
+                                            rootState: 'Main',
+                                            enableUrlRouting: false
+                                        });
+                                    });
+
+                                    it('should make the root state\'s cUrl null', function() {
+                                        c6State.in('foo', function() {
+                                            expect(c6State.get('Main').cUrl).toBeNull();
+                                        });
+                                    });
+                                });
+                            });
+                        });
+
                         describe('map(fn)', function() {
                             beforeEach(function() {
                                 c6StateProvider
@@ -30,6 +68,28 @@
                                     .state('Posts', [function() {}])
                                     .state('Posts.Post', [function() {}])
                                     .state('Posts.Post.Comments', [function() {}]);
+                            });
+
+                            describe('specifying a parent state', function() {
+                                beforeEach(function() {
+                                    c6StateProvider.map(function() {
+                                        this.state('About');
+                                        this.route('/posts', 'Posts');
+                                    });
+
+                                    c6StateProvider.map('Posts', function() {
+                                        this.route('/:postId', 'Posts.Post', function() {
+                                            this.route('/comments', 'Posts.Post.Comments');
+                                        });
+                                    });
+                                });
+
+                                it('should allow children to be defined under the specified parent', function() {
+                                    var postsPost = c6State.get('Posts.Post'),
+                                        posts = c6State.get('Posts');
+
+                                    expect(postsPost.cParent).toBe(posts);
+                                });
                             });
 
                             describe('this.state(state, mapFn)', function() {
@@ -105,43 +165,91 @@
                 describe('@public', function() {
                     describe('methods', function() {
                         describe('get(state)', function() {
-                            var Home,
-                                home;
+                            var Home, Sidebar, Contacts,
+                                home, sidebar, contacts;
 
                             beforeEach(function() {
                                 Home = [function() {}];
+                                Sidebar = [function() {}];
+                                Contacts = [function() {}];
 
                                 c6StateProvider.state('Home', Home);
+                                c6StateProvider.state('Sidebar', Sidebar);
+                                c6StateProvider.state('Contacts', Contacts);
+
+                                c6StateProvider.config('sidebar', {
+                                    rootState: 'Sidebar'
+                                });
 
                                 c6StateProvider.map(function() {
                                     this.state('Home');
                                 });
 
-                                home = c6State.get('Home');
+                                c6StateProvider.map('sidebar', null, function() {
+                                    this.state('Contacts');
+                                });
                             });
 
-                            it('should get the auto-generated Application state', function() {
-                                var application = c6State.get('Application');
+                            describe('the auto-generated Application state', function() {
+                                it('should be gettable', function() {
+                                    var application = c6State.get('Application');
 
-                                expect(application.cModel).toBeNull();
-                                expect(application.cParent).toBeNull();
-                                expect(application.cUrl).toBe('/');
+                                    expect(application.cModel).toBeNull();
+                                    expect(application.cParent).toBeNull();
+                                    expect(application.cUrl).toBe('');
+                                });
+
+                                it('should be overwriteable', function() {
+                                    var application;
+
+                                    c6StateProvider.state('Application', [function() {
+                                        this.templateUrl = 'assets/views/app.html';
+                                    }]);
+
+                                    application = c6State.get('Application');
+
+                                    expect(application.templateUrl).toBe('assets/views/app.html');
+                                    expect(application.cModel).toBeNull();
+                                    expect(application.cUrl).toBe('');
+                                });
                             });
 
-                            it('should be an instance of the provided constructor', function() {
-                                expect(home).toEqual(jasmine.any(Home[0]));
-                            });
+                            describe('normal states', function() {
+                                beforeEach(function() {
+                                    home = c6State.get('Home');
+                                });
 
-                            it('should be decorated with properties', function() {
-                                expect(home.cModel).toBeNull();
-                                expect(home.cParent).toBe(c6State.get('Application'));
-                                expect(home.cUrl).toBeNull();
-                            });
+                                it('should be an instance of the provided constructor', function() {
+                                    expect(home).toEqual(jasmine.any(Home[0]));
+                                });
 
-                            it('should return the same instance', function() {
-                                var home2 = c6State.get('Home');
+                                it('should be decorated with properties', function() {
+                                    expect(home.cModel).toBeNull();
+                                    expect(home.cParent).toBe(c6State.get('Application'));
+                                    expect(home.cUrl).toBeNull();
+                                });
 
-                                expect(home).toBe(home2);
+                                it('should return the same instance', function() {
+                                    var home2 = c6State.get('Home');
+
+                                    expect(home).toBe(home2);
+                                });
+
+                                it('should be context-aware', function() {
+                                    sidebar = c6State.get('Sidebar');
+                                    contacts = c6State.get('Contacts');
+
+                                    expect(sidebar).toBeUndefined();
+                                    expect(contacts).toBeUndefined();
+
+                                    c6State.in('sidebar', function() {
+                                        sidebar = c6State.get('Sidebar');
+                                        contacts = c6State.get('Contacts');
+                                    });
+
+                                    expect(sidebar).toEqual(jasmine.any(Sidebar[0]));
+                                    expect(contacts).toEqual(jasmine.any(Contacts[0]));
+                                });
                             });
                         });
                     });
