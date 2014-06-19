@@ -950,10 +950,10 @@
             );
         }])
 
-        .controller('EditCardDisplayAdController', ['appData','MiniReelService',
-        function                                   ( appData , MiniReelService ) {
-            this.choices = MiniReelService.adChoicesOf(appData);
-        }])
+        // .controller('EditCardDisplayAdController', ['appData','MiniReelService',
+        // function                                   ( appData , MiniReelService ) {
+        //     this.choices = MiniReelService.adChoicesOf(appData);
+        // }])
 
         .controller('EditCardServerController', ['appData','MiniReelService',
         function                                 ( appData , MiniReelService ) {

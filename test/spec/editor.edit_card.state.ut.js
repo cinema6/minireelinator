@@ -168,13 +168,13 @@
                         sref: 'editor.editCard.skip',
                         icon: 'skip',
                         required: false
-                    },
-                    displayAd = {
-                        name: 'Display Ad Settings',
-                        sref: 'editor.editCard.displayAd',
-                        icon: 'ad',
-                        required: false
                     };
+                    // displayAd = {
+                    //     name: 'Display Ad Settings',
+                    //     sref: 'editor.editCard.displayAd',
+                    //     icon: 'ad',
+                    //     required: false
+                    // };
 
                 beforeEach(function() {
                     model = {
@@ -200,11 +200,11 @@
                         expect(controller.model).toBe(model);
                     });
 
-                    it('should set the model\'s displayAdSource to the MiniReel\'s displayAdSource', function() {
+                    xit('should set the model\'s displayAdSource to the MiniReel\'s displayAdSource', function() {
                         expect(model.displayAdSource).toBe(EditorState.cModel.data.displayAdSource);
                     });
 
-                    describe('if the card has a displayAdSource', function() {
+                    xdescribe('if the card has a displayAdSource', function() {
                         beforeEach(function() {
                             model.displayAdSource = 'cinema6';
 
@@ -357,7 +357,8 @@
                         });
 
                         it('should enable the "copy", "ballot", and "video" tabs', function() {
-                            expect(controller.tabs).toEqual([copy, video, ballot, displayAd]);
+                            // expect(controller.tabs).toEqual([copy, video, ballot, displayAd]);
+                            expect(controller.tabs).toEqual([copy, video, ballot]);
                         });
                     });
 
@@ -368,7 +369,8 @@
                         });
 
                         it('should enable the "copy" and "video" tabs', function() {
-                            expect(controller.tabs).toEqual([copy, video, ballot, displayAd]);
+                            // expect(controller.tabs).toEqual([copy, video, ballot, displayAd]);
+                            expect(controller.tabs).toEqual([copy, video, ballot]);
                         });
                     });
 

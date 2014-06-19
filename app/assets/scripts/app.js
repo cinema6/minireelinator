@@ -489,7 +489,7 @@
                             function               ( controller , model , appData ) {
                                 var minireelData = this.cParent.cModel.data,
                                     deck = minireelData.deck,
-                                    mode = minireelData.mode,
+                                    // mode = minireelData.mode,
                                     adData = appData.user.org.waterfalls;
 
                                 var copy = {
@@ -525,20 +525,20 @@
                                         icon: 'skip',
                                         required: false
                                     },
-                                    displayAd = {
-                                        name: 'Display Ad Settings',
-                                        sref: 'editor.editCard.displayAd',
-                                        icon: 'ad',
-                                        required: false
-                                    },
+                                    // displayAd = {
+                                    //     name: 'Display Ad Settings',
+                                    //     sref: 'editor.editCard.displayAd',
+                                    //     icon: 'ad',
+                                    //     required: false
+                                    // },
                                     hasOwnVideoAdServer = adData &&
-                                        (adData.video.length > 1),
-                                    hasOwnDisplayAdServer = adData &&
-                                        (adData.display.length > 1) &&
-                                        (mode === 'lightbox-ads');
+                                        (adData.video.length > 1);
+                                    // hasOwnDisplayAdServer = adData &&
+                                    //     (adData.display.length > 1) &&
+                                    //     (mode === 'lightbox-ads');
 
-                                model.displayAdSource = model.displayAdSource ||
-                                    minireelData.displayAdSource;
+                                // model.displayAdSource = model.displayAdSource ||
+                                //     minireelData.displayAdSource;
 
                                 switch (model.type) {
                                 case 'ad':
@@ -552,9 +552,10 @@
                                     switch (model.type) {
                                     case 'video':
                                     case 'videoBallot':
-                                        return hasOwnDisplayAdServer ?
-                                            [copy, video, ballot, displayAd] :
-                                            [copy, video, ballot];
+                                        // return hasOwnDisplayAdServer ?
+                                        //     [copy, video, ballot, displayAd] :
+                                        //     [copy, video, ballot];
+                                        return [copy, video, ballot];
                                     case 'ad':
                                         var tabs = hasOwnVideoAdServer ?
                                             [adServer, adSkip] :
@@ -628,19 +629,19 @@
                                     model:  [function() {
                                         return this.cParent.cModel;
                                     }]
-                                },
-                                displayAd: {
-                                    controller: 'EditCardDisplayAdController',
-                                    controllerAs: 'EditCardDisplayAdCtrl',
-                                    templateUrl: assets('views/editor/edit_card/display_ad.html'),
-                                    model:  [function() {
-                                        return this.cParent.cModel;
-                                    }],
-                                    afterModel: ['appData',
-                                    function    ( appData ) {
-                                        return appData.ensureFulfillment();
-                                    }]
-                                },
+                                }
+                            // displayAd: {
+                            //     controller: 'EditCardDisplayAdController',
+                            //     controllerAs: 'EditCardDisplayAdCtrl',
+                            //     templateUrl: assets('views/editor/edit_card/display_ad.html'),
+                            //     model:  [function() {
+                            //         return this.cParent.cModel;
+                            //     }],
+                            //     afterModel: ['appData',
+                            //     function    ( appData ) {
+                            //         return appData.ensureFulfillment();
+                            //     }]
+                            // }
                             }
                         },
                         newCard: {
