@@ -2,7 +2,7 @@
     'use strict';
 
     define(['manager'], function() {
-        describe('NewAdsController', function() {
+        xdescribe('NewAdsController', function() {
             var $rootScope,
                 $controller,
                 MiniReelService,
