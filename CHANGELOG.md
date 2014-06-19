@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[Beta9.3.rc1]*
+  * [FIX]: Close the preview modal when a lightbox card preview is closed
+
 ## Beta9.2 (June 18, 2014)
 * *[Beta9.2.rc1]*
   * [FIX]: Fix for an issue that caused the MR Preview to show the old

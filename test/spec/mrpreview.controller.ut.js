@@ -249,11 +249,24 @@
                 describe('close', function() {
                     beforeEach(function() {
                         PreviewController.active = true;
-                        session.emit('close');
                     });
 
                     it('should set active to false', function() {
+                        spyOn($scope, '$emit');
+                        session.emit('close');
+
                         expect(PreviewController.active).toBe(false);
+                        expect($scope.$emit).not.toHaveBeenCalledWith('mrPreview:closePreview');
+                    });
+
+                    it('should emit mrPreview:closePreview if previewing a card', function() {
+                        spyOn(MiniReelService, 'convertCard').and.returnValue(experience.data.deck[0]);
+                        $scope.$emit('mrPreview:updateExperience', experience, {});
+                        spyOn($scope, '$emit');
+
+                        session.emit('close');
+
+                        expect($scope.$emit).toHaveBeenCalledWith('mrPreview:closePreview');
                     });
                 });
             });
