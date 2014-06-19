@@ -1,7 +1,8 @@
 (function() {
     'use strict';
 
-    var noop = angular.noop;
+    var noop = angular.noop,
+        extend = angular.extend;
 
     function mixin(instance, constructor) {
         var args = Array.prototype.slice.call(arguments, 2);
@@ -16,11 +17,20 @@
             var stateConstructors = {},
                 contexts = {};
 
-            function C6State($injector) {
+            C6State.$inject = ['$injector','$q','$http','$templateCache'];
+            function C6State  ( $injector , $q , $http , $templateCache ) {
                 var self = this;
 
                 var states = {},
                     currentContext = 'main';
+
+                Object.defineProperties(this, {
+                    current: {
+                        get: function() {
+                            return null;
+                        }
+                    }
+                });
 
                 this.get = function(name) {
                     var context = contexts[currentContext],
@@ -31,12 +41,41 @@
                                 this.cModel = null;
                                 this.cUrl = context.enableUrlRouting ? '' : null;
                                 this.cParent = null;
+                                this.cTemplate = null;
                             }];
 
                     return states[name] || (constructor &&
                         (states[name] = initializers.reduce(function(state, initializer) {
                             return mixin(state, initializer, self);
                         }, $injector.instantiate(constructor))));
+                };
+
+                this.goTo = function(stateName) {
+                    var state = this.get(stateName);
+
+                    function fetchTemplate(state) {
+                        var templateUrl = state.templateUrl;
+
+                        return (templateUrl ?
+                            $http.get(templateUrl, {
+                                cache: $templateCache
+                            }).then(function returnTemplate(response) {
+                                return response.data;
+                            }) :
+                            $q.when(state.template)
+                        ).then(function saveTemplate(template) {
+                            state.cTemplate = template;
+
+                            return state;
+                        });
+                    }
+
+                    function resolve() {
+                        return state;
+                    }
+
+                    return fetchTemplate(state)
+                        .then(resolve);
                 };
 
                 this.in = function(context, fn) {
@@ -61,6 +100,7 @@
                         this.cParent = c6State.get(parent);
                         this.cUrl = null;
                         this.cModel = null;
+                        this.cTemplate = null;
                     });
 
                     this.context.stateConstructors[name] = constructor;
@@ -111,14 +151,39 @@
             };
 
             this.config = function(context, config) {
-                config.stateConstructors = {};
+                var contextWithUrlRouting;
+
+                if (!config) {
+                    config = context;
+                    context = 'main';
+                }
+
+                contextWithUrlRouting = Object.keys(contexts)
+                    .reduce(function(result, name) {
+                        var context = contexts[name];
+
+                        return context.enableUrlRouting ? context : result;
+                    }, null);
+
+                if (contextWithUrlRouting && config.enableUrlRouting) {
+                    throw new Error(
+                        'Cannot enable URL routing in context "' + context + '" because it is ' +
+                        'already enabled in context "' + contextWithUrlRouting.name + '".'
+                    );
+                }
+
+                config = extend(contexts[context] || {
+                    name: context,
+                    stateConstructors: {},
+                    current: null
+                }, config);
 
                 contexts[context] = config;
             };
 
             this.$get = ['$injector',
             function    ( $injector ) {
-                return new C6State($injector);
+                return $injector.instantiate(C6State);
             }];
 
             this.state('Application', noop);

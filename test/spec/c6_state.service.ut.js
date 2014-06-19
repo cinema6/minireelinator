@@ -4,7 +4,9 @@
     define(['c6_state'], function() {
         ddescribe('c6State', function() {
             var c6StateProvider,
-                c6State;
+                c6State,
+                $rootScope,
+                $httpBackend;
 
             beforeEach(function() {
                 module('c6.state', function($injector) {
@@ -12,7 +14,9 @@
                 });
 
                 inject(function($injector) {
+                    $rootScope = $injector.get('$rootScope');
                     c6State = $injector.get('c6State');
+                    $httpBackend = $injector.get('$httpBackend');
                 });
             });
 
@@ -31,6 +35,10 @@
                             describe('enableUrlRouting', function() {
                                 describe('when true', function() {
                                     beforeEach(function() {
+                                        c6StateProvider.config({
+                                            enableUrlRouting: false
+                                        });
+
                                         c6StateProvider.config('foo', {
                                             rootState: 'Main',
                                             enableUrlRouting: true
@@ -57,6 +65,52 @@
                                             expect(c6State.get('Main').cUrl).toBeNull();
                                         });
                                     });
+                                });
+
+                                describe('if enableUrlRouting is already true in another context', function() {
+                                    beforeEach(function() {
+                                        c6StateProvider.config({
+                                            enableUrlRouting: false
+                                        });
+
+                                        c6StateProvider.config('one', {
+                                            enableUrlRouting: true
+                                        });
+
+                                        c6StateProvider.config('two', {
+                                            enableUrlRouting: false
+                                        });
+                                    });
+
+                                    it('should throw an error if set to true as well', function() {
+                                        expect(function() {
+                                            c6StateProvider.config('three', {
+                                                enableUrlRouting: true
+                                            });
+                                        }).toThrow(new Error('Cannot enable URL routing in context "three" because it is already enabled in context "one".'));
+                                    });
+                                });
+                            });
+
+                            describe('reconfiguring', function() {
+                                it('should reconfigure a context if called again on an existing context', function() {
+                                    var application;
+
+                                    c6StateProvider.config('main', {
+                                        enableUrlRouting: false
+                                    });
+
+                                    application = c6State.get('Application');
+
+                                    expect(application.cUrl).toBeNull();
+                                });
+
+                                it('should apply to the main context if called with just an object', function() {
+                                    c6StateProvider.config({
+                                        enableUrlRouting: false,
+                                    });
+
+                                    expect(c6State.get('Application').cUrl).toBeNull();
                                 });
                             });
                         });
@@ -163,7 +217,100 @@
                 });
 
                 describe('@public', function() {
+                    describe('properties', function() {
+                        describe('current', function() {
+                            it('should start as null', function() {
+                                expect(c6State.current).toBeNull();
+                            });
+
+                            it('should not be settable', function() {
+                                expect(function() {
+                                    c6State.current = 'foo';
+                                }).toThrow();
+                            });
+                        });
+                    });
+
                     describe('methods', function() {
+                        describe('goTo(state, model, params)', function() {
+                            var aboutModel, serializedParams,
+                                success, failure;
+
+                            beforeEach(function() {
+                                success = jasmine.createSpy('success()');
+                                failure = jasmine.createSpy('failure()');
+
+                                aboutModel = {};
+
+                                c6StateProvider
+                                    .state('Home', function() {
+
+                                    })
+                                    .state('About', function() {
+                                        this.templateUrl = 'assets/views/about.html';
+                                        this.queryParams = {
+                                            debug: '=',
+                                            name: '=nme',
+                                            age: '&'
+                                        };
+
+                                        this.beforeModel = jasmine.createSpy('about.beforeModel()');
+                                        this.model = jasmine.createSpy('about.model()')
+                                            .and.returnValue(aboutModel);
+                                        this.afterModel = jasmine.createSpy('about.afterModel()');
+                                        this.serializeParams = jasmine.createSpy('about.serializeParams()')
+                                            .and.callFake(function() {
+                                                /* jshint boss:true */
+                                                return serializedParams = {};
+                                                /* jshint boss:false */
+                                            });
+                                    })
+                                    .map(function() {
+                                        this.state('Home');
+                                        this.state('About');
+                                    });
+                            });
+
+                            describe('when called with a simple state', function() {
+                                beforeEach(function() {
+                                    $rootScope.$apply(function() {
+                                        c6State.goTo('Home').then(success);
+                                    });
+                                });
+
+                                it('should succeed', function() {
+                                    expect(success).toHaveBeenCalledWith(c6State.get('Home'));
+                                });
+                            });
+
+                            describe('when called with a complex state', function() {
+                                var template, about;
+
+                                beforeEach(function() {
+                                    about = c6State.get('About');
+
+                                    template = [
+                                        '<p>This is my template!</p>'
+                                    ].join('\n');
+
+                                    $httpBackend.expectGET(about.templateUrl)
+                                        .respond(200, template);
+
+                                    $rootScope.$apply(function() {
+                                        c6State.goTo('About').then(success, failure);
+                                    });
+
+                                    expect(success).not.toHaveBeenCalled();
+
+                                    $httpBackend.flush();
+                                });
+
+                                it('should set the cTemplate to the fetched template', function() {
+                                    expect(about.cTemplate).toBe(template);
+                                });
+                            });
+                        });
+
                         describe('get(state)', function() {
                             var Home, Sidebar, Contacts,
                                 home, sidebar, contacts;
@@ -211,6 +358,7 @@
                                     expect(application.templateUrl).toBe('assets/views/app.html');
                                     expect(application.cModel).toBeNull();
                                     expect(application.cUrl).toBe('');
+                                    expect(application.cTemplate).toBeNull();
                                 });
                             });
 
@@ -227,6 +375,7 @@
                                     expect(home.cModel).toBeNull();
                                     expect(home.cParent).toBe(c6State.get('Application'));
                                     expect(home.cUrl).toBeNull();
+                                    expect(home.cTemplate).toBeNull();
                                 });
 
                                 it('should return the same instance', function() {
