@@ -181,7 +181,7 @@
                     ]);
                 });
 
-                describe('when ad server editing is enabled', function() {
+                xdescribe('when ad server editing is enabled', function() {
                     it('should', function() {
                         appData.user = {
                             org: {

@@ -156,8 +156,8 @@
             );
             this.autoplay = minireel.data.autoplay;
             this.title = minireel.data.title;
-            this.displayAdSource = minireel.data.displayAdSource;
-            this.videoAdSource = minireel.data.videoAdSource;
+            // this.displayAdSource = minireel.data.displayAdSource;
+            // this.videoAdSource = minireel.data.videoAdSource;
 
             Object.defineProperties(this, {
                 currentTab: {
@@ -196,18 +196,18 @@
 
                 data.mode = this.mode.value;
 
-                ['displayAdSource','videoAdSource'].forEach(function(prop) {
-                    if (data[prop] !== self[prop]) {
-                        angular.forEach(data.deck, function(card) {
-                            if (prop === 'displayAdSource') {
-                                card[prop] = self[prop];
-                            } else if (card.type === 'ad') {
-                                card.data.source = self[prop];
-                            }
-                            data[prop] = self[prop];
-                        });
-                    }
-                });
+                // ['displayAdSource','videoAdSource'].forEach(function(prop) {
+                //     if (data[prop] !== self[prop]) {
+                //         angular.forEach(data.deck, function(card) {
+                //             if (prop === 'displayAdSource') {
+                //                 card[prop] = self[prop];
+                //             } else if (card.type === 'ad') {
+                //                 card.data.source = self[prop];
+                //             }
+                //             data[prop] = self[prop];
+                //         });
+                //     }
+                // });
 
                 (minireel.id ? $q.when(minireel) :
                     minireel.save())
@@ -250,8 +250,8 @@
 
             $scope.$watch(function() { return self.mode; }, function(mode, prevMode) {
                 var minireel = self.model.minireel,
-                    autoplayTab = tabBySref('autoplay'),
-                    adsTab = tabBySref('ads');
+                    autoplayTab = tabBySref('autoplay');
+                    // adsTab = tabBySref('ads');
 
                 self.autoplay = mode.autoplayable && minireel.data.autoplay;
 
@@ -259,15 +259,15 @@
                     autoplayTab.requiredVisits = autoplayTab.visits + 1;
                 }
 
-                if ((mode.value === 'lightbox-ads' || prevMode.value === 'lightbox-ads') &&
-                    mode !== prevMode) {
-                    adsTab.requiredVisits = adsTab.visits + 1;
-                }
+                // if ((mode.value === 'lightbox-ads' || prevMode.value === 'lightbox-ads') &&
+                //     mode !== prevMode) {
+                //     adsTab.requiredVisits = adsTab.visits + 1;
+                // }
             });
-        }])
-
-        .controller('NewAdsController', ['MiniReelService', 'appData',
-        function                        ( MiniReelService ,  appData ) {
-            this.adChoices = MiniReelService.adChoicesOf(appData);
         }]);
+
+        // .controller('NewAdsController', ['MiniReelService', 'appData',
+        // function                        ( MiniReelService ,  appData ) {
+        //     this.adChoices = MiniReelService.adChoicesOf(appData);
+        // }]);
 }());

@@ -105,12 +105,12 @@
                                 requiredVisits: 3,
                                 visits: 3
                             },
-                            {
-                                name: 'Ad Settings',
-                                sref: 'ads',
-                                requiredVisits: 3,
-                                visits: 3
-                            },
+                            // {
+                            //     name: 'Ad Settings',
+                            //     sref: 'ads',
+                            //     requiredVisits: 3,
+                            //     visits: 3
+                            // },
                             {
                                 name: 'Autoplay',
                                 sref: 'autoplay',
@@ -240,13 +240,13 @@
                     });
                 });
 
-                describe('displayAdSource', function() {
+                xdescribe('displayAdSource', function() {
                     it('should be the displayAdSource value of the minireel', function() {
                         expect(NewCtrl.displayAdSource).toBe(minireel.data.displayAdSource);
                     });
                 });
 
-                describe('videoAdSource', function() {
+                xdescribe('videoAdSource', function() {
                     it('should be the videoAdSource value of the minireel', function() {
                         expect(NewCtrl.videoAdSource).toBe(minireel.data.videoAdSource);
                     });
@@ -306,7 +306,7 @@
                         expect(minireel.save).toHaveBeenCalled();
                     });
 
-                    describe('checks the displayAdSource', function() {
+                    xdescribe('checks the displayAdSource', function() {
                         describe('if it has changed', function() {
                             it('should add the info to every card', function() {
                                 NewCtrl.displayAdSource = 'publisher';
@@ -325,7 +325,7 @@
                         });
                     });
 
-                    describe('checks the videoAdSource', function() {
+                    xdescribe('checks the videoAdSource', function() {
                         describe('if it has changed', function() {
                             it('should update the property on the ad card only', function() {
                                 NewCtrl.videoAdSource = 'publisher';
@@ -540,7 +540,7 @@
                         });
 
                         it('should bump up the requiredVisits of the autoplay tab', function() {
-                            expect(NewCtrl.tabs[4].requiredVisits).toBe(NewCtrl.tabs[4].visits + 1);
+                            expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits + 1);
                         });
                     });
 
@@ -560,7 +560,7 @@
                                 });
 
                                 it('should bump up the requiredVisits of the autoplay tab', function() {
-                                    expect(NewCtrl.tabs[4].requiredVisits).toBe(NewCtrl.tabs[4].visits + 1);
+                                    expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits + 1);
                                 });
                             });
                         });
@@ -571,18 +571,18 @@
                             $scope.$apply(function() {
                                 NewCtrl.mode = model.modes[0].modes[0];
                             });
-                            NewCtrl.tabs[4].requiredVisits = NewCtrl.tabs[4].visits;
+                            NewCtrl.tabs[3].requiredVisits = NewCtrl.tabs[3].visits;
                             $scope.$apply(function() {
                                 NewCtrl.mode = model.modes[0].modes[1];
                             });
                         });
 
                         it('should not bump up the requiredVisits of the autoplay tab', function() {
-                            expect(NewCtrl.tabs[4].requiredVisits).toBe(NewCtrl.tabs[4].visits);
+                            expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits);
                         });
                     });
 
-                    describe('when switching modes to lightbox-ads', function() {
+                    xdescribe('when switching modes to lightbox-ads', function() {
                         it('should bump up the requiredVisits of the ads tab', function() {
                             $scope.$apply(function() {
                                 NewCtrl.mode = model.modes[0].modes[0];
@@ -595,7 +595,7 @@
                         });
                     });
 
-                    describe('when switching modes from lightbox-ads', function() {
+                    xdescribe('when switching modes from lightbox-ads', function() {
                         it('should bump up the requiredVisits of the ads tab', function() {
                             $scope.$apply(function() {
                                 NewCtrl.mode = model.modes[0].modes[1];
@@ -608,7 +608,7 @@
                         });
                     });
 
-                    describe('when switching modes that do not effect display ads', function() {
+                    xdescribe('when switching modes that do not effect display ads', function() {
                         it('should bump up the requiredVisits of the ads tab', function() {
                             $scope.$apply(function() {
                                 NewCtrl.mode = model.modes[1].modes[1];
