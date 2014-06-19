@@ -891,9 +891,13 @@
                         { splash: null },
                     splash: minireel.data.splash ||
                         { ratio: '1-1', source: 'generated', theme: 'img-only' },
-                    deck: minireel.data.deck.map(function(card) {
-                        return makeCard(card);
-                    })
+                    deck: minireel.data.deck.
+                        filter(function(card) {
+                            return card.type !== 'ad';
+                        })
+                        .map(function(card) {
+                            return makeCard(card);
+                        })
                 };
 
                 // Loop through the experience and copy everything but

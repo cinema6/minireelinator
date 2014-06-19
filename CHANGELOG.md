@@ -3,6 +3,7 @@
 * *[Beta10.rc1]*
   * [FIX]: Close the preview modal when a lightbox card preview is closed
   * Ad card is no longer an option when inserting a card
+  * Ad cards are no longer included in the Editor's deck
 
 ## Beta9.2 (June 18, 2014)
 * *[Beta9.2.rc1]*
