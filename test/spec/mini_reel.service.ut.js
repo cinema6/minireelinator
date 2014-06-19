@@ -60,7 +60,8 @@
                         title: 'My MiniReel',
                         mode: 'lightbox',
                         displayAdSource: 'cinema6',
-                        videoAdSource: 'cinema6',
+                        videoAdSource: 'cinema6-publisher',
+                        videoAdSkip: true,
                         autoplay: true,
                         election: 'el-76506623bf22d9',
                         branding: 'elitedaily',
@@ -116,7 +117,7 @@
                                 data: {
                                     autoplay: true,
                                     source: 'cinema6-publisher',
-                                    skip: false
+                                    skip: true
                                 }
                             },
                             {
@@ -156,18 +157,6 @@
                                 }
                             },
                             {
-                                id: 'rc-f31cabb9193ef9',
-                                type: 'ad',
-                                ad: true,
-                                modules: ['displayAd'],
-                                displayAdSource: 'cinema6',
-                                data: {
-                                    autoplay: false,
-                                    source: 'publisher-cinema6',
-                                    skip: 6
-                                }
-                            },
-                            {
                                 id: 'rc-f940abe0c1f3f0',
                                 type: 'video',
                                 title: 'No video yet..',
@@ -188,18 +177,6 @@
                                     choices: []
                                 },
                                 data: {}
-                            },
-                            {
-                                id: 'rc-5065695912f286',
-                                type: 'ad',
-                                ad: true,
-                                modules: ['displayAd'],
-                                displayAdSource: 'cinema6',
-                                data: {
-                                    autoplay: false,
-                                    source: 'publisher',
-                                    skip: true
-                                }
                             },
                             {
                                 id: 'rc-25c1f60b933186',
@@ -756,7 +733,7 @@
                                 }
                             });
 
-                            expect(deck[3]).toEqual({
+                            expect(deck[2]).toEqual({
                                 id: 'rc-61fa9683714e13',
                                 type: 'videoBallot',
                                 title: 'The Smartest Turtle',
@@ -780,7 +757,7 @@
                                 }
                             });
 
-                            expect(deck[4]).toEqual({
+                            expect(deck[3]).toEqual({
                                 id: 'rc-d8ebd5461ba524',
                                 type: 'video',
                                 title: 'The Dumbest Turtle',
@@ -798,7 +775,7 @@
                             });
                         });
 
-                        it('should transpile the ad cards', function() {
+                        xit('should transpile the ad cards', function() {
                             expect(deck[2]).toEqual({
                                 id: 'rc-1c7a46097a5d4a',
                                 type: 'ad',
@@ -847,7 +824,7 @@
                         });
 
                         it('should transpile the links cards', function() {
-                            expect(deck[9]).toEqual({
+                            expect(deck[6]).toEqual({
                                 id: 'rc-25c1f60b933186',
                                 type: 'links',
                                 title: 'If You Love Turtles',
@@ -856,14 +833,14 @@
                                 ad: false,
                                 view: 'links',
                                 displayAdSource: 'cinema6',
-                                data: minireel.data.deck[9].data
+                                data: minireel.data.deck[7].data
                             });
 
-                            expect(deck[9].data.links).not.toBe(minireel.data.deck[9].data.links);
+                            expect(deck[6].data.links).not.toBe(minireel.data.deck[7].data.links);
                         });
 
                         it('should transpile the recap cards', function() {
-                            expect(deck[10]).toEqual({
+                            expect(deck[7]).toEqual({
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
                                 title: null,
@@ -896,6 +873,7 @@
                                     org: {
                                         id: 'o-17593d7a2bf294',
                                         minAdCount: 3,
+                                        videoAdSkip: true,
                                         waterfalls: {
                                             display: ['publisher'],
                                             video: ['cinema6-publisher']
@@ -959,9 +937,9 @@
                             });
 
                             it('should initialize a new minireel', function() {
-                                var adCard = MiniReelService.createCard('ad');
+                                /*var adCard = MiniReelService.createCard('ad');
 
-                                delete adCard.id;
+                                delete adCard.id;*/
 
                                 expect(cinema6.db.create).toHaveBeenCalledWith('experience', {
                                     type: 'minireel',
@@ -972,6 +950,7 @@
                                         mode: 'lightbox',
                                         displayAdSource: appData.user.org.waterfalls.display[0],
                                         videoAdSource: appData.user.org.waterfalls.video[0],
+                                        videoAdSkip: appData.user.org.videoAdSkip,
                                         branding: appData.user.branding,
                                         splash: {
                                             source: 'generated',
@@ -982,9 +961,9 @@
                                             splash: null
                                         },
                                         deck: [
+                                            /*jasmine.objectContaining(adCard),
                                             jasmine.objectContaining(adCard),
-                                            jasmine.objectContaining(adCard),
-                                            jasmine.objectContaining(adCard),
+                                            jasmine.objectContaining(adCard),*/
                                             {
                                                 id: jasmine.any(String),
                                                 title: null,
@@ -1051,6 +1030,7 @@
                                             branding: appData.user.branding,
                                             displayAdSource: appData.user.org.waterfalls.display[0],
                                             videoAdSource: appData.user.org.waterfalls.video[0],
+                                            videoAdSkip: appData.user.org.videoAdSkip,
                                             splash: {
                                                 ratio: minireels[0].data.splash.ratio,
                                                 source: firstMiniReel.data.splash.source,
@@ -1090,6 +1070,7 @@
                                                 branding: appData.user.branding,
                                                 displayAdSource: appData.user.org.waterfalls.display[0],
                                                 videoAdSource: appData.user.org.waterfalls.video[0],
+                                                videoAdSkip: appData.user.org.videoAdSkip,
                                                 splash: {
                                                     ratio: '1-1',
                                                     source: 'generated',
@@ -1150,6 +1131,12 @@
                             result = MiniReelService.convertForPlayer(converted);
 
                             expect(Object.keys(result.data).length).toBe(Object.keys(minireel.data).length);
+
+                            minireel.data.deck.forEach(function(card) {
+                                if (card.type === 'ad') {
+                                    card.id = jasmine.any(String);
+                                }
+                            });
                             expect(result.data).toEqual(minireel.data);
                             expect(result).not.toBe(minireel);
                         });
@@ -1168,6 +1155,50 @@
                             expect(result).toBe(minireel);
                             expect(result.data).not.toBe(converted.data);
                             expect(minireel.data.deck[0].title).toBe('New Title');
+                        });
+
+                        describe('inserting ads', function() {
+                            beforeEach(function() {
+                                minireel = {
+                                    data: {
+                                        deck: [
+                                            MiniReelService.createCard('video'),
+                                            MiniReelService.createCard('video'),
+                                            MiniReelService.createCard('video'),
+                                            MiniReelService.createCard('recap')
+                                        ]
+                                    }
+                                };
+                            });
+
+                            describe('if there are at least two videos', function() {
+                                it('should put the ad card after the second video', function() {
+                                    expect(MiniReelService.convertForPlayer(minireel).data.deck[2].type).toBe('ad');
+                                });
+                            });
+
+                            describe('if there is only one video', function() {
+                                beforeEach(function() {
+                                    minireel.data.deck.splice(0, 2);
+                                });
+
+                                it('should insert the ad card after the video', function() {
+                                    expect(MiniReelService.convertForPlayer(minireel).data.deck[1].type).toBe('ad');
+                                });
+                            });
+
+                            describe('if there are no videos', function() {
+                                beforeEach(function() {
+                                    minireel.data.deck.splice(0, 3);
+                                });
+
+                                it('should not insert an ad', function() {
+                                    var converted = MiniReelService.convertForPlayer(minireel);
+
+                                    expect(converted.data.deck[0].type).toBe('recap');
+                                    expect(converted.data.deck.length).toBe(1);
+                                });
+                            });
                         });
                     });
 
