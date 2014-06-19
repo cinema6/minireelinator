@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## Beta10 (June 19, 2014)
 * *[Beta10.rc1]*
   * [FIX]: Close the preview modal when a lightbox card preview is closed
   * Ad card is no longer an option when inserting a card
@@ -9,6 +10,7 @@
   * Removes Ad settings tab from MiniReel-level modal
   * Removes Display Ad settings tab in Edit Card modal
   * [FIX]: splash image modal content positioning fixed
+* *[/Beta10.rc1]*
 
 ## Beta9.2 (June 18, 2014)
 * *[Beta9.2.rc1]*
