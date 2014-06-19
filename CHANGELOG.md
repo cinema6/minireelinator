@@ -7,6 +7,7 @@
   * Ad cards are no longer auto-inserted into the Editor
   * Ad cards are now auto-inserted after the second video
   * Removes Ad settings tab from MiniReel-level modal
+  * Removes Display Ad settings tab in Edit Card modal
 
 ## Beta9.2 (June 18, 2014)
 * *[Beta9.2.rc1]*
