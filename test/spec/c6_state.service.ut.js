@@ -6,7 +6,10 @@
             var c6StateProvider,
                 c6State,
                 $rootScope,
-                $httpBackend;
+                $httpBackend,
+                $q;
+
+            var _private;
 
             beforeEach(function() {
                 module('c6.state', function($injector) {
@@ -17,7 +20,10 @@
                     $rootScope = $injector.get('$rootScope');
                     c6State = $injector.get('c6State');
                     $httpBackend = $injector.get('$httpBackend');
+                    $q = $injector.get('$q');
                 });
+
+                _private = c6State._private;
             });
 
             describe('provider', function() {
@@ -216,6 +222,318 @@
                     expect(c6State).toEqual(jasmine.any(Object));
                 });
 
+                describe('@private', function() {
+                    describe('methods', function() {
+                        describe('renderStates(states)', function() {
+                            var application, posts, post,
+                                sidebar,
+                                applicationView, postsView, postView,
+                                sidebarView,
+                                success, failure;
+
+                            function ViewDelegate(id, parent) {
+                                this.id = id;
+                                this.parent = parent;
+
+                                this.renderDeferred = $q.defer();
+
+                                this.render = jasmine.createSpy('view.render()')
+                                    .and.returnValue(this.renderDeferred.promise);
+                            }
+
+                            beforeEach(function() {
+                                success = jasmine.createSpy('success');
+                                failure = jasmine.createSpy('failure');
+
+                                application = {
+                                    cContext: 'main'
+                                };
+                                posts = {
+                                    cContext: 'main'
+                                };
+                                post = {
+                                    cContext: 'main'
+                                };
+
+                                sidebar = {
+                                    cContext: 'sidebar'
+                                };
+
+                                applicationView = new ViewDelegate(null, null);
+                                postsView = new ViewDelegate(null, applicationView);
+                                postView = new ViewDelegate(null, postsView);
+
+                                sidebarView = new ViewDelegate('sidebar-view');
+
+                                c6StateProvider.config('sidebar', {
+                                    rootView: 'sidebar-view'
+                                });
+
+                                c6State._registerView(sidebarView);
+                                c6State._registerView(applicationView);
+
+                                $rootScope.$apply(function() {
+                                    _private.renderStates([application, posts, post]).then(success, failure);
+                                });
+                            });
+
+                            it('should render the application state into the application view', function() {
+                                expect(applicationView.render).toHaveBeenCalledWith(application);
+                            });
+
+                            describe('after the application view is rendered', function() {
+                                beforeEach(function() {
+                                    c6State._registerView(postsView);
+
+                                    $rootScope.$apply(function() {
+                                        applicationView.renderDeferred.resolve();
+                                    });
+                                });
+
+                                it('should render the posts view', function() {
+                                    expect(postsView.render).toHaveBeenCalledWith(posts);
+                                });
+
+                                describe('after the posts view is rendered', function() {
+                                    beforeEach(function() {
+                                        c6State._registerView(postView);
+
+                                        $rootScope.$apply(function() {
+                                            postsView.renderDeferred.resolve();
+                                        });
+                                    });
+
+                                    it('should render the post view', function() {
+                                        expect(postView.render).toHaveBeenCalledWith(post);
+                                    });
+
+                                    describe('after the post view is rendered', function() {
+                                        beforeEach(function() {
+                                            $rootScope.$apply(function() {
+                                                postView.renderDeferred.resolve();
+                                            });
+                                        });
+
+                                        it('should resolve the promise with the family', function() {
+                                            expect(success).toHaveBeenCalledWith([application, posts, post]);
+                                        });
+                                    });
+                                });
+                            });
+                        });
+
+                        describe('resolveStates(states)', function() {
+                            var applicationHTML, postsHTML, commentsHTML,
+                                application, posts, post, comments,
+                                success, failure;
+
+                            beforeEach(function() {
+                                success = jasmine.createSpy('success');
+                                failure = jasmine.createSpy('failure');
+
+                                applicationHTML = [
+                                    '<c6-view></c6-view>'
+                                ].join('\n');
+                                postsHTML = [
+                                    '<ul>',
+                                    '    <li>Posts here</li>',
+                                    '</ul>'
+                                ].join('\n');
+                                commentsHTML = [
+                                    '<span>Comments here</span>'
+                                ].join('\n');
+
+                                $httpBackend.expectGET('assets/views/posts.html')
+                                    .respond(200, postsHTML);
+
+                                c6StateProvider
+                                    .state('Application', function() {
+                                        this.beforeModel = jasmine.createSpy('application.beforeModel()')
+                                            .and.returnValue({});
+                                    })
+                                    .state('Posts', function($q) {
+                                        this.templateUrl = 'assets/views/posts.html';
+
+                                        this.beforeModelDeferred = $q.defer();
+                                        this.myModel = {};
+                                        this.afterModelDeferred = $q.defer();
+
+                                        this.beforeModel = jasmine.createSpy('posts.beforeModel()')
+                                            .and.returnValue(this.beforeModelDeferred.promise);
+                                        this.model = jasmine.createSpy('posts.model()')
+                                            .and.returnValue($q.when(this.myModel));
+                                        this.afterModel = jasmine.createSpy('posts.afterModel()')
+                                            .and.returnValue(this.afterModelDeferred.promise);
+                                    })
+                                    .state('Post', function() {
+                                        this.template = [
+                                            '<p>Hello</p>'
+                                        ].join('\n');
+
+                                        this.model = jasmine.createSpy('post.model()');
+                                    })
+                                    .state('Comments', function() {
+                                        this.templateUrl = 'assets/views/posts/post/comments.html';
+
+                                        this.model = jasmine.createSpy('comments.model()');
+                                        this.afterModel = jasmine.createSpy('comments.afterModel()');
+                                    });
+
+                                c6StateProvider.map(function() {
+                                    this.state('Posts', function() {
+                                        this.state('Post', function() {
+                                            this.state('Comments');
+                                        });
+                                    });
+                                });
+
+                                application = c6State.get('Application');
+                                posts = c6State.get('Posts');
+                                post = c6State.get('Post');
+                                comments = c6State.get('Comments');
+
+                                $rootScope.$apply(function() {
+                                    _private.resolveStates([application, posts, post, comments]).then(success, failure);
+                                });
+
+                                $httpBackend.flush();
+                            });
+
+                            describe('if the state already has a cModel', function() {
+                                var providedModel;
+
+                                beforeEach(function() {
+                                    providedModel = posts.cModel = {};
+
+                                    posts.templateUrl = null;
+
+                                    $rootScope.$apply(function() {
+                                        _private.resolveStates([posts]).then(success, failure);
+                                    });
+
+                                    $rootScope.$apply(function() {
+                                        posts.beforeModelDeferred.resolve();
+                                        posts.afterModelDeferred.resolve();
+                                    });
+                                });
+
+                                it('should not call the model() hook', function() {
+                                    expect(posts.model).not.toHaveBeenCalled();
+                                });
+                            });
+
+                            describe('the root state', function() {
+                                it('should be resolved', function() {
+                                    expect(application.cTemplate).toBe(applicationHTML);
+                                    expect(application.beforeModel).toHaveBeenCalled();
+                                    expect(application.cModel).toBeNull();
+                                });
+                            });
+
+                            describe('the posts state', function() {
+                                it('should have a template', function() {
+                                    expect(posts.cTemplate).toBe(postsHTML);
+                                });
+
+                                it('should resolve the beforeModel hook', function() {
+                                    expect(posts.beforeModel).toHaveBeenCalled();
+                                });
+
+                                describe('after beforeModel() resolves', function() {
+                                    beforeEach(function() {
+                                        expect(posts.model).not.toHaveBeenCalled();
+
+                                        $httpBackend.expectGET(comments.templateUrl)
+                                            .respond(200, '');
+
+                                        $rootScope.$apply(function() {
+                                            posts.beforeModelDeferred.resolve();
+                                        });
+                                    });
+
+                                    it('should resolve the model', function() {
+                                        expect(posts.model).toHaveBeenCalled();
+                                    });
+                                });
+
+                                describe('after model() resolves', function() {
+                                    beforeEach(function() {
+                                        $httpBackend.expectGET(comments.templateUrl)
+                                            .respond(200, '');
+
+                                        $rootScope.$apply(function() {
+                                            posts.beforeModelDeferred.resolve();
+                                        });
+                                    });
+
+                                    it('should set the cModel', function() {
+                                        expect(posts.cModel).toBe(posts.myModel);
+                                    });
+
+                                    it('should call afterModel() with the model', function() {
+                                        expect(posts.afterModel).toHaveBeenCalledWith(posts.myModel);
+                                    });
+                                });
+                            });
+
+                            describe('the post state', function() {
+                                beforeEach(function() {
+                                    expect(post.model).not.toHaveBeenCalled();
+
+                                    $httpBackend.expectGET(comments.templateUrl)
+                                        .respond(200, '');
+
+                                    $rootScope.$apply(function() {
+                                        posts.beforeModelDeferred.resolve();
+                                        posts.afterModelDeferred.resolve();
+                                    });
+                                });
+
+                                it('should set the template to the cTemplate', function() {
+                                    expect(post.cTemplate).toBe(post.template);
+                                });
+
+                                it('should resolve the model', function() {
+                                    expect(post.model).toHaveBeenCalled();
+                                });
+                            });
+
+                            describe('the comments state', function() {
+                                beforeEach(function() {
+                                    $httpBackend.expectGET(comments.templateUrl)
+                                        .respond(200, commentsHTML);
+
+                                    expect(comments.model).not.toHaveBeenCalled();
+                                    expect(comments.afterModel).not.toHaveBeenCalled();
+
+                                    $rootScope.$apply(function() {
+                                        posts.beforeModelDeferred.resolve();
+                                        posts.afterModelDeferred.resolve();
+                                    });
+
+                                    $httpBackend.flush();
+                                });
+
+                                it('should setup the cTemplate', function() {
+                                    expect(comments.cTemplate).toBe(commentsHTML);
+                                });
+
+                                it('should call model()', function() {
+                                    expect(comments.model).toHaveBeenCalled();
+                                });
+
+                                it('should call afterModel()', function() {
+                                    expect(comments.afterModel).toHaveBeenCalledWith(undefined);
+                                });
+
+                                it('should succeed with the family', function() {
+                                    expect(success).toHaveBeenCalledWith([application, posts, post, comments]);
+                                });
+                            });
+                        });
+                    });
+                });
+
                 describe('@public', function() {
                     describe('properties', function() {
                         describe('current', function() {
@@ -232,81 +550,82 @@
                     });
 
                     describe('methods', function() {
-                        describe('goTo(state, model, params)', function() {
-                            var aboutModel, serializedParams,
-                                success, failure;
+                        describe('goTo(state, models, params)', function() {
+                            var success, failure,
+                                resolveStatesDeferred, renderStatesDeferred,
+                                application, home, about;
 
                             beforeEach(function() {
+                                resolveStatesDeferred = $q.defer();
+                                renderStatesDeferred = $q.defer();
+
+                                spyOn(_private, 'resolveStates')
+                                    .and.returnValue(resolveStatesDeferred.promise);
+                                spyOn(_private, 'renderStates')
+                                    .and.returnValue(renderStatesDeferred.promise);
+
                                 success = jasmine.createSpy('success()');
                                 failure = jasmine.createSpy('failure()');
-
-                                aboutModel = {};
 
                                 c6StateProvider
                                     .state('Home', function() {
 
                                     })
                                     .state('About', function() {
-                                        this.templateUrl = 'assets/views/about.html';
-                                        this.queryParams = {
-                                            debug: '=',
-                                            name: '=nme',
-                                            age: '&'
-                                        };
 
-                                        this.beforeModel = jasmine.createSpy('about.beforeModel()');
-                                        this.model = jasmine.createSpy('about.model()')
-                                            .and.returnValue(aboutModel);
-                                        this.afterModel = jasmine.createSpy('about.afterModel()');
-                                        this.serializeParams = jasmine.createSpy('about.serializeParams()')
-                                            .and.callFake(function() {
-                                                /* jshint boss:true */
-                                                return serializedParams = {};
-                                                /* jshint boss:false */
-                                            });
                                     })
                                     .map(function() {
-                                        this.state('Home');
-                                        this.state('About');
+                                        this.state('Home', function() {
+                                            this.state('About');
+                                        });
                                     });
+
+                                application = c6State.get('Application');
+                                home = c6State.get('Home');
+                                about = c6State.get('About');
                             });
 
-                            describe('when called with a simple state', function() {
+                            describe('if called with only a state name', function() {
                                 beforeEach(function() {
-                                    $rootScope.$apply(function() {
-                                        c6State.goTo('Home').then(success);
-                                    });
-                                });
-
-                                it('should succeed', function() {
-                                    expect(success).toHaveBeenCalledWith(c6State.get('Home'));
-                                });
-                            });
-
-                            describe('when called with a complex state', function() {
-                                var template, about;
-
-                                beforeEach(function() {
-                                    about = c6State.get('About');
-
-                                    template = [
-                                        '<p>This is my template!</p>'
-                                    ].join('\n');
-
-                                    $httpBackend.expectGET(about.templateUrl)
-                                        .respond(200, template);
-
                                     $rootScope.$apply(function() {
                                         c6State.goTo('About').then(success, failure);
                                     });
-
-                                    expect(success).not.toHaveBeenCalled();
-
-                                    $httpBackend.flush();
                                 });
 
-                                it('should set the cTemplate to the fetched template', function() {
-                                    expect(about.cTemplate).toBe(template);
+                                it('should resolve the state', function() {
+                                    expect(_private.resolveStates).toHaveBeenCalledWith([application, home, about]);
+                                });
+
+                                describe('when the states are resolved', function() {
+                                    beforeEach(function() {
+                                        expect(_private.renderStates).not.toHaveBeenCalled();
+
+                                        $rootScope.$apply(function() {
+                                            resolveStatesDeferred.resolve([application, home, about]);
+                                        });
+                                    });
+
+                                    it('should render the states', function() {
+                                        expect(_private.renderStates).toHaveBeenCalledWith([application, home, about]);
+                                    });
+                                });
+                            });
+
+                            describe('if called with models', function() {
+                                var aboutModel, homeModel;
+
+                                beforeEach(function() {
+                                    aboutModel = {};
+                                    homeModel = {};
+
+                                    $rootScope.$apply(function() {
+                                        c6State.goTo('About', [homeModel, aboutModel]).then(success, failure);
+                                    });
+                                });
+
+                                it('should set the cModel on the state', function() {
+                                    expect(home.cModel).toBe(homeModel);
+                                    expect(about.cModel).toBe(aboutModel);
                                 });
                             });
                         });
@@ -344,6 +663,7 @@
                                     expect(application.cModel).toBeNull();
                                     expect(application.cParent).toBeNull();
                                     expect(application.cUrl).toBe('');
+                                    expect(application.cContext).toBe('main');
                                 });
 
                                 it('should be overwriteable', function() {
@@ -359,6 +679,7 @@
                                     expect(application.cModel).toBeNull();
                                     expect(application.cUrl).toBe('');
                                     expect(application.cTemplate).toBeNull();
+                                    expect(application.cContext).toBe('main');
                                 });
                             });
 
@@ -376,6 +697,7 @@
                                     expect(home.cParent).toBe(c6State.get('Application'));
                                     expect(home.cUrl).toBeNull();
                                     expect(home.cTemplate).toBeNull();
+                                    expect(home.cContext).toBe('main');
                                 });
 
                                 it('should return the same instance', function() {
@@ -398,6 +720,8 @@
 
                                     expect(sidebar).toEqual(jasmine.any(Sidebar[0]));
                                     expect(contacts).toEqual(jasmine.any(Contacts[0]));
+                                    expect(sidebar.cContext).toBe('sidebar');
+                                    expect(contacts.cContext).toBe('sidebar');
                                 });
                             });
                         });

@@ -19,10 +19,32 @@
 
             C6State.$inject = ['$injector','$q','$http','$templateCache'];
             function C6State  ( $injector , $q , $http , $templateCache ) {
-                var self = this;
+                var self = this,
+                    _private = {};
 
                 var states = {},
                     currentContext = 'main';
+
+                function qSeries(fns) {
+                    return fns.reduce(function(promise, fn) {
+                        return promise ? promise.then(fn) : $q.when(fn());
+                    }, null);
+                }
+
+                function stateFamilyOf(state) {
+                    var family = [];
+
+                    function unshift(state) {
+                        if (!state) { return; }
+
+                        family.unshift(state);
+                        unshift(state.cParent);
+                    }
+
+                    unshift(state);
+
+                    return family;
+                }
 
                 Object.defineProperties(this, {
                     current: {
@@ -42,6 +64,7 @@
                                 this.cUrl = context.enableUrlRouting ? '' : null;
                                 this.cParent = null;
                                 this.cTemplate = null;
+                                this.cContext = currentContext;
                             }];
 
                     return states[name] || (constructor &&
@@ -50,32 +73,18 @@
                         }, $injector.instantiate(constructor))));
                 };
 
-                this.goTo = function(stateName) {
-                    var state = this.get(stateName);
+                this.goTo = function(stateName, models) {
+                    var state = this.get(stateName),
+                        family = stateFamilyOf(state),
+                        statesWithModels = (models && models.length) ?
+                            family.slice(-models.length) : [];
 
-                    function fetchTemplate(state) {
-                        var templateUrl = state.templateUrl;
+                    statesWithModels.forEach(function(state, index) {
+                        state.cModel = models[index];
+                    });
 
-                        return (templateUrl ?
-                            $http.get(templateUrl, {
-                                cache: $templateCache
-                            }).then(function returnTemplate(response) {
-                                return response.data;
-                            }) :
-                            $q.when(state.template)
-                        ).then(function saveTemplate(template) {
-                            state.cTemplate = template;
-
-                            return state;
-                        });
-                    }
-
-                    function resolve() {
-                        return state;
-                    }
-
-                    return fetchTemplate(state)
-                        .then(resolve);
+                    return _private.resolveStates(family)
+                        .then(_private.renderStates);
                 };
 
                 this.in = function(context, fn) {
@@ -83,6 +92,88 @@
                     fn();
                     currentContext = 'main';
                 };
+
+                this._registerView = function(viewDelegate) {
+                    var parent = viewDelegate.parent,
+                        id = viewDelegate.id,
+                        views = Object.keys(contexts)
+                            .reduce(parent ?
+                                function(views, contextName) {
+                                    var context = contexts[contextName],
+                                        viewDelegates = context.viewDelegates;
+
+                                    return viewDelegates.indexOf(parent) > -1 ?
+                                        viewDelegates : views;
+                                } :
+                                function(views, contextName) {
+                                    var context = contexts[contextName];
+
+                                    return context.rootView === id ?
+                                        context.viewDelegates : views;
+                                },
+                            null);
+
+                    views.push(viewDelegate);
+
+                    return viewDelegate;
+                };
+
+                _private.resolveStates = function(states) {
+                    function setupTemplate(state) {
+                        var templateUrl = state.templateUrl;
+
+                        return (templateUrl ?
+                            $http.get(templateUrl, {
+                                cache: $templateCache
+                            }).then(function (response) {
+                                return response.data;
+                            }) : $q.when(state.template))
+                                .then(function set(template) {
+                                    state.cTemplate = template || '<c6-view></c6-view>';
+                                });
+                    }
+
+                    return qSeries(states.map(function(state) {
+                        function beforeModel() {
+                            return (state.beforeModel || noop).call(state);
+                        }
+
+                        function model() {
+                            return (state.model || noop).call(state);
+                        }
+
+                        function afterModel(model) {
+                            state.cModel = model || null;
+
+                            return (state.afterModel || noop).call(state, model);
+                        }
+
+                        return function() {
+                            return setupTemplate(state)
+                                .then(beforeModel)
+                                .then(model)
+                                .then(afterModel);
+                        };
+                    })).then(function fulfill() {
+                        return states;
+                    });
+                };
+
+                _private.renderStates = function(states) {
+                    return qSeries(states.map(function(state, index) {
+                        var views = contexts[state.cContext].viewDelegates;
+
+                        return function() {
+                            var view = views[index];
+
+                            return view.render(state);
+                        };
+                    })).then(function fulfill() {
+                        return states;
+                    });
+                };
+
+                if (window.c6.kHasKarma) { this._private = _private; }
             }
 
             function Mapper(context, parent) {
@@ -94,16 +185,18 @@
                     var constructor = stateConstructors[name],
                         initializers = constructor.initializers ||
                             (constructor.initializers = []),
-                        parent = this.parent;
+                        parent = this.parent,
+                        context = this.context;
 
                     initializers.push(function(c6State) {
                         this.cParent = c6State.get(parent);
                         this.cUrl = null;
                         this.cModel = null;
                         this.cTemplate = null;
+                        this.cContext = context.name;
                     });
 
-                    this.context.stateConstructors[name] = constructor;
+                    context.stateConstructors[name] = constructor;
 
                     if (mapFn) {
                         mapFn.call(new Mapper(this.context, name));
@@ -175,6 +268,7 @@
                 config = extend(contexts[context] || {
                     name: context,
                     stateConstructors: {},
+                    viewDelegates: [],
                     current: null
                 }, config);
 
@@ -190,6 +284,7 @@
 
             this.config('main', {
                 rootState: 'Application',
+                rootView: null,
                 enableUrlRouting: true
             });
         }]);
