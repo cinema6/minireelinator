@@ -516,7 +516,11 @@
                     });
 
                     it('should transition to the editor.editCard.video state', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('editor.editCard', { cardId: 'rc-c98312239510db' });
+                        expect(c6State.goTo).toHaveBeenCalledWith('editor.editCard', {
+                            cardId: 'rc-c98312239510db',
+                            insertionIndex: null,
+                            card: null
+                        });
                     });
                 });
 
@@ -540,7 +544,8 @@
                     it('should transition to the editor.editCard state with the card and the insertionIndex', function() {
                         expect(c6State.goTo).toHaveBeenCalledWith('editor.editCard', {
                             insertionIndex: 3,
-                            card: lastCreatedCard
+                            card: lastCreatedCard,
+                            cardId: null
                         });
                     });
                 });

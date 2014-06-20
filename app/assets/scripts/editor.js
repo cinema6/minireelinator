@@ -398,7 +398,11 @@
 //                if (evtSrc){
 //                    AppCtrl.sendPageEvent('Editor','Click','Edit Card',self.pageObject);
 //                }
-                c6State.goTo('editor.editCard', { cardId: card.id });
+                c6State.goTo('editor.editCard', {
+                    cardId: card.id,
+                    insertionIndex: null,
+                    card: null
+                });
             };
 
             this.newCard = function(insertionIndex/*,evtSrc*/) {
@@ -414,7 +418,8 @@
 
                 c6State.goTo('editor.editCard', {
                     insertionIndex: insertionIndex,
-                    card: card
+                    card: card,
+                    cardId: null
                 });
             };
 
