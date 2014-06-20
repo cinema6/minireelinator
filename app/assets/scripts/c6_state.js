@@ -65,6 +65,8 @@
                                 this.cParent = null;
                                 this.cTemplate = null;
                                 this.cContext = currentContext;
+
+                                this.serializeParams = function() { return {}; };
                             }];
 
                     return states[name] || (constructor &&
@@ -84,7 +86,10 @@
                     });
 
                     return _private.resolveStates(family)
-                        .then(_private.renderStates);
+                        .then(_private.renderStates)
+                        .then(function fulfill() {
+                            return state;
+                        });
                 };
 
                 this.in = function(context, fn) {
@@ -118,6 +123,20 @@
                     return viewDelegate;
                 };
 
+                _private.syncUrl = function(states) {
+                    var lastState = states[states.length - 1],
+                        values = states.reduce(function(values, state) {
+                            var part = state.serializeParams(state.cModel);
+
+                            return extend(values, part);
+                        }, {}),
+                        url = Object.keys(values).reduce(function(url, prop) {
+                            return url.replace(':' + prop, values[prop]);
+                        }, lastState.cUrl);
+
+                    return url;
+                };
+
                 _private.resolveStates = function(states) {
                     function setupTemplate(state) {
                         var templateUrl = state.templateUrl;
@@ -139,7 +158,7 @@
                         }
 
                         function model() {
-                            return (state.model || noop).call(state);
+                            return state.cModel || (state.model || noop).call(state);
                         }
 
                         function afterModel(model) {
@@ -190,10 +209,22 @@
 
                     initializers.push(function(c6State) {
                         this.cParent = c6State.get(parent);
-                        this.cUrl = null;
+                        this.cUrl = this.cParent.cUrl;
                         this.cModel = null;
                         this.cTemplate = null;
                         this.cContext = context.name;
+
+                        this.serializeParams = this.serializeParams ||
+                            function(model) {
+                                var url = this.cUrl,
+                                    prop = (url.match(/:[^\/]+/) || [''])[0]
+                                        .substr(1) || null,
+                                    result = {};
+
+                                if (prop) { result[prop] = model.id; }
+
+                                return result;
+                            };
                     });
 
                     context.stateConstructors[name] = constructor;
@@ -204,6 +235,14 @@
                 },
                 route: function(route, name, mapFn) {
                     var constructor = stateConstructors[name];
+
+                    if (!this.context.enableUrlRouting) {
+                        throw new Error(
+                            'Cannot map route "' + route + '"' +
+                            ' in context "' + this.context.name + '".' +
+                            ' URL Routing is not enabled.'
+                        );
+                    }
 
                     this.state(name, mapFn);
 

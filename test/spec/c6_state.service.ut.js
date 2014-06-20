@@ -127,7 +127,9 @@
                                     .state('About', [function() {}])
                                     .state('Posts', [function() {}])
                                     .state('Posts.Post', [function() {}])
-                                    .state('Posts.Post.Comments', [function() {}]);
+                                    .state('Posts.Post.Comments', [function() {}])
+                                    .state('Posts.Post.Favs', [function() {}])
+                                    .state('Posts.Post.Favs.Stars', [function() {}]);
                             });
 
                             describe('specifying a parent state', function() {
@@ -179,7 +181,8 @@
                             });
 
                             describe('this.route(route, state, mapFn)', function() {
-                                var about, posts, postsPost, postsPostComments, application;
+                                var about, posts, postsPost, postsPostComments,
+                                    postsPostFavs, postsPostFavsStars, application;
 
                                 beforeEach(function() {
                                     c6StateProvider.map(function() {
@@ -187,6 +190,9 @@
                                         this.route('/posts', 'Posts', function() {
                                             this.route('/:postId', 'Posts.Post', function() {
                                                 this.route('/comments', 'Posts.Post.Comments');
+                                                this.state('Posts.Post.Favs', function() {
+                                                    this.route('/stars', 'Posts.Post.Favs.Stars');
+                                                });
                                             });
                                         });
                                     });
@@ -195,6 +201,8 @@
                                     posts = c6State.get('Posts');
                                     postsPost = c6State.get('Posts.Post');
                                     postsPostComments = c6State.get('Posts.Post.Comments');
+                                    postsPostFavs = c6State.get('Posts.Post.Favs');
+                                    postsPostFavsStars = c6State.get('Posts.Post.Favs.Stars');
                                     application = c6State.get('Application');
                                 });
 
@@ -210,6 +218,26 @@
                                     expect(posts.cUrl).toBe('/posts');
                                     expect(postsPost.cUrl).toBe('/posts/:postId');
                                     expect(postsPostComments.cUrl).toBe('/posts/:postId/comments');
+                                    expect(postsPostFavs.cUrl).toBe(postsPost.cUrl);
+                                    expect(postsPostFavsStars.cUrl).toBe('/posts/:postId/stars');
+                                });
+                            });
+
+                            describe('this.route() in a context without URL routing', function() {
+                                beforeEach(function() {
+                                    c6StateProvider.config('foo', {
+                                        rootState: 'Posts',
+                                        rootView: 'post-view',
+                                        enableUrlRouting: false
+                                    });
+                                });
+
+                                it('should throw an error', function() {
+                                    expect(function() {
+                                        c6StateProvider.map('foo', null, function() {
+                                            this.route('/post', 'Posts.Post');
+                                        });
+                                    }).toThrow(new Error('Cannot map route "/post" in context "foo". URL Routing is not enabled.'));
                                 });
                             });
                         });
@@ -224,6 +252,48 @@
 
                 describe('@private', function() {
                     describe('methods', function() {
+                        describe('syncUrl(states)', function() {
+                            var application, posts, post, comment;
+
+                            beforeEach(function() {
+                                c6StateProvider
+                                    .state('Posts', function() {})
+                                    .state('Post', function() {})
+                                    .state('Comment', function() {
+                                        this.serializeParams = function(model) {
+                                            return {
+                                                commentUri: model.uri
+                                            };
+                                        };
+                                    });
+
+                                c6StateProvider.map(function() {
+                                    this.route('/posts', 'Posts', function() {
+                                        this.route('/:postId/content', 'Post', function() {
+                                            this.route('/comments/:commentUri', 'Comment');
+                                        });
+                                    });
+                                });
+
+                                application = c6State.get('Application');
+                                posts = c6State.get('Posts');
+                                post = c6State.get('Post');
+                                comment = c6State.get('Comment');
+
+                                posts.cModel = [];
+                                post.cModel = {
+                                    id: 'the-name'
+                                };
+                                comment.cModel = {
+                                    uri: 'blah-blah'
+                                };
+                            });
+
+                            it('should return a full url for the state family', function() {
+                                expect(_private.syncUrl([application, posts, post, comment])).toBe('/posts/the-name/content/comments/blah-blah');
+                            });
+                        });
+
                         describe('renderStates(states)', function() {
                             var application, posts, post,
                                 sidebar,
@@ -350,6 +420,7 @@
                                     .state('Application', function() {
                                         this.beforeModel = jasmine.createSpy('application.beforeModel()')
                                             .and.returnValue({});
+                                        this.model = jasmine.createSpy('application.model()');
                                     })
                                     .state('Posts', function($q) {
                                         this.templateUrl = 'assets/views/posts.html';
@@ -392,6 +463,8 @@
                                 post = c6State.get('Post');
                                 comments = c6State.get('Comments');
 
+                                application.cModel = {};
+
                                 $rootScope.$apply(function() {
                                     _private.resolveStates([application, posts, post, comments]).then(success, failure);
                                 });
@@ -399,34 +472,12 @@
                                 $httpBackend.flush();
                             });
 
-                            describe('if the state already has a cModel', function() {
-                                var providedModel;
-
-                                beforeEach(function() {
-                                    providedModel = posts.cModel = {};
-
-                                    posts.templateUrl = null;
-
-                                    $rootScope.$apply(function() {
-                                        _private.resolveStates([posts]).then(success, failure);
-                                    });
-
-                                    $rootScope.$apply(function() {
-                                        posts.beforeModelDeferred.resolve();
-                                        posts.afterModelDeferred.resolve();
-                                    });
-                                });
-
-                                it('should not call the model() hook', function() {
-                                    expect(posts.model).not.toHaveBeenCalled();
-                                });
-                            });
-
                             describe('the root state', function() {
                                 it('should be resolved', function() {
                                     expect(application.cTemplate).toBe(applicationHTML);
                                     expect(application.beforeModel).toHaveBeenCalled();
-                                    expect(application.cModel).toBeNull();
+                                    expect(application.model).not.toHaveBeenCalled();
+                                    expect(application.cModel).toEqual({});
                                 });
                             });
 
@@ -608,6 +659,18 @@
                                     it('should render the states', function() {
                                         expect(_private.renderStates).toHaveBeenCalledWith([application, home, about]);
                                     });
+
+                                    describe('when the states are rendered', function() {
+                                        beforeEach(function() {
+                                            $rootScope.$apply(function() {
+                                                renderStatesDeferred.resolve([application, home, about]);
+                                            });
+                                        });
+
+                                        it('should resolve to the state being transitioned to', function() {
+                                            expect(success).toHaveBeenCalledWith(about);
+                                        });
+                                    });
                                 });
                             });
 
@@ -695,7 +758,7 @@
                                 it('should be decorated with properties', function() {
                                     expect(home.cModel).toBeNull();
                                     expect(home.cParent).toBe(c6State.get('Application'));
-                                    expect(home.cUrl).toBeNull();
+                                    expect(home.cUrl).toBe('');
                                     expect(home.cTemplate).toBeNull();
                                     expect(home.cContext).toBe('main');
                                 });
