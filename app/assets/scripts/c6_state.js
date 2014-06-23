@@ -14,19 +14,22 @@
         return instance;
     }
 
-    angular.module('c6.state', [])
+    angular.module('c6.state', ['c6.mrmaker.services'])
         .provider('c6State', [function() {
             var stateConstructors = {},
                 contexts = {};
 
-            C6State.$inject = ['$injector','$q','$http','$templateCache','$location','$rootScope'];
-            function C6State  ( $injector , $q , $http , $templateCache , $location , $rootScope ) {
+            C6State.$inject = ['$injector','$q','$http','$templateCache','$location','$rootScope',
+                               'c6AsyncQueue'];
+            function C6State  ( $injector , $q , $http , $templateCache , $location , $rootScope ,
+                                c6AsyncQueue ) {
                 var self = this,
-                    lastPath = null,
                     _private = {};
 
                 var states = {},
-                    currentContext = 'main';
+                    lastPath = null,
+                    currentContext = 'main',
+                    queue = c6AsyncQueue();
 
                 function qSeries(fns) {
                     return fns.reduce(function(promise, fn) {
@@ -80,7 +83,7 @@
                         }, $injector.instantiate(constructor))));
                 };
 
-                this.goTo = function(stateName, models, params) {
+                this.goTo = queue.wrap(function(stateName, models, params) {
                     var state = this.get(stateName),
                         family = stateFamilyOf(state),
                         statesWithModels = (models && models.length) ?
@@ -101,7 +104,7 @@
 
                             return state;
                         });
-                };
+                }, this);
 
                 this.in = function(context, fn) {
                     var result;

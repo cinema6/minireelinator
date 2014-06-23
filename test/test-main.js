@@ -82,13 +82,13 @@
                     deps: ['angular', 'angularMocks', 'modernizr', 'timelinemax', 'c6ui', 'c6_state', 'c6log', 'sha1', 'hammer']
                 },
                 services: {
-                    deps: ['app']
+                    deps: ['angularMocks']
                 },
                 'c6_state.old': {
                     deps: ['angularMocks']
                 },
                 c6_state: {
-                    deps: ['angularMocks']
+                    deps: ['services']
                 },
                 c6_drag: {
                     deps: ['angular', 'angularMocks', 'hammer']

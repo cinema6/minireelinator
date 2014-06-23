@@ -885,6 +885,28 @@
                                 about = c6State.get('About');
                             });
 
+                            it('should wait for other goTo calls to finish before start a new one', function() {
+                                $rootScope.$apply(function() {
+                                    c6State.goTo('Home');
+                                });
+
+                                expect(_private.resolveStates).toHaveBeenCalledWith([application, home]);
+
+                                $rootScope.$apply(function() {
+                                    c6State.goTo('About');
+                                });
+
+                                expect(_private.resolveStates.calls.count()).toBe(1);
+
+                                $rootScope.$apply(function() {
+                                    resolveStatesDeferred.resolve([application, home]);
+                                    renderStatesDeferred.resolve([application, home]);
+                                });
+
+                                expect(_private.resolveStates.calls.count()).toBe(2);
+                                expect(_private.resolveStates).toHaveBeenCalledWith([application, home, about]);
+                            });
+
                             describe('if called with only a state name', function() {
                                 beforeEach(function() {
                                     $rootScope.$apply(function() {
