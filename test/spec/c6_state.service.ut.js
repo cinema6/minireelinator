@@ -7,11 +7,19 @@
                 c6State,
                 $rootScope,
                 $httpBackend,
-                $q;
+                $q,
+                $location;
 
             var _private;
 
             beforeEach(function() {
+                module('ng', function($provide) {
+                    $provide.value('$location', {
+                        path: jasmine.createSpy('$location.path()'),
+                        search: jasmine.createSpy('$location.search()')
+                    });
+                });
+
                 module('c6.state', function($injector) {
                     c6StateProvider = $injector.get('c6StateProvider');
                 });
@@ -21,6 +29,7 @@
                     c6State = $injector.get('c6State');
                     $httpBackend = $injector.get('$httpBackend');
                     $q = $injector.get('$q');
+                    $location = $injector.get('$location');
                 });
 
                 _private = c6State._private;
@@ -250,31 +259,155 @@
                     expect(c6State).toEqual(jasmine.any(Object));
                 });
 
+                describe('events', function() {
+                    beforeEach(function() {
+                        c6StateProvider
+                            .state('Home', function() {})
+                            .state('About', function() {})
+                            .state('Pages', function() {})
+                            .state('Page', function() {})
+                            .state('Posts', function() {})
+                            .state('Post', function() {})
+                            .state('Comments', function() {})
+                            .state('Comment', function() {})
+                            .state('Meta', function() {});
+
+                        c6StateProvider.config({
+                            enableUrlRouting: false
+                        });
+
+                        c6StateProvider.config('test', {
+                            enableUrlRouting: true,
+                            rootState: 'Home'
+                        });
+
+                        c6StateProvider.map('test', null, function() {
+                            this.route('/about', 'About');
+                            this.route('/pages', 'Pages', function() {
+                                this.route('/:pageId', 'Page');
+                            });
+                            this.route('/posts', 'Posts', function() {
+                                this.route('/:postId', 'Post', function() {
+                                    this.route('/comments', 'Comments', function() {
+                                        this.state('Meta', function() {
+                                            this.route('/:commentId', 'Comment');
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+
+                    describe('$locationChangeStart', function() {
+                        function broadcast(path) {
+                            $location.path.and.returnValue(path);
+                            $rootScope.$broadcast('$locationChangeStart');
+                        }
+
+                        beforeEach(function() {
+                            spyOn(c6State, 'goTo');
+                            $location.path.and.returnValue('');
+                        });
+
+                        it('should prevent default on the event', function() {
+                            var $scope = $rootScope.$new(),
+                                listener = jasmine.createSpy('listener');
+
+                            $scope.$on('$locationChangeStart', listener.and.callFake(function(event) {
+                                expect(event.defaultPrevented).toBe(true);
+                            }));
+
+                            $rootScope.$broadcast('$locationChangeStart');
+                            expect(listener).toHaveBeenCalled();
+                        });
+
+                        it('should call goTo based on the path', function() {
+                            broadcast('');
+                            expect(c6State.goTo).toHaveBeenCalledWith('Home');
+
+                            broadcast('/about');
+                            expect(c6State.goTo).toHaveBeenCalledWith('About');
+
+                            broadcast('/pages');
+                            expect(c6State.goTo).toHaveBeenCalledWith('Pages');
+
+                            broadcast('/pages/p-1234');
+                            expect(c6State.goTo).toHaveBeenCalledWith('Page');
+
+                            broadcast('/posts');
+                            expect(c6State.goTo).toHaveBeenCalledWith('Posts');
+
+                            broadcast('/posts/po-e343f');
+                            expect(c6State.goTo).toHaveBeenCalledWith('Post');
+
+                            broadcast('/posts/po-e343f/comments');
+                            expect(c6State.goTo).toHaveBeenCalledWith('Comments');
+
+                            broadcast('/posts/po-e343f/comments/c-a');
+                            expect(c6State.goTo).toHaveBeenCalledWith('Comment');
+                        });
+
+                        it('should not call goTo again if the path hasn\'t changed', function() {
+                            broadcast('/about');
+                            expect(c6State.goTo).toHaveBeenCalled();
+
+                            c6State.goTo.calls.reset();
+
+                            broadcast('/about');
+                            expect(c6State.goTo).not.toHaveBeenCalled();
+
+                            broadcast('/pages/p-abc');
+                            expect(c6State.goTo).toHaveBeenCalled();
+
+                            c6State.goTo.calls.reset();
+
+                            broadcast('/pages/p-123');
+                            expect(c6State.goTo).toHaveBeenCalled();
+                        });
+
+                        it('should null-out the cModel of the states that are changing', function() {
+                            var posts, post, comments, comment,
+                                postsModel, postModel, commentsModel, commentModel;
+
+                            c6State.in('test', function() {
+                                posts = c6State.get('Posts');
+                                post = c6State.get('Post');
+                                comments = c6State.get('Comments');
+                                comment = c6State.get('Comment');
+                            });
+
+                            postsModel = posts.cModel = {};
+                            postModel = post.cModel = {};
+                            commentsModel = comments.cModel = {};
+                            commentModel = comment.cModel = {};
+
+                            posts.cParams = {};
+                            post.cParams = { postId: 'po-abc' };
+                            comments.cParams = {};
+                            comment.cParams = { commentId: 'c-abc' };
+
+                            broadcast('/posts/po-abc/comments/c-abc');
+                            expect(posts.cModel).toBe(postsModel);
+                            expect(post.cModel).toBe(postModel);
+                            expect(comments.cModel).toBe(commentsModel);
+                            expect(comment.cModel).toBe(commentModel);
+
+                            broadcast('/posts/po-abc/comments/c-123');
+                            expect(posts.cModel).toBe(postsModel);
+                            expect(post.cModel).toBe(postModel);
+                            expect(comments.cModel).toBe(commentsModel);
+                            expect(comment.cModel).toBeNull();
+                            expect(comment.cParams).toEqual({ commentId: 'c-123' });
+                        });
+                    });
+                });
+
                 describe('@private', function() {
                     describe('methods', function() {
                         describe('syncUrl(states)', function() {
                             var application, posts, post, comment;
 
-                            beforeEach(function() {
-                                c6StateProvider
-                                    .state('Posts', function() {})
-                                    .state('Post', function() {})
-                                    .state('Comment', function() {
-                                        this.serializeParams = function(model) {
-                                            return {
-                                                commentUri: model.uri
-                                            };
-                                        };
-                                    });
-
-                                c6StateProvider.map(function() {
-                                    this.route('/posts', 'Posts', function() {
-                                        this.route('/:postId/content', 'Post', function() {
-                                            this.route('/comments/:commentUri', 'Comment');
-                                        });
-                                    });
-                                });
-
+                            function setup() {
                                 application = c6State.get('Application');
                                 posts = c6State.get('Posts');
                                 post = c6State.get('Post');
@@ -287,10 +420,80 @@
                                 comment.cModel = {
                                     uri: 'blah-blah'
                                 };
+                            }
+
+                            beforeEach(function() {
+                                c6StateProvider
+                                    .state('Posts', function() {})
+                                    .state('Post', function() {})
+                                    .state('Comment', function() {
+                                        this.serializeParams = function(model) {
+                                            return {
+                                                commentUri: model.uri
+                                            };
+                                        };
+                                    });
                             });
 
-                            it('should return a full url for the state family', function() {
-                                expect(_private.syncUrl([application, posts, post, comment])).toBe('/posts/the-name/content/comments/blah-blah');
+                            describe('if the context supports URL routing', function() {
+                                beforeEach(function() {
+                                    c6StateProvider.map(function() {
+                                        this.route('/posts', 'Posts', function() {
+                                            this.route('/:postId/content', 'Post', function() {
+                                                this.route('/comments/:commentUri', 'Comment');
+                                            });
+                                        });
+                                    });
+
+                                    setup();
+                                });
+
+                                it('should return a full url for the state family', function() {
+                                    expect(_private.syncUrl([application, posts, post, comment])).toBe('/posts/the-name/content/comments/blah-blah');
+                                });
+
+                                it('should change the URL path', function() {
+                                    _private.syncUrl([application, posts, post, comment]);
+
+                                    expect($location.path).toHaveBeenCalledWith('/posts/the-name/content/comments/blah-blah');
+                                });
+
+                                it('should set the cParams on the state', function() {
+                                    _private.syncUrl([application, posts, post, comment]);
+
+                                    expect(application.cParams).toEqual({});
+                                    expect(posts.cParams).toEqual({});
+                                    expect(post.cParams).toEqual({ postId: 'the-name' });
+                                    expect(comment.cParams).toEqual({ commentUri: 'blah-blah' });
+                                });
+                            });
+
+                            describe('if the context does not support URL routing', function() {
+                                beforeEach(function() {
+                                    c6StateProvider.config({
+                                        enableUrlRouting: false
+                                    });
+
+                                    c6StateProvider.map(function() {
+                                        this.state('Posts', function() {
+                                            this.state('Post', function() {
+                                                this.state('Comment');
+                                            });
+                                        });
+                                    });
+
+                                    setup();
+                                });
+
+                                it('should return null', function() {
+                                    expect(_private.syncUrl([application, posts, post, comment])).toBeNull();
+                                });
+
+                                it('should not change the path', function() {
+                                    _private.syncUrl([application, posts, post, comment]);
+
+                                    expect($location.path).not.toHaveBeenCalled();
+                                });
                             });
                         });
 
@@ -464,6 +667,9 @@
                                 comments = c6State.get('Comments');
 
                                 application.cModel = {};
+                                posts.cParams = {
+                                    postId: 'foo'
+                                };
 
                                 $rootScope.$apply(function() {
                                     _private.resolveStates([application, posts, post, comments]).then(success, failure);
@@ -503,7 +709,7 @@
                                     });
 
                                     it('should resolve the model', function() {
-                                        expect(posts.model).toHaveBeenCalled();
+                                        expect(posts.model).toHaveBeenCalledWith(posts.cParams);
                                     });
                                 });
 
@@ -601,6 +807,45 @@
                     });
 
                     describe('methods', function() {
+                        describe('_deregisterView(viewDelegate)', function() {
+                            var parentView, childView;
+
+                            beforeEach(function() {
+                                parentView = {
+                                    id: null,
+                                    parent: null,
+                                    render: function() {}
+                                };
+                                childView = {
+                                    id: null,
+                                    parent: parentView,
+                                    render: function() {}
+                                };
+
+                                c6StateProvider.state('Child', function() {});
+
+                                c6StateProvider.map(function() {
+                                    this.state('Child');
+                                });
+
+                                c6State._registerView(parentView);
+                                c6State._registerView(childView);
+
+                                c6State._deregisterView(childView);
+                            });
+
+                            it('should remove references to the view delegate', function() {
+                                var application = c6State.get('Application'),
+                                    child = c6State.get('Child');
+
+                                expect(function() {
+                                    $rootScope.$apply(function() {
+                                        _private.renderStates([application, child]);
+                                    });
+                                }).toThrow();
+                            });
+                        });
+
                         describe('goTo(state, models, params)', function() {
                             var success, failure,
                                 resolveStatesDeferred, renderStatesDeferred,
@@ -614,9 +859,13 @@
                                     .and.returnValue(resolveStatesDeferred.promise);
                                 spyOn(_private, 'renderStates')
                                     .and.returnValue(renderStatesDeferred.promise);
+                                spyOn(_private, 'syncUrl')
+                                    .and.returnValue('/foo/bar/okay');
 
                                 success = jasmine.createSpy('success()');
                                 failure = jasmine.createSpy('failure()');
+
+                                c6StateProvider.config('foo', {});
 
                                 c6StateProvider
                                     .state('Home', function() {
@@ -667,8 +916,23 @@
                                             });
                                         });
 
+                                        it('should sync the URL', function() {
+                                            expect(_private.syncUrl).toHaveBeenCalledWith([application, home, about]);
+                                        });
+
                                         it('should resolve to the state being transitioned to', function() {
                                             expect(success).toHaveBeenCalledWith(about);
+                                        });
+
+                                        it('should not update the query params', function() {
+                                            expect($location.search).not.toHaveBeenCalled();
+                                        });
+
+                                        it('should set the "current" property', function() {
+                                            expect(c6State.current).toBe(about.cName);
+                                            c6State.in('foo', function() {
+                                                expect(c6State.current).toBeNull();
+                                            });
                                         });
                                     });
                                 });
@@ -691,11 +955,32 @@
                                     expect(about.cModel).toBe(aboutModel);
                                 });
                             });
+
+                            describe('if called with query params', function() {
+                                beforeEach(function() {
+                                    $rootScope.$apply(function() {
+                                        c6State.goTo('About', null, {
+                                            hello: 'foo',
+                                            test: 'bar'
+                                        });
+
+                                        resolveStatesDeferred.resolve([application, about]);
+                                        renderStatesDeferred.resolve([application, about]);
+                                    });
+                                });
+
+                                it('should update the query params', function() {
+                                    expect($location.search).toHaveBeenCalledWith({
+                                        hello: 'foo',
+                                        test: 'bar'
+                                    });
+                                });
+                            });
                         });
 
                         describe('get(state)', function() {
                             var Home, Sidebar, Contacts,
-                                home, sidebar, contacts;
+                                home, sidebar, contacts, post;
 
                             beforeEach(function() {
                                 Home = [function() {}];
@@ -703,6 +988,7 @@
                                 Contacts = [function() {}];
 
                                 c6StateProvider.state('Home', Home);
+                                c6StateProvider.state('Post', function() {});
                                 c6StateProvider.state('Sidebar', Sidebar);
                                 c6StateProvider.state('Contacts', Contacts);
 
@@ -712,6 +998,7 @@
 
                                 c6StateProvider.map(function() {
                                     this.state('Home');
+                                    this.route('/posts/:postId', 'Post');
                                 });
 
                                 c6StateProvider.map('sidebar', null, function() {
@@ -727,6 +1014,8 @@
                                     expect(application.cParent).toBeNull();
                                     expect(application.cUrl).toBe('');
                                     expect(application.cContext).toBe('main');
+                                    expect(application.cName).toBe('Application');
+                                    expect(application.cParams).toEqual({});
                                 });
 
                                 it('should be overwriteable', function() {
@@ -749,6 +1038,7 @@
                             describe('normal states', function() {
                                 beforeEach(function() {
                                     home = c6State.get('Home');
+                                    post = c6State.get('Post');
                                 });
 
                                 it('should be an instance of the provided constructor', function() {
@@ -761,6 +1051,8 @@
                                     expect(home.cUrl).toBe('');
                                     expect(home.cTemplate).toBeNull();
                                     expect(home.cContext).toBe('main');
+                                    expect(home.cName).toBe('Home');
+                                    expect(home.cParams).toBeNull();
                                 });
 
                                 it('should return the same instance', function() {
@@ -785,6 +1077,10 @@
                                     expect(contacts).toEqual(jasmine.any(Contacts[0]));
                                     expect(sidebar.cContext).toBe('sidebar');
                                     expect(contacts.cContext).toBe('sidebar');
+                                });
+
+                                it('should set the cParams based on the dynamic segments of the URL', function() {
+                                    expect(post.cParams).toEqual({ postId: null });
                                 });
                             });
                         });

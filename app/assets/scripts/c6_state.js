@@ -2,7 +2,9 @@
     'use strict';
 
     var noop = angular.noop,
-        extend = angular.extend;
+        extend = angular.extend,
+        isDefined = angular.isDefined,
+        equals = angular.equals;
 
     function mixin(instance, constructor) {
         var args = Array.prototype.slice.call(arguments, 2);
@@ -17,9 +19,10 @@
             var stateConstructors = {},
                 contexts = {};
 
-            C6State.$inject = ['$injector','$q','$http','$templateCache'];
-            function C6State  ( $injector , $q , $http , $templateCache ) {
+            C6State.$inject = ['$injector','$q','$http','$templateCache','$location','$rootScope'];
+            function C6State  ( $injector , $q , $http , $templateCache , $location , $rootScope ) {
                 var self = this,
+                    lastPath = null,
                     _private = {};
 
                 var states = {},
@@ -49,7 +52,7 @@
                 Object.defineProperties(this, {
                     current: {
                         get: function() {
-                            return null;
+                            return contexts[currentContext].current;
                         }
                     }
                 });
@@ -65,6 +68,8 @@
                                 this.cParent = null;
                                 this.cTemplate = null;
                                 this.cContext = currentContext;
+                                this.cName = name;
+                                this.cParams = {};
 
                                 this.serializeParams = function() { return {}; };
                             }];
@@ -75,7 +80,7 @@
                         }, $injector.instantiate(constructor))));
                 };
 
-                this.goTo = function(stateName, models) {
+                this.goTo = function(stateName, models, params) {
                     var state = this.get(stateName),
                         family = stateFamilyOf(state),
                         statesWithModels = (models && models.length) ?
@@ -87,15 +92,25 @@
 
                     return _private.resolveStates(family)
                         .then(_private.renderStates)
+                        .then(_private.syncUrl)
+                        .then(function updateParams() {
+                            return params ? $location.search(params) : $location;
+                        })
                         .then(function fulfill() {
+                            contexts[state.cContext].current = state.cName;
+
                             return state;
                         });
                 };
 
                 this.in = function(context, fn) {
+                    var result;
+
                     currentContext = context;
-                    fn();
+                    result = fn();
                     currentContext = 'main';
+
+                    return result;
                 };
 
                 this._registerView = function(viewDelegate) {
@@ -123,16 +138,37 @@
                     return viewDelegate;
                 };
 
+                this._deregisterView = function(viewDelegate) {
+                    var views = Object.keys(contexts)
+                        .reduce(function(views, contextName) {
+                            var viewDelegates = contexts[contextName].viewDelegates;
+                            return viewDelegates.indexOf(viewDelegate) > -1 ?
+                                viewDelegates : views;
+                        }, []);
+
+                    views.splice(views.indexOf(viewDelegate), 1);
+                };
+
                 _private.syncUrl = function(states) {
                     var lastState = states[states.length - 1],
-                        values = states.reduce(function(values, state) {
-                            var part = state.serializeParams(state.cModel);
-
+                        params = states.map(function(state) {
+                            return state.cUrl ?
+                                state.serializeParams(state.cModel) : {};
+                        }),
+                        values = params.reduce(function(values, part) {
                             return extend(values, part);
                         }, {}),
                         url = Object.keys(values).reduce(function(url, prop) {
                             return url.replace(':' + prop, values[prop]);
                         }, lastState.cUrl);
+
+                    states.forEach(function(state, index) {
+                        state.cParams = params[index];
+                    });
+
+                    if (url) {
+                        $location.path(url);
+                    }
 
                     return url;
                 };
@@ -158,7 +194,8 @@
                         }
 
                         function model() {
-                            return state.cModel || (state.model || noop).call(state);
+                            return state.cModel ||
+                                (state.model || noop).call(state, state.cParams);
                         }
 
                         function afterModel(model) {
@@ -193,11 +230,73 @@
                 };
 
                 if (window.c6.kHasKarma) { this._private = _private; }
+
+                $rootScope.$on('$locationChangeStart', function(event) {
+                    var path = $location.path(),
+                        // Find the context that has URL routing enabled
+                        context = Object.keys(contexts)
+                            .reduce(function(context, contextName) {
+                                var next = contexts[contextName];
+
+                                return next.enableUrlRouting ? next : context;
+                            }, null),
+                        // Find the State for this path
+                        route = context.routes.reduce(function(route, next) {
+                            return next.matcher.test(path) ? next : route;
+                        }, null),
+                        // Get the state object instance for this URL
+                        state = self.in(context.name, function() {
+                            return self.get(route.name);
+                        }),
+                        // Get the dynamic segments of the URL in the correct order (according to
+                        // the order in the URL.)
+                        keys = (state.cUrl.match(/:[^\/]+/g) || [])
+                            .map(function(key) {
+                                return key.substring(1);
+                            }),
+                        // Create the paramaters object for this route
+                        dynamicParams = (path.match(route.matcher) || [])
+                            .slice(1)
+                            .reduce(function(params, value, index) {
+                                params[keys[index]] = value;
+
+                                return params;
+                            }, {}),
+                        family = stateFamilyOf(state);
+
+                    if (path ===  lastPath) { return; }
+
+                    // Iterate through all the states in this transition
+                    family.forEach(function(state) {
+                        // Create a parameters object based on the dynamic segments of this route
+                        // only (not including children and parents.)
+                        var params = state.cParams &&
+                            Object.keys(state.cParams)
+                                .reduce(function(params, key) {
+                                    params[key] = dynamicParams[key];
+
+                                    return params;
+                                }, {});
+
+                        // If the params have changed, ditch the current model and update the
+                        // cParams.
+                        if (!equals(params, state.cParams)) {
+                            state.cModel = null;
+                            state.cParams = params;
+                        }
+                    });
+
+                    self.goTo(route.name);
+                    lastPath = path;
+
+                    event.preventDefault();
+                });
             }
 
-            function Mapper(context, parent) {
+            function Mapper(context, parent, url) {
                 this.parent = parent;
                 this.context = context;
+                this.url  = isDefined(url) ? url : null;
             }
             Mapper.prototype = {
                 state: function(name, mapFn) {
@@ -213,6 +312,38 @@
                         this.cModel = null;
                         this.cTemplate = null;
                         this.cContext = context.name;
+                        this.cName = name;
+                        this.cParams = null;
+                    });
+
+                    context.stateConstructors[name] = constructor;
+
+                    if (mapFn) {
+                        mapFn.call(new Mapper(this.context, name, this.url));
+                    }
+                },
+                route: function(route, name, mapFn) {
+                    var constructor = stateConstructors[name],
+                        url = this.url + route;
+
+                    if (!this.context.enableUrlRouting) {
+                        throw new Error(
+                            'Cannot map route "' + route + '"' +
+                            ' in context "' + this.context.name + '".' +
+                            ' URL Routing is not enabled.'
+                        );
+                    }
+
+                    this.state(name);
+
+                    constructor.initializers.push(function() {
+                        this.cUrl = url;
+                        this.cParams = (route.match(/:[^\/]+/g) || [])
+                            .reduce(function(params, match) {
+                                params[match.substr(1)] = null;
+
+                                return params;
+                            }, {});
 
                         this.serializeParams = this.serializeParams ||
                             function(model) {
@@ -227,28 +358,19 @@
                             };
                     });
 
-                    context.stateConstructors[name] = constructor;
+                    this.context.routes.push({
+                        name: name,
+                        matcher: new RegExp(
+                            '^' +
+                            url.replace(/:[^\/]+/g, '([^\\/]+)')
+                                .replace(/\//g, '\\/') +
+                            '$'
+                        )
+                    });
 
                     if (mapFn) {
-                        mapFn.call(new Mapper(this.context, name));
+                        mapFn.call(new Mapper(this.context, name, this.url + route));
                     }
-                },
-                route: function(route, name, mapFn) {
-                    var constructor = stateConstructors[name];
-
-                    if (!this.context.enableUrlRouting) {
-                        throw new Error(
-                            'Cannot map route "' + route + '"' +
-                            ' in context "' + this.context.name + '".' +
-                            ' URL Routing is not enabled.'
-                        );
-                    }
-
-                    this.state(name, mapFn);
-
-                    constructor.initializers.push(function() {
-                        this.cUrl = this.cParent.cUrl + route;
-                    });
                 }
             };
 
@@ -271,7 +393,7 @@
                 context = contexts[context || 'main'];
                 parent = parent || context.rootState;
 
-                mapper = new Mapper(context, parent);
+                mapper = new Mapper(context, parent, context.enableUrlRouting ? '' : null);
 
                 mapFn.call(mapper);
             };
@@ -308,6 +430,12 @@
                     name: context,
                     stateConstructors: {},
                     viewDelegates: [],
+                    routes: config.enableUrlRouting ?
+                        [{
+                            name: config.rootState,
+                            matcher: /^$/
+                        }] :
+                        [],
                     current: null
                 }, config);
 
