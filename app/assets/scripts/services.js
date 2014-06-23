@@ -37,6 +37,28 @@
 
         .factory('c6AsyncQueue', ['$q',
         function                 ( $q ) {
+            function allSettled(promises) {
+                var results = [],
+                    total = promises.length,
+                    deferred = $q.defer();
+
+                if (!total) {
+                    deferred.resolve(results);
+                }
+
+                forEach(promises, function(promise, index) {
+                    promise.finally(function(result) {
+                        results[index] = result;
+
+                        if (results.length === total) {
+                            deferred.resolve(results);
+                        }
+                    });
+                });
+
+                return deferred.promise;
+            }
+
             function Queue() {
                 this.queue = [];
             }
@@ -46,7 +68,7 @@
 
                     return function() {
                         var args = arguments,
-                            promise = $q.all(queue)
+                            promise = allSettled(queue)
                                 .then(function apply() {
                                     return fn.apply(context, args);
                                 });

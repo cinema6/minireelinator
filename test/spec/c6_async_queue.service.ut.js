@@ -2,13 +2,13 @@
     'use strict';
 
     define(['services'], function() {
-        describe('c6AsyncQueue()', function() {
+        ddescribe('c6AsyncQueue()', function() {
             var $rootScope,
                 $q,
                 c6AsyncQueue;
 
             beforeEach(function() {
-                module('c6.mrmaker');
+                module('c6.mrmaker.services');
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
@@ -125,7 +125,7 @@
                         expect(async1).not.toHaveBeenCalled();
 
                         $rootScope.$apply(function() {
-                            deferred3.resolve();
+                            deferred3.reject();
                         });
                         expect(async1).toHaveBeenCalled();
 
