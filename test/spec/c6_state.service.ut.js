@@ -23,7 +23,8 @@
             beforeEach(function() {
                 module('ng', function($provide) {
                     $provide.value('$location', {
-                        path: jasmine.createSpy('$location.path()'),
+                        path: jasmine.createSpy('$location.path()')
+                            .and.returnValue(''),
                         search: jasmine.createSpy('$location.search()')
                     });
                 });
@@ -853,6 +854,60 @@
                     });
 
                     describe('methods', function() {
+                        describe('_registerView(viewDelegate)', function() {
+                            var parentView, childView, sidebarView;
+
+                            beforeEach(function() {
+                                parentView = {
+                                    id: null,
+                                    parent: null
+                                };
+
+                                childView = {
+                                    id: null,
+                                    parent: parentView
+                                };
+
+                                sidebarView = {
+                                    id: 'sidebar',
+                                    parent: null
+                                };
+
+                                c6StateProvider
+                                    .state('Sidebar', function() {})
+                                    .state('Parent', function() {})
+                                    .state('Child', function() {});
+
+                                c6StateProvider.config('sidebar', {
+                                    rootView: 'sidebar',
+                                    rootState: 'Sidebar'
+                                });
+
+                                c6StateProvider.map(function() {
+                                    this.state('Parent', function() {
+                                        this.route('/child', 'Child');
+                                    });
+                                });
+
+                                get();
+                                $location.path.and.returnValue('/child');
+                                spyOn(c6State, 'goTo');
+                            });
+
+                            it('should goTo the state of the current path when the rootView of the URL-routed context is registered', function() {
+                                c6State._registerView(sidebarView);
+                                expect(c6State.goTo).not.toHaveBeenCalled();
+
+                                c6State._registerView(parentView);
+                                expect(c6State.goTo).toHaveBeenCalledWith('Child');
+
+                                c6State.goTo.calls.reset();
+
+                                c6State._registerView(childView);
+                                expect(c6State.goTo).not.toHaveBeenCalled();
+                            });
+                        });
+
                         describe('_deregisterView(viewDelegate)', function() {
                             var parentView, childView;
 

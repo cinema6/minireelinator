@@ -53,6 +53,65 @@
                     return family;
                 }
 
+                function routePathToState() {
+                    var path = $location.path(),
+                        // Find the context that has URL routing enabled
+                        context = Object.keys(contexts)
+                            .reduce(function(context, contextName) {
+                                var next = contexts[contextName];
+
+                                return next.enableUrlRouting ? next : context;
+                            }, null),
+                        // Find the State for this path
+                        route = context.routes.reduce(function(route, next) {
+                            return next.matcher.test(path) ? next : route;
+                        }, null),
+                        // Get the state object instance for this URL
+                        state = self.in(context.name, function() {
+                            return self.get(route.name);
+                        }),
+                        // Get the dynamic segments of the URL in the correct order (according to
+                        // the order in the URL.)
+                        keys = (state.cUrl.match(/:[^\/]+/g) || [])
+                            .map(function(key) {
+                                return key.substring(1);
+                            }),
+                        // Create the paramaters object for this route
+                        dynamicParams = (path.match(route.matcher) || [])
+                            .slice(1)
+                            .reduce(function(params, value, index) {
+                                params[keys[index]] = value;
+
+                                return params;
+                            }, {}),
+                        family = stateFamilyOf(state);
+
+                    if (path ===  lastPath) { return; }
+
+                    // Iterate through all the states in this transition
+                    family.forEach(function(state) {
+                        // Create a parameters object based on the dynamic segments of this route
+                        // only (not including children and parents.)
+                        var params = state.cParams &&
+                            Object.keys(state.cParams)
+                                .reduce(function(params, key) {
+                                    params[key] = dynamicParams[key];
+
+                                    return params;
+                                }, {});
+
+                        // If the params have changed, ditch the current model and update the
+                        // cParams.
+                        if (!equals(params, state.cParams)) {
+                            state.cModel = null;
+                            state.cParams = params;
+                        }
+                    });
+
+                    self.goTo(route.name);
+                    lastPath = path;
+                }
+
                 Object.defineProperties(this, {
                     current: {
                         get: function() {
@@ -108,24 +167,31 @@
                 this._registerView = function(viewDelegate) {
                     var parent = viewDelegate.parent,
                         id = viewDelegate.id,
-                        views = Object.keys(contexts)
+                        contextsArray = Object.keys(contexts).map(function(contextName) {
+                            return contexts[contextName];
+                        }),
+                        urlRoutedContext = contextsArray.reduce(function(result, context) {
+                            return context.enableUrlRouting ? context : result;
+                        }, null),
+                        views = contextsArray
                             .reduce(parent ?
-                                function(views, contextName) {
-                                    var context = contexts[contextName],
-                                        viewDelegates = context.viewDelegates;
+                                function(views, context) {
+                                    var viewDelegates = context.viewDelegates;
 
                                     return viewDelegates.indexOf(parent) > -1 ?
                                         viewDelegates : views;
                                 } :
-                                function(views, contextName) {
-                                    var context = contexts[contextName];
-
+                                function(views, context) {
                                     return context.rootView === id ?
                                         context.viewDelegates : views;
                                 },
                             null);
 
                     views.push(viewDelegate);
+
+                    if (!parent && id === urlRoutedContext.rootView) {
+                        routePathToState();
+                    }
 
                     return viewDelegate;
                 };
@@ -224,62 +290,7 @@
                 if (window.c6.kHasKarma) { this._private = _private; }
 
                 $rootScope.$on('$locationChangeStart', function(event) {
-                    var path = $location.path(),
-                        // Find the context that has URL routing enabled
-                        context = Object.keys(contexts)
-                            .reduce(function(context, contextName) {
-                                var next = contexts[contextName];
-
-                                return next.enableUrlRouting ? next : context;
-                            }, null),
-                        // Find the State for this path
-                        route = context.routes.reduce(function(route, next) {
-                            return next.matcher.test(path) ? next : route;
-                        }, null),
-                        // Get the state object instance for this URL
-                        state = self.in(context.name, function() {
-                            return self.get(route.name);
-                        }),
-                        // Get the dynamic segments of the URL in the correct order (according to
-                        // the order in the URL.)
-                        keys = (state.cUrl.match(/:[^\/]+/g) || [])
-                            .map(function(key) {
-                                return key.substring(1);
-                            }),
-                        // Create the paramaters object for this route
-                        dynamicParams = (path.match(route.matcher) || [])
-                            .slice(1)
-                            .reduce(function(params, value, index) {
-                                params[keys[index]] = value;
-
-                                return params;
-                            }, {}),
-                        family = stateFamilyOf(state);
-
-                    if (path ===  lastPath) { return; }
-
-                    // Iterate through all the states in this transition
-                    family.forEach(function(state) {
-                        // Create a parameters object based on the dynamic segments of this route
-                        // only (not including children and parents.)
-                        var params = state.cParams &&
-                            Object.keys(state.cParams)
-                                .reduce(function(params, key) {
-                                    params[key] = dynamicParams[key];
-
-                                    return params;
-                                }, {});
-
-                        // If the params have changed, ditch the current model and update the
-                        // cParams.
-                        if (!equals(params, state.cParams)) {
-                            state.cModel = null;
-                            state.cParams = params;
-                        }
-                    });
-
-                    self.goTo(route.name);
-                    lastPath = path;
+                    routePathToState();
 
                     event.preventDefault();
                 });
