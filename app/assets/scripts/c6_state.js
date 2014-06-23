@@ -4,7 +4,8 @@
     var noop = angular.noop,
         extend = angular.extend,
         isDefined = angular.isDefined,
-        equals = angular.equals;
+        equals = angular.equals,
+        forEach = angular.forEach;
 
     function mixin(instance, constructor) {
         var args = Array.prototype.slice.call(arguments, 2);
@@ -62,20 +63,8 @@
 
                 this.get = function(name) {
                     var context = contexts[currentContext],
-                        constructor = (context.rootState === name) ?
-                            stateConstructors[name] : context.stateConstructors[name],
-                        initializers = (constructor && constructor.initializers) ||
-                            [function() {
-                                this.cModel = null;
-                                this.cUrl = context.enableUrlRouting ? '' : null;
-                                this.cParent = null;
-                                this.cTemplate = null;
-                                this.cContext = currentContext;
-                                this.cName = name;
-                                this.cParams = {};
-
-                                this.serializeParams = function() { return {}; };
-                            }];
+                        constructor = context.stateConstructors[name],
+                        initializers = (constructor && constructor.initializers);
 
                     return states[name] || (constructor &&
                         (states[name] = initializers.reduce(function(state, initializer) {
@@ -307,11 +296,12 @@
                         initializers = constructor.initializers ||
                             (constructor.initializers = []),
                         parent = this.parent,
-                        context = this.context;
+                        context = this.context,
+                        url = this.url;
 
                     initializers.push(function(c6State) {
-                        this.cParent = c6State.get(parent);
-                        this.cUrl = this.cParent.cUrl;
+                        this.cParent = parent && c6State.get(parent);
+                        this.cUrl = url;
                         this.cModel = null;
                         this.cTemplate = null;
                         this.cContext = context.name;
@@ -322,7 +312,7 @@
                     context.stateConstructors[name] = constructor;
 
                     if (mapFn) {
-                        mapFn.call(new Mapper(this.context, name, this.url));
+                        mapFn.call(new Mapper(this.context, name, url));
                     }
                 },
                 route: function(route, name, mapFn) {
@@ -433,12 +423,7 @@
                     name: context,
                     stateConstructors: {},
                     viewDelegates: [],
-                    routes: config.enableUrlRouting ?
-                        [{
-                            name: config.rootState,
-                            matcher: /^$/
-                        }] :
-                        [],
+                    routes: config.enableUrlRouting ? [] : null,
                     current: null
                 }, config);
 
@@ -447,6 +432,16 @@
 
             this.$get = ['$injector',
             function    ( $injector ) {
+                forEach(contexts, function(context) {
+                    if (context.enableUrlRouting) {
+                        (new Mapper(context, null, ''))
+                            .route('', context.rootState);
+                    } else {
+                        (new Mapper(context, null, null))
+                            .state(context.rootState);
+                    }
+                });
+
                 return $injector.instantiate(C6State);
             }];
 

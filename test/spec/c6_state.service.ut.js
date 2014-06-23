@@ -4,6 +4,7 @@
     define(['c6_state'], function() {
         ddescribe('c6State', function() {
             var c6StateProvider,
+                $injector,
                 c6State,
                 $rootScope,
                 $httpBackend,
@@ -11,6 +12,13 @@
                 $location;
 
             var _private;
+
+            function get() {
+                c6State = $injector.get('c6State');
+                _private = c6State._private;
+
+                return c6State;
+            }
 
             beforeEach(function() {
                 module('ng', function($provide) {
@@ -24,15 +32,14 @@
                     c6StateProvider = $injector.get('c6StateProvider');
                 });
 
-                inject(function($injector) {
+                inject(function(_$injector_) {
+                    $injector = _$injector_;
+
                     $rootScope = $injector.get('$rootScope');
-                    c6State = $injector.get('c6State');
                     $httpBackend = $injector.get('$httpBackend');
                     $q = $injector.get('$q');
                     $location = $injector.get('$location');
                 });
-
-                _private = c6State._private;
             });
 
             describe('provider', function() {
@@ -58,6 +65,8 @@
                                             rootState: 'Main',
                                             enableUrlRouting: true
                                         });
+
+                                        get();
                                     });
 
                                     it('should make the root state\'s cUrl \'\'', function() {
@@ -73,6 +82,8 @@
                                             rootState: 'Main',
                                             enableUrlRouting: false
                                         });
+
+                                        get();
                                     });
 
                                     it('should make the root state\'s cUrl null', function() {
@@ -84,23 +95,33 @@
 
                                 describe('if enableUrlRouting is already true in another context', function() {
                                     beforeEach(function() {
+                                        c6StateProvider
+                                            .state('One', function() {})
+                                            .state('Two', function() {})
+                                            .state('Three', function() {});
+
                                         c6StateProvider.config({
                                             enableUrlRouting: false
                                         });
 
                                         c6StateProvider.config('one', {
-                                            enableUrlRouting: true
+                                            enableUrlRouting: true,
+                                            rootState: 'One'
                                         });
 
                                         c6StateProvider.config('two', {
-                                            enableUrlRouting: false
+                                            enableUrlRouting: false,
+                                            rootState: 'Two'
                                         });
+
+                                        get();
                                     });
 
                                     it('should throw an error if set to true as well', function() {
                                         expect(function() {
                                             c6StateProvider.config('three', {
-                                                enableUrlRouting: true
+                                                enableUrlRouting: true,
+                                                rootState: 'Three'
                                             });
                                         }).toThrow(new Error('Cannot enable URL routing in context "three" because it is already enabled in context "one".'));
                                     });
@@ -115,6 +136,8 @@
                                         enableUrlRouting: false
                                     });
 
+                                    get();
+
                                     application = c6State.get('Application');
 
                                     expect(application.cUrl).toBeNull();
@@ -124,6 +147,8 @@
                                     c6StateProvider.config({
                                         enableUrlRouting: false,
                                     });
+
+                                    get();
 
                                     expect(c6State.get('Application').cUrl).toBeNull();
                                 });
@@ -153,6 +178,8 @@
                                             this.route('/comments', 'Posts.Post.Comments');
                                         });
                                     });
+
+                                    get();
                                 });
 
                                 it('should allow children to be defined under the specified parent', function() {
@@ -173,6 +200,8 @@
                                             });
                                         });
                                     });
+
+                                    get();
                                 });
 
                                 it('should set up relationships between states', function() {
@@ -205,6 +234,8 @@
                                             });
                                         });
                                     });
+
+                                    get();
 
                                     about = c6State.get('About');
                                     posts = c6State.get('Posts');
@@ -256,7 +287,7 @@
 
             describe('service', function() {
                 it('should exist', function() {
-                    expect(c6State).toEqual(jasmine.any(Object));
+                    expect($injector.get('c6State')).toEqual(jasmine.any(Object));
                 });
 
                 describe('events', function() {
@@ -296,6 +327,8 @@
                                 });
                             });
                         });
+
+                        get();
                     });
 
                     describe('$locationChangeStart', function() {
@@ -408,6 +441,8 @@
                             var application, posts, post, comment;
 
                             function setup() {
+                                get();
+
                                 application = c6State.get('Application');
                                 posts = c6State.get('Posts');
                                 post = c6State.get('Post');
@@ -539,8 +574,13 @@
                                 sidebarView = new ViewDelegate('sidebar-view');
 
                                 c6StateProvider.config('sidebar', {
-                                    rootView: 'sidebar-view'
+                                    rootView: 'sidebar-view',
+                                    rootState: 'Sidebar'
                                 });
+
+                                c6StateProvider.state('Sidebar', function() {});
+
+                                get();
 
                                 c6State._registerView(sidebarView);
                                 c6State._registerView(applicationView);
@@ -660,6 +700,8 @@
                                         });
                                     });
                                 });
+
+                                get();
 
                                 application = c6State.get('Application');
                                 posts = c6State.get('Posts');
@@ -793,6 +835,10 @@
 
                 describe('@public', function() {
                     describe('properties', function() {
+                        beforeEach(function() {
+                            get();
+                        });
+
                         describe('current', function() {
                             it('should start as null', function() {
                                 expect(c6State.current).toBeNull();
@@ -828,6 +874,8 @@
                                     this.state('Child');
                                 });
 
+                                get();
+
                                 c6State._registerView(parentView);
                                 c6State._registerView(childView);
 
@@ -855,19 +903,12 @@
                                 resolveStatesDeferred = $q.defer();
                                 renderStatesDeferred = $q.defer();
 
-                                spyOn(_private, 'resolveStates')
-                                    .and.returnValue(resolveStatesDeferred.promise);
-                                spyOn(_private, 'renderStates')
-                                    .and.returnValue(renderStatesDeferred.promise);
-                                spyOn(_private, 'syncUrl')
-                                    .and.returnValue('/foo/bar/okay');
-
-                                success = jasmine.createSpy('success()');
-                                failure = jasmine.createSpy('failure()');
-
-                                c6StateProvider.config('foo', {});
+                                c6StateProvider.config('foo', {
+                                    rootState: 'Foo'
+                                });
 
                                 c6StateProvider
+                                    .state('Foo', function() {})
                                     .state('Home', function() {
 
                                     })
@@ -879,6 +920,18 @@
                                             this.state('About');
                                         });
                                     });
+
+                                get();
+
+                                spyOn(_private, 'resolveStates')
+                                    .and.returnValue(resolveStatesDeferred.promise);
+                                spyOn(_private, 'renderStates')
+                                    .and.returnValue(renderStatesDeferred.promise);
+                                spyOn(_private, 'syncUrl')
+                                    .and.returnValue('/foo/bar/okay');
+
+                                success = jasmine.createSpy('success()');
+                                failure = jasmine.createSpy('failure()');
 
                                 application = c6State.get('Application');
                                 home = c6State.get('Home');
@@ -1030,7 +1083,7 @@
 
                             describe('the auto-generated Application state', function() {
                                 it('should be gettable', function() {
-                                    var application = c6State.get('Application');
+                                    var application = get().get('Application');
 
                                     expect(application.cModel).toBeNull();
                                     expect(application.cParent).toBeNull();
@@ -1047,7 +1100,7 @@
                                         this.templateUrl = 'assets/views/app.html';
                                     }]);
 
-                                    application = c6State.get('Application');
+                                    application = get().get('Application');
 
                                     expect(application.templateUrl).toBe('assets/views/app.html');
                                     expect(application.cModel).toBeNull();
@@ -1059,6 +1112,8 @@
 
                             describe('normal states', function() {
                                 beforeEach(function() {
+                                    get();
+
                                     home = c6State.get('Home');
                                     post = c6State.get('Post');
                                 });
