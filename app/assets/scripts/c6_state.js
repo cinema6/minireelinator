@@ -32,6 +32,55 @@
     }
 
     angular.module('c6.state', ['c6.mrmaker.services'])
+        .directive('c6Sref', ['c6State','$animate',
+        function             ( c6State , $animate ) {
+            return {
+                restrict: 'A',
+                link: function(scope, $element, attrs) {
+                    function setActive() {
+                        $animate.addClass($element, 'c6-active');
+                    }
+
+                    function stateChange() {
+                        if (c6State.in(attrs.c6Context || 'main', function() {
+                            return c6State.isActive(c6State.get(attrs.c6Sref));
+                        })) {
+                            setActive();
+                        } else {
+                            $animate.removeClass($element, 'c6-active');
+                        }
+                    }
+
+                    $element.on('click', function() {
+                            var state = attrs.c6Sref,
+                                params = scope.$eval(attrs.c6Params),
+                                models = scope.$eval(attrs.c6Models);
+
+                            scope.$apply(function() {
+                                c6State.in(attrs.c6Context || 'main', function() {
+                                    c6State.goTo(state, models, params);
+                                });
+                            });
+                        })
+                        .on('$destroy', function() {
+                            c6State.removeListener('stateChange', stateChange);
+                        });
+
+                    c6State.on('stateChange', stateChange);
+
+                    c6State.in(attrs.c6Context || 'main', function() {
+                        if (c6State.isActive(c6State.get(attrs.c6Sref))) {
+                            setActive();
+                        }
+                    });
+
+                    if ($element.prop('tagName') === 'A') {
+                        $element.attr('href', '');
+                    }
+                }
+            };
+        }])
+
         .directive('c6View', ['c6State','$animate','$compile','$controller','$location',
         function             ( c6State , $animate , $compile , $controller , $location ) {
             function ModelController() {}
