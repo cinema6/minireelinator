@@ -2,11 +2,12 @@
     'use strict';
 
     define(['c6_state'], function() {
-        ddescribe('<c6-view>', function() {
+        describe('<c6-view>', function() {
             var $rootScope,
                 $scope,
                 $compile,
                 $controller,
+                $location,
                 c6State;
 
             var $body,
@@ -20,6 +21,7 @@
                     $compile = $injector.get('$compile');
                     $controller = $injector.get('$controller');
                     c6State = $injector.get('c6State');
+                    $location = $injector.get('$location');
 
                     $scope = $rootScope.$new();
                 });
@@ -136,6 +138,155 @@
                     });
 
                     describe('render(state)', function() {
+                        describe('binding to query parameters', function() {
+                            var controller,
+                                state, applicationState;
+
+                            beforeEach(function() {
+                                spyOn($location, 'search').and.returnValue($location);
+                                spyOn($location, 'replace');
+
+                                applicationState = {};
+
+                                state = {
+                                    cParent: applicationState,
+                                    cTemplate: '<div></div>',
+                                    controller: function() {
+                                        controller = this;
+                                    },
+                                    queryParams: {
+                                        sort: '=',
+                                        coordinates: '=cors',
+                                        debug: '&'
+                                    }
+                                };
+
+                                $scope.$apply(function() {
+                                    delegate.render(state);
+                                });
+                            });
+
+                            it('should create one-way bindings on the controller', function() {
+                                $location.search.and.returnValue({});
+
+                                expect(controller.debug).not.toBeDefined();
+
+                                $location.search.and.returnValue({
+                                    debug: true
+                                });
+                                expect(controller.debug).toBe(true);
+                                expect($location.search).toHaveBeenCalledWith();
+
+                                $location.search.and.returnValue({
+                                    debug: false
+                                });
+                                expect(controller.debug).toBe(false);
+                                expect($location.search).toHaveBeenCalledWith();
+
+                                expect(function() {
+                                    controller.debug = 'foo';
+                                }).toThrow();
+                            });
+
+                            it('should create two-way bindings on the controller', function() {
+                                $location.search.and.returnValue({});
+
+                                expect(controller.sort).not.toBeDefined();
+
+                                $location.search.and.returnValue({
+                                    sort: 'asc'
+                                });
+                                expect(controller.sort).toBe('asc');
+
+                                $location.search.and.returnValue($location);
+                                controller.sort = 'desc';
+                                expect($location.replace).toHaveBeenCalled();
+                                expect($location.search).toHaveBeenCalledWith('sort', 'desc');
+                            });
+
+                            it('should create bindings with custom names', function() {
+                                $location.search.and.returnValue({});
+
+                                expect(controller.coordinates).toBeUndefined();
+
+                                $location.search.and.returnValue({
+                                    cors: '44,22'
+                                });
+                                expect(controller.coordinates).toBe('44,22');
+                            });
+
+                            it('should support setting an initial value', function() {
+                                $scope.$apply(function() {
+                                    delegate.render({
+                                        cTemplate: '<div></div>',
+                                        controller: function() {
+                                            this.debug = false;
+
+                                            controller = this;
+                                        },
+                                        queryParams: {
+                                            debug: '='
+                                        }
+                                    });
+                                });
+
+                                $location.search.and.returnValue({
+                                    debug: false
+                                });
+                                expect(controller.debug).toBe(false);
+                                expect($location.search).toHaveBeenCalledWith('debug', false);
+                            });
+
+                            it('should throw an error if two controllers try to two-way bind to the same query param', function() {
+                                var childDelegate,
+                                    childState;
+
+                                state = {
+                                    cTemplate: '<c6-view></c6-view>',
+                                    controller: function() {},
+                                    queryParams: {
+                                        debug: '='
+                                    },
+                                    cParent: applicationState
+                                };
+
+                                $scope.$apply(function() {
+                                    delegate.render(state);
+                                });
+                                childDelegate = c6State._registerView.calls.mostRecent().args[0];
+
+                                childState = {
+                                    cTemplate: '<div></div>',
+                                    controller: function() {},
+                                    queryParams: {
+                                        debug: '&'
+                                    },
+                                    cParent: state
+                                };
+
+                                expect(function() {
+                                    $scope.$apply(function() {
+                                        childDelegate.render(childState);
+                                    });
+                                }).not.toThrow();
+
+                                childState = {
+                                    cTemplate: '<span></span>',
+                                    controller: function() {},
+                                    queryParams: {
+                                        debug: '='
+                                    },
+                                    cParent: state
+                                };
+
+                                expect(function() {
+                                    $scope.$apply(function() {
+                                        childDelegate.render(childState);
+                                    });
+                                }).toThrow();
+                            });
+                        });
+
                         it('should render the template of the provided state', function() {
                             $scope.$apply(function() {
                                 delegate.render({

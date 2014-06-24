@@ -291,7 +291,7 @@
                     expect($injector.get('c6State')).toEqual(jasmine.any(Object));
                 });
 
-                describe('events', function() {
+                describe('scope $events', function() {
                     beforeEach(function() {
                         c6StateProvider
                             .state('Home', function() {})
@@ -888,6 +888,43 @@
                     });
 
                     describe('methods', function() {
+                        describe('isActive', function() {
+                            beforeEach(function() {
+                                c6StateProvider
+                                    .state('Posts', function() {})
+                                    .state('Post', function() {})
+                                    .state('Comments', function() {})
+                                    .state('About', function() {});
+
+                                c6StateProvider.map(function() {
+                                    this.state('About');
+                                    this.state('Posts', function() {
+                                        this.state('Post', function() {
+                                            this.state('Comments');
+                                        });
+                                    });
+                                });
+
+                                get();
+                            });
+
+                            it('should be true if the provided state is in the current state\'s family', function() {
+                                var current = jasmine.createSpy('c6State.current').and.returnValue('Application');
+
+                                Object.defineProperty(c6State, 'current', {
+                                    get: current
+                                });
+
+                                expect(c6State.isActive(c6State.get('Application'))).toBe(true);
+                                expect(c6State.isActive(c6State.get('About'))).toBe(false);
+
+                                current.and.returnValue('Comments');
+                                expect(c6State.isActive(c6State.get('Comments'))).toBe(true);
+                                expect(c6State.isActive(c6State.get('Posts'))).toBe(true);
+                                expect(c6State.isActive(c6State.get('About'))).toBe(false);
+                            });
+                        });
+
                         describe('_registerView(viewDelegate)', function() {
                             var parentView, childView, sidebarView;
 
@@ -989,9 +1026,12 @@
                         describe('goTo(state, models, params)', function() {
                             var success, failure,
                                 resolveStatesDeferred, renderStatesDeferred,
-                                application, home, about;
+                                application, home, about,
+                                stateChange;
 
                             beforeEach(function() {
+                                stateChange = jasmine.createSpy('stateChange()');
+
                                 resolveStatesDeferred = $q.defer();
                                 renderStatesDeferred = $q.defer();
 
@@ -1014,6 +1054,8 @@
                                     });
 
                                 get();
+
+                                c6State.on('stateChange', stateChange);
 
                                 spyOn(_private, 'resolveStates')
                                     .and.returnValue(resolveStatesDeferred.promise);
@@ -1093,6 +1135,16 @@
 
                                         it('should not update the query params', function() {
                                             expect($location.search).not.toHaveBeenCalled();
+                                        });
+
+                                        it('should emit the stateChange event', function() {
+                                            expect(stateChange).toHaveBeenCalledWith(about, null);
+
+                                            $rootScope.$apply(function() {
+                                                c6State.goTo('Application');
+                                            });
+
+                                            expect(stateChange).toHaveBeenCalledWith(application, about);
                                         });
 
                                         it('should set the "current" property', function() {

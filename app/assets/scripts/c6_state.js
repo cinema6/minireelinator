@@ -16,15 +16,73 @@
         return instance;
     }
 
+    function stateFamilyOf(state) {
+        var family = [];
+
+        function unshift(state) {
+            if (!state) { return; }
+
+            family.unshift(state);
+            unshift(state.cParent);
+        }
+
+        unshift(state);
+
+        return family;
+    }
+
     angular.module('c6.state', ['c6.mrmaker.services'])
-        .directive('c6View', ['c6State','$animate','$compile','$controller',
-        function             ( c6State , $animate , $compile , $controller ) {
+        .directive('c6View', ['c6State','$animate','$compile','$controller','$location',
+        function             ( c6State , $animate , $compile , $controller , $location ) {
             function ModelController() {}
             ModelController.prototype = {
                 initWithModel: function(model) {
                     this.model = model;
                 }
             };
+
+            function ParamsController(config, state) {
+                forEach(config, function(config, prop) {
+                    var isTwoWay = config.charAt(0) === '=',
+                        param = config.substr(1) || prop,
+                        initialValue = this[prop];
+
+                    if (isTwoWay) {
+                        stateFamilyOf(state).slice(0, -1).forEach(function(ancestorState) {
+                            forEach(
+                                ancestorState.queryParams,
+                                function(ancestorConfig, ancestorProp) {
+                                    var ancestorParam = ancestorConfig.substr(1) || ancestorProp,
+                                        ancestorIsTwoWay = ancestorConfig.charAt(0) === '=';
+
+                                    if (ancestorIsTwoWay && ancestorParam === param) {
+                                        throw new Error(
+                                            'Cannot create two-way query paramater binding ' +
+                                            'in controller of state ' + state.cName + ' because ' +
+                                            'it is already two-way bound in the controller of ' +
+                                            'state ' + ancestorState.cName + '.'
+                                        );
+                                    }
+                                }
+                            );
+                        });
+                    }
+
+                    Object.defineProperty(this, prop, {
+                        get: function() {
+                            return $location.search()[param];
+                        },
+                        set: isTwoWay ? function(value) {
+                            $location.search(prop, value)
+                                .replace();
+                        } : undefined
+                    });
+
+                    if (isTwoWay) {
+                        this[prop] = initialValue;
+                    }
+                }, this);
+            }
 
             function ViewDelegate(scope, $element, $attrs, transclude) {
                 this.id = $attrs.id || null;
@@ -55,6 +113,10 @@
 
                     if (controller) {
                         controller.initWithModel(state.cModel, state.cModel);
+                    }
+
+                    if (state.queryParams) {
+                        mixin(controller, ParamsController, state.queryParams, state);
                     }
 
                     return scope;
@@ -122,9 +184,9 @@
                 contexts = {};
 
             C6State.$inject = ['$injector','$q','$http','$templateCache','$location','$rootScope',
-                               'c6AsyncQueue'];
+                               'c6AsyncQueue','c6EventEmitter'];
             function C6State  ( $injector , $q , $http , $templateCache , $location , $rootScope ,
-                                c6AsyncQueue ) {
+                                c6AsyncQueue , c6EventEmitter ) {
                 var self = this,
                     _private = {};
 
@@ -137,21 +199,6 @@
                     return fns.reduce(function(promise, fn) {
                         return promise ? promise.then(fn) : $q.when(fn());
                     }, null);
-                }
-
-                function stateFamilyOf(state) {
-                    var family = [];
-
-                    function unshift(state) {
-                        if (!state) { return; }
-
-                        family.unshift(state);
-                        unshift(state.cParent);
-                    }
-
-                    unshift(state);
-
-                    return family;
                 }
 
                 function routePathToState() {
@@ -215,11 +262,16 @@
 
                 Object.defineProperties(this, {
                     current: {
+                        configurable: true,
                         get: function() {
                             return contexts[currentContext].current;
                         }
                     }
                 });
+
+                this.isActive = function(state) {
+                    return stateFamilyOf(this.get(this.current)).indexOf(state) > -1;
+                };
 
                 this.get = function(name) {
                     var context = contexts[currentContext],
@@ -249,7 +301,12 @@
                             return params ? $location.search(params) : $location;
                         })
                         .then(function fulfill() {
+                            var prevState = self.in(state.cContext, function() {
+                                return self.get(self.current) || null;
+                            });
+
                             contexts[state.cContext].current = state.cName;
+                            self.emit('stateChange', state, prevState);
 
                             return state;
                         });
@@ -412,6 +469,8 @@
 
                     event.preventDefault();
                 });
+
+                c6EventEmitter(this);
             }
 
             function Mapper(context, parent, url) {
