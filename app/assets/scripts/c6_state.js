@@ -11,11 +11,111 @@
         var args = Array.prototype.slice.call(arguments, 2);
 
         constructor.apply(instance, args);
+        extend(instance.constructor.prototype, constructor.prototype);
 
         return instance;
     }
 
     angular.module('c6.state', ['c6.mrmaker.services'])
+        .directive('c6View', ['c6State','$animate','$compile','$controller',
+        function             ( c6State , $animate , $compile , $controller ) {
+            function ModelController() {}
+            ModelController.prototype = {
+                initWithModel: function(model) {
+                    this.model = model;
+                }
+            };
+
+            function ViewDelegate(scope, $element, $attrs, transclude) {
+                this.id = $attrs.id || null;
+                this.parent = $element.inheritedData('cViewDelegate') || null;
+
+                this.$element = null;
+                this.state = null;
+                this.model = null;
+                this.controller = null;
+
+                this.scope = scope;
+                this.$view = $element;
+                this.$attrs = $attrs;
+                this.transclude = transclude;
+            }
+            ViewDelegate.prototype = {
+                createScope: function(state) {
+                    var scope = this.scope.$new(),
+                        controllerAs = state.controllerAs,
+                        controller = this.controller = state.controller ?
+                            mixin($controller(state.controller, {
+                                $scope: scope
+                            }), ModelController) : null;
+
+                    if (controllerAs) {
+                        scope[controllerAs] = this.controller;
+                    }
+
+                    if (controller) {
+                        controller.initWithModel(state.cModel, state.cModel);
+                    }
+
+                    return scope;
+                },
+                render: function(state) {
+                    var self = this,
+                        $view = this.$view;
+
+                    if (state === this.state) {
+                        if (this.controller && state.cModel !== this.model) {
+                            this.controller.initWithModel(state.cModel, this.model);
+                        }
+                        return;
+                    }
+
+                    this.clear();
+
+                    this.$element = this.transclude(function($clone) {
+                        $clone.html(state.cTemplate);
+
+                        $clone.data('cViewDelegate', self);
+
+                        $compile($clone.contents())(self.createScope(state));
+
+                        $animate.enter($clone, null, $view);
+                    });
+                    this.state = state;
+                    this.model = state.cModel;
+                },
+                clear: function() {
+                    if (this.$element) {
+                        $animate.leave(this.$element);
+                    }
+
+                    if (this.state) {
+                        this.state.cModel = null;
+                    }
+
+                    this.state = null;
+                    this.controller = null;
+                    this.model = null;
+                }
+            };
+
+            function link(scope, $element, $attrs, controller, transclude) {
+                var delegate = new ViewDelegate(scope, $element, $attrs, transclude);
+
+                c6State._registerView(delegate);
+
+                scope.$on('$destroy', function() {
+                    c6State._deregisterView(delegate);
+                });
+            }
+
+            return {
+                restrict: 'EAC',
+                transclude: 'element',
+                link: link
+            };
+        }])
+
         .provider('c6State', [function() {
             var stateConstructors = {},
                 contexts = {};
@@ -280,6 +380,13 @@
                         return function() {
                             var view = views[index];
 
+                            if (!view) {
+                                return $q.reject(
+                                    'Cannot render state: ' + state.cName + '. ' +
+                                    'There is no <c6-view> for rendering.'
+                                );
+                            }
+
                             return view.render(state);
                         };
                     })).then(function fulfill() {
@@ -330,6 +437,28 @@
                     var constructor = stateConstructors[name],
                         url = this.url + route;
 
+                    function RoutedState() {
+                        this.cUrl = url;
+                        this.cParams = (route.match(/:[^\/]+/g) || [])
+                            .reduce(function(params, match) {
+                                params[match.substr(1)] = null;
+
+                                return params;
+                            }, {});
+                    }
+                    RoutedState.prototype = {
+                        serializeParams: function(model) {
+                            var url = this.cUrl,
+                                prop = (url.match(/:[^\/]+/) || [''])[0]
+                                    .substr(1) || null,
+                                result = {};
+
+                            if (prop) { result[prop] = model.id; }
+
+                            return result;
+                        }
+                    };
+
                     if (!this.context.enableUrlRouting) {
                         throw new Error(
                             'Cannot map route "' + route + '"' +
@@ -340,27 +469,7 @@
 
                     this.state(name);
 
-                    constructor.initializers.push(function() {
-                        this.cUrl = url;
-                        this.cParams = (route.match(/:[^\/]+/g) || [])
-                            .reduce(function(params, match) {
-                                params[match.substr(1)] = null;
-
-                                return params;
-                            }, {});
-
-                        this.serializeParams = this.serializeParams ||
-                            function(model) {
-                                var url = this.cUrl,
-                                    prop = (url.match(/:[^\/]+/) || [''])[0]
-                                        .substr(1) || null,
-                                    result = {};
-
-                                if (prop) { result[prop] = model.id; }
-
-                                return result;
-                            };
-                    });
+                    constructor.initializers.push(RoutedState);
 
                     this.context.routes.push({
                         name: name,

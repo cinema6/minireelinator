@@ -2,413 +2,348 @@
     'use strict';
 
     define(['c6_state'], function() {
-        describe('<c6-view>', function() {
+        ddescribe('<c6-view>', function() {
             var $rootScope,
                 $scope,
                 $compile,
-                $animate;
+                $controller,
+                c6State;
 
-            var c6State,
-                HomeController,
-                homeCtrl;
-
-            var view;
+            var $body,
+                $view;
 
             beforeEach(function() {
-                HomeController = jasmine.createSpy('HomeController')
-                    .and.callFake(function() {
-                        homeCtrl = this;
-                    });
-
-                module('ngAnimateMock');
-
-                module('c6.state', function($provide, $controllerProvider) {
-                    $provide.factory('c6State', function(c6EventEmitter) {
-                        var c6State = c6EventEmitter({});
-
-                        spyOn(c6State, 'emit').and.callThrough();
-
-                        return c6State;
-                    });
-
-                    $controllerProvider.register('HomeController', ['$scope', 'cModel', HomeController]);
-                });
+                module('c6.state');
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
                     $compile = $injector.get('$compile');
-                    $animate = $injector.get('$animate');
-
+                    $controller = $injector.get('$controller');
                     c6State = $injector.get('c6State');
-                    spyOn(c6State, 'removeListener').and.callThrough();
 
                     $scope = $rootScope.$new();
                 });
 
-                $rootScope.$apply(function() {
-                    view = $compile('<div><c6-view id="parent"></c6-view></div>')($scope);
-                });
+                spyOn(c6State, '_registerView');
+                spyOn(c6State, '_deregisterView');
+
+                $body = $('body');
             });
 
-            it('should support nested views', function() {
-                var parentState = {
-                        name: 'parent',
-                        cTemplate: '<div><c6-view id="child"></c6-view></div>',
-                        cModel: null
-                    },
-                    childState = {
-                        name: 'parent.child',
-                        cTemplate: '<p>I\'m a child!</p>',
-                        cModel: null
-                    };
-
-                $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', parentState, null, false);
-                });
-                expect(view.find('c6-view>div').length).toBe(1);
-
-                $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', childState, parentState, true);
-                });
-                expect(view.text()).toBe('I\'m a child!');
+            afterEach(function() {
+                $view.remove();
             });
 
-            it('should support transitioning to the same state', function() {
-                var parentState = {
-                        name: 'parent',
-                        cTemplate: '<c6-view></c6-view>',
-                        cModel: null
-                    },
-                    childState = {
-                        name: 'parent.child',
-                        cTemplate: '<p>{{ChildCtrl.model.data}}</p>',
-                        cModel: { data: 'Hello!' },
-                        controllerAs: 'ChildCtrl',
-                        controller: function() {}
-                    },
-                    successSpy = jasmine.createSpy('handleViewChangeSuccess'),
-                    $p;
+            it('should register the view', function() {
+                $scope.$apply(function() {
+                    $view = $('<c6-view></c6-view>');
+                    $body.append($view);
+                    $compile($view)($scope);
+                });
 
-                $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', parentState, null, false);
-                });
-                $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', childState, parentState, true);
-                });
-                $p = view.find('p');
-
-                expect(view.text()).toBe('Hello!');
-
-                c6State.on('viewChangeSuccess', successSpy);
-                childState.cModel.data = 'World!';
-                $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', parentState, childState, false);
-                });
-                expect(successSpy).toHaveBeenCalledWith(parentState);
-                $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', childState, parentState, true);
-                });
-                expect(successSpy).toHaveBeenCalledWith(childState);
-                expect(view.text()).toBe('World!');
-                expect($p[0]).toBe(view.find('p')[0]);
+                expect(c6State._registerView).toHaveBeenCalledWith(jasmine.objectContaining({
+                    id: null,
+                    parent: null,
+                    render: jasmine.any(Function)
+                }));
             });
 
-            it('should nullify the cModel of a state when it is removed from view', function() {
-                var parentState = {
-                        name: 'parent',
-                        cTemplate: '<c6-view id="foo"></c6-view>',
-                        cModel: {}
-                    },
-                    childState = {
-                        name: 'parent.child',
-                        cTemplate: 'Child',
-                        cModel: {}
-                    },
-                    siblingState = {
-                        name: 'sibling',
-                        cTemplate: 'Sibling',
-                        cModel: {}
-                    };
+            it('should register a child view', function() {
+                var parent;
 
                 $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', parentState, null, false);
+                    $view = $('<c6-view></c6-view>');
+                    $body.append($view);
+                    $compile($view)($scope);
                 });
-                $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', childState, parentState, true);
-                });
-                expect(parentState.cModel).not.toBeNull();
-                expect(childState.cModel).not.toBeNull();
 
-                $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', siblingState, childState, true);
+                parent = c6State._registerView.calls.first().args[0];
+                parent.render({
+                    cTemplate: '<c6-view id="child"></c6-view>'
                 });
-                expect(c6State.removeListener).toHaveBeenCalledWith('viewChangeStart', jasmine.any(Function));
-                expect(parentState.cModel).toBeNull();
-                expect(childState.cModel).toBeNull();
+
+                expect(c6State._registerView).toHaveBeenCalledWith(jasmine.objectContaining({
+                    id: 'child',
+                    parent: parent,
+                    render: jasmine.any(Function)
+                }));
             });
 
-            it('should support "backing out" of a nested view without re-rendering the parent', function() {
-                var parentState = {
-                        name: 'parent',
-                        cTemplate: '<p>Parent</p><c6-view></c6-view>',
-                        controller: jasmine.createSpy('ParentController'),
-                        cModel: null
-                    },
-                    childState = {
-                        name: 'parent.child',
-                        cTemplate: '<p>Child</p>',
-                        cModel: {}
-                    },
-                    $c6View;
-
-                $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', parentState, null, false);
-                });
-                $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', childState, parentState, true);
-                });
-                $c6View = view.children('c6-view');
-
-                expect(view.text()).toBe('ParentChild');
-
-                spyOn($scope, '$new').and.callThrough();
-                parentState.controller.calls.reset();
-                $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', parentState, childState, true);
-                });
-                expect(view.children('c6-view')[0]).toBe($c6View[0]);
-                expect(view.text()).toBe('Parent');
-                expect($scope.$new).not.toHaveBeenCalled();
-                expect(parentState.controller).not.toHaveBeenCalled();
-                expect(c6State.emit).toHaveBeenCalledWith('viewChangeSuccess', parentState);
-                expect(childState.cModel).toBeNull();
-
-                $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', parentState, parentState, false);
-                });
-                $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', childState, parentState, true);
-                });
-                expect(view.text()).toBe('ParentChild');
-            });
-
-            it('should support entering a child without re-rendering the parents', function() {
-                var parentState = {
-                        name: 'parent',
-                        cTemplate: '<p>Parent</p><c6-view></c6-view>',
-                        controller: jasmine.createSpy('ParentController'),
-                        cModel: null
-                    },
-                    childState = {
-                        name: 'parent.child',
-                        cTemplate: '<p>Child</p><c6-view></c6-view>',
-                        controller: jasmine.createSpy('ChildController'),
-                        cModel: null
-                    },
-                    grandchildState = {
-                        name: 'parent.child.grandchild',
-                        cTemplate: '<p>Grandchild</p>',
-                        cModel: null
-                    },
-                    $c6Views = {};
-
-                $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', parentState, null, true);
-                });
-                $c6Views.parent = view.children('c6-view');
-                expect($c6Views.parent.text()).toBe('Parent');
-
-                $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', parentState, parentState, false);
-                });
-                $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', childState, parentState, false);
-                });
-                $c6Views.child = view.children('c6-view').children('c6-view');
-                expect($c6Views.child.text()).toBe('Child');
-                expect(view.children('c6-view')[0]).toBe($c6Views.parent[0]);
-
-                $scope.$apply(function() {
-                    c6State.emit('viewChangeStart', grandchildState, childState, true);
-                });
-                $c6Views.grandchild = view.children('c6-view').children('c6-view').children('c6-view');
-                expect($c6Views.grandchild.text()).toBe('Grandchild');
-                expect(view.children('c6-view')[0]).toBe($c6Views.parent[0]);
-                expect(view.children('c6-view').children('c6-view')[0]).toBe($c6Views.child[0]);
-            });
-
-            describe('initialization', function() {
-                it('should emit viewReady', function() {
-                    expect(c6State.emit).toHaveBeenCalledWith('viewReady');
-                });
-            });
-
-            describe('when viewChangeStart is emitted', function() {
-                var homeState,
-                    scope;
+            describe('when the $scope is $destroyed', function() {
+                var delegate;
 
                 beforeEach(function() {
-                    homeState = {
-                        name: 'home',
-                        cTemplate: '<div>foo</div>',
-                        cModel: {}
-                    };
-
                     $scope.$apply(function() {
-                        c6State.emit('viewChangeStart', homeState, null, true);
+                        $view = $('<c6-view></c6-view>');
+                        $body.append($view);
+                        $compile($view)($scope);
                     });
 
-                    scope = view.find('c6-view div').scope();
+                    delegate = c6State._registerView.calls.mostRecent().args[0];
+
+                    $scope.$destroy();
                 });
 
-                it('should animate the new contents in', function() {
-                    expect(view.text()).toBe('foo');
-                    expect($animate.queue[0].event).toBe('enter');
-                });
-
-                it('should give the children a new scope', function() {
-                    expect(view.find('c6-view div').scope().$parent).toBe($scope);
-                });
-
-                it('should replace the contents as views change', function() {
-                    var contactsState = {
-                            name: 'contacts',
-                            cTemplate: '{{1 + 1}} is 2. Duh.',
-                            cModel: null
-                        },
-                        oldScope = view.find('c6-view div').scope();
-
-                    spyOn(oldScope, '$destroy').and.callThrough();
-
-                    $scope.$apply(function() {
-                        c6State.emit('viewChangeStart', contactsState, homeState, true);
-                    });
-
-                    expect(oldScope.$destroy).toHaveBeenCalled();
-
-                    expect(view.text()).toBe('2 is 2. Duh.');
-                    expect(homeState.cModel).toBeNull();
-                    expect($animate.queue[0].event).toBe('enter');
-                    expect($animate.queue[1].event).toBe('enter');
-                    expect($animate.queue[2].event).toBe('leave');
+                it('should deregister the view', function() {
+                    expect(c6State._deregisterView).toHaveBeenCalledWith(delegate);
                 });
             });
 
-            describe('if a controller is specified', function() {
-                var homeState,
-                    newScope;
+            describe('ViewDelegate', function() {
+                var delegate;
 
                 beforeEach(function() {
-                    homeState = {
-                        name: 'home',
-                        controller: 'HomeController',
-                        cTemplate: '<div>foo</div>',
-                        cModel: {}
-                    };
-
                     $scope.$apply(function() {
-                        c6State.emit('viewChangeStart', homeState);
+                        $view = $('<div><c6-view></c6-view></div>');
+                        $body.append($view);
+                        $compile($view)($scope);
                     });
 
-                    newScope = view.find('c6-view div').scope();
+                    delegate = c6State._registerView.calls.mostRecent().args[0];
                 });
 
-                it('should invoke the controller with the new scope', function() {
-                    expect(HomeController).toHaveBeenCalledWith(newScope, homeState.cModel);
-                });
-            });
+                describe('methods', function() {
+                    describe('clear()', function() {
+                        var state;
 
-            describe('if controllerAs is specified', function() {
-                var homeState,
-                    scope;
+                        beforeEach(function() {
+                            state = {
+                                cTemplate: 'Hello',
+                                cModel: {}
+                            };
 
-                beforeEach(function() {
-                    homeState = {
-                        name: 'home',
-                        controller: 'HomeController',
-                        controllerAs: 'HomeCtrl',
-                        cTemplate: '<p>Hello</p>',
-                        cModel: null
-                    };
+                            $scope.$apply(function() {
+                                delegate.render(state);
+                            });
 
-                    $scope.$apply(function() {
-                        c6State.emit('viewChangeStart', homeState);
-                    });
-
-                    scope = view.find('c6-view *').scope();
-                });
-
-                it('should stick the controller on the scope', function() {
-                    expect(scope.HomeCtrl).toBe(homeCtrl);
-                });
-            });
-
-            describe('updateControllerModel', function() {
-                var homeState,
-                    scope;
-
-                beforeEach(function() {
-                    homeState = {
-                        name: 'home',
-                        controllerAs: 'HomeCtrl',
-                        controller: function() {},
-                        cTemplate: '<p>Hello</p>',
-                        cModel: {
-                            data: 'foo'
-                        }
-                    };
-                });
-
-                describe('if specified', function() {
-                    beforeEach(function() {
-                        homeState.updateControllerModel = ['model','controller', jasmine.createSpy('updateControllerModel')];
-
-                        $scope.$apply(function() {
-                            c6State.emit('viewChangeStart', homeState);
+                            $scope.$apply(function() {
+                                delegate.clear();
+                            });
                         });
 
-                        scope = view.find('c6-view *').scope();
-                    });
-
-                    it('should $invoke the setup function', function() {
-                        expect(homeState.updateControllerModel[2]).toHaveBeenCalledWith(homeState.cModel, scope.HomeCtrl);
-                    });
-                });
-
-                describe('if not specified', function() {
-                    beforeEach(function() {
-                        $scope.$apply(function() {
-                            c6State.emit('viewChangeStart', homeState);
+                        it('should empty the view', function() {
+                            expect($view.text()).toBe('');
                         });
 
-                        scope = view.find('c6-view *').scope();
+                        it('should null out the model', function() {
+                            expect(state.cModel).toBeNull();
+                        });
                     });
 
-                    it('should make the model the "model" property of the controller', function() {
-                        expect(scope.HomeCtrl.model).toBe(homeState.cModel);
+                    describe('render(state)', function() {
+                        it('should render the template of the provided state', function() {
+                            $scope.$apply(function() {
+                                delegate.render({
+                                    cTemplate: '<p>Foo is {{1 + 1}}</p>'
+                                });
+                            });
+
+                            expect($view.text()).toBe('Foo is 2');
+                        });
+
+                        it('should instantiate the controller', function() {
+                            var Controller = ['$scope', jasmine.createSpy('Controller()')
+                                .and.callFake(function($scope) {
+                                    $scope.name = 'Josh';
+                                })];
+
+                            $scope.$apply(function() {
+                                delegate.render({
+                                    cTemplate: 'Hello {{name}}',
+                                    controller: Controller
+                                });
+                            });
+
+                            expect(Controller[1]).toHaveBeenCalled();
+                            expect($view.text()).toBe('Hello Josh');
+                        });
+
+                        it('should put the controller on the scope if controllerAs is specified', function() {
+                            function Controller() {}
+
+                            $scope.$apply(function() {
+                                delegate.render({
+                                    cTemplate: '<div></div>',
+                                    controller: Controller,
+                                    controllerAs: 'Ctrl'
+                                });
+                            });
+
+                            expect($view.children().first().children().scope().Ctrl).toEqual(jasmine.any(Controller));
+                        });
+
+                        it('should remove an old view if there is one and then render the new one', function() {
+                            $scope.$apply(function() {
+                                delegate.render({
+                                    cTemplate: 'Template 1'
+                                });
+                            });
+
+                            $scope.$apply(function() {
+                                delegate.render({
+                                    cTemplate: 'Template 2'
+                                });
+                            });
+
+                            expect($view.text()).toBe('Template 2');
+                        });
+
+                        describe('if the same state is rendered twice', function() {
+                            var view, initWithModel, state;
+
+                            beforeEach(function() {
+                                state = {
+                                    cTemplate: '<div></div>',
+                                    cModel: {},
+                                    controller: jasmine.createSpy('Controller')
+                                        .and.callFake(function() {
+                                            this.initWithModel = initWithModel = jasmine.createSpy('controller.initWithModel()');
+                                        })
+                                };
+
+                                $scope.$apply(function() {
+                                    delegate.render(state);
+                                });
+
+                                initWithModel.calls.reset();
+                                state.controller.calls.reset();
+                                view = $view.children().first().children().first()[0];
+                            });
+
+                            describe('if the models are the same', function() {
+                                beforeEach(function() {
+                                    $scope.$apply(function() {
+                                        delegate.render(state);
+                                    });
+                                });
+
+                                it('should not do anything', function() {
+                                    expect(initWithModel).not.toHaveBeenCalled();
+                                    expect(state.controller).not.toHaveBeenCalled();
+                                    expect($view.children().first().children().first()[0]).toBe(view);
+                                });
+                            });
+
+                            describe('if the model has changed', function() {
+                                var oldModel;
+
+                                beforeEach(function() {
+                                    oldModel = state.cModel;
+
+                                    state.cModel = { name: 'Foo' };
+
+                                    $scope.$apply(function() {
+                                        delegate.render(state);
+                                    });
+                                });
+
+                                it('should not re-render views or reinstantiate controllers', function() {
+                                    expect(state.controller).not.toHaveBeenCalled();
+                                    expect($view.children().first().children().first()[0]).toBe(view);
+                                });
+
+                                it('should call initWithModel()', function() {
+                                    expect(initWithModel).toHaveBeenCalledWith(state.cModel, oldModel);
+                                });
+                            });
+                        });
+
+                        describe('controller.initWithModel(newModel, oldModel)', function() {
+                            var controller;
+
+                            describe('if already defined', function() {
+                                var initWithModel;
+
+                                beforeEach(function() {
+                                    initWithModel = function() {};
+
+                                    function Controller() {
+                                        this.initWithModel = initWithModel;
+                                    }
+
+                                    $scope.$apply(function() {
+                                        delegate.render({
+                                            cTemplate: '<div></div>',
+                                            controller: Controller,
+                                            controllerAs: 'Ctrl'
+                                        });
+                                    });
+                                    controller = $view.children().first().children().scope().Ctrl;
+                                });
+
+                                it('should not be overwritten', function() {
+                                    expect(controller.initWithModel).toBe(initWithModel);
+                                });
+                            });
+
+                            describe('if not defined', function() {
+                                beforeEach(function() {
+                                    function Controller() {}
+
+                                    $scope.$apply(function() {
+                                        delegate.render({
+                                            cTemplate: '<div></div>',
+                                            controller: Controller,
+                                            controllerAs: 'Ctrl'
+                                        });
+                                    });
+                                    controller = $view.children().first().children().scope().Ctrl;
+                                });
+
+                                it('should create a method', function() {
+                                    expect(controller.initWithModel).toEqual(jasmine.any(Function));
+                                });
+
+                                it('should set the provided model as the "model" property of the controller', function() {
+                                    var model = {};
+
+                                    controller.initWithModel(model);
+
+                                    expect(controller.model).toBe(model);
+                                });
+                            });
+
+                            it('should be called when the view is rendered', function() {
+                                var initWithModel,
+                                    state = {
+                                        cTemplate: '<div></div>',
+                                        cModel: {},
+                                        controller: function() {
+                                            this.initWithModel = initWithModel = jasmine.createSpy('controller.initWithModel()');
+                                        }
+                                    };
+
+                                $scope.$apply(function() {
+                                    delegate.render(state);
+                                });
+
+                                expect(initWithModel).toHaveBeenCalledWith(state.cModel, state.cModel);
+                            });
+
+                            it('should not be called if the state changes', function() {
+                                var initWithModel = jasmine.createSpy('initWithModel()');
+
+                                $scope.$apply(function() {
+                                    delegate.render({
+                                        controller: function() {
+                                            this.initWithModel = initWithModel;
+                                        },
+                                        cModel: {}
+                                    });
+                                });
+
+                                initWithModel.calls.reset();
+
+                                $scope.$apply(function() {
+                                    delegate.render({
+                                        cModel: {}
+                                    });
+                                });
+
+                                expect(initWithModel).not.toHaveBeenCalled();
+                            });
+                        });
                     });
-                });
-            });
-
-            describe('when the view change finishes', function() {
-                var homeState;
-
-                beforeEach(function() {
-                    homeState = {
-                        name: 'home',
-                        cTemplate: 'Foo',
-                        cModel: null
-                    };
-
-                    $scope.$apply(function() {
-                        c6State.emit('viewChangeStart', homeState);
-                    });
-
-                    $animate.queue[0].args[3]();
-                });
-
-                it('should emit viewChangeSuccess', function() {
-                    expect(c6State.emit).toHaveBeenCalledWith('viewChangeSuccess', homeState);
                 });
             });
         });

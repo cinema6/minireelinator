@@ -2,7 +2,7 @@
     'use strict';
 
     define(['services'], function() {
-        ddescribe('c6AsyncQueue()', function() {
+        describe('c6AsyncQueue()', function() {
             var $rootScope,
                 $q,
                 c6AsyncQueue;
