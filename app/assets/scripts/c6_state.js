@@ -105,6 +105,7 @@
                 c6State._registerView(delegate);
 
                 scope.$on('$destroy', function() {
+                    delegate.clear();
                     c6State._deregisterView(delegate);
                 });
             }

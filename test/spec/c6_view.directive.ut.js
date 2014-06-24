@@ -2,7 +2,7 @@
     'use strict';
 
     define(['c6_state'], function() {
-        describe('<c6-view>', function() {
+        ddescribe('<c6-view>', function() {
             var $rootScope,
                 $scope,
                 $compile,
@@ -80,12 +80,17 @@
                     });
 
                     delegate = c6State._registerView.calls.mostRecent().args[0];
+                    spyOn(delegate, 'clear');
 
                     $scope.$destroy();
                 });
 
                 it('should deregister the view', function() {
                     expect(c6State._deregisterView).toHaveBeenCalledWith(delegate);
+                });
+
+                it('should clear the delegate', function() {
+                    expect(delegate.clear).toHaveBeenCalled();
                 });
             });
 
