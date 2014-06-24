@@ -374,9 +374,13 @@
                 };
 
                 _private.renderStates = function(states) {
-                    return qSeries(states.map(function(state, index) {
-                        var views = contexts[state.cContext].viewDelegates;
+                    var views = contexts[states[0].cContext].viewDelegates,
+                        numOfViews = views.length,
+                        numOfStates = states.length,
+                        extraViews = numOfViews > numOfStates ?
+                            views.slice(numOfStates - numOfViews) : [];
 
+                    return qSeries(states.map(function(state, index) {
                         return function() {
                             var view = views[index];
 
@@ -389,7 +393,13 @@
 
                             return view.render(state);
                         };
-                    })).then(function fulfill() {
+                    })).then(function removeExtras() {
+                        return qSeries(extraViews.map(function(view) {
+                            return function() {
+                                return view.clear();
+                            };
+                        }));
+                    }).then(function fulfill() {
                         return states;
                     });
                 };

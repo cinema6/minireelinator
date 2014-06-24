@@ -2,7 +2,7 @@
     'use strict';
 
     define(['c6_state'], function() {
-        describe('c6State', function() {
+        ddescribe('c6State', function() {
             var c6StateProvider,
                 $injector,
                 c6State,
@@ -548,6 +548,7 @@
 
                                 this.render = jasmine.createSpy('view.render()')
                                     .and.returnValue(this.renderDeferred.promise);
+                                this.clear = jasmine.createSpy('view.clear()');
                             }
 
                             beforeEach(function() {
@@ -585,51 +586,84 @@
 
                                 c6State._registerView(sidebarView);
                                 c6State._registerView(applicationView);
-
-                                $rootScope.$apply(function() {
-                                    _private.renderStates([application, posts, post]).then(success, failure);
-                                });
                             });
 
-                            it('should render the application state into the application view', function() {
-                                expect(applicationView.render).toHaveBeenCalledWith(application);
-                            });
-
-                            describe('after the application view is rendered', function() {
+                            describe('backing out of a state', function() {
                                 beforeEach(function() {
                                     c6State._registerView(postsView);
+                                    c6State._registerView(postView);
 
                                     $rootScope.$apply(function() {
-                                        applicationView.renderDeferred.resolve();
+                                        _private.renderStates([application]);
                                     });
                                 });
 
-                                it('should render the posts view', function() {
-                                    expect(postsView.render).toHaveBeenCalledWith(posts);
+                                it('should call render() on the application view', function() {
+                                    expect(applicationView.render).toHaveBeenCalledWith(application);
                                 });
 
-                                describe('after the posts view is rendered', function() {
+                                describe('when the application view is rendered', function() {
                                     beforeEach(function() {
-                                        c6State._registerView(postView);
-
                                         $rootScope.$apply(function() {
-                                            postsView.renderDeferred.resolve();
+                                            applicationView.renderDeferred.resolve();
                                         });
                                     });
 
-                                    it('should render the post view', function() {
-                                        expect(postView.render).toHaveBeenCalledWith(post);
+                                    it('should call clear() on the rest of the child views', function() {
+                                        [postsView, postView].forEach(function(view) {
+                                            expect(view.clear).toHaveBeenCalled();
+                                        });
+                                    });
+                                });
+                            });
+
+                            describe('moving into a state', function() {
+                                beforeEach(function() {
+                                    $rootScope.$apply(function() {
+                                        _private.renderStates([application, posts, post]).then(success, failure);
+                                    });
+                                });
+
+                                it('should render the application state into the application view', function() {
+                                    expect(applicationView.render).toHaveBeenCalledWith(application);
+                                });
+
+                                describe('after the application view is rendered', function() {
+                                    beforeEach(function() {
+                                        c6State._registerView(postsView);
+
+                                        $rootScope.$apply(function() {
+                                            applicationView.renderDeferred.resolve();
+                                        });
                                     });
 
-                                    describe('after the post view is rendered', function() {
+                                    it('should render the posts view', function() {
+                                        expect(postsView.render).toHaveBeenCalledWith(posts);
+                                    });
+
+                                    describe('after the posts view is rendered', function() {
                                         beforeEach(function() {
+                                            c6State._registerView(postView);
+
                                             $rootScope.$apply(function() {
-                                                postView.renderDeferred.resolve();
+                                                postsView.renderDeferred.resolve();
                                             });
                                         });
 
-                                        it('should resolve the promise with the family', function() {
-                                            expect(success).toHaveBeenCalledWith([application, posts, post]);
+                                        it('should render the post view', function() {
+                                            expect(postView.render).toHaveBeenCalledWith(post);
+                                        });
+
+                                        describe('after the post view is rendered', function() {
+                                            beforeEach(function() {
+                                                $rootScope.$apply(function() {
+                                                    postView.renderDeferred.resolve();
+                                                });
+                                            });
+
+                                            it('should resolve the promise with the family', function() {
+                                                expect(success).toHaveBeenCalledWith([application, posts, post]);
+                                            });
                                         });
                                     });
                                 });
@@ -909,9 +943,15 @@
                         });
 
                         describe('_deregisterView(viewDelegate)', function() {
-                            var parentView, childView;
+                            var parentView, childView,
+                                failure;
 
                             beforeEach(function() {
+                                var application = c6State.get('Application'),
+                                    child = c6State.get('Child');
+
+                                failure = jasmine.createSpy('failure()');
+
                                 parentView = {
                                     id: null,
                                     parent: null,
@@ -935,17 +975,14 @@
                                 c6State._registerView(childView);
 
                                 c6State._deregisterView(childView);
+
+                                $rootScope.$apply(function() {
+                                    _private.renderStates([application, child]).catch(failure);
+                                });
                             });
 
                             it('should remove references to the view delegate', function() {
-                                var application = c6State.get('Application'),
-                                    child = c6State.get('Child');
-
-                                expect(function() {
-                                    $rootScope.$apply(function() {
-                                        _private.renderStates([application, child]);
-                                    });
-                                }).toThrow();
+                                expect(failure).toHaveBeenCalled();
                             });
                         });
 
