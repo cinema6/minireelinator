@@ -341,6 +341,9 @@
                         beforeEach(function() {
                             spyOn(c6State, 'goTo');
                             $location.path.and.returnValue('');
+                            $location.search.and.returnValue({
+                                name: 'foo'
+                            });
                         });
 
                         it('should prevent default on the event', function() {
@@ -357,28 +360,28 @@
 
                         it('should call goTo based on the path', function() {
                             broadcast('');
-                            expect(c6State.goTo).toHaveBeenCalledWith('Home');
+                            expect(c6State.goTo).toHaveBeenCalledWith('Home', null, $location.search());
 
                             broadcast('/about');
-                            expect(c6State.goTo).toHaveBeenCalledWith('About');
+                            expect(c6State.goTo).toHaveBeenCalledWith('About', null, $location.search());
 
                             broadcast('/pages');
-                            expect(c6State.goTo).toHaveBeenCalledWith('Pages');
+                            expect(c6State.goTo).toHaveBeenCalledWith('Pages', null, $location.search());
 
                             broadcast('/pages/p-1234');
-                            expect(c6State.goTo).toHaveBeenCalledWith('Page');
+                            expect(c6State.goTo).toHaveBeenCalledWith('Page', null, $location.search());
 
                             broadcast('/posts');
-                            expect(c6State.goTo).toHaveBeenCalledWith('Posts');
+                            expect(c6State.goTo).toHaveBeenCalledWith('Posts', null, $location.search());
 
                             broadcast('/posts/po-e343f');
-                            expect(c6State.goTo).toHaveBeenCalledWith('Post');
+                            expect(c6State.goTo).toHaveBeenCalledWith('Post', null, $location.search());
 
                             broadcast('/posts/po-e343f/comments');
-                            expect(c6State.goTo).toHaveBeenCalledWith('Comments');
+                            expect(c6State.goTo).toHaveBeenCalledWith('Comments', null, $location.search());
 
                             broadcast('/posts/po-e343f/comments/c-a');
-                            expect(c6State.goTo).toHaveBeenCalledWith('Comment');
+                            expect(c6State.goTo).toHaveBeenCalledWith('Comment', null, $location.search());
                         });
 
                         it('should not call goTo again if the path hasn\'t changed', function() {
@@ -982,6 +985,7 @@
 
                                 get();
                                 $location.path.and.returnValue('/child');
+                                $location.search.and.returnValue({});
                                 spyOn(c6State, 'goTo');
                             });
 
@@ -990,7 +994,7 @@
                                 expect(c6State.goTo).not.toHaveBeenCalled();
 
                                 c6State._registerView(parentView);
-                                expect(c6State.goTo).toHaveBeenCalledWith('Child');
+                                expect(c6State.goTo).toHaveBeenCalledWith('Child', null, {});
 
                                 c6State.goTo.calls.reset();
 

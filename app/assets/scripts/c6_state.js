@@ -350,7 +350,7 @@
                         }
                     });
 
-                    self.goTo(route.name);
+                    self.goTo(route.name, null, $location.search());
                     lastPath = path;
 
                     return true;
