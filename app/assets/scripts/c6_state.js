@@ -31,6 +31,28 @@
         return family;
     }
 
+    function urlOfStateFamily(family, models, params) {
+        var numOfModels = (models || 0) && models.length,
+            numOfStates = family.length,
+            startOfModel = numOfStates - numOfModels,
+            allModels = params ? [] : family.map(function(state, index) {
+                var modelIndex = Math.max(index - startOfModel, -1);
+
+                return modelIndex > -1 ? models[modelIndex] : state.cModel;
+            });
+
+        params = params || family.reduce(function(params, state, index) {
+            var model = allModels[index];
+
+            return model && state.cUrl ?
+                extend(params, state.serializeParams(model)) : params;
+        }, {});
+
+        return Object.keys(params).reduce(function(url, prop) {
+            return url.replace(':' + prop, params[prop]);
+        }, family[family.length - 1].cUrl);
+    }
+
     angular.module('c6.state', ['c6.mrmaker.services'])
         .directive('c6Sref', ['c6State','$animate',
         function             ( c6State , $animate ) {
@@ -75,7 +97,19 @@
                     });
 
                     if ($element.prop('tagName') === 'A') {
-                        $element.attr('href', '');
+                        scope.$watchCollection(function() {
+                            return [attrs.c6Sref, scope.$eval(attrs.c6Models)];
+                        }, function(values) {
+                            c6State.in(attrs.c6Context || 'main', function() {
+                                var stateName = values[0],
+                                    models = values[1],
+                                    state = c6State.get(stateName),
+                                    family = stateFamilyOf(state),
+                                    url = urlOfStateFamily(family, models);
+
+                                $element.attr('href', (url || '') && ('#' + url));
+                            });
+                        });
                     }
                 }
             };
@@ -415,17 +449,14 @@
                 };
 
                 _private.syncUrl = function(states) {
-                    var lastState = states[states.length - 1],
-                        params = states.map(function(state) {
+                    var params = states.map(function(state) {
                             return state.cUrl ?
                                 state.serializeParams(state.cModel) : {};
                         }),
                         values = params.reduce(function(values, part) {
                             return extend(values, part);
                         }, {}),
-                        url = Object.keys(values).reduce(function(url, prop) {
-                            return url.replace(':' + prop, values[prop]);
-                        }, lastState.cUrl);
+                        url = urlOfStateFamily(states, null, values);
 
                     states.forEach(function(state, index) {
                         state.cParams = params[index];
@@ -564,19 +595,17 @@
 
                                 return params;
                             }, {});
-                    }
-                    RoutedState.prototype = {
-                        serializeParams: function(model) {
-                            var url = this.cUrl,
-                                prop = (url.match(/:[^\/]+/) || [''])[0]
+
+                        this.serializeParams = this.serializeParams || function(model) {
+                            var prop = (route.match(/:[^\/]+/) || [''])[0]
                                     .substr(1) || null,
                                 result = {};
 
                             if (prop) { result[prop] = model.id; }
 
                             return result;
-                        }
-                    };
+                        };
+                    }
 
                     if (!this.context.enableUrlRouting) {
                         throw new Error(

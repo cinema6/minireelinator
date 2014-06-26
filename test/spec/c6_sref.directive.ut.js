@@ -2,7 +2,7 @@
     'use strict';
 
     define(['c6_state'], function() {
-        ddescribe('c6-sref=""', function() {
+        describe('c6-sref=""', function() {
             var $rootScope,
                 $scope,
                 $compile,
@@ -20,15 +20,31 @@
                         .state('Home', function() {})
                         .state('About', function() {})
                         .state('Foo', function() {})
-                        .state('Bar', function() {});
+                        .state('Bar', function() {})
+                        .state('Team', function() {})
+                        .state('Users', function() {})
+                        .state('Posts', function() {})
+                        .state('Post', function() {})
+                        .state('Comment', function() {})
+                        .state('Like', function() {});
 
                     c6StateProvider.config('foo', {
                         rootState: 'Foo'
                     });
 
                     c6StateProvider.map(function() {
-                        this.state('Home');
-                        this.state('About');
+                        this.route('/home', 'Home');
+                        this.route('/about', 'About', function() {
+                            this.route('/team', 'Team');
+                        });
+                        this.route('/posts', 'Posts', function() {
+                            this.route('/:postId', 'Post', function() {
+                                this.route('/comments/:commentId', 'Comment', function() {
+                                    this.route('/likes/:likeId', 'Like');
+                                });
+                            });
+                        });
+                        this.state('Users');
                     });
 
                     c6StateProvider.map('foo', null, function() {
@@ -68,6 +84,7 @@
 
                 $scope.$apply(function() {
                     $scope.state = 'Users';
+                    delete $scope.context;
                 });
                 $sref.click();
                 expect(c6State.goTo).toHaveBeenCalledWith('Users', undefined, undefined);
@@ -99,18 +116,82 @@
                 expect(c6State.goTo).toHaveBeenCalled();
             });
 
-            it('should give anchor tags an empty href property', function() {
-                expect($sref.attr('href')).toBe('');
-            });
+            describe('the href', function() {
+                describe('on a non-anchor tag', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            $sref = $compile('<button c6-sref="{{state}}">Button</button>')($scope);
+                        });
+                    });
 
-            it('should not give non-anchor tags an href property', function() {
-                $scope.$apply(function() {
-                    $sref = $compile('<button c6-sref="{{state}}">Button</button>')($scope);
+                    it('should not be present', function() {
+                        expect($sref.attr('href')).toBeUndefined();
+                    });
                 });
-                $sref.click();
-                expect(c6State.goTo).toHaveBeenCalledWith('Bar', undefined, undefined);
 
-                expect($sref.attr('href')).toBeUndefined();
+                describe('on an anchor tag', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            $scope.state = 'Team';
+                            delete $scope.context;
+                        });
+                    });
+
+                    it('should set the href to a URL representation of the state', function() {
+                        expect($sref.attr('href')).toBe('#/about/team');
+                    });
+
+                    describe('if the route has dynamic segments', function() {
+                        beforeEach(function() {
+                            var post = c6State.get('Post'),
+                                comment = c6State.get('Comment'),
+                                like = c6State.get('Like');
+
+                            post.cModel = { id: 'p-1' };
+                            comment.cModel = { id: 'c-a' };
+                            like.cModel = { id: 'l-5' };
+
+                            $scope.$apply(function() {
+                                $scope.state = 'Like';
+                            });
+                        });
+
+                        it('should be a compiled URL', function() {
+                            expect($sref.attr('href')).toBe('#/posts/p-1/comments/c-a/likes/l-5');
+                        });
+
+                        describe('if models are provided', function() {
+                            beforeEach(function() {
+                                $scope.$apply(function() {
+                                    $scope.models = [{ id: 'c-c' },{ id: 'l-0' }];
+                                });
+                            });
+
+                            it('should use the models', function() {
+                                expect($sref.attr('href')).toBe('#/posts/p-1/comments/c-c/likes/l-0');
+                            });
+                        });
+                    });
+
+                    describe('if the state has no route', function() {
+                        beforeEach(function() {
+                            var bar = c6State.in('foo', function() {
+                                return c6State.get('Bar');
+                            });
+
+                            bar.cModel = {};
+
+                            $scope.$apply(function() {
+                                $scope.state = 'Bar';
+                                $scope.context = 'foo';
+                            });
+                        });
+
+                        it('should set the href to ""', function() {
+                            expect($sref.attr('href')).toBe('');
+                        });
+                    });
+                });
             });
 
             it('should add the "c6-active" class when the state the sref points to is active', function() {
