@@ -382,11 +382,21 @@
                         });
 
                         it('should not call goTo again if the path hasn\'t changed', function() {
+                            var $scope = $rootScope.$new();
+
+                            function expectDefaultNotPrevented() {
+                                var ignore = $scope.$on('$locationChangeStart', function(event) {
+                                    expect(event.defaultPrevented).toBe(false);
+                                    ignore();
+                                });
+                            }
+
                             broadcast('/about');
                             expect(c6State.goTo).toHaveBeenCalled();
 
                             c6State.goTo.calls.reset();
 
+                            expectDefaultNotPrevented();
                             broadcast('/about');
                             expect(c6State.goTo).not.toHaveBeenCalled();
 
@@ -482,16 +492,26 @@
                                     });
 
                                     setup();
+
+                                    spyOn(c6State, 'goTo').and.callThrough();
                                 });
 
                                 it('should return a full url for the state family', function() {
                                     expect(_private.syncUrl([application, posts, post, comment])).toBe('/posts/the-name/content/comments/blah-blah');
                                 });
 
-                                it('should change the URL path', function() {
+                                it('should change the URL path, but not trigger a call to goTo', function() {
+                                    $location.path.and.callFake(function() {
+                                        if (!arguments.length) {
+                                            return '/posts/the-name/content/comments/blah-blah';
+                                        } else {
+                                            $rootScope.$broadcast('$locationChangeStart');
+                                        }
+                                    });
                                     _private.syncUrl([application, posts, post, comment]);
 
                                     expect($location.path).toHaveBeenCalledWith('/posts/the-name/content/comments/blah-blah');
+                                    expect(c6State.goTo).not.toHaveBeenCalled();
                                 });
 
                                 it('should set the cParams on the state', function() {

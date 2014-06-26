@@ -328,7 +328,7 @@
                             }, {}),
                         family = stateFamilyOf(state);
 
-                    if (path ===  lastPath) { return; }
+                    if (path ===  lastPath) { return false; }
 
                     // Iterate through all the states in this transition
                     family.forEach(function(state) {
@@ -352,6 +352,8 @@
 
                     self.goTo(route.name);
                     lastPath = path;
+
+                    return true;
                 }
 
                 Object.defineProperties(this, {
@@ -474,6 +476,7 @@
                     });
 
                     if (url) {
+                        lastPath = url;
                         $location.path(url);
                     }
 
@@ -556,12 +559,13 @@
                 if (window.c6.kHasKarma) { this._private = _private; }
 
                 $rootScope.$on('$locationChangeStart', function(event) {
-                    routePathToState();
-
-                    event.preventDefault();
+                    if (routePathToState()) {
+                        event.preventDefault();
+                    }
                 });
 
                 c6EventEmitter(this);
+                this.setMaxListenersWarning(0);
             }
 
             function Mapper(context, parent, url) {
