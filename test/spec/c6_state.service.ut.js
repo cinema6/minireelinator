@@ -2,7 +2,7 @@
     'use strict';
 
     define(['c6_state'], function() {
-        describe('c6State', function() {
+        ddescribe('c6State', function() {
             var c6StateProvider,
                 $injector,
                 c6State,
@@ -1206,11 +1206,6 @@
                                 Sidebar = [function() {}];
                                 Contacts = [function() {}];
 
-                                c6StateProvider.state('Home', Home);
-                                c6StateProvider.state('Post', function() {});
-                                c6StateProvider.state('Sidebar', Sidebar);
-                                c6StateProvider.state('Contacts', Contacts);
-
                                 c6StateProvider.config('sidebar', {
                                     rootState: 'Sidebar'
                                 });
@@ -1223,6 +1218,11 @@
                                 c6StateProvider.map('sidebar', null, function() {
                                     this.state('Contacts');
                                 });
+
+                                c6StateProvider.state('Home', Home);
+                                c6StateProvider.state('Post', function() {});
+                                c6StateProvider.state('Sidebar', Sidebar);
+                                c6StateProvider.state('Contacts', Contacts);
                             });
 
                             describe('the auto-generated Application state', function() {

@@ -264,7 +264,18 @@
 
         .provider('c6State', [function() {
             var stateConstructors = {},
-                contexts = {};
+                contexts = {},
+                map = [];
+
+            function processMap(map) {
+                var mapper;
+
+                /* jshint boss:true */
+                while (mapper = map.shift()) {
+                /* jshint boss:false */
+                    mapper();
+                }
+            }
 
             C6State.$inject = ['$injector','$q','$http','$templateCache','$location','$rootScope',
                                'c6AsyncQueue','c6EventEmitter'];
@@ -560,52 +571,35 @@
             }
             Mapper.prototype = {
                 state: function(name, mapFn) {
-                    var constructor = stateConstructors[name],
-                        initializers = constructor.initializers ||
-                            (constructor.initializers = []),
-                        parent = this.parent,
+                    var parent = this.parent,
                         context = this.context,
                         url = this.url;
 
-                    initializers.push(function(c6State) {
-                        this.cParent = parent && c6State.get(parent);
-                        this.cUrl = url;
-                        this.cModel = null;
-                        this.cTemplate = null;
-                        this.cContext = context.name;
-                        this.cName = name;
-                        this.cParams = null;
-                    });
+                    map.push(function() {
+                        var constructor = stateConstructors[name],
+                            initializers = constructor.initializers ||
+                                (constructor.initializers = []);
 
-                    context.stateConstructors[name] = constructor;
+                        initializers.push(function(c6State) {
+                            this.cParent = parent && c6State.get(parent);
+                            this.cUrl = url;
+                            this.cModel = null;
+                            this.cTemplate = null;
+                            this.cContext = context.name;
+                            this.cName = name;
+                            this.cParams = null;
+                        });
+
+                        context.stateConstructors[name] = constructor;
+                    });
 
                     if (mapFn) {
                         mapFn.call(new Mapper(this.context, name, url));
                     }
                 },
                 route: function(route, name, mapFn) {
-                    var constructor = stateConstructors[name],
-                        url = this.url + route;
-
-                    function RoutedState() {
-                        this.cUrl = url;
-                        this.cParams = (route.match(/:[^\/]+/g) || [])
-                            .reduce(function(params, match) {
-                                params[match.substr(1)] = null;
-
-                                return params;
-                            }, {});
-
-                        this.serializeParams = this.serializeParams || function(model) {
-                            var prop = (route.match(/:[^\/]+/) || [''])[0]
-                                    .substr(1) || null,
-                                result = {};
-
-                            if (prop) { result[prop] = model.id; }
-
-                            return result;
-                        };
-                    }
+                    var url = this.url + route,
+                        context = this.context;
 
                     if (!this.context.enableUrlRouting) {
                         throw new Error(
@@ -617,16 +611,38 @@
 
                     this.state(name);
 
-                    constructor.initializers.push(RoutedState);
+                    map.push(function() {
+                        var constructor = stateConstructors[name];
 
-                    this.context.routes.push({
-                        name: name,
-                        matcher: new RegExp(
-                            '^' +
-                            url.replace(/:[^\/]+/g, '([^\\/]+)')
-                                .replace(/\//g, '\\/') +
-                            '$'
-                        )
+                        constructor.initializers.push(function() {
+                            this.cUrl = url;
+                            this.cParams = (route.match(/:[^\/]+/g) || [])
+                                .reduce(function(params, match) {
+                                    params[match.substr(1)] = null;
+
+                                    return params;
+                                }, {});
+
+                            this.serializeParams = this.serializeParams || function(model) {
+                                var prop = (route.match(/:[^\/]+/) || [''])[0]
+                                        .substr(1) || null,
+                                    result = {};
+
+                                if (prop) { result[prop] = model.id; }
+
+                                return result;
+                            };
+                        });
+
+                        context.routes.push({
+                            name: name,
+                            matcher: new RegExp(
+                                '^' +
+                                url.replace(/:[^\/]+/g, '([^\\/]+)')
+                                    .replace(/\//g, '\\/') +
+                                '$'
+                            )
+                        });
                     });
 
                     if (mapFn) {
@@ -709,6 +725,8 @@
                             .state(context.rootState);
                     }
                 });
+
+                processMap(map);
 
                 return $injector.instantiate(C6State);
             }];
