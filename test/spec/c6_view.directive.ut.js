@@ -2,7 +2,7 @@
     'use strict';
 
     define(['c6_state'], function() {
-        describe('<c6-view>', function() {
+        ddescribe('<c6-view>', function() {
             var $rootScope,
                 $scope,
                 $compile,
@@ -111,13 +111,20 @@
 
                 describe('methods', function() {
                     describe('clear()', function() {
-                        var state;
+                        var state, scope;
 
                         beforeEach(function() {
+                            scope = {
+                                $destroy: jasmine.createSpy('scope.$destroy()')
+                            };
+
                             state = {
                                 cTemplate: 'Hello',
                                 cModel: {}
                             };
+
+                            spyOn(delegate.parentScope, '$new')
+                                .and.returnValue(scope);
 
                             $scope.$apply(function() {
                                 delegate.render(state);
@@ -134,6 +141,10 @@
 
                         it('should null out the model', function() {
                             expect(state.cModel).toBeNull();
+                        });
+
+                        it('should $destroy the scope', function() {
+                            expect(scope.$destroy).toHaveBeenCalled();
                         });
                     });
 
@@ -298,19 +309,21 @@
                         });
 
                         it('should instantiate the controller', function() {
-                            var Controller = ['$scope', jasmine.createSpy('Controller()')
-                                .and.callFake(function($scope) {
+                            var Controller = ['$scope','cState', jasmine.createSpy('Controller()')
+                                .and.callFake(function($scope, cState) {
                                     $scope.name = 'Josh';
-                                })];
-
-                            $scope.$apply(function() {
-                                delegate.render({
+                                    expect(cState).toBe(state);
+                                })],
+                                state = {
                                     cTemplate: 'Hello {{name}}',
                                     controller: Controller
-                                });
+                                };
+
+                            $scope.$apply(function() {
+                                delegate.render(state);
                             });
 
-                            expect(Controller[1]).toHaveBeenCalled();
+                            expect(Controller[2]).toHaveBeenCalled();
                             expect($view.text()).toBe('Hello Josh');
                         });
 

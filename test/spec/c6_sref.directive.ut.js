@@ -141,6 +141,14 @@
                         expect($sref.attr('href')).toBe('#/about/team');
                     });
 
+                    it('should not actually set the href when clicked', function() {
+                        $sref.on('click', function(event) {
+                            expect(event.isDefaultPrevented()).toBe(true);
+                        });
+
+                        $sref.click();
+                    });
+
                     describe('if the route has dynamic segments', function() {
                         beforeEach(function() {
                             var post = c6State.get('Post'),
