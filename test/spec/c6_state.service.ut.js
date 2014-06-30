@@ -9,7 +9,8 @@
                 $rootScope,
                 $httpBackend,
                 $q,
-                $location;
+                $location,
+                $timeout;
 
             var _private;
 
@@ -25,7 +26,8 @@
                     $provide.value('$location', {
                         path: jasmine.createSpy('$location.path()')
                             .and.returnValue(''),
-                        search: jasmine.createSpy('$location.search()')
+                        search: jasmine.createSpy('$location.search()'),
+                        replace: jasmine.createSpy('$location.replace()')
                     });
                 });
 
@@ -40,6 +42,7 @@
                     $httpBackend = $injector.get('$httpBackend');
                     $q = $injector.get('$q');
                     $location = $injector.get('$location');
+                    $timeout = $injector.get('$timeout');
                 });
             });
 
@@ -332,10 +335,10 @@
                         get();
                     });
 
-                    describe('$locationChangeStart', function() {
+                    describe('$locationChangeSuccess', function() {
                         function broadcast(path) {
                             $location.path.and.returnValue(path);
-                            $rootScope.$broadcast('$locationChangeStart');
+                            $rootScope.$broadcast('$locationChangeSuccess');
                         }
 
                         beforeEach(function() {
@@ -344,18 +347,6 @@
                             $location.search.and.returnValue({
                                 name: 'foo'
                             });
-                        });
-
-                        it('should prevent default on the event', function() {
-                            var $scope = $rootScope.$new(),
-                                listener = jasmine.createSpy('listener');
-
-                            $scope.$on('$locationChangeStart', listener.and.callFake(function(event) {
-                                expect(event.defaultPrevented).toBe(true);
-                            }));
-
-                            $rootScope.$broadcast('$locationChangeStart');
-                            expect(listener).toHaveBeenCalled();
                         });
 
                         it('should call goTo based on the path', function() {
@@ -385,30 +376,36 @@
                         });
 
                         it('should not call goTo again if the path hasn\'t changed', function() {
-                            var $scope = $rootScope.$new();
+                            var home, about, pages, page;
 
-                            function expectDefaultNotPrevented() {
-                                var ignore = $scope.$on('$locationChangeStart', function(event) {
-                                    expect(event.defaultPrevented).toBe(false);
-                                    ignore();
-                                });
-                            }
+                            c6State.in('test', function() {
+                                home = c6State.get('Home');
+                                about = c6State.get('About');
+                                pages = c6State.get('Pages');
+                                page = c6State.get('Page');
+                            });
 
                             broadcast('/about');
                             expect(c6State.goTo).toHaveBeenCalled();
 
                             c6State.goTo.calls.reset();
 
-                            expectDefaultNotPrevented();
+                            _private.syncUrl([home, about]);
                             broadcast('/about');
                             expect(c6State.goTo).not.toHaveBeenCalled();
 
                             broadcast('/pages/p-abc');
                             expect(c6State.goTo).toHaveBeenCalled();
+                            home.cModel = {};
+                            pages.cModel = {};
+                            page.cModel = { id: 'p-abc' };
+                            _private.syncUrl([home, pages, page]);
 
                             c6State.goTo.calls.reset();
 
                             broadcast('/pages/p-123');
+                            page.cModel = { id: 'p-123' };
+                            _private.syncUrl([home, pages, page]);
                             expect(c6State.goTo).toHaveBeenCalled();
                         });
 
@@ -452,13 +449,14 @@
                 describe('@private', function() {
                     describe('methods', function() {
                         describe('syncUrl(states)', function() {
-                            var application, posts, post, comment;
+                            var application, posts, auth, post, comment;
 
                             function setup() {
                                 get();
 
                                 application = c6State.get('Application');
                                 posts = c6State.get('Posts');
+                                auth = c6State.get('Auth');
                                 post = c6State.get('Post');
                                 comment = c6State.get('Comment');
 
@@ -481,15 +479,18 @@
                                                 commentUri: model.uri
                                             };
                                         };
-                                    });
+                                    })
+                                    .state('Auth', function() {});
                             });
 
                             describe('if the context supports URL routing', function() {
                                 beforeEach(function() {
                                     c6StateProvider.map(function() {
                                         this.route('/posts', 'Posts', function() {
-                                            this.route('/:postId/content', 'Post', function() {
-                                                this.route('/comments/:commentUri', 'Comment');
+                                            this.state('Auth', function() {
+                                                this.route('/:postId/content', 'Post', function() {
+                                                    this.route('/comments/:commentUri', 'Comment');
+                                                });
                                             });
                                         });
                                     });
@@ -500,15 +501,17 @@
                                 });
 
                                 it('should return a full url for the state family', function() {
-                                    expect(_private.syncUrl([application, posts, post, comment])).toBe('/posts/the-name/content/comments/blah-blah');
+                                    expect(_private.syncUrl([application, posts, auth, post, comment])).toBe('/posts/the-name/content/comments/blah-blah');
                                 });
 
                                 it('should change the URL path, but not trigger a call to goTo', function() {
-                                    $location.path.and.callFake(function() {
+                                    $location.path.and.callFake(function(path) {
                                         if (!arguments.length) {
-                                            return '/posts/the-name/content/comments/blah-blah';
+                                            return '';
                                         } else {
-                                            $rootScope.$broadcast('$locationChangeStart');
+                                            $location.path.and.returnValue(path);
+                                            $rootScope.$broadcast('$locationChangeSuccess');
+                                            return $location;
                                         }
                                     });
                                     _private.syncUrl([application, posts, post, comment]);
@@ -517,11 +520,26 @@
                                     expect(c6State.goTo).not.toHaveBeenCalled();
                                 });
 
+                                it('should not set the path if the path is not changing', function() {
+                                    $location.path.and.callFake(function() {
+                                        if (!arguments.length) {
+                                            return '/posts/p-123/content';
+                                        } else {
+                                            return $location;
+                                        }
+                                    });
+                                    post.cModel = { id: 'p-123' };
+                                    _private.syncUrl([application, posts, post]);
+
+                                    expect($location.path).not.toHaveBeenCalledWith('/posts/p-123/content');
+                                });
+
                                 it('should set the cParams on the state', function() {
                                     _private.syncUrl([application, posts, post, comment]);
 
                                     expect(application.cParams).toEqual({});
                                     expect(posts.cParams).toEqual({});
+                                    expect(auth.cParams).toBeNull();
                                     expect(post.cParams).toEqual({ postId: 'the-name' });
                                     expect(comment.cParams).toEqual({ commentUri: 'blah-blah' });
                                 });
@@ -551,7 +569,7 @@
                                 it('should not change the path', function() {
                                     _private.syncUrl([application, posts, post, comment]);
 
-                                    expect($location.path).not.toHaveBeenCalled();
+                                    expect($location.path).not.toHaveBeenCalledWith(jasmine.any(String));
                                 });
                             });
                         });
@@ -1113,6 +1131,7 @@
                                     resolveStatesDeferred.resolve([application, home]);
                                     renderStatesDeferred.resolve([application, home]);
                                 });
+                                $timeout.flush();
 
                                 expect(_private.resolveStates.calls.count()).toBe(2);
                                 expect(_private.resolveStates).toHaveBeenCalledWith([application, home, about]);
@@ -1153,28 +1172,35 @@
                                             expect(_private.syncUrl).toHaveBeenCalledWith([application, home, about]);
                                         });
 
-                                        it('should resolve to the state being transitioned to', function() {
-                                            expect(success).toHaveBeenCalledWith(about);
-                                        });
-
-                                        it('should not update the query params', function() {
-                                            expect($location.search).not.toHaveBeenCalled();
-                                        });
-
-                                        it('should emit the stateChange event', function() {
-                                            expect(stateChange).toHaveBeenCalledWith(about, null);
-
-                                            $rootScope.$apply(function() {
-                                                c6State.goTo('Application');
+                                        describe('in the next $digest()', function() {
+                                            beforeEach(function() {
+                                                $timeout.flush();
                                             });
 
-                                            expect(stateChange).toHaveBeenCalledWith(application, about);
-                                        });
+                                            it('should resolve to the state being transitioned to', function() {
+                                                expect(success).toHaveBeenCalledWith(about);
+                                            });
 
-                                        it('should set the "current" property', function() {
-                                            expect(c6State.current).toBe(about.cName);
-                                            c6State.in('foo', function() {
-                                                expect(c6State.current).toBeNull();
+                                            it('should not update the query params', function() {
+                                                expect($location.search).not.toHaveBeenCalled();
+                                            });
+
+                                            it('should emit the stateChange event', function() {
+                                                expect(stateChange).toHaveBeenCalledWith(about, null);
+
+                                                $rootScope.$apply(function() {
+                                                    c6State.goTo('Application');
+                                                });
+                                                $timeout.flush();
+
+                                                expect(stateChange).toHaveBeenCalledWith(application, about);
+                                            });
+
+                                            it('should set the "current" property', function() {
+                                                expect(c6State.current).toBe(about.cName);
+                                                c6State.in('foo', function() {
+                                                    expect(c6State.current).toBeNull();
+                                                });
                                             });
                                         });
                                     });
@@ -1201,6 +1227,8 @@
 
                             describe('if called with query params', function() {
                                 beforeEach(function() {
+                                    $location.search.and.returnValue($location);
+
                                     $rootScope.$apply(function() {
                                         c6State.goTo('About', null, {
                                             hello: 'foo',
@@ -1210,6 +1238,7 @@
                                         resolveStatesDeferred.resolve([application, about]);
                                         renderStatesDeferred.resolve([application, about]);
                                     });
+                                    $timeout.flush();
                                 });
 
                                 it('should update the query params', function() {
@@ -1217,6 +1246,10 @@
                                         hello: 'foo',
                                         test: 'bar'
                                     });
+                                });
+
+                                it('should replace the $location', function() {
+                                    expect($location.replace).toHaveBeenCalled();
                                 });
                             });
                         });

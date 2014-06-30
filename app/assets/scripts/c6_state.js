@@ -73,10 +73,12 @@
                         }
                     }
 
-                    $element.on('click', function() {
+                    $element.on('click', function(event) {
                             var state = attrs.c6Sref,
                                 params = scope.$eval(attrs.c6Params),
                                 models = scope.$eval(attrs.c6Models);
+
+                            event.preventDefault();
 
                             scope.$apply(function() {
                                 c6State.in(attrs.c6Context || 'main', function() {
@@ -175,15 +177,16 @@
                 this.state = null;
                 this.model = null;
                 this.controller = null;
+                this.scope = null;
 
-                this.scope = scope;
+                this.parentScope = scope;
                 this.$view = $element;
                 this.$attrs = $attrs;
                 this.transclude = transclude;
             }
             ViewDelegate.prototype = {
                 createScope: function(state) {
-                    var scope = this.scope.$new(),
+                    var scope = this.scope = this.parentScope.$new(),
                         controllerAs = state.controllerAs,
                         controller = this.controller = state.controller ?
                             mixin($controller(state.controller, {
@@ -238,9 +241,15 @@
                         this.state.cModel = null;
                     }
 
+                    if (this.scope) {
+                        this.scope.$destroy();
+                    }
+
                     this.state = null;
                     this.controller = null;
                     this.model = null;
+                    this.scope = null;
+                    this.$element = null;
                 }
             };
 
@@ -278,9 +287,9 @@
             }
 
             C6State.$inject = ['$injector','$q','$http','$templateCache','$location','$rootScope',
-                               'c6AsyncQueue','c6EventEmitter'];
+                               'c6AsyncQueue','c6EventEmitter','$timeout'];
             function C6State  ( $injector , $q , $http , $templateCache , $location , $rootScope ,
-                                c6AsyncQueue , c6EventEmitter ) {
+                                c6AsyncQueue , c6EventEmitter , $timeout ) {
                 var self = this,
                     _private = {};
 
@@ -288,6 +297,10 @@
                     lastPath = null,
                     currentContext = 'main',
                     queue = c6AsyncQueue();
+
+                function nextTick() {
+                    return $timeout(noop);
+                }
 
                 function qSeries(fns) {
                     return fns.reduce(function(promise, fn) {
@@ -351,7 +364,6 @@
                     });
 
                     self.goTo(route.name, null, $location.search());
-                    lastPath = path;
 
                     return true;
                 }
@@ -393,8 +405,9 @@
                     return _private.resolveStates(family)
                         .then(_private.renderStates)
                         .then(_private.syncUrl)
+                        .then(nextTick)
                         .then(function updateParams() {
-                            return params ? $location.search(params) : $location;
+                            return params ? $location.search(params).replace() : $location;
                         })
                         .then(function fulfill() {
                             var prevState = self.in(state.cContext, function() {
@@ -462,25 +475,29 @@
                 };
 
                 _private.syncUrl = function(states) {
-                    var params = states.map(function(state) {
-                            return state.cUrl ?
-                                state.serializeParams(state.cModel) : {};
+                    var currentPath = $location.path(),
+                        params = states.map(function(state) {
+                            return state.cParams ?
+                                state.serializeParams(state.cModel) : null;
                         }),
                         values = params.reduce(function(values, part) {
                             return extend(values, part);
                         }, {}),
-                        url = urlOfStateFamily(states, null, values);
+                        path = urlOfStateFamily(states, null, values);
 
                     states.forEach(function(state, index) {
                         state.cParams = params[index];
                     });
 
-                    if (url) {
-                        lastPath = url;
-                        $location.path(url);
+                    if (path) {
+                        lastPath = path;
+
+                        if (path !== currentPath) {
+                            $location.path(path);
+                        }
                     }
 
-                    return url;
+                    return path;
                 };
 
                 _private.resolveStates = function(states) {
@@ -558,11 +575,7 @@
 
                 if (window.c6.kHasKarma) { this._private = _private; }
 
-                $rootScope.$on('$locationChangeStart', function(event) {
-                    if (routePathToState()) {
-                        event.preventDefault();
-                    }
-                });
+                $rootScope.$on('$locationChangeSuccess', routePathToState);
 
                 c6EventEmitter(this);
                 this.setMaxListenersWarning(0);
