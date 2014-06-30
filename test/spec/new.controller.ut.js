@@ -346,18 +346,6 @@
                     });
                 });
 
-                xdescribe('displayAdSource', function() {
-                    it('should be the displayAdSource value of the minireel', function() {
-                        expect(NewCtrl.displayAdSource).toBe(minireel.data.displayAdSource);
-                    });
-                });
-
-                xdescribe('videoAdSource', function() {
-                    it('should be the videoAdSource value of the minireel', function() {
-                        expect(NewCtrl.videoAdSource).toBe(minireel.data.videoAdSource);
-                    });
-                });
-
                 describe('currentTab', function() {
                     describe('if there is no tab for the current state', function() {
                         beforeEach(function() {
@@ -410,45 +398,6 @@
 
                     it('should save the minireel', function() {
                         expect(minireel.save).toHaveBeenCalled();
-                    });
-
-                    xdescribe('checks the displayAdSource', function() {
-                        describe('if it has changed', function() {
-                            it('should add the info to every card', function() {
-                                NewCtrl.displayAdSource = 'publisher';
-                                NewCtrl.save();
-
-                                expect(minireel.data.displayAdSource).toBe('publisher');
-                                expect(minireel.data.deck[0].displayAdSource).toBe('publisher');
-                            });
-                        });
-
-                        describe('if it has not changed', function() {
-                            it('should not update the property on any cards', function() {
-                                expect(minireel.data.displayAdSource).toBe('cinema6');
-                                expect(minireel.data.deck[0].displayAdSource).toBe('cinema6');
-                            });
-                        });
-                    });
-
-                    xdescribe('checks the videoAdSource', function() {
-                        describe('if it has changed', function() {
-                            it('should update the property on the ad card only', function() {
-                                NewCtrl.videoAdSource = 'publisher';
-                                NewCtrl.save();
-
-                                expect(minireel.data.videoAdSource).toBe('publisher');
-                                expect(minireel.data.deck[1].data.source).toBe('publisher');
-                                expect(minireel.data.deck[0].data.source).toBe(undefined);
-                            });
-                        });
-
-                        describe('if it has not changed', function() {
-                            it('should not update the ad cards', function() {
-                                expect(minireel.data.videoAdSource).toBe('cinema6');
-                                expect(minireel.data.deck[1].data.source).toBe('cinema6');
-                            });
-                        });
                     });
 
                     describe('after the save is finished', function() {
@@ -699,45 +648,6 @@
                         });
 
                         it('should not bump up the requiredVisits of the autoplay tab', function() {
-                            expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits);
-                        });
-                    });
-
-                    xdescribe('when switching modes to lightbox-ads', function() {
-                        it('should bump up the requiredVisits of the ads tab', function() {
-                            $scope.$apply(function() {
-                                NewCtrl.mode = modes[0].modes[0];
-                            });
-                            $scope.$apply(function() {
-                                NewCtrl.mode = modes[0].modes[1];
-                            });
-
-                            expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits + 1);
-                        });
-                    });
-
-                    xdescribe('when switching modes from lightbox-ads', function() {
-                        it('should bump up the requiredVisits of the ads tab', function() {
-                            $scope.$apply(function() {
-                                NewCtrl.mode = modes[0].modes[1];
-                            });
-                            $scope.$apply(function() {
-                                NewCtrl.mode = modes[0].modes[0];
-                            });
-
-                            expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits + 1);
-                        });
-                    });
-
-                    xdescribe('when switching modes that do not effect display ads', function() {
-                        it('should bump up the requiredVisits of the ads tab', function() {
-                            $scope.$apply(function() {
-                                NewCtrl.mode = modes[1].modes[1];
-                            });
-                            $scope.$apply(function() {
-                                NewCtrl.mode = modes[1].modes[0];
-                            });
-
                             expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits);
                         });
                     });

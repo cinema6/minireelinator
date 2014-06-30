@@ -203,9 +203,6 @@
                 tabBySref(state.cName).visits++;
             }
 
-            // this.displayAdSource = minireel.data.displayAdSource;
-            // this.videoAdSource = minireel.data.videoAdSource;
-
             this.modes = appData.experience.data.modes;
             this.returnState = cState.cParent.cName;
             this.baseState = (function() {
@@ -274,19 +271,6 @@
 
                 data.mode = this.mode.value;
 
-                // ['displayAdSource','videoAdSource'].forEach(function(prop) {
-                //     if (data[prop] !== self[prop]) {
-                //         angular.forEach(data.deck, function(card) {
-                //             if (prop === 'displayAdSource') {
-                //                 card[prop] = self[prop];
-                //             } else if (card.type === 'ad') {
-                //                 card.data.source = self[prop];
-                //             }
-                //             data[prop] = self[prop];
-                //         });
-                //     }
-                // });
-
                 (minireel.id ? $q.when(minireel) :
                     minireel.save())
                     .then(function goToEditor(minireel) {
@@ -340,16 +324,6 @@
                 if (mode.autoplayable !== prevMode.autoplayable) {
                     autoplayTab.requiredVisits = autoplayTab.visits + 1;
                 }
-
-                // if ((mode.value === 'lightbox-ads' || prevMode.value === 'lightbox-ads') &&
-                //     mode !== prevMode) {
-                //     adsTab.requiredVisits = adsTab.visits + 1;
-                // }
             });
         }]);
-
-        // .controller('NewAdsController', ['MiniReelService', 'appData',
-        // function                        ( MiniReelService ,  appData ) {
-        //     this.adChoices = MiniReelService.adChoicesOf(appData);
-        // }]);
 }());
