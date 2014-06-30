@@ -13,6 +13,14 @@
 
             var minireel;
 
+            function setCurrentState(name) {
+                Object.defineProperty(c6State, 'current', {
+                    get: function() {
+                        return name;
+                    }
+                });
+            }
+
             beforeEach(function() {
                 minireel = {
                     data: {
@@ -37,8 +45,8 @@
 
                     $scope = $rootScope.$new();
                     $scope.$apply(function() {
-                        EditorSplashCtrl = $controller('EditorSplashController', { $scope: $scope, cModel: minireel });
-                        EditorSplashCtrl.model = minireel;
+                        EditorSplashCtrl = $controller('EditorSplashController', { $scope: $scope });
+                        EditorSplashCtrl.initWithModel(minireel);
                     });
                 });
             });
@@ -59,13 +67,13 @@
                         expect(EditorSplashCtrl.tabs).toEqual([
                             {
                                 name: 'Source Type',
-                                sref: 'editor.splash.source',
+                                sref: 'MR:Splash.Source',
                                 visits: 0,
                                 requiredVisits: 0
                             },
                             {
                                 name: 'Image Settings',
-                                sref: 'editor.splash.image',
+                                sref: 'MR:Splash.Image',
                                 visits: 0,
                                 requiredVisits: 0
                             }
@@ -76,7 +84,7 @@
                 describe('currentTab', function() {
                     describe('if the current state is not represented by a tab', function() {
                         beforeEach(function() {
-                            c6State.current = { name: 'editor.splash' };
+                            setCurrentState('MR:Editor.Splash');
                         });
 
                         it('should be null', function() {
@@ -87,7 +95,7 @@
                     describe('if the current state is represented by a tab', function() {
                         it('should be the tab of that state', function() {
                             EditorSplashCtrl.tabs.forEach(function(tab) {
-                                c6State.current = { name: tab.sref };
+                                setCurrentState(tab.sref);
 
                                 expect(EditorSplashCtrl.currentTab).toBe(tab);
                             });
@@ -206,18 +214,18 @@
             });
 
             describe('events', function() {
-                describe('c6State: stateChangeSuccess', function() {
-                    ['editor.splash.source', 'editor.splash.image'].forEach(function(stateName, index) {
+                describe('c6State: stateChange', function() {
+                    ['MR:Splash.Source', 'MR:Splash.Image'].forEach(function(stateName, index) {
                         describe('when the state is ' + stateName, function() {
                             var state, tab,
                                 initialVisits;
 
                             beforeEach(function() {
-                                state = { name: stateName };
+                                state = { cName: stateName };
                                 tab = EditorSplashCtrl.tabs[index];
                                 initialVisits = tab.visits = Math.floor(Math.random() * 10) + 1;
 
-                                c6State.emit('stateChangeSuccess', state);
+                                c6State.emit('stateChange', state);
                             });
 
                             it('should increment the visit count of the tab', function() {
@@ -230,7 +238,7 @@
                         beforeEach(function() {
                             $scope.$destroy();
 
-                            c6State.emit('stateChangeSuccess', { name: 'editor.splash.image' });
+                            c6State.emit('stateChange', { cName: 'MR:Splash.Image' });
                         });
 
                         it('should not increment the visits', function() {

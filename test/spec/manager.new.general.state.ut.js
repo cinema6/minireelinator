@@ -5,7 +5,6 @@
         describe('NewGeneralState', function() {
             var $injector,
                 c6State,
-                ManagerNewState,
                 NewGeneralState;
 
             beforeEach(function() {
@@ -15,8 +14,7 @@
                     $injector = _$injector_;
 
                     c6State = $injector.get('c6State');
-                    ManagerNewState = c6State.get('manager.new');
-                    NewGeneralState = c6State.get('manager.new.general');
+                    NewGeneralState = c6State.get('MR:New.General');
                 });
             });
 

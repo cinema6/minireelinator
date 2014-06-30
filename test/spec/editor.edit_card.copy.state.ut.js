@@ -15,27 +15,13 @@
                     $injector = _$injector_;
 
                     c6State = $injector.get('c6State');
-                    EditCardState = c6State.get('editor.editCard');
-                    EditCardCopyState = c6State.get('editor.editCard.copy');
+                    EditCardState = c6State.get('MR:EditCard');
+                    EditCardCopyState = c6State.get('MR:EditCard.Copy');
                 });
             });
 
             it('should exist', function() {
                 expect(EditCardCopyState).toEqual(jasmine.any(Object));
-            });
-
-            describe('model()', function() {
-                var result;
-
-                beforeEach(function() {
-                    EditCardState.cModel = {};
-
-                    result = $injector.invoke(EditCardCopyState.model, EditCardCopyState);
-                });
-
-                it('should return a reference to the parent\'s model', function() {
-                    expect(result).toBe(EditCardState.cModel);
-                });
             });
         });
     });

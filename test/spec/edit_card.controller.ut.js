@@ -7,7 +7,6 @@
                 $scope,
                 $controller,
                 c6State,
-                c6StateParams,
                 cinema6,
                 $q,
                 MiniReelService,
@@ -19,25 +18,19 @@
                 appDataDeferred,
                 appData;
 
-            beforeEach(function() {
-                tabs = [
-                    {
-                        name: 'Foo',
-                        sref: 'editor.editCard.foo'
-                    },
-                    {
-                        name: 'Copy',
-                        sref: 'editor.editCard.copy'
-                    },
-                    {
-                        name: 'Video',
-                        sref: 'editor.editCard.video'
+            function setCurrentState(name) {
+                Object.defineProperty(c6State, 'current', {
+                    get: function() {
+                        return name;
                     }
-                ];
+                });
+            }
 
+            beforeEach(function() {
                 model = {
                     title: null,
                     note: null,
+                    type: 'videoBallot',
                     data: {
                         service: 'youtube',
                         videoid: 'gy1B3agGNxw',
@@ -97,7 +90,6 @@
                     spyOn(cinema6, 'getAppData')
                         .and.returnValue(appDataDeferred.promise);
 
-                    c6StateParams = $injector.get('c6StateParams');
                     MiniReelService = $injector.get('MiniReelService');
 
                     $scope = $rootScope.$new();
@@ -114,21 +106,25 @@
                                     displayAdSource: 'publisher-cinema6',
                                     deck: [
                                         {
-                                            id: 'rc-44b7277334f900'
+                                            id: 'rc-44b7277334f900',
+                                            type: 'video'
                                         },
                                         {
-                                            id: 'rc-9bc990dd4ad17a'
+                                            id: 'rc-9bc990dd4ad17a',
+                                            type: 'videoBallot'
                                         },
                                         {
-                                            id: 'rc-2f3c9133f3cbb3'
+                                            id: 'rc-2f3c9133f3cbb3',
+                                            type: 'videoBallot'
                                         }
                                     ]
                                 }
                             }
                         };
-                        EditCardCtrl = $controller('EditCardController', { $scope: $scope, cModel: model });
-                        EditCardCtrl.model = model;
-                        EditCardCtrl.tabs = tabs;
+                        EditCardCtrl = $controller('EditCardController', { $scope: $scope });
+                        EditCardCtrl.initWithModel(model);
+                        tabs = EditCardCtrl.tabs;
+                        model = EditCardCtrl.model;
                         $scope.EditCardCtrl = EditCardCtrl;
                     });
                 });
@@ -139,11 +135,104 @@
             });
 
             describe('methods', function() {
+                describe('initWithModel', function() {
+                    var model,
+                        copy = {
+                            name: jasmine.any(String),
+                            sref: 'MR:EditCard.Copy',
+                            icon: 'text',
+                            required: true
+                        },
+                        ballot = {
+                            name: jasmine.any(String),
+                            sref: 'MR:EditCard.Ballot',
+                            icon: 'ballot',
+                            required: false,
+                            customRequiredText: jasmine.any(String)
+                        },
+                        video = {
+                            name: jasmine.any(String),
+                            sref: 'MR:EditCard.Video',
+                            icon: 'play',
+                            required: true
+                        };
+
+                    beforeEach(function() {
+                        model = {
+                            type: 'video',
+                            data: {}
+                        };
+                    });
+
+                    describe('on a new card', function() {
+                        beforeEach(function() {
+                            EditCardCtrl.initWithModel(model);
+                        });
+
+                        it('should set isNew to true', function() {
+                            expect(EditCardCtrl.isNew).toBe(true);
+                        });
+                    });
+
+                    describe('on an existing card', function() {
+                        it('should set isNew to false', function() {
+                            EditorCtrl.model.data.deck.forEach(function(card) {
+                                /* global angular */
+                                model = angular.copy(card);
+                                EditCardCtrl.initWithModel(model);
+
+                                expect(EditCardCtrl.isNew).toBe(false);
+                            });
+                        });
+                    });
+
+                    describe('on typeless cards', function() {
+                        beforeEach(function() {
+                            model.type = null;
+                            EditCardCtrl.initWithModel(model);
+                        });
+
+                        it('should not enable any tabs', function() {
+                            expect(EditCardCtrl.tabs).toEqual([]);
+                        });
+                    });
+
+                    describe('on videoBallot cards', function() {
+                        beforeEach(function() {
+                            model.type = 'videoBallot';
+                            EditCardCtrl.initWithModel(model);
+                        });
+
+                        it('should enable the "copy", "ballot", and "video" tabs', function() {
+                            expect(EditCardCtrl.tabs).toEqual([copy, video, ballot]);
+                        });
+
+                        it('should not set data.source', function() {
+                            expect(model.data.source).toBeUndefined();
+                        });
+                    });
+
+                    describe('on video cards', function() {
+                        beforeEach(function() {
+                            model.type = 'video';
+                            EditCardCtrl.initWithModel(model);
+                        });
+
+                        it('should enable the "copy" and "video" tabs', function() {
+                            expect(EditCardCtrl.tabs).toEqual([copy, video, ballot]);
+                        });
+
+                        it('should not set data.source', function() {
+                            expect(model.data.source).toBeUndefined();
+                        });
+                    });
+                });
+
                 describe('save()', function() {
                     beforeEach(function() {
                         spyOn($scope, '$emit').and.callThrough();
                         spyOn(EditCardCtrl, 'setIdealType');
-                        c6StateParams.insertionIndex = 1;
+                        EditCardCtrl.insertionIndex = 1;
                     });
 
                     function assertMutual() {
@@ -152,7 +241,7 @@
                         });
 
                         it('should goTo the editor state', function() {
-                            expect(c6State.goTo).toHaveBeenCalledWith('editor');
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', null, {});
                         });
                     }
 
@@ -263,7 +352,7 @@
                 describe('currentTab', function() {
                     describe('if the current state is not represented by a tab', function() {
                         beforeEach(function() {
-                            c6State.current = { name: 'editor.editCard.server' };
+                            setCurrentState('MR:EditCard.Server');
                         });
 
                         it('should be null', function() {
@@ -274,7 +363,7 @@
                     describe('if the current state is represented by a tab', function() {
                         it('should be that tab', function() {
                             tabs.forEach(function(tab) {
-                                c6State.current = { name: tab.sref };
+                                setCurrentState(tab.sref);
                                 expect(EditCardCtrl.currentTab).toBe(tab);
                             });
                         });
@@ -394,7 +483,7 @@
                                     });
 
                                     it('should go back to the editor state', function() {
-                                        expect(c6State.goTo).toHaveBeenCalledWith('editor');
+                                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor');
                                     });
                                 });
 
@@ -424,7 +513,7 @@
                                             });
 
                                             it('should go back to the editor state', function() {
-                                                expect(c6State.goTo).toHaveBeenCalledWith('editor');
+                                                expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor');
                                             });
                                         });
 
@@ -460,7 +549,7 @@
 
                 describe('primaryButton', function() {
                     beforeEach(function() {
-                        c6State.current = c6State.get('editor.editCard.server');
+                        setCurrentState('MR:EditCard.Server');
                     });
 
                     it('should always be the same object', function() {
@@ -523,9 +612,9 @@
                             });
                         });
 
-                        describe('on the editor.editCard.copy state', function() {
+                        describe('on the MR:EditCard.Copy state', function() {
                             beforeEach(function() {
-                                c6State.current = c6State.get('editor.editCard.copy');
+                                setCurrentState('MR:EditCard.Copy');
                             });
 
                             describe('the text', function() {
@@ -540,7 +629,7 @@
                                 });
 
                                 it('should go to the editor.editCard.video state', function() {
-                                    expect(c6State.goTo).toHaveBeenCalledWith('editor.editCard.video');
+                                    expect(c6State.goTo).toHaveBeenCalledWith('MR:EditCard.Video');
                                 });
                             });
 
@@ -572,10 +661,10 @@
                             });
                         });
 
-                        ['editor.editCard.video', 'editor.editCard.ballot'].forEach(function(state) {
+                        ['MR:EditCard.Video', 'MR:EditCard.Ballot'].forEach(function(state) {
                             describe('on the ' + state + ' state', function() {
                                 beforeEach(function() {
-                                    c6State.current = c6State.get(state);
+                                    setCurrentState(state);
                                 });
 
                                 describe('the text', function() {

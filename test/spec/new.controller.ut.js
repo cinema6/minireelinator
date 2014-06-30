@@ -8,10 +8,19 @@
                 $scope,
                 $controller,
                 c6State,
+                appData,
                 NewCtrl;
 
-            var model,
+            var modes,
                 minireel;
+
+            function setCurrentState(name) {
+                Object.defineProperty(c6State, 'current', {
+                    get: function() {
+                        return name;
+                    }
+                });
+            }
 
             beforeEach(function() {
                 minireel = {
@@ -40,86 +49,67 @@
                         })
                 };
 
-                model = {
-                    modes: [
-                        /* jshint quotmark:false */
-                        {
-                            "value": "lightbox",
-                            "modes": [
-                                {
-                                    "value": "lightbox",
-                                    "autoplayable": true
-                                },
-                                {
-                                    "value": "lightbox-ads",
-                                    "autoplayable": true
-                                }
-                            ]
+                module('c6.mrmaker', function($provide) {
+                    $provide.value('appData', {
+                        ensureFulfillment: jasmine.createSpy('appData.ensureFulfillment()'),
+                        experience: {
+                            data: {
+                                modes: [
+                                    /* jshint quotmark:false */
+                                    {
+                                        "value": "lightbox",
+                                        "modes": [
+                                            {
+                                                "value": "lightbox",
+                                                "autoplayable": true
+                                            },
+                                            {
+                                                "value": "lightbox-ads",
+                                                "autoplayable": true
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "value": "inline",
+                                        "modes": [
+                                            {
+                                                "value": "light",
+                                                "autoplayable": true
+                                            },
+                                            {
+                                                "value": "full",
+                                                "autoplayable": false
+                                            }
+                                        ]
+                                    }
+                                    /* jshint quotmark:single */
+                                ]
+                            }
                         },
-                        {
-                            "value": "inline",
-                            "modes": [
-                                {
-                                    "value": "light",
-                                    "autoplayable": true
-                                },
-                                {
-                                    "value": "full",
-                                    "autoplayable": false
+                        user: {
+                            org: {
+                                waterfalls: {
+                                    video: [],
+                                    display: []
                                 }
-                            ]
+                            }
                         }
-                        /* jshint quotmark:single */
-                    ],
-                    minireel: minireel
-                };
-
-                module('c6.mrmaker');
+                    });
+                });
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
                     $controller = $injector.get('$controller');
                     c6State = $injector.get('c6State');
                     $q = $injector.get('$q');
+                    appData = $injector.get('appData');
+
+                    modes = appData.experience.data.modes;
 
                     $scope = $rootScope.$new();
                     $scope.$apply(function() {
-                        NewCtrl = $controller('NewController', { $scope: $scope, cModel: model });
-                        NewCtrl.model = model;
-                        NewCtrl.tabs = [
-                            {
-                                name: 'Title Settings',
-                                sref: 'general',
-                                requiredVisits: 3,
-                                visits: 3
-                            },
-                            {
-                                name: 'Lightbox',
-                                sref: 'category',
-                                requiredVisits: 10,
-                                visits: 10
-                            },
-                            {
-                                name: 'MiniReel Type',
-                                sref: 'mode',
-                                requiredVisits: 3,
-                                visits: 3
-                            },
-                            // {
-                            //     name: 'Ad Settings',
-                            //     sref: 'ads',
-                            //     requiredVisits: 3,
-                            //     visits: 3
-                            // },
-                            {
-                                name: 'Autoplay',
-                                sref: 'autoplay',
-                                requiredVisits: 5,
-                                visits: 5
-                            }
-                        ];
-                        NewCtrl.baseState = 'manager.new';
-                        NewCtrl.returnState = 'manager';
+                        NewCtrl = $controller('NewController', { $scope: $scope, cState: c6State.get('MR:New') });
+                        NewCtrl.initWithModel(minireel);
                     });
                 });
             });
@@ -129,7 +119,7 @@
             });
 
             describe('events', function() {
-                describe('c6State:stateChangeSuccess', function() {
+                describe('c6State:stateChange', function() {
                     [0, 1, 2, 3].forEach(function(index) {
                         describe('with the state of the tab at index: ' + index, function() {
                             var tab,
@@ -140,10 +130,10 @@
                                 tab = NewCtrl.tabs[index];
                                 initialVisits = tab.visits;
                                 state = {
-                                    name: NewCtrl.baseState + '.' + tab.sref
+                                    cName: tab.sref
                                 };
 
-                                c6State.emit('stateChangeSuccess', state);
+                                c6State.emit('stateChange', state);
                             });
 
                             it('should bump up the visits of the corresponding tab', function() {
@@ -159,7 +149,7 @@
                             $scope.$destroy();
                             initialVisits = NewCtrl.tabs[3].visits;
 
-                            c6State.emit('stateChangeSuccess', { name: NewCtrl.baseState + '.autoplay' });
+                            c6State.emit('stateChange', { name: NewCtrl.baseState + '.autoplay' });
                         });
 
                         it('should not increment visits', function() {
@@ -196,35 +186,151 @@
                             expect(tab.requiredVisits).toBe(tab.visits + 1);
                         });
                     });
+                });
 
-                    describe('if the general tab is not present', function() {
-                        var tabs;
+                describe('modes', function() {
+                    it('should be all of the modes', function() {
+                        expect(NewCtrl.modes).toBe(modes);
+                    });
+                });
 
+                describe('returnState', function() {
+                    it('should be the name of the parent state', function() {
+                        ['MR:Editor.Settings', 'MR:New'].forEach(function(stateName) {
+                            var state = c6State.get(stateName);
+
+                            NewCtrl = $controller('NewController', {
+                                $scope: $scope,
+                                cState: state
+                            });
+
+                            expect(NewCtrl.returnState).toBe(state.cParent.cName);
+                        });
+                    });
+                });
+
+                describe('baseState', function() {
+                    describe('if the state is MR:Editor.Settings', function() {
                         beforeEach(function() {
-                            tabs = NewCtrl.tabs.slice(1);
+                            NewCtrl = $controller('NewController', {
+                                $scope: $scope,
+                                cState: c6State.get('MR:Editor.Settings')
+                            });
                         });
 
-                        it('should not throw errors', function() {
-                            expect(function() {
-                                $scope.$apply(function() {
-                                    NewCtrl = $controller('NewController', { $scope: $scope, cModel: model });
-                                    NewCtrl.tabs = tabs;
-                                    NewCtrl.model = model;
-                                });
-                            }).not.toThrow();
+                        it('should be "MR:Settings."', function() {
+                            expect(NewCtrl.baseState).toBe('MR:Settings.');
                         });
+                    });
+
+                    describe('if the state is MR:New', function() {
+                        beforeEach(function() {
+                            NewCtrl = $controller('NewController', {
+                                $scope: $scope,
+                                cState: c6State.get('MR:New')
+                            });
+                        });
+
+                        it('should be "MR:New."', function() {
+                            expect(NewCtrl.baseState).toBe('MR:New.');
+                        });
+                    });
+                });
+
+                describe('tabs', function() {
+                    describe('on the "MR:New" state', function() {
+                        beforeEach(function() {
+                            NewCtrl = $controller('NewController', {
+                                $scope: $scope,
+                                cState: c6State.get('MR:New')
+                            });
+                        });
+
+                        it('should have four tabs', function() {
+                            expect(NewCtrl.tabs).toEqual([
+                                jasmine.objectContaining({
+                                    name: jasmine.any(String),
+                                    sref: 'MR:New.General',
+                                    visits: 0,
+                                    required: true,
+                                    requiredVisits: 1
+                                }),
+                                jasmine.objectContaining({
+                                    name: jasmine.any(String),
+                                    sref: 'MR:New.Category',
+                                    visits: 0,
+                                    required: false,
+                                    requiredVisits: 0
+                                }),
+                                jasmine.objectContaining({
+                                    name: jasmine.any(String),
+                                    sref: 'MR:New.Mode',
+                                    visits: 0,
+                                    required: false,
+                                    requiredVisits: 0
+                                }),
+                                jasmine.objectContaining({
+                                    name: jasmine.any(String),
+                                    sref: 'MR:New.Autoplay',
+                                    visits: 0,
+                                    required: false,
+                                    requiredVisits: 0
+                                })
+                            ]);
+                        });
+                    });
+
+                    describe('on the "MR:Editor.Settings" state', function() {
+                        beforeEach(function() {
+                            NewCtrl = $controller('NewController', {
+                                $scope: $scope,
+                                cState: c6State.get('MR:Editor.Settings')
+                            });
+                        });
+
+                        it('should have three tabs', function() {
+                            expect(NewCtrl.tabs).toEqual([
+                                jasmine.objectContaining({
+                                    name: jasmine.any(String),
+                                    sref: 'MR:Settings.Category',
+                                    visits: 0,
+                                    required: false,
+                                    requiredVisits: 0
+                                }),
+                                jasmine.objectContaining({
+                                    name: jasmine.any(String),
+                                    sref: 'MR:Settings.Mode',
+                                    visits: 0,
+                                    required: false,
+                                    requiredVisits: 0
+                                }),
+                                jasmine.objectContaining({
+                                    name: jasmine.any(String),
+                                    sref: 'MR:Settings.Autoplay',
+                                    visits: 0,
+                                    required: false,
+                                    requiredVisits: 0
+                                })
+                            ]);
+                        });
+                    });
+                });
+
+                describe('model', function() {
+                    it('should be the minireel', function() {
+                        expect(NewCtrl.model).toBe(minireel);
                     });
                 });
 
                 describe('category', function() {
                     it('should be the category of the MiniReel', function() {
-                        expect(NewCtrl.category).toBe(model.modes[1]);
+                        expect(NewCtrl.category).toBe(modes[1]);
                     });
                 });
 
                 describe('mode', function() {
                     it('should be the mode config of the minireel', function() {
-                        expect(NewCtrl.mode).toBe(model.modes[1].modes[1]);
+                        expect(NewCtrl.mode).toBe(modes[1].modes[1]);
                     });
                 });
 
@@ -255,7 +361,7 @@
                 describe('currentTab', function() {
                     describe('if there is no tab for the current state', function() {
                         beforeEach(function() {
-                            c6State.current = { name: 'manager.new.foo' };
+                            setCurrentState('MR:New.Foo');
                         });
 
                         it('should be null', function() {
@@ -266,7 +372,7 @@
                     describe('if there is a tab for the current state', function() {
                         it('should be the tab for the current state', function() {
                             NewCtrl.tabs.forEach(function(tab) {
-                                c6State.current = { name: 'manager.new.' + tab.sref };
+                                setCurrentState(tab.sref);
 
                                 expect(NewCtrl.currentTab).toBe(tab);
                             });
@@ -282,7 +388,7 @@
                     beforeEach(function() {
                         saveDeferred = $q.defer();
 
-                        NewCtrl.mode = model.modes[0].modes[0];
+                        NewCtrl.mode = modes[0].modes[0];
                         NewCtrl.autoplay = true;
                         NewCtrl.title = 'Sweet!';
 
@@ -354,7 +460,7 @@
                         });
 
                         it('should go to the editor', function() {
-                            expect(c6State.goTo).toHaveBeenCalledWith('editor', { minireelId: minireel.id });
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [minireel]);
                         });
                     });
 
@@ -368,7 +474,22 @@
                         });
 
                         it('should go right to the editor', function() {
-                            expect(c6State.goTo).toHaveBeenCalledWith('editor', { minireelId: minireel.id });
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [minireel]);
+                        });
+                    });
+
+                    describe('if the returnState is the editor', function() {
+                        beforeEach(function() {
+                            minireel.id = 'e-abc';
+                            NewCtrl.returnState = 'MR:Editor';
+
+                            $scope.$apply(function() {
+                                NewCtrl.save();
+                            });
+                        });
+
+                        it('should not provide a model when going to the editor', function() {
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', null);
                         });
                     });
                 });
@@ -378,11 +499,11 @@
                         it('should go to the next tab state', function() {
                             spyOn(c6State, 'goTo');
 
-                            c6State.current = { name: 'manager.new.general' };
+                            setCurrentState('MR:New.General');
 
                             NewCtrl.nextTab();
 
-                            expect(c6State.goTo).toHaveBeenCalledWith('manager.new.' + NewCtrl.tabs[1].sref);
+                            expect(c6State.goTo).toHaveBeenCalledWith(NewCtrl.tabs[1].sref);
                         });
                     });
 
@@ -390,7 +511,7 @@
                         it('should do nothing', function() {
                             spyOn(c6State, 'goTo');
 
-                            c6State.current = { name: 'manager.new.autoplay' };
+                            setCurrentState('MR:New.Autoplay');
 
                             NewCtrl.nextTab();
 
@@ -404,11 +525,11 @@
                         it('should go to the next tab state', function() {
                             spyOn(c6State, 'goTo');
 
-                            c6State.current = { name: 'manager.new.mode' };
+                            setCurrentState('MR:New.Mode');
 
                             NewCtrl.prevTab();
 
-                            expect(c6State.goTo).toHaveBeenCalledWith('manager.new.' + NewCtrl.tabs[1].sref);
+                            expect(c6State.goTo).toHaveBeenCalledWith(NewCtrl.tabs[1].sref);
                         });
                     });
 
@@ -416,7 +537,7 @@
                         it('should do nothing', function() {
                             spyOn(c6State, 'goTo');
 
-                            c6State.current = { name: 'manager.new.general' };
+                            setCurrentState('MR:New.General');
 
                             NewCtrl.prevTab();
 
@@ -499,14 +620,14 @@
                 describe('this.category', function() {
                     it('should set the mode to be the first in the category', function() {
                         $scope.$apply(function() {
-                            NewCtrl.category = model.modes[0];
+                            NewCtrl.category = modes[0];
                         });
-                        expect(NewCtrl.mode).toBe(model.modes[0].modes[0]);
+                        expect(NewCtrl.mode).toBe(modes[0].modes[0]);
 
                         $scope.$apply(function() {
-                            NewCtrl.category = model.modes[1];
+                            NewCtrl.category = modes[1];
                         });
-                        expect(NewCtrl.mode).toBe(model.modes[1].modes[0]);
+                        expect(NewCtrl.mode).toBe(modes[1].modes[0]);
                     });
 
                     it('should bump up the requiredVisits of the mode tab by one', function() {
@@ -515,7 +636,7 @@
                         expect(modeTab.requiredVisits).toBe(modeTab.visits);
 
                         $scope.$apply(function() {
-                            NewCtrl.category = model.modes[0];
+                            NewCtrl.category = modes[0];
                         });
                         expect(modeTab.requiredVisits).toBe(modeTab.visits + 1);
                     });
@@ -527,11 +648,11 @@
                             $scope.$apply(function() {
                                 minireel.data.autoplay = true;
                                 NewCtrl.autoplay = true;
-                                NewCtrl.mode = model.modes[0].modes[0];
+                                NewCtrl.mode = modes[0].modes[0];
                             });
 
                             $scope.$apply(function() {
-                                NewCtrl.mode = model.modes[1].modes[1];
+                                NewCtrl.mode = modes[1].modes[1];
                             });
                         });
 
@@ -551,7 +672,7 @@
                                     minireel.data.autoplay = bool;
 
                                     $scope.$apply(function() {
-                                        NewCtrl.mode = model.modes[0].modes[0];
+                                        NewCtrl.mode = modes[0].modes[0];
                                     });
                                 });
 
@@ -569,11 +690,11 @@
                     describe('when switching modes that do not effect the autoplayable status', function() {
                         beforeEach(function() {
                             $scope.$apply(function() {
-                                NewCtrl.mode = model.modes[0].modes[0];
+                                NewCtrl.mode = modes[0].modes[0];
                             });
                             NewCtrl.tabs[3].requiredVisits = NewCtrl.tabs[3].visits;
                             $scope.$apply(function() {
-                                NewCtrl.mode = model.modes[0].modes[1];
+                                NewCtrl.mode = modes[0].modes[1];
                             });
                         });
 
@@ -585,10 +706,10 @@
                     xdescribe('when switching modes to lightbox-ads', function() {
                         it('should bump up the requiredVisits of the ads tab', function() {
                             $scope.$apply(function() {
-                                NewCtrl.mode = model.modes[0].modes[0];
+                                NewCtrl.mode = modes[0].modes[0];
                             });
                             $scope.$apply(function() {
-                                NewCtrl.mode = model.modes[0].modes[1];
+                                NewCtrl.mode = modes[0].modes[1];
                             });
 
                             expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits + 1);
@@ -598,10 +719,10 @@
                     xdescribe('when switching modes from lightbox-ads', function() {
                         it('should bump up the requiredVisits of the ads tab', function() {
                             $scope.$apply(function() {
-                                NewCtrl.mode = model.modes[0].modes[1];
+                                NewCtrl.mode = modes[0].modes[1];
                             });
                             $scope.$apply(function() {
-                                NewCtrl.mode = model.modes[0].modes[0];
+                                NewCtrl.mode = modes[0].modes[0];
                             });
 
                             expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits + 1);
@@ -611,10 +732,10 @@
                     xdescribe('when switching modes that do not effect display ads', function() {
                         it('should bump up the requiredVisits of the ads tab', function() {
                             $scope.$apply(function() {
-                                NewCtrl.mode = model.modes[1].modes[1];
+                                NewCtrl.mode = modes[1].modes[1];
                             });
                             $scope.$apply(function() {
-                                NewCtrl.mode = model.modes[1].modes[0];
+                                NewCtrl.mode = modes[1].modes[0];
                             });
 
                             expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits);

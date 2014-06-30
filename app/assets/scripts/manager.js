@@ -2,6 +2,44 @@
     'use strict';
 
     angular.module('c6.mrmaker')
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Manager.Embed', ['c6UrlMaker','cinema6',
+            function                                  ( c6UrlMaker , cinema6 ) {
+                this.controller = 'GenericController';
+                this.controllerAs = 'ManagerEmbedCtrl';
+                this.templateUrl = c6UrlMaker('views/manager/embed.html');
+
+                this.model = function(params) {
+                    return cinema6.db.find('experience', params.minireelId);
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Manager', ['c6UrlMaker','cinema6','appData',
+            function                            ( c6UrlMaker , cinema6 , appData ) {
+                this.controller = 'ManagerController';
+                this.controllerAs = 'ManagerCtrl';
+                this.templateUrl = c6UrlMaker('views/manager.html');
+
+                this.queryParams = {
+                    filter: '='
+                };
+
+                this.model = function() {
+                    var user = appData.user;
+
+                    return cinema6.db.findAll('experience', {
+                        type: 'minireel',
+                        org: user.org.id,
+                        sort: 'lastUpdated,-1'
+                    });
+                };
+            }]);
+        }])
+
         .controller('ManagerController', ['c6State','MiniReelService','ConfirmDialogService',
                                           'cinema6',
         function                         ( c6State , MiniReelService , ConfirmDialogService ,
@@ -24,20 +62,14 @@
                                 return minireel.save();
                             })
                             .then(function editCopy(minireel) {
-                                c6State.goTo(
-                                    'editor.setMode.category',
-                                    { minireelId: minireel.id }
-                                );
+                                c6State.goTo('MR:Editor', [minireel]);
+                                c6State.goTo('MR:Settings.Category');
                             });
                     },
                     onCancel: function() {
                         ConfirmDialogService.close();
                     }
                 });
-            };
-
-            this.edit = function(minireel) {
-                c6State.goTo('editor', { minireelId: minireel.id });
             };
 
             this.makePublic = function(minireel) {
@@ -111,27 +143,55 @@
                 });
         }])
 
-        .controller('NewController', ['$scope','cModel','MiniReelService','c6State','$q',
-        function                     ( $scope , cModel , MiniReelService , c6State , $q ) {
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider
+                .state('MR:New', ['c6UrlMaker','MiniReelService',
+                function         ( c6UrlMaker , MiniReelService ) {
+                    this.controller = 'NewController';
+                    this.controllerAs = 'NewCtrl';
+                    this.templateUrl = c6UrlMaker('views/manager/new.html');
+
+                    this.model = function() {
+                        return MiniReelService.create();
+                    };
+                }])
+
+                .state('MR:New.General', ['c6UrlMaker',
+                function                 ( c6UrlMaker ) {
+                    this.templateUrl = c6UrlMaker('views/manager/new/general.html');
+                }])
+
+                .state('MR:New.Category', ['c6UrlMaker',
+                function                  ( c6UrlMaker ) {
+                    this.templateUrl = c6UrlMaker('views/manager/new/category.html');
+                }])
+
+                .state('MR:New.Mode', ['c6UrlMaker',
+                function              ( c6UrlMaker ) {
+                    this.templateUrl = c6UrlMaker('views/manager/new/mode.html');
+                }])
+
+                .state('MR:New.Autoplay', ['c6UrlMaker',
+                function                  ( c6UrlMaker ) {
+                    this.templateUrl = c6UrlMaker('views/manager/new/autoplay.html');
+                }]);
+        }])
+
+        .controller('NewController', ['$scope','MiniReelService','c6State','$q','appData',
+                                      'cState',
+        function                     ( $scope , MiniReelService , c6State , $q , appData ,
+                                       cState ) {
             var self = this,
-                minireel = cModel.minireel,
-                setupTabs = $scope.$watch(function() { return self.tabs; }, function() {
-                    var general = tabBySref('general');
+                stateName = cState.cName;
 
-                    if (general) {
-                        Object.defineProperties(general, {
-                            requiredVisits: {
-                                get: function() {
-                                    return self.title ?
-                                        this.visits :
-                                        this.visits + 1;
-                                }
-                            }
-                        });
-                    }
-
-                    setupTabs();
-                });
+            function Tab(name, sref, required) {
+                this.name = name;
+                this.sref = sref;
+                this.visits = 0;
+                this.requiredVisits = 0;
+                this.required = !!required;
+            }
 
             function tabBySref(sref) {
                 return self.tabs.reduce(function(result, next) {
@@ -140,38 +200,56 @@
             }
 
             function incrementTabVisits(state) {
-                var name = state.name
-                    .replace(self.baseState + '.', '');
-
-                tabBySref(name).visits++;
+                tabBySref(state.cName).visits++;
             }
 
-            this.mode = MiniReelService.modeDataOf(
-                minireel,
-                cModel.modes
-            );
-            this.category = MiniReelService.modeCategoryOf(
-                minireel,
-                cModel.modes
-            );
-            this.autoplay = minireel.data.autoplay;
-            this.title = minireel.data.title;
             // this.displayAdSource = minireel.data.displayAdSource;
             // this.videoAdSource = minireel.data.videoAdSource;
 
+            this.modes = appData.experience.data.modes;
+            this.returnState = cState.cParent.cName;
+            this.baseState = (function() {
+                switch (stateName) {
+                case 'MR:New':
+                    return 'MR:New.';
+                case 'MR:Editor.Settings':
+                    return 'MR:Settings.';
+                }
+            }());
+            this.tabs = [
+                new Tab('Lightbox', this.baseState + 'Category'),
+                new Tab('MiniReel Type', this.baseState + 'Mode'),
+                new Tab('Autoplay', this.baseState + 'Autoplay')
+            ];
+            if (this.baseState === 'MR:New.') {
+                this.tabs.unshift(new Tab('Title Settings', 'MR:New.General', true));
+
+                Object.defineProperties(this.tabs[0], {
+                    requiredVisits: {
+                        get: function() {
+                            return self.title ?
+                                this.visits :
+                                this.visits + 1;
+                        }
+                    }
+                });
+            }
             Object.defineProperties(this, {
                 currentTab: {
                     configurable: true,
                     get: function() {
-                        var state = c6State.current.name
-                            .replace(this.baseState + '.', '');
-
-                        return this.tabs.reduce(function(result, next) {
-                            return state === next.sref ? next : result;
-                        }, null);
+                        return tabBySref(c6State.current);
                     }
                 }
             });
+
+            this.initWithModel = function(minireel) {
+                this.model = minireel;
+                this.mode = MiniReelService.modeDataOf(minireel, this.modes);
+                this.category = MiniReelService.modeCategoryOf(minireel, this.modes);
+                this.autoplay = minireel.data.autoplay;
+                this.title = minireel.data.title;
+            };
 
             this.isAsFarAs = function(tab) {
                 return this.tabs.indexOf(tab) <= this.tabs.indexOf(this.currentTab);
@@ -179,7 +257,7 @@
 
             this.tabIsValid = function(tab) {
                 switch (tab.sref) {
-                case 'general':
+                case 'MR:New.General':
                     return !!this.title;
                 default:
                     return this.isAsFarAs(tab);
@@ -187,7 +265,7 @@
             };
 
             this.save = function() {
-                var minireel = this.model.minireel,
+                var minireel = this.model,
                     data = minireel.data;
 
                 ['autoplay', 'title'].forEach(function(prop) {
@@ -212,7 +290,11 @@
                 (minireel.id ? $q.when(minireel) :
                     minireel.save())
                     .then(function goToEditor(minireel) {
-                        c6State.goTo('editor', { minireelId: minireel.id });
+                        c6State.goTo(
+                            'MR:Editor',
+                            (self.returnState === 'MR:Editor') ?
+                                null : [minireel]
+                        );
                     });
             };
 
@@ -220,7 +302,7 @@
                 var index = this.tabs.indexOf(this.currentTab);
 
                 if (index+1 < this.tabs.length) {
-                    c6State.goTo(this.baseState + '.' + this.tabs[index+1].sref);
+                    c6State.goTo(this.tabs[index+1].sref);
                 }
             };
 
@@ -228,29 +310,29 @@
                 var index = this.tabs.indexOf(this.currentTab);
 
                 if (index-1 > -1) {
-                    c6State.goTo(this.baseState + '.' + this.tabs[index-1].sref);
+                    c6State.goTo(this.tabs[index-1].sref);
                 }
             };
 
-            c6State.on('stateChangeSuccess', incrementTabVisits);
+            c6State.on('stateChange', incrementTabVisits);
 
             $scope.$on('$destroy', function() {
-                c6State.removeListener('stateChangeSuccess', incrementTabVisits);
+                c6State.removeListener('stateChange', incrementTabVisits);
             });
 
             $scope.$watch(function() { return self.category; }, function(category, prevCategory) {
                 var modeTab;
 
                 if (category === prevCategory) { return; }
-                modeTab = tabBySref('mode');
+                modeTab = tabBySref(self.baseState + 'Mode');
 
                 self.mode = self.category.modes[0];
                 modeTab.requiredVisits = modeTab.visits + 1;
             });
 
             $scope.$watch(function() { return self.mode; }, function(mode, prevMode) {
-                var minireel = self.model.minireel,
-                    autoplayTab = tabBySref('autoplay');
+                var minireel = self.model,
+                    autoplayTab = tabBySref(self.baseState + 'Autoplay');
                     // adsTab = tabBySref('ads');
 
                 self.autoplay = mode.autoplayable && minireel.data.autoplay;

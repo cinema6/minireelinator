@@ -2,7 +2,7 @@
     'use strict';
 
     define(['c6_state'], function() {
-        ddescribe('<c6-view>', function() {
+        describe('<c6-view>', function() {
             var $rootScope,
                 $scope,
                 $compile,

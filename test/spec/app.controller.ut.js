@@ -89,6 +89,7 @@
                     $rootScope = $injector.get('$rootScope');
                     $q = $injector.get('$q');
                     c6State = $injector.get('c6State');
+                    spyOn(c6State, 'goTo');
                     $window = $injector.get('$window');
 
                     $scope = $rootScope.$new();
@@ -218,39 +219,25 @@
                 });
             });
 
-            describe('cinema6 integration', function() {
-                beforeEach(function() {
-                    cinema6.init.calls.mostRecent().args[0].setup(appData);
-                });
-
-                it('should initialize a session with cinema6', function() {
-                    expect(cinema6.init).toHaveBeenCalled();
-                });
-
-                it('should configure gsap', function() {
-                    expect(gsap.TweenLite.ticker.useRAF).toHaveBeenCalledWith(appData.profile.raf);
-                });
-            });
-
             describe('events', function() {
-                describe('c6State: stateChangeSuccess', function() {
+                describe('c6State: stateChange', function() {
                     it('should ping the session', function() {
                         spyOn(AppCtrl,'trackStateChange');
                         cinema6.getSession.calls.reset();
                         expect(cinema6.getSession).not.toHaveBeenCalled();
-                        c6State.emit('stateChangeSuccess', c6State.get('manager'), null);
+                        c6State.emit('stateChange', c6State.get('MR:Manager'), null);
                         $rootScope.$apply(function() {
                             cinema6._.getSessionDeferred.resolve(cinema6Session);
                         });
-                        expect(cinema6Session.ping).toHaveBeenCalledWith('stateChange', { name: 'manager' });
+                        expect(cinema6Session.ping).toHaveBeenCalledWith('stateChange', { name: 'MR:Manager' });
                         cinema6.getSession.calls.reset();
 
                         $rootScope.$apply(function() {
-                            c6State.emit('stateChangeSuccess', c6State.get('editor'), c6State.get('manager'));
+                            c6State.emit('stateChange', c6State.get('MR:Editor'), c6State.get('MR:Manager'));
                         });
                         expect(AppCtrl.trackStateChange).toHaveBeenCalled();
                         expect(cinema6.getSession).toHaveBeenCalled();
-                        expect(cinema6Session.ping).toHaveBeenCalledWith('stateChange', { name: 'editor' });
+                        expect(cinema6Session.ping).toHaveBeenCalledWith('stateChange', { name: 'MR:Editor' });
                     });
                 });
             });

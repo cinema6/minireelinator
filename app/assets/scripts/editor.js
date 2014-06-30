@@ -108,6 +108,12 @@
                     get: function() {
                         return !!queue.queue.length;
                     }
+                },
+                minireel: {
+                    configurable: true,
+                    get: function() {
+                        return _private.proxy;
+                    }
                 }
             });
 
@@ -247,12 +253,26 @@
             if (window.c6.kHasKarma) { this._private = _private; }
         }])
 
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Editor', ['c6UrlMaker','cinema6',
+            function                           ( c6UrlMaker , cinema6 ) {
+                this.controller = 'EditorController';
+                this.controllerAs = 'EditorCtrl';
+                this.templateUrl = c6UrlMaker('views/editor.html');
+
+                this.model = function(params) {
+                    return cinema6.db.find('experience', params.minireelId);
+                };
+            }]);
+        }])
+
         .controller('EditorController', ['c6State','$scope','EditorService','cinema6',
                                          'ConfirmDialogService','c6Debounce','$q','$log',
-                                         'MiniReelService','cModel',
+                                         'MiniReelService',
         function                        ( c6State , $scope , EditorService , cinema6 ,
                                           ConfirmDialogService , c6Debounce , $q , $log ,
-                                          MiniReelService , cModel ) {
+                                          MiniReelService ) {
             var self = this,
                 AppCtrl = $scope.AppCtrl,
                 cardLimits = {
@@ -328,6 +348,12 @@
                 }
             });
 
+            this.initWithModel = function(model) {
+                this.model = EditorService.open(model);
+
+                AppCtrl.branding = this.model.data.branding;
+            };
+
             this.bustCache = function() {
                 this.cacheBuster++;
             };
@@ -394,27 +420,19 @@
                 });
             };
 
-            this.editCard = function(card/*,evtSrc*/) {
-//                if (evtSrc){
-//                    AppCtrl.sendPageEvent('Editor','Click','Edit Card',self.pageObject);
-//                }
-                c6State.goTo('editor.editCard', { cardId: card.id });
-            };
-
             this.newCard = function(insertionIndex/*,evtSrc*/) {
 //                if (evtSrc){
 //                    AppCtrl.sendPageEvent('Editor','Click','New Card',self.pageObject);
 //                }
 
                 // TODO: Delete this code
-                /*c6State.goTo('editor.newCard', {
-                    insertionIndex: insertionIndex
+                /*c6State.goTo('MR:Editor.NewCard', null, {
+                    insertAt: insertionIndex
                 });*/
                 var card = MiniReelService.createCard('videoBallot');
 
-                c6State.goTo('editor.editCard', {
-                    insertionIndex: insertionIndex,
-                    card: card
+                c6State.goTo('MR:EditCard', [card], {
+                    insertAt: insertionIndex
                 });
             };
 
@@ -467,7 +485,7 @@
                     onAffirm: function() {
                         EditorService.erase()
                             .then(function backToManager() {
-                                c6State.goTo('manager');
+                                c6State.goTo('MR:Manager');
                             });
 
                         ConfirmDialogService.close();
@@ -513,16 +531,16 @@
                         cancel: 'No, publish my changes first',
                         onCancel: function() {
                             self.save();
-                            c6State.goTo('manager');
+                            c6State.goTo('MR:Manager');
                             ConfirmDialogService.close();
                         },
                         onAffirm: function() {
-                            c6State.goTo('manager');
+                            c6State.goTo('MR:Manager');
                             ConfirmDialogService.close();
                         }
                     });
                 } else {
-                    c6State.goTo('manager');
+                    c6State.goTo('MR:Manager');
                 }
             };
 
@@ -563,13 +581,66 @@
                     });
             });
 
-            AppCtrl.branding = cModel.data.branding;
 
         //    AppCtrl.sendPageView(this.pageObject);
         }])
 
-        .controller('EditorSplashController', ['$scope','c6State','$log','cModel',
-        function                              ( $scope , c6State , $log , cModel ) {
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider
+                .state('MR:Editor.Settings', ['c6UrlMaker','EditorService',
+                function                     ( c6UrlMaker , EditorService ) {
+                    this.controller = 'NewController';
+                    this.controllerAs = 'NewCtrl';
+                    this.templateUrl = c6UrlMaker('views/manager/new.html');
+
+                    this.model = function() {
+                        return EditorService.state.minireel;
+                    };
+                }])
+
+                .state('MR:Settings.Category', ['c6UrlMaker',
+                function                  ( c6UrlMaker ) {
+                    this.templateUrl = c6UrlMaker('views/manager/new/category.html');
+                }])
+
+                .state('MR:Settings.Mode', ['c6UrlMaker',
+                function              ( c6UrlMaker ) {
+                    this.templateUrl = c6UrlMaker('views/manager/new/mode.html');
+                }])
+
+                .state('MR:Settings.Autoplay', ['c6UrlMaker',
+                function                  ( c6UrlMaker ) {
+                    this.templateUrl = c6UrlMaker('views/manager/new/autoplay.html');
+                }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Editor.Splash', ['c6UrlMaker',
+            function                                  ( c6UrlMaker ) {
+                this.controller = 'EditorSplashController';
+                this.controllerAs = 'EditorSplashCtrl';
+                this.templateUrl = c6UrlMaker('views/editor/splash.html');
+
+                this.model = function() {
+                    return copy(this.cParent.cModel);
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Editor.NewCard', ['c6UrlMaker',
+            function                                   ( c6UrlMaker ) {
+                this.controller = 'NewCardController';
+                this.controllerAs = 'NewCardCtrl';
+                this.templateUrl = c6UrlMaker('views/editor/new_card.html');
+            }]);
+        }])
+
+        .controller('EditorSplashController', ['$scope','c6State','$log',
+        function                              ( $scope , c6State , $log ) {
             var self = this;
 
             function tabBySref(sref) {
@@ -579,7 +650,7 @@
             }
 
             function incrementTabVisits(state) {
-                tabBySref(state.name).visits++;
+                tabBySref(state.cName).visits++;
             }
 
             $log = ($log.context || function() { return $log; })('EditorSplashCtrl');
@@ -587,29 +658,34 @@
             this.tabs = [
                 {
                     name: 'Source Type',
-                    sref: 'editor.splash.source',
+                    sref: 'MR:Splash.Source',
                     visits: 0,
                     requiredVisits: 0
                 },
                 {
                     name: 'Image Settings',
-                    sref: 'editor.splash.image',
+                    sref: 'MR:Splash.Image',
                     visits: 0,
                     requiredVisits: 0
                 }
             ];
-            this.splashSrc = cModel.data.collateral.splash;
             Object.defineProperties(this, {
                 currentTab: {
                     configurable: true,
                     get: function() {
                         return this.tabs.reduce(function(result, next) {
-                            return next.sref === c6State.current.name ?
+                            return next.sref === c6State.current ?
                                 next : result;
                         }, null);
                     }
                 }
             });
+
+            this.initWithModel = function(model) {
+                this.splashSrc = model.data.collateral.splash;
+
+                this.model = model;
+            };
 
             this.isAsFarAs = function(tab) {
                 var tabs = this.tabs;
@@ -621,7 +697,7 @@
                 if (!tab) { return tab; }
 
                 switch (tab.sref) {
-                case 'editor.splash.image':
+                case 'MR:Splash.Image':
                     switch (this.model.data.splash.source) {
                     case 'generated':
                         return this.isAsFarAs(tab);
@@ -634,10 +710,10 @@
                 }
             };
 
-            c6State.on('stateChangeSuccess', incrementTabVisits);
+            c6State.on('stateChange', incrementTabVisits);
 
             $scope.$on('$destroy', function() {
-                c6State.removeListener('stateChangeSuccess', incrementTabVisits);
+                c6State.removeListener('stateChange', incrementTabVisits);
             });
 
             $scope.$watch(
@@ -646,13 +722,31 @@
                     var imageTab;
 
                     if (source === prevSource) { return; }
-                    imageTab = tabBySref('editor.splash.image');
+                    imageTab = tabBySref('MR:Splash.Image');
 
                     imageTab.requiredVisits = imageTab.visits + 1;
                     self.splashSrc = null;
                     self.model.data.collateral.splash = null;
                 }
             );
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider
+                .state('MR:Splash.Source', ['c6UrlMaker',
+                function                   ( c6UrlMaker ) {
+                    this.controller = 'GenericController';
+                    this.controllerAs = 'SplashSourceCtrl';
+                    this.templateUrl = c6UrlMaker('views/editor/splash/source.html');
+                }])
+
+                .state('MR:Splash.Image', ['c6UrlMaker',
+                function                  ( c6UrlMaker ) {
+                    this.controller = 'SplashImageController';
+                    this.controllerAs = 'SplashImageCtrl';
+                    this.templateUrl = c6UrlMaker('views/editor/splash/image.html');
+                }]);
         }])
 
         .controller('SplashImageController', ['$scope','CollateralService','$log','$q','c6State',
@@ -760,7 +854,7 @@
                         copy(minireel.data.splash, data.splash);
                         $log.info('Save complete: ', EditorCtrl.model);
 
-                        c6State.goTo('editor');
+                        c6State.goTo('MR:Editor');
                         EditorCtrl.bustCache();
 
                         return EditorCtrl.model;
@@ -791,29 +885,84 @@
             }
         }])
 
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider
+                .state('MR:EditCard', ['c6UrlMaker','MiniReelService','c6State','$q',
+                                       'EditorService',
+                function              ( c6UrlMaker , MiniReelService , c6State , $q ,
+                                        EditorService ) {
+                    this.controller = 'EditCardController';
+                    this.controllerAs = 'EditCardCtrl';
+                    this.templateUrl = c6UrlMaker('views/editor/edit_card.html');
+                    this.queryParams = {
+                        insertionIndex: '&insertAt'
+                    };
+
+                    this.model = function(params) {
+                        var deck = EditorService.state.minireel.data.deck;
+
+                        return MiniReelService.findCard(deck, params.cardId);
+                    };
+
+                    this.afterModel = function(model) {
+                        var types = ['video', 'videoBallot'];
+
+                        if(types.indexOf(model.type) < 0) {
+                            c6State.goTo('MR:Editor');
+
+                            return $q.reject('Cannot edit this card');
+                        }
+                    };
+                }])
+
+                .state('MR:EditCard.Copy', ['c6UrlMaker',
+                function                   ( c6UrlMaker ) {
+                    this.controller = 'GenericController';
+                    this.controllerAs = 'EditCardCopyCtrl';
+                    this.templateUrl = c6UrlMaker('views/editor/edit_card/copy.html');
+                }])
+
+                .state('MR:EditCard.Video', ['c6UrlMaker',
+                function                   ( c6UrlMaker ) {
+                    this.controller = 'GenericController';
+                    this.controllerAs = 'EditCardVideoCtrl';
+                    this.templateUrl = c6UrlMaker('views/editor/edit_card/video.html');
+                }])
+
+                .state('MR:EditCard.Ballot', ['c6UrlMaker','MiniReelService',
+                function                     ( c6UrlMaker , MiniReelService ) {
+                    this.controller = 'GenericController';
+                    this.controllerAs = 'EditCardBallotCtrl';
+                    this.templateUrl = c6UrlMaker('views/editor/edit_card/ballot.html');
+                    this.model = function() {
+                        var card = this.cParent.cModel;
+
+                        if (card.type === 'video') {
+                            MiniReelService.setCardType(card, 'videoBallot');
+                        }
+
+                        return card.data.ballot;
+                    };
+                }]);
+        }])
+
         .controller('EditCardController', ['$scope','c6Computed','c6State','VideoService',
-                                           'MiniReelService','cinema6','c6StateParams',
+                                           'MiniReelService',
         function                          ( $scope , c6Computed , c6State , VideoService ,
-                                            MiniReelService , cinema6 , c6StateParams ) {
+                                            MiniReelService ) {
             var self = this,
                 c = c6Computed($scope),
                 EditorCtrl = $scope.EditorCtrl,
                 primaryButton = {},
-                negativeButton = {},
-                removeInitWatcher = $scope.$watch(
-                    function() { return self.tabs; },
-                    function(tabs) {
-                        c6State.goTo(tabs[0].sref);
-                        removeInitWatcher();
-                    }
-                );
+                negativeButton = {};
 
             Object.defineProperties(this, {
                 currentTab: {
                     configurable: true,
                     get: function() {
                         return this.tabs.filter(function(tab) {
-                            return tab.sref === c6State.current.name;
+                            return tab.sref === c6State.current;
                         })[0] || null;
                     }
                 },
@@ -864,9 +1013,9 @@
                 },
                 primaryButton: {
                     get: function() {
-                        var state = c6State.current.name;
+                        var state = c6State.current;
 
-                        if (this.canSave || /^(editor.editCard.(video|ballot))$/.test(state)) {
+                        if (this.canSave || /^(MR:EditCard.(Video|Ballot))$/.test(state)) {
                             return copy({
                                 text: EditorCtrl.model.status === 'active' ? 'I\'m Done!' : 'Save',
                                 action: function() { self.save(); },
@@ -876,7 +1025,7 @@
 
                         return copy({
                             text: 'Next Step',
-                            action: function() { c6State.goTo('editor.editCard.video'); },
+                            action: function() { c6State.goTo('MR:EditCard.Video'); },
                             enabled: this.copyComplete && !EditorCtrl.errorForCard(this.model)
                         }, primaryButton);
                     }
@@ -890,10 +1039,10 @@
                                 'Prev Step' : 'Cancel',
                             action: this.isNew ?
                                 function() {
-                                    c6State.goTo((prevTab || { sref: 'editor' }).sref);
+                                    c6State.goTo((prevTab || { sref: 'MR:Editor' }).sref);
                                 } :
                                 function() {
-                                    c6State.goTo('editor');
+                                    c6State.goTo('MR:Editor');
                                 },
                             enabled: true
                         }, negativeButton);
@@ -902,6 +1051,51 @@
             });
 
             VideoService.createVideoUrl(c, this, 'EditCardCtrl');
+
+            this.initWithModel = function(model) {
+                var minireelData = EditorCtrl.model.data,
+                    deck = minireelData.deck;
+
+                var copyTab = {
+                        name: 'Editorial Content',
+                        sref: 'MR:EditCard.Copy',
+                        icon: 'text',
+                        required: true
+                    },
+                    videoTab = {
+                        name: 'Video Content',
+                        sref: 'MR:EditCard.Video',
+                        icon: 'play',
+                        required: true
+                    },
+                    ballotTab = {
+                        name: 'Questionnaire',
+                        sref: 'MR:EditCard.Ballot',
+                        icon: 'ballot',
+                        required: false,
+                        customRequiredText: [
+                            'Indicates required field (to include a questionnaire)'
+                        ].join('')
+                    };
+
+                this.model = copy(model);
+                this.tabs = (function() {
+                    switch (model.type) {
+                    case 'video':
+                    case 'videoBallot':
+                        return [copyTab, videoTab, ballotTab];
+                    default:
+                        return [];
+                    }
+                }());
+                this.isNew = !deck.filter(function(card) {
+                    return card.id === model.id;
+                })[0];
+
+                if (this.tabs.length) {
+                    c6State.goTo(this.tabs[0].sref);
+                }
+            };
 
             this.setIdealType = function() {
                 var choices;
@@ -926,10 +1120,10 @@
                 if (index > -1) {
                     copy(this.model, deck[index]);
                 } else {
-                    deck.splice(c6StateParams.insertionIndex, 0, this.model);
+                    deck.splice(this.insertionIndex, 0, this.model);
                 }
 
-                c6State.goTo('editor');
+                c6State.goTo('MR:Editor', null, {});
             };
 
             $scope.$watch(
@@ -950,24 +1144,14 @@
             );
         }])
 
-        // .controller('EditCardDisplayAdController', ['appData','MiniReelService',
-        // function                                   ( appData , MiniReelService ) {
-        //     this.choices = MiniReelService.adChoicesOf(appData);
-        // }])
-
-        .controller('EditCardServerController', ['appData','MiniReelService',
-        function                                 ( appData , MiniReelService ) {
-            this.choices = MiniReelService.adChoicesOf(appData);
-        }])
-
-        .controller('NewCardController', ['c6State','c6StateParams','MiniReelService',
-        function                         ( c6State , c6StateParams , MiniReelService ) {
+        .controller('NewCardController', ['c6State','MiniReelService',
+        function                         ( c6State , MiniReelService ) {
             this.type = 'videoBallot';
 
             this.edit = function() {
                 var card = MiniReelService.createCard(this.type);
 
-                c6State.goTo('editor.editCard', { cardId: card.id, card: card });
+                c6State.goTo('MR:EditCard', [card]);
             };
         }])
 

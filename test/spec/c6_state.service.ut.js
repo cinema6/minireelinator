@@ -2,7 +2,7 @@
     'use strict';
 
     define(['c6_state'], function() {
-        ddescribe('c6State', function() {
+        describe('c6State', function() {
             var c6StateProvider,
                 $injector,
                 c6State,
