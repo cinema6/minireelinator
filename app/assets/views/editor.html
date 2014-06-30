@@ -12,7 +12,7 @@
         <div class="pageHeader__coverImg">
             <div class="miniReel__imgBox miniReel__imgBox--{{minireel.data.splash.ratio}}"
                 c6-bg-img="{{EditorCtrl.splashSrc}}">
-                <div ng-if="minireel.status !== 'active'" c6-sref="editor.splash.source" class="coverImg__edit">
+                <div ng-if="minireel.status !== 'active'" c6-sref="MR:Splash.Source" class="coverImg__edit">
                     <span class="ui__editToolTip">
                         <span class="ui__edit sprite--alpha"><span class="ir">Edit</span></span>
                         Edit
@@ -35,7 +35,7 @@
             </form>
             <div class="pageHeader__actions clearfix">
                 <div class="metaData__group">
-                    Type: <a c6-sref="editor.setMode.category" class="miniReel__type" title="AutoPlay MiniReel"><strong>{{EditorCtrl.prettyMode}}</strong></a> 
+                    Type: <a c6-sref="MR:Settings.Category" class="miniReel__type" title="AutoPlay MiniReel"><strong>{{EditorCtrl.prettyMode}}</strong></a> 
                     <span class="ui__divider--bar">&nbsp;|&nbsp;</span>
                     Created {{minireel.created | date:'M/d/yyyy' }}
                     <span class="ui__divider--bar">&nbsp;|&nbsp;</span>

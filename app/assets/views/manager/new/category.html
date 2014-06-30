@@ -1,6 +1,6 @@
 <div class="modal__content modal__editor clearfix">
     <ul class="wizard__group">
-        <li ng-repeat="$this in NewCtrl.model.modes" class="wizard__choice">
+        <li ng-repeat="$this in NewCtrl.modes" class="wizard__choice">
             <input id="category-{{$this.value}}" type="radio" 
                 name="minireel-category" ng-value="$this"
                 class="modal__radioBtn" ng-model="NewCtrl.category" />
