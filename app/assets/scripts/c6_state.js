@@ -190,7 +190,8 @@
                         controllerAs = state.controllerAs,
                         controller = this.controller = state.controller ?
                             mixin($controller(state.controller, {
-                                $scope: scope
+                                $scope: scope,
+                                cState: state
                             }), ModelController) : null;
 
                     if (controllerAs) {
@@ -319,7 +320,7 @@
                             }, null),
                         // Find the State for this path
                         route = context.routes.reduce(function(route, next) {
-                            return next.matcher.test(path) ? next : route;
+                            return route || (next.matcher.test(path) ? next : route);
                         }, null),
                         // Get the state object instance for this URL
                         state = self.in(context.name, function() {

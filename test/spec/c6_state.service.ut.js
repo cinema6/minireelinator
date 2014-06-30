@@ -305,7 +305,10 @@
                             .state('Post', function() {})
                             .state('Comments', function() {})
                             .state('Comment', function() {})
-                            .state('Meta', function() {});
+                            .state('Meta', function() {})
+                            .state('Settings', function() {})
+                            .state('General', function() {})
+                            .state('User', function() {});
 
                         c6StateProvider.config({
                             enableUrlRouting: false
@@ -329,6 +332,10 @@
                                         });
                                     });
                                 });
+                            });
+                            this.route('/settings', 'Settings', function() {
+                                this.route('/', 'General');
+                                this.route('/', 'User');
                             });
                         });
 
@@ -373,6 +380,11 @@
 
                             broadcast('/posts/po-e343f/comments/c-a');
                             expect(c6State.goTo).toHaveBeenCalledWith('Comment', null, $location.search());
+                        });
+
+                        it('if there are multiple route matches, the first state to be mapped should be preferred', function() {
+                            broadcast('/settings/');
+                            expect(c6State.goTo).toHaveBeenCalledWith('General', null, $location.search());
                         });
 
                         it('should not call goTo again if the path hasn\'t changed', function() {
