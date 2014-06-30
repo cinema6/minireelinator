@@ -189,10 +189,10 @@
                     var scope = this.scope = this.parentScope.$new(),
                         controllerAs = state.controllerAs,
                         controller = this.controller = state.controller ?
-                            mixin($controller(state.controller, {
-                                $scope: scope,
-                                cState: state
-                            }), ModelController) : null;
+                        mixin($controller(state.controller, {
+                            $scope: scope,
+                            cState: state
+                        }), ModelController) : null;
 
                     if (controllerAs) {
                         scope[controllerAs] = this.controller;

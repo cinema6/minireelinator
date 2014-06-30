@@ -3,7 +3,6 @@
     'use strict';
 
     var noop = angular.noop,
-        copy = angular.copy,
         forEach = angular.forEach,
         jqLite = angular.element,
         extend = angular.extend,

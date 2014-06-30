@@ -1,5 +1,11 @@
 # MiniReelinator
 
+## Beta11 (June 20, 2014)
+* *[Beta11.rc1]*
+  * [FIX]: Fixed an issue that could cause clicking "New Card" to edit
+    the last card you created
+* *[/Beta11.rc1]*
+
 ## Beta10 (June 19, 2014)
 * *[Beta10.rc1]*
   * [FIX]: Close the preview modal when a lightbox card preview is closed

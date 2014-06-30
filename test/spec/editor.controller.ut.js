@@ -520,7 +520,7 @@
                         EditorCtrl.newCard(3);
                     });
 
-                    xit('should transition to the editor.editCard state', function() {
+                    xit('should transition to the MR:NewCard state', function() {
                         expect(c6State.goTo).toHaveBeenCalledWith('MR:NewCard', null, {
                             insertAt: 3
                         });
