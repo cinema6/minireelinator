@@ -96,8 +96,8 @@
                 <button class="modal__closeBtn sprite--alpha" ng-click="EditorCtrl.closePreview()"><span class="ir">Close</span></button>
             </form>
             <div class="preview__iframeHolder">
-                <iframe mr-preview="minireel"
-                    ng-src="{{PreviewCtrl.playerSrc}}"
+                <mr-preview experience="minireel"
+                    src="{{PreviewCtrl.playerSrc}}"
                     ng-style="{height: (PreviewCtrl.fullscreen && PreviewCtrl.device === 'desktop') ? (AppCtrl.screenSpace.height + 'px') : ''}"
                     ng-class="{
                         'preview__iframe--fullscreen': (PreviewCtrl.fullscreen),
@@ -106,7 +106,7 @@
                         'preview__iframe--inactive': !PreviewCtrl.active
                     }"
                     class="preview__iframe">
-                </iframe>
+                </mr-preview>
                 <div ng-class="{
                         'preview__splashHolder--inactive': PreviewCtrl.active
                     }"
