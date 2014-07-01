@@ -1,5 +1,4 @@
-<c6-alias model="EditCardVideoCtrl.model" as="card">
-<div class="modal__content modal__editor-slide">
+<div class="modal__content modal__editor-slide" c6-alias="EditCardCtrl.model as card">
     <form>
         <label class="field field--noBreak clearfix">
             <span class="modal__label">
@@ -17,4 +16,3 @@
     </form>
         <video-preview service="{{card.data.service}}" videoid="{{card.data.videoid}}" start="card.data.start" end="card.data.end"></video-preview>
 </div>
-</c6-alias>

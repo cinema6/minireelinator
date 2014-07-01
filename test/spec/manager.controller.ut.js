@@ -56,19 +56,6 @@
                 };
                 /* jshint quotmark:single */
 
-                module('c6.state', function($provide) {
-                    $provide.provider('c6State', function() {
-                        this.$get = function() {
-                            return {
-                                goTo: jasmine.createSpy('c6State.transitionTo()')
-                            };
-                        };
-
-                        this.state = function() { return this; };
-                        this.index = function() { return this; };
-                    });
-                });
-
                 module('c6.mrmaker');
 
                 inject(function($injector) {
@@ -85,6 +72,7 @@
                     ConfirmDialogService = $injector.get('ConfirmDialogService');
 
                     c6State = $injector.get('c6State');
+                    spyOn(c6State, 'goTo');
 
                     $scope = $rootScope.$new();
                     $scope.$apply(function() {
@@ -194,8 +182,9 @@
                                     });
                                 });
 
-                                it('should transition to the editor.setMode.category state', function() {
-                                    expect(c6State.goTo).toHaveBeenCalledWith('editor.setMode.category', { minireelId: newMiniReel.id });
+                                it('should transition to the MR:Editor state, then the MR:Settings.Category state', function() {
+                                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [newMiniReel]);
+                                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Settings.Category');
                                 });
                             });
                         });
@@ -242,16 +231,6 @@
                             minireel.data.mode = 'lightbox-ads';
                             expect(ManagerCtrl.modeNameFor(minireel)).toBe('With Companion Ad');
                         });
-                    });
-                });
-
-                describe('edit(minireel)', function() {
-                    beforeEach(function() {
-                        ManagerCtrl.edit({ id: 'e-59c8519cc4c54f' });
-                    });
-
-                    it('should transition to the "editor" state and provide the id of the minireel', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('editor', { minireelId: 'e-59c8519cc4c54f' });
                     });
                 });
 

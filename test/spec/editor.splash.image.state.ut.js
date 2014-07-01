@@ -14,7 +14,7 @@
                     $injector = _$injector_;
 
                     c6State = $injector.get('c6State');
-                    SplashImageState = c6State.get('editor.splash.image');
+                    SplashImageState = c6State.get('MR:Splash.Image');
                 });
             });
 

@@ -5,7 +5,6 @@
         describe('NewAutoplayState', function() {
             var $injector,
                 c6State,
-                ManagerNewState,
                 NewAutoplayState;
 
             beforeEach(function() {
@@ -15,8 +14,7 @@
                     $injector = _$injector_;
 
                     c6State = $injector.get('c6State');
-                    ManagerNewState = c6State.get('manager.new');
-                    NewAutoplayState = c6State.get('manager.new.autoplay');
+                    NewAutoplayState = c6State.get('MR:New.Autoplay');
                 });
             });
 

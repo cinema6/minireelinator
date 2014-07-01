@@ -33,10 +33,13 @@
                 ];
 
                 appData = {
-                    user: currentUser
+                    user: currentUser,
+                    ensureFulfillment: jasmine.createSpy('appData.ensureFulfillment()')
                 };
 
-                module('c6.mrmaker');
+                module('c6.mrmaker', function($provide) {
+                    $provide.value('appData', appData);
+                });
 
                 inject(function(_$injector_) {
                     $injector = _$injector_;
@@ -47,7 +50,7 @@
                     c6State = $injector.get('c6State');
                 });
 
-                ManagerState = c6State.get('manager');
+                ManagerState = c6State.get('MR:Manager');
             });
 
             describe('model', function() {
@@ -72,7 +75,7 @@
                     spyOn(cinema6, 'getAppData').and.returnValue($q.when(appData));
 
                     $rootScope.$apply(function() {
-                        result = $injector.invoke(ManagerState.model, ManagerState);
+                        result = ManagerState.model();
                     });
                 });
 
@@ -80,18 +83,8 @@
                     expect(result.then).toEqual(jasmine.any(Function));
                 });
 
-                it('should get the currentUser', function() {
-                    expect(cinema6.getAppData).toHaveBeenCalled();
-                });
-
                 it('should get all the minireels that are associated with the user\'s org', function() {
                     expect(cinema6.db.findAll).toHaveBeenCalledWith('experience', { type: 'minireel', org: currentUser.org.id, sort: 'lastUpdated,-1' });
-                });
-
-                it('should return the model it already has if it has one', function() {
-                    ManagerState.cModel = [];
-
-                    expect($injector.invoke(ManagerState.model, ManagerState)).toBe(ManagerState.cModel);
                 });
             });
         });

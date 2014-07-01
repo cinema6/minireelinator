@@ -14,43 +14,6 @@
             var minireel,
                 appData;
 
-            var tabs = {
-                general: {
-                    name: jasmine.any(String),
-                    sref: 'general',
-                    visits: 0,
-                    requiredVisits: 0,
-                    required: true
-                },
-                category: {
-                    name: jasmine.any(String),
-                    sref: 'category',
-                    visits: 0,
-                    requiredVisits: 0,
-                    required: false
-                },
-                mode: {
-                    name: jasmine.any(String),
-                    sref: 'mode',
-                    visits: 0,
-                    requiredVisits: 0,
-                    required: false
-                },
-                ads: {
-                    name: jasmine.any(String),
-                    sref: 'ads',
-                    visits: 0,
-                    requiredVisits: 0
-                },
-                autoplay: {
-                    name: jasmine.any(String),
-                    sref: 'autoplay',
-                    visits: 0,
-                    requiredVisits: 0,
-                    required: false
-                }
-            };
-
             beforeEach(function() {
                 minireel = {};
 
@@ -66,7 +29,7 @@
                     appData = $injector.get('appData');
                     MiniReelService = $injector.get('MiniReelService');
 
-                    ManagerNewState = c6State.get('manager.new');
+                    ManagerNewState = c6State.get('MR:New');
                 });
 
                 spyOn(cinema6, 'getAppData').and.returnValue($q.when(appData));
@@ -95,93 +58,13 @@
             describe('model()', function() {
                 var result;
 
-                describe('if there is already a model', function() {
-                    beforeEach(function() {
-                        ManagerNewState.cModel = {};
-
-                        result = $injector.invoke(ManagerNewState.model, ManagerNewState);
-                    });
-
-                    it('should return the existing model', function() {
-                        expect(result).toBe(ManagerNewState.cModel);
-                    });
-                });
-
                 describe('if there is not already a model', function() {
-                    var success;
-
                     beforeEach(function() {
-                        success = jasmine.createSpy('model() success');
-
-                        $rootScope.$apply(function() {
-                            result = $injector.invoke(ManagerNewState.model, ManagerNewState).then(success);
-                        });
+                        result = ManagerNewState.model();
                     });
 
-                    it('should return a promise that resolves to a hash with the supported modes, and a new minireel', function() {
-                        expect(success).toHaveBeenCalledWith({
-                            modes: appData.experience.data.modes,
-                            minireel: minireel
-                        });
-                    });
-                });
-            });
-
-            describe('updateControllerModel()', function() {
-                var controller, model;
-
-                beforeEach(function() {
-                    controller = {};
-                    model = {};
-
-                    $injector.invoke(ManagerNewState.updateControllerModel, ManagerNewState, {
-                        controller: controller,
-                        model: model
-                    });
-                });
-
-                it('should set the model as the controller\'s model', function() {
-                    expect(controller.model).toBe(model);
-                });
-
-                it('should set the controller\'s returnState to "manager"', function() {
-                    expect(controller.returnState).toBe('manager');
-                });
-
-                it('should set the controller\'s baseState to "manager.new"', function() {
-                    expect(controller.baseState).toBe('manager.new');
-                });
-
-                it('should enable all of the tabs', function() {
-                    expect(controller.tabs).toEqual([
-                        jasmine.objectContaining(tabs.general),
-                        jasmine.objectContaining(tabs.category),
-                        jasmine.objectContaining(tabs.mode),
-                        jasmine.objectContaining(tabs.autoplay)
-                    ]);
-                });
-
-                xdescribe('when ad server editing is enabled', function() {
-                    it('should', function() {
-                        appData.user = {
-                            org: {
-                                waterfalls: {
-                                    video: ['cinema6','publisher'],
-                                    display: ['cinema6','publisher']
-                                }
-                            }
-                        };
-                        $injector.invoke(ManagerNewState.updateControllerModel, ManagerNewState, {
-                            controller: controller,
-                            model: model
-                        });
-                        expect(controller.tabs).toEqual([
-                            jasmine.objectContaining(tabs.general),
-                            jasmine.objectContaining(tabs.category),
-                            jasmine.objectContaining(tabs.mode),
-                            jasmine.objectContaining(tabs.ads),
-                            jasmine.objectContaining(tabs.autoplay)
-                        ]);
+                    it('should return a new minireel', function() {
+                        expect(result).toBe(minireel);
                     });
                 });
             });

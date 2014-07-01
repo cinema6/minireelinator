@@ -77,6 +77,7 @@
                         dirty: false,
                         inFlight: false
                     };
+                    spyOn(EditorService, 'open').and.returnValue(cModel);
                     MiniReelService = $injector.get('MiniReelService');
                     ConfirmDialogService = $injector.get('ConfirmDialogService');
                     $timeout = $injector.get('$timeout');
@@ -94,8 +95,8 @@
                     };
                     $childScope = $scope.$new();
                     $scope.$apply(function() {
-                        EditorCtrl = $controller('EditorController', { $scope: $scope, cModel: cModel });
-                        EditorCtrl.model = cModel;
+                        EditorCtrl = $controller('EditorController', { $scope: $scope });
+                        EditorCtrl.initWithModel(cModel);
                     });
                 });
 
@@ -105,6 +106,10 @@
 
             it('should exist', function() {
                 expect(EditorCtrl).toEqual(jasmine.any(Object));
+            });
+
+            it('should open the MiniReel with the EditorService', function() {
+                expect(EditorService.open).toHaveBeenCalledWith(cModel);
             });
 
             it('should set the AppCtrl\'s branding to the minireel\'s branding', function() {
@@ -508,22 +513,6 @@
                     });
                 });
 
-                describe('editCard(card)', function() {
-                    beforeEach(function() {
-                        spyOn(c6State, 'goTo');
-
-                        EditorCtrl.editCard({ id: 'rc-c98312239510db' });
-                    });
-
-                    it('should transition to the editor.editCard.video state', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('editor.editCard', {
-                            cardId: 'rc-c98312239510db',
-                            insertionIndex: null,
-                            card: null
-                        });
-                    });
-                });
-
                 describe('newCard(insertionIndex)', function() {
                     beforeEach(function() {
                         spyOn(c6State, 'goTo');
@@ -531,9 +520,9 @@
                         EditorCtrl.newCard(3);
                     });
 
-                    xit('should transition to the editor.editCard state', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('editor.newCard', {
-                            insertionIndex: 3
+                    xit('should transition to the MR:NewCard state', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:NewCard', null, {
+                            insertAt: 3
                         });
                     });
 
@@ -542,10 +531,8 @@
                     });
 
                     it('should transition to the editor.editCard state with the card and the insertionIndex', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('editor.editCard', {
-                            insertionIndex: 3,
-                            card: lastCreatedCard,
-                            cardId: null
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:EditCard', [lastCreatedCard], {
+                            insertAt: 3
                         });
                     });
                 });
@@ -636,7 +623,7 @@
                                 eraseDeferred.resolve(null);
                             });
 
-                            expect(c6State.goTo).toHaveBeenCalledWith('manager');
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Manager');
                         });
                     });
                 });
@@ -765,7 +752,7 @@
                             it('should close the dialog', function() {
                                 dialog().onCancel();
                                 expect(EditorCtrl.save).toHaveBeenCalled();
-                                expect(c6State.goTo).toHaveBeenCalledWith('manager');
+                                expect(c6State.goTo).toHaveBeenCalledWith('MR:Manager');
                                 expect(ConfirmDialogService.close).toHaveBeenCalled();
                             });
                         });
@@ -774,7 +761,7 @@
                             it('should goTo manager state', function() {
                                 dialog().onAffirm();
                                 expect(EditorCtrl.save).not.toHaveBeenCalled();
-                                expect(c6State.goTo).toHaveBeenCalledWith('manager');
+                                expect(c6State.goTo).toHaveBeenCalledWith('MR:Manager');
                                 expect(ConfirmDialogService.close).toHaveBeenCalled();
                             });
                         });
@@ -786,13 +773,13 @@
                             EditorCtrl.model.status = 'active';
                             EditorCtrl.backToDashboard();
 
-                            expect(c6State.goTo).toHaveBeenCalledWith('manager');
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Manager');
 
                             EditorCtrl.minireelState.dirty = true;
                             EditorCtrl.model.status = 'pending';
                             EditorCtrl.backToDashboard();
 
-                            expect(c6State.goTo).toHaveBeenCalledWith('manager');
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Manager');
 
                             expect(ConfirmDialogService.display).not.toHaveBeenCalled();
                         });

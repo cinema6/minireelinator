@@ -9,7 +9,6 @@
                 VideoService,
                 computer,
                 c6State,
-                c6StateParams,
                 MiniReelService,
                 NewCardCtrl;
 
@@ -35,11 +34,10 @@
                     $controller = $injector.get('$controller');
                     VideoService = $injector.get('VideoService');
                     c6State = $injector.get('c6State');
-                    c6StateParams = $injector.get('c6StateParams');
                     MiniReelService = $injector.get('MiniReelService');
 
                     spyOn(VideoService, 'createVideoUrl').and.callThrough();
-                    c6State.get('editor').cModel = { id: 'e-fcfb709c23e0fd' };
+                    c6State.get('MR:Editor').cModel = { id: 'e-fcfb709c23e0fd' };
 
                     $scope = $rootScope.$new();
                     NewCardCtrl = $controller('NewCardController', { $scope: $scope, cModel: model });
@@ -68,7 +66,6 @@
                             id: 'rc-39635762f9ab06'
                         };
 
-                        c6StateParams.insertionIndex = 4;
                         NewCardCtrl.type = 'blah';
                         spyOn(c6State, 'goTo');
                         spyOn(MiniReelService, 'createCard')
@@ -82,7 +79,7 @@
                     });
 
                     it('should transition to the edit card state', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('editor.editCard', { cardId: card.id, card: card });
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:EditCard', [card]);
                     });
                 });
             });

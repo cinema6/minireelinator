@@ -8,7 +8,7 @@
                 c6AsyncQueue;
 
             beforeEach(function() {
-                module('c6.mrmaker');
+                module('c6.mrmaker.services');
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
@@ -125,7 +125,7 @@
                         expect(async1).not.toHaveBeenCalled();
 
                         $rootScope.$apply(function() {
-                            deferred3.resolve();
+                            deferred3.reject();
                         });
                         expect(async1).toHaveBeenCalled();
 

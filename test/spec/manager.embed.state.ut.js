@@ -7,7 +7,6 @@
                 cinema6,
                 $q,
                 c6State,
-                c6StateParams,
                 $rootScope,
                 ManagerEmbedState;
 
@@ -20,10 +19,9 @@
                     $rootScope = $injector.get('$rootScope');
                     $q = $injector.get('$q');
                     c6State = $injector.get('c6State');
-                    c6StateParams = $injector.get('c6StateParams');
                     cinema6 = $injector.get('cinema6');
 
-                    ManagerEmbedState = c6State.get('manager.embed');
+                    ManagerEmbedState = c6State.get('MR:Manager.Embed');
                 });
             });
 
@@ -33,27 +31,29 @@
 
             describe('model()', function() {
                 var result, success,
-                    minireel;
+                    minireel, params;
 
                 beforeEach(function() {
-                    c6StateParams.minireelId = 'e-9b5c930e646069';
+                    params = {
+                        minireelId: 'e-9b5c930e646069'
+                    };
 
                     success = jasmine.createSpy('model() success');
                     minireel = {
-                        id: c6StateParams.minireelId,
+                        id: params.minireelId,
                         data: {}
                     };
 
                     spyOn(cinema6.db, 'find').and.returnValue($q.when(minireel));
 
                     $rootScope.$apply(function() {
-                        result = $injector.invoke(ManagerEmbedState.model, ManagerEmbedState)
+                        result = ManagerEmbedState.model(params)
                             .then(success);
                     });
                 });
 
                 it('should find the minireel', function() {
-                    expect(cinema6.db.find).toHaveBeenCalledWith('experience', c6StateParams.minireelId);
+                    expect(cinema6.db.find).toHaveBeenCalledWith('experience', params.minireelId);
                 });
 
                 it('should resolve to the minireel', function() {

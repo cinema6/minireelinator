@@ -3,7 +3,6 @@
     'use strict';
 
     var noop = angular.noop,
-        copy = angular.copy,
         forEach = angular.forEach,
         jqLite = angular.element,
         extend = angular.extend,
@@ -239,419 +238,37 @@
             cinema6Provider.useAdapter(c6Defines.kLocal ? FixtureAdapter : CWRXAdapter);
         }])
 
-        .config(['c6StateProvider','c6UrlMakerProvider',
-        function( c6StateProvider , c6UrlMakerProvider ) {
-            var assets = c6UrlMakerProvider.makeUrl.bind(c6UrlMakerProvider);
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.map(function() {
+                this.route('/dashboard', 'MR:Manager', function() {
+                    this.route('/new', 'MR:New', function() {
+                        this.route('/', 'MR:New.General');
+                        this.route('/', 'MR:New.Category');
+                        this.route('/', 'MR:New.Mode');
+                        this.route('/', 'MR:New.Autoplay');
+                    });
+                    this.route('/embed/:minireelId', 'MR:Manager.Embed');
+                });
 
-            function Tab(name, sref, required) {
-                this.name = name;
-                this.sref = sref;
-                this.visits = 0;
-                this.requiredVisits = 0;
-                this.required = !!required;
-            }
-
-            var newSubstates = {
-                general: {
-                    templateUrl: assets('views/manager/new/general.html')
-                },
-                category: {
-                    templateUrl: assets('views/manager/new/category.html')
-                },
-                mode: {
-                    templateUrl: assets('views/manager/new/mode.html')
-                },
-                // ads: {
-                //     controller: 'NewAdsController',
-                //     controllerAs: 'NewAdsCtrl',
-                //     templateUrl: assets('views/manager/new/ads.html'),
-                //     afterModel: ['appData',
-                //     function    ( appData ) {
-                //         return appData.ensureFulfillment();
-                //     }]
-                // },
-                autoplay: {
-                    templateUrl: assets('views/manager/new/autoplay.html')
-                }
-            };
-
-            var newTabs = {
-                general: new Tab('Title Settings', 'general', true),
-                category: new Tab('Lightbox', 'category'),
-                mode: new Tab('MiniReel Type', 'mode'),
-                // ads: new Tab('Ad Settings', 'ads'),
-                autoplay: new Tab('Autoplay', 'autoplay')
-            };
-
-            c6StateProvider
-                .state('manager', {
-                    controller: 'ManagerController',
-                    controllerAs: 'ManagerCtrl',
-                    templateUrl: assets('views/manager.html'),
-                    model:  ['cinema6',
-                    function( cinema6 ) {
-                        return this.cModel || cinema6.getAppData()
-                            .then(function(appData) {
-                                var user = appData.user;
-
-                                return cinema6.db.findAll(
-                                    'experience',
-                                    { type: 'minireel', org: user.org.id, sort: 'lastUpdated,-1' }
-                                );
-                            });
-                    }],
-                    children: {
-                        embed: {
-                            controller: 'GenericController',
-                            controllerAs: 'ManagerEmbedCtrl',
-                            templateUrl: assets('views/manager/embed.html'),
-                            model:  ['c6StateParams','cinema6',
-                            function( c6StateParams , cinema6 ) {
-                                return cinema6.db.find('experience', c6StateParams.minireelId);
-                            }]
-                        },
-                        new: {
-                            controller: 'NewController',
-                            controllerAs: 'NewCtrl',
-                            templateUrl: assets('views/manager/new.html'),
-                            model:  ['cinema6','MiniReelService','$q',
-                            function( cinema6 , MiniReelService , $q ) {
-                                function getModes() {
-                                    return cinema6.getAppData()
-                                        .then(function returnModes(appData) {
-                                            return appData.experience.data.modes;
-                                        });
-                                }
-
-                                return this.cModel ||
-                                    $q.all({
-                                        modes: getModes(),
-                                        minireel: MiniReelService.create()
-                                    });
-                            }],
-                            afterModel: ['appData',
-                            function    ( appData ) {
-                                return appData.ensureFulfillment();
-                            }],
-                            updateControllerModel: ['controller','model'/*,'appData'*/,
-                            function               ( controller , model /*, appData */) {
-                                // var waterfalls = appData.user.org.waterfalls;
-
-                                controller.model = model;
-
-                                controller.returnState = 'manager';
-                                controller.baseState = 'manager.new';
-                                // controller.tabs = waterfalls &&
-                                //     ((waterfalls.video.length > 1) ||
-                                //     (waterfalls.display.length > 1)) ?
-                                //     [
-                                //         newTabs.general,
-                                //         newTabs.category,
-                                //         newTabs.mode,
-                                //         newTabs.ads,
-                                //         newTabs.autoplay
-                                //     ] :
-                                //     [
-                                //         newTabs.general,
-                                //         newTabs.category,
-                                //         newTabs.mode,
-                                //         newTabs.autoplay
-                                //     ];
-
-                                controller.tabs = [
-                                    newTabs.general,
-                                    newTabs.category,
-                                    newTabs.mode,
-                                    newTabs.autoplay
-                                ];
-                            }],
-                            children: copy(newSubstates)
-                        }
-                    }
-                })
-                .state('editor', {
-                    controller: 'EditorController',
-                    controllerAs: 'EditorCtrl',
-                    templateUrl: assets('views/editor.html'),
-                    model:  ['cinema6','c6StateParams','EditorService',
-                    function( cinema6 , c6StateParams , EditorService ) {
-                        return this.cModel ||
-                            cinema6.db.find('experience', c6StateParams.minireelId)
-                                .then(function open(minireel) {
-                                    return EditorService.open(minireel);
-                                });
-                    }],
-                    children: {
-                        splash: {
-                            controller: 'EditorSplashController',
-                            controllerAs: 'EditorSplashCtrl',
-                            templateUrl: assets('views/editor/splash.html'),
-                            model:  [function() {
-                                return this.cModel || copy(this.cParent.cModel);
-                            }],
-                            children: {
-                                source: {
-                                    controller: 'GenericController',
-                                    controllerAs: 'SplashSourceCtrl',
-                                    templateUrl: assets('views/editor/splash/source.html')
-                                },
-                                image: {
-                                    controller: 'SplashImageController',
-                                    controllerAs: 'SplashImageCtrl',
-                                    templateUrl: assets('views/editor/splash/image.html')
-                                }
-                            }
-                        },
-                        setMode: {
-                            controller: 'NewController',
-                            controllerAs: 'NewCtrl',
-                            templateUrl: assets('views/manager/new.html'),
-                            model:  ['cinema6','$q',
-                            function( cinema6 , $q ) {
-                                function getModes() {
-                                    return cinema6.getAppData()
-                                        .then(function returnModes(appData) {
-                                            return appData.experience.data.modes;
-                                        });
-                                }
-
-                                return this.cModel ||
-                                    $q.all({
-                                        modes: getModes(),
-                                        minireel: this.cParent.cModel
-                                    });
-                            }],
-                            afterModel: ['appData',
-                            function    ( appData ) {
-                                return appData.ensureFulfillment();
-                            }],
-                            updateControllerModel: ['controller','model'/*, 'appData'*/,
-                            function               ( controller , model /*,  appData*/ ) {
-                                // var waterfalls = appData.user.org.waterfalls;
-
-                                controller.model = model;
-
-                                controller.returnState = 'editor';
-                                controller.baseState = 'editor.setMode';
-                                // controller.tabs = waterfalls &&
-                                //     ((waterfalls.video.length > 1) ||
-                                //     (waterfalls.display.length > 1)) ?
-                                //     [
-                                //         newTabs.category,
-                                //         newTabs.mode,
-                                //         newTabs.ads,
-                                //         newTabs.autoplay
-                                //     ] :
-                                //     [
-                                //         newTabs.category,
-                                //         newTabs.mode,
-                                //         newTabs.autoplay
-                                //     ];
-
-                                controller.tabs = [
-                                    newTabs.category,
-                                    newTabs.mode,
-                                    newTabs.autoplay
-                                ];
-                            }],
-                            children: copy(newSubstates)
-                        },
-                        editCard: {
-                            controller: 'EditCardController',
-                            controllerAs: 'EditCardCtrl',
-                            templateUrl: assets('views/editor/edit_card.html'),
-                            beforeModel: ['appData',
-                            function     ( appData ) {
-                                return appData.ensureFulfillment();
-                            }],
-                            model:  ['c6StateParams','MiniReelService',
-                            function( c6StateParams , MiniReelService ) {
-                                var minireel = this.cParent.cModel;
-
-                                return this.cModel ||
-                                    copy(MiniReelService.findCard(
-                                        minireel.data.deck,
-                                        c6StateParams.cardId
-                                    )) ||
-                                    c6StateParams.card;
-                            }],
-                            afterModel: ['model','$q','c6State',
-                            function    ( model , $q , c6State ) {
-                                var types = ['video', 'videoBallot', 'ad'];
-
-                                if(types.indexOf(model.type) < 0) {
-                                    c6State.goTo('editor');
-
-                                    return $q.reject('Cannot edit this card');
-                                }
-                            }],
-                            updateControllerModel: ['controller','model','appData',
-                            function               ( controller , model , appData ) {
-                                var minireelData = this.cParent.cModel.data,
-                                    deck = minireelData.deck,
-                                    // mode = minireelData.mode,
-                                    adData = appData.user.org.waterfalls;
-
-                                var copy = {
-                                        name: 'Editorial Content',
-                                        sref: 'editor.editCard.copy',
-                                        icon: 'text',
-                                        required: true
-                                    },
-                                    video = {
-                                        name: 'Video Content',
-                                        sref: 'editor.editCard.video',
-                                        icon: 'play',
-                                        required: true
-                                    },
-                                    ballot = {
-                                        name: 'Questionnaire',
-                                        sref: 'editor.editCard.ballot',
-                                        icon: 'ballot',
-                                        required: false,
-                                        customRequiredText: [
-                                            'Indicates required field (to include a questionnaire)'
-                                        ].join('')
-                                    },
-                                    adServer = {
-                                        name: 'Video Ad Settings',
-                                        sref: 'editor.editCard.server',
-                                        icon: 'ad',
-                                        required: false
-                                    },
-                                    adSkip = {
-                                        name: 'Skip Settings',
-                                        sref: 'editor.editCard.skip',
-                                        icon: 'skip',
-                                        required: false
-                                    },
-                                    // displayAd = {
-                                    //     name: 'Display Ad Settings',
-                                    //     sref: 'editor.editCard.displayAd',
-                                    //     icon: 'ad',
-                                    //     required: false
-                                    // },
-                                    hasOwnVideoAdServer = adData &&
-                                        (adData.video.length > 1);
-                                    // hasOwnDisplayAdServer = adData &&
-                                    //     (adData.display.length > 1) &&
-                                    //     (mode === 'lightbox-ads');
-
-                                // model.displayAdSource = model.displayAdSource ||
-                                //     minireelData.displayAdSource;
-
-                                switch (model.type) {
-                                case 'ad':
-                                    model.data.source = model.data.source ||
-                                        minireelData.videoAdSource;
-                                    break;
-                                }
-
-                                controller.model = model;
-                                controller.tabs = (function() {
-                                    switch (model.type) {
-                                    case 'video':
-                                    case 'videoBallot':
-                                        // return hasOwnDisplayAdServer ?
-                                        //     [copy, video, ballot, displayAd] :
-                                        //     [copy, video, ballot];
-                                        return [copy, video, ballot];
-                                    case 'ad':
-                                        var tabs = hasOwnVideoAdServer ?
-                                            [adServer, adSkip] :
-                                            [adSkip];
-
-                                        return tabs;
-                                    default:
-                                        return [];
-                                    }
-                                }());
-                                controller.isNew = !deck.filter(function(card) {
-                                    return card.id === model.id;
-                                })[0];
-                            }],
-                            children: {
-                                copy: {
-                                    controller: 'GenericController',
-                                    controllerAs: 'EditCardCopyCtrl',
-                                    templateUrl: assets('views/editor/edit_card/copy.html'),
-                                    model:  [function() {
-                                        return this.cParent.cModel;
-                                    }]
-                                },
-                                video: {
-                                    controller: 'GenericController',
-                                    controllerAs: 'EditCardVideoCtrl',
-                                    templateUrl: assets('views/editor/edit_card/video.html'),
-                                    model:  [function() {
-                                        return this.cParent.cModel;
-                                    }]
-                                },
-                                ballot: {
-                                    controller: 'GenericController',
-                                    controllerAs: 'EditCardBallotCtrl',
-                                    templateUrl: assets('views/editor/edit_card/ballot.html'),
-                                    model:  ['MiniReelService',
-                                    function( MiniReelService ) {
-                                        var card = this.cParent.cModel;
-
-                                        if (card.type === 'video') {
-                                            MiniReelService.setCardType(card, 'videoBallot');
-                                        }
-
-                                        return this.cParent.cModel.data.ballot;
-                                    }],
-                                    afterModel: ['model','$q','c6State',
-                                    function    ( model , $q , c6State ) {
-                                        if (!model) {
-                                            c6State.goTo('editor.editCard.video');
-
-                                            return $q.reject('Card doesn\'t support ballots.');
-                                        }
-                                    }]
-                                },
-                                server: {
-                                    controller: 'EditCardServerController',
-                                    controllerAs: 'EditCardServerCtrl',
-                                    templateUrl: assets('views/editor/edit_card/server.html'),
-                                    model:  [function() {
-                                        return this.cParent.cModel;
-                                    }],
-                                    afterModel: ['appData',
-                                    function    ( appData ) {
-                                        return appData.ensureFulfillment();
-                                    }]
-                                },
-                                skip: {
-                                    controller: 'GenericController',
-                                    controllerAs: 'EditCardSkipCtrl',
-                                    templateUrl: assets('views/editor/edit_card/skip.html'),
-                                    model:  [function() {
-                                        return this.cParent.cModel;
-                                    }]
-                                }
-                            // displayAd: {
-                            //     controller: 'EditCardDisplayAdController',
-                            //     controllerAs: 'EditCardDisplayAdCtrl',
-                            //     templateUrl: assets('views/editor/edit_card/display_ad.html'),
-                            //     model:  [function() {
-                            //         return this.cParent.cModel;
-                            //     }],
-                            //     afterModel: ['appData',
-                            //     function    ( appData ) {
-                            //         return appData.ensureFulfillment();
-                            //     }]
-                            // }
-                            }
-                        },
-                        newCard: {
-                            controller: 'NewCardController',
-                            controllerAs: 'NewCardCtrl',
-                            templateUrl: assets('views/editor/new_card.html')
-                        }
-                    }
-                })
-                .index('manager');
+                this.route('/edit/:minireelId', 'MR:Editor', function() {
+                    this.route('/settings', 'MR:Editor.Settings', function() {
+                        this.route('/', 'MR:Settings.Category');
+                        this.route('/', 'MR:Settings.Mode');
+                        this.route('/', 'MR:Settings.Autoplay');
+                    });
+                    this.route('/splash', 'MR:Editor.Splash', function() {
+                        this.route('/', 'MR:Splash.Source');
+                        this.route('/', 'MR:Splash.Image');
+                    });
+                    this.route('/card/:cardId', 'MR:EditCard', function() {
+                        this.state('MR:EditCard.Copy');
+                        this.state('MR:EditCard.Video');
+                        this.state('MR:EditCard.Ballot');
+                    });
+                    this.route('/card/new', 'MR:Editor.NewCard');
+                });
+            });
         }])
 
         .config(['CollateralServiceProvider',
@@ -858,9 +475,26 @@
 
         .controller('GenericController', noop)
 
-        .controller('AppController', ['$scope','$log','cinema6','gsap','c6State','c6Defines',
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider
+                .state('Application', ['c6UrlMaker','cinema6','appData',
+                function              ( c6UrlMaker , cinema6 , appData ) {
+                    this.templateUrl = c6UrlMaker('views/app.html');
+                    this.controller = 'AppController';
+                    this.controllerAs = 'AppCtrl';
+
+                    this.beforeModel = function() {
+                        cinema6.init();
+
+                        return appData.ensureFulfillment();
+                    };
+                }]);
+        }])
+
+        .controller('AppController', ['$scope','$log','cinema6','c6State','c6Defines',
                                       'tracker','$window',
-        function                     ( $scope , $log , cinema6 , gsap , c6State , c6Defines ,
+        function                     ( $scope , $log , cinema6 , c6State , c6Defines ,
                                        tracker , $window ) {
             var self = this,
                 $parentWindow = jqLite($window.parent);
@@ -876,12 +510,6 @@
                     self.config = appData.experience;
                     self.user = appData.user;
                 });
-
-            cinema6.init({
-                setup: function(appData) {
-                    gsap.TweenLite.ticker.useRAF(appData.profile.raf);
-                }
-            });
 
             this.screenSpace = {
                 width: null,
@@ -936,11 +564,11 @@
                     self.config.title + ' - ' + pageObject.title);
             };
 
-            c6State.on('stateChangeSuccess', function(state) {
+            c6State.on('stateChange', function(state) {
                 self.trackStateChange(state);
                 cinema6.getSession()
                     .then(function pingSession(session) {
-                        session.ping('stateChange', { name: state.name });
+                        session.ping('stateChange', { name: state.cName });
                     });
             });
 
@@ -951,6 +579,9 @@
 
             $log.info('Initialize tracker with:',c6Defines.kTracker);
             tracker.create(c6Defines.kTracker.accountId,c6Defines.kTracker.config);
+
+            //TODO: WRITE A TEST
+            c6State.goTo('MR:Manager');
 
             $scope.AppCtrl = this;
 

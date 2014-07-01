@@ -2,42 +2,18 @@
     'use strict';
 
     define(['app'], function() {
-        /* global angular */
         describe('EditCardState', function() {
             var EditCardState,
-                EditorState,
                 $rootScope,
                 $injector,
-                c6StateParams,
+                EditorService,
                 c6State,
-                appData,
                 $q;
 
+            var minireel;
+
             beforeEach(function() {
-                module('c6.mrmaker');
-
-                inject(function(_$injector_) {
-                    $injector = _$injector_;
-                    $rootScope = $injector.get('$rootScope');
-                    appData = $injector.get('appData');
-                    $q = $injector.get('$q');
-
-                    c6State = $injector.get('c6State');
-                    c6StateParams = $injector.get('c6StateParams');
-                });
-
-                spyOn(appData, 'ensureFulfillment').and.returnValue($q.when(appData));
-                appData.user = {
-                    org: {
-                        waterfalls: {
-                            video: ['cinema6','cinema6-publisher','publisher','publisher-cinema6'],
-                            display: ['cinema6','cinema6-publisher','publisher','publisher-cinema6']
-                        }
-                    }
-                };
-
-                EditorState = c6State.get('editor');
-                EditorState.cModel = {
+                minireel = {
                     data: {
                         displayAdSource: 'publisher-cinema6',
                         videoAdSource: 'publisher',
@@ -57,49 +33,43 @@
                         ]
                     }
                 };
-                EditCardState = c6State.get('editor.editCard');
+
+                module('c6.mrmaker');
+
+                inject(function(_$injector_) {
+                    $injector = _$injector_;
+                    $rootScope = $injector.get('$rootScope');
+                    $q = $injector.get('$q');
+                    EditorService = $injector.get('EditorService');
+                    Object.defineProperty(EditorService.state, 'minireel', {
+                        value: minireel
+                    });
+
+                    c6State = $injector.get('c6State');
+                });
+
+                EditCardState = c6State.get('MR:EditCard');
             });
 
             it('should exist', function() {
                 expect(EditCardState).toEqual(jasmine.any(Object));
             });
 
-            describe('beforeModel()', function() {
-                var result;
-
-                beforeEach(function() {
-                    result = $injector.invoke(EditCardState.beforeModel, EditCardState);
-                });
-
-                it('should return the promise of appData.ensureFulfillment()', function() {
-                    expect(result).toBe(appData.ensureFulfillment());
-                });
-            });
-
             describe('model()', function() {
+                var params, model;
+
                 beforeEach(function() {
-                    c6StateParams.cardId = 'rc-036a2e0b648f3d';
-                    c6StateParams.card = {};
-                });
+                    params = {
+                        cardId: 'rc-036a2e0b648f3d'
+                    };
 
-                it('should return the current model if there is already one', function() {
-                    EditCardState.cModel = {};
-
-                    expect($injector.invoke(EditCardState.model, EditCardState)).toBe(EditCardState.cModel);
+                    model = EditCardState.model(params);
                 });
 
                 it('should use the c6StateParams id to find the card in the deck of the editor\'s model', function() {
-                    var model = $injector.invoke(EditCardState.model, EditCardState),
-                        card = EditorState.cModel.data.deck[2];
+                    var card = minireel.data.deck[2];
 
-                    expect(model).toEqual(card);
-                    expect(model).not.toBe(card);
-                });
-
-                it('should use the reference to the c6StateParams card if one is provided', function() {
-                    c6StateParams.cardId = 'rc-fa679e80268c16';
-
-                    expect($injector.invoke(EditCardState.model, EditCardState)).toBe(c6StateParams.card);
+                    expect(model).toBe(card);
                 });
             });
 
@@ -121,7 +91,7 @@
                 });
 
                 it('should do nothing if the card type is acceptable', function() {
-                    expect($injector.invoke(EditCardState.afterModel, EditCardState, { model: goodModel })).toBeUndefined();
+                    expect(EditCardState.afterModel(goodModel)).toBeUndefined();
                     expect(c6State.goTo).not.toHaveBeenCalled();
                 });
 
@@ -129,268 +99,10 @@
                     var fail = jasmine.createSpy('fail');
 
                     $rootScope.$apply(function() {
-                        $injector.invoke(EditCardState.afterModel, EditCardState, { model: badModel }).catch(fail);
+                        EditCardState.afterModel(badModel).catch(fail);
                     });
                     expect(fail).toHaveBeenCalled();
-                    expect(c6State.goTo).toHaveBeenCalledWith('editor');
-                });
-            });
-
-            describe('updateControllerModel()', function() {
-                var model, controller,
-                    copy = {
-                        name: 'Editorial Content',
-                        sref: 'editor.editCard.copy',
-                        icon: 'text',
-                        required: true
-                    },
-                    ballot = {
-                        name: 'Questionnaire',
-                        sref: 'editor.editCard.ballot',
-                        icon: 'ballot',
-                        required: false,
-                        customRequiredText: jasmine.any(String)
-                    },
-                    video = {
-                        name: 'Video Content',
-                        sref: 'editor.editCard.video',
-                        icon: 'play',
-                        required: true
-                    },
-                    adServer = {
-                        name: 'Video Ad Settings',
-                        sref: 'editor.editCard.server',
-                        icon: 'ad',
-                        required: false
-                    },
-                    adSkip = {
-                        name: 'Skip Settings',
-                        sref: 'editor.editCard.skip',
-                        icon: 'skip',
-                        required: false
-                    };
-                    // displayAd = {
-                    //     name: 'Display Ad Settings',
-                    //     sref: 'editor.editCard.displayAd',
-                    //     icon: 'ad',
-                    //     required: false
-                    // };
-
-                beforeEach(function() {
-                    model = {
-                        type: 'video',
-                        data: {}
-                    };
-                    controller = {};
-                });
-
-                function updateControllerModel() {
-                    $injector.invoke(EditCardState.updateControllerModel, EditCardState, {
-                        controller: controller,
-                        model: model
-                    });
-                }
-
-                describe('always', function() {
-                    beforeEach(function() {
-                        updateControllerModel();
-                    });
-
-                    it('should set the model as the controller\'s model property', function() {
-                        expect(controller.model).toBe(model);
-                    });
-
-                    xit('should set the model\'s displayAdSource to the MiniReel\'s displayAdSource', function() {
-                        expect(model.displayAdSource).toBe(EditorState.cModel.data.displayAdSource);
-                    });
-
-                    xdescribe('if the card has a displayAdSource', function() {
-                        beforeEach(function() {
-                            model.displayAdSource = 'cinema6';
-
-                            updateControllerModel();
-                        });
-
-                        it('should not change the displayAdSource', function() {
-                            expect(model.displayAdSource).not.toBe(EditorState.cModel.data.displayAdSource);
-                        });
-                    });
-                });
-
-                describe('on a new card', function() {
-                    beforeEach(function() {
-                        updateControllerModel();
-                    });
-
-                    it('should set isNew to true', function() {
-                        expect(controller.isNew).toBe(true);
-                    });
-                });
-
-                describe('on an existing card', function() {
-                    it('should set isNew to false', function() {
-                        EditorState.cModel.data.deck.forEach(function(card) {
-                            model = angular.copy(card);
-                            updateControllerModel();
-
-                            expect(controller.isNew).toBe(false);
-                        });
-                    });
-                });
-
-                describe('on typeless cards', function() {
-                    beforeEach(function() {
-                        model.type = null;
-                        updateControllerModel();
-                    });
-
-                    it('should not enable any tabs', function() {
-                        expect(controller.tabs).toEqual([]);
-                    });
-                });
-
-                describe('on videoBallot cards', function() {
-                    beforeEach(function() {
-                        model.type = 'videoBallot';
-                        updateControllerModel();
-                    });
-
-                    it('should enable the "copy", "ballot", and "video" tabs', function() {
-                        expect(controller.tabs).toEqual([copy, video, ballot]);
-                    });
-
-                    it('should not set data.source', function() {
-                        expect(model.data.source).toBeUndefined();
-                    });
-                });
-
-                describe('on video cards', function() {
-                    beforeEach(function() {
-                        model.type = 'video';
-                        updateControllerModel();
-                    });
-
-                    it('should enable the "copy" and "video" tabs', function() {
-                        expect(controller.tabs).toEqual([copy, video, ballot]);
-                    });
-
-                    it('should not set data.source', function() {
-                        expect(model.data.source).toBeUndefined();
-                    });
-                });
-
-                describe('on ad cards', function() {
-                    beforeEach(function() {
-                        model.type = 'ad';
-                        updateControllerModel();
-                    });
-
-                    it('should enable the "server" and "skip" tabs', function() {
-                        expect(controller.tabs).toEqual([adServer, adSkip]);
-                    });
-
-                    it('should only enable the "skip" tab if enablePublisherAds is false', function() {
-                        appData.user.org.waterfalls.video = [];
-                        updateControllerModel();
-
-                        expect(controller.tabs).toEqual([adSkip]);
-                    });
-
-                    it('should set data.source to the minireel\'s videoAdSource', function() {
-                        expect(model.data.source).toBe(EditorState.cModel.data.videoAdSource);
-                    });
-
-                    describe('if the ad has a source', function() {
-                        beforeEach(function() {
-                            model.data.source = 'cinema6';
-
-                            updateControllerModel();
-                        });
-
-                        it('should not change the source', function() {
-                            expect(model.data.source).not.toBe(EditorState.cModel.data.videoAdSource);
-                        });
-                    });
-                });
-
-                describe('in lighbox-ads mode', function() {
-                    beforeEach(function() {
-                        EditorState.cModel.data.mode = 'lightbox-ads';
-                    });
-
-                    describe('on a new card', function() {
-                        beforeEach(function() {
-                            updateControllerModel();
-                        });
-
-                        it('should set isNew to true', function() {
-                            expect(controller.isNew).toBe(true);
-                        });
-                    });
-
-                    describe('on an existing card', function() {
-                        it('should set isNew to false', function() {
-                            EditorState.cModel.data.deck.forEach(function(card) {
-                                model = angular.copy(card);
-                                updateControllerModel();
-
-                                expect(controller.isNew).toBe(false);
-                            });
-                        });
-                    });
-
-                    describe('on typeless cards', function() {
-                        beforeEach(function() {
-                            model.type = null;
-                            updateControllerModel();
-                        });
-
-                        it('should not enable any tabs', function() {
-                            expect(controller.tabs).toEqual([]);
-                        });
-                    });
-
-                    describe('on videoBallot cards', function() {
-                        beforeEach(function() {
-                            model.type = 'videoBallot';
-                            updateControllerModel();
-                        });
-
-                        it('should enable the "copy", "ballot", and "video" tabs', function() {
-                            // expect(controller.tabs).toEqual([copy, video, ballot, displayAd]);
-                            expect(controller.tabs).toEqual([copy, video, ballot]);
-                        });
-                    });
-
-                    describe('on video cards', function() {
-                        beforeEach(function() {
-                            model.type = 'video';
-                            updateControllerModel();
-                        });
-
-                        it('should enable the "copy" and "video" tabs', function() {
-                            // expect(controller.tabs).toEqual([copy, video, ballot, displayAd]);
-                            expect(controller.tabs).toEqual([copy, video, ballot]);
-                        });
-                    });
-
-                    describe('on ad cards', function() {
-                        beforeEach(function() {
-                            model.type = 'ad';
-                            updateControllerModel();
-                        });
-
-                        it('should enable the "server" and "skip" tabs', function() {
-                            expect(controller.tabs).toEqual([adServer, adSkip]);
-                        });
-
-                        it('should only enable the "skip" tab if enablePublisherAds is false', function() {
-                            appData.user.org.waterfalls.video = [];
-                            updateControllerModel();
-
-                            expect(controller.tabs).toEqual([adSkip]);
-                        });
-                    });
+                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor');
                 });
             });
         });

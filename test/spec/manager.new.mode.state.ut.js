@@ -5,8 +5,6 @@
         describe('NewModeState', function() {
             var $injector,
                 c6State,
-                c6StateParams,
-                ManagerNewState,
                 NewModeState;
 
             beforeEach(function() {
@@ -16,9 +14,7 @@
                     $injector = _$injector_;
 
                     c6State = $injector.get('c6State');
-                    c6StateParams = $injector.get('c6StateParams');
-                    ManagerNewState = c6State.get('manager.new');
-                    NewModeState = c6State.get('manager.new.mode');
+                    NewModeState = c6State.get('MR:New.Mode');
                 });
             });
 

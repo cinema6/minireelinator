@@ -470,7 +470,7 @@
                             });
 
                             it('should still reach the end of the chain', function() {
-                                expect(c6State.goTo).toHaveBeenCalledWith('editor');
+                                expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor');
                             });
                         });
 
@@ -518,7 +518,7 @@
                         });
 
                         it('should transition back to the editor', function() {
-                            expect(c6State.goTo).toHaveBeenCalledWith('editor');
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor');
                         });
 
                         it('should bust the caches', function() {

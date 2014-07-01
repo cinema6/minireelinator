@@ -18,7 +18,7 @@
                     MiniReelService = $injector.get('MiniReelService');
                 });
 
-                NewCardState = c6State.get('editor.newCard');
+                NewCardState = c6State.get('MR:Editor.NewCard');
             });
 
             it('should exist', function() {

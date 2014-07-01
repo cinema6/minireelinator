@@ -308,6 +308,18 @@
                                 expect(state.inFlight).toBe(false);
                             });
                         });
+
+                        describe('minireel', function() {
+                            it('should be the proxy', function() {
+                                expect(state.minireel).toBe(_private.proxy);
+
+                                _private.proxy = {};
+                                expect(state.minireel).toBe(_private.proxy);
+
+                                _private.proxy = {};
+                                expect(state.minireel).toBe(_private.proxy);
+                            });
+                        });
                     });
                 });
 
