@@ -1162,6 +1162,7 @@
             var self = this,
                 profile,
                 card,
+                toClean = [],
                 experience = {
                     data: {
                         mode: 'full',
@@ -1197,6 +1198,14 @@
             profile.device = this.device;
 
             $scope.$on('mrPreview:initExperience', function(event, exp, session) {
+                var fn;
+
+                /* jshint boss:true */
+                while (fn = toClean.shift()) {
+                    fn();
+                }
+                /* jshint boss:false */
+
                 // convert the MRinator experience to a MRplayer experience
                 experience = MiniReelService.convertForPlayer(exp);
 
@@ -1242,53 +1251,55 @@
                         }
                     });
 
-                $scope.$on('mrPreview:splashClick', function() {
+                toClean.push($scope.$on('mrPreview:splashClick', function() {
                     self.active = true;
-                });
+                }));
 
                 // register another listener within the init handler
                 // this will share the session
-                $scope.$on('mrPreview:updateExperience', function(event, exp, newCard) {
-                    // the EditorCtrl $broadcasts the most up-to-date experience model
-                    // when the user clicks 'preview'.
-                    // it may have a newCard to go to
+                toClean.push(
+                    $scope.$on('mrPreview:updateExperience', function(event, exp, newCard) {
+                        // the EditorCtrl $broadcasts the most up-to-date experience model
+                        // when the user clicks 'preview'.
+                        // it may have a newCard to go to
 
-                    // we convert the experience
-                    experience = MiniReelService.convertForPlayer(exp);
+                        // we convert the experience
+                        experience = MiniReelService.convertForPlayer(exp);
 
-                    // if it's been changed or we're previewing a specific card
-                    // then we ping the player
-                    // and send the updated experience
-                    // the MRplayer is listening in the RumbleCtrl
-                    // and will update the deck
-                    if(!equals(experience, session.experience)) {
-                        session.ping('mrPreview:updateExperience', experience);
-                    }
+                        // if it's been changed or we're previewing a specific card
+                        // then we ping the player
+                        // and send the updated experience
+                        // the MRplayer is listening in the RumbleCtrl
+                        // and will update the deck
+                        if(!equals(experience, session.experience)) {
+                            session.ping('mrPreview:updateExperience', experience);
+                        }
 
-                    if(newCard) {
-                        card = MiniReelService.convertCard(newCard, experience);
-                        session.ping('mrPreview:jumpToCard', card);
-                    } else {
-                        card = null;
-                        session.ping('mrPreview:reset');
-                    }
-                });
+                        if(newCard) {
+                            card = MiniReelService.convertCard(newCard, experience);
+                            session.ping('mrPreview:jumpToCard', card);
+                        } else {
+                            card = null;
+                            session.ping('mrPreview:reset');
+                        }
+                    })
+                );
 
-                $scope.$on('mrPreview:updateMode', function(event, exp) {
+                toClean.push($scope.$on('mrPreview:updateMode', function(event, exp) {
                     // the EditorCtrl $broadcasts the experience
                     // when the mode (full, light, etc) changes.
                     // we need to convert and save the updated
                     // experience, this will trigger a refresh automatically
                     experience = MiniReelService.convertForPlayer(exp);
-                });
+                }));
 
-                $scope.$on('mrPreview:reset', function() {
+                toClean.push($scope.$on('mrPreview:reset', function() {
                     card = null;
                     self.active = false;
                     session.ping('mrPreview:reset');
-                });
+                }));
 
-                $scope.$watch(function() {
+                toClean.push($scope.$watch(function() {
                     return self.device;
                 }, function(newDevice, oldDevice) {
                     if(newDevice === oldDevice) { return; }
@@ -1298,9 +1309,9 @@
                     profile.device = newDevice;
                     self.fullscreen = false;
                     self.active = false;
-                });
+                }));
 
-                $scope.$watch(function() {
+                toClean.push($scope.$watch(function() {
                     return self.active;
                 }, function(active) {
                     if (active) {
@@ -1310,7 +1321,7 @@
                         $scope.$broadcast('mrPreview:splashShow');
                         session.ping('hide');
                     }
-                });
+                }));
             });
         }])
 
@@ -1368,26 +1379,41 @@
             };
         }])
 
-        .directive('mrPreview', ['postMessage',
-        function                ( postMessage ) {
+        .directive('mrPreview', ['postMessage','$compile',
+        function                ( postMessage , $compile ) {
+            function link(scope, $element) {
+                var $iframe, session;
+
+                scope.$watchCollection('[src, experience]', function(data) {
+                    var src = data[0], experience = data[1];
+
+                    if (!src || !experience) { return; }
+
+                    if (session) {
+                        postMessage.destroySession(session.id);
+                    }
+
+                    // Use an existing frame (but remove it from the DOM) if possible
+                    $iframe = ($iframe && $iframe.remove()) ||
+                        // Create a new frame if we don't already have one
+                        $compile('<iframe></iframe>')(scope);
+
+                    $iframe.prop('src', src);
+
+                    // Back in the DOM it goes!
+                    $element.append($iframe);
+                    session = postMessage.createSession($iframe.prop('contentWindow'));
+                    scope.$emit('mrPreview:initExperience', experience, session);
+                });
+            }
+
             return {
-                restrict: 'A',
-                link: function(scope, element, attrs) {
-                    var iframe,
-                        session;
-
-                    scope.$watch(attrs.mrPreview, function(experience) {
-                        if(experience) {
-                            // store the MR player window
-                            iframe = element.prop('contentWindow');
-
-                            // create a postMessage session (as defined in c6ui.postMessage)
-                            session = postMessage.createSession(iframe);
-
-                            scope.$emit('mrPreview:initExperience', experience, session);
-                        }
-                    });
-                }
+                restrict: 'E',
+                scope: {
+                    experience: '=',
+                    src: '@'
+                },
+                link: link
             };
         }])
 
