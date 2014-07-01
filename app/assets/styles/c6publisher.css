@@ -389,23 +389,23 @@
             .preview__iframeHolder {
                 width:100%;
             }
-            .preview__iframe {
+            .preview__iframe>iframe {
                 border: 0; display: block;
             }
-                .preview__iframe--mobile {
+                .preview__iframe--mobile>iframe {
                     width:20em;
                     height:35.5em;
                 }
-                .preview__iframe--desktop {
+                .preview__iframe--desktop>iframe {
                     width: 43.75em;
                     height: 36.25em;
                 }
-                    .preview__iframe--desktop.preview__iframe--fullscreen {
+                    .preview__iframe--desktop.preview__iframe--fullscreen>iframe {
                         width: 100%; height: 100%;
                         position:fixed; top:0; left:0;
                         background:white;
                     }
-                .preview__iframe--inactive {
+                .preview__iframe--inactive>iframe {
                     display:none;
                 }
             .preview__splashHolder--inactive {

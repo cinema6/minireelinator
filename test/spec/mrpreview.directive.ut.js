@@ -2,7 +2,7 @@
     'use strict';
 
     define(['editor'], function() {
-        ddescribe('<mr-preview>', function() {
+        describe('<mr-preview>', function() {
             var $rootScope,
                 $scope,
                 $compile,
