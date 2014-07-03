@@ -18,8 +18,8 @@
             options: {
                 prefix: ''
             },
-            cwd: '<%= settings.appDir %>',
-            src: 'assets/views/**/*.html',
+            cwd: '<%= settings.appDir %>/assets',
+            src: 'views/**/*.html',
             dest: '.tmp/templates.js'
         }
     };

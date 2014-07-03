@@ -1,7 +1,8 @@
-(function(){
+define( ['angular'],
+function( angular ) {
     'use strict';
 
-    angular.module('c6.mrmaker')
+    return angular.module('c6.app.minireel.tracker', [])
     .service('tracker',['$window',function($window){
 
         this.create = function(){
@@ -58,4 +59,4 @@
 
     }]);
 
-}());
+});

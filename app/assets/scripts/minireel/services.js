@@ -1,4 +1,5 @@
-(function() {
+define( ['angular','c6ui','cryptojs'],
+function( angular , c6ui , cryptojs ) {
     'use strict';
 
     var forEach = angular.forEach,
@@ -11,7 +12,7 @@
         fromJson = angular.fromJson,
         isArray = angular.isArray;
 
-    angular.module('c6.mrmaker.services', ['c6.ui'])
+    return angular.module('c6.app.minireel.services', [c6ui.name])
         .factory('requireCJS', ['$http','$cacheFactory','$q',
         function               ( $http , $cacheFactory , $q ) {
             var cache = $cacheFactory('requireCJS');
@@ -32,60 +33,6 @@
                             return module.exports;
                         }))
                 );
-            };
-        }])
-
-        .factory('c6AsyncQueue', ['$q',
-        function                 ( $q ) {
-            function allSettled(promises) {
-                var results = [],
-                    total = promises.length,
-                    deferred = $q.defer();
-
-                if (!total) {
-                    deferred.resolve(results);
-                }
-
-                forEach(promises, function(promise, index) {
-                    promise.finally(function(result) {
-                        results[index] = result;
-
-                        if (results.length === total) {
-                            deferred.resolve(results);
-                        }
-                    });
-                });
-
-                return deferred.promise;
-            }
-
-            function Queue() {
-                this.queue = [];
-            }
-            Queue.prototype = {
-                wrap: function(fn, context) {
-                    var queue = this.queue;
-
-                    return function() {
-                        var args = arguments,
-                            promise = allSettled(queue)
-                                .then(function apply() {
-                                    return fn.apply(context, args);
-                                });
-
-                        queue.push(promise);
-
-                        promise.finally(function() {
-                            queue.splice(queue.indexOf(promise), 1);
-                        });
-
-                        return promise;
-                    };
-                }
-            };
-
-            return function() {
-                return new Queue();
             };
         }])
 
@@ -594,17 +541,17 @@
             };
         }])
 
-        .service('MiniReelService', ['crypto','$window','cinema6','$q','VoteService',
-        function                    ( crypto , $window , cinema6 , $q , VoteService ) {
+        .service('MiniReelService', ['$window','cinema6','$q','VoteService',
+        function                    ( $window , cinema6 , $q , VoteService ) {
             var self = this;
 
             function generateId(prefix) {
                 return prefix + '-' +
-                    crypto.SHA1(
+                    cryptojs.SHA1(
                         $window.navigator.userAgent +
                         $window.Date.now() +
                         Math.random($window.Date.now())
-                    ).toString(crypto.enc.Hex).substr(0, 14);
+                    ).toString(cryptojs.enc.Hex).substr(0, 14);
             }
 
             /******************************************************\
@@ -1221,4 +1168,4 @@
                 return target;
             };
         }]);
-}());
+});

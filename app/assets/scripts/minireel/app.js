@@ -1,68 +1,19 @@
-(function(window$){
+define( ['angular','c6ui','c6log','c6_state','minireel/services','minireel/tracker',
+         'minireel/c6_drag','minireel/card_table','minireel/editor','minireel/manager',
+         'minireel/players'],
+function( angular , c6ui , c6log , c6State  , services          , tracker          ,
+          c6Drag           , cardTable           , editor          , manager          ,
+          players          ) {
     /* jshint -W106 */
     'use strict';
 
-    var noop = angular.noop,
-        forEach = angular.forEach,
-        jqLite = angular.element,
-        extend = angular.extend,
+    var jqLite = angular.element,
         isDefined = angular.isDefined;
 
-    angular.module('c6.mrmaker', window$.c6.kModDeps)
-        .constant('c6Defines', window$.c6)
-        .config(['$provide',
-        function( $provide ) {
-            var config = {
-                modernizr: 'Modernizr',
-                gsap: [
-                    'TimelineLite',
-                    'TimelineMax',
-                    'TweenLite',
-                    'TweenMax',
-                    'Back',
-                    'Bounce',
-                    'Circ',
-                    'Cubic',
-                    'Ease',
-                    'EaseLookup',
-                    'Elastic',
-                    'Expo',
-                    'Linear',
-                    'Power0',
-                    'Power1',
-                    'Power2',
-                    'Power3',
-                    'Power4',
-                    'Quad',
-                    'Quart',
-                    'Quint',
-                    'RoughEase',
-                    'Sine',
-                    'SlowMo',
-                    'SteppedEase',
-                    'Strong'
-                ],
-                crypto: 'CryptoJS',
-                youtube: 'YT'
-            };
-
-            angular.forEach(config, function(value, key) {
-                if (angular.isString(value)) {
-                    $provide.value(key, window[value]);
-                } else if (angular.isArray(value)) {
-                    $provide.factory(key, function() {
-                        var service = {};
-
-                        angular.forEach(value, function(global) {
-                            service[global] = window[global];
-                        });
-
-                        return service;
-                    });
-                }
-            });
-        }])
-
+    return angular.module('c6.app.minireel', [
+        c6ui.name, c6log.name, c6State.name, c6Drag.name,
+        services.name, tracker.name, cardTable.name, editor.name, manager.name, players.name
+    ])
         .config(['$sceDelegateProvider',
         function( $sceDelegateProvider ) {
             $sceDelegateProvider.resourceUrlWhitelist([
@@ -71,171 +22,6 @@
                 '*://player.vimeo.com/**',
                 '*://www.dailymotion.com/**'
             ]);
-        }])
-
-        .config(['c6UrlMakerProvider', 'c6Defines',
-        function( c6UrlMakerProvider ,  c6Defines ) {
-            c6UrlMakerProvider.location(c6Defines.kBaseUrl,'default');
-            c6UrlMakerProvider.location((c6Defines.kLocal ?
-                'assets' + c6Defines.kExpUrl :
-                c6Defines.kExpUrl
-            ), 'app');
-            c6UrlMakerProvider.location(c6Defines.kCollateralUrl, 'collateral');
-        }])
-
-        .constant('VoteAdapter', ['$http','config','$q',
-        function                 ( $http , config , $q ) {
-            function clean(model) {
-                delete model.org;
-                delete model.created;
-                delete model.id;
-
-                return model;
-            }
-
-            this.findAll = function() {
-                return $q.reject('The vote service does not support finding all elections.');
-            };
-
-            this.find = function(type, id) {
-                return $http.get(config.apiBase + '/election/' + id)
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
-            };
-
-            this.findQuery = function(type, query) {
-                return this.find(type, query.id);
-            };
-
-            this.create = function(type, data) {
-                return $http.post(config.apiBase + '/election', clean(data))
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
-            };
-
-            this.erase = function(type, model) {
-                return $http.delete(config.apiBase + '/election/' + model.id)
-                    .then(function returnNull() {
-                        return null;
-                    });
-            };
-
-            this.update = function(type, model) {
-                return $http.put(config.apiBase + '/election/' + model.id, clean(model))
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
-            };
-        }])
-
-        .constant('ContentAdapter', ['$http','$q','config',
-        function                    ( $http , $q , config ) {
-            function clean(model) {
-                delete model.id;
-                delete model.org;
-                delete model.created;
-
-                return model;
-            }
-
-            this.findAll = function() {
-                return $http.get(config.apiBase + '/content/experiences')
-                    .then(function returnData(response) {
-                        return response.data;
-                    });
-            };
-
-            this.find = function(type, id) {
-                return $http.get(config.apiBase + '/content/experience/' + id)
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
-            };
-
-            this.findQuery = function(type, query) {
-                function returnData(response) {
-                    return response.data;
-                }
-
-                function handleError(response) {
-                    return response.status === 404 ?
-                        [] : $q.reject(response);
-                }
-
-                return $http.get(config.apiBase + '/content/experiences', {
-                        params: query
-                    })
-                    .then(returnData, handleError);
-            };
-
-            this.create = function(type, data) {
-                return $http.post(config.apiBase + '/content/experience', clean(data))
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
-            };
-
-            this.erase = function(type, model) {
-                return $http.delete(config.apiBase + '/content/experience/' + model.id)
-                    .then(function returnNull() {
-                        return null;
-                    });
-            };
-
-            this.update = function(type, model) {
-                return $http.put(config.apiBase + '/content/experience/' + model.id, clean(model))
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
-            };
-        }])
-
-        .constant('CWRXAdapter', ['config','$injector',
-        function                 ( config , $injector ) {
-            var self = this,
-                adapters = {};
-
-            forEach(config, function(Constructor, type) {
-                adapters[type] = $injector.instantiate(Constructor, {
-                    config: Constructor.config
-                });
-            });
-
-            ['find', 'findAll', 'findQuery', 'create', 'erase', 'update']
-                .forEach(function(method) {
-                    self[method] = function(type) {
-                        var delegate = adapters[type];
-
-                        return delegate[method].apply(delegate, arguments);
-                    };
-                });
-        }])
-
-        .config(['cinema6Provider','c6UrlMakerProvider','ContentAdapter','CWRXAdapter',
-                 'VoteAdapter','c6Defines',
-        function( cinema6Provider , c6UrlMakerProvider , ContentAdapter , CWRXAdapter ,
-                  VoteAdapter , c6Defines ) {
-            var FixtureAdapter = cinema6Provider.adapters.fixture;
-
-            ContentAdapter.config = {
-                apiBase: '/api'
-            };
-            VoteAdapter.config = {
-                apiBase: '/api'
-            };
-
-            CWRXAdapter.config = {
-                election: VoteAdapter,
-                experience: ContentAdapter
-            };
-
-            FixtureAdapter.config = {
-                jsonSrc: c6UrlMakerProvider.makeUrl('mock/fixtures.json')
-            };
-
-            cinema6Provider.useAdapter(c6Defines.kLocal ? FixtureAdapter : CWRXAdapter);
         }])
 
         .config(['c6StateProvider',
@@ -290,45 +76,6 @@
             };
         }])
 
-        .run    (['c6Runner','cinema6',
-        function ( c6Runner , cinema6 ) {
-            var proto = jqLite.fn,
-                notifyDOMModified = c6Runner.runOnce(function() {
-                    cinema6.getSession()
-                        .then(function ping(session) {
-                            session.ping('domModified');
-                        });
-                }, 100);
-
-            [
-                'addClass',
-                'after',
-                'append',
-                'attr',
-                'css',
-                'empty',
-                'html',
-                'prepend',
-                'remove',
-                'removeAttr',
-                'removeClass'
-            ].forEach(function(methodName) {
-                var method = proto[methodName];
-
-                proto[methodName] = function() {
-                    var result = method.apply(this, arguments);
-                    notifyDOMModified();
-
-                    return result;
-                };
-            });
-        }])
-
-        .run   (['$rootScope',
-        function( $rootScope ) {
-            $rootScope.Infinity = Infinity;
-        }])
-
         .service('ConfirmDialogService', [function() {
             var model = {},
                 dialog = null;
@@ -355,11 +102,11 @@
             };
         }])
 
-        .directive('confirmDialog', ['c6UrlMaker','ConfirmDialogService',
-        function                    ( c6UrlMaker , ConfirmDialogService ) {
+        .directive('confirmDialog', ['ConfirmDialogService',
+        function                    ( ConfirmDialogService ) {
             return {
                 restrict: 'E',
-                templateUrl: c6UrlMaker('views/directives/confirm_dialog.html'),
+                templateUrl: 'views/minireel/directives/confirm_dialog.html',
                 scope: {},
                 link: function(scope) {
                     scope.model = ConfirmDialogService.model;
@@ -449,53 +196,30 @@
             };
         }])
 
-        .filter('splashPageSrc', ['$sce','c6UrlMaker',
-        function                 ( $sce , c6UrlMaker ) {
+        .filter('splashPageSrc', ['$sce',
+        function                 ( $sce ) {
             return function(minireel) {
                 var splash = minireel.data.splash;
 
-                return $sce.trustAsResourceUrl(c6UrlMaker(
-                    ('splash/' + splash.theme + '/' + splash.ratio + '.html'),
-                'collateral'));
+                return $sce.trustAsResourceUrl(
+                    ('/collateral/splash/' + splash.theme + '/' + splash.ratio + '.html')
+                );
             };
         }])
-
-        .service('appData', ['cinema6',
-        function            ( cinema6 ) {
-            var self = this,
-                promise = cinema6.getAppData()
-                    .then(function fulfill(data) {
-                        return extend(self, data);
-                    });
-
-            this.ensureFulfillment = function() {
-                return promise;
-            };
-        }])
-
-        .controller('GenericController', noop)
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider
-                .state('Application', ['c6UrlMaker','cinema6','appData',
-                function              ( c6UrlMaker , cinema6 , appData ) {
-                    this.templateUrl = c6UrlMaker('views/app.html');
-                    this.controller = 'AppController';
-                    this.controllerAs = 'AppCtrl';
-
-                    this.beforeModel = function() {
-                        cinema6.init();
-
-                        return appData.ensureFulfillment();
-                    };
-                }]);
+            c6StateProvider.state('MiniReel', [function() {
+                this.templateUrl = 'views/minireel/app.html';
+                this.controller = 'MiniReelController';
+                this.controllerAs = 'MiniReelCtrl';
+            }]);
         }])
 
-        .controller('AppController', ['$scope','$log','cinema6','c6State','c6Defines',
-                                      'tracker','$window',
-        function                     ( $scope , $log , cinema6 , c6State , c6Defines ,
-                                       tracker , $window ) {
+        .controller('MiniReelController', ['$scope','$log','cinema6','c6State','c6Defines',
+                                           'tracker','$window',
+        function                          ( $scope , $log , cinema6 , c6State , c6Defines ,
+                                            tracker , $window ) {
             var self = this,
                 $parentWindow = jqLite($window.parent);
 
@@ -566,10 +290,6 @@
 
             c6State.on('stateChange', function(state) {
                 self.trackStateChange(state);
-                cinema6.getSession()
-                    .then(function pingSession(session) {
-                        session.ping('stateChange', { name: state.cName });
-                    });
             });
 
             $parentWindow.on('resize', function setScreenSpace() {
@@ -579,19 +299,12 @@
 
             $log.info('Initialize tracker with:',c6Defines.kTracker);
             tracker.create(c6Defines.kTracker.accountId,c6Defines.kTracker.config);
-
-            //TODO: WRITE A TEST
-            c6State.goTo('MR:Manager');
-
-            $scope.AppCtrl = this;
-
         }])
 
-        .directive('embedCode', ['c6UrlMaker',
-        function                ( c6UrlMaker ) {
+        .directive('embedCode', [function() {
             return {
                 restrict: 'E',
-                templateUrl: c6UrlMaker('views/directives/embed_code.html'),
+                templateUrl: 'views/minireel/directives/embed_code.html',
                 controller: 'EmbedCodeController',
                 controllerAs: 'Ctrl',
                 scope: {
@@ -668,4 +381,4 @@
                 }
             });
         }]);
-}(window));
+});

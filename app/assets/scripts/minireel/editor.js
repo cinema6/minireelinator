@@ -1,4 +1,5 @@
-(function() {
+define( ['angular','c6ui','c6_state','minireel/services','c6_defines'],
+function( angular , c6ui , c6State  , services          , c6Defines  ) {
     'use strict';
 
     var isNumber = angular.isNumber,
@@ -8,7 +9,7 @@
         isDefined = angular.isDefined,
         noop = angular.noop;
 
-    angular.module('c6.mrmaker')
+    return angular.module('c6.app.minireel.editor', [c6ui.name , c6State.name, services.name])
         .animation('.toolbar__publish', ['$timeout',
         function                        ( $timeout ) {
             return {
@@ -1156,9 +1157,7 @@
         }])
 
         .controller('PreviewController',['$scope','MiniReelService','postMessage','c6BrowserInfo',
-                                         'c6Defines','c6UrlMaker',
-        function                        ( $scope , MiniReelService , postMessage , c6BrowserInfo ,
-                                          c6Defines , c6UrlMaker ) {
+        function                        ( $scope , MiniReelService , postMessage , c6BrowserInfo ) {
             var self = this,
                 profile,
                 card,
@@ -1176,17 +1175,15 @@
             this.fullscreen = false;
             Object.defineProperty(this, 'playerSrc', {
                 get: function() {
-                    return c6UrlMaker((
-                        'rumble' + (c6Defines.kLocal ?
-                            ('/app/index.html?kCollateralUrl=' +
-                                encodeURIComponent('../c6Content') +
-                                '&kDebug=true&kDevMode=true') :
-                            ('/?kCollateralUrl=' + encodeURIComponent(c6Defines.kCollateralUrl))) +
-                        '&autoplay=' + encodeURIComponent(experience.data.autoplay) +
-                        '&kDevice=' + encodeURIComponent(this.device) +
-                        '&kMode=' + encodeURIComponent(experience.data.mode) +
-                        '&kEnvUrlRoot='
-                    ), 'app');
+                    return ('/apps/rumble' + (c6Defines.kLocal ?
+                        ('/app/index.html?kCollateralUrl=' +
+                            encodeURIComponent('/collateral') +
+                            '&kDebug=true&kDevMode=true') :
+                        ('/?kCollateralUrl=' + encodeURIComponent('/collateral'))) +
+                    '&autoplay=' + encodeURIComponent(experience.data.autoplay) +
+                    '&kDevice=' + encodeURIComponent(this.device) +
+                    '&kMode=' + encodeURIComponent(experience.data.mode) +
+                    '&kEnvUrlRoot=');
                 }
             });
 
@@ -1328,7 +1325,7 @@
         .directive('splashPage', ['c6UrlMaker','requireCJS',
         function                 ( c6UrlMaker , requireCJS ) {
             return {
-                templateUrl: c6UrlMaker('views/directives/splash_page.html'),
+                templateUrl: 'views/minireel/directives/splash_page.html',
                 scope: {
                     minireel: '=splashPage',
                     splashSrc: '@'
@@ -1353,7 +1350,7 @@
                         }
                     });
                     scope.splashLoad = function() {
-                        requireCJS(c6UrlMaker('splash/splash.js', 'collateral'))
+                        requireCJS('/collateral/splash/splash.js')
                             .then(function bind(splashJS) {
                                 var c6 = {
                                         loadExperience: function() {
@@ -1421,7 +1418,7 @@
         function                   ( c6UrlMaker , $window , c6Debounce , $q ) {
             return {
                 restrict: 'E',
-                templateUrl: c6UrlMaker('views/directives/video_trimmer.html'),
+                templateUrl: 'views/minireel/directives/video_trimmer.html',
                 scope: {
                     duration: '@',
                     currentTime: '=',
@@ -1619,7 +1616,7 @@
         function                   ( c6UrlMaker , $timeout ) {
             return {
                 restrict: 'E',
-                templateUrl: c6UrlMaker('views/directives/video_preview.html'),
+                templateUrl: 'views/minireel/directives/video_preview.html',
                 scope: {
                     service: '@',
                     videoid: '@',
@@ -1717,4 +1714,4 @@
                 }
             };
         }]);
-}());
+});

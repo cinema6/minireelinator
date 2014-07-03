@@ -1,6 +1,6 @@
 {
     "appUrl": "/__dirname/<%= settings.appDir %>/",
-    "appModule": "c6.mrmaker",
+    "appModule": "c6.app",
     "appDir": "app",
     "distDir": "dist",
     "awsJSON": ".aws.json",

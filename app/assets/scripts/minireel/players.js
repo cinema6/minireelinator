@@ -1,10 +1,11 @@
-(function() {
+define( ['angular','c6ui','youtube'],
+function( angular , c6ui , youtube ) {
     'use strict';
 
     var fromJson = angular.fromJson,
         jqLite = angular.element;
 
-    angular.module('c6.mrmaker')
+    return angular.module('c6.app.minireel.players', [c6ui.name])
         .service('VimeoPlayerService', ['$q','$window','$rootScope','c6EventEmitter',
                                         'c6UrlParser',
         function                       ( $q , $window , $rootScope , c6EventEmitter ,
@@ -321,8 +322,8 @@
             };
         }])
 
-        .directive('youtubePlayer', ['youtube','c6EventEmitter','$interval','$compile', '$http',
-        function                    ( youtube , c6EventEmitter , $interval , $compile ,  $http ) {
+        .directive('youtubePlayer', ['c6EventEmitter','$interval','$compile', '$http',
+        function                    ( c6EventEmitter , $interval , $compile ,  $http ) {
             return {
                 restrict: 'E',
                 scope: {
@@ -532,4 +533,4 @@
                 }
             };
         }]);
-}());
+});

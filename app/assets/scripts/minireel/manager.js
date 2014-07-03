@@ -1,7 +1,8 @@
-(function() {
+define( ['angular','c6ui','c6_state','minireel/services'],
+function( angular , c6ui , c6State  , services          ) {
     'use strict';
 
-    angular.module('c6.mrmaker')
+    return angular.module('c6.app.minireel.manager', [c6ui.name, c6State.name, services.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('MR:Manager.Embed', ['c6UrlMaker','cinema6',
@@ -18,8 +19,8 @@
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Manager', ['c6UrlMaker','cinema6','appData',
-            function                            ( c6UrlMaker , cinema6 , appData ) {
+            c6StateProvider.state('MR:Manager', ['c6UrlMaker','cinema6',
+            function                            ( c6UrlMaker , cinema6 ) {
                 this.controller = 'ManagerController';
                 this.controllerAs = 'ManagerCtrl';
                 this.templateUrl = c6UrlMaker('views/manager.html');
@@ -29,11 +30,8 @@
                 };
 
                 this.model = function() {
-                    var user = appData.user;
-
                     return cinema6.db.findAll('experience', {
                         type: 'minireel',
-                        org: user.org.id,
                         sort: 'lastUpdated,-1'
                     });
                 };
@@ -178,11 +176,10 @@
                 }]);
         }])
 
-        .controller('NewController', ['$scope','MiniReelService','c6State','$q','appData',
-                                      'cState',
-        function                     ( $scope , MiniReelService , c6State , $q , appData ,
-                                       cState ) {
+        .controller('NewController', ['$scope','MiniReelService','c6State','$q','cState',
+        function                     ( $scope , MiniReelService , c6State , $q , cState ) {
             var self = this,
+                MiniReelCtrl = $scope.MiniReelCtrl,
                 stateName = cState.cName;
 
             function Tab(name, sref, required) {
@@ -203,7 +200,7 @@
                 tabBySref(state.cName).visits++;
             }
 
-            this.modes = appData.experience.data.modes;
+            this.modes = MiniReelCtrl.model.data.modes;
             this.returnState = cState.cParent.cName;
             this.baseState = (function() {
                 switch (stateName) {
@@ -326,4 +323,4 @@
                 }
             });
         }]);
-}());
+});
