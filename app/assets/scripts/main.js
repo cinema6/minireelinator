@@ -19,8 +19,8 @@
             modernizr: libUrl('modernizr/modernizr.custom.71747'),
             youtube: 'lib/youtube',
             cryptojs: libUrl('cryptojs/v3.1.2/sha1'),
-            angular: libUrl('angular/v1.2.14-0-g729fb13/angular'),
-            ngAnimate: libUrl('angular/v1.2.14-0-g729fb13/angular-animate'),
+            angular: libUrl('angular/v1.2.14-0-g729fb13/angular.min'),
+            ngAnimate: libUrl('angular/v1.2.14-0-g729fb13/angular-animate.min'),
             c6ui: libUrl('c6ui/v2.6.4-0-g0df471c/c6uilib.min'),
             c6log: libUrl('c6ui/v2.6.4-0-g0df471c/c6log.min')
         },
