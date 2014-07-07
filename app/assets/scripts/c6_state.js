@@ -472,6 +472,9 @@ function( angular , c6ui ) {
 
                             contexts[state.cContext].current = state.cName;
                             self.emit('stateChange', state, prevState);
+                            if (state.enter) {
+                                state.enter();
+                            }
 
                             return state;
                         });

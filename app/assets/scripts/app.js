@@ -1,11 +1,22 @@
-define( ['angular','ngAnimate','minireel/app','c6ui'],
-function( angular , ngAnimate , minireel     , c6ui ) {
+define( ['angular','ngAnimate','minireel/app','login','portal','c6ui','c6_defines'],
+function( angular , ngAnimate , minireel     , login , portal , c6ui , c6Defines  ) {
     'use strict';
 
     var forEach = angular.forEach,
         noop = angular.noop;
 
-    return angular.module('c6.app', [ngAnimate.name, minireel.name, c6ui.name])
+    return angular.module('c6.app', [
+        ngAnimate.name,
+        minireel.name,
+        login.name,
+        c6ui.name,
+        portal.name
+    ])
+        .config(['c6UrlMakerProvider',
+        function( c6UrlMakerProvider ) {
+            c6UrlMakerProvider.location(c6Defines.kApiUrl, 'api');
+        }])
+
         .constant('VoteAdapter', ['$http','config','$q',
         function                 ( $http , config , $q ) {
             function clean(model) {
@@ -47,6 +58,68 @@ function( angular , ngAnimate , minireel     , c6ui ) {
 
             this.update = function(type, model) {
                 return $http.put(config.apiBase + '/election/' + model.id, clean(model))
+                    .then(function arrayify(response) {
+                        return [response.data];
+                    });
+            };
+        }])
+
+        .constant('OrgAdapter', ['$http','$q','config',
+        function                ( $http , $q , config ) {
+            function clean(model) {
+                delete model.id;
+                delete model.org;
+                delete model.created;
+
+                return model;
+            }
+
+            this.findAll = function() {
+                return $http.get(config.apiBase + '/account/orgs')
+                    .then(function returnData(response) {
+                        return response.data;
+                    });
+            };
+
+            this.find = function(type, id) {
+                return $http.get(config.apiBase + '/account/org/' + id)
+                    .then(function arrayify(response) {
+                        return [response.data];
+                    });
+            };
+
+            this.findQuery = function(type, query) {
+                function returnData(response) {
+                    return response.data;
+                }
+
+                function handleError(response) {
+                    return response.status === 404 ?
+                        [] : $q.reject(response);
+                }
+
+                return $http.get(config.apiBase + '/account/orgs', {
+                        params: query
+                    })
+                    .then(returnData, handleError);
+            };
+
+            this.create = function(type, data) {
+                return $http.post(config.apiBase + '/account/org', clean(data))
+                    .then(function arrayify(response) {
+                        return [response.data];
+                    });
+            };
+
+            this.erase = function(type, model) {
+                return $http.delete(config.apiBase + '/account/org/' + model.id)
+                    .then(function returnNull() {
+                        return null;
+                    });
+            };
+
+            this.update = function(type, model) {
+                return $http.put(config.apiBase + '/account/org/' + model.id, clean(model))
                     .then(function arrayify(response) {
                         return [response.data];
                     });
@@ -137,9 +210,9 @@ function( angular , ngAnimate , minireel     , c6ui ) {
         }])
 
         .config(['cinema6Provider','ContentAdapter','CWRXAdapter',
-                 'VoteAdapter','c6Defines',
+                 'VoteAdapter','OrgAdapter','c6Defines',
         function( cinema6Provider , ContentAdapter , CWRXAdapter ,
-                  VoteAdapter , c6Defines ) {
+                  VoteAdapter , OrgAdapter , c6Defines ) {
             var FixtureAdapter = cinema6Provider.adapters.fixture;
 
             ContentAdapter.config = {
@@ -148,10 +221,14 @@ function( angular , ngAnimate , minireel     , c6ui ) {
             VoteAdapter.config = {
                 apiBase: '/api'
             };
+            OrgAdapter.config = {
+                apiBase: '/api'
+            };
 
             CWRXAdapter.config = {
                 election: VoteAdapter,
-                experience: ContentAdapter
+                experience: ContentAdapter,
+                org: OrgAdapter
             };
 
             FixtureAdapter.config = {
@@ -176,10 +253,17 @@ function( angular , ngAnimate , minireel     , c6ui ) {
                     this.controller = 'AppController';
                     this.controllerAs = 'AppCtrl';
                 }]);
+
+            c6StateProvider.map(function() {
+                this.state('Portal', function() {
+                    this.route('/apps', 'Apps', function() {
+                        this.route('/minireel', 'MiniReel');
+                    });
+                });
+                this.route('', 'Login');
+            });
         }])
 
-        .controller('AppController', [function() {
-
-        }]);
+        .controller('AppController', [function() {}]);
 
 });

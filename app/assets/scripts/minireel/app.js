@@ -26,7 +26,7 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.map(function() {
+            c6StateProvider.map('MiniReel', function() {
                 this.route('/dashboard', 'MR:Manager', function() {
                     this.route('/new', 'MR:New', function() {
                         this.route('/', 'MR:New.General');
@@ -209,10 +209,15 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MiniReel', [function() {
+            c6StateProvider.state('MiniReel', ['c6State',
+            function                          ( c6State ) {
                 this.templateUrl = 'views/minireel/app.html';
                 this.controller = 'MiniReelController';
                 this.controllerAs = 'MiniReelCtrl';
+
+                this.enter = function() {
+                    c6State.goTo('MR:Manager');
+                };
             }]);
         }])
 

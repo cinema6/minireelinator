@@ -270,7 +270,6 @@
     .mast__group {
         min-height:3.75em;
         background:#282b2c; color:#fff;
-        display: none;
     }
         .mainNav {
             float:left;
@@ -316,9 +315,6 @@
         display: none;
         float:right;
     }
-        .userPane__group--show {
-            display: block;
-        }
         .userPane__display {
             float:left; margin:1.1875em 0 0 0;
         }
@@ -480,5 +476,4 @@
         padding:0.875rem 0 0.8125rem 0;
         color:#7d7d7d; text-align: center; font-size:0.75em;
         background:#262626;
-        display: none;
     }

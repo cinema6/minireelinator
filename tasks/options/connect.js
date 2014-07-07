@@ -17,6 +17,7 @@
                 port: '<%= settings.sandboxPort %>',
                 middleware: function(connect) {
                     return [
+                        require('grunt-connect-proxy/lib/utils').proxyRequest,
                         require('connect-livereload')({
                             rules: [
                                 {

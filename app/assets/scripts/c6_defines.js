@@ -12,6 +12,7 @@ define(function() {
         accountId : 'UA-44457821-1',
         config    : (c6.kLocal) ? { 'cookieDomain' : 'none' } : 'auto'
     };
+    c6.kApiUrl = '/api';
 
     return c6;
 });

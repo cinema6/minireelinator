@@ -47,7 +47,7 @@ module.exports = function(grunt) {
      *********************************************************************************************/
 
     grunt.registerTask('server', 'start a development server', [
-        'configureProxies:sandbox',
+        'configureProxies:app',
         'connect:app',
         'open:server',
         'watch:livereload'

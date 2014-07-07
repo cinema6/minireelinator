@@ -5,11 +5,11 @@ function( angular , c6ui , c6State  , services          ) {
     return angular.module('c6.app.minireel.manager', [c6ui.name, c6State.name, services.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Manager.Embed', ['c6UrlMaker','cinema6',
-            function                                  ( c6UrlMaker , cinema6 ) {
+            c6StateProvider.state('MR:Manager.Embed', ['cinema6',
+            function                                  ( cinema6 ) {
                 this.controller = 'GenericController';
                 this.controllerAs = 'ManagerEmbedCtrl';
-                this.templateUrl = c6UrlMaker('views/manager/embed.html');
+                this.templateUrl = 'views/minireel/manager/embed.html';
 
                 this.model = function(params) {
                     return cinema6.db.find('experience', params.minireelId);
@@ -19,11 +19,11 @@ function( angular , c6ui , c6State  , services          ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Manager', ['c6UrlMaker','cinema6',
-            function                            ( c6UrlMaker , cinema6 ) {
+            c6StateProvider.state('MR:Manager', ['cinema6',
+            function                            ( cinema6 ) {
                 this.controller = 'ManagerController';
                 this.controllerAs = 'ManagerCtrl';
-                this.templateUrl = c6UrlMaker('views/manager.html');
+                this.templateUrl = 'views/minireel/manager.html';
 
                 this.queryParams = {
                     filter: '='
@@ -144,35 +144,31 @@ function( angular , c6ui , c6State  , services          ) {
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider
-                .state('MR:New', ['c6UrlMaker','MiniReelService',
-                function         ( c6UrlMaker , MiniReelService ) {
+                .state('MR:New', ['MiniReelService',
+                function         ( MiniReelService ) {
                     this.controller = 'NewController';
                     this.controllerAs = 'NewCtrl';
-                    this.templateUrl = c6UrlMaker('views/manager/new.html');
+                    this.templateUrl = 'views/minireel/manager/new.html';
 
                     this.model = function() {
                         return MiniReelService.create();
                     };
                 }])
 
-                .state('MR:New.General', ['c6UrlMaker',
-                function                 ( c6UrlMaker ) {
-                    this.templateUrl = c6UrlMaker('views/manager/new/general.html');
+                .state('MR:New.General', [function() {
+                    this.templateUrl = 'views/minireel/manager/new/general.html';
                 }])
 
-                .state('MR:New.Category', ['c6UrlMaker',
-                function                  ( c6UrlMaker ) {
-                    this.templateUrl = c6UrlMaker('views/manager/new/category.html');
+                .state('MR:New.Category', [function() {
+                    this.templateUrl = 'views/minireel/manager/new/category.html';
                 }])
 
-                .state('MR:New.Mode', ['c6UrlMaker',
-                function              ( c6UrlMaker ) {
-                    this.templateUrl = c6UrlMaker('views/manager/new/mode.html');
+                .state('MR:New.Mode', [function() {
+                    this.templateUrl = 'views/minireel/manager/new/mode.html';
                 }])
 
-                .state('MR:New.Autoplay', ['c6UrlMaker',
-                function                  ( c6UrlMaker ) {
-                    this.templateUrl = c6UrlMaker('views/manager/new/autoplay.html');
+                .state('MR:New.Autoplay', [function() {
+                    this.templateUrl = 'views/minrieel/manager/new/autoplay.html';
                 }]);
         }])
 

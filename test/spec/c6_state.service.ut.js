@@ -2,7 +2,7 @@
     'use strict';
 
     define(['c6_state'], function(c6StateModule) {
-        describe('c6State', function() {
+        ddescribe('c6State', function() {
             var c6StateProvider,
                 $injector,
                 c6State,
@@ -188,9 +188,11 @@
 
                                 it('should allow children to be defined under the specified parent', function() {
                                     var postsPost = c6State.get('Posts.Post'),
+                                        postsPostComments = c6State.get('Posts.Post.Comments'),
                                         posts = c6State.get('Posts');
 
                                     expect(postsPost.cParent).toBe(posts);
+                                    expect(postsPostComments.cUrl).toBe('/posts/:postId/comments');
                                 });
                             });
 
@@ -1096,10 +1098,10 @@
                                 c6StateProvider
                                     .state('Foo', function() {})
                                     .state('Home', function() {
-
+                                        this.enter = jasmine.createSpy('home.enter()');
                                     })
                                     .state('About', function() {
-
+                                        this.enter = jasmine.createSpy('about.enter()');
                                     })
                                     .map(function() {
                                         this.state('Home', function() {
@@ -1206,6 +1208,10 @@
                                                 $timeout.flush();
 
                                                 expect(stateChange).toHaveBeenCalledWith(application, about);
+                                            });
+
+                                            it('should call the enter() hook on the state', function() {
+                                                expect(about.enter).toHaveBeenCalled();
                                             });
 
                                             it('should set the "current" property', function() {
