@@ -325,8 +325,7 @@ function( angular , c6ui , services          , c6Drag           ) {
             };
         }])
 
-        .directive('cardTable', ['c6UrlMaker',
-        function                ( c6UrlMaker ) {
+        .directive('cardTable', [function() {
             return {
                 restrict: 'E',
                 templateUrl: 'views/minireel/directives/card_table.html',

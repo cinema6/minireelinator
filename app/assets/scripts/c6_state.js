@@ -532,13 +532,15 @@ function( angular , c6ui ) {
                         }),
                         views = find(
                             contextsArray,
-                            parent ? function(context) {
-                                var viewDelegates = context.viewDelegates;
+                            parent ?
+                                function(context) {
+                                    var viewDelegates = context.viewDelegates;
 
-                                return viewDelegates.indexOf(parent) > -1;
-                            } : function(context) {
+                                    return viewDelegates.indexOf(parent) > -1;
+                                } :
+                                function(context) {
                                     return context.rootView === id;
-                            }
+                                }
                         ).viewDelegates;
 
                     views.push(viewDelegate);
