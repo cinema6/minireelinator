@@ -6,6 +6,7 @@ define(['app'], function(appModule) {
             $rootScope,
             $q,
             cinema6,
+            portal,
             apps;
 
         beforeEach(function() {
@@ -19,44 +20,79 @@ define(['app'], function(appModule) {
                 $rootScope = $injector.get('$rootScope');
                 $q = $injector.get('$q');
                 cinema6 = $injector.get('cinema6');
-
-                apps = c6State.get('Apps');
             });
+
+            portal = c6State.get('Portal');
+            portal.cModel = {
+                id: 'u-123',
+                org: {
+                    id: '0-abc'
+                },
+                applications: ['e-4a10e2e0c9c9fc', 'e-e8603dc4da81c9']
+            };
+            apps = c6State.get('Apps');
         });
 
         it('should exist', function() {
             expect(apps).toEqual(jasmine.any(Object));
         });
 
-        describe('enter()', function() {
-            var minireel;
+        describe('model()', function() {
+            var minireel, other,
+                success, failure;
 
             beforeEach(function() {
+                success = jasmine.createSpy('success');
+                failure = jasmine.createSpy('failure');
+
                 minireel = {
                     appUri: 'mini-reel-maker'
                 };
+                other = {
+                    appUri: 'some-other'
+                };
 
-                apps.cModel = ['e-efaa765476bd5b'];
-                spyOn(cinema6.db, 'find').and.returnValue($q.when(minireel));
-                spyOn(c6State, 'goTo');
+                spyOn(cinema6.db, 'find').and.callFake(function(type, id) {
+                    switch (id) {
+                    case 'e-4a10e2e0c9c9fc':
+                        return $q.when(minireel);
+                    case 'e-e8603dc4da81c9':
+                        return $q.when(other);
+                    default:
+                        return $q.reject('NOT FOUND');
+                    }
+                });
+
                 $rootScope.$apply(function() {
-                    apps.enter();
+                    apps.model().then(success, failure);
                 });
             });
 
-            it('should find the user\'s first app', function() {
-                expect(cinema6.db.find).toHaveBeenCalledWith('experience', apps.cModel[0]);
+            it('should resolve to an array of experiences', function() {
+                expect(success).toHaveBeenCalledWith([minireel, other]);
+            });
+        });
+
+        describe('enter()', function() {
+            beforeEach(function() {
+                spyOn(c6State, 'goTo');
+                apps.cModel = [
+                    {
+                        appUri: 'mini-reel-maker'
+                    }
+                ];
+                $rootScope.$apply(function() {
+                    apps.enter();
+                });
             });
 
             it('should transition to the MiniReel state', function() {
-                expect(c6State.goTo).toHaveBeenCalledWith('MiniReel', [minireel]);
+                expect(c6State.goTo).toHaveBeenCalledWith('MiniReel', [apps.cModel[0]]);
             });
 
             it('should go to the error state if the minireel\'s uri is not "mini-reel-maker"', function() {
-                minireel.appUri = 'foo';
-                $rootScope.$apply(function() {
-                    apps.enter();
-                });
+                apps.cModel[0].appUri = 'foo';
+                apps.enter();
 
                 expect(c6State.goTo).toHaveBeenCalledWith('Error', [jasmine.any(String)]);
             });

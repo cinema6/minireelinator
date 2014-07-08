@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/editor','minireel/app'], function(editorModule, minireelModule) {
+    define(['app'], function(appModule) {
         describe('MR:EditCard.Ballot State', function() {
             var $injector,
                 $rootScope,
@@ -11,8 +11,7 @@
                 BallotState;
 
             beforeEach(function() {
-                module(minireelModule.name);
-                module(editorModule.name);
+                module(appModule.name);
 
                 inject(function(_$injector_) {
                     $injector = _$injector_;

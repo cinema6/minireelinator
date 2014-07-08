@@ -1,15 +1,14 @@
 (function() {
     'use strict';
 
-    define(['minireel/editor', 'minireel/app'], function(editorModule, minireelModule) {
+    define(['app'], function(appModule) {
         describe('VideoState', function() {
             var $injector,
                 c6State,
                 VideoState;
 
             beforeEach(function() {
-                module(minireelModule.name);
-                module(editorModule.name);
+                module(appModule.name);
 
                 inject(function(_$injector_) {
                     $injector = _$injector_;

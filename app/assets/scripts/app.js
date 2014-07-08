@@ -248,10 +248,15 @@ function( angular , ngAnimate , minireel     , login , portal , c6ui , c6Defines
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider
-                .state('Application', [function() {
+                .state('Application', ['c6State',
+                function              ( c6State ) {
                     this.templateUrl = 'views/app.html';
                     this.controller = 'AppController';
                     this.controllerAs = 'AppCtrl';
+
+                    this.enter = function() {
+                        c6State.goTo('Portal');
+                    };
                 }]);
 
             c6StateProvider.map(function() {
@@ -260,7 +265,7 @@ function( angular , ngAnimate , minireel     , login , portal , c6ui , c6Defines
                         this.route('/minireel', 'MiniReel');
                     });
                 });
-                this.route('', 'Login');
+                this.state('Login');
             });
         }])
 

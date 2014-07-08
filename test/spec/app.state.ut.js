@@ -19,6 +19,17 @@
             it('should exist', function() {
                 expect(application).toEqual(jasmine.any(Object));
             });
+
+            describe('enter()', function() {
+                beforeEach(function() {
+                    spyOn(c6State, 'goTo');
+                    application.enter();
+                });
+
+                it('should go to the portal', function() {
+                    expect(c6State.goTo).toHaveBeenCalledWith('Portal');
+                });
+            });
         });
     });
 }());

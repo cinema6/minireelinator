@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/manager', 'minireel/app'], function(managerModule, minireelModule) {
+    define(['app'], function(appModule) {
         describe('ManagerNewState', function() {
             var $injector,
                 $rootScope,
@@ -15,8 +15,7 @@
             beforeEach(function() {
                 minireel = {};
 
-                module(minireelModule.name);
-                module(managerModule.name);
+                module(appModule.name);
 
                 inject(function(_$injector_) {
                     $injector = _$injector_;

@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/editor', 'minireel/app'], function(editorModule, minireelModule) {
+    define(['app'], function(appModule) {
         describe('EditCardState', function() {
             var EditCardState,
                 $rootScope,
@@ -34,8 +34,7 @@
                     }
                 };
 
-                module(editorModule.name);
-                module(minireelModule.name);
+                module(appModule.name);
 
                 inject(function(_$injector_) {
                     $injector = _$injector_;

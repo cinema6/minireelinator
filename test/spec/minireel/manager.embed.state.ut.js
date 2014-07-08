@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/manager', 'minireel/app'], function(managerModule, minireelModule) {
+    define(['app'], function(appModule) {
         describe('ManagerEmbedState', function() {
             var $injector,
                 cinema6,
@@ -11,8 +11,7 @@
                 ManagerEmbedState;
 
             beforeEach(function() {
-                module(minireelModule.name);
-                module(managerModule.name);
+                module(appModule.name);
 
                 inject(function(_$injector_) {
                     $injector = _$injector_;

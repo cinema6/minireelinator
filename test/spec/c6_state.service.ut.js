@@ -2,7 +2,7 @@
     'use strict';
 
     define(['c6_state'], function(c6StateModule) {
-        ddescribe('c6State', function() {
+        describe('c6State', function() {
             var c6StateProvider,
                 $injector,
                 c6State,
@@ -172,15 +172,15 @@
 
                             describe('specifying a parent state', function() {
                                 beforeEach(function() {
-                                    c6StateProvider.map(function() {
-                                        this.state('About');
-                                        this.route('/posts', 'Posts');
-                                    });
-
                                     c6StateProvider.map('Posts', function() {
                                         this.route('/:postId', 'Posts.Post', function() {
                                             this.route('/comments', 'Posts.Post.Comments');
                                         });
+                                    });
+
+                                    c6StateProvider.map(function() {
+                                        this.state('About');
+                                        this.route('/posts', 'Posts');
                                     });
 
                                     get();

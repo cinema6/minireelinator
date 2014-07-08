@@ -5,18 +5,11 @@ function( angular , c6State  , fnUtils  ) {
     return angular.module('c6.app.login', [c6State.name, fnUtils.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Login', ['AuthService','$q','c6State','fn',
-            function                       ( AuthService , $q , c6State , fn ) {
+            c6StateProvider.state('Login', [function() {
                 this.templateUrl = 'views/login.html';
                 this.controller = 'LoginController';
                 this.controllerAs = 'LoginCtrl';
 
-                this.beforeModel = function() {
-                    var goToPortal = fn.partial(fn.call)(c6State, 'goTo', 'Portal');
-
-                    return fn.invertPromise(AuthService.checkStatus())
-                        .catch(fn.onRejection(fn.transformArgs(fn.toArray, goToPortal)));
-                };
                 this.model = function() {
                     return {
                         email: '',

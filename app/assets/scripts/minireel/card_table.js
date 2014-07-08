@@ -329,7 +329,7 @@ function( angular , c6ui , services          , c6Drag           ) {
         function                ( c6UrlMaker ) {
             return {
                 restrict: 'E',
-                templateUrl: c6UrlMaker('views/directives/card_table.html'),
+                templateUrl: 'views/minireel/directives/card_table.html',
                 controller: 'CardTableController',
                 controllerAs: 'CardTableCtrl',
                 scope: true

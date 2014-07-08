@@ -8,6 +8,12 @@ function( angular , c6ui ) {
         equals = angular.equals,
         forEach = angular.forEach;
 
+    function find(collection, predicate) {
+        return collection.reduce(function(result, next) {
+            return result || (predicate(next) ? next : result);
+        }, null);
+    }
+
     function mixin(instance, constructor) {
         var args = Array.prototype.slice.call(arguments, 2);
 
@@ -330,17 +336,42 @@ function( angular , c6ui ) {
         .provider('c6State', [function() {
             var stateConstructors = {},
                 contexts = {},
-                map = [];
+                map;
 
-            function processMap(map) {
-                var mapper;
-
-                /* jshint boss:true */
-                while (mapper = map.shift()) {
-                /* jshint boss:false */
-                    mapper();
-                }
+            function Thunker() {
+                this.items = [];
+                this.queue = {};
             }
+            Thunker.prototype = {
+                push: function(id, thunk, dep) {
+                    var item = {
+                        id: id,
+                        thunk: thunk
+                    };
+
+                    if (!dep) {
+                        return this.items.push(item);
+                    } else {
+                        (this.queue[dep] || (this.queue[dep] = [])).push(item);
+                    }
+                },
+                force: function() {
+                    var item, index,
+                        deps;
+
+                    for (index = 0; index < this.items.length; index++) {
+                        item = this.items[index];
+                        deps = this.queue[item.id];
+                        this.items.push.apply(this.items, deps);
+                    }
+
+                    /* jshint boss:true */
+                    while (item = this.items.shift()) {
+                    /* jshint boss:false */
+                        item.thunk();
+                    }
+                }
+            };
 
             C6State.$inject = ['$injector','$q','$http','$templateCache','$location','$rootScope',
                                'c6AsyncQueue','c6EventEmitter','$timeout'];
@@ -374,9 +405,9 @@ function( angular , c6ui ) {
                                 return next.enableUrlRouting ? next : context;
                             }, null),
                         // Find the State for this path
-                        route = context.routes.reduce(function(route, next) {
-                            return route || (next.matcher.test(path) ? next : route);
-                        }, null),
+                        route = find(context.routes, function(route) {
+                            return route.matcher.test(path);
+                        }),
                         // Get the state object instance for this URL
                         state = self.in(context.name, function() {
                             return self.get(route.name);
@@ -496,22 +527,19 @@ function( angular , c6ui ) {
                         contextsArray = Object.keys(contexts).map(function(contextName) {
                             return contexts[contextName];
                         }),
-                        urlRoutedContext = contextsArray.reduce(function(result, context) {
-                            return context.enableUrlRouting ? context : result;
-                        }, null),
-                        views = contextsArray
-                            .reduce(parent ?
-                                function(views, context) {
-                                    var viewDelegates = context.viewDelegates;
+                        urlRoutedContext = find(contextsArray, function(context) {
+                            return context.enableUrlRouting;
+                        }),
+                        views = find(
+                            contextsArray,
+                            parent ? function(context) {
+                                var viewDelegates = context.viewDelegates;
 
-                                    return viewDelegates.indexOf(parent) > -1 ?
-                                        viewDelegates : views;
-                                } :
-                                function(views, context) {
-                                    return context.rootView === id ?
-                                        context.viewDelegates : views;
-                                },
-                            null);
+                                return viewDelegates.indexOf(parent) > -1;
+                            } : function(context) {
+                                    return context.rootView === id;
+                            }
+                        ).viewDelegates;
 
                     views.push(viewDelegate);
 
@@ -651,7 +679,7 @@ function( angular , c6ui ) {
                         context = this.context,
                         url = this.url;
 
-                    map.push(function() {
+                    map.push(name + ':state', function() {
                         var constructor = stateConstructors[name],
                             initializers = constructor.initializers ||
                                 (constructor.initializers = []);
@@ -667,14 +695,15 @@ function( angular , c6ui ) {
                         });
 
                         context.stateConstructors[name] = constructor;
-                    });
+                    }, parent && (parent + ':state'));
 
                     if (mapFn) {
                         mapFn.call(new Mapper(this.context, name, url));
                     }
                 },
                 route: function(route, name, mapFn) {
-                    var url = this.url + route,
+                    var mapperUrl = this.url,
+                        parent = this.parent,
                         context = this.context;
 
                     if (!this.context.enableUrlRouting) {
@@ -687,8 +716,12 @@ function( angular , c6ui ) {
 
                     this.state(name);
 
-                    map.push(function() {
-                        var constructor = stateConstructors[name];
+                    map.push(name + ':route', function() {
+                        var constructor = stateConstructors[name],
+                            parentRoute = find(context.routes, function(route) {
+                                return route.name === parent;
+                            }),
+                            url = (parentRoute ? parentRoute.url : mapperUrl) + route;
 
                         constructor.initializers.push(function() {
                             this.cUrl = url;
@@ -712,6 +745,7 @@ function( angular , c6ui ) {
 
                         context.routes.push({
                             name: name,
+                            url: url,
                             matcher: new RegExp(
                                 '^' +
                                 url.replace(/:[^\/]+/g, '([^\\/]+)')
@@ -719,7 +753,7 @@ function( angular , c6ui ) {
                                 '$'
                             )
                         });
-                    });
+                    }, name + ':state');
 
                     if (mapFn) {
                         mapFn.call(new Mapper(this.context, name, this.url + route));
@@ -727,8 +761,11 @@ function( angular , c6ui ) {
                 }
             };
 
+            map = new Thunker();
+
             this.map = function(context, parent, mapFn) {
-                var mapper;
+                var mapper,
+                    parentUrl;
 
                 switch (arguments.length) {
                 case 1:
@@ -745,8 +782,9 @@ function( angular , c6ui ) {
 
                 context = contexts[context || 'main'];
                 parent = parent || context.rootState;
+                parentUrl = context.enableUrlRouting ? '' : null;
 
-                mapper = new Mapper(context, parent, context.enableUrlRouting ? '' : null);
+                mapper = new Mapper(context, parent, parentUrl);
 
                 mapFn.call(mapper);
             };
@@ -802,7 +840,7 @@ function( angular , c6ui ) {
                     }
                 });
 
-                processMap(map);
+                map.force();
 
                 return $injector.instantiate(C6State);
             }];

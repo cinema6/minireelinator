@@ -11,6 +11,11 @@
                     context: '/api',
                     host: '<%= personal.apiHost %>',
                     changeOrigin: true
+                },
+                {
+                    context: '/collateral',
+                    host: '<%= personal.apiHost %>',
+                    changeOrigin: true
                 }
             ],
             options: {

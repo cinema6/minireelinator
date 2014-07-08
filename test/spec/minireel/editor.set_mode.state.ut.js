@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/editor', 'minireel/app', 'minireel/manager'], function(editorModule, managerModule, minireelModule) {
+    define(['app'], function(appModule) {
         describe('SetModeState', function() {
             var $injector,
                 c6State,
@@ -9,9 +9,7 @@
                 SetModeState;
 
             beforeEach(function() {
-                module(minireelModule.name);
-                module(managerModule.name);
-                module(editorModule.name);
+                module(appModule.name);
 
                 inject(function(_$injector_) {
                     $injector = _$injector_;

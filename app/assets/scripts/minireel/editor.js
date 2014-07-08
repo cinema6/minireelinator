@@ -260,7 +260,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
             function                           ( c6UrlMaker , cinema6 ) {
                 this.controller = 'EditorController';
                 this.controllerAs = 'EditorCtrl';
-                this.templateUrl = c6UrlMaker('views/editor.html');
+                this.templateUrl = 'views/minireel/editor.html';
 
                 this.model = function(params) {
                     return cinema6.db.find('experience', params.minireelId);
@@ -593,7 +593,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 function                     ( c6UrlMaker , EditorService ) {
                     this.controller = 'NewController';
                     this.controllerAs = 'NewCtrl';
-                    this.templateUrl = c6UrlMaker('views/manager/new.html');
+                    this.templateUrl = 'views/minireel/manager/new.html';
 
                     this.model = function() {
                         return EditorService.state.minireel;
@@ -602,17 +602,17 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
 
                 .state('MR:Settings.Category', ['c6UrlMaker',
                 function                  ( c6UrlMaker ) {
-                    this.templateUrl = c6UrlMaker('views/manager/new/category.html');
+                    this.templateUrl = 'views/minireel/manager/new/category.html';
                 }])
 
                 .state('MR:Settings.Mode', ['c6UrlMaker',
                 function              ( c6UrlMaker ) {
-                    this.templateUrl = c6UrlMaker('views/manager/new/mode.html');
+                    this.templateUrl = 'views/minireel/manager/new/mode.html';
                 }])
 
                 .state('MR:Settings.Autoplay', ['c6UrlMaker',
                 function                  ( c6UrlMaker ) {
-                    this.templateUrl = c6UrlMaker('views/manager/new/autoplay.html');
+                    this.templateUrl = 'views/minireel/manager/new/autoplay.html';
                 }]);
         }])
 
@@ -622,7 +622,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
             function                                  ( c6UrlMaker ) {
                 this.controller = 'EditorSplashController';
                 this.controllerAs = 'EditorSplashCtrl';
-                this.templateUrl = c6UrlMaker('views/editor/splash.html');
+                this.templateUrl = 'views/minireel/editor/splash.html';
 
                 this.model = function() {
                     return copy(this.cParent.cModel);
@@ -636,7 +636,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
             function                                   ( c6UrlMaker ) {
                 this.controller = 'NewCardController';
                 this.controllerAs = 'NewCardCtrl';
-                this.templateUrl = c6UrlMaker('views/editor/new_card.html');
+                this.templateUrl = 'views/minireel/editor/new_card.html';
             }]);
         }])
 
@@ -739,14 +739,14 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 function                   ( c6UrlMaker ) {
                     this.controller = 'GenericController';
                     this.controllerAs = 'SplashSourceCtrl';
-                    this.templateUrl = c6UrlMaker('views/editor/splash/source.html');
+                    this.templateUrl = 'views/minireel/editor/splash/source.html';
                 }])
 
                 .state('MR:Splash.Image', ['c6UrlMaker',
                 function                  ( c6UrlMaker ) {
                     this.controller = 'SplashImageController';
                     this.controllerAs = 'SplashImageCtrl';
-                    this.templateUrl = c6UrlMaker('views/editor/splash/image.html');
+                    this.templateUrl = 'views/minireel/editor/splash/image.html';
                 }]);
         }])
 
@@ -895,7 +895,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                                         EditorService ) {
                     this.controller = 'EditCardController';
                     this.controllerAs = 'EditCardCtrl';
-                    this.templateUrl = c6UrlMaker('views/editor/edit_card.html');
+                    this.templateUrl = 'views/minireel/editor/edit_card.html';
                     this.queryParams = {
                         insertionIndex: '&insertAt'
                     };
@@ -921,21 +921,21 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 function                   ( c6UrlMaker ) {
                     this.controller = 'GenericController';
                     this.controllerAs = 'EditCardCopyCtrl';
-                    this.templateUrl = c6UrlMaker('views/editor/edit_card/copy.html');
+                    this.templateUrl = 'views/minireel/editor/edit_card/copy.html';
                 }])
 
                 .state('MR:EditCard.Video', ['c6UrlMaker',
                 function                   ( c6UrlMaker ) {
                     this.controller = 'GenericController';
                     this.controllerAs = 'EditCardVideoCtrl';
-                    this.templateUrl = c6UrlMaker('views/editor/edit_card/video.html');
+                    this.templateUrl = 'views/minireel/editor/edit_card/video.html';
                 }])
 
                 .state('MR:EditCard.Ballot', ['c6UrlMaker','MiniReelService',
                 function                     ( c6UrlMaker , MiniReelService ) {
                     this.controller = 'GenericController';
                     this.controllerAs = 'EditCardBallotCtrl';
-                    this.templateUrl = c6UrlMaker('views/editor/edit_card/ballot.html');
+                    this.templateUrl = 'views/minireel/editor/edit_card/ballot.html';
                     this.model = function() {
                         var card = this.cParent.cModel;
 

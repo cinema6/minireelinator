@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/manager', 'minireel/app'], function(managerModule, minireelModule) {
+    define(['minireel/manager', 'minireel/app', 'app'], function(managerModule, minireelModule, appModule) {
         describe('NewController', function() {
             var $rootScope,
                 $q,
@@ -49,6 +49,7 @@
                         })
                 };
 
+                module(appModule.name);
                 module(minireelModule.name);
                 module(managerModule.name);
 
