@@ -312,7 +312,8 @@
     userPane__group
     ========================================================================== */
     .userPane__group {
-        display: none;
+        display: block;
+        background: red;
         float:right;
     }
         .userPane__display {

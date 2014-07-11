@@ -1,5 +1,5 @@
-define( ['angular','ngAnimate','minireel/app','login','portal','c6ui','c6_defines'],
-function( angular , ngAnimate , minireel     , login , portal , c6ui , c6Defines  ) {
+define( ['angular','ngAnimate','minireel/app','account/app','login','portal','c6ui','c6_defines'],
+function( angular , ngAnimate , minireel     , account     , login , portal , c6ui , c6Defines  ) {
     'use strict';
 
     var forEach = angular.forEach,
@@ -7,6 +7,7 @@ function( angular , ngAnimate , minireel     , login , portal , c6ui , c6Defines
 
     return angular.module('c6.app', [
         ngAnimate.name,
+        account.name,
         minireel.name,
         login.name,
         c6ui.name,
@@ -264,6 +265,7 @@ function( angular , ngAnimate , minireel     , login , portal , c6ui , c6Defines
                     this.route('/apps', 'Apps', function() {
                         this.route('/minireel', 'MiniReel');
                     });
+                    this.route('/account', 'Account');
                 });
                 this.state('Login');
             });

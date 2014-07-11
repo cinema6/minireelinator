@@ -11,7 +11,7 @@
         </nav>
         <div class="userPane__group clearfix">
             <div class="userPane__display">
-                <a href="#/account" class="userPane__userName" title="{{user.email}}" ng-bind="user.email | limitTo : 28"></a>
+                <a c6-sref="Account" c6-params="{}" class="userPane__userName" title="{{PortalCtrl.model.email}}" ng-bind="PortalCtrl.model.email | limitTo : 28"></a>
             </div>
             <nav class="userNav__group" >
                 <button  type="button" 

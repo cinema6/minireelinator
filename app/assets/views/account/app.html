@@ -1,0 +1,21 @@
+<div class="container page__group--padded" ng-init="currentView = 'password'" >
+    <div class="breadcrumbNav">&lsaquo; <a href="#/" title="Dashboard">Back to the Dashboard</a></div>
+    <h1 class="pageTitle">Account Settings</h1>
+    <div class="clearfix">
+        <div class="sidebar__group">
+            <nav class="sidebar__nav">
+                <ul>
+                    <li ng-click="currentView='password'"
+                        class="sideNav__item">
+                        Change Password
+                    </li>
+                    <li ng-click="currentView='email'"
+                        class="sideNav__item">
+                        Change Email
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <c6-view class="mainContent__group"></c6-view>
+    </div>
+</div>
