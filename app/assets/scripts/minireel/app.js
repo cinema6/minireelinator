@@ -1,14 +1,13 @@
 define( ['angular','c6ui','c6log','c6_state','minireel/services','minireel/tracker',
          'minireel/c6_drag','minireel/card_table','minireel/editor','minireel/manager',
-         'minireel/players'],
+         'minireel/players','c6_defines'],
 function( angular , c6ui , c6log , c6State  , services          , tracker          ,
           c6Drag           , cardTable           , editor          , manager          ,
-          players          ) {
+          players          , c6Defines  ) {
     /* jshint -W106 */
     'use strict';
 
-    var jqLite = angular.element,
-        isDefined = angular.isDefined;
+    var isDefined = angular.isDefined;
 
     return angular.module('c6.app.minireel', [
         c6ui.name, c6log.name, c6State.name, c6Drag.name,
@@ -215,46 +214,24 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                 this.controller = 'MiniReelController';
                 this.controllerAs = 'MiniReelCtrl';
 
+                this.model = function() {
+                    return this.cParent.cModel[0];
+                };
                 this.enter = function() {
                     c6State.goTo('MR:Manager');
                 };
             }]);
         }])
 
-        .controller('MiniReelController', ['$scope','$log','cinema6','c6State','c6Defines',
-                                           'tracker','$window',
-        function                          ( $scope , $log , cinema6 , c6State , c6Defines ,
-                                            tracker , $window ) {
-            var self = this,
-                $parentWindow = jqLite($window.parent);
+        .controller('MiniReelController', ['$log','c6State','tracker',
+        function                          ( $log , c6State , tracker ) {
+            var self = this;
 
             $log.info('AppCtlr loaded.');
 
             this.branding = null;
             this.config = null;
             this.user = null;
-            cinema6.getAppData()
-                .then(function setControllerProps(appData) {
-                    $log.info('My current user is:',appData.user);
-                    self.config = appData.experience;
-                    self.user = appData.user;
-                });
-
-            this.screenSpace = {
-                width: null,
-                height: null
-            };
-
-            this.setScreenSpace = function() {
-                return cinema6.getSession()
-                    .then(function requestSpace(session) {
-                        return session.request('availableSpace');
-                    })
-                    .then(function setScreenSpace(space) {
-                        /* jshint boss:true */
-                        return self.screenSpace = space;
-                    });
-            };
 
             this.trackStateChange = function(state){
                 $log.info('trackChange:',state.name);
@@ -297,11 +274,6 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                 self.trackStateChange(state);
             });
 
-            $parentWindow.on('resize', function setScreenSpace() {
-                self.setScreenSpace();
-            });
-            this.setScreenSpace();
-
             $log.info('Initialize tracker with:',c6Defines.kTracker);
             tracker.create(c6Defines.kTracker.accountId,c6Defines.kTracker.config);
         }])
@@ -319,10 +291,11 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
             };
         }])
 
-        .controller('EmbedCodeController', ['$scope','$attrs','MiniReelService','appData',
-        function                           ( $scope , $attrs , MiniReelService , appData ) {
-            var self = this,
-                categories = null;
+        .controller('EmbedCodeController', ['$scope','$attrs','MiniReelService','c6State',
+        function                           ( $scope , $attrs , MiniReelService , c6State ) {
+            var minireelState = c6State.get('MiniReel'),
+                categories = minireelState.cModel.data.modes,
+                c6EmbedSrc = minireelState.cModel.data.c6EmbedSrc;
 
             this.readOnly = isDefined($attrs.readonly);
             this.modes = [
@@ -342,25 +315,16 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                 height: '522px'
             };
 
-            this.c6EmbedSrc = null;
-            appData.ensureFulfillment()
-                .then(function setC6EmbedSrc(data) {
-                    self.c6EmbedSrc = data.experience.data.c6EmbedSrc;
-                    categories = data.experience.data.modes;
-                });
-
             Object.defineProperties(this, {
                 code: {
                     get: function() {
                         var minireel = $scope.minireel,
                             splash = minireel.data.splash,
                             branding = minireel.data.branding,
-                            isInline = MiniReelService.modeCategoryOf(
-                                minireel,
-                                categories
-                            ).value === 'inline';
+                            isInline = MiniReelService.modeCategoryOf(minireel, categories)
+                                .value === 'inline';
 
-                        return '<script src="' + this.c6EmbedSrc + '"' +
+                        return '<script src="' + c6EmbedSrc + '"' +
                             ' data-exp="' + minireel.id + '"' +
                             ' data-:title="' + btoa(minireel.data.title) + '"' +
                             ' data-splash="' +

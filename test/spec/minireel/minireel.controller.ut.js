@@ -1,10 +1,7 @@
 (function(){
     'use strict';
 
-    define(['minireel/app', 'c6ui'], function(minireelModule, c6uiModule) {
-        /* global angular */
-        var jqLite = angular.element;
-
+    define(['minireel/app', 'c6ui', 'c6_defines'], function(minireelModule, c6uiModule, c6Defines) {
         describe('MiniReelController', function() {
             var $rootScope,
                 $scope,
@@ -12,11 +9,9 @@
                 c6State,
                 $window,
                 MiniReelCtrl,
-                c6Defines,
                 tracker;
 
-            var cinema6,
-                gsap,
+            var gsap,
                 appData,
                 cinema6Session;
 
@@ -29,13 +24,6 @@
                     }
                 };
                 
-                c6Defines = {
-                    kTracker : {
-                        accountId : 'account1',
-                        config    : 'auto'
-                    }
-                };
-
                 tracker = {
                     create   :  jasmine.createSpy('tracker.create'),
                     send     :  jasmine.createSpy('tracker.send'),
@@ -52,35 +40,6 @@
                     },
                     user: {}
                 };
-
-                module(c6uiModule.name, function($provide) {
-                    $provide.provider('cinema6', function() {
-                        this.adapters = {
-                            fixture: [function() {}]
-                        };
-
-                        this.useAdapter = jasmine.createSpy('cinema6Provider.useAdapter()');
-
-                        this.$get = function($q) {
-                            cinema6 = {
-                                init: jasmine.createSpy('cinema6.init()'),
-                                getSession: jasmine.createSpy('cinema6.getSiteSession()').and.callFake(function() {
-                                    return cinema6._.getSessionDeferred.promise;
-                                }),
-                                getAppData: jasmine.createSpy('cinema6.getAppData()')
-                                    .and.callFake(function() {
-                                        return cinema6._.getAppDataDeferred.promise;
-                                    }),
-                                _: {
-                                    getSessionDeferred: $q.defer(),
-                                    getAppDataDeferred: $q.defer()
-                                }
-                            };
-
-                            return cinema6;
-                        };
-                    });
-                });
 
                 module(minireelModule.name, function($provide) {
                     $provide.value('gsap', gsap);
@@ -112,18 +71,6 @@
                 expect(MiniReelCtrl).toBeDefined();
             });
 
-            it('should initialize the screenSpace', function() {
-                cinema6Session.request.and.returnValue($q.when({ width: 300, height: 200 }));
-                $scope.$apply(function() {
-                    cinema6._.getSessionDeferred.resolve(cinema6Session);
-                });
-
-                expect(MiniReelCtrl.screenSpace).toEqual({
-                    width: 300,
-                    height: 200
-                });
-            });
-
             describe('properties', function() {
                 var appDataDeferred;
 
@@ -131,87 +78,9 @@
                     appDataDeferred = $q.defer();
                 });
 
-                describe('config', function() {
-                    it('should initially be null', function() {
-                        expect(MiniReelCtrl.config).toBeNull();
-                    });
-
-                    it('should be the experience when the appData is fetched', function() {
-                        $scope.$apply(function() {
-                            cinema6._.getAppDataDeferred.resolve(appData);
-                        });
-
-                        expect(MiniReelCtrl.config).toBe(appData.experience);
-                    });
-                });
-
                 describe('branding', function() {
                     it('should be null', function() {
                         expect(MiniReelCtrl.branding).toBeNull();
-                    });
-                });
-
-                describe('user', function() {
-                    it('should initially be null', function() {
-                        expect(MiniReelCtrl.user).toBeNull();
-                    });
-
-                    it('should be the current user when the appData is fetched', function() {
-                        $scope.$apply(function() {
-                            cinema6._.getAppDataDeferred.resolve(appData);
-                        });
-
-                        expect(MiniReelCtrl.user).toBe(appData.user);
-                    });
-                });
-
-                describe('screenSpace', function() {
-                    it('should be initialzied with minimal information', function() {
-                        expect(MiniReelCtrl.screenSpace).toEqual({
-                            width: null,
-                            height: null
-                        });
-                    });
-                });
-            });
-
-            describe('methods', function() {
-                describe('setScreenSpace()', function() {
-                    var success;
-
-                    beforeEach(function() {
-                        success = jasmine.createSpy('success');
-
-                        cinema6.getSession.and.returnValue($q.when(cinema6Session));
-                        cinema6Session.request.and.returnValue($q.when({ width: 800, height: 450 }));
-
-                        $scope.$apply(function() {
-                            MiniReelCtrl.setScreenSpace().then(success);
-                        });
-                    });
-
-                    it('should get the available space from cinema6 and set the screenSpace property with the result', function() {
-                        expect(cinema6Session.request).toHaveBeenCalledWith('availableSpace');
-                        expect(MiniReelCtrl.screenSpace).toEqual({
-                            width: 800,
-                            height: 450
-                        });
-                        expect(success).toHaveBeenCalledWith(MiniReelCtrl.screenSpace);
-                    });
-                });
-            });
-
-            describe('events', function() {
-                describe('$window resize', function() {
-                    beforeEach(function() {
-                        spyOn(MiniReelCtrl, 'setScreenSpace');
-                    });
-
-                    it('should set the screen space', function() {
-                        var $parentWindow = jqLite($window.parent);
-
-                        $parentWindow.trigger('resize');
-                        expect(MiniReelCtrl.setScreenSpace).toHaveBeenCalled();
                     });
                 });
             });
@@ -219,7 +88,7 @@
             describe('tracking',function(){
                 describe('create',function(){
                     it('should initialize the tracker',function(){
-                        expect(tracker.create).toHaveBeenCalledWith('account1','auto');
+                        expect(tracker.create).toHaveBeenCalledWith(c6Defines.kTracker.accountId,'auto');
 
                     });
                 });

@@ -541,9 +541,10 @@ function( angular , c6ui , cryptojs ) {
             };
         }])
 
-        .service('MiniReelService', ['$window','cinema6','$q','VoteService',
-        function                    ( $window , cinema6 , $q , VoteService ) {
-            var self = this;
+        .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
+        function                    ( $window , cinema6 , $q , VoteService , c6State ) {
+            var self = this,
+                portal = c6State.get('Portal');
 
             function generateId(prefix) {
                 return prefix + '-' +
@@ -897,9 +898,7 @@ function( angular , c6ui , cryptojs ) {
             };
 
             this.create = function(toCopy) {
-                function getLastMinireel(appData) {
-                    var user = appData.user;
-
+                function getLastMinireel(user) {
                     return $q.all({
                         minireels: cinema6.db.findAll('experience', {
                             type: 'minireel',
@@ -977,8 +976,7 @@ function( angular , c6ui , cryptojs ) {
                     return minireel;
                 }
 
-                return cinema6.getAppData()
-                    .then(getLastMinireel)
+                return getLastMinireel(portal.cModel)
                     .then(fetchTemplate)
                     .then(createMinireel);
             };

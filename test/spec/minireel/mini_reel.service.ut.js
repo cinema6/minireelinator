@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/services'], function(servicesModule) {
+    define(['app'], function(appModule) {
         /* global angular:true */
         var copy = angular.copy;
 
@@ -12,6 +12,8 @@
                 VideoThumbnailService,
                 $rootScope,
                 cinema6,
+                c6State,
+                portal,
                 $q;
 
             var minireel;
@@ -26,7 +28,7 @@
             };
 
             beforeEach(function() {
-                module(servicesModule.name);
+                module(appModule.name);
 
                 Object.defineProperty(Object.prototype, 'jasmineToString', {
                     enumerable: false,
@@ -46,7 +48,23 @@
                     $q = $injector.get('$q');
                     CollateralService = $injector.get('CollateralService');
                     VideoThumbnailService = $injector.get('VideoThumbnailService');
+                    c6State = $injector.get('c6State');
                 });
+
+                portal = c6State.get('Portal');
+                portal.cModel = {
+                    id: 'u-5b67ee6000ce6f',
+                    org: {
+                        id: 'o-17593d7a2bf294',
+                        minAdCount: 3,
+                        videoAdSkip: true,
+                        waterfalls: {
+                            display: ['publisher'],
+                            video: ['cinema6-publisher']
+                        }
+                    },
+                    branding: 'elitedaily'
+                };
 
                 minireel = cinema6.db.create('experience', {
                     id: 'e-15aa87f5da34c3',
@@ -859,7 +877,6 @@
                             success,
                             newModel,
                             saveDeferred,
-                            appData,
                             minireels;
 
                         beforeEach(function() {
@@ -867,28 +884,11 @@
 
                             minireels = [];
 
-                            appData = {
-                                user: {
-                                    id: 'u-5b67ee6000ce6f',
-                                    org: {
-                                        id: 'o-17593d7a2bf294',
-                                        minAdCount: 3,
-                                        videoAdSkip: true,
-                                        waterfalls: {
-                                            display: ['publisher'],
-                                            video: ['cinema6-publisher']
-                                        }
-                                    },
-                                    branding: 'elitedaily'
-                                }
-                            };
-
                             spyOn(cinema6.db, 'findAll').and.returnValue($q.when(minireels));
 
                             saveDeferred = $q.defer();
                             success = jasmine.createSpy('success');
 
-                            spyOn(cinema6, 'getAppData').and.returnValue($q.when(appData));
                             spyOn(cinema6.db, 'create').and.callFake(function() {
                                 newModel = dbCreate.apply(cinema6.db, arguments);
 
@@ -948,10 +948,10 @@
                                     data: {
                                         title: null,
                                         mode: 'lightbox',
-                                        displayAdSource: appData.user.org.waterfalls.display[0],
-                                        videoAdSource: appData.user.org.waterfalls.video[0],
-                                        videoAdSkip: appData.user.org.videoAdSkip,
-                                        branding: appData.user.branding,
+                                        displayAdSource: portal.cModel.org.waterfalls.display[0],
+                                        videoAdSource: portal.cModel.org.waterfalls.video[0],
+                                        videoAdSkip: portal.cModel.org.videoAdSkip,
+                                        branding: portal.cModel.branding,
                                         splash: {
                                             source: 'generated',
                                             ratio: '1-1',
@@ -1015,7 +1015,7 @@
                                 it('should be almost identical to the first one', function() {
                                     expect(cinema6.db.findAll).toHaveBeenCalledWith('experience', {
                                         type: 'minireel',
-                                        user: appData.user.id,
+                                        user: portal.cModel.id,
                                         sort: 'lastUpdated,-1',
                                         limit: 1
                                     });
@@ -1027,10 +1027,10 @@
                                         data: {
                                             title: null,
                                             mode: 'lightbox',
-                                            branding: appData.user.branding,
-                                            displayAdSource: appData.user.org.waterfalls.display[0],
-                                            videoAdSource: appData.user.org.waterfalls.video[0],
-                                            videoAdSkip: appData.user.org.videoAdSkip,
+                                            branding: portal.cModel.branding,
+                                            displayAdSource: portal.cModel.org.waterfalls.display[0],
+                                            videoAdSource: portal.cModel.org.waterfalls.video[0],
+                                            videoAdSkip: portal.cModel.org.videoAdSkip,
                                             splash: {
                                                 ratio: minireels[0].data.splash.ratio,
                                                 source: firstMiniReel.data.splash.source,
@@ -1067,10 +1067,10 @@
                                             data: {
                                                 title: null,
                                                 mode: 'lightbox',
-                                                branding: appData.user.branding,
-                                                displayAdSource: appData.user.org.waterfalls.display[0],
-                                                videoAdSource: appData.user.org.waterfalls.video[0],
-                                                videoAdSkip: appData.user.org.videoAdSkip,
+                                                branding: portal.cModel.branding,
+                                                displayAdSource: portal.cModel.org.waterfalls.display[0],
+                                                videoAdSource: portal.cModel.org.waterfalls.video[0],
+                                                videoAdSkip: portal.cModel.org.videoAdSkip,
                                                 splash: {
                                                     ratio: '1-1',
                                                     source: 'generated',

@@ -3,9 +3,14 @@ define (['app'], function(appModule) {
 
     describe('MiniReel state', function() {
         var c6State,
-            minireel;
+            minireel,
+            apps;
+
+        var minireelExp;
 
         beforeEach(function() {
+            minireelExp = {};
+
             module(appModule.name);
 
             inject(function($injector) {
@@ -13,10 +18,24 @@ define (['app'], function(appModule) {
             });
 
             minireel = c6State.get('MiniReel');
+            apps = c6State.get('Apps');
+            apps.cModel = [minireelExp];
         });
 
         it('should exist', function() {
             expect(minireel).toEqual(jasmine.any(Object));
+        });
+
+        describe('model()', function() {
+            var result;
+
+            beforeEach(function() {
+                result = minireel.model();
+            });
+
+            it('should be the MiniReel experience', function() {
+                expect(result).toBe(minireelExp);
+            });
         });
 
         describe('enter()', function() {

@@ -43,7 +43,7 @@
                     </strong> 
                     {{this.lastModified | date:'M/d/yyyy'}}
                 </div>
-                <div class="miniReel__body" c6-sref="MR:Editor" c6-models="[this]" c6-params="{}">
+                <div class="miniReel__body" ng-click="ManagerCtrl.edit(this)">
                     <div class="miniReel__imgBox"
                         c6-bg-img="{{this.data.collateral.splash}}">
                         &nbsp;

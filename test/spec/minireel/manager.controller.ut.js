@@ -1,73 +1,33 @@
 (function() {
     'use strict';
 
-    define(['minireel/manager', 'minireel/app'], function(managerModule, minireelModule) {
+    define(['minireel/manager', 'app'], function(managerModule, appModule) {
         describe('ManagerController', function() {
             var $rootScope,
                 $scope,
                 $controller,
                 $q,
-                cinema6,
+                c6State,
+                EditorService,
                 ConfirmDialogService,
                 MiniReelService,
                 ManagerCtrl;
 
-            var model,
-                c6State;
-
-            var appData,
-                appDataDeferred;
+            var MiniReelCtrl,
+                model;
 
             beforeEach(function() {
                 model = [];
 
-                /* jshint quotmark:false */
-                appData = {
-                    experience: {
-                        data: {
-                            "modes": [
-                                {
-                                    "modes": [
-                                        {
-                                            "name": "No Companion Ad",
-                                            "value": "lightbox"
-                                        },
-                                        {
-                                            "name": "With Companion Ad",
-                                            "value": "lightbox-ads"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "modes": [
-                                        {
-                                            "name": "Light Text",
-                                            "value": "light"
-                                        },
-                                        {
-                                            "name": "Heavy Text",
-                                            "value": "full"
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    }
-                };
-                /* jshint quotmark:single */
-
-                module(minireelModule.name);
+                module(appModule.name);
                 module(managerModule.name);
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
                     $controller = $injector.get('$controller');
                     $q = $injector.get('$q');
+                    EditorService = $injector.get('EditorService');
 
-                    appDataDeferred = $q.defer();
-                    cinema6 = $injector.get('cinema6');
-                    spyOn(cinema6, 'getAppData')
-                        .and.returnValue(appDataDeferred.promise);
 
                     MiniReelService = $injector.get('MiniReelService');
                     ConfirmDialogService = $injector.get('ConfirmDialogService');
@@ -76,6 +36,40 @@
                     spyOn(c6State, 'goTo');
 
                     $scope = $rootScope.$new();
+                    MiniReelCtrl = $scope.MiniReelCtrl = {
+                        model: {
+                            data: {
+                                /* jshint quotmark:false */
+                                "modes": [
+                                    {
+                                        "modes": [
+                                            {
+                                                "name": "No Companion Ad",
+                                                "value": "lightbox"
+                                            },
+                                            {
+                                                "name": "With Companion Ad",
+                                                "value": "lightbox-ads"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "modes": [
+                                            {
+                                                "name": "Light Text",
+                                                "value": "light"
+                                            },
+                                            {
+                                                "name": "Heavy Text",
+                                                "value": "full"
+                                            }
+                                        ]
+                                    }
+                                ]
+                                /* jshint quotmark:single */
+                            }
+                        }
+                    };
                     $scope.$apply(function() {
                         ManagerCtrl = $controller('ManagerController', { $scope: $scope, cModel: model });
                         ManagerCtrl.model = model;
@@ -112,6 +106,36 @@
                 function dialog() {
                     return ConfirmDialogService.display.calls.mostRecent().args[0];
                 }
+
+                describe('edit(minireel)', function() {
+                    var minireel, editorMinireel;
+
+                    beforeEach(function() {
+                        minireel = {
+                            id: 'e-9efb2ee320038f',
+                            data: {
+                                deck: []
+                            }
+                        };
+
+                        editorMinireel = {
+                            id: 'e-9efb2ee320038f',
+                            data: {}
+                        };
+
+                        spyOn(EditorService, 'open').and.returnValue(editorMinireel);
+
+                        ManagerCtrl.edit(minireel);
+                    });
+
+                    it('should open the MiniReel for editing', function() {
+                        expect(EditorService.open).toHaveBeenCalledWith(minireel);
+                    });
+
+                    it('should go to the editor state', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [editorMinireel], {});
+                    });
+                });
 
                 describe('copy(minireel)', function() {
                     var minireel,
@@ -207,31 +231,17 @@
                         };
                     });
 
-                    describe('before the appData is fetched', function() {
-                        it('should return null', function() {
-                            expect(ManagerCtrl.modeNameFor(minireel)).toBeNull();
-                        });
-                    });
+                    it('should return the name of the mode for the given minireel', function() {
+                        expect(ManagerCtrl.modeNameFor(minireel)).toBe('Heavy Text');
 
-                    describe('after the app data is retrived', function() {
-                        beforeEach(function() {
-                            $scope.$apply(function() {
-                                appDataDeferred.resolve(appData);
-                            });
-                        });
+                        minireel.data.mode = 'light';
+                        expect(ManagerCtrl.modeNameFor(minireel)).toBe('Light Text');
 
-                        it('should return the name of the mode for the given minireel', function() {
-                            expect(ManagerCtrl.modeNameFor(minireel)).toBe('Heavy Text');
+                        minireel.data.mode = 'lightbox';
+                        expect(ManagerCtrl.modeNameFor(minireel)).toBe('No Companion Ad');
 
-                            minireel.data.mode = 'light';
-                            expect(ManagerCtrl.modeNameFor(minireel)).toBe('Light Text');
-
-                            minireel.data.mode = 'lightbox';
-                            expect(ManagerCtrl.modeNameFor(minireel)).toBe('No Companion Ad');
-
-                            minireel.data.mode = 'lightbox-ads';
-                            expect(ManagerCtrl.modeNameFor(minireel)).toBe('With Companion Ad');
-                        });
+                        minireel.data.mode = 'lightbox-ads';
+                        expect(ManagerCtrl.modeNameFor(minireel)).toBe('With Companion Ad');
                     });
                 });
 

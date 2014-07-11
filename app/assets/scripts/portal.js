@@ -8,6 +8,8 @@ function( angular , c6State  , c6ui , fnUtils  ) {
             c6StateProvider.state('Portal', ['$q','cinema6','c6State','AuthService','fn',
             function                        ( $q , cinema6 , c6State , AuthService , fn ) {
                 this.templateUrl = 'views/portal.html';
+                this.controller = 'GenericController';
+                this.controllerAs = 'PortalCtrl';
 
                 this.model = function() {
                     return AuthService.checkStatus()

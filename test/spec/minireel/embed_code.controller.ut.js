@@ -1,13 +1,14 @@
 (function() {
     'use strict';
 
-    define(['minireel/app'], function(minireelModule) {
+    define(['app'], function(appModule) {
         describe('EmbedCodeController', function() {
             var $rootScope,
                 $scope,
                 $controller,
                 $q,
-                appData,
+                c6State,
+                MiniReelState,
                 EmbedCodeCtrl;
 
             var ensureFulfillmentDeferred,
@@ -16,20 +17,46 @@
             beforeEach(function() {
                 $attrs = {};
 
-                module(minireelModule.name, function($provide) {
-                    $provide.value('appData', {
-                        ensureFulfillment: jasmine.createSpy('appData.ensureFulfillment()')
-                    });
-                });
+                module(appModule.name);
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
                     $controller = $injector.get('$controller');
-                    appData = $injector.get('appData');
                     $q = $injector.get('$q');
+                    c6State = $injector.get('c6State');
+
+                    MiniReelState = c6State.get('MiniReel');
+                    MiniReelState.cModel = {
+                        data: {
+                            c6EmbedSrc: '//lib.cinema6.com/c6embed/v0.7.0-0-g495dfa0/c6embed.min.js',
+                            modes: [
+                                {
+                                    value: 'lightbox',
+                                    modes: [
+                                        {
+                                            value: 'lightbox'
+                                        },
+                                        {
+                                            value: 'lightbox-ads'
+                                        }
+                                    ]
+                                },
+                                {
+                                    value: 'inline',
+                                    modes: [
+                                        {
+                                            value: 'full'
+                                        },
+                                        {
+                                            value: 'light'
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    };
 
                     ensureFulfillmentDeferred = $q.defer();
-                    appData.ensureFulfillment.and.returnValue(ensureFulfillmentDeferred.promise);
 
                     $scope = $rootScope.$new();
                     $scope.minireel = {
@@ -114,50 +141,10 @@
                 });
 
                 describe('code', function() {
-                    function resolveAppData() {
-                        $scope.$apply(function() {
-                            ensureFulfillmentDeferred.resolve({
-                                experience: {
-                                    data: {
-                                        modes: [
-                                            {
-                                                value: 'lightbox',
-                                                modes: [
-                                                    {
-                                                        value: 'lightbox'
-                                                    },
-                                                    {
-                                                        value: 'lightbox-ads'
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                value: 'inline',
-                                                modes: [
-                                                    {
-                                                        value: 'full'
-                                                    },
-                                                    {
-                                                        value: 'light'
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                }
-                            });
-                        });
-                    }
-
-                    beforeEach(function() {
-                        EmbedCodeCtrl.c6EmbedSrc = 'embed.js';
-                    });
-
                     ['lightbox', 'lightbox-ads'].forEach(function(mode) {
                         describe('if the minireel mode is ' + mode, function() {
                             beforeEach(function() {
                                 $scope.minireel.data.mode = mode;
-                                resolveAppData();
                             });
 
                             it('should not preload', function() {
@@ -170,7 +157,6 @@
                         describe('if the minireel mode is ' + mode, function() {
                             beforeEach(function() {
                                 $scope.minireel.data.mode = mode;
-                                resolveAppData();
                             });
 
                             it('should preload', function() {
@@ -182,7 +168,7 @@
                     describe('if the size is responsive', function() {
                         it('should be a responsive embed code', function() {
                             expect(EmbedCodeCtrl.code).toBe(
-                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-:branding="' + btoa('elitedaily') + '"></script>'
+                                '<script src="' + MiniReelState.cModel.data.c6EmbedSrc + '" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-:branding="' + btoa('elitedaily') + '"></script>'
                             );
                         });
                     });
@@ -204,7 +190,7 @@
 
                         it('should be an explicit embed code', function() {
                             expect(EmbedCodeCtrl.code).toBe(
-                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-width="650px" data-height="522px" data-:branding="' + btoa('elitedaily') + '"></script>'
+                                '<script src="' + MiniReelState.cModel.data.c6EmbedSrc + '" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-width="650px" data-height="522px" data-:branding="' + btoa('elitedaily') + '"></script>'
                             );
                         });
 
@@ -213,29 +199,9 @@
                             EmbedCodeCtrl.size.width = '100%';
 
                             expect(EmbedCodeCtrl.code).toBe(
-                                '<script src="embed.js" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-width="100%" data-height="300px" data-:branding="' + btoa('elitedaily') + '"></script>'
+                                '<script src="' + MiniReelState.cModel.data.c6EmbedSrc + '" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-width="100%" data-height="300px" data-:branding="' + btoa('elitedaily') + '"></script>'
                             );
                         });
-                    });
-                });
-
-                describe('c6EmbedSrc', function() {
-                    it('should be initialized as null', function() {
-                        expect(EmbedCodeCtrl.c6EmbedSrc).toBeNull();
-                    });
-
-                    it('should be the value set in the experience when the appData is fetched', function() {
-                        $scope.$apply(function() {
-                            ensureFulfillmentDeferred.resolve({
-                                experience: {
-                                    data: {
-                                        c6EmbedSrc: '//lib.cinema6.com/c6embed/v0.7.0-0-g495dfa0/c6embed.min.js'
-                                    }
-                                }
-                            });
-                        });
-
-                        expect(EmbedCodeCtrl.c6EmbedSrc).toBe('//lib.cinema6.com/c6embed/v0.7.0-0-g495dfa0/c6embed.min.js');
                     });
                 });
             });

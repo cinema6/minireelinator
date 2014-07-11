@@ -15,7 +15,8 @@
                 EditorService,
                 MiniReelService,
                 ConfirmDialogService,
-                AppCtrl,
+                MiniReelCtrl,
+                PortalCtrl,
                 EditorCtrl;
 
             var lastCreatedCard;
@@ -77,7 +78,7 @@
                     EditorService.state = {
                         dirty: false,
                         inFlight: false,
-                        minireel: cModel
+                        minireel: null
                     };
                     MiniReelService = $injector.get('MiniReelService');
                     ConfirmDialogService = $injector.get('ConfirmDialogService');
@@ -87,17 +88,58 @@
                     $log.context = function() { return $log; };
 
                     $scope = $rootScope.$new();
-                    AppCtrl = $scope.AppCtrl = {
-                        sendPageView : jasmine.createSpy('AppCtrl.sendPageView'),
-                        sendPageEvent : jasmine.createSpy('AppCtrl.sendPageEvent'),
-                        config: null,
-                        user: null,
-                        branding: null
+                    PortalCtrl = $scope.PortalCtrl = {
+                        model: {
+                            org: {}
+                        }
+                    };
+                    MiniReelCtrl = $scope.MiniReelCtrl = {
+                        sendPageView : jasmine.createSpy('MiniReelCtrl.sendPageView'),
+                        sendPageEvent : jasmine.createSpy('MiniReelCtrl.sendPageEvent'),
+                        branding: null,
+                        model: {
+                            data: {
+                                modes: [
+                                    {
+                                        modes: [
+                                            {
+                                                name: 'Lightbox',
+                                                value: 'lightbox',
+                                                limits: {}
+                                            },
+                                            {
+                                                name: 'Lightbox, with Companion Ad',
+                                                value: 'lightbox-ads',
+                                                limits: {}
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        modes: [
+                                            {
+                                                name: 'Light Text',
+                                                value: 'light',
+                                                limits: {
+                                                    copy: 200
+                                                }
+                                            },
+                                            {
+                                                name: 'Heavy Text',
+                                                value: 'full',
+                                                limits: {
+                                                    copy: 420
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
                     };
                     $childScope = $scope.$new();
                     $scope.$apply(function() {
                         EditorCtrl = $controller('EditorController', { $scope: $scope });
-                        EditorCtrl.initWithModel();
+                        EditorCtrl.initWithModel(cModel);
                     });
                 });
 
@@ -113,13 +155,13 @@
                 expect(EditorCtrl.model).toBe(cModel);
             });
 
-            it('should set the AppCtrl\'s branding to the minireel\'s branding', function() {
-                expect(AppCtrl.branding).toBe(cModel.data.branding);
+            it('should set the MiniReelCtrl\'s branding to the minireel\'s branding', function() {
+                expect(MiniReelCtrl.branding).toBe(cModel.data.branding);
             });
 /*
             describe('tracking', function(){
                 it('should send a pageview when loaded',function(){
-                    expect($scope.AppCtrl.sendPageView)
+                    expect($scope.MiniReelCtrl.sendPageView)
                         .toHaveBeenCalledWith({page:'editor',title:'Editor'});
                 });
             });
@@ -152,82 +194,33 @@
                 });
 
                 describe('cardLimits', function() {
-                    it('should have a liberal initial value', function() {
-                        expect(EditorCtrl.cardLimits).toEqual({
-                            copy: Infinity
-                        });
-                    });
+                    function setMode(mode) {
+                        cModel.data.mode = mode;
+                    }
 
                     it('should return references to the same object', function() {
                         expect(EditorCtrl.cardLimits).toBe(EditorCtrl.cardLimits);
                     });
 
-                    describe('when the config is available', function() {
-                        function setMode(mode) {
-                            cModel.data.mode = mode;
-                        }
-
-                        beforeEach(function() {
-                            AppCtrl.config = {
-                                data: {
-                                    modes: [
-                                        {
-                                            modes: [
-                                                {
-                                                    name: 'Lightbox',
-                                                    value: 'lightbox',
-                                                    limits: {}
-                                                },
-                                                {
-                                                    name: 'Lightbox, with Companion Ad',
-                                                    value: 'lightbox-ads',
-                                                    limits: {}
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            modes: [
-                                                {
-                                                    name: 'Light Text',
-                                                    value: 'light',
-                                                    limits: {
-                                                        copy: 200
-                                                    }
-                                                },
-                                                {
-                                                    name: 'Heavy Text',
-                                                    value: 'full',
-                                                    limits: {
-                                                        copy: 420
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                }
-                            };
+                    it('should set the limits based off of the mode', function() {
+                        setMode('full');
+                        expect(EditorCtrl.cardLimits).toEqual({
+                            copy: 420
                         });
 
-                        it('should set the limits based off of the mode', function() {
-                            setMode('full');
-                            expect(EditorCtrl.cardLimits).toEqual({
-                                copy: 420
-                            });
+                        setMode('light');
+                        expect(EditorCtrl.cardLimits).toEqual({
+                            copy: 200
+                        });
 
-                            setMode('light');
-                            expect(EditorCtrl.cardLimits).toEqual({
-                                copy: 200
-                            });
+                        setMode('lightbox');
+                        expect(EditorCtrl.cardLimits).toEqual({
+                            copy: Infinity
+                        });
 
-                            setMode('lightbox');
-                            expect(EditorCtrl.cardLimits).toEqual({
-                                copy: Infinity
-                            });
-
-                            setMode('lightbox-ads');
-                            expect(EditorCtrl.cardLimits).toEqual({
-                                copy: Infinity
-                            });
+                        setMode('lightbox-ads');
+                        expect(EditorCtrl.cardLimits).toEqual({
+                            copy: Infinity
                         });
                     });
                 });
@@ -263,58 +256,17 @@
                 });
 
                 describe('prettyMode', function() {
-                    describe('if the AppCtrl has no config', function() {
-                        it('should be null', function() {
-                            expect(EditorCtrl.prettyMode).toBeNull();
-                        });
-                    });
+                    it('should find the "name" for the mode\'s value', function() {
+                        expect(EditorCtrl.prettyMode).toBe('Lightbox');
 
-                    describe('if the AppCtrl has a config', function() {
-                        beforeEach(function() {
-                            AppCtrl.config = {
-                                data: {
-                                    modes: [
-                                        {
-                                            modes: [
-                                                {
-                                                    name: 'Lightbox',
-                                                    value: 'lightbox'
-                                                },
-                                                {
-                                                    name: 'Lightbox, with Companion Ad',
-                                                    value: 'lightbox-ads'
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            modes: [
-                                                {
-                                                    name: 'Light Text',
-                                                    value: 'light'
-                                                },
-                                                {
-                                                    name: 'Heavy Text',
-                                                    value: 'full'
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                }
-                            };
-                        });
+                        cModel.data.mode = 'lightbox-ads';
+                        expect(EditorCtrl.prettyMode).toBe('Lightbox, with Companion Ad');
 
-                        it('should find the "name" for the mode\'s value', function() {
-                            expect(EditorCtrl.prettyMode).toBe('Lightbox');
+                        cModel.data.mode = 'light';
+                        expect(EditorCtrl.prettyMode).toBe('Light Text');
 
-                            cModel.data.mode = 'lightbox-ads';
-                            expect(EditorCtrl.prettyMode).toBe('Lightbox, with Companion Ad');
-
-                            cModel.data.mode = 'light';
-                            expect(EditorCtrl.prettyMode).toBe('Light Text');
-
-                            cModel.data.mode = 'full';
-                            expect(EditorCtrl.prettyMode).toBe('Heavy Text');
-                        });
+                        cModel.data.mode = 'full';
+                        expect(EditorCtrl.prettyMode).toBe('Heavy Text');
                     });
                 });
             });
@@ -401,23 +353,15 @@
                             EditorCtrl.model.data.deck.unshift(card);
                         });
 
-                        it('should be false if the app config has not been loaded', function() {
-                            expect(EditorCtrl.canDeleteCard(card)).toBe(false);
-                        });
-
                         it('should be true if the minAdCount is undefined', function() {
-                            AppCtrl.user = {
-                                org: {}
-                            };
+                            PortalCtrl.model.org = {};
 
                             expect(EditorCtrl.canDeleteCard(card)).toBe(true);
                         });
 
                         it('should be true if the number of ad cards in the deck is greater than the org\'s min ad count', function() {
-                            AppCtrl.user = {
-                                org: {
-                                    minAdCount: 2
-                                }
+                            PortalCtrl.model.org = {
+                                minAdCount: 2
                             };
 
                             expect(EditorCtrl.canDeleteCard(card)).toBe(false);
@@ -538,6 +482,25 @@
                     });
                 });
 
+                describe('editCard(card)', function() {
+                    var card;
+
+                    beforeEach(function() {
+                        spyOn(c6State, 'goTo');
+
+                        card = {
+                            id: 'rc-ed21efd869ad2b'
+                        };
+
+                        EditorCtrl.editCard(card);
+                    });
+
+                    it('should go to the edit card state with a copy of the card', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:EditCard', [card]);
+                        expect(c6State.goTo.calls.mostRecent().args[1][0]).not.toBe(card);
+                    });
+                });
+
                 describe('deleteCard(card)', function() {
                     var card;
 
@@ -643,14 +606,6 @@
                     it('should set preview mode to true', function() {
                         EditorCtrl.previewMode();
                         expect(EditorCtrl.preview).toBe(true);
-                    });
-
-                    it('should ping the parent with the "stateChange" event', function() {
-                        $scope.$apply(function() {
-                            EditorCtrl.previewMode();
-                        });
-
-                        expect(session.ping).toHaveBeenCalledWith('stateChange', { name: 'editor.preview' });
                     });
 
                     describe('without a card', function() {
@@ -832,8 +787,8 @@
                         expect(EditorCtrl.save).toHaveBeenCalled();
                     });
 
-                    it('should set the AppCtrl branding back to null', function() {
-                        expect(AppCtrl.branding).toBeNull();
+                    it('should set the MiniReelCtrl branding back to null', function() {
+                        expect(MiniReelCtrl.branding).toBeNull();
                     });
 
                     describe('after the save finishes', function() {

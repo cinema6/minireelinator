@@ -38,14 +38,18 @@ function( angular , c6ui , c6State  , services          ) {
             }]);
         }])
 
-        .controller('ManagerController', ['c6State','MiniReelService','ConfirmDialogService',
-                                          'cinema6',
-        function                         ( c6State , MiniReelService , ConfirmDialogService ,
-                                           cinema6 ) {
+        .controller('ManagerController', ['$scope','c6State','MiniReelService',
+                                          'ConfirmDialogService','EditorService',
+        function                         ( $scope , c6State , MiniReelService ,
+                                           ConfirmDialogService , EditorService ) {
             var self = this,
-                appData = null;
+                MiniReelCtrl = $scope.MiniReelCtrl;
 
             this.filter = 'all';
+
+            this.edit = function(minireel) {
+                return c6State.goTo('MR:Editor', [EditorService.open(minireel)], {});
+            };
 
             this.copy = function(minireel) {
                 ConfirmDialogService.display({
@@ -124,21 +128,15 @@ function( angular , c6ui , c6State  , services          ) {
             };
 
             this.modeNameFor = function(minireel) {
-                return appData &&
-                    MiniReelService.modeDataOf(
-                        minireel,
-                        appData.experience.data.modes
-                    ).name;
+                return MiniReelService.modeDataOf(
+                    minireel,
+                    MiniReelCtrl.model.data.modes
+                ).name;
             };
 
             this.determineInclusionWithFilter = function(minireel) {
                 return self.filter === 'all' || self.filter === minireel.status;
             };
-
-            cinema6.getAppData()
-                .then(function save(data) {
-                    appData = data;
-                });
         }])
 
         .config(['c6StateProvider',
@@ -168,7 +166,7 @@ function( angular , c6ui , c6State  , services          ) {
                 }])
 
                 .state('MR:New.Autoplay', [function() {
-                    this.templateUrl = 'views/minrieel/manager/new/autoplay.html';
+                    this.templateUrl = 'views/minireel/manager/new/autoplay.html';
                 }]);
         }])
 

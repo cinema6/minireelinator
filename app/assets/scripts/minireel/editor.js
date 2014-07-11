@@ -263,10 +263,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 this.templateUrl = 'views/minireel/editor.html';
 
                 this.model = function(params) {
-                    return cinema6.db.find('experience', params.minireelId);
-                };
-                this.afterModel = function(minireel) {
-                    return EditorService.open(minireel);
+                    return cinema6.db.find('experience', params.minireelId)
+                        .then(function open(minireel) {
+                            return EditorService.open(minireel);
+                        });
                 };
             }]);
         }])
@@ -278,7 +278,8 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                                           ConfirmDialogService , c6Debounce , $q , $log ,
                                           MiniReelService ) {
             var self = this,
-                AppCtrl = $scope.AppCtrl,
+                MiniReelCtrl = $scope.MiniReelCtrl,
+                PortalCtrl = $scope.PortalCtrl,
                 cardLimits = {
                     copy: Infinity
                 },
@@ -305,7 +306,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
             Object.defineProperties(this, {
                 prettyMode: {
                     get: function() {
-                        var categories = AppCtrl.config && AppCtrl.config.data.modes,
+                        var categories = MiniReelCtrl.model.data.modes,
                             targetMode = this.model.data.mode;
 
                         return categories && (function() {
@@ -326,7 +327,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 cardLimits: {
                     configurable: true,
                     get: function() {
-                        var config = AppCtrl.config,
+                        var config = MiniReelCtrl.model,
                             mode;
 
                         if (!config) { return cardLimits; }
@@ -352,10 +353,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 }
             });
 
-            this.initWithModel = function() {
-                this.model = EditorService.state.minireel;
+            this.initWithModel = function(model) {
+                this.model = model;
 
-                AppCtrl.branding = this.model.data.branding;
+                MiniReelCtrl.branding = this.model.data.branding;
             };
 
             this.bustCache = function() {
@@ -379,9 +380,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                             totalAdCards = deck.filter(function(card) {
                                 return card.type === 'ad';
                             }).length,
-                            minAdCount = AppCtrl.user ?
-                                (AppCtrl.user.org.minAdCount || 0) :
-                                Infinity;
+                            minAdCount = (PortalCtrl.model.org.minAdCount || 0);
 
                         return totalAdCards > minAdCount;
                     }.call(this));
@@ -426,7 +425,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
 
             this.newCard = function(insertionIndex/*,evtSrc*/) {
 //                if (evtSrc){
-//                    AppCtrl.sendPageEvent('Editor','Click','New Card',self.pageObject);
+//                    MiniReelCtrl.sendPageEvent('Editor','Click','New Card',self.pageObject);
 //                }
 
                 // TODO: Delete this code
@@ -440,9 +439,13 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 });
             };
 
+            this.editCard = function(card) {
+                return c6State.goTo('MR:EditCard', [copy(card)]);
+            };
+
             this.deleteCard = function(card/*,evtSrc*/) {
 //                if (evtSrc){
-//                    AppCtrl.sendPageEvent('Editor','Click','Delete Card',self.pageObject);
+//                    MiniReelCtrl.sendPageEvent('Editor','Click','Delete Card',self.pageObject);
 //                }
                 ConfirmDialogService.display({
                     prompt: 'Are you sure you want to delete this card?',
@@ -463,14 +466,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
 
             this.previewMode = function(card/*,evtSrc*/) {
 //                if (evtSrc){
-//                    AppCtrl.sendPageEvent('Editor','Click','Preview Card',self.pageObject);
+//                    MiniReelCtrl.sendPageEvent('Editor','Click','Preview Card',self.pageObject);
 //                }
                 self.preview = true;
                 $scope.$broadcast('mrPreview:updateExperience', self.model, card);
-                cinema6.getSession()
-                    .then(function pingStateChange(session) {
-                        session.ping('stateChange', { name: 'editor.preview' });
-                    });
             };
 
             this.closePreview = function() {
@@ -577,7 +576,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     return $q.when(self.model);
                 }
 
-                AppCtrl.branding = null;
+                MiniReelCtrl.branding = null;
 
                 save()
                     .then(function close() {
@@ -586,7 +585,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
             });
 
 
-        //    AppCtrl.sendPageView(this.pageObject);
+        //    MiniReelCtrl.sendPageView(this.pageObject);
         }])
 
         .config(['c6StateProvider',
@@ -899,7 +898,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     this.model = function(params) {
                         var deck = EditorService.state.minireel.data.deck;
 
-                        return MiniReelService.findCard(deck, params.cardId);
+                        return copy(MiniReelService.findCard(deck, params.cardId));
                     };
 
                     this.afterModel = function(model) {
@@ -1073,7 +1072,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                         ].join('')
                     };
 
-                this.model = copy(model);
+                this.model = model;
                 this.tabs = (function() {
                     switch (model.type) {
                     case 'video':

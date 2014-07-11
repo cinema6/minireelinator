@@ -12,9 +12,13 @@
                 c6State;
 
             var minireel = {
-                id: 'e-9990920583a712',
-                processed: false
-            };
+                    id: 'e-9990920583a712',
+                    processed: false
+                },
+                editorMinireel = {
+                    id: 'e-9990920583a712',
+                    processed: true
+                };
 
             beforeEach(function() {
                 module(appModule.name);
@@ -43,6 +47,7 @@
 
                 beforeEach(function() {
                     spyOn(cinema6.db, 'find').and.returnValue($q.when(minireel));
+                    spyOn(EditorService, 'open').and.returnValue(editorMinireel);
 
                     success = jasmine.createSpy('model() success');
 
@@ -61,19 +66,8 @@
                 });
 
                 it('should resolve to the transpiled minireel', function() {
-                    expect(success).toHaveBeenCalledWith(minireel);
-                });
-            });
-
-            describe('afterModel(model)', function() {
-                beforeEach(function() {
-                    spyOn(EditorService, 'open');
-
-                    EditorState.afterModel(minireel);
-                });
-
-                it('should open the minireel', function() {
                     expect(EditorService.open).toHaveBeenCalledWith(minireel);
+                    expect(success).toHaveBeenCalledWith(editorMinireel);
                 });
             });
         });

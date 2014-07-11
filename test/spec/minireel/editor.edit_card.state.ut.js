@@ -69,7 +69,8 @@
                 it('should use the c6StateParams id to find the card in the deck of the editor\'s model', function() {
                     var card = minireel.data.deck[2];
 
-                    expect(model).toBe(card);
+                    expect(model).toEqual(card);
+                    expect(model).not.toBe(card);
                 });
             });
 
