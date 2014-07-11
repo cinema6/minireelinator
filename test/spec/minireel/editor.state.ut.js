@@ -8,6 +8,7 @@
                 $rootScope,
                 $q,
                 cinema6,
+                EditorService,
                 c6State;
 
             var minireel = {
@@ -25,6 +26,7 @@
                     $q = $injector.get('$q');
                     cinema6 = $injector.get('cinema6');
                     c6State = $injector.get('c6State');
+                    EditorService = $injector.get('EditorService');
 
                     EditorState = c6State.get('MR:Editor');
                 });
@@ -60,6 +62,18 @@
 
                 it('should resolve to the transpiled minireel', function() {
                     expect(success).toHaveBeenCalledWith(minireel);
+                });
+            });
+
+            describe('afterModel(model)', function() {
+                beforeEach(function() {
+                    spyOn(EditorService, 'open');
+
+                    EditorState.afterModel(minireel);
+                });
+
+                it('should open the minireel', function() {
+                    expect(EditorService.open).toHaveBeenCalledWith(minireel);
                 });
             });
         });

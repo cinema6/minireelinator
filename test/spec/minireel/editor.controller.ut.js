@@ -76,9 +76,9 @@
                     EditorService = $injector.get('EditorService');
                     EditorService.state = {
                         dirty: false,
-                        inFlight: false
+                        inFlight: false,
+                        minireel: cModel
                     };
-                    spyOn(EditorService, 'open').and.returnValue(cModel);
                     MiniReelService = $injector.get('MiniReelService');
                     ConfirmDialogService = $injector.get('ConfirmDialogService');
                     $timeout = $injector.get('$timeout');
@@ -97,7 +97,7 @@
                     $childScope = $scope.$new();
                     $scope.$apply(function() {
                         EditorCtrl = $controller('EditorController', { $scope: $scope });
-                        EditorCtrl.initWithModel(cModel);
+                        EditorCtrl.initWithModel();
                     });
                 });
 
@@ -109,8 +109,8 @@
                 expect(EditorCtrl).toEqual(jasmine.any(Object));
             });
 
-            it('should open the MiniReel with the EditorService', function() {
-                expect(EditorService.open).toHaveBeenCalledWith(cModel);
+            it('should set it\'s model to the EditorService\'s minireel', function() {
+                expect(EditorCtrl.model).toBe(cModel);
             });
 
             it('should set the AppCtrl\'s branding to the minireel\'s branding', function() {

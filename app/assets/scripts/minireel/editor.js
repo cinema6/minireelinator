@@ -256,14 +256,17 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Editor', ['c6UrlMaker','cinema6',
-            function                           ( c6UrlMaker , cinema6 ) {
+            c6StateProvider.state('MR:Editor', ['cinema6','EditorService',
+            function                           ( cinema6 , EditorService ) {
                 this.controller = 'EditorController';
                 this.controllerAs = 'EditorCtrl';
                 this.templateUrl = 'views/minireel/editor.html';
 
                 this.model = function(params) {
                     return cinema6.db.find('experience', params.minireelId);
+                };
+                this.afterModel = function(minireel) {
+                    return EditorService.open(minireel);
                 };
             }]);
         }])
@@ -349,8 +352,8 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 }
             });
 
-            this.initWithModel = function(model) {
-                this.model = EditorService.open(model);
+            this.initWithModel = function() {
+                this.model = EditorService.state.minireel;
 
                 AppCtrl.branding = this.model.data.branding;
             };
