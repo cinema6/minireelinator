@@ -4,9 +4,10 @@ function( angular , c6ui ) {
 
     var noop = angular.noop,
         extend = angular.extend,
-        isDefined = angular.isDefined,
         equals = angular.equals,
-        forEach = angular.forEach;
+        forEach = angular.forEach,
+        isString = angular.isString,
+        copy = angular.copy;
 
     function find(collection, predicate) {
         return collection.reduce(function(result, next) {
@@ -291,6 +292,7 @@ function( angular , c6ui ) {
 
                         $animate.enter($clone, null, $view);
                     });
+                    state.cRendered = true;
                     this.state = state;
                     this.model = state.cModel;
                 },
@@ -301,6 +303,7 @@ function( angular , c6ui ) {
 
                     if (this.state) {
                         this.state.cModel = null;
+                        this.state.cRendered = false;
                     }
 
                     if (this.scope) {
@@ -336,40 +339,50 @@ function( angular , c6ui ) {
         .provider('c6State', [function() {
             var stateConstructors = {},
                 contexts = {},
-                map;
+                stateConfigs;
 
             function Thunker() {
-                this.items = [];
-                this.queue = {};
+                this.groups = {};
+                this.map = [];
             }
             Thunker.prototype = {
-                push: function(id, thunk, dep) {
-                    var item = {
-                        id: id,
-                        thunk: thunk
-                    };
+                push: function(group, thunk) {
+                    var groups = this.groups;
 
-                    if (!dep) {
-                        return this.items.push(item);
-                    } else {
-                        (this.queue[dep] || (this.queue[dep] = [])).push(item);
-                    }
+                    return (groups[group] || (groups[group] = [])).push(thunk);
+                },
+                relate: function(parent, child) {
+                    this.map.push({
+                        parent: parent,
+                        child: child
+                    });
+
+                    return this;
                 },
                 force: function() {
-                    var item, index,
-                        deps;
+                    var map = this.map, groups = this.groups;
 
-                    for (index = 0; index < this.items.length; index++) {
-                        item = this.items[index];
-                        deps = this.queue[item.id];
-                        this.items.push.apply(this.items, deps);
+                    function callChildrenOf(parent) {
+                        var children = map.filter(function(relationship) {
+                            return relationship.parent === parent;
+                        });
+
+                        children.forEach(function(relationship) {
+                            var thunks = groups[relationship.child],
+                                thunk;
+
+                            /* jshint boss:true */
+                            while(thunk = thunks.shift()) {
+                            /* jshint boss:false */
+                                thunk();
+                            }
+
+                            callChildrenOf(relationship.child);
+                        });
+
                     }
 
-                    /* jshint boss:true */
-                    while (item = this.items.shift()) {
-                    /* jshint boss:false */
-                        item.thunk();
-                    }
+                    callChildrenOf(null);
                 }
             };
 
@@ -404,10 +417,13 @@ function( angular , c6ui ) {
 
                                 return next.enableUrlRouting ? next : context;
                             }, null),
+                        routes = context.routes,
                         // Find the State for this path
-                        route = find(context.routes, function(route) {
-                            return route.matcher.test(path);
-                        }),
+                        route = routes[find(Object.keys(routes), function(name) {
+                            var matcher = routes[name].matcher;
+
+                            return !!matcher && matcher.test(path);
+                        })],
                         // Get the state object instance for this URL
                         state = self.in(context.name, function() {
                             return self.get(route.name);
@@ -450,7 +466,7 @@ function( angular , c6ui ) {
                         }
                     });
 
-                    self.goTo(route.name, null, $location.search());
+                    self.goTo(route.name, null, copy($location.search()));
 
                     return true;
                 }
@@ -605,19 +621,37 @@ function( angular , c6ui ) {
                     }
 
                     return qSeries(states.map(function(state) {
+                        var currentModel = state.cModel;
+
+                        function orModel() {
+                            var args = Array.prototype.slice.call(arguments),
+                                fn = args.shift();
+
+                            return currentModel ||
+                                fn.apply(state, args);
+                        }
+
                         function beforeModel() {
-                            return (state.beforeModel || noop).call(state);
+                            return orModel(state.beforeModel || noop);
                         }
 
                         function model() {
-                            return state.cModel ||
-                                (state.model || noop).call(state, state.cParams);
+                            return orModel(state.model || noop, state.cParams);
                         }
 
                         function afterModel(model) {
+                            var afterModelFn = state.afterModel || noop,
+                                shouldBeCalled = (afterModelFn.lastCallValue !== model) ||
+                                    !state.cRendered,
+                                result;
+
                             state.cModel = model || null;
 
-                            return (state.afterModel || noop).call(state, model);
+                            result = shouldBeCalled ?
+                                afterModelFn.call(state, model) : null;
+                            afterModelFn.lastCallValue = model;
+
+                            return result;
                         }
 
                         return function() {
@@ -670,43 +704,57 @@ function( angular , c6ui ) {
                 this.setMaxListenersWarning(0);
             }
 
-            function Mapper(context, parent, url) {
+            function Route(name, url) {
+                this.name = name;
+                this.url = url;
+                this.matcher = isString(url) ? new RegExp(
+                    '^' +
+                    url.replace(/:[^\/]+/g, '([^\\/]+)')
+                        .replace(/\//g, '\\/') +
+                    '$'
+                ) : null;
+            }
+
+            function Mapper(context, parent) {
                 this.parent = parent;
                 this.context = context;
-                this.url  = isDefined(url) ? url : null;
             }
             Mapper.prototype = {
                 state: function(name, mapFn) {
                     var parent = this.parent,
-                        context = this.context,
-                        url = this.url;
+                        context = this.context;
 
-                    map.push(name + ':state', function() {
-                        var constructor = stateConstructors[name],
-                            initializers = constructor.initializers ||
-                                (constructor.initializers = []);
+                    stateConfigs.relate(parent, name)
+                        .push(name, function() {
+                            var constructor = stateConstructors[name],
+                                initializers = constructor.initializers ||
+                                    (constructor.initializers = []),
+                                routes = (context.routes || {}),
+                                parentUrl = (routes[parent] || {}).url ||
+                                    (context.enableUrlRouting ? '' : null);
 
-                        initializers.push(function(c6State) {
-                            this.cParent = parent && c6State.get(parent);
-                            this.cUrl = url;
-                            this.cModel = null;
-                            this.cTemplate = null;
-                            this.cContext = context.name;
-                            this.cName = name;
-                            this.cParams = null;
+                            initializers.push(function(c6State) {
+                                this.cParent = parent && c6State.get(parent);
+                                this.cUrl = parentUrl;
+                                this.cModel = null;
+                                this.cTemplate = null;
+                                this.cContext = context.name;
+                                this.cName = name;
+                                this.cParams = null;
+                                this.cRendered = false;
+                            });
+
+                            context.stateConstructors[name] = constructor;
+
+                            routes[name] = new Route(name, parentUrl);
                         });
 
-                        context.stateConstructors[name] = constructor;
-                    }, parent && (parent + ':state'));
-
                     if (mapFn) {
-                        mapFn.call(new Mapper(this.context, name, url));
+                        mapFn.call(new Mapper(this.context, name));
                     }
                 },
                 route: function(route, name, mapFn) {
-                    var mapperUrl = this.url,
-                        parent = this.parent,
-                        context = this.context;
+                    var context = this.context;
 
                     if (!this.context.enableUrlRouting) {
                         throw new Error(
@@ -718,12 +766,9 @@ function( angular , c6ui ) {
 
                     this.state(name);
 
-                    map.push(name + ':route', function() {
+                    stateConfigs.push(name, function() {
                         var constructor = stateConstructors[name],
-                            parentRoute = find(context.routes, function(route) {
-                                return route.name === parent;
-                            }),
-                            url = (parentRoute ? parentRoute.url : mapperUrl) + route;
+                            url = context.routes[name].url + route;
 
                         constructor.initializers.push(function() {
                             this.cUrl = url;
@@ -745,29 +790,19 @@ function( angular , c6ui ) {
                             };
                         });
 
-                        context.routes.push({
-                            name: name,
-                            url: url,
-                            matcher: new RegExp(
-                                '^' +
-                                url.replace(/:[^\/]+/g, '([^\\/]+)')
-                                    .replace(/\//g, '\\/') +
-                                '$'
-                            )
-                        });
-                    }, name + ':state');
+                        context.routes[name] = new Route(name, url);
+                    });
 
                     if (mapFn) {
-                        mapFn.call(new Mapper(this.context, name, this.url + route));
+                        mapFn.call(new Mapper(this.context, name));
                     }
                 }
             };
 
-            map = new Thunker();
+            stateConfigs = new Thunker();
 
             this.map = function(context, parent, mapFn) {
-                var mapper,
-                    parentUrl;
+                var mapper;
 
                 switch (arguments.length) {
                 case 1:
@@ -783,10 +818,8 @@ function( angular , c6ui ) {
                 }
 
                 context = contexts[context || 'main'];
-                parent = parent || context.rootState;
-                parentUrl = context.enableUrlRouting ? '' : null;
 
-                mapper = new Mapper(context, parent, parentUrl);
+                mapper = new Mapper(context, parent);
 
                 mapFn.call(mapper);
             };
@@ -823,7 +856,7 @@ function( angular , c6ui ) {
                     name: context,
                     stateConstructors: {},
                     viewDelegates: [],
-                    routes: config.enableUrlRouting ? [] : null,
+                    routes: config.enableUrlRouting ? {} : null,
                     current: null
                 }, config);
 
@@ -833,16 +866,16 @@ function( angular , c6ui ) {
             this.$get = ['$injector',
             function    ( $injector ) {
                 forEach(contexts, function(context) {
-                    if (context.enableUrlRouting) {
-                        (new Mapper(context, null, ''))
-                            .route('', context.rootState);
-                    } else {
-                        (new Mapper(context, null, null))
-                            .state(context.rootState);
-                    }
-                });
+                    this.map(context.name, null, function() {
+                        if (context.enableUrlRouting) {
+                            this.route('', context.rootState);
+                        } else {
+                            this.state(context.rootState);
+                        }
+                    });
+                }, this);
 
-                map.force();
+                stateConfigs.force();
 
                 return $injector.instantiate(C6State);
             }];

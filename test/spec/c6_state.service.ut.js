@@ -167,14 +167,17 @@
                                     .state('Posts.Post', [function() {}])
                                     .state('Posts.Post.Comments', [function() {}])
                                     .state('Posts.Post.Favs', [function() {}])
-                                    .state('Posts.Post.Favs.Stars', [function() {}]);
+                                    .state('Posts.Post.Favs.Stars', [function() {}])
+                                    .state('Comments.Meta', [function() {}]);
                             });
 
                             describe('specifying a parent state', function() {
                                 beforeEach(function() {
                                     c6StateProvider.map('Posts', function() {
                                         this.route('/:postId', 'Posts.Post', function() {
-                                            this.route('/comments', 'Posts.Post.Comments');
+                                            this.route('/comments', 'Posts.Post.Comments', function() {
+                                                this.state('Comments.Meta');
+                                            });
                                         });
                                     });
 
@@ -189,10 +192,12 @@
                                 it('should allow children to be defined under the specified parent', function() {
                                     var postsPost = c6State.get('Posts.Post'),
                                         postsPostComments = c6State.get('Posts.Post.Comments'),
-                                        posts = c6State.get('Posts');
+                                        posts = c6State.get('Posts'),
+                                        meta = c6State.get('Comments.Meta');
 
                                     expect(postsPost.cParent).toBe(posts);
                                     expect(postsPostComments.cUrl).toBe('/posts/:postId/comments');
+                                    expect(meta.cUrl).toBe('/posts/:postId/comments');
                                 });
                             });
 
@@ -382,6 +387,10 @@
 
                             broadcast('/posts/po-e343f/comments/c-a');
                             expect(c6State.goTo).toHaveBeenCalledWith('Comment', null, $location.search());
+
+                            c6State.goTo.calls.all().forEach(function(call) {
+                                expect(call.args[2]).not.toBe($location.search());
+                            });
                         });
 
                         it('if there are multiple route matches, the first state to be mapped should be preferred', function() {
@@ -754,6 +763,7 @@
                                         this.beforeModel = jasmine.createSpy('application.beforeModel()')
                                             .and.returnValue({});
                                         this.model = jasmine.createSpy('application.model()');
+                                        this.afterModel = jasmine.createSpy('application.afterModel()');
                                     })
                                     .state('Posts', function($q) {
                                         this.templateUrl = 'assets/views/posts.html';
@@ -779,7 +789,7 @@
                                     .state('Comments', function() {
                                         this.templateUrl = 'assets/views/posts/post/comments.html';
 
-                                        this.model = jasmine.createSpy('comments.model()');
+                                        this.model = jasmine.createSpy('comments.model()').and.returnValue({});
                                         this.afterModel = jasmine.createSpy('comments.afterModel()');
                                     });
 
@@ -813,9 +823,10 @@
                             describe('the root state', function() {
                                 it('should be resolved', function() {
                                     expect(application.cTemplate).toBe(applicationHTML);
-                                    expect(application.beforeModel).toHaveBeenCalled();
+                                    expect(application.beforeModel).not.toHaveBeenCalled();
                                     expect(application.model).not.toHaveBeenCalled();
                                     expect(application.cModel).toEqual({});
+                                    expect(application.afterModel).toHaveBeenCalled();
                                 });
                             });
 
@@ -826,6 +837,42 @@
 
                                 it('should resolve the beforeModel hook', function() {
                                     expect(posts.beforeModel).toHaveBeenCalled();
+                                });
+
+                                describe('when called again', function() {
+                                    beforeEach(function() {
+                                        $rootScope.$apply(function() {
+                                            posts.beforeModelDeferred.resolve();
+                                        });
+                                        posts.afterModel.calls.reset();
+                                        posts.cModel = null;
+                                    });
+
+                                    describe('when already rendered', function() {
+                                        beforeEach(function() {
+                                            posts.cRendered = true;
+                                            $rootScope.$apply(function() {
+                                                _private.resolveStates([posts]);
+                                            });
+                                        });
+
+                                        it('should not call afterModel()', function() {
+                                            expect(posts.afterModel).not.toHaveBeenCalled();
+                                        });
+                                    });
+
+                                    describe('when not rendered', function() {
+                                        beforeEach(function() {
+                                            posts.cRendered = false;
+                                            $rootScope.$apply(function() {
+                                                _private.resolveStates([posts]);
+                                            });
+                                        });
+
+                                        it('should call afterModel()', function() {
+                                            expect(posts.afterModel).toHaveBeenCalled();
+                                        });
+                                    });
                                 });
 
                                 describe('after beforeModel() resolves', function() {
@@ -912,7 +959,7 @@
                                 });
 
                                 it('should call afterModel()', function() {
-                                    expect(comments.afterModel).toHaveBeenCalledWith(undefined);
+                                    expect(comments.afterModel).toHaveBeenCalledWith({});
                                 });
 
                                 it('should succeed with the family', function() {
@@ -1310,6 +1357,7 @@
                                     expect(application.cContext).toBe('main');
                                     expect(application.cName).toBe('Application');
                                     expect(application.cParams).toEqual({});
+                                    expect(application.cRendered).toBe(false);
                                 });
 
                                 it('should be overwriteable', function() {
@@ -1349,6 +1397,7 @@
                                     expect(home.cContext).toBe('main');
                                     expect(home.cName).toBe('Home');
                                     expect(home.cParams).toBeNull();
+                                    expect(home.cRendered).toBe(false);
                                 });
 
                                 it('should return the same instance', function() {

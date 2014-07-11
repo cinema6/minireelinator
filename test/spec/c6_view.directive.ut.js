@@ -120,7 +120,8 @@
 
                             state = {
                                 cTemplate: 'Hello',
-                                cModel: {}
+                                cModel: {},
+                                cRendered: true
                             };
 
                             spyOn(delegate.parentScope, '$new')
@@ -145,6 +146,10 @@
 
                         it('should $destroy the scope', function() {
                             expect(scope.$destroy).toHaveBeenCalled();
+                        });
+
+                        it('should set cRendered to false', function() {
+                            expect(state.cRendered).toBe(false);
                         });
                     });
 
@@ -355,6 +360,16 @@
                             });
 
                             expect($view.text()).toBe('Template 2');
+                        });
+
+                        it('should set cRendered to true', function() {
+                            var state = {};
+
+                            $scope.$apply(function() {
+                                delegate.render(state);
+                            });
+
+                            expect(state.cRendered).toBe(true);
                         });
 
                         describe('if the same state is rendered twice', function() {
