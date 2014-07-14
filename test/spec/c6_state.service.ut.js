@@ -73,9 +73,9 @@
                                         get();
                                     });
 
-                                    it('should make the root state\'s cUrl \'\'', function() {
+                                    it('should make the root state\'s cUrl \'/\'', function() {
                                         c6State.in('foo', function() {
-                                            expect(c6State.get('Main').cUrl).toBe('');
+                                            expect(c6State.get('Main').cUrl).toBe('/');
                                         });
                                     });
                                 });
@@ -537,9 +537,13 @@
                                             return $location;
                                         }
                                     });
-                                    _private.syncUrl([application, posts, post, comment]);
 
+                                    _private.syncUrl([application, posts, post, comment]);
                                     expect($location.path).toHaveBeenCalledWith('/posts/the-name/content/comments/blah-blah');
+                                    expect(c6State.goTo).not.toHaveBeenCalled();
+
+                                    _private.syncUrl([application]);
+                                    expect($location.path).toHaveBeenCalledWith('/');
                                     expect(c6State.goTo).not.toHaveBeenCalled();
                                 });
 
@@ -1353,7 +1357,7 @@
 
                                     expect(application.cModel).toBeNull();
                                     expect(application.cParent).toBeNull();
-                                    expect(application.cUrl).toBe('');
+                                    expect(application.cUrl).toBe('/');
                                     expect(application.cContext).toBe('main');
                                     expect(application.cName).toBe('Application');
                                     expect(application.cParams).toEqual({});
@@ -1371,7 +1375,7 @@
 
                                     expect(application.templateUrl).toBe('assets/views/app.html');
                                     expect(application.cModel).toBeNull();
-                                    expect(application.cUrl).toBe('');
+                                    expect(application.cUrl).toBe('/');
                                     expect(application.cTemplate).toBeNull();
                                     expect(application.cContext).toBe('main');
                                 });
@@ -1392,7 +1396,7 @@
                                 it('should be decorated with properties', function() {
                                     expect(home.cModel).toBeNull();
                                     expect(home.cParent).toBe(c6State.get('Application'));
-                                    expect(home.cUrl).toBe('');
+                                    expect(home.cUrl).toBe('/');
                                     expect(home.cTemplate).toBeNull();
                                     expect(home.cContext).toBe('main');
                                     expect(home.cName).toBe('Home');

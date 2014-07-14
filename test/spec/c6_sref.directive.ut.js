@@ -26,7 +26,8 @@
                         .state('Posts', function() {})
                         .state('Post', function() {})
                         .state('Comment', function() {})
-                        .state('Like', function() {});
+                        .state('Like', function() {})
+                        .state('Auth', function() {});
 
                     c6StateProvider.config('foo', {
                         rootState: 'Foo'
@@ -37,10 +38,12 @@
                         this.route('/about', 'About', function() {
                             this.route('/team', 'Team');
                         });
-                        this.route('/posts', 'Posts', function() {
-                            this.route('/:postId', 'Post', function() {
-                                this.route('/comments/:commentId', 'Comment', function() {
-                                    this.route('/likes/:likeId', 'Like');
+                        this.state('Auth', function() {
+                            this.route('/posts', 'Posts', function() {
+                                this.route('/:postId', 'Post', function() {
+                                    this.route('/comments/:commentId', 'Comment', function() {
+                                        this.route('/likes/:likeId', 'Like');
+                                    });
                                 });
                             });
                         });
@@ -138,7 +141,7 @@
                     });
 
                     it('should set the href to a URL representation of the state', function() {
-                        expect($sref.attr('href')).toBe('#/about/team');
+                        expect($sref.attr('href')).toBe('/#/about/team');
                     });
 
                     it('should not actually set the href when clicked', function() {
@@ -153,11 +156,13 @@
                         beforeEach(function() {
                             var post = c6State.get('Post'),
                                 comment = c6State.get('Comment'),
-                                like = c6State.get('Like');
+                                like = c6State.get('Like'),
+                                auth = c6State.get('Auth');
 
                             post.cModel = { id: 'p-1' };
                             comment.cModel = { id: 'c-a' };
                             like.cModel = { id: 'l-5' };
+                            auth.cModel = {};
 
                             $scope.$apply(function() {
                                 $scope.state = 'Like';
@@ -165,7 +170,7 @@
                         });
 
                         it('should be a compiled URL', function() {
-                            expect($sref.attr('href')).toBe('#/posts/p-1/comments/c-a/likes/l-5');
+                            expect($sref.attr('href')).toBe('/#/posts/p-1/comments/c-a/likes/l-5');
                         });
 
                         describe('if models are provided', function() {
@@ -176,7 +181,7 @@
                             });
 
                             it('should use the models', function() {
-                                expect($sref.attr('href')).toBe('#/posts/p-1/comments/c-c/likes/l-0');
+                                expect($sref.attr('href')).toBe('/#/posts/p-1/comments/c-c/likes/l-0');
                             });
                         });
                     });

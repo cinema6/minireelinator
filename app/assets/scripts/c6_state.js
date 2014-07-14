@@ -52,7 +52,7 @@ function( angular , c6ui ) {
         params = params || family.reduce(function(params, state, index) {
             var model = allModels[index];
 
-            return model && state.cUrl ?
+            return model && state.cParams ?
                 extend(params, state.serializeParams(model)) : params;
         }, {});
 
@@ -171,7 +171,7 @@ function( angular , c6ui ) {
                                     family = stateFamilyOf(state),
                                     url = urlOfStateFamily(family, models);
 
-                                $element.attr('href', (url || '') && ('#' + url));
+                                $element.attr('href', (url || '') && ('/#' + url));
                             });
                         });
                     }
@@ -409,7 +409,7 @@ function( angular , c6ui ) {
                 }
 
                 function routePathToState() {
-                    var path = $location.path(),
+                    var path = $location.path() || '/',
                         // Find the context that has URL routing enabled
                         context = Object.keys(contexts)
                             .reduce(function(context, contextName) {
@@ -594,7 +594,7 @@ function( angular , c6ui ) {
                         state.cParams = params[index];
                     });
 
-                    if (path) {
+                    if (path !== null) {
                         lastPath = path;
 
                         if (path !== currentPath) {
@@ -768,7 +768,7 @@ function( angular , c6ui ) {
 
                     stateConfigs.push(name, function() {
                         var constructor = stateConstructors[name],
-                            url = context.routes[name].url + route;
+                            url = context.routes[name].url.replace(/\/$/, '') + route;
 
                         constructor.initializers.push(function() {
                             this.cUrl = url;
@@ -868,7 +868,7 @@ function( angular , c6ui ) {
                 forEach(contexts, function(context) {
                     this.map(context.name, null, function() {
                         if (context.enableUrlRouting) {
-                            this.route('', context.rootState);
+                            this.route('/', context.rootState);
                         } else {
                             this.state(context.rootState);
                         }
