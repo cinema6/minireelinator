@@ -1,0 +1,29 @@
+<form class="form__group" name="theForm" id="change_email" ng-submit="EmailCtrl.submit()" c6-alias="AccountCtrl.model as user">
+    <h1 class="form__title">Change your Email </h1>
+    <p class="form__spacer">Current Email : <strong>{{user.email}}</strong> </p>
+    <div class="form__pair">
+        <label class="form__label" for="change_email_addr" >Change Email To:</label>
+        <input class="form__textBox" id="change_email_addr"  type="text" name="email" ng-model="EmailCtrl.email" autocomplete="off" ng-trim="false" ng-minlength="4" ng-maxlength="128" ng-pattern="EmailCtrl.pattern" required>
+        <div class="form__errorBox">
+            <span class="form__errorTxt" ng-show="theForm.email.$error.required"> Required. </span>
+            <span class="form__errorTxt" ng-show="theForm.email.$error.minlength"> Too short. </span>
+            <span class="form__errorTxt" ng-show="theForm.email.$error.maxlength"> Too long. </span>
+            <span class="form__errorTxt" ng-show="theForm.email.$error.pattern"> Invalid email. </span>
+        </div>
+    </div>
+    <div class="form__pair form__spacer">
+        <label class="form__label" for="change_email_password" >Current Password:</label>
+        <input class="form__textBox" id="change_email_password" type="password" name="password" ng-model="EmailCtrl.password" autocomplete="off" required ng-minlength="1" ng-maxlength="128" ng-trim="false">
+        <div class="form__errorBox">
+            <span class="form__errorTxt" ng-show="theForm.password.$error.required"> Required. </span>
+            <span class="form__errorTxt" ng-show="theForm.password.$error.minlength"> Too short. </span>
+            <span class="form__errorTxt" ng-show="theForm.password.$error.maxlength"> Too long. </span>
+        </div>
+    </div>
+    <input type="submit" value="Change Email" 
+        class="form__submitBtn"
+        ng-disabled="((!theForm.$valid) || (EmailCtrl.email === user.email))">
+    <div>
+        <span>{{EmailCtrl.lastMessage}}</span>
+    </div>
+</form>

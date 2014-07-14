@@ -223,8 +223,8 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
             }]);
         }])
 
-        .controller('MiniReelController', ['$log','c6State','tracker',
-        function                          ( $log , c6State , tracker ) {
+        .controller('MiniReelController', ['$scope','$log','c6State','tracker',
+        function                          ( $scope , $log , c6State , tracker ) {
             var self = this;
 
             $log.info('AppCtlr loaded.');
@@ -234,7 +234,7 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
             this.user = null;
 
             this.trackStateChange = function(state){
-                $log.info('trackChange:',state.name);
+                $log.info('trackChange:',state.cName);
                 if ((self.config === null) || (!state.templateUrl)){
                     return;
                 }
@@ -270,12 +270,14 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                     self.config.title + ' - ' + pageObject.title);
             };
 
-            c6State.on('stateChange', function(state) {
-                self.trackStateChange(state);
-            });
+            c6State.on('stateChange', this.trackStateChange);
 
             $log.info('Initialize tracker with:',c6Defines.kTracker);
             tracker.create(c6Defines.kTracker.accountId,c6Defines.kTracker.config);
+
+            $scope.$on('$destroy', function() {
+                c6State.removeListener('stateChange', self.trackStateChange);
+            });
         }])
 
         .directive('embedCode', [function() {

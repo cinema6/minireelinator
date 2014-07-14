@@ -31,9 +31,8 @@ define(['app'], function(appModule) {
                 result = account.model();
             });
 
-            it('should be a copy of the user', function() {
-                expect(result).toEqual(portal.cModel);
-                expect(result).not.toBe(portal.cModel);
+            it('should be the user', function() {
+                expect(result).toBe(portal.cModel);
             });
         });
     });
