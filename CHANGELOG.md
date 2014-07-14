@@ -1,5 +1,9 @@
 # MiniReelinator
 
+## Beta12
+* *[Beta12.rc1]*
+  * [FIX]: Heavy text disabled, light text updated to allow inifinite text
+
 ## Beta11 (June 20, 2014)
 * *[Beta11.rc1]*
   * [FIX]: Fixed an issue that could cause clicking "New Card" to edit
