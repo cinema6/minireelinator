@@ -6,7 +6,6 @@ function( angular , c6ui ) {
         extend = angular.extend,
         equals = angular.equals,
         forEach = angular.forEach,
-        isString = angular.isString,
         copy = angular.copy;
 
     function find(collection, predicate) {
@@ -341,6 +340,82 @@ function( angular , c6ui ) {
                 contexts = {},
                 stateConfigs;
 
+            function List() {
+                this.data = {};
+                this.order = [];
+            }
+            List.prototype = {
+                push: function(key) {
+                    var currentIndex = this.order.indexOf(key),
+                        hasPosition = currentIndex > -1;
+
+                    if (hasPosition) {
+                        this.order.splice(currentIndex, 1);
+                    }
+
+                    return this.set.apply(this, arguments);
+                },
+                set: function(key, value) {
+                    var currentIndex = this.order.indexOf(key),
+                        hasPosition = currentIndex > -1;
+
+                    this.data[key] = value;
+
+                    if (!hasPosition) {
+                        return this.order.push(key);
+                    }
+
+                    return currentIndex;
+                },
+                get: function(key) {
+                    return this.data[key];
+                },
+                nth: function(index) {
+                    return this.data[this.order[index]];
+                },
+                forEach: function(fn, context) {
+                    return this.order.forEach(function(key, index) {
+                        fn.call(context, this.data[key], key, index, this);
+                    }, this);
+                },
+                map: function(fn, context) {
+                    var result = new List();
+
+                    this.forEach(function(value, key) {
+                        result.push(key, fn.apply(this, arguments));
+                    }, context);
+
+                    return result;
+                },
+                filter: function(fn, context) {
+                    var result = new List();
+
+                    this.forEach(function(value, key) {
+                        if (fn.apply(this, arguments)) {
+                            result.push(key, value);
+                        }
+                    }, context);
+
+                    return result;
+                },
+                reduce: function(fn, initialValue) {
+                    var initialSupplied = arguments.length > 1,
+                        result = initialSupplied ? initialValue : this.nth(0);
+
+                    this.forEach(function(item, key, index) {
+                        var args = Array.prototype.slice.call(arguments);
+
+                        if (!initialSupplied && index === 0) {
+                            return;
+                        }
+
+                        result = fn.apply(null, [result].concat(args));
+                    });
+
+                    return result;
+                }
+            };
+
             function Thunker() {
                 this.groups = {};
                 this.map = [];
@@ -419,21 +494,27 @@ function( angular , c6ui ) {
                             }, null),
                         routes = context.routes,
                         // Find the State for this path
-                        route = routes[find(Object.keys(routes), function(name) {
+                        /*route = routes[find(Object.keys(routes), function(name) {
                             var matcher = routes[name].matcher;
 
                             return !!matcher && matcher.test(path);
-                        })],
+                        })],*/
+                        route = routes.reduce(function(route, next) {
+                            var matcher = next.matcher;
+
+                            return route || ((!!matcher && matcher.test(path)) ?
+                                next : route);
+                        }, null),
                         // Get the state object instance for this URL
                         state = self.in(context.name, function() {
                             return self.get(route.name);
                         }),
                         // Get the dynamic segments of the URL in the correct order (according to
                         // the order in the URL.)
-                        keys = (state.cUrl.match(/:[^\/]+/g) || [])
+                        keys = state.cUrl ? (state.cUrl.match(/:[^\/]+/g) || [])
                             .map(function(key) {
                                 return key.substring(1);
-                            }),
+                            }) : [],
                         // Create the paramaters object for this route
                         dynamicParams = (path.match(route.matcher) || [])
                             .slice(1)
@@ -707,12 +788,14 @@ function( angular , c6ui ) {
             function Route(name, url) {
                 this.name = name;
                 this.url = url;
-                this.matcher = isString(url) ? new RegExp(
-                    '^' +
-                    url.replace(/:[^\/]+/g, '([^\\/]+)')
-                        .replace(/\//g, '\\/') +
-                    '$'
-                ) : null;
+                this.matcher = (url === true) ?
+                    /.*/ :
+                    (url || null) && new RegExp(
+                        '^' +
+                        url.replace(/:[^\/]+/g, '([^\\/]+)')
+                            .replace(/\//g, '\\/') +
+                        '$'
+                    );
             }
 
             function Mapper(context, parent) {
@@ -729,8 +812,8 @@ function( angular , c6ui ) {
                             var constructor = stateConstructors[name],
                                 initializers = constructor.initializers ||
                                     (constructor.initializers = []),
-                                routes = (context.routes || {}),
-                                parentUrl = (routes[parent] || {}).url ||
+                                routes = (context.routes || new List()),
+                                parentUrl = (routes.get(parent) || {}).url ||
                                     (context.enableUrlRouting ? '' : null);
 
                             initializers.push(function(c6State) {
@@ -746,7 +829,7 @@ function( angular , c6ui ) {
 
                             context.stateConstructors[name] = constructor;
 
-                            routes[name] = new Route(name, parentUrl);
+                            routes.set(name, new Route(name, parentUrl));
                         });
 
                     if (mapFn) {
@@ -768,11 +851,12 @@ function( angular , c6ui ) {
 
                     stateConfigs.push(name, function() {
                         var constructor = stateConstructors[name],
-                            url = context.routes[name].url.replace(/\/$/, '') + route;
+                            url = (route === true) ? true :
+                                context.routes.get(name).url.replace(/\/$/, '') + route;
 
                         constructor.initializers.push(function() {
-                            this.cUrl = url;
-                            this.cParams = (route.match(/:[^\/]+/g) || [])
+                            this.cUrl = (url === true) ? null : url;
+                            this.cParams = this.cUrl && (route.match(/:[^\/]+/g) || [])
                                 .reduce(function(params, match) {
                                     params[match.substr(1)] = null;
 
@@ -790,7 +874,7 @@ function( angular , c6ui ) {
                             };
                         });
 
-                        context.routes[name] = new Route(name, url);
+                        context.routes.set(name, new Route(name, url));
                     });
 
                     if (mapFn) {
@@ -856,7 +940,7 @@ function( angular , c6ui ) {
                     name: context,
                     stateConstructors: {},
                     viewDelegates: [],
-                    routes: config.enableUrlRouting ? {} : null,
+                    routes: config.enableUrlRouting ? new List() : null,
                     current: null
                 }, config);
 
@@ -868,7 +952,9 @@ function( angular , c6ui ) {
                 forEach(contexts, function(context) {
                     this.map(context.name, null, function() {
                         if (context.enableUrlRouting) {
-                            this.route('/', context.rootState);
+                            this.route('/', context.rootState, function() {
+                                this.route(true, 'Error');
+                            });
                         } else {
                             this.state(context.rootState);
                         }
@@ -880,7 +966,8 @@ function( angular , c6ui ) {
                 return $injector.instantiate(C6State);
             }];
 
-            this.state('Application', noop);
+            this.state('Application', function() {});
+            this.state('Error', function() {});
 
             this.config('main', {
                 rootState: 'Application',

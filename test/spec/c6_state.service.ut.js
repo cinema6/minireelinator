@@ -393,6 +393,16 @@
                             });
                         });
 
+                        it('should match the error state if the route is not found', function() {
+                            broadcast('/dfhs/sdkhf/dsklf');
+                            expect(c6State.goTo).toHaveBeenCalledWith('Error', null, $location.search());
+
+                            c6State.goTo.calls.reset();
+
+                            broadcast('/abc/dskfh');
+                            expect(c6State.goTo).toHaveBeenCalledWith('Error', null, $location.search());
+                        });
+
                         it('if there are multiple route matches, the first state to be mapped should be preferred', function() {
                             broadcast('/settings/');
                             expect(c6State.goTo).toHaveBeenCalledWith('General', null, $location.search());
@@ -472,7 +482,7 @@
                 describe('@private', function() {
                     describe('methods', function() {
                         describe('syncUrl(states)', function() {
-                            var application, posts, auth, post, comment;
+                            var application, posts, auth, post, comment, error;
 
                             function setup() {
                                 get();
@@ -482,6 +492,7 @@
                                 auth = c6State.get('Auth');
                                 post = c6State.get('Post');
                                 comment = c6State.get('Comment');
+                                error = c6State.get('Error');
 
                                 posts.cModel = [];
                                 post.cModel = {
@@ -519,6 +530,7 @@
                                     });
 
                                     setup();
+                                    error.cModel = {};
 
                                     spyOn(c6State, 'goTo').and.callThrough();
                                 });
@@ -545,6 +557,11 @@
                                     _private.syncUrl([application]);
                                     expect($location.path).toHaveBeenCalledWith('/');
                                     expect(c6State.goTo).not.toHaveBeenCalled();
+                                });
+
+                                it('should not change the URL if the final state\'s cUrl is null', function() {
+                                    _private.syncUrl([application, error]);
+                                    expect($location.path).not.toHaveBeenCalledWith(jasmine.any(String));
                                 });
 
                                 it('should not set the path if the path is not changing', function() {
@@ -1349,6 +1366,21 @@
                                 c6StateProvider.state('Post', function() {});
                                 c6StateProvider.state('Sidebar', Sidebar);
                                 c6StateProvider.state('Contacts', Contacts);
+                            });
+
+                            describe('the auto-generated Error state', function() {
+                                it('should be gettable', function() {
+                                    var error = c6State.get('Error');
+
+                                    expect(error).toEqual(jasmine.objectContaining({
+                                        cModel: null,
+                                        cParent: c6State.get('Application'),
+                                        cUrl: null,
+                                        cName: 'Error',
+                                        cParams: null,
+                                        cRendered: false
+                                    }));
+                                });
                             });
 
                             describe('the auto-generated Application state', function() {
