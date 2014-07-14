@@ -39,7 +39,7 @@ function( angular , c6State  , c6ui , fnUtils  ) {
             this.logout = function() {
                 return AuthService.logout()
                     .then(function transition() {
-                        return c6State.goTo('Login');
+                        return c6State.goTo('Login', null, {});
                     });
             };
         }])
