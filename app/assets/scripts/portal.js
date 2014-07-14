@@ -8,7 +8,7 @@ function( angular , c6State  , c6ui , fnUtils  ) {
             c6StateProvider.state('Portal', ['$q','cinema6','c6State','AuthService','fn',
             function                        ( $q , cinema6 , c6State , AuthService , fn ) {
                 this.templateUrl = 'views/portal.html';
-                this.controller = 'GenericController';
+                this.controller = 'PortalController';
                 this.controllerAs = 'PortalCtrl';
 
                 this.model = function() {
@@ -32,6 +32,16 @@ function( angular , c6State  , c6ui , fnUtils  ) {
                     c6State.goTo('Apps');
                 };
             }]);
+        }])
+
+        .controller('PortalController', ['AuthService','c6State',
+        function                        ( AuthService , c6State ) {
+            this.logout = function() {
+                return AuthService.logout()
+                    .then(function transition() {
+                        return c6State.goTo('Login');
+                    });
+            };
         }])
 
         .config(['c6StateProvider',
