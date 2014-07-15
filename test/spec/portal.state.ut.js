@@ -123,6 +123,25 @@ define (['app', 'angular'], function(appModule, angular) {
                 spyOn(cinema6.db, 'find').and.returnValue($q.when(org));
             });
 
+            describe('if the user has no org', function() {
+                beforeEach(function() {
+                    cinema6.db.find.and.returnValue($q.reject('404!!!'));
+                    spyOn(c6State, 'goTo');
+
+                    $rootScope.$apply(function() {
+                        portal.afterModel(user).then(success, failure);
+                    });
+                });
+
+                it('should reject the promise', function() {
+                    expect(failure).toHaveBeenCalledWith('404!!!');
+                });
+
+                it('should transition to the Error state', function() {
+                    expect(c6State.goTo).toHaveBeenCalledWith('Error', [jasmine.any(String)], null, true);
+                });
+            });
+
             [
                 {
                     org: 'o-e7fcd57733d708',

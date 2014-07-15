@@ -26,7 +26,13 @@ function( angular , c6State  , c6ui , fnUtils  ) {
                         .then(function validate(user) {
                             user.applications = user.applications || [];
                             return user;
-                        });
+                        })
+                        .catch(fn.onRejection(function error(reason) {
+                            c6State.goTo('Error', [
+                                'There is a problem with your account. Please contact customer' +
+                                ' service. Message: ' + reason
+                            ], null, true);
+                        }));
                 };
                 this.enter = function() {
                     c6State.goTo('Apps', null, null, true);
