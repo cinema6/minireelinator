@@ -365,28 +365,28 @@
 
                         it('should call goTo based on the path', function() {
                             broadcast('');
-                            expect(c6State.goTo).toHaveBeenCalledWith('Home', null, $location.search());
+                            expect(c6State.goTo).toHaveBeenCalledWith('Home', null, $location.search(), true);
 
                             broadcast('/about');
-                            expect(c6State.goTo).toHaveBeenCalledWith('About', null, $location.search());
+                            expect(c6State.goTo).toHaveBeenCalledWith('About', null, $location.search(), true);
 
                             broadcast('/pages');
-                            expect(c6State.goTo).toHaveBeenCalledWith('Pages', null, $location.search());
+                            expect(c6State.goTo).toHaveBeenCalledWith('Pages', null, $location.search(), true);
 
                             broadcast('/pages/p-1234');
-                            expect(c6State.goTo).toHaveBeenCalledWith('Page', null, $location.search());
+                            expect(c6State.goTo).toHaveBeenCalledWith('Page', null, $location.search(), true);
 
                             broadcast('/posts');
-                            expect(c6State.goTo).toHaveBeenCalledWith('Posts', null, $location.search());
+                            expect(c6State.goTo).toHaveBeenCalledWith('Posts', null, $location.search(), true);
 
                             broadcast('/posts/po-e343f');
-                            expect(c6State.goTo).toHaveBeenCalledWith('Post', null, $location.search());
+                            expect(c6State.goTo).toHaveBeenCalledWith('Post', null, $location.search(), true);
 
                             broadcast('/posts/po-e343f/comments');
-                            expect(c6State.goTo).toHaveBeenCalledWith('Comments', null, $location.search());
+                            expect(c6State.goTo).toHaveBeenCalledWith('Comments', null, $location.search(), true);
 
                             broadcast('/posts/po-e343f/comments/c-a');
-                            expect(c6State.goTo).toHaveBeenCalledWith('Comment', null, $location.search());
+                            expect(c6State.goTo).toHaveBeenCalledWith('Comment', null, $location.search(), true);
 
                             c6State.goTo.calls.all().forEach(function(call) {
                                 expect(call.args[2]).not.toBe($location.search());
@@ -395,17 +395,17 @@
 
                         it('should match the error state if the route is not found', function() {
                             broadcast('/dfhs/sdkhf/dsklf');
-                            expect(c6State.goTo).toHaveBeenCalledWith('Error', null, $location.search());
+                            expect(c6State.goTo).toHaveBeenCalledWith('Error', null, $location.search(), true);
 
                             c6State.goTo.calls.reset();
 
                             broadcast('/abc/dskfh');
-                            expect(c6State.goTo).toHaveBeenCalledWith('Error', null, $location.search());
+                            expect(c6State.goTo).toHaveBeenCalledWith('Error', null, $location.search(), true);
                         });
 
                         it('if there are multiple route matches, the first state to be mapped should be preferred', function() {
                             broadcast('/settings/');
-                            expect(c6State.goTo).toHaveBeenCalledWith('General', null, $location.search());
+                            expect(c6State.goTo).toHaveBeenCalledWith('General', null, $location.search(), true);
                         });
 
                         it('should not call goTo again if the path hasn\'t changed', function() {
@@ -481,7 +481,7 @@
 
                 describe('@private', function() {
                     describe('methods', function() {
-                        describe('syncUrl(states)', function() {
+                        describe('syncUrl(states, replace)', function() {
                             var application, posts, auth, post, comment, error;
 
                             function setup() {
@@ -557,6 +557,16 @@
                                     _private.syncUrl([application]);
                                     expect($location.path).toHaveBeenCalledWith('/');
                                     expect(c6State.goTo).not.toHaveBeenCalled();
+
+                                    expect($location.replace).not.toHaveBeenCalled();
+                                });
+
+                                it('should replace the URL if replace is true', function() {
+                                    $location.path.and.returnValue($location);
+
+                                    _private.syncUrl([application, posts, post, comment], true);
+                                    expect($location.path).toHaveBeenCalledWith('/posts/the-name/content/comments/blah-blah');
+                                    expect($location.replace).toHaveBeenCalled();
                                 });
 
                                 it('should not change the URL if the final state\'s cUrl is null', function() {
@@ -1094,7 +1104,7 @@
                                 expect(c6State.goTo).not.toHaveBeenCalled();
 
                                 c6State._registerView(parentView);
-                                expect(c6State.goTo).toHaveBeenCalledWith('Child', null, {});
+                                expect(c6State.goTo).toHaveBeenCalledWith('Child', null, {}, true);
 
                                 c6State.goTo.calls.reset();
 
@@ -1147,7 +1157,7 @@
                             });
                         });
 
-                        describe('goTo(state, models, params)', function() {
+                        describe('goTo(state, models, params, replace)', function() {
                             var success, failure,
                                 resolveStatesDeferred, renderStatesDeferred,
                                 application, home, about,
@@ -1251,7 +1261,7 @@
                                         });
 
                                         it('should sync the URL', function() {
-                                            expect(_private.syncUrl).toHaveBeenCalledWith([application, home, about]);
+                                            expect(_private.syncUrl).toHaveBeenCalledWith([application, home, about], false);
                                         });
 
                                         describe('in the next $digest()', function() {
@@ -1336,6 +1346,23 @@
 
                                 it('should replace the $location', function() {
                                     expect($location.replace).toHaveBeenCalled();
+                                });
+                            });
+
+                            describe('if called with replace as true', function() {
+                                beforeEach(function() {
+                                    $rootScope.$apply(function() {
+                                        _private.syncUrl.calls.reset();
+
+                                        c6State.goTo('About', null, null, true);
+
+                                        resolveStatesDeferred.resolve([application, about]);
+                                        renderStatesDeferred.resolve([application, about]);
+                                    });
+                                });
+
+                                it('should sync the url with replace as true', function() {
+                                    expect(_private.syncUrl).toHaveBeenCalledWith([application, about], true);
                                 });
                             });
                         });

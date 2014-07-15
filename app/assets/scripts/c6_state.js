@@ -494,11 +494,6 @@ function( angular , c6ui ) {
                             }, null),
                         routes = context.routes,
                         // Find the State for this path
-                        /*route = routes[find(Object.keys(routes), function(name) {
-                            var matcher = routes[name].matcher;
-
-                            return !!matcher && matcher.test(path);
-                        })],*/
                         route = routes.reduce(function(route, next) {
                             var matcher = next.matcher;
 
@@ -547,7 +542,7 @@ function( angular , c6ui ) {
                         }
                     });
 
-                    self.goTo(route.name, null, copy($location.search()));
+                    self.goTo(route.name, null, copy($location.search()), true);
 
                     return true;
                 }
@@ -576,7 +571,7 @@ function( angular , c6ui ) {
                         }, $injector.instantiate(constructor))));
                 };
 
-                this.goTo = queue.wrap(function(stateName, models, params) {
+                this.goTo = queue.wrap(function(stateName, models, params, replace) {
                     var state = this.get(stateName),
                         family = stateFamilyOf(state),
                         statesWithModels = (models && models.length) ?
@@ -588,7 +583,9 @@ function( angular , c6ui ) {
 
                     return _private.resolveStates(family)
                         .then(_private.renderStates)
-                        .then(_private.syncUrl)
+                        .then(function syncUrl(states) {
+                            return _private.syncUrl(states, !!replace);
+                        })
                         .then(nextTick)
                         .then(function updateParams() {
                             return params ? $location.search(params).replace() : $location;
@@ -660,7 +657,7 @@ function( angular , c6ui ) {
                     views.splice(views.indexOf(viewDelegate), 1);
                 };
 
-                _private.syncUrl = function(states) {
+                _private.syncUrl = function(states, replace) {
                     var currentPath = $location.path(),
                         params = states.map(function(state) {
                             return state.cParams ?
@@ -675,11 +672,15 @@ function( angular , c6ui ) {
                         state.cParams = params[index];
                     });
 
-                    if (path !== null) {
-                        lastPath = path;
+                    if (path === null) { return  path; }
 
-                        if (path !== currentPath) {
-                            $location.path(path);
+                    lastPath = path;
+
+                    if (path !== currentPath) {
+                        $location.path(path);
+
+                        if (replace) {
+                            $location.replace();
                         }
                     }
 
