@@ -340,6 +340,17 @@ function( angular , c6ui ) {
                 contexts = {},
                 stateConfigs;
 
+            /**
+             * A data-structure that merges an array (ordered values) with an object (values
+             * accessible by key. Similar to a Map in C++. Includes methods for fetching/setting
+             * data by key, allong with many methods common to arrays.
+             *
+             * The use-case for a List is being able to replace members (by setting a key multiple
+             * times) while maintaining an order for the members.
+             *
+             * @class List
+             * @constructor
+             */
             function List() {
                 this.data = {};
                 this.order = [];
@@ -416,16 +427,43 @@ function( angular , c6ui ) {
                 }
             };
 
+            /**
+             * A Thunker holds a collection of
+             * [thunks](http://en.wikipedia.org/wiki/Thunk#Functional_programming). In addition to
+             * housing thunks, it also sets up parent-child relationships between thunks that
+             * affect the order of evaluation. Child thunks will always be evaluated after their
+             * parent.
+             *
+             * @class Thunker
+             * @constructor
+             */
             function Thunker() {
                 this.groups = {};
                 this.map = [];
             }
             Thunker.prototype = {
+                /**
+                 * Adds a thunk with the provided group id to the collection of thunks.
+                 *
+                 * @method push
+                 * @param {String} group An ID of a group for this thunk
+                 * @param {Function} thunk A function to be called later
+                 * @return {Number} The index of the thunk in the map
+                 */
                 push: function(group, thunk) {
                     var groups = this.groups;
 
                     return (groups[group] || (groups[group] = [])).push(thunk);
                 },
+                /**
+                 * Sets up a parent child relationship between two groups. The thunks in the parent
+                 * group will be called before those in the child group.
+                 *
+                 * @method relate
+                 * @param {String} parent The id of the parent group
+                 * @param {String} child The id of the child group
+                 * @chainable
+                 */
                 relate: function(parent, child) {
                     this.map.push({
                         parent: parent,
@@ -434,6 +472,11 @@ function( angular , c6ui ) {
 
                     return this;
                 },
+                /**
+                 * Executes all of the thunks that have been pushed into this Thunker.
+                 *
+                 * @method force
+                 */
                 force: function() {
                     var map = this.map, groups = this.groups;
 
