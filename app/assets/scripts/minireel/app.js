@@ -218,7 +218,7 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                     return this.cParent.cModel[0];
                 };
                 this.enter = function() {
-                    c6State.goTo('MR:Manager');
+                    c6State.goTo('MR:Manager', null, null, true);
                 };
             }]);
         }])

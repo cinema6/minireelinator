@@ -14,7 +14,7 @@ function( angular , c6State  , c6ui , fnUtils  ) {
                 this.model = function() {
                     return AuthService.checkStatus()
                         .catch(fn.onRejection(function redirect() {
-                            c6State.goTo('Login');
+                            c6State.goTo('Login', null, null, true);
                         }));
                 };
                 this.afterModel = function(user) {
@@ -29,7 +29,7 @@ function( angular , c6State  , c6ui , fnUtils  ) {
                         });
                 };
                 this.enter = function() {
-                    c6State.goTo('Apps');
+                    c6State.goTo('Apps', null, null, true);
                 };
             }]);
         }])
@@ -63,9 +63,9 @@ function( angular , c6State  , c6ui , fnUtils  ) {
                         isMiniReel = fn.partial(fn.is)('mini-reel-maker');
 
                     if (isMiniReel(experience.appUri)) {
-                        goToMiniReel([experience]);
+                        goToMiniReel([experience], null, true);
                     } else {
-                        goToError(['You do not have any supported experiences!']);
+                        goToError(['You do not have any supported experiences!'], null, true);
                     }
                 };
             }]);

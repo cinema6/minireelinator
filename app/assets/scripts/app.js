@@ -256,7 +256,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     this.controllerAs = 'AppCtrl';
 
                     this.enter = function() {
-                        c6State.goTo('Portal');
+                        c6State.goTo('Portal', null, null, true);
                     };
                 }])
 

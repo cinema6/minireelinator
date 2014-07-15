@@ -87,14 +87,14 @@ define(['app'], function(appModule) {
             });
 
             it('should transition to the MiniReel state', function() {
-                expect(c6State.goTo).toHaveBeenCalledWith('MiniReel', [apps.cModel[0]]);
+                expect(c6State.goTo).toHaveBeenCalledWith('MiniReel', [apps.cModel[0]], null, true);
             });
 
             it('should go to the error state if the minireel\'s uri is not "mini-reel-maker"', function() {
                 apps.cModel[0].appUri = 'foo';
                 apps.enter();
 
-                expect(c6State.goTo).toHaveBeenCalledWith('Error', [jasmine.any(String)]);
+                expect(c6State.goTo).toHaveBeenCalledWith('Error', [jasmine.any(String)], null, true);
             });
         });
     });

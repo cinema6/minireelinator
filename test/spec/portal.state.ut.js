@@ -75,7 +75,7 @@ define (['app', 'angular'], function(appModule, angular) {
                 });
 
                 it('should transition to the login state', function() {
-                    expect(c6State.goTo).toHaveBeenCalledWith('Login');
+                    expect(c6State.goTo).toHaveBeenCalledWith('Login', null, null, true);
                 });
             });
         });
@@ -97,7 +97,7 @@ define (['app', 'angular'], function(appModule, angular) {
             });
 
             it('should go to the "Apps" state', function() {
-                expect(c6State.goTo).toHaveBeenCalledWith('Apps');
+                expect(c6State.goTo).toHaveBeenCalledWith('Apps', null, null, true);
             });
         });
 

@@ -27,7 +27,7 @@
                 });
 
                 it('should go to the portal', function() {
-                    expect(c6State.goTo).toHaveBeenCalledWith('Portal');
+                    expect(c6State.goTo).toHaveBeenCalledWith('Portal', null, null, true);
                 });
             });
         });

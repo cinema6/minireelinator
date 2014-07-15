@@ -46,7 +46,7 @@ define (['app'], function(appModule) {
             });
 
             it('should go to the manager state', function() {
-                expect(c6State.goTo).toHaveBeenCalledWith('MR:Manager');
+                expect(c6State.goTo).toHaveBeenCalledWith('MR:Manager', null, null, true);
             });
         });
     });
