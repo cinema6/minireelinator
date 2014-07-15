@@ -90,9 +90,6 @@
                     init: function(angular) {
                         return angular.module('c6.log');
                     }
-                },
-                templates: {
-                    deps: ['angular', 'app']
                 }
             }
         });

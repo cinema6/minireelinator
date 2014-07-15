@@ -1,11 +1,14 @@
-define( ['angular','ngAnimate','minireel/app','account/app','login','portal','c6ui','c6_defines'],
-function( angular , ngAnimate , minireel     , account     , login , portal , c6ui , c6Defines  ) {
+define( ['angular','ngAnimate','minireel/app','account/app','login','portal','c6ui','c6_defines',
+         'templates'],
+function( angular , ngAnimate , minireel     , account     , login , portal , c6ui , c6Defines  ,
+          templates ) {
     'use strict';
 
     var forEach = angular.forEach,
         noop = angular.noop;
 
     return angular.module('c6.app', [
+        templates.name,
         ngAnimate.name,
         account.name,
         minireel.name,
