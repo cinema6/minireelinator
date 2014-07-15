@@ -6,18 +6,27 @@
     module.exports = {
         options: {
             htmlmin: grunt.config.get('htmlmin.options'),
-            module: '<%= settings.appModule %>',
-            prefix: '<%= _version %>/'
+            module: '<%= settings.appModule %>.templates',
+            bootstrap: function(module, script) {
+                return '(' + function(module) {
+                    define( ['angular'],
+                    function( angular ) {
+
+                        return angular.module(module, [])
+                            .run(    ['$templateCache',
+                            function ( $templateCache ) {
+                                /* SCRIPT */
+                            }]);
+                    });
+                }.toString().replace('/* SCRIPT */', script) + '("' + module + '"))';
+            }
         },
         dist: {
             cwd: '<%= settings.appDir %>/assets',
             src: 'views/**/*.html',
-            dest: '.tmp/templates.js'
+            dest: '.tmp/templates.js',
         },
         test: {
-            options: {
-                prefix: ''
-            },
             cwd: '<%= settings.appDir %>/assets',
             src: 'views/**/*.html',
             dest: '.tmp/templates.js'

@@ -117,9 +117,8 @@ module.exports = function(grunt) {
         'copy:dist',
         'ngtemplates:dist',
         'htmlmin:dist',
-        'sed',
-        'cssmin:dist',
-        'uglify:dist'
+        'replace:dist',
+        'requirejs:dist'
     ]);
 
     /*********************************************************************************************
