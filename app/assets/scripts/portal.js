@@ -52,8 +52,8 @@ function( angular , c6State  , c6ui , fnUtils  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Apps', ['c6State','cinema6','fn','$q',
-            function                      ( c6State , cinema6 , fn , $q ) {
+            c6StateProvider.state('Apps', ['c6State','cinema6','$q',
+            function                      ( c6State , cinema6 , $q ) {
                 this.model = function() {
                     var applications = this.cParent.cModel.applications;
 
@@ -62,16 +62,14 @@ function( angular , c6State  , c6ui , fnUtils  ) {
                     }));
                 };
                 this.enter = function() {
-                    var goTo = fn.partial(fn.call)(c6State, 'goTo'),
-                        goToMiniReel = fn.partial(goTo)('MiniReel'),
-                        goToError = fn.partial(goTo)('Error'),
-                        experience = fn.first(this.cModel),
-                        isMiniReel = fn.partial(fn.is)('mini-reel-maker');
+                    var experience = this.cModel[0];
 
-                    if (isMiniReel(experience.appUri)) {
-                        goToMiniReel([experience], null, true);
+                    if (experience.appUri === 'mini-reel-maker') {
+                        c6State.goTo('MiniReel', [experience], null, true);
                     } else {
-                        goToError(['You do not have any supported experiences!'], null, true);
+                        c6State.goTo('Error', [
+                            'You do not have any supported experiences!'
+                        ], null, true);
                     }
                 };
             }]);

@@ -26,16 +26,20 @@ function( angular , c6State  , fnUtils  ) {
             this.submit = function() {
                 var self = this;
 
-                var login = fn.partial(fn.apply)(AuthService, 'login'),
-                    goToPortal = fn.partial(fn.call)(c6State, 'goTo', 'Portal');
-
                 function validate(model) {
-                    return fn.promiseOn(
-                        fn.all(fn.values(model), fn.truthy)
-                    ).then(
-                        fn.value(model),
-                        fn.value(fn.rejectify('Email and password required.'))
-                    );
+                    if (model.email && model.password) {
+                        return $q.when(model);
+                    } else {
+                        return $q.reject('Email and password required.');
+                    }
+                }
+
+                function login(model) {
+                    return AuthService.login(model.email, model.password);
+                }
+
+                function goToPortal(user) {
+                    return c6State.goTo('Portal', [user]);
                 }
 
                 function writeError(error) {
@@ -43,9 +47,8 @@ function( angular , c6State  , fnUtils  ) {
                 }
 
                 return validate(this.model)
-                    .then(fn.value(fn.valuesOfKeys(['email', 'password'], this.model)))
                     .then(login)
-                    .then(fn.onFulfillment(fn.transformArgs(fn.toArray, goToPortal)))
+                    .then(fn.onFulfillment(goToPortal))
                     .catch(fn.onRejection(writeError));
             };
         }])
