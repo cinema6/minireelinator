@@ -14,14 +14,12 @@
     "defaultE2EEnv": "browserstack",
     "s3": {
         "test": {
-            "bucket": "com.cinema6.staging",
-            "collateral": "collateral/",
-            "app": "apps/<%= package.name %>/"
+            "bucket": "com.cinema6.staging.glickm",
+            "app": ""
         },
         "production": {
-            "bucket": "com.cinema6.portal",
-            "collateral": "collateral/",
-            "app": "apps/<%= package.name %>/"
+            "bucket": "com.cinema6.portal.glickm",
+            "app": ""
         }
     }
 }
