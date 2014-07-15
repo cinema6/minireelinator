@@ -200,15 +200,24 @@
                             });
 
                             describe('after the minireel is saved', function() {
+                                var editorMinireel;
+
                                 beforeEach(function() {
                                     newMiniReel.id = 'e-28113695539bd2';
+                                    editorMinireel = {
+                                        id: 'e-aeb7b161e6b5d9'
+                                    };
+
+                                    spyOn(EditorService, 'open').and.returnValue(editorMinireel);
+
                                     $scope.$apply(function() {
                                         saveDeferred.resolve(newMiniReel);
                                     });
                                 });
 
                                 it('should transition to the MR:Editor state, then the MR:Settings.Category state', function() {
-                                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [newMiniReel]);
+                                    expect(EditorService.open).toHaveBeenCalledWith(newMiniReel);
+                                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [editorMinireel]);
                                     expect(c6State.goTo).toHaveBeenCalledWith('MR:Settings.Category');
                                 });
                             });
