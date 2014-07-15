@@ -258,6 +258,16 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     this.enter = function() {
                         c6State.goTo('Portal');
                     };
+                }])
+
+                .state('Error', [function() {
+                    this.controller = 'GenericController';
+                    this.controllerAs = 'ErrorCtrl';
+                    this.templateUrl = 'views/error.html';
+
+                    this.model = function() {
+                        return 'Something went horribly wrong!';
+                    };
                 }]);
 
             c6StateProvider.map(function() {
