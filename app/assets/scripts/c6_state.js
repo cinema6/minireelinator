@@ -788,14 +788,12 @@ function( angular , c6ui ) {
             function Route(name, url) {
                 this.name = name;
                 this.url = url;
-                this.matcher = (url === true) ?
-                    /.*/ :
-                    (url || null) && new RegExp(
-                        '^' +
-                        url.replace(/:[^\/]+/g, '([^\\/]+)')
-                            .replace(/\//g, '\\/') +
-                        '$'
-                    );
+                this.matcher = url ? (url || null) && new RegExp(
+                    '^' +
+                    url.replace(/:[^\/]+/g, '([^\\/]+)')
+                        .replace(/\//g, '\\/') +
+                    '$'
+                ) : /.*/;
             }
 
             function Mapper(context, parent) {
@@ -851,12 +849,12 @@ function( angular , c6ui ) {
 
                     stateConfigs.push(name, function() {
                         var constructor = stateConstructors[name],
-                            url = (route === true) ? true :
+                            url = (route || null) &&
                                 context.routes.get(name).url.replace(/\/$/, '') + route;
 
                         constructor.initializers.push(function() {
-                            this.cUrl = (url === true) ? null : url;
-                            this.cParams = this.cUrl && (route.match(/:[^\/]+/g) || [])
+                            this.cUrl = url;
+                            this.cParams = url && (route.match(/:[^\/]+/g) || [])
                                 .reduce(function(params, match) {
                                     params[match.substr(1)] = null;
 
@@ -953,7 +951,7 @@ function( angular , c6ui ) {
                     this.map(context.name, null, function() {
                         if (context.enableUrlRouting) {
                             this.route('/', context.rootState, function() {
-                                this.route(true, 'Error');
+                                this.route(null, 'Error');
                             });
                         } else {
                             this.state(context.rootState);
