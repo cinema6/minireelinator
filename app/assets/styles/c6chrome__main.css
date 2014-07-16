@@ -4,7 +4,7 @@
     body {
         font-family: 'museo-sans', Arial, Helvetica, sans-serif; 
         font-size: 100%; font-weight:300; line-height: 1.5;
-        background:#262626; color:#646464;
+        background:#fff; color:#646464;
         margin:0;
     }
     html, body {
@@ -72,12 +72,12 @@
     .hidden {
         visibility: hidden;
     }
-    .sprite--alpha {
+    .c6Sprite--alpha {
         background:url('../img/sprite--alpha@2x.png') 0 0 / 25rem 6.25rem no-repeat;
         border:0; margin:0; padding:0; overflow: hidden;
         font-size:1rem; line-height: 1;
     }
-    .sprite--fff {
+    .c6Sprite--fff {
         background:url('../img/sprite--white@2x.png') 0 0 / 50rem 33.25rem no-repeat;
         border:0; margin:0; padding:0; overflow: hidden;
         font-size:1rem; line-height: 1;
@@ -97,12 +97,9 @@
         background-position:0 -2.8125em; display:block;
         width:1.5em; height:1.5em;
     }
-    .ui__viewHolder {
-        background:#eee; 
+    .ui__viewHolder--extend {
+        min-height:80%;
     }
-        .ui__viewHolder--extend {
-            min-height:80%;
-        }
     .ui__viewFrame {
         display:block;
         border:0;
@@ -293,7 +290,7 @@
             .mast__title {
                 font-size:1em; font-weight:300; text-align: center;
                 width:100%;
-                position:absolute; z-index: -1;
+                position:absolute;
                 margin:1.1875em 0 0 0;
             }
     @media screen and (max-width:42em) {
@@ -313,7 +310,6 @@
     ========================================================================== */
     .userPane__group {
         display: block;
-        background: red;
         float:right;
     }
         .userPane__display {
@@ -476,5 +472,4 @@
     .footer__group {
         padding:0.875rem 0 0.8125rem 0;
         color:#7d7d7d; text-align: center; font-size:0.75em;
-        background:#262626;
     }
