@@ -311,6 +311,7 @@
     .userPane__group {
         display: block;
         float:right;
+        position: relative; z-index:5;
     }
         .userPane__display {
             float:left; margin:1.1875em 0 0 0;
