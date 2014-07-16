@@ -1012,6 +1012,8 @@
             }
                 .toolbar__btn:hover, .modal__btn:hover {
                     background:#13a2ff;
+                    color:#fff;
+                    border:0;
                 }
                 .toolbar__btn--disabled, .modal__btn--disabled,
                 .toolbar__btn:disabled, .modal__btn:disabled {
