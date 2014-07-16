@@ -42,78 +42,63 @@
             baseUrl: '/base/' + appDir + '/assets/scripts',
 
             paths: {
-                angular: libUrl('angular/v1.2.14-0-g729fb13/angular'),
-                angularMocks: libUrl('angular/v1.2.14-0-g729fb13/angular-mocks'),
-                jquery: libUrl('jquery/2.0.3-0-gf576d00/jquery'),
+                async: 'lib/async',
+                youtube: 'lib/youtube',
+                jquery: libUrl('jquery/2.0.3-0-gf576d00/jquery.min'),
+                hammer: libUrl('hammer.js/1.0.9-0-g308cb9a/hammer.min'),
                 modernizr: libUrl('modernizr/modernizr.custom.71747'),
-                tweenmax: libUrl('gsap/1.11.2-0-g79f8c87/TweenMax.min'),
-                timelinemax: libUrl('gsap/1.11.2-0-g79f8c87/TimelineMax.min'),
-                c6ui: libUrl('c6ui/v2.6.4-0-g0df471c/c6uilib'),
-                c6log: libUrl('c6ui/v2.6.4-0-g0df471c/c6log'),
-                sha1: libUrl('cryptojs/v3.1.2/sha1'),
-                hammer: libUrl('hammer.js/1.0.9-0-g308cb9a/hammer'),
+                cryptojs: libUrl('cryptojs/v3.1.2/sha1'),
+                angular: libUrl('angular/v1.2.14-0-g729fb13/angular'),
+                ngMock: libUrl('angular/v1.2.14-0-g729fb13/angular-mocks'),
+                ngAnimate: libUrl('angular/v1.2.14-0-g729fb13/angular-animate'),
+                c6ui: libUrl('c6ui/v2.6.4-0-g0df471c/c6uilib.min'),
+                c6log: libUrl('c6ui/v2.6.4-0-g0df471c/c6log.min'),
                 templates: '/base/.tmp/templates',
                 'helpers/drag': '/base/test/helpers/drag'
             },
-
             shim: {
+                modernizr: {
+                    exports: 'Modernizr'
+                },
+                cryptojs: {
+                    exports: 'CryptoJS'
+                },
                 angular: {
-                    deps: ['jquery']
+                    deps: ['jquery'],
+                    exports: 'angular'
                 },
-                angularMocks: {
-                    deps: ['angular']
+                ngAnimate: {
+                    deps: ['angular'],
+                    init: function(angular) {
+                        return angular.module('ngAnimate');
+                    }
                 },
-                timelinemax: {
-                    deps: ['tweenmax']
-                },
-                uirouter: {
-                    deps: ['angular']
+                ngMock: {
+                    deps: ['angular'],
+                    init: function(angular) {
+                        return angular.module('ngMock');
+                    }
                 },
                 c6ui: {
-                    deps: ['angular']
+                    deps: ['angular'],
+                    init: function(angular) {
+                        return angular.module('c6.ui');
+                    }
                 },
                 c6log: {
-                    deps: ['c6ui']
-                },
-                templates: {
-                    deps: ['app']
-                },
-                app: {
-                    deps: ['angular', 'angularMocks', 'modernizr', 'timelinemax', 'c6ui', 'c6_state', 'c6log', 'sha1', 'hammer']
-                },
-                services: {
-                    deps: ['angularMocks']
-                },
-                'c6_state.old': {
-                    deps: ['angularMocks']
-                },
-                c6_state: {
-                    deps: ['services']
-                },
-                c6_drag: {
-                    deps: ['angular', 'angularMocks', 'hammer']
-                },
-                manager: {
-                    deps: ['app']
-                },
-                editor: {
-                    deps: ['app']
-                },
-                players: {
-                    deps: ['app']
-                },
-                card_table: {
-                    deps: ['app', 'c6_drag']
+                    deps: ['angular'],
+                    init: function(angular) {
+                        return angular.module('c6.log');
+                    }
                 }
-            },
-
-            priority: [
-                'angular'
-            ],
-
-            deps: tests,
-
-            callback: $window.__karma__.start
+            }
         });
+
+        require(['c6_defines','ngMock'], function(c6Defines) {
+            c6Defines.kHasKarma = true;
+
+            require(tests, $window.__karma__.start);
+        });
+
     };
 }(window));

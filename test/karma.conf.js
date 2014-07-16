@@ -15,7 +15,7 @@ module.exports = function(config) {
             { pattern: 'settings.json', included: false },
             { pattern: (settings.appDir + '/assets/scripts/**/*.js'), included: false },
             { pattern: '.tmp/templates.js', included: false },
-            { pattern: 'test/spec/*.js', included: false },
+            { pattern: 'test/spec/**/*.js', included: false },
             { pattern: 'test/helpers/*.js', included: false },
             'test/test-main.js'
         ],

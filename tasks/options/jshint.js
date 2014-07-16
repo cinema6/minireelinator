@@ -7,7 +7,8 @@
         },
         all: [
             'Gruntfile.js',
-            '<%= settings.appDir %>/assets/scripts/**/*.js'
+            '<%= settings.appDir %>/assets/scripts/**/*.js',
+            '!<%= settings.appDir %>/assets/scripts/lib/**/*.js'
         ]
     };
 })();

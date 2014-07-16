@@ -1,0 +1,71 @@
+<main c6-alias="ManagerCtrl.model as minireels">
+<header class="pageHeader container">
+    <h1 class="pageTitle">Dashboard</h1>
+    <div class="pageHeader__actions clearfix">
+        <ul class="filters__list">
+            <li class="filters__item">
+                <button ng-click="ManagerCtrl.filter = 'all'" ng-class="{'filtersBtn__showAll--active': ManagerCtrl.filter === 'all'}" class="filters__btn filtersBtn__showAll" type="button" title="Show All">Show All</button>
+            </li>
+            <li class="filters__item">
+                <button ng-click="ManagerCtrl.filter = 'active'" ng-class="{'filtersBtn__published--active': ManagerCtrl.filter === 'active'}" class="filters__btn filtersBtn__published" type="button" title="Published">Published</button>
+            </li>
+            <li class="filters__item">
+                <button ng-click="ManagerCtrl.filter = 'pending'" ng-class="{'filtersBtn__private--active': ManagerCtrl.filter === 'pending'}" class="filters__btn filtersBtn__private" type="button" title="Private">Private</button>
+            </li>
+        </ul>
+        <ul class="toolbar__group">
+            <li class="toolbar__item">
+                <button c6-sref="MR:New.General" class="toolbar__btn toolbar__newMiniReel" type="button"><span class="ui__plus sprite--alpha">&nbsp;</span>New MiniReel</button>
+            </li>
+        </ul>
+    </div>
+    <span class="ui__divider--border"><br></span>
+</header>
+
+<div class="container miniReels__group">
+    <ul class="miniReels__list grid">
+        <li class="miniReels__item grid__item" ng-show="!minireels.length">
+            <article class="miniReel__group miniReelCreator" c6-sref="MR:New.General">
+                <div class="miniReel__body">
+                    <h1 class="miniReel__title"><span class="miniReel__titleText">Create a MiniReel</span></h1>
+                </div>
+            </article>
+        </li>
+
+        <li class="miniReels__item grid__item" ng-repeat="this in minireels | filter:ManagerCtrl.determineInclusionWithFilter track by this.id">
+            <article class="miniReel__group">
+                <div class="miniReel__status miniReel__status--{{this.status}}">
+                    <strong ng-show="this.status === 'active'" class="statusText">
+                        Published
+                    </strong>
+                    <strong ng-show="this.status === 'pending'" class="statusText">
+                        Private
+                    </strong> 
+                    {{this.lastModified | date:'M/d/yyyy'}}
+                </div>
+                <div class="miniReel__body" ng-click="ManagerCtrl.edit(this)">
+                    <div class="miniReel__imgBox"
+                        c6-bg-img="{{this.data.collateral.splash}}">
+                        &nbsp;
+                    </div>
+                    <div class="miniReel__copy">
+                        <h1 class="miniReel__title">
+                            <span class="miniReel__titleText">{{this.data.title}}</span>
+                            <span class="miniReel__type">{{ManagerCtrl.modeNameFor(this)}}</span>
+                        </h1>
+                    </div>
+                </div>
+                <form class="miniReel__quickActions">
+                    <button ng-show="this.status === 'active'" ng-click="ManagerCtrl.makePrivate(this)" class="quickActions__btn" type="button">Make Private</button>
+                    <button ng-show="this.status === 'pending'" ng-click="ManagerCtrl.makePublic(this)" class="quickActions__btn" type="button">Make Public</button> &nbsp;|&nbsp; 
+                    <span ng-show="this.status === 'active'"><button c6-sref="MR:Manager.Embed" c6-models="[this]" class="quickActions__btn" type="button">Embed</button> &nbsp;|&nbsp; </span>
+                    <button ng-click="ManagerCtrl.copy(this)" class="quickActions__btn" type="button">Copy</button> &nbsp;|&nbsp; 
+                    <button ng-click="ManagerCtrl.remove(this)" class="quickActions__btn quickActions__delete" type="button">Delete</button>
+                </form>
+            </article>
+        </li>
+    </ul>
+    <p ng-show="!minireels.length">You have no Mini Reels. Would you like to <a c6-sref="MR:New.General" title="Create A MiniReel">create one?</a></p>
+</div>
+</main>
+<c6-view></c6-view>

@@ -1,39 +1,46 @@
 (function() {
     'use strict';
 
-    var grunt = require('grunt'),
-        c6Sandbox = require('c6-sandbox');
-
     module.exports = {
         options: {
-            hostname: '0.0.0.0'
+            hostname: '*'
         },
-        sandbox: {
+        app: {
             proxies: [
                 {
                     context: '/api',
+                    host: '<%= personal.apiHost %>',
+                    changeOrigin: true
+                },
+                {
+                    context: '/collateral',
                     host: '<%= personal.apiHost %>',
                     changeOrigin: true
                 }
             ],
             options: {
                 port: '<%= settings.sandboxPort %>',
-                middleware: function() {
+                middleware: function(connect) {
                     return [
-                        require('connect-livereload')(),
-                        c6Sandbox({
-                            landingContentDir: grunt.template.process('<%= settings.collateralDir %>'),
-                            experiences: grunt.config.process(
-                                grunt.file.readJSON(
-                                    grunt.template.process('<%= settings.experiencesJSON %>')
-                                )
-                            ),
-                            users: grunt.config.process(
-                                grunt.file.readJSON(
-                                    grunt.template.process('<%= settings.usersJSON %>')
-                                )
-                            )
-                        })
+                        require('grunt-connect-proxy/lib/utils').proxyRequest,
+                        require('connect-livereload')({
+                            rules: [
+                                {
+                                    match: /<!--C6INJECT-->/,
+                                    fn: function(match, snippet) {
+                                        return [
+                                            snippet,
+                                            '<script>',
+                                            '(' + function(window) {
+                                                window.DEBUG = true;
+                                            }.toString() + '(window))',
+                                            '</script>'
+                                        ].join('\n');
+                                    }
+                                }
+                            ]
+                        }),
+                        connect.static('app')
                     ];
                 }
             }
