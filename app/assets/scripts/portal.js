@@ -1,21 +1,22 @@
-define( ['angular','c6_state','c6ui','fn_utils'],
-function( angular , c6State  , c6ui , fnUtils  ) {
+define( ['angular','c6_state','c6ui'],
+function( angular , c6State  , c6ui ) {
     'use strict';
 
-    return angular.module('c6.app.portal', [c6State.name, c6ui.name, fnUtils.name])
+    return angular.module('c6.app.portal', [c6State.name, c6ui.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Portal', ['$q','cinema6','c6State','AuthService','fn',
-            function                        ( $q , cinema6 , c6State , AuthService , fn ) {
+            c6StateProvider.state('Portal', ['$q','cinema6','c6State','AuthService',
+            function                        ( $q , cinema6 , c6State , AuthService ) {
                 this.templateUrl = 'views/portal.html';
                 this.controller = 'PortalController';
                 this.controllerAs = 'PortalCtrl';
 
                 this.model = function() {
                     return AuthService.checkStatus()
-                        .catch(fn.onRejection(function redirect() {
+                        .catch(function redirect(reason) {
                             c6State.goTo('Login', null, null, true);
-                        }));
+                            return $q.reject(reason);
+                        });
                 };
                 this.afterModel = function(user) {
                     return cinema6.db.find('org', user.org)
@@ -27,12 +28,13 @@ function( angular , c6State  , c6ui , fnUtils  ) {
                             user.applications = user.applications || [];
                             return user;
                         })
-                        .catch(fn.onRejection(function error(reason) {
+                        .catch(function error(reason) {
                             c6State.goTo('Error', [
                                 'There is a problem with your account. Please contact customer' +
                                 ' service. Message: ' + reason
                             ], null, true);
-                        }));
+                            return $q.reject(reason);
+                        });
                 };
                 this.enter = function() {
                     c6State.goTo('Apps', null, null, true);
@@ -52,8 +54,8 @@ function( angular , c6State  , c6ui , fnUtils  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Apps', ['c6State','cinema6','fn','$q',
-            function                      ( c6State , cinema6 , fn , $q ) {
+            c6StateProvider.state('Apps', ['c6State','cinema6','$q',
+            function                      ( c6State , cinema6 , $q ) {
                 this.model = function() {
                     var applications = this.cParent.cModel.applications;
 
@@ -62,16 +64,14 @@ function( angular , c6State  , c6ui , fnUtils  ) {
                     }));
                 };
                 this.enter = function() {
-                    var goTo = fn.partial(fn.call)(c6State, 'goTo'),
-                        goToMiniReel = fn.partial(goTo)('MiniReel'),
-                        goToError = fn.partial(goTo)('Error'),
-                        experience = fn.first(this.cModel),
-                        isMiniReel = fn.partial(fn.is)('mini-reel-maker');
+                    var experience = this.cModel[0];
 
-                    if (isMiniReel(experience.appUri)) {
-                        goToMiniReel([experience], null, true);
+                    if (experience.appUri === 'mini-reel-maker') {
+                        c6State.goTo('MiniReel', [experience], null, true);
                     } else {
-                        goToError(['You do not have any supported experiences!'], null, true);
+                        c6State.goTo('Error', [
+                            'You do not have any supported experiences!'
+                        ], null, true);
                     }
                 };
             }]);

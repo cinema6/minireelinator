@@ -2,10 +2,6 @@
     /* global requirejs */
     'use strict';
 
-    var c6 = window.c6 = {};
-
-    c6.kLogLevels = ['error','warn','log','info'];
-
     requirejs.config({
         baseUrl: 'scripts',
         paths: {

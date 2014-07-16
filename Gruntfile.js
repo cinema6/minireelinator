@@ -137,7 +137,6 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('publish', 'upload the collateral assets and app to s3', function(target) {
-        grunt.task.run('publish:collateral:' + target);
         grunt.task.run('publish:app:' + target);
     });
 };

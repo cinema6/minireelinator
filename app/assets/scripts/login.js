@@ -1,8 +1,8 @@
-define( ['angular','c6_state','fn_utils'],
-function( angular , c6State  , fnUtils  ) {
+define( ['angular','c6_state'],
+function( angular , c6State  ) {
     'use strict';
 
-    return angular.module('c6.app.login', [c6State.name, fnUtils.name])
+    return angular.module('c6.app.login', [c6State.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Login', [function() {
@@ -19,34 +19,39 @@ function( angular , c6State  , fnUtils  ) {
             }]);
         }])
 
-        .controller('LoginController', ['$q','fn','AuthService','c6State',
-        function                       ( $q , fn , AuthService , c6State ) {
+        .controller('LoginController', ['$q','AuthService','c6State',
+        function                       ( $q , AuthService , c6State ) {
             this.error = null;
 
             this.submit = function() {
                 var self = this;
 
-                var login = fn.partial(fn.apply)(AuthService, 'login'),
-                    goToPortal = fn.partial(fn.call)(c6State, 'goTo', 'Portal');
-
                 function validate(model) {
-                    return fn.promiseOn(
-                        fn.all(fn.values(model), fn.truthy)
-                    ).then(
-                        fn.value(model),
-                        fn.value(fn.rejectify('Email and password required.'))
-                    );
+                    if (model.email && model.password) {
+                        return $q.when(model);
+                    } else {
+                        return $q.reject('Email and password required.');
+                    }
+                }
+
+                function login(model) {
+                    return AuthService.login(model.email, model.password);
+                }
+
+                function goToPortal(user) {
+                    c6State.goTo('Portal', [user]);
+                    return user;
                 }
 
                 function writeError(error) {
                     self.error = error;
+                    return $q.reject(error);
                 }
 
                 return validate(this.model)
-                    .then(fn.value(fn.valuesOfKeys(['email', 'password'], this.model)))
                     .then(login)
-                    .then(fn.onFulfillment(fn.transformArgs(fn.toArray, goToPortal)))
-                    .catch(fn.onRejection(writeError));
+                    .then(goToPortal)
+                    .catch(writeError);
             };
         }])
 

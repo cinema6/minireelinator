@@ -64,7 +64,7 @@ function( angular , c6ui , c6State  , services          ) {
                                 return minireel.save();
                             })
                             .then(function editCopy(minireel) {
-                                c6State.goTo('MR:Editor', [minireel]);
+                                c6State.goTo('MR:Editor', [EditorService.open(minireel)]);
                                 c6State.goTo('MR:Settings.Category');
                             });
                     },
