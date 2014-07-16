@@ -1,21 +1,22 @@
-define( ['angular','c6_state','c6ui','fn_utils'],
-function( angular , c6State  , c6ui , fnUtils  ) {
+define( ['angular','c6_state','c6ui'],
+function( angular , c6State  , c6ui ) {
     'use strict';
 
-    return angular.module('c6.app.portal', [c6State.name, c6ui.name, fnUtils.name])
+    return angular.module('c6.app.portal', [c6State.name, c6ui.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Portal', ['$q','cinema6','c6State','AuthService','fn',
-            function                        ( $q , cinema6 , c6State , AuthService , fn ) {
+            c6StateProvider.state('Portal', ['$q','cinema6','c6State','AuthService',
+            function                        ( $q , cinema6 , c6State , AuthService ) {
                 this.templateUrl = 'views/portal.html';
                 this.controller = 'PortalController';
                 this.controllerAs = 'PortalCtrl';
 
                 this.model = function() {
                     return AuthService.checkStatus()
-                        .catch(fn.onRejection(function redirect() {
+                        .catch(function redirect(reason) {
                             c6State.goTo('Login', null, null, true);
-                        }));
+                            return $q.reject(reason);
+                        });
                 };
                 this.afterModel = function(user) {
                     return cinema6.db.find('org', user.org)
@@ -27,12 +28,13 @@ function( angular , c6State  , c6ui , fnUtils  ) {
                             user.applications = user.applications || [];
                             return user;
                         })
-                        .catch(fn.onRejection(function error(reason) {
+                        .catch(function error(reason) {
                             c6State.goTo('Error', [
                                 'There is a problem with your account. Please contact customer' +
                                 ' service. Message: ' + reason
                             ], null, true);
-                        }));
+                            return $q.reject(reason);
+                        });
                 };
                 this.enter = function() {
                     c6State.goTo('Apps', null, null, true);

@@ -1,8 +1,8 @@
-define( ['angular','c6_state','fn_utils'],
-function( angular , c6State  , fnUtils  ) {
+define( ['angular','c6_state'],
+function( angular , c6State  ) {
     'use strict';
 
-    return angular.module('c6.app.login', [c6State.name, fnUtils.name])
+    return angular.module('c6.app.login', [c6State.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Login', [function() {
@@ -19,8 +19,8 @@ function( angular , c6State  , fnUtils  ) {
             }]);
         }])
 
-        .controller('LoginController', ['$q','fn','AuthService','c6State',
-        function                       ( $q , fn , AuthService , c6State ) {
+        .controller('LoginController', ['$q','AuthService','c6State',
+        function                       ( $q , AuthService , c6State ) {
             this.error = null;
 
             this.submit = function() {
@@ -39,17 +39,19 @@ function( angular , c6State  , fnUtils  ) {
                 }
 
                 function goToPortal(user) {
-                    return c6State.goTo('Portal', [user]);
+                    c6State.goTo('Portal', [user]);
+                    return user;
                 }
 
                 function writeError(error) {
                     self.error = error;
+                    return $q.reject(error);
                 }
 
                 return validate(this.model)
                     .then(login)
-                    .then(fn.onFulfillment(goToPortal))
-                    .catch(fn.onRejection(writeError));
+                    .then(goToPortal)
+                    .catch(writeError);
             };
         }])
 
