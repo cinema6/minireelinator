@@ -1,9 +1,8 @@
 # MiniReelinator
 
-## Beta12
 * *[Beta12.rc1]*
   * [FIX]: Fixed CSS bugs from merging glickm into minireelinator
-* *[/Beta12.rc1]*
+  * [FEATURE]: Splash image can now be downlaoded via the UI
 
 ## Beta11 (June 20, 2014)
 * *[Beta11.rc1]*
