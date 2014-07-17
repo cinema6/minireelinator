@@ -19,12 +19,10 @@
   "smarttabs": true,
   "maxlen": 100,
   "globals": {
-    "__C6_APP_BASE_URL__" : true,
-    "__dirname" : true,
-    "angular": false,
-    "ga": true,
-    "module" : true,
-    "process" : true,
-    "require" : true
+    "require"   : true,
+    "define"    : true,
+    "module"    : true,
+    "process"   : true,
+    "__dirname" : true
   }
 }

@@ -47,8 +47,8 @@ module.exports = function(grunt) {
      *********************************************************************************************/
 
     grunt.registerTask('server', 'start a development server', [
-        'configureProxies:sandbox',
-        'connect:sandbox',
+        'configureProxies:app',
+        'connect:app',
         'open:server',
         'watch:livereload'
     ]);
@@ -117,9 +117,8 @@ module.exports = function(grunt) {
         'copy:dist',
         'ngtemplates:dist',
         'htmlmin:dist',
-        'sed',
-        'cssmin:dist',
-        'uglify:dist'
+        'replace:dist',
+        'requirejs:dist'
     ]);
 
     /*********************************************************************************************
@@ -138,7 +137,6 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('publish', 'upload the collateral assets and app to s3', function(target) {
-        grunt.task.run('publish:collateral:' + target);
         grunt.task.run('publish:app:' + target);
     });
 };

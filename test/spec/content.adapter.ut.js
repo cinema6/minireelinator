@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['app'], function() {
+    define(['app'], function(appModule) {
         /* global angular:true */
         var copy = angular.copy,
             extend = angular.extend;
@@ -13,7 +13,7 @@
             var $httpBackend;
 
             beforeEach(function() {
-                module('c6.mrmaker');
+                module(appModule.name);
 
                 inject(function($injector) {
                     ContentAdapter = $injector.get('ContentAdapter');

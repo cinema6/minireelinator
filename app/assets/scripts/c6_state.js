@@ -1,11 +1,18 @@
-(function() {
+define( ['angular','c6ui'],
+function( angular , c6ui ) {
     'use strict';
 
     var noop = angular.noop,
         extend = angular.extend,
-        isDefined = angular.isDefined,
         equals = angular.equals,
-        forEach = angular.forEach;
+        forEach = angular.forEach,
+        copy = angular.copy;
+
+    function find(collection, predicate) {
+        return collection.reduce(function(result, next) {
+            return result || (predicate(next) ? next : result);
+        }, null);
+    }
 
     function mixin(instance, constructor) {
         var args = Array.prototype.slice.call(arguments, 2);
@@ -44,7 +51,7 @@
         params = params || family.reduce(function(params, state, index) {
             var model = allModels[index];
 
-            return model && state.cUrl ?
+            return model && state.cParams ?
                 extend(params, state.serializeParams(model)) : params;
         }, {});
 
@@ -53,7 +60,61 @@
         }, family[family.length - 1].cUrl);
     }
 
-    angular.module('c6.state', ['c6.mrmaker.services'])
+    return angular.module('c6.state', [c6ui.name])
+        .factory('c6AsyncQueue', ['$q',
+        function                 ( $q ) {
+            function allSettled(promises) {
+                var results = [],
+                    total = promises.length,
+                    deferred = $q.defer();
+
+                if (!total) {
+                    deferred.resolve(results);
+                }
+
+                forEach(promises, function(promise, index) {
+                    promise.finally(function(result) {
+                        results[index] = result;
+
+                        if (results.length === total) {
+                            deferred.resolve(results);
+                        }
+                    });
+                });
+
+                return deferred.promise;
+            }
+
+            function Queue() {
+                this.queue = [];
+            }
+            Queue.prototype = {
+                wrap: function(fn, context) {
+                    var queue = this.queue;
+
+                    return function() {
+                        var args = arguments,
+                            promise = allSettled(queue)
+                                .then(function apply() {
+                                    return fn.apply(context, args);
+                                });
+
+                        queue.push(promise);
+
+                        promise.finally(function() {
+                            queue.splice(queue.indexOf(promise), 1);
+                        });
+
+                        return promise;
+                    };
+                }
+            };
+
+            return function() {
+                return new Queue();
+            };
+        }])
+
         .directive('c6Sref', ['c6State','$animate',
         function             ( c6State , $animate ) {
             return {
@@ -109,7 +170,7 @@
                                     family = stateFamilyOf(state),
                                     url = urlOfStateFamily(family, models);
 
-                                $element.attr('href', (url || '') && ('#' + url));
+                                $element.attr('href', (url || '') && ('/#' + url));
                             });
                         });
                     }
@@ -230,6 +291,7 @@
 
                         $animate.enter($clone, null, $view);
                     });
+                    state.cRendered = true;
                     this.state = state;
                     this.model = state.cModel;
                 },
@@ -240,6 +302,7 @@
 
                     if (this.state) {
                         this.state.cModel = null;
+                        this.state.cRendered = false;
                     }
 
                     if (this.scope) {
@@ -275,17 +338,171 @@
         .provider('c6State', [function() {
             var stateConstructors = {},
                 contexts = {},
-                map = [];
+                stateConfigs;
 
-            function processMap(map) {
-                var mapper;
-
-                /* jshint boss:true */
-                while (mapper = map.shift()) {
-                /* jshint boss:false */
-                    mapper();
-                }
+            /**
+             * A data-structure that merges an array (ordered values) with an object (values
+             * accessible by key. Similar to a Map in C++. Includes methods for fetching/setting
+             * data by key, allong with many methods common to arrays.
+             *
+             * The use-case for a List is being able to replace members (by setting a key multiple
+             * times) while maintaining an order for the members.
+             *
+             * @class List
+             * @constructor
+             */
+            function List() {
+                this.data = {};
+                this.order = [];
             }
+            List.prototype = {
+                push: function(key) {
+                    var currentIndex = this.order.indexOf(key),
+                        hasPosition = currentIndex > -1;
+
+                    if (hasPosition) {
+                        this.order.splice(currentIndex, 1);
+                    }
+
+                    return this.set.apply(this, arguments);
+                },
+                set: function(key, value) {
+                    var currentIndex = this.order.indexOf(key),
+                        hasPosition = currentIndex > -1;
+
+                    this.data[key] = value;
+
+                    if (!hasPosition) {
+                        return this.order.push(key);
+                    }
+
+                    return currentIndex;
+                },
+                get: function(key) {
+                    return this.data[key];
+                },
+                nth: function(index) {
+                    return this.data[this.order[index]];
+                },
+                forEach: function(fn, context) {
+                    return this.order.forEach(function(key, index) {
+                        fn.call(context, this.data[key], key, index, this);
+                    }, this);
+                },
+                map: function(fn, context) {
+                    var result = new List();
+
+                    this.forEach(function(value, key) {
+                        result.push(key, fn.apply(this, arguments));
+                    }, context);
+
+                    return result;
+                },
+                filter: function(fn, context) {
+                    var result = new List();
+
+                    this.forEach(function(value, key) {
+                        if (fn.apply(this, arguments)) {
+                            result.push(key, value);
+                        }
+                    }, context);
+
+                    return result;
+                },
+                reduce: function(fn, initialValue) {
+                    var initialSupplied = arguments.length > 1,
+                        result = initialSupplied ? initialValue : this.nth(0);
+
+                    this.forEach(function(item, key, index) {
+                        var args = Array.prototype.slice.call(arguments);
+
+                        if (!initialSupplied && index === 0) {
+                            return;
+                        }
+
+                        result = fn.apply(null, [result].concat(args));
+                    });
+
+                    return result;
+                }
+            };
+
+            /**
+             * A Thunker holds a collection of
+             * [thunks](http://en.wikipedia.org/wiki/Thunk#Functional_programming). In addition to
+             * housing thunks, it also sets up parent-child relationships between thunks that
+             * affect the order of evaluation. Child thunks will always be evaluated after their
+             * parent.
+             *
+             * @class Thunker
+             * @constructor
+             */
+            function Thunker() {
+                this.groups = {};
+                this.map = [];
+            }
+            Thunker.prototype = {
+                /**
+                 * Adds a thunk with the provided group id to the collection of thunks.
+                 *
+                 * @method push
+                 * @param {String} group An ID of a group for this thunk
+                 * @param {Function} thunk A function to be called later
+                 * @return {Number} The index of the thunk in the map
+                 */
+                push: function(group, thunk) {
+                    var groups = this.groups;
+
+                    return (groups[group] || (groups[group] = [])).push(thunk);
+                },
+                /**
+                 * Sets up a parent child relationship between two groups. The thunks in the parent
+                 * group will be called before those in the child group.
+                 *
+                 * @method relate
+                 * @param {String} parent The id of the parent group
+                 * @param {String} child The id of the child group
+                 * @chainable
+                 */
+                relate: function(parent, child) {
+                    this.map.push({
+                        parent: parent,
+                        child: child
+                    });
+
+                    return this;
+                },
+                /**
+                 * Executes all of the thunks that have been pushed into this Thunker.
+                 *
+                 * @method force
+                 */
+                force: function() {
+                    var map = this.map, groups = this.groups;
+
+                    function callChildrenOf(parent) {
+                        var children = map.filter(function(relationship) {
+                            return relationship.parent === parent;
+                        });
+
+                        children.forEach(function(relationship) {
+                            var thunks = groups[relationship.child],
+                                thunk;
+
+                            /* jshint boss:true */
+                            while(thunk = thunks.shift()) {
+                            /* jshint boss:false */
+                                thunk();
+                            }
+
+                            callChildrenOf(relationship.child);
+                        });
+
+                    }
+
+                    callChildrenOf(null);
+                }
+            };
 
             C6State.$inject = ['$injector','$q','$http','$templateCache','$location','$rootScope',
                                'c6AsyncQueue','c6EventEmitter','$timeout'];
@@ -310,7 +527,7 @@
                 }
 
                 function routePathToState() {
-                    var path = $location.path(),
+                    var path = $location.path() || '/',
                         // Find the context that has URL routing enabled
                         context = Object.keys(contexts)
                             .reduce(function(context, contextName) {
@@ -318,9 +535,13 @@
 
                                 return next.enableUrlRouting ? next : context;
                             }, null),
+                        routes = context.routes,
                         // Find the State for this path
-                        route = context.routes.reduce(function(route, next) {
-                            return route || (next.matcher.test(path) ? next : route);
+                        route = routes.reduce(function(route, next) {
+                            var matcher = next.matcher;
+
+                            return route || ((!!matcher && matcher.test(path)) ?
+                                next : route);
                         }, null),
                         // Get the state object instance for this URL
                         state = self.in(context.name, function() {
@@ -328,10 +549,10 @@
                         }),
                         // Get the dynamic segments of the URL in the correct order (according to
                         // the order in the URL.)
-                        keys = (state.cUrl.match(/:[^\/]+/g) || [])
+                        keys = state.cUrl ? (state.cUrl.match(/:[^\/]+/g) || [])
                             .map(function(key) {
                                 return key.substring(1);
-                            }),
+                            }) : [],
                         // Create the paramaters object for this route
                         dynamicParams = (path.match(route.matcher) || [])
                             .slice(1)
@@ -364,7 +585,7 @@
                         }
                     });
 
-                    self.goTo(route.name, null, $location.search());
+                    self.goTo(route.name, null, copy($location.search()), true);
 
                     return true;
                 }
@@ -393,7 +614,7 @@
                         }, $injector.instantiate(constructor))));
                 };
 
-                this.goTo = queue.wrap(function(stateName, models, params) {
+                this.goTo = queue.wrap(function(stateName, models, params, replace) {
                     var state = this.get(stateName),
                         family = stateFamilyOf(state),
                         statesWithModels = (models && models.length) ?
@@ -405,7 +626,9 @@
 
                     return _private.resolveStates(family)
                         .then(_private.renderStates)
-                        .then(_private.syncUrl)
+                        .then(function syncUrl(states) {
+                            return _private.syncUrl(states, !!replace);
+                        })
                         .then(nextTick)
                         .then(function updateParams() {
                             return params ? $location.search(params).replace() : $location;
@@ -417,6 +640,9 @@
 
                             contexts[state.cContext].current = state.cName;
                             self.emit('stateChange', state, prevState);
+                            if (state.enter) {
+                                state.enter();
+                            }
 
                             return state;
                         });
@@ -438,22 +664,21 @@
                         contextsArray = Object.keys(contexts).map(function(contextName) {
                             return contexts[contextName];
                         }),
-                        urlRoutedContext = contextsArray.reduce(function(result, context) {
-                            return context.enableUrlRouting ? context : result;
-                        }, null),
-                        views = contextsArray
-                            .reduce(parent ?
-                                function(views, context) {
+                        urlRoutedContext = find(contextsArray, function(context) {
+                            return context.enableUrlRouting;
+                        }),
+                        views = find(
+                            contextsArray,
+                            parent ?
+                                function(context) {
                                     var viewDelegates = context.viewDelegates;
 
-                                    return viewDelegates.indexOf(parent) > -1 ?
-                                        viewDelegates : views;
+                                    return viewDelegates.indexOf(parent) > -1;
                                 } :
-                                function(views, context) {
-                                    return context.rootView === id ?
-                                        context.viewDelegates : views;
-                                },
-                            null);
+                                function(context) {
+                                    return context.rootView === id;
+                                }
+                        ).viewDelegates;
 
                     views.push(viewDelegate);
 
@@ -475,7 +700,7 @@
                     views.splice(views.indexOf(viewDelegate), 1);
                 };
 
-                _private.syncUrl = function(states) {
+                _private.syncUrl = function(states, replace) {
                     var currentPath = $location.path(),
                         params = states.map(function(state) {
                             return state.cParams ?
@@ -490,11 +715,15 @@
                         state.cParams = params[index];
                     });
 
-                    if (path) {
-                        lastPath = path;
+                    if (path === null) { return  path; }
 
-                        if (path !== currentPath) {
-                            $location.path(path);
+                    lastPath = path;
+
+                    if (path !== currentPath) {
+                        $location.path(path);
+
+                        if (replace) {
+                            $location.replace();
                         }
                     }
 
@@ -517,19 +746,37 @@
                     }
 
                     return qSeries(states.map(function(state) {
+                        var currentModel = state.cModel;
+
+                        function orModel() {
+                            var args = Array.prototype.slice.call(arguments),
+                                fn = args.shift();
+
+                            return currentModel ||
+                                fn.apply(state, args);
+                        }
+
                         function beforeModel() {
-                            return (state.beforeModel || noop).call(state);
+                            return orModel(state.beforeModel || noop);
                         }
 
                         function model() {
-                            return state.cModel ||
-                                (state.model || noop).call(state, state.cParams);
+                            return orModel(state.model || noop, state.cParams);
                         }
 
                         function afterModel(model) {
+                            var afterModelFn = state.afterModel || noop,
+                                shouldBeCalled = (afterModelFn.lastCallValue !== model) ||
+                                    !state.cRendered,
+                                result;
+
                             state.cModel = model || null;
 
-                            return (state.afterModel || noop).call(state, model);
+                            result = shouldBeCalled ?
+                                afterModelFn.call(state, model) : null;
+                            afterModelFn.lastCallValue = model;
+
+                            return result;
                         }
 
                         return function() {
@@ -582,42 +829,57 @@
                 this.setMaxListenersWarning(0);
             }
 
-            function Mapper(context, parent, url) {
+            function Route(name, url) {
+                this.name = name;
+                this.url = url;
+                this.matcher = url ? (url || null) && new RegExp(
+                    '^' +
+                    url.replace(/:[^\/]+/g, '([^\\/]+)')
+                        .replace(/\//g, '\\/') +
+                    '$'
+                ) : /.*/;
+            }
+
+            function Mapper(context, parent) {
                 this.parent = parent;
                 this.context = context;
-                this.url  = isDefined(url) ? url : null;
             }
             Mapper.prototype = {
                 state: function(name, mapFn) {
                     var parent = this.parent,
-                        context = this.context,
-                        url = this.url;
+                        context = this.context;
 
-                    map.push(function() {
-                        var constructor = stateConstructors[name],
-                            initializers = constructor.initializers ||
-                                (constructor.initializers = []);
+                    stateConfigs.relate(parent, name)
+                        .push(name, function() {
+                            var constructor = stateConstructors[name],
+                                initializers = constructor.initializers ||
+                                    (constructor.initializers = []),
+                                routes = (context.routes || new List()),
+                                parentUrl = (routes.get(parent) || {}).url ||
+                                    (context.enableUrlRouting ? '' : null);
 
-                        initializers.push(function(c6State) {
-                            this.cParent = parent && c6State.get(parent);
-                            this.cUrl = url;
-                            this.cModel = null;
-                            this.cTemplate = null;
-                            this.cContext = context.name;
-                            this.cName = name;
-                            this.cParams = null;
+                            initializers.push(function(c6State) {
+                                this.cParent = parent && c6State.get(parent);
+                                this.cUrl = parentUrl;
+                                this.cModel = null;
+                                this.cTemplate = null;
+                                this.cContext = context.name;
+                                this.cName = name;
+                                this.cParams = null;
+                                this.cRendered = false;
+                            });
+
+                            context.stateConstructors[name] = constructor;
+
+                            routes.set(name, new Route(name, parentUrl));
                         });
 
-                        context.stateConstructors[name] = constructor;
-                    });
-
                     if (mapFn) {
-                        mapFn.call(new Mapper(this.context, name, url));
+                        mapFn.call(new Mapper(this.context, name));
                     }
                 },
                 route: function(route, name, mapFn) {
-                    var url = this.url + route,
-                        context = this.context;
+                    var context = this.context;
 
                     if (!this.context.enableUrlRouting) {
                         throw new Error(
@@ -629,12 +891,14 @@
 
                     this.state(name);
 
-                    map.push(function() {
-                        var constructor = stateConstructors[name];
+                    stateConfigs.push(name, function() {
+                        var constructor = stateConstructors[name],
+                            url = (route || null) &&
+                                context.routes.get(name).url.replace(/\/$/, '') + route;
 
                         constructor.initializers.push(function() {
                             this.cUrl = url;
-                            this.cParams = (route.match(/:[^\/]+/g) || [])
+                            this.cParams = url && (route.match(/:[^\/]+/g) || [])
                                 .reduce(function(params, match) {
                                     params[match.substr(1)] = null;
 
@@ -652,22 +916,16 @@
                             };
                         });
 
-                        context.routes.push({
-                            name: name,
-                            matcher: new RegExp(
-                                '^' +
-                                url.replace(/:[^\/]+/g, '([^\\/]+)')
-                                    .replace(/\//g, '\\/') +
-                                '$'
-                            )
-                        });
+                        context.routes.set(name, new Route(name, url));
                     });
 
                     if (mapFn) {
-                        mapFn.call(new Mapper(this.context, name, this.url + route));
+                        mapFn.call(new Mapper(this.context, name));
                     }
                 }
             };
+
+            stateConfigs = new Thunker();
 
             this.map = function(context, parent, mapFn) {
                 var mapper;
@@ -686,9 +944,8 @@
                 }
 
                 context = contexts[context || 'main'];
-                parent = parent || context.rootState;
 
-                mapper = new Mapper(context, parent, context.enableUrlRouting ? '' : null);
+                mapper = new Mapper(context, parent);
 
                 mapFn.call(mapper);
             };
@@ -725,7 +982,7 @@
                     name: context,
                     stateConstructors: {},
                     viewDelegates: [],
-                    routes: config.enableUrlRouting ? [] : null,
+                    routes: config.enableUrlRouting ? new List() : null,
                     current: null
                 }, config);
 
@@ -735,21 +992,24 @@
             this.$get = ['$injector',
             function    ( $injector ) {
                 forEach(contexts, function(context) {
-                    if (context.enableUrlRouting) {
-                        (new Mapper(context, null, ''))
-                            .route('', context.rootState);
-                    } else {
-                        (new Mapper(context, null, null))
-                            .state(context.rootState);
-                    }
-                });
+                    this.map(context.name, null, function() {
+                        if (context.enableUrlRouting) {
+                            this.route('/', context.rootState, function() {
+                                this.route(null, 'Error');
+                            });
+                        } else {
+                            this.state(context.rootState);
+                        }
+                    });
+                }, this);
 
-                processMap(map);
+                stateConfigs.force();
 
                 return $injector.instantiate(C6State);
             }];
 
-            this.state('Application', noop);
+            this.state('Application', function() {});
+            this.state('Error', function() {});
 
             this.config('main', {
                 rootState: 'Application',
@@ -757,4 +1017,4 @@
                 enableUrlRouting: true
             });
         }]);
-}());
+});

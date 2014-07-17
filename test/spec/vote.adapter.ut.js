@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['app'], function() {
+    define(['app'], function(appModule) {
         /* global angular:true */
         var extend = angular.extend,
             copy = angular.copy;
@@ -15,7 +15,7 @@
             var $httpBackend;
 
             beforeEach(function() {
-                module('c6.mrmaker');
+                module(appModule.name);
 
                 inject(function($injector) {
                     VoteAdapter = $injector.get('VoteAdapter');

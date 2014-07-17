@@ -23,10 +23,6 @@
                         '!**/*.{js,css,html}'
                     ],
                     dest: '<%= _versionDir %>'
-                },
-                {
-                    src: '<%= settings.appDir %>/assets/scripts/main.js',
-                    dest: '.tmp/main.js'
                 }
             ]
         }

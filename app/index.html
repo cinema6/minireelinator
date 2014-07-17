@@ -7,7 +7,9 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-        <link rel="stylesheet" href="assets/styles/c6publisher.css">
+        <base href="/assets/"/>
+        <link rel="stylesheet" href="styles/c6chrome__main.css">
+        <link rel="stylesheet" href="styles/minireel/c6publisher.css">
         <link rel="stylesheet" ng-if="AppCtrl.branding" ng-href="/collateral/branding/{{AppCtrl.branding}}/styles/splash.css">
         <script type="text/javascript" src="//use.typekit.net/xuz8gem.js"></script>
         <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
@@ -17,47 +19,11 @@
                 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
         </script>
+        <!--C6INJECT-->
     </head>
     <body>
         <c6-view></c6-view>
 
-        <script>
-            (function(build, search) {
-                var c6 = window.c6 = {
-                    kBaseUrl: build,
-                    kDebug: false,
-                    kEnv: 'production'
-                };
-                function decorateWithParams(object) {
-                    var pairs = search.split('&');
-
-                    function isBoolValue(key) {
-                        return [
-                            'kDebug'
-                        ].indexOf(key) > -1;
-                    }
-
-                    pairs.forEach(function(pair) {
-                        var split = pair.split('='),
-                            key = split[0],
-                            value = split[1];
-
-                        if (pair.length === 0) { return; }
-
-                        if (isBoolValue(key)) {
-                            value = !!parseInt(value, 10);
-                        }
-
-                        object[key] = value;
-                    });
-
-                    return object;
-                };
-
-                decorateWithParams(c6);
-            }('assets', window.location.search.replace(/^\?/, '')));
-        </script>
-
-        <script data-main="assets/scripts/main" src="//lib.cinema6.com/require/2.1.5/require.min.js"> </script>
+        <script data-main="scripts/main" src="//lib.cinema6.com/require/2.1.5/require.min.js"> </script>
     </body>
 </html>

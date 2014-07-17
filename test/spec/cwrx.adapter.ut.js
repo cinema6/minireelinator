@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['app'], function() {
+    define(['app'], function(appModule) {
         describe('CWRXAdapter', function() {
             var CWRXAdapter,
                 adapter,
@@ -26,7 +26,7 @@
                     voteAdapter = this;
                 };
 
-                module('c6.mrmaker');
+                module(appModule.name);
 
                 inject(function($injector) {
                     CWRXAdapter = $injector.get('CWRXAdapter');
