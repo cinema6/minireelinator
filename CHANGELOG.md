@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## Beta12 (July 17, 2014)
+
+* *[Beta12.rc3]*
+  * [FIX]: desktop preview modal height adjusted to prevent scrolling
+* *[/Beta12.rc3]*
+
 * *[Beta12.rc2]*
   * [FIX]: Filter experiences by org again
   * [FIX]: Change page title to "Cinema6 Portal"
