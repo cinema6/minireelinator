@@ -8,6 +8,7 @@
                 $scope,
                 $controller,
                 c6State,
+                EditorService,
                 MiniReelCtrl,
                 NewCtrl;
 
@@ -58,6 +59,7 @@
                     $controller = $injector.get('$controller');
                     c6State = $injector.get('c6State');
                     $q = $injector.get('$q');
+                    EditorService = $injector.get('EditorService');
 
                     $scope = $rootScope.$new();
                     $scope.$apply(function() {
@@ -362,10 +364,19 @@
 
             describe('methods', function() {
                 describe('save()', function() {
-                    var saveDeferred;
+                    var saveDeferred,
+                        compiledMinireel;
 
                     beforeEach(function() {
                         saveDeferred = $q.defer();
+
+                        compiledMinireel = {
+                            data: {
+                                deck: []
+                            }
+                        };
+                        spyOn(EditorService, 'open').and.returnValue(compiledMinireel);
+
 
                         NewCtrl.mode = modes[0].modes[0];
                         NewCtrl.autoplay = true;
@@ -395,26 +406,30 @@
                         beforeEach(function() {
                             $scope.$apply(function() {
                                 minireel.id = 'e-31ba4eaf5dc098';
+                                compiledMinireel.id = minireel.id;
+
                                 saveDeferred.resolve(minireel);
                             });
                         });
 
                         it('should go to the editor', function() {
-                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [minireel]);
+                            expect(EditorService.open).toHaveBeenCalledWith(minireel);
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [compiledMinireel]);
                         });
                     });
 
                     describe('if the minireel already has an id', function() {
                         beforeEach(function() {
                             minireel.id = 'e-97a58a5eba29e0';
-
+                            compiledMinireel.id = minireel.id;
                             $scope.$apply(function() {
                                 NewCtrl.save();
                             });
                         });
 
                         it('should go right to the editor', function() {
-                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [minireel]);
+                            expect(EditorService.open).toHaveBeenCalledWith(minireel);
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [compiledMinireel]);
                         });
                     });
 

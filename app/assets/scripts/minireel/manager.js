@@ -171,7 +171,9 @@ function( angular , c6ui , c6State  , services          ) {
         }])
 
         .controller('NewController', ['$scope','MiniReelService','c6State','$q','cState',
-        function                     ( $scope , MiniReelService , c6State , $q , cState ) {
+                                      'EditorService',
+        function                     ( $scope , MiniReelService , c6State , $q , cState,
+                                       EditorService ) {
             var self = this,
                 MiniReelCtrl = $scope.MiniReelCtrl,
                 stateName = cState.cName;
@@ -268,7 +270,7 @@ function( angular , c6ui , c6State  , services          ) {
                         c6State.goTo(
                             'MR:Editor',
                             (self.returnState === 'MR:Editor') ?
-                                null : [minireel]
+                                null : [EditorService.open(minireel)]
                         );
                     });
             };
