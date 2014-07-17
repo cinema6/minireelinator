@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## Beta12 (July 17, 2014)
+* *[Beta12.rc2]*
+  * [FIX]: Filter experiences by org again
+  * [FIX]: Change page title to "Cinema6 Portal"
+* *[/Beta12.rc2]*
+
 * *[Beta12.rc1]*
   * [FIX]: Heavy text disabled, light text updated to allow inifinite text
   * [FIX]: Fixed CSS bugs from merging glickm into minireelinator
