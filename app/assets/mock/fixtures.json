@@ -82,12 +82,10 @@
                         "description": "When triggered, this MiniReel will display itself in the allotted content space of your website.",
                         "modes": [
                             {
-                                "name": "Embedded, Light Text",
+                                "name": "Embedded",
                                 "value": "light",
-                                "description": "Recommended for content that is light on text. Copy is limited to approximately 200 characters.",
-                                "limits": {
-                                    "copy": 200
-                                },
+                                "description": "Recommended for content that is light on text. We suggest limiting copy to 200-300 characters, but the content area will scroll to allow for longer text.",
+                                "limits": {},
                                 "autoplayable": true
                             },
                             {
@@ -97,7 +95,8 @@
                                 "limits": {
                                     "copy": 420
                                 },
-                                "autoplayable": false
+                                "autoplayable": false,
+                                "disabled": true
                             }
                         ]
                     }

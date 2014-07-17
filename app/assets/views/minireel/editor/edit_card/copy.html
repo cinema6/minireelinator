@@ -13,7 +13,7 @@
             <span ng-show="EditorCtrl.cardLimits.copy < Infinity" class="modal__label">Slide Copy </span>
             <span class="modal__textBoxHolder">
                 <textarea ng-model="card.note" class="modal__textarea modal__cardCopy"></textarea>
-                <span class="field__context typo--context">({{card.note.length || 0}} of {{EditorCtrl.cardLimits.copy}} max characters)</span>
+                <span class="field__context typo--context">({{card.note.length || 0}} <span ng-hide="EditorCtrl.cardLimits.copy === Infinity">of {{EditorCtrl.cardLimits.copy}} max</span> characters)</span>
             </span>
         </label>
     </form>
