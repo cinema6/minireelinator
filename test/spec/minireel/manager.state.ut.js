@@ -8,7 +8,8 @@
                 $q,
                 cinema6,
                 $injector,
-                c6State;
+                c6State,
+                portal;
 
             var currentUser,
                 experiences;
@@ -43,6 +44,12 @@
                 });
 
                 ManagerState = c6State.get('MR:Manager');
+                portal = c6State.get('Portal');
+                portal.cModel = {
+                    org: {
+                        id: 'o-fe9cf63e8490b0'
+                    }
+                };
             });
 
             describe('model', function() {
@@ -75,7 +82,7 @@
                 });
 
                 it('should get all the minireels that are associated with the user\'s org', function() {
-                    expect(cinema6.db.findAll).toHaveBeenCalledWith('experience', { type: 'minireel', sort: 'lastUpdated,-1' });
+                    expect(cinema6.db.findAll).toHaveBeenCalledWith('experience', { type: 'minireel', org: portal.cModel.org.id, sort: 'lastUpdated,-1' });
                 });
             });
         });
