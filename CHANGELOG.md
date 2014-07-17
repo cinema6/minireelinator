@@ -4,6 +4,7 @@
 * *[Beta12.rc2]*
   * [FIX]: Filter experiences by org again
   * [FIX]: Change page title to "Cinema6 Portal"
+  * [FIX]: desktop preview modal height adjusted to prevent scrolling
 * *[/Beta12.rc2]*
 
 * *[Beta12.rc1]*
