@@ -19,9 +19,11 @@
         <input ng-model="size.width" class="textBox" type="text" value="Width"> x
         <input ng-model="size.height" class="textBox" type="text" value="Height">
     </div>
-    <label for="embed-format">Embed Code Format</label>
-    <input name="embed-format" type="radio" ng-model="Ctrl.format" value="shortcode">Wordpress Shortcode</input>
-    <input name="embed-format" type="radio" ng-model="Ctrl.format" value="script">Script Tag</input>
+    <div class="embedCode__format">
+        Embed Code Format:
+        <label for="embedFormat_wordpress"><input id="embedFormat_wordpress" name="embed-format" type="radio" ng-model="Ctrl.format" value="shortcode">Wordpress Shortcode</input></label>
+        <label for="embedFormat_script"><input id="embedFormat_script" name="embed-format" type="radio" ng-model="Ctrl.format" value="script">Script Tag</input></label>
+    </div>
     <textarea ng-model="Ctrl.code" name="" id="" class="embedCode__snippet" cols="30" rows="10"></textarea>
     <p ng-if="!Ctrl.readOnly" class="embedCode__tip"><strong><span class="typo--attention">*</span> Responsive Auto-Fit</strong> embedding will automatically resize the MiniReel widget to fit nicely into your page. This is the recommended embedding method.</p>
     <p><a ng-href="{{splashSrc}}" download target="_blank" class="toolbar__btn toolbar__preview" type="button" >Download Splash Image</a></p>

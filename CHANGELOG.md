@@ -2,6 +2,7 @@
 
 * *[Beta13.rc1]*
   * [FEATURE]: Support generating wordpress shortcode embeds
+  * [FEATURE]: Styles for wordpress shortcode embeds added
 
 ## Beta12 (July 17, 2014)
 * *[Beta12.rc3]*

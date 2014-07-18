@@ -1640,6 +1640,9 @@
             .embedCode__customSizeDimensions .textBox {
                 width:4.375em;
             }
+        .embedCode__format {
+            margin:0.5em 0 0 0;
+        }
         .embedCode__snippet {
             border:2px solid #b0b0b0;
             -webkit-box-sizing: border-box;
