@@ -246,6 +246,9 @@
             padding:1.5em 2.25em; margin:0 0 0 -19.75em;
             width:34em; height:15em;
         }
+            .ui__modal--embed {
+                height:20em;
+            }
         .ui__modal--confirmation {
             width:28em; height:10em;
             margin:0 0 0 -15.5em;
