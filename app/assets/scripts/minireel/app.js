@@ -299,6 +299,27 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                 categories = minireelState.cModel.data.modes,
                 c6EmbedSrc = minireelState.cModel.data.c6EmbedSrc;
 
+            function formatEmbed(template, data) {
+                var repeatedMatcher = (/\|.+?\|/),
+                    repeated = template.match(repeatedMatcher)[0].replace(/^.|.$/g, ''),
+                    bookends = template.split(repeatedMatcher);
+
+                return bookends[0] +
+                    Object.keys(data)
+                        .filter(function(attr) {
+                            return data[attr] !== false;
+                        })
+                        .map(function(attr) {
+                            var value = data[attr];
+
+                            return (value === true ?
+                                repeated.split('=')[0] : repeated)
+                                    .replace('{attr}', attr)
+                                    .replace('{value}', data[attr]);
+                        }).join(' ') +
+                    bookends[1];
+            }
+
             this.readOnly = isDefined($attrs.readonly);
             this.modes = [
                 {
@@ -311,6 +332,7 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                 }
             ];
             this.mode = this.modes[0].value;
+            this.format = 'shortcode';
 
             this.size = {
                 width: '650px',
@@ -324,30 +346,27 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                             splash = minireel.data.splash,
                             branding = minireel.data.branding,
                             isInline = MiniReelService.modeCategoryOf(minireel, categories)
-                                .value === 'inline';
+                                .value === 'inline',
+                            explicitDimensions = this.mode === 'custom';
 
-                        return '<script src="' + c6EmbedSrc + '"' +
-                            ' data-exp="' + minireel.id + '"' +
-                            ' data-:title="' + btoa(minireel.data.title) + '"' +
-                            ' data-splash="' +
-                                splash.theme + ':' + splash.ratio.split('-').join('/') +
-                            '"' +
-                            (isInline ?
-                                ' data-preload' :
-                                ''
-                            ) +
-                            (this.mode === 'custom' ?
-                                (' data-width="' +
-                                    this.size.width +
-                                    '" data-height="' +
-                                    this.size.height + '"') :
-                                '') +
-                            (!!branding ?
-                                (' data-:branding="' +
-                                    btoa(branding) +
-                                    '"') :
-                                '') +
-                            '></script>';
+                        var data = {
+                            'exp': minireel.id,
+                            ':title': btoa(minireel.data.title),
+                            ':splash': btoa(splash.theme + ':' + splash.ratio.replace('-', '/')),
+                            ':branding': branding ? btoa(branding) : false,
+                            'width': explicitDimensions ? this.size.width : false,
+                            'height': explicitDimensions ? this.size.height : false,
+                            'preload': isInline
+                        };
+
+                        switch (this.format) {
+                        case 'shortcode':
+                            return formatEmbed('[minireel version="1" |{attr}="{value}"|]', data);
+                        case 'script':
+                            return formatEmbed('<script src="' +
+                                c6EmbedSrc +
+                                '" |data-{attr}="{value}"|></script>', data);
+                        }
                     }
                 }
             });

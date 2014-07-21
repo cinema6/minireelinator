@@ -13,15 +13,19 @@
     </div>
 </div>
 <div class="embedCode__group">
-    <div ng-if="!Ctrl.readOnly" class="embedCode__header">
-        <label class="embed__label" for="embed-size">Embed Code Size:</label>
-        <select ng-model="Ctrl.mode" ng-options="mode.value as mode.name for mode in Ctrl.modes" class="embed__selector" name="embed-size" id="embed-size"></select>
-        <div c6-alias="Ctrl.size as size" ng-show="Ctrl.mode === 'custom'" class="embedCode__customSizeDimensions">
-            <input ng-model="size.width" class="textBox" type="text" value="Width"> x
-            <input ng-model="size.height" class="textBox" type="text" value="Height">
-        </div>
+    <label class="embed__label" for="embed-size">Embed Code Size:</label>
+    <select ng-model="Ctrl.mode" ng-options="mode.value as mode.name for mode in Ctrl.modes" class="embed__selector" name="embed-size" id="embed-size"></select>
+    <div c6-alias="Ctrl.size as size" ng-show="Ctrl.mode === 'custom'" class="embedCode__customSizeDimensions">
+        <input ng-model="size.width" class="textBox" type="text" value="Width"> x
+        <input ng-model="size.height" class="textBox" type="text" value="Height">
     </div>
+    <div class="embedCode__format">
+        Embed Code Format:
+        <label for="embedFormat_wordpress"><input id="embedFormat_wordpress" name="embed-format" type="radio" ng-model="Ctrl.format" value="shortcode">Wordpress Shortcode</input></label>
+        <label for="embedFormat_script"><input id="embedFormat_script" name="embed-format" type="radio" ng-model="Ctrl.format" value="script">Script Tag</input></label>
+    </div>
+    <p class="embedCode__tip" ng-show="Ctrl.format === 'shortcode'">Requires the <strong>MiniReel Shortcode WordPress plug-in</strong>, please contact <a href="mailto:support@cinema6.com" title="Cinema6 Support">Cinema6 Support</a>.</p>
     <textarea ng-model="Ctrl.code" name="" id="" class="embedCode__snippet" cols="30" rows="10"></textarea>
     <p ng-if="!Ctrl.readOnly" class="embedCode__tip"><strong><span class="typo--attention">*</span> Responsive Auto-Fit</strong> embedding will automatically resize the MiniReel widget to fit nicely into your page. This is the recommended embedding method.</p>
-    <p><a ng-href="{{splashSrc}}" download target="_blank" class="toolbar__btn toolbar__preview" type="button" >Download Splash Image</a></p>
+    <p><a ng-if="!!splashSrc" ng-href="{{splashSrc}}" download target="_blank" class="toolbar__btn toolbar__preview" type="button" >Download Splash Image</a></p>
 </div>

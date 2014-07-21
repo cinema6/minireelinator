@@ -246,6 +246,9 @@
             padding:1.5em 2.25em; margin:0 0 0 -19.75em;
             width:34em; height:15em;
         }
+            .ui__modal--embed {
+                height:auto;
+            }
         .ui__modal--confirmation {
             width:28em; height:10em;
             margin:0 0 0 -15.5em;
@@ -1640,6 +1643,9 @@
             .embedCode__customSizeDimensions .textBox {
                 width:4.375em;
             }
+        .embedCode__format {
+            margin:0.5em 0 0 0;
+        }
         .embedCode__snippet {
             border:2px solid #b0b0b0;
             -webkit-box-sizing: border-box;

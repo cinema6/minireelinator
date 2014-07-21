@@ -110,6 +110,12 @@
                     });
                 });
 
+                describe('format', function() {
+                    it('should be initialized as shortcode', function() {
+                        expect(EmbedCodeCtrl.format).toBe('shortcode');
+                    });
+                });
+
                 describe('mode', function() {
                     it('should be initialized as responsive', function() {
                         expect(EmbedCodeCtrl.mode).toBe('responsive');
@@ -141,66 +147,157 @@
                 });
 
                 describe('code', function() {
-                    ['lightbox', 'lightbox-ads'].forEach(function(mode) {
-                        describe('if the minireel mode is ' + mode, function() {
-                            beforeEach(function() {
-                                $scope.minireel.data.mode = mode;
-                            });
-
-                            it('should not preload', function() {
-                                expect(EmbedCodeCtrl.code).not.toContain(' data-preload');
-                            });
-                        });
-                    });
-
-                    ['full', 'light'].forEach(function(mode) {
-                        describe('if the minireel mode is ' + mode, function() {
-                            beforeEach(function() {
-                                $scope.minireel.data.mode = mode;
-                            });
-
-                            it('should preload', function() {
-                                expect(EmbedCodeCtrl.code).toContain(' data-preload');
-                            });
-                        });
-                    });
-
-                    describe('if the size is responsive', function() {
-                        it('should be a responsive embed code', function() {
-                            expect(EmbedCodeCtrl.code).toBe(
-                                '<script src="' + MiniReelState.cModel.data.c6EmbedSrc + '" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-:branding="' + btoa('elitedaily') + '"></script>'
-                            );
-                        });
-                    });
-
-                    describe('if there is no branding', function() {
+                    describe('if the format is "shortcode"', function() {
                         beforeEach(function() {
-                            delete $scope.minireel.data.branding;
+                            EmbedCodeCtrl.format = 'shortcode';
                         });
 
-                        it('should not include the branding', function() {
-                            expect(EmbedCodeCtrl.code).not.toContain('data-:branding="' + btoa('undefined') + '"');
+                        it('should be a wordpress shortcode', function() {
+                            expect(EmbedCodeCtrl.code).toMatch(/\[minireel .+?\]/);
+                        });
+
+                        it('should include the experience id', function() {
+                            expect(EmbedCodeCtrl.code).toContain(' exp="' + $scope.minireel.id + '"');
+                        });
+
+                        it('should include the title', function() {
+                            expect(EmbedCodeCtrl.code).toContain(' :title="' + btoa($scope.minireel.data.title) + '"');
+                        });
+
+                        it('should include the splash settings', function() {
+                            expect(EmbedCodeCtrl.code).toContain(' :splash="' + btoa('img-text-overlay:6/4') + '"');
+                        });
+
+                        it('should include the branding', function() {
+                            expect(EmbedCodeCtrl.code).toContain(' :branding="' + btoa($scope.minireel.data.branding) + '"');
+                        });
+
+                        ['lightbox', 'lightbox-ads'].forEach(function(mode) {
+                            describe('if the minireel mode is ' + mode, function() {
+                                beforeEach(function() {
+                                    $scope.minireel.data.mode = mode;
+                                });
+
+                                it('should not preload', function() {
+                                    expect(EmbedCodeCtrl.code).not.toContain(' preload');
+                                });
+                            });
+                        });
+
+                        ['full', 'light'].forEach(function(mode) {
+                            describe('if the minireel mode is ' + mode, function() {
+                                beforeEach(function() {
+                                    $scope.minireel.data.mode = mode;
+                                });
+
+                                it('should preload', function() {
+                                    expect(EmbedCodeCtrl.code).toContain(' preload');
+                                });
+                            });
+                        });
+
+                        describe('if the size is responsive', function() {
+                            beforeEach(function() {
+                                EmbedCodeCtrl.mode = 'responsive';
+                            });
+
+                            it('should not include an explicit width and height', function() {
+                                expect(EmbedCodeCtrl.code).not.toMatch(/ width=".+?" height=".+?"/);
+                            });
+                        });
+
+                        describe('if there is no branding', function() {
+                            beforeEach(function() {
+                                delete $scope.minireel.data.branding;
+                            });
+
+                            it('should not include the branding attribute', function() {
+                                expect(EmbedCodeCtrl.code).not.toMatch(/ branding=".+?"/);
+                            });
+                        });
+
+                        describe('if the size is explicit', function() {
+                            beforeEach(function() {
+                                EmbedCodeCtrl.mode = 'custom';
+                            });
+
+                            it('should include a width and height', function() {
+                                expect(EmbedCodeCtrl.code).toMatch(/ width=".+?" height=".+?"/);
+                            });
+
+                            it('should update if the dimensions are updated', function() {
+                                EmbedCodeCtrl.size.height = '300px';
+                                EmbedCodeCtrl.size.width = '100%';
+
+                                expect(EmbedCodeCtrl.code).toMatch(/ width="100%" height="300px"/);
+                            });
                         });
                     });
 
-                    describe('if the size is explicit', function() {
+                    describe('if the format is "script"', function() {
                         beforeEach(function() {
-                            EmbedCodeCtrl.mode = 'custom';
+                            EmbedCodeCtrl.format = 'script';
                         });
 
-                        it('should be an explicit embed code', function() {
-                            expect(EmbedCodeCtrl.code).toBe(
-                                '<script src="' + MiniReelState.cModel.data.c6EmbedSrc + '" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-width="650px" data-height="522px" data-:branding="' + btoa('elitedaily') + '"></script>'
-                            );
+                        ['lightbox', 'lightbox-ads'].forEach(function(mode) {
+                            describe('if the minireel mode is ' + mode, function() {
+                                beforeEach(function() {
+                                    $scope.minireel.data.mode = mode;
+                                });
+
+                                it('should not preload', function() {
+                                    expect(EmbedCodeCtrl.code).not.toContain(' data-preload');
+                                });
+                            });
                         });
 
-                        it('should update if the dimensions are updated', function() {
-                            EmbedCodeCtrl.size.height = '300px';
-                            EmbedCodeCtrl.size.width = '100%';
+                        ['full', 'light'].forEach(function(mode) {
+                            describe('if the minireel mode is ' + mode, function() {
+                                beforeEach(function() {
+                                    $scope.minireel.data.mode = mode;
+                                });
 
-                            expect(EmbedCodeCtrl.code).toBe(
-                                '<script src="' + MiniReelState.cModel.data.c6EmbedSrc + '" data-exp="e-0277a8c7564f87" data-:title="' + btoa('This is the Title!') + '" data-splash="img-text-overlay:6/4" data-width="100%" data-height="300px" data-:branding="' + btoa('elitedaily') + '"></script>'
-                            );
+                                it('should preload', function() {
+                                    expect(EmbedCodeCtrl.code).toContain(' data-preload');
+                                });
+                            });
+                        });
+
+                        describe('if the size is responsive', function() {
+                            beforeEach(function() {
+                                EmbedCodeCtrl.mode = 'responsive';
+                            });
+
+                            it('should not include an explicit width and height', function() {
+                                expect(EmbedCodeCtrl.code).not.toMatch(/ data-width=".+?" data-height=".+?"/);
+                            });
+                        });
+
+                        describe('if there is no branding', function() {
+                            beforeEach(function() {
+                                delete $scope.minireel.data.branding;
+                            });
+
+                            it('should not include the branding', function() {
+                                expect(EmbedCodeCtrl.code).not.toContain('data-:branding="' + btoa('undefined') + '"');
+                            });
+                        });
+
+                        describe('if the size is explicit', function() {
+                            beforeEach(function() {
+                                EmbedCodeCtrl.mode = 'custom';
+                            });
+
+                            it('should include a width and height', function() {
+                                expect(EmbedCodeCtrl.code).toMatch(/ data-width=".+?" data-height=".+?"/);
+                            });
+
+                            it('should update if the dimensions are updated', function() {
+                                EmbedCodeCtrl.size.height = '300px';
+                                EmbedCodeCtrl.size.width = '100%';
+
+                                expect(EmbedCodeCtrl.code).toMatch(/ data-width="100%" data-height="300px"/);
+                            });
                         });
                     });
                 });
