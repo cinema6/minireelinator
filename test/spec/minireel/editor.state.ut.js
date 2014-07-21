@@ -1,9 +1,10 @@
 (function() {
     'use strict';
 
-    define(['app'], function(appModule) {
+    define(['app', 'minireel/editor'], function(appModule, editorModule) {
         describe('EditorState', function() {
             var $injector,
+                playerMeta,
                 EditorState,
                 $rootScope,
                 $q,
@@ -21,6 +22,12 @@
                 };
 
             beforeEach(function() {
+                module(editorModule.name, function($provide) {
+                    $provide.value('playerMeta', {
+                        ensureFulfillment: jasmine.createSpy('playerMeta.ensureFulfillment()')
+                    });
+                });
+
                 module(appModule.name);
 
                 inject(function(_$injector_) {
@@ -29,6 +36,7 @@
                     $rootScope = $injector.get('$rootScope');
                     $q = $injector.get('$q');
                     cinema6 = $injector.get('cinema6');
+                    playerMeta = $injector.get('playerMeta');
                     c6State = $injector.get('c6State');
                     EditorService = $injector.get('EditorService');
 
@@ -38,6 +46,20 @@
 
             it('should exist', function() {
                 expect(EditorState).toEqual(jasmine.any(Object));
+            });
+
+            describe('beforeModel()', function() {
+                var ensured;
+
+                beforeEach(function() {
+                    ensured = {};
+
+                    playerMeta.ensureFulfillment.and.returnValue(ensured);
+                });
+
+                it('should ensure fulfillment of the player meta data', function() {
+                    expect(EditorState.beforeModel()).toBe(ensured);
+                });
             });
 
             describe('model()', function() {
