@@ -966,7 +966,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                         switch (this.model.type) {
                         case 'video':
                         case 'videoBallot':
-                            return [this.copyComplete, this.videoComplete].indexOf(false) < 0 &&
+                            return [this.copyComplete].indexOf(false) < 0 &&
                                 !EditorCtrl.errorForCard(this.model);
 
                         default:
@@ -1009,7 +1009,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     get: function() {
                         var state = c6State.current;
 
-                        if (this.canSave || /^(MR:EditCard.(Video|Ballot))$/.test(state)) {
+                        if (/^(MR:EditCard.(Video|Ballot))$/.test(state)) {
                             return copy({
                                 text: EditorCtrl.model.status === 'active' ? 'I\'m Done!' : 'Save',
                                 action: function() { self.save(); },

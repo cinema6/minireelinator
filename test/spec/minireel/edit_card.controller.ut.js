@@ -556,55 +556,6 @@
                         expect(EditCardCtrl.primaryButton).toBe(EditCardCtrl.primaryButton);
                     });
 
-                    describe('if the card can be saved', function() {
-                        beforeEach(function() {
-                            Object.defineProperty(EditCardCtrl, 'canSave', {
-                                value: true
-                            });
-                        });
-
-                        describe('the text', function() {
-                            describe('if the minireel is not published', function() {
-                                beforeEach(function() {
-                                    EditorCtrl.model.status = 'pending';
-                                });
-
-                                it('should be "Save"', function() {
-                                    expect(EditCardCtrl.primaryButton.text).toBe('Save');
-                                });
-                            });
-
-                            describe('if the minireel is published', function() {
-                                beforeEach(function() {
-                                    EditorCtrl.model.status = 'active';
-                                });
-
-                                it('should be "Done"', function() {
-                                    expect(EditCardCtrl.primaryButton.text).toBe('I\'m Done!');
-                                });
-                            });
-                        });
-
-                        describe('the action', function() {
-                            beforeEach(function() {
-                                spyOn(EditCardCtrl, 'save');
-
-                                EditCardCtrl.primaryButton.action();
-                            });
-
-                            it('should call "save()"', function() {
-                                expect(EditCardCtrl.save).toHaveBeenCalled();
-                                expect(EditCardCtrl.save.calls.mostRecent().object).toBe(EditCardCtrl);
-                            });
-                        });
-
-                        describe('enabled', function() {
-                            it('should be true', function() {
-                                expect(EditCardCtrl.primaryButton.enabled).toBe(true);
-                            });
-                        });
-                    });
-
                     describe('if the card cannot be saved', function() {
                         beforeEach(function() {
                             Object.defineProperty(EditCardCtrl, 'canSave', {
@@ -761,10 +712,10 @@
                                 expect(canSave()).toBe(true);
 
                                 onlyEmpty('service');
-                                expect(canSave()).toBe(false);
+                                expect(canSave()).toBe(true);
 
                                 onlyEmpty('videoid');
-                                expect(canSave()).toBe(false);
+                                expect(canSave()).toBe(true);
 
                                 onlyEmpty('foo');
                                 expect(canSave()).toBe(true);
