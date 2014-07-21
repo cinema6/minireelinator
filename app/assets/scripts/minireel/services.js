@@ -647,6 +647,8 @@ function( angular , c6ui , cryptojs ) {
                             return 'Intro';
                         case 'recap':
                             return 'Recap';
+                        case 'text':
+                            return 'Text';
 
                         default:
                             return null;
@@ -713,7 +715,8 @@ function( angular , c6ui , cryptojs ) {
                     },
                     links: {
                         links: copy([])
-                    }
+                    },
+                    text: {}
                 };
 
                 /******************************************************\
@@ -1062,6 +1065,14 @@ function( angular , c6ui , cryptojs ) {
                 };
 
                 cardBases = {
+                    text: {
+                        id: copy(),
+                        type: copy(),
+                        title: copy(null),
+                        note: copy(null),
+                        modules: value([]),
+                        displayAdSource: copy('cinema6')
+                    },
                     video: {
                         id: copy(),
                         type: function(card) {
