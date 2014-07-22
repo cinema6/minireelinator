@@ -1,41 +1,23 @@
-<div class="card__container card--{{$this.type}}"
-    ng-class="{
-        'card__container--dragging': DragCtrl.currentDrags[0] === DragCtrl.draggables[$this.id]
-    }"
-    id="container-{{$this.id}}"
-    c6-drag-zone>
-    <span ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id]">
-        <h4 class="card__type">{{$index + 1}}. {{$this.label}}</h4>
-        <button ng-show="$index !== (deck.length - 1)" ng-click="EditorCtrl.deleteCard($this, $event)" class="card__deleteBtn" type="button" title="Delete Card">
-            <span class="ui__xSmall ui__xSmall--white sprite--alpha"><span class="ir">Delete Card</span></span>
-        </button>
+<div class="card__statusIndicator" ng-class="{'card__statusIndicator--error': !!EditorCtrl.errorForCard($this)}">
+    <span class="ui__editToolTip">
+        <span class="ui__edit sprite--alpha"><span class="ir">Edit</span></span>
+        Edit
     </span>
-    <div id="{{$this.id}}" data-title="{{$this.title}}" c6-draggable="$index !== (deck.length - 1)" ng-click="EditorCtrl.editCard($this)" class="card__item">
-        <div class="card__statusIndicator" ng-class="{'card__statusIndicator--error': !!EditorCtrl.errorForCard($this)}">
-            <span class="ui__editToolTip">
-                <span class="ui__edit sprite--alpha"><span class="ir">Edit</span></span>
-                Edit
-            </span>
-            <div class="card__statusMsg">
-                <div class="ui__alert sprite--alpha"><span class="ir">Warning!</span></div>
-                <span class="statusText">{{EditorCtrl.errorForCard($this)}}</span>
-            </div>
-        </div>
-        <div class="card__imgBox">
-            <div class="miniReel__imgBox"
-                ng-style="{'background-image': 'url(' + (CardTableCtrl.getThumbs($this).large || '') + ')'}">
-                &nbsp;
-            </div>
-        </div>
-        <div class="card__body">
-            <div class="card__copy">
-                <h1 class="card__title"><span class="card__titleText">{{$this.title}}</span></h1>
-                <p class="card__summary">{{$this.note}}</p>
-            </div>
-            <div class="ui__divider--pause">&hellip;</div>
-        </div>
+    <div class="card__statusMsg">
+        <div class="ui__alert sprite--alpha"><span class="ir">Warning!</span></div>
+        <span class="statusText">{{EditorCtrl.errorForCard($this)}}</span>
     </div>
-    <div ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id]" class="card__contextBar">
-        <a href="" title="Preview This Slide" ng-click="EditorCtrl.previewMode($this, $event)">Preview This Slide</a>
+</div>
+<div class="card__imgBox">
+    <div class="miniReel__imgBox"
+        ng-style="{'background-image': 'url(' + (CardTableCtrl.getThumbs($this).large || '') + ')'}">
+        &nbsp;
     </div>
+</div>
+<div class="card__body">
+    <div class="card__copy">
+        <h1 class="card__title"><span class="card__titleText">{{$this.title}}</span></h1>
+        <p class="card__summary">{{$this.note}}</p>
+    </div>
+    <div class="ui__divider--pause">&hellip;</div>
 </div>

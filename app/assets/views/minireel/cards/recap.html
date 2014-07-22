@@ -1,21 +1,6 @@
-<div class="card__container card--recap"
-    ng-class="{
-        'card__container--dragging': DragCtrl.currentDrags[0] === DragCtrl.draggables[$this.id]
-    }"
-    id="container-{{$this.id}}"
-    c6-drag-zone>
-    <span ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id]">
-        <h4 class="card__type">{{$index + 1}}. Recap Slide</h4>
-    </span>
-    <div id="{{$this.id}}" data-title="{{$this.title}}" c6-draggable="$index !== (deck.length - 1)" ng-click="EditorCtrl.editCard($this, $event)" class="card__item">
-        <h1 class="card__title"><span class="card__titleText">Recap Slide</span></h1>
-        <div class="card__img sprite--fff">&nbsp;</div>
-        <div class="card__body">
-            <div class="ui__divider--pause">&hellip;</div>
-            <p class="card__summary">A list of each video as well as the results of each questionnaire (when applicable) will accompany the recap slide.</p>
-        </div>
-    </div>
-    <div ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id]" class="card__contextBar">
-        <a href="" title="Preview This Slide" ng-click="EditorCtrl.previewMode($this, $event)">Preview This Slide</a>
-    </div>
+<h1 class="card__title"><span class="card__titleText">Recap Slide</span></h1>
+<div class="card__img sprite--fff">&nbsp;</div>
+<div class="card__body">
+    <div class="ui__divider--pause">&hellip;</div>
+    <p class="card__summary">A list of each video as well as the results of each questionnaire (when applicable) will accompany the recap slide.</p>
 </div>
