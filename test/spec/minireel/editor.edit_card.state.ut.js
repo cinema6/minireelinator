@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['app'], function(appModule) {
+    define(['app', 'minireel/editor'], function(appModule, editorModule) {
         describe('EditCardState', function() {
             var EditCardState,
                 $rootScope,
@@ -33,6 +33,10 @@
                         ]
                     }
                 };
+
+                module(editorModule.name, function($provide) {
+                    $provide.value('playerMeta', {});
+                });
 
                 module(appModule.name);
 
