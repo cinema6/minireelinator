@@ -25,6 +25,8 @@ function( angular , c6ui , c6State  , services          ) {
                 this.controllerAs = 'ManagerCtrl';
                 this.templateUrl = 'views/minireel/manager.html';
 
+                this.filter = 'all';
+
                 this.queryParams = {
                     filter: '='
                 };
@@ -41,14 +43,14 @@ function( angular , c6ui , c6State  , services          ) {
             }]);
         }])
 
-        .controller('ManagerController', ['$scope','c6State','MiniReelService',
+        .controller('ManagerController', ['$scope','c6State','MiniReelService','cState',
                                           'ConfirmDialogService','EditorService',
-        function                         ( $scope , c6State , MiniReelService ,
+        function                         ( $scope , c6State , MiniReelService , cState ,
                                            ConfirmDialogService , EditorService ) {
             var self = this,
                 MiniReelCtrl = $scope.MiniReelCtrl;
 
-            this.filter = 'all';
+            this.filter = cState.filter;
 
             this.edit = function(minireel) {
                 return c6State.goTo('MR:Editor', [EditorService.open(minireel)], {});
@@ -140,6 +142,10 @@ function( angular , c6ui , c6State  , services          ) {
             this.determineInclusionWithFilter = function(minireel) {
                 return self.filter === 'all' || self.filter === minireel.status;
             };
+
+            $scope.$on('$destroy', function() {
+                cState.filter = self.filter;
+            });
         }])
 
         .config(['c6StateProvider',

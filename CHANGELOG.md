@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[Beta14.rc1]*
+  * [FIX]: The filter applied to the dashboard is remembered when you go
+    back to the dashboard
+
 ## Beta13 (July 22, 2014)
 * *[Beta13.rc1]*
   * [FEATURE]: Support generating wordpress shortcode embeds
