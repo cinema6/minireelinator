@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[Beta14.rc1]*
+  * [FEATURE]: Create text cards by not specifying a video when
+    creating/editing a card
+
 ## Beta13 (July 22, 2014)
 * *[Beta13.rc1]*
   * [FEATURE]: Support generating wordpress shortcode embeds
