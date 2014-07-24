@@ -109,6 +109,9 @@
         border:0; margin:0; padding:0; overflow: hidden;
         font-size:1rem; line-height: 1;
     }
+        .wizard__choice--small .sprite--fff {
+            background-size:40.5rem 12.5rem;
+        }
     .css-promote {
         transform: translateZ(0);
         -webkit-transform: translateZ(0); /* Safari and Chrome */
@@ -674,11 +677,19 @@
             .wizard__choice--ads {
                 margin:0 0 0.5em 0;
             }
+            .wizard__choice--small {
+                padding:2em 0 0 0;
+            }
             .wizard__choice,
             .wizard__hitarea,
             .wizard__diagram {
                 height:7.5em;
             }
+                .wizard__choice--small,
+                .wizard__choice--small .wizard__hitarea,
+                .wizard__choice--small .wizard__diagram {
+                    height:6em;
+                }
             .wizard__choice--textOnly {
                 padding:0.8125em 0 0 0;
             }
@@ -707,6 +718,21 @@
                 .diagram__full {
                     background-position:-11.875em -8.125em;
                 }
+
+                .wizard__choice--small .wizard__diagram {
+                    width:9em;
+                    position:absolute; top:0; left:3em;
+                }
+                    .wizard__choice--small .diagram__lightbox {
+                        background-position:0 0;
+                    }
+                    .wizard__choice--small .diagram__lightbox-ads {
+                        background-position:0 -6.5em;
+                    }
+                    .wizard__choice--small .diagram__light, 
+                    .wizard__choice--small .diagram__inline {
+                        background-position:-9.5em 0;
+                    }
                 
             .wizard__copy {
                 position:absolute; top:0; left:15.375em;
@@ -714,14 +740,20 @@
                 .wizard__choice--textOnly .wizard__copy {
                     left:3em;
                 }
+                .wizard__choice--small .wizard__copy {
+                    left:13.125em;
+                }
                 .wizard__copy .wizard__title {
                     font-size:1.125em; color:#444; font-weight:700;
                     margin:5px 0;
                     -webkit-transition: color 0.5s; transition: color 0.5s;
                 }
                     .form__adSettings .wizard__copy .wizard__title {
-                        margin:5px 0 0 0;
+                        margin:0.3125em 0 0 0;
                         font-size:1em;
+                    }
+                    .wizard__choice--small .wizard__copy .wizard__title {
+                        margin:0;
                     }
                 .wizard__copy .wizard__p {
                     font-size:1em; color:#646464; font-weight:100;
@@ -729,6 +761,9 @@
                 }
                     .form__adSettings .wizard__copy .wizard__p {
                         margin:0;
+                        font-size:0.875em;
+                    }
+                    .wizard__choice--small .wizard__copy .wizard__p {
                         font-size:0.875em;
                     }
                 .wizard__choice:hover .wizard__title {

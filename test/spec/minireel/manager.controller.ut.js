@@ -233,10 +233,10 @@
                                     });
                                 });
 
-                                it('should transition to the MR:Editor state, then the MR:Settings.Category state', function() {
+                                it('should transition to the MR:Editor state, then the MR:Settings.Mode state', function() {
                                     expect(EditorService.open).toHaveBeenCalledWith(newMiniReel);
                                     expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [editorMinireel]);
-                                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Settings.Category');
+                                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Settings.Mode');
                                 });
                             });
                         });

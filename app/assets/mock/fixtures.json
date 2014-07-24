@@ -96,7 +96,7 @@
                                     "copy": 420
                                 },
                                 "autoplayable": false,
-                                "disabled": true
+                                "deprecated": true
                             }
                         ]
                     }
