@@ -11,7 +11,8 @@
                 EditorService,
                 ConfirmDialogService,
                 MiniReelService,
-                ManagerCtrl;
+                ManagerCtrl,
+                manager;
 
             var MiniReelCtrl,
                 model;
@@ -34,6 +35,9 @@
 
                     c6State = $injector.get('c6State');
                     spyOn(c6State, 'goTo');
+
+                    manager = c6State.get('MR:Manager');
+                    manager.filter = 'foo';
 
                     $scope = $rootScope.$new();
                     MiniReelCtrl = $scope.MiniReelCtrl = {
@@ -71,7 +75,7 @@
                         }
                     };
                     $scope.$apply(function() {
-                        ManagerCtrl = $controller('ManagerController', { $scope: $scope, cModel: model });
+                        ManagerCtrl = $controller('ManagerController', { $scope: $scope, cState: manager });
                         ManagerCtrl.model = model;
                     });
                 });
@@ -84,10 +88,24 @@
                 expect(ManagerCtrl).toEqual(jasmine.any(Object));
             });
 
+            describe('$events', function() {
+                describe('$destroy', function() {
+                    beforeEach(function() {
+                        ManagerCtrl.filter = 'active';
+
+                        $scope.$destroy();
+                    });
+
+                    it('should set the filter on the state', function() {
+                        expect(manager.filter).toBe(ManagerCtrl.filter);
+                    });
+                });
+            });
+
             describe('properties', function() {
                 describe('filter', function() {
-                    it('should be initialized as "all"', function() {
-                        expect(ManagerCtrl.filter).toBe('all');
+                    it('should be initialized as the state\'s filter', function() {
+                        expect(ManagerCtrl.filter).toBe(manager.filter);
                     });
                 });
             });

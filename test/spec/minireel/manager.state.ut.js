@@ -52,6 +52,12 @@
                 };
             });
 
+            describe('filter', function() {
+                it('should be all', function() {
+                    expect(ManagerState.filter).toBe('all');
+                });
+            });
+
             describe('model', function() {
                 var result;
 

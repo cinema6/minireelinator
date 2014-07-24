@@ -3,6 +3,8 @@
 * *[Beta14.rc1]*
   * [FEATURE]: Create text cards by not specifying a video when
     creating/editing a card
+  * [FIX]: The filter applied to the dashboard is remembered when you go
+    back to the dashboard
 
 ## Beta13 (July 22, 2014)
 * *[Beta13.rc1]*
