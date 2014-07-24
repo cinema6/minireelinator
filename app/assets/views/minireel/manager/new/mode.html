@@ -1,7 +1,7 @@
-<div class="modal__content modal__editor clearfix">
+<div class="modal__content modal__editor-slide clearfix">
     <ul class="wizard__group">
         <li ng-repeat="$this in NewCtrl.modes" 
-            class="wizard__choice"
+            class="wizard__choice wizard__choice--small"
             ng-class="{'wizard__choice--disabled': $this.disabled}">
             <div class="wizard__disabler" ng-if="$this.disabled">
                 <h3 class="disabler__title">Coming Soon</h3>
