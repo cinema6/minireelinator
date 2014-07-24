@@ -91,6 +91,10 @@
                                                 {
                                                     "value": "full",
                                                     "autoplayable": false
+                                                },
+                                                {
+                                                    "value": "foo",
+                                                    "deprecated": true
                                                 }
                                             ]
                                         }
@@ -113,7 +117,7 @@
 
             describe('events', function() {
                 describe('c6State:stateChange', function() {
-                    [0, 1, 2, 3].forEach(function(index) {
+                    [0, 1, 2].forEach(function(index) {
                         describe('with the state of the tab at index: ' + index, function() {
                             var tab,
                                 state,
@@ -140,13 +144,13 @@
 
                         beforeEach(function() {
                             $scope.$destroy();
-                            initialVisits = NewCtrl.tabs[3].visits;
+                            initialVisits = NewCtrl.tabs[2].visits;
 
                             c6State.emit('stateChange', { name: NewCtrl.baseState + '.autoplay' });
                         });
 
                         it('should not increment visits', function() {
-                            expect(NewCtrl.tabs[3].visits).toBe(initialVisits);
+                            expect(NewCtrl.tabs[2].visits).toBe(initialVisits);
                         });
                     });
                 });
@@ -182,8 +186,10 @@
                 });
 
                 describe('modes', function() {
-                    it('should be all of the modes', function() {
-                        expect(NewCtrl.modes).toBe(modes);
+                    it('should be all of the modes, flattened into a single array', function() {
+                        var modes = MiniReelCtrl.model.data.modes;
+
+                        expect(NewCtrl.modes).toEqual(modes[0].modes.concat([modes[1].modes[0], modes[1].modes[1]]));
                     });
                 });
 
@@ -250,13 +256,6 @@
                                 }),
                                 jasmine.objectContaining({
                                     name: jasmine.any(String),
-                                    sref: 'MR:New.Category',
-                                    visits: 0,
-                                    required: false,
-                                    requiredVisits: 0
-                                }),
-                                jasmine.objectContaining({
-                                    name: jasmine.any(String),
                                     sref: 'MR:New.Mode',
                                     visits: 0,
                                     required: false,
@@ -285,13 +284,6 @@
                             expect(NewCtrl.tabs).toEqual([
                                 jasmine.objectContaining({
                                     name: jasmine.any(String),
-                                    sref: 'MR:Settings.Category',
-                                    visits: 0,
-                                    required: false,
-                                    requiredVisits: 0
-                                }),
-                                jasmine.objectContaining({
-                                    name: jasmine.any(String),
                                     sref: 'MR:Settings.Mode',
                                     visits: 0,
                                     required: false,
@@ -312,12 +304,6 @@
                 describe('model', function() {
                     it('should be the minireel', function() {
                         expect(NewCtrl.model).toBe(minireel);
-                    });
-                });
-
-                describe('category', function() {
-                    it('should be the category of the MiniReel', function() {
-                        expect(NewCtrl.category).toBe(modes[1]);
                     });
                 });
 
@@ -484,7 +470,7 @@
 
                             NewCtrl.prevTab();
 
-                            expect(c6State.goTo).toHaveBeenCalledWith(NewCtrl.tabs[1].sref);
+                            expect(c6State.goTo).toHaveBeenCalledWith(NewCtrl.tabs[0].sref);
                         });
                     });
 
@@ -552,7 +538,7 @@
                         });
                     });
 
-                    [1, 2, 3].forEach(function(index) {
+                    [1, 2].forEach(function(index) {
                         describe('on the tab at index: ' + index, function() {
                             [true, false].forEach(function(bool) {
                                 describe('if isAsFarAs(tab) returns ' + bool, function() {
@@ -616,7 +602,7 @@
                         });
 
                         it('should bump up the requiredVisits of the autoplay tab', function() {
-                            expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits + 1);
+                            expect(NewCtrl.tabs[2].requiredVisits).toBe(NewCtrl.tabs[2].visits + 1);
                         });
                     });
 
@@ -636,7 +622,7 @@
                                 });
 
                                 it('should bump up the requiredVisits of the autoplay tab', function() {
-                                    expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits + 1);
+                                    expect(NewCtrl.tabs[2].requiredVisits).toBe(NewCtrl.tabs[2].visits + 1);
                                 });
                             });
                         });
@@ -647,14 +633,14 @@
                             $scope.$apply(function() {
                                 NewCtrl.mode = modes[0].modes[0];
                             });
-                            NewCtrl.tabs[3].requiredVisits = NewCtrl.tabs[3].visits;
+                            NewCtrl.tabs[2].requiredVisits = NewCtrl.tabs[2].visits;
                             $scope.$apply(function() {
                                 NewCtrl.mode = modes[0].modes[1];
                             });
                         });
 
                         it('should not bump up the requiredVisits of the autoplay tab', function() {
-                            expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits);
+                            expect(NewCtrl.tabs[2].requiredVisits).toBe(NewCtrl.tabs[2].visits);
                         });
                     });
                 });
