@@ -3,6 +3,7 @@
 * *[Beta14.rc1]*
   * [FIX]: The filter applied to the dashboard is remembered when you go
     back to the dashboard
+  * Splash images now default to a 3:2 ratio with the title overlayed
 
 ## Beta13 (July 22, 2014)
 * *[Beta13.rc1]*
