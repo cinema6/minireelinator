@@ -191,6 +191,16 @@
                             });
                         });
                     });
+
+                    describe('if collateral.splash is a blob', function() {
+                        beforeEach(function() {
+                            cModel.data.collateral.splash = 'blob:http://www.foo.com/image.jpg';
+                        });
+
+                        it('should be the splash without the cacheBuster', function() {
+                            expect(EditorCtrl.splashSrc).toBe(cModel.data.collateral.splash);
+                        });
+                    });
                 });
 
                 describe('cardLimits', function() {

@@ -363,9 +363,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 },
                 splashSrc: {
                     get: function() {
-                        var splash = this.model.data.collateral.splash;
+                        var splash = this.model.data.collateral.splash,
+                            isBlob = (/^blob:/).test(splash);
 
-                        return splash && (splash + '?cb=' + this.cacheBuster);
+                        return splash && (splash + (isBlob ? '' : ('?cb=' + this.cacheBuster)));
                     }
                 }
             });
@@ -763,9 +764,9 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
         }])
 
         .controller('SplashImageController', ['$scope','CollateralService','$log','$q','c6State',
-                                              'FileService',
+                                              'FileService','EditorService',
         function                             ( $scope , CollateralService , $log , $q , c6State ,
-                                               FileService ) {
+                                               FileService , EditorService ) {
             var EditorCtrl = $scope.EditorCtrl,
                 EditorSplashCtrl = $scope.EditorSplashCtrl;
             var self = this,
@@ -803,15 +804,12 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 }
             });
 
-            this.uploadSplash = function() {
+            this.uploadSplash = function(minireel) {
                 var upload;
 
                 $log.info('Upload started: ', this.splash);
-                this.currentUpload = upload = CollateralService.set(
-                    'splash',
-                    this.splash,
-                    EditorSplashCtrl.model
-                );
+                this.currentUpload = upload =
+                    CollateralService.set('splash', this.splash, minireel);
 
                 return upload
                     .finally(function cleanup() {
@@ -841,26 +839,23 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
             this.save = function() {
                 var data = EditorCtrl.model.data;
 
-                function handleImageAsset() {
-                    switch (splash.source) {
-                    case 'specified':
-                        return !!self.splash ?
-                            self.uploadSplash() :
-                            $q.when(minireel);
-                    case 'generated':
-                        return self.generateSplash(true)
-                            .then(function save(data) {
-                                minireel.data.collateral.splash = data.toString();
-
-                                return minireel;
-                            })
-                            .catch(function fix() {
-                                return minireel;
-                            });
+                function handleImageAsset(minireel) {
+                    if (!!self.splash || splash.source === 'generated') {
+                        minireel.data.collateral.splash = self.splashSrc;
                     }
+
+                    EditorService.beforeSync('splash', splash.source === 'generated' ?
+                        noop : function(proxy) {
+                            return self.uploadSplash(proxy)
+                                .then(function close() {
+                                    return FileService.open(self.splash).close();
+                                });
+                        });
+
+                    return $q.when(minireel);
                 }
 
-                return handleImageAsset()
+                return handleImageAsset(minireel)
                     .then(function copyData(minireel) {
                         $log.info('Saving data: ', minireel);
                         copy(minireel.data.collateral, data.collateral);
@@ -873,12 +868,6 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                         return EditorCtrl.model;
                     });
             };
-
-            $scope.$on('$destroy', function() {
-                if (!self.splash) { return; }
-
-                FileService.open(self.splash).close();
-            });
 
             $scope.$watch(function() { return self.splash; }, function(newImage, oldImage) {
                 var file;
