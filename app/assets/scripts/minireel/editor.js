@@ -305,10 +305,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
 
         .controller('EditorController', ['c6State','$scope','EditorService','cinema6',
                                          'ConfirmDialogService','c6Debounce','$q','$log',
-                                         'MiniReelService',
+                                         'MiniReelService','CollateralService',
         function                        ( c6State , $scope , EditorService , cinema6 ,
                                           ConfirmDialogService , c6Debounce , $q , $log ,
-                                          MiniReelService ) {
+                                          MiniReelService , CollateralService ) {
             var self = this,
                 MiniReelCtrl = $scope.MiniReelCtrl,
                 PortalCtrl = $scope.PortalCtrl,
@@ -320,6 +320,23 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
 
                     $log.info('Autosaving MiniReel');
                     self.save();
+                }, 10000),
+                generateTemporaryCollage = c6Debounce(function() {
+                    var isSpecified = self.model.data.splash.source === 'specified';
+
+                    if (shouldAutoSave() || isSpecified || !self.minireelState.dirty) { return; }
+
+                    $log.info('Generating temporary collage.');
+
+                    CollateralService.generateCollage({
+                        minireel: self.model,
+                        name: 'splash--temp.jpg',
+                        allRatios: false,
+                        cache: false
+                    }).then(function attach(collage) {
+                        self.model.data.collateral.splash = collage.toString();
+                        self.bustCache();
+                    });
                 }, 10000);
 
             function shouldAutoSave() {
@@ -589,6 +606,9 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
 
             $scope.$watch(function() { return self.minireelState.dirty; }, function(isDirty) {
                 if (!isDirty) { return; }
+
+                $log.info('MiniReel is dirty!');
+                generateTemporaryCollage();
 
                 if (!shouldAutoSave()) {
                     $log.warn('MiniReel is published. Will not autosave.');

@@ -15,6 +15,7 @@
                 EditorService,
                 MiniReelService,
                 ConfirmDialogService,
+                CollateralService,
                 MiniReelCtrl,
                 PortalCtrl,
                 EditorCtrl;
@@ -31,6 +32,9 @@
                         mode: 'lightbox',
                         collateral: {
                             splash: null
+                        },
+                        splash: {
+                            source: 'generated'
                         },
                         deck: [
                             {
@@ -82,6 +86,7 @@
                     };
                     MiniReelService = $injector.get('MiniReelService');
                     ConfirmDialogService = $injector.get('ConfirmDialogService');
+                    CollateralService = $injector.get('CollateralService');
                     $timeout = $injector.get('$timeout');
                     cinema6 = $injector.get('cinema6');
                     $log = $injector.get('$log');
@@ -872,8 +877,13 @@
                 });
 
                 describe('this.minireelState.dirty', function() {
+                    var generateCollageDeferred;
+
                     beforeEach(function() {
+                        generateCollageDeferred = $q.defer();
+
                         spyOn(EditorCtrl, 'save');
+                        spyOn(CollateralService, 'generateCollage').and.returnValue(generateCollageDeferred.promise);
                     });
 
                     it('should save the minireel (debounced) every time it is true', function() {
@@ -897,6 +907,20 @@
                         expect(EditorCtrl.save.calls.count()).toBe(2);
                     });
 
+                    describe('if the minireel is pending', function() {
+                        beforeEach(function() {
+                            $scope.$apply(function() {
+                                EditorCtrl.minireelState.dirty = true;
+                            });
+                            cModel.status = 'pending';
+                            $timeout.flush();
+                        });
+
+                        it('should not generate a collage', function() {
+                            expect(CollateralService.generateCollage).not.toHaveBeenCalled();
+                        });
+                    });
+
                     describe('if the minireel is active', function() {
                         beforeEach(function() {
                             EditorCtrl.save.calls.reset();
@@ -905,6 +929,63 @@
                                 EditorCtrl.minireelState.dirty = true;
                             });
                             cModel.status = 'active';
+                            cModel.data.splash.source = 'generated';
+                        });
+
+                        describe('if the splash is specified', function() {
+                            beforeEach(function() {
+                                cModel.data.splash.source = 'specified';
+                                $timeout.flush();
+                            });
+
+                            it('should not generate an image', function() {
+                                expect(CollateralService.generateCollage).not.toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('if the minireel becomes clean', function() {
+                            beforeEach(function() {
+                                EditorCtrl.minireelState.dirty = false;
+                                $timeout.flush();
+                            });
+
+                            it('should not generate an image', function() {
+                                expect(CollateralService.generateCollage).not.toHaveBeenCalled();
+                            });
+                        });
+
+                        it('should generate a temporary collage', function() {
+                            $timeout.flush();
+
+                            expect(CollateralService.generateCollage).toHaveBeenCalledWith({
+                                minireel: cModel,
+                                name: 'splash--temp.jpg',
+                                allRatios: false,
+                                cache: false
+                            });
+                        });
+
+                        describe('when the image is generated', function() {
+                            beforeEach(function() {
+                                spyOn(EditorCtrl, 'bustCache');
+
+                                $timeout.flush();
+                                $scope.$apply(function() {
+                                    generateCollageDeferred.resolve({
+                                        toString: function() {
+                                            return 'splash--temp.jpg';
+                                        }
+                                    });
+                                });
+                            });
+
+                            it('should set the MiniReel\'s splash to be the new image', function() {
+                                expect(cModel.data.collateral.splash).toBe('splash--temp.jpg');
+                            });
+
+                            it('should bust the cache', function() {
+                                expect(EditorCtrl.bustCache).toHaveBeenCalled();
+                            });
                         });
 
                         it('should not autosave', function() {
@@ -917,9 +998,6 @@
                             $scope.$apply(function() {
                                 EditorCtrl.minireelState.dirty = true;
                             });
-                            expect(function() {
-                                $timeout.flush();
-                            }).toThrow();
                             expect(EditorCtrl.save).not.toHaveBeenCalled();
                         });
                     });
