@@ -6,6 +6,7 @@
   * Splash image settings are now editable even when the MiniReel is
     published
 
+## Beta14 (July 25, 2014)
 * *[Beta14.rc1]*
   * [FEATURE]: Create text cards by not specifying a video when
     creating/editing a card
@@ -14,6 +15,7 @@
   * Splash images now default to a 3:2 ratio with the title overlayed
   * The two tabs for choosing the MiniReel view mode have been
     consolidated into a single tab
+* *[/Beta14.rc1]*
 
 ## Beta13 (July 22, 2014)
 * *[Beta13.rc1]*
