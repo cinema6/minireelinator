@@ -13,8 +13,11 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
         c6ui.name, c6log.name, c6State.name, c6Drag.name,
         services.name, tracker.name, cardTable.name, editor.name, manager.name, players.name
     ])
-        .config(['$sceDelegateProvider',
-        function( $sceDelegateProvider ) {
+        .config(['$sceDelegateProvider','$compileProvider',
+        function( $sceDelegateProvider , $compileProvider ) {
+            $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|blob):/)
+                .imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|blob):|data:image\//);
+
             $sceDelegateProvider.resourceUrlWhitelist([
                 'self',
                 '*://www.youtube.com/**',
