@@ -70,7 +70,7 @@ function( angular , c6ui , c6State  , services          ) {
                             })
                             .then(function editCopy(minireel) {
                                 c6State.goTo('MR:Editor', [EditorService.open(minireel)]);
-                                c6State.goTo('MR:Settings.Category');
+                                c6State.goTo('MR:Settings.Mode');
                             });
                     },
                     onCancel: function() {
@@ -185,7 +185,8 @@ function( angular , c6ui , c6State  , services          ) {
                                        EditorService ) {
             var self = this,
                 MiniReelCtrl = $scope.MiniReelCtrl,
-                stateName = cState.cName;
+                stateName = cState.cName,
+                modes = MiniReelCtrl.model.data.modes;
 
             function Tab(name, sref, required) {
                 this.name = name;
@@ -205,7 +206,11 @@ function( angular , c6ui , c6State  , services          ) {
                 tabBySref(state.cName).visits++;
             }
 
-            this.modes = MiniReelCtrl.model.data.modes;
+            this.modes = modes.reduce(function(array, mode) {
+                return array.concat(mode.modes.filter(function(mode) {
+                    return !mode.deprecated;
+                }));
+            }, []);
             this.returnState = cState.cParent.cName;
             this.baseState = (function() {
                 switch (stateName) {
@@ -216,7 +221,6 @@ function( angular , c6ui , c6State  , services          ) {
                 }
             }());
             this.tabs = [
-                new Tab('Lightbox', this.baseState + 'Category'),
                 new Tab('MiniReel Type', this.baseState + 'Mode'),
                 new Tab('Autoplay', this.baseState + 'Autoplay')
             ];
@@ -244,8 +248,7 @@ function( angular , c6ui , c6State  , services          ) {
 
             this.initWithModel = function(minireel) {
                 this.model = minireel;
-                this.mode = MiniReelService.modeDataOf(minireel, this.modes);
-                this.category = MiniReelService.modeCategoryOf(minireel, this.modes);
+                this.mode = MiniReelService.modeDataOf(minireel, modes);
                 this.autoplay = minireel.data.autoplay;
                 this.title = minireel.data.title;
             };
