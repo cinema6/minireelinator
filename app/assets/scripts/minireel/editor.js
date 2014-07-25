@@ -906,7 +906,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     };
 
                     this.afterModel = function(model) {
-                        var types = ['video', 'videoBallot'];
+                        var types = ['video', 'videoBallot', 'text'];
 
                         if(types.indexOf(model.type) < 0) {
                             c6State.goTo('MR:Editor');
@@ -922,10 +922,21 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     this.templateUrl = 'views/minireel/editor/edit_card/copy.html';
                 }])
 
-                .state('MR:EditCard.Video', [function() {
+                .state('MR:EditCard.Video', ['MiniReelService',
+                function                    ( MiniReelService ) {
                     this.controller = 'GenericController';
                     this.controllerAs = 'EditCardVideoCtrl';
                     this.templateUrl = 'views/minireel/editor/edit_card/video.html';
+
+                    this.model = function() {
+                        var card = this.cParent.cModel;
+
+                        if (!(/^video/).test(card.type)) {
+                            return MiniReelService.setCardType(card, 'video');
+                        }
+
+                        return card;
+                    };
                 }])
 
                 .state('MR:EditCard.Ballot', ['c6UrlMaker','MiniReelService',
@@ -936,7 +947,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     this.model = function() {
                         var card = this.cParent.cModel;
 
-                        if (card.type === 'video') {
+                        if (card.type !== 'videoBallot') {
                             MiniReelService.setCardType(card, 'videoBallot');
                         }
 
@@ -970,7 +981,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                         switch (this.model.type) {
                         case 'video':
                         case 'videoBallot':
-                            return [this.copyComplete, this.videoComplete].indexOf(false) < 0 &&
+                            return [this.copyComplete].indexOf(false) < 0 &&
                                 !EditorCtrl.errorForCard(this.model);
 
                         default:
@@ -1013,7 +1024,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     get: function() {
                         var state = c6State.current;
 
-                        if (this.canSave || /^(MR:EditCard.(Video|Ballot))$/.test(state)) {
+                        if (/^(MR:EditCard.(Video|Ballot))$/.test(state)) {
                             return copy({
                                 text: EditorCtrl.model.status === 'active' ? 'I\'m Done!' : 'Save',
                                 action: function() { self.save(); },
@@ -1081,6 +1092,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     switch (model.type) {
                     case 'video':
                     case 'videoBallot':
+                    case 'text':
                         return [copyTab, videoTab, ballotTab];
                     default:
                         return [];
@@ -1098,11 +1110,15 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
             this.setIdealType = function() {
                 var choices;
 
-                if (this.model.type !== 'videoBallot') { return; }
+                if (!(/^video/).test(this.model.type)) { return; }
 
-                choices = this.model.data.ballot.choices;
+                if (!this.model.data.videoid) {
+                    return MiniReelService.setCardType(this.model, 'text');
+                }
 
-                if (!choices[0] || !choices[1]) {
+                choices = (this.model.data.ballot || {}).choices || [];
+
+                if ((!choices[0] || !choices[1]) && this.model.type !== 'video') {
                     MiniReelService.setCardType(this.model, 'video');
                 }
             };

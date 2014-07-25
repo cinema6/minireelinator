@@ -51,15 +51,27 @@
                         videoCard = {
                             type: 'video',
                             data: {}
+                        },
+                        videoBallotCard = {
+                            type: 'videoBallot',
+                            data: {
+                                ballot: {}
+                            }
                         };
 
                     EditCardState.cModel = adCard;
-                    expect($injector.invoke(BallotState.model, BallotState)).toBeUndefined();
+                    expect(BallotState.model()).toBe(adCard.data.ballot);
+                    expect(MiniReelService.setCardType).toHaveBeenCalledWith(adCard, 'videoBallot');
 
                     EditCardState.cModel = videoCard;
-                    expect($injector.invoke(BallotState.model, BallotState)).toBe(videoCard.data.ballot);
+                    expect(BallotState.model()).toBe(videoCard.data.ballot);
                     expect(MiniReelService.setCardType).toHaveBeenCalledWith(videoCard, 'videoBallot');
                     expect(videoCard.data.ballot).toEqual(jasmine.any(Object));
+
+                    MiniReelService.setCardType.calls.reset();
+                    EditCardState.cModel = videoBallotCard;
+                    expect(BallotState.model()).toBe(videoBallotCard.data.ballot);
+                    expect(MiniReelService.setCardType).not.toHaveBeenCalled();
                 });
             });
         });

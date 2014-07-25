@@ -1,6 +1,8 @@
 # MiniReelinator
 
 * *[Beta14.rc1]*
+  * [FEATURE]: Create text cards by not specifying a video when
+    creating/editing a card
   * [FIX]: The filter applied to the dashboard is remembered when you go
     back to the dashboard
   * Splash images now default to a 3:2 ratio with the title overlayed
