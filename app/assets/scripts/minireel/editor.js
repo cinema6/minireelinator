@@ -763,7 +763,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
             this.generatedSrcs = {
                 '1-1': null,
                 '6-5': null,
-                '6-4': null,
+                '3-2': null,
                 '16-9': null
             };
             Object.defineProperties(this, {

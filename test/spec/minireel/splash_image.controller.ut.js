@@ -2,7 +2,7 @@
     'use strict';
 
     define(['minireel/editor'], function(editorModule) {
-        describe('SplashImageController', function() {
+        ddescribe('SplashImageController', function() {
             var $rootScope,
                 $scope,
                 $controller,
@@ -240,13 +240,13 @@
                             SplashImageCtrl.generatedSrcs = {
                                 '1-1': 'splash--1-1',
                                 '6-5': 'splash--6-5',
-                                '6-4': 'splash--6-4',
+                                '3-2': 'splash--3-2',
                                 '16-9': 'splash--16-9'
                             };
                         });
 
                         it('should return the generated splash for that ratio', function() {
-                            ['1-1', '6-5', '6-4', '16-9'].forEach(function(ratio) {
+                            ['1-1', '6-5', '3-2', '16-9'].forEach(function(ratio) {
                                 minireel.data.splash.ratio = ratio;
 
                                 expect(SplashImageCtrl.splashSrc).toBe(SplashImageCtrl.generatedSrcs[ratio]);
@@ -260,7 +260,7 @@
                         expect(SplashImageCtrl.generatedSrcs).toEqual({
                             '1-1': null,
                             '6-5': null,
-                            '6-4': null,
+                            '3-2': null,
                             '16-9': null
                         });
                     });
@@ -305,7 +305,7 @@
                                     result = {
                                         '1-1': '/collateral/foo--1-1',
                                         '6-5': '/collateral/foo--6-5',
-                                        '6-4': '/collateral/foo--6-4',
+                                        '3-2': '/collateral/foo--3-2',
                                         '16-9': '/collateral/foo--16-9'
                                     };
 
