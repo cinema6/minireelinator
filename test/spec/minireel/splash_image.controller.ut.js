@@ -424,7 +424,8 @@
 
                         beforeEach(function() {
                             wrapper = {
-                                close: jasmine.createSpy('wrapper.close()')
+                                close: jasmine.createSpy('wrapper.close()'),
+                                url: 'temp.jpg'
                             };
 
                             FileService.open.and.returnValue(wrapper);
@@ -466,6 +467,7 @@
                                 minireel.data.collateral.splash = 'splash.jpg';
                                 SplashImageCtrl.splash = null;
 
+                                EditorService.beforeSync.calls.reset();
                                 $scope.$apply(function() {
                                     SplashImageCtrl.save().then(success);
                                 });
@@ -473,6 +475,10 @@
 
                             it('should not set the MiniReel\'s splash to its splashSrc', function() {
                                 expect(minireel.data.collateral.splash).not.toBe(SplashImageCtrl.splashSrc);
+                            });
+
+                            it('should not try to upload anything on the next sync', function() {
+                                expect(EditorService.beforeSync).not.toHaveBeenCalled();
                             });
                         });
 

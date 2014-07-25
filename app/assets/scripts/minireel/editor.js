@@ -855,17 +855,33 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 var data = EditorCtrl.model.data;
 
                 function handleImageAsset(minireel) {
-                    if (!!self.splash || splash.source === 'generated') {
+                    function generated(minireel) {
                         minireel.data.collateral.splash = self.splashSrc;
+
+                        return EditorService.beforeSync('splash', noop);
                     }
 
-                    EditorService.beforeSync('splash', splash.source === 'generated' ?
-                        noop : function(proxy) {
+                    function specified(minireel) {
+                        if (!self.splash) { return; }
+
+                        minireel.data.collateral.splash = self.splashSrc;
+
+                        return EditorService.beforeSync('splash', function(proxy) {
                             return self.uploadSplash(proxy)
                                 .then(function close() {
                                     return FileService.open(self.splash).close();
                                 });
                         });
+                    }
+
+                    switch (splash.source) {
+                    case 'generated':
+                        generated(minireel);
+                        break;
+                    case 'specified':
+                        specified(minireel);
+                        break;
+                    }
 
                     return $q.when(minireel);
                 }
