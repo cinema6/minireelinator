@@ -231,7 +231,6 @@
                         access: "public",
                         created: "fkdslf",
                         lastUpdated: "fkdsjfkd",
-                        org: "483fh38",
                         user: "e2e-user"
                     };
                     /* jshint quotmark:single */

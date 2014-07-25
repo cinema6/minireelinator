@@ -72,7 +72,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         function                ( $http , $q , config ) {
             function clean(model) {
                 delete model.id;
-                delete model.org;
                 delete model.created;
 
                 return model;
