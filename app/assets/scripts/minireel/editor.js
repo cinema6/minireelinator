@@ -169,6 +169,23 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     });
                 }
 
+                function syncWithCollateral() {
+                    if (proxy.data.splash.source === 'specified') {
+                        return $q.when(proxy);
+                    }
+
+                    return CollateralService.generateCollage({
+                        minireel: proxy,
+                        name: 'splash',
+                        cache: proxy.status === 'active'
+                    }).then(function store(data) {
+                        proxy.data.collateral.splash = data.toString();
+                    })
+                    .catch(function rescue() {
+                        return proxy;
+                    });
+                }
+
                 function syncWithElection(miniReel) {
                     if (miniReel.status !== 'active'){
                         return $q.when(miniReel);
@@ -194,6 +211,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 }
 
                 return beforeSync()
+                    .then(syncWithCollateral)
                     .then(syncToMinireel)
                    .then(syncWithElection)
                    .then(function save(minireel){
