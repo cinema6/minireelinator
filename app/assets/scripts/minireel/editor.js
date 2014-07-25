@@ -40,7 +40,8 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
         function                  ( MiniReelService , $q , c6AsyncQueue , VoteService ,
                                     CollateralService ) {
             var _private = {},
-                queue = c6AsyncQueue();
+                queue = c6AsyncQueue(),
+                beforeSyncFns = {};
 
             function readOnly(source, key, target) {
                 Object.defineProperty(target, key, {
@@ -152,25 +153,19 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     });
             };
 
+            this.beforeSync = function(id, fn) {
+                beforeSyncFns[id] = fn;
+            };
+
             this.sync = queue.wrap(function() {
                 var minireel = _private.minireel,
                     proxy = _private.proxy;
 
-                function syncWithCollateral() {
-                    if (proxy.data.splash.source === 'specified' ||
-                        proxy.status === 'active') {
-                        return $q.when(proxy);
-                    }
-
-                    return CollateralService.generateCollage({
-                        minireel: proxy,
-                        name: 'splash',
-                        cache: proxy.status === 'active'
-                    }).then(function store(data) {
-                        proxy.data.collateral.splash = data.toString();
-                    })
-                    .catch(function rescue() {
-                        return proxy;
+                function beforeSync() {
+                    return $q.all(Object.keys(beforeSyncFns).map(function(id) {
+                        return beforeSyncFns[id](proxy);
+                    })).finally(function() {
+                        beforeSyncFns = {};
                     });
                 }
 
@@ -198,18 +193,18 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     return rejectNothingOpen();
                 }
 
-                return syncWithCollateral()
-                        .then(syncToMinireel)
-                       .then(syncWithElection)
-                       .then(function save(minireel){
-                            return minireel.save();
-                        })
-                       .then(syncToProxy)
-                       .then(function updateElection(proxy){
-                            // See comment in publish
-                            proxy.data.election = minireel.data.election;
-                            return proxy;
-                        });
+                return beforeSync()
+                    .then(syncToMinireel)
+                   .then(syncWithElection)
+                   .then(function save(minireel){
+                        return minireel.save();
+                    })
+                   .then(syncToProxy)
+                   .then(function updateElection(proxy){
+                        // See comment in publish
+                        proxy.data.election = minireel.data.election;
+                        return proxy;
+                    });
             }, this);
 
             this.publish = queue.wrap(function() {
