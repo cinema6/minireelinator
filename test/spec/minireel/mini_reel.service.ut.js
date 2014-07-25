@@ -660,9 +660,9 @@
                                     splash: null
                                 });
                                 expect(result.data.splash).toEqual({
-                                    ratio: '1-1',
+                                    ratio: '3-2',
                                     source: 'generated',
-                                    theme: 'img-only'
+                                    theme: 'img-text-overlay'
                                 });
                             });
                         });
@@ -954,8 +954,8 @@
                                         branding: portal.cModel.branding,
                                         splash: {
                                             source: 'generated',
-                                            ratio: '1-1',
-                                            theme: 'img-only'
+                                            ratio: '3-2',
+                                            theme: 'img-text-overlay'
                                         },
                                         collateral: {
                                             splash: null
@@ -1072,9 +1072,9 @@
                                                 videoAdSource: portal.cModel.org.waterfalls.video[0],
                                                 videoAdSkip: portal.cModel.org.videoAdSkip,
                                                 splash: {
-                                                    ratio: '1-1',
+                                                    ratio: '3-2',
                                                     source: 'generated',
-                                                    theme: 'img-only'
+                                                    theme: 'img-text-overlay'
                                                 },
                                                 collateral: {
                                                     splash: null

@@ -876,7 +876,7 @@ function( angular , c6ui , cryptojs ) {
                     collateral: minireel.data.collateral ||
                         { splash: null },
                     splash: minireel.data.splash ||
-                        { ratio: '1-1', source: 'generated', theme: 'img-only' },
+                        { ratio: '3-2', source: 'generated', theme: 'img-text-overlay' },
                     deck: minireel.data.deck.
                         filter(function(card) {
                             return card.type !== 'ad';
@@ -912,16 +912,11 @@ function( angular , c6ui , cryptojs ) {
 
                 function fetchTemplate(data) {
                     var lastMinireel = data.minireels[0] || {
-                            data: {
-                                splash: {
-                                    ratio: '1-1',
-                                    theme: 'img-only'
-                                }
-                            }
+                            data: {}
                         },
                         splash = lastMinireel.data.splash || {
-                            ratio: '1-1',
-                            theme: 'img-only'
+                            ratio: '3-2',
+                            theme: 'img-text-overlay'
                         },
                         ratio = splash.ratio,
                         theme = splash.theme,
