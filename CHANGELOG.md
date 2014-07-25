@@ -1,5 +1,11 @@
 # MiniReelinator
 
+* *[Beta15.rc1]*
+  * [FIX]: If a MiniReel is published, editing image settings does not
+    take effect until the "Publish" button is clicked
+  * Splash image settings are now editable even when the MiniReel is
+    published
+
 * *[Beta14.rc1]*
   * [FEATURE]: Create text cards by not specifying a video when
     creating/editing a card
