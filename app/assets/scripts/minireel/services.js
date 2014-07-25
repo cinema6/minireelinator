@@ -647,6 +647,8 @@ function( angular , c6ui , cryptojs ) {
                             return 'Intro';
                         case 'recap':
                             return 'Recap';
+                        case 'text':
+                            return 'Text';
 
                         default:
                             return null;
@@ -713,7 +715,8 @@ function( angular , c6ui , cryptojs ) {
                     },
                     links: {
                         links: copy([])
-                    }
+                    },
+                    text: {}
                 };
 
                 /******************************************************\
@@ -876,7 +879,7 @@ function( angular , c6ui , cryptojs ) {
                     collateral: minireel.data.collateral ||
                         { splash: null },
                     splash: minireel.data.splash ||
-                        { ratio: '1-1', source: 'generated', theme: 'img-only' },
+                        { ratio: '3-2', source: 'generated', theme: 'img-text-overlay' },
                     deck: minireel.data.deck.
                         filter(function(card) {
                             return card.type !== 'ad';
@@ -912,16 +915,11 @@ function( angular , c6ui , cryptojs ) {
 
                 function fetchTemplate(data) {
                     var lastMinireel = data.minireels[0] || {
-                            data: {
-                                splash: {
-                                    ratio: '1-1',
-                                    theme: 'img-only'
-                                }
-                            }
+                            data: {}
                         },
                         splash = lastMinireel.data.splash || {
-                            ratio: '1-1',
-                            theme: 'img-only'
+                            ratio: '3-2',
+                            theme: 'img-text-overlay'
                         },
                         ratio = splash.ratio,
                         theme = splash.theme,
@@ -1062,6 +1060,14 @@ function( angular , c6ui , cryptojs ) {
                 };
 
                 cardBases = {
+                    text: {
+                        id: copy(),
+                        type: copy(),
+                        title: copy(null),
+                        note: copy(null),
+                        modules: value([]),
+                        displayAdSource: copy('cinema6')
+                    },
                     video: {
                         id: copy(),
                         type: function(card) {

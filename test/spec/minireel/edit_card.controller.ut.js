@@ -226,6 +226,21 @@
                             expect(model.data.source).toBeUndefined();
                         });
                     });
+
+                    describe('on text cards', function() {
+                        beforeEach(function() {
+                            model.type = 'text';
+                            EditCardCtrl.initWithModel(model);
+                        });
+
+                        it('should enable the "copy" and "video" tabs', function() {
+                            expect(EditCardCtrl.tabs).toEqual([copy, video, ballot]);
+                        });
+
+                        it('should not set data.source', function() {
+                            expect(model.data.source).toBeUndefined();
+                        });
+                    });
                 });
 
                 describe('save()', function() {
@@ -277,8 +292,12 @@
                 });
 
                 describe('setIdealType()', function() {
-                    it('should not mess with anything that is not a videoBallot card', function() {
-                        ['ad', 'recap', 'video', 'links'].forEach(function(type) {
+                    beforeEach(function() {
+                        spyOn(MiniReelService, 'setCardType').and.callThrough();
+                    });
+
+                    it('should not mess with anything that is not a video/videoBallot card', function() {
+                        ['ad', 'recap', 'text', 'links'].forEach(function(type) {
                             EditCardCtrl.model.type = type;
 
                             EditCardCtrl.setIdealType();
@@ -287,9 +306,42 @@
                         });
                     });
 
+                    ['videoBallot', 'video'].forEach(function(type) {
+                        describe('with a ' + type + ' type with no videoid', function() {
+                            beforeEach(function() {
+                                EditCardCtrl.model.type = type;
+                                EditCardCtrl.model.data.videoid = null;
+                                EditCardCtrl.model.data.source = null;
+
+                                EditCardCtrl.setIdealType();
+                            });
+
+                            it('should set the card to the "text" type', function() {
+                                expect(MiniReelService.setCardType).toHaveBeenCalledWith(EditCardCtrl.model, 'text');
+                                expect(EditCardCtrl.model.type).toBe('text');
+                            });
+                        });
+                    });
+
+                    describe('with a plain video card', function() {
+                        beforeEach(function() {
+                            EditCardCtrl.model.type = 'video';
+                            EditCardCtrl.model.data.videoid = 'abc';
+                            EditCardCtrl.model.data.source = 'youtube';
+
+                            EditCardCtrl.setIdealType();
+                        });
+
+                        it('should not do anything', function() {
+                            expect(MiniReelService.setCardType).not.toHaveBeenCalled();
+                        });
+                    });
+
                     describe('with a videoBallot type', function() {
                         beforeEach(function() {
                             EditCardCtrl.model.type = 'videoBallot';
+                            EditCardCtrl.model.data.videoid = 'abc';
+                            EditCardCtrl.model.data.source = 'youtube';
                         });
 
                         describe('if user has chosen two prompts', function() {
@@ -317,7 +369,6 @@
                                     ]
                                 };
 
-                                spyOn(MiniReelService, 'setCardType').and.callThrough();
                                 EditCardCtrl.setIdealType();
                             });
 
@@ -556,55 +607,6 @@
                         expect(EditCardCtrl.primaryButton).toBe(EditCardCtrl.primaryButton);
                     });
 
-                    describe('if the card can be saved', function() {
-                        beforeEach(function() {
-                            Object.defineProperty(EditCardCtrl, 'canSave', {
-                                value: true
-                            });
-                        });
-
-                        describe('the text', function() {
-                            describe('if the minireel is not published', function() {
-                                beforeEach(function() {
-                                    EditorCtrl.model.status = 'pending';
-                                });
-
-                                it('should be "Save"', function() {
-                                    expect(EditCardCtrl.primaryButton.text).toBe('Save');
-                                });
-                            });
-
-                            describe('if the minireel is published', function() {
-                                beforeEach(function() {
-                                    EditorCtrl.model.status = 'active';
-                                });
-
-                                it('should be "Done"', function() {
-                                    expect(EditCardCtrl.primaryButton.text).toBe('I\'m Done!');
-                                });
-                            });
-                        });
-
-                        describe('the action', function() {
-                            beforeEach(function() {
-                                spyOn(EditCardCtrl, 'save');
-
-                                EditCardCtrl.primaryButton.action();
-                            });
-
-                            it('should call "save()"', function() {
-                                expect(EditCardCtrl.save).toHaveBeenCalled();
-                                expect(EditCardCtrl.save.calls.mostRecent().object).toBe(EditCardCtrl);
-                            });
-                        });
-
-                        describe('enabled', function() {
-                            it('should be true', function() {
-                                expect(EditCardCtrl.primaryButton.enabled).toBe(true);
-                            });
-                        });
-                    });
-
                     describe('if the card cannot be saved', function() {
                         beforeEach(function() {
                             Object.defineProperty(EditCardCtrl, 'canSave', {
@@ -761,10 +763,10 @@
                                 expect(canSave()).toBe(true);
 
                                 onlyEmpty('service');
-                                expect(canSave()).toBe(false);
+                                expect(canSave()).toBe(true);
 
                                 onlyEmpty('videoid');
-                                expect(canSave()).toBe(false);
+                                expect(canSave()).toBe(true);
 
                                 onlyEmpty('foo');
                                 expect(canSave()).toBe(true);

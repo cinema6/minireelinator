@@ -1,52 +1,34 @@
-<div class="card__container card--ad"
-    ng-class="{
-        'card__container--dragging': DragCtrl.currentDrags[0] === DragCtrl.draggables[$this.id]
-    }"
-    id="container-{{$this.id}}"
-    c6-drag-zone>
-    <span ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id]">
-        <h4 class="card__type">{{$index + 1}}. Advertisement Slide</h4>
-        <button ng-show="EditorCtrl.canDeleteCard($this)" ng-click="EditorCtrl.deleteCard($this, $event)" class="card__deleteBtn" type="button" title="Delete Card">
-            <span class="ui__xSmall ui__xSmall--white sprite--alpha"><span class="ir">Delete Card</span></span>
-        </button>
+<div class="card__statusIndicator">
+    <span class="ui__editToolTip">
+        <span class="ui__edit sprite--alpha"><span class="ir">Edit</span></span>
+        Edit
     </span>
-    <div id="{{$this.id}}" data-title="{{$this.title}}" c6-draggable="$index !== (deck.length - 1)" ng-click="EditorCtrl.editCard($this, $event)" class="card__item">
-        <div class="card__statusIndicator">
-            <span class="ui__editToolTip">
-                <span class="ui__edit sprite--alpha"><span class="ir">Edit</span></span>
-                Edit
-            </span>
-        </div>
-        <div class="card__imgBox">
-            <div class="card__img sprite--fff">
-                &nbsp;
-            </div>
-        </div>
-        <div class="card__body">
-            <div class="card__copy">
-                <h1 class="card__title"><span class="card__titleText">Advertisement Slide</span></h1>
-                <p class="card__summary">
-                    Served by: <br>
-                    <ng-switch on="$this.data.source">
-                        <strong ng-switch-when="cinema6">Cinema6 Ad Server</strong>
-                        <strong ng-switch-when="publisher">Publisher Ad Server</strong>
-                        <strong ng-switch-when="publisher-cinema6">Publisher Ad Server with Cinema6 fallback</strong>
-                        <strong ng-switch-when="cinema6-publisher">Cinema6 Ad Server with Publisher fallback</strong>
-                    </ng-switch>
-                </p>
-                <p class="card__summary">
-                    Skip Availability: <br>
-                    <ng-switch on="$this.data.skip">
-                        <strong ng-switch-when="delay">After 6 Seconds</strong>
-                        <strong ng-switch-when="anytime">Anytime</strong>
-                        <strong ng-switch-when="never">Never</strong>
-                    </ng-switch>
-                </p>
-            </div>
-            <div class="ui__divider--pause">&hellip;</div>
-        </div>
+</div>
+<div class="card__imgBox">
+    <div class="card__img sprite--fff">
+        &nbsp;
     </div>
-    <!--<div ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id]" class="card__contextBar">
-        <a href="#" title="Preview This Slide" ng-click="EditorCtrl.previewMode($this, $event)">Preview This Slide</a>
-    </div>-->
+</div>
+<div class="card__body">
+    <div class="card__copy">
+        <h1 class="card__title"><span class="card__titleText">Advertisement Slide</span></h1>
+        <p class="card__summary">
+            Served by: <br>
+            <ng-switch on="$this.data.source">
+                <strong ng-switch-when="cinema6">Cinema6 Ad Server</strong>
+                <strong ng-switch-when="publisher">Publisher Ad Server</strong>
+                <strong ng-switch-when="publisher-cinema6">Publisher Ad Server with Cinema6 fallback</strong>
+                <strong ng-switch-when="cinema6-publisher">Cinema6 Ad Server with Publisher fallback</strong>
+            </ng-switch>
+        </p>
+        <p class="card__summary">
+            Skip Availability: <br>
+            <ng-switch on="$this.data.skip">
+                <strong ng-switch-when="delay">After 6 Seconds</strong>
+                <strong ng-switch-when="anytime">Anytime</strong>
+                <strong ng-switch-when="never">Never</strong>
+            </ng-switch>
+        </p>
+    </div>
+    <div class="ui__divider--pause">&hellip;</div>
 </div>

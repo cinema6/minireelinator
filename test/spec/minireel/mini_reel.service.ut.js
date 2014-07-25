@@ -92,6 +92,15 @@
                         },
                         deck: [
                             {
+                                id: 'rc-9de889d3002d03',
+                                type: 'text',
+                                title: 'This is my MiniReel',
+                                note: 'Hello. This is an intro.',
+                                displayAdSource: 'cinema6',
+                                modules: [],
+                                data: {},
+                            },
+                            {
                                 id: 'rc-c9cf24e87307ac',
                                 type: 'youtube',
                                 title: 'The Slowest Turtle',
@@ -301,7 +310,8 @@
                             var videoCard = MiniReelService.createCard('video'),
                                 videoBallotCard = MiniReelService.createCard('videoBallot'),
                                 adCard = MiniReelService.createCard('ad'),
-                                linksCard = MiniReelService.createCard('links');
+                                linksCard = MiniReelService.createCard('links'),
+                                textCard = MiniReelService.createCard('text');
 
                             expect(videoCard).toEqual({
                                 id: jasmine.any(String),
@@ -318,6 +328,18 @@
                                     start: null,
                                     end: null
                                 }
+                            });
+
+                            expect(textCard).toEqual({
+                                id: jasmine.any(String),
+                                type: 'text',
+                                title: null,
+                                note: null,
+                                label: 'Text',
+                                ad: false,
+                                view: 'text',
+                                displayAdSource: null,
+                                data: {}
                             });
 
                             expect(videoBallotCard).toEqual({
@@ -543,7 +565,7 @@
                             $rootScope.$apply(function() {
                                 result = MiniReelService.publish(minireel).then(success);
                             });
-                            
+
                             $rootScope.$apply(function() {
                                 updateVoteDeferred.resolve(minireel);
                             });
@@ -660,9 +682,9 @@
                                     splash: null
                                 });
                                 expect(result.data.splash).toEqual({
-                                    ratio: '1-1',
+                                    ratio: '3-2',
                                     source: 'generated',
-                                    theme: 'img-only'
+                                    theme: 'img-text-overlay'
                                 });
                             });
                         });
@@ -709,8 +731,22 @@
                             expect(result.data.mode).toBe('lightbox');
                         });
 
-                        it('should transpile the various video cards into two cards', function() {
+                        it('should transpile the text card', function() {
                             expect(deck[0]).toEqual({
+                                id: 'rc-9de889d3002d03',
+                                type: 'text',
+                                title: 'This is my MiniReel',
+                                note: 'Hello. This is an intro.',
+                                label: 'Text',
+                                ad: false,
+                                view: 'text',
+                                displayAdSource: 'cinema6',
+                                data: {}
+                            });
+                        });
+
+                        it('should transpile the various video cards into two cards', function() {
+                            expect(deck[1]).toEqual({
                                 id: 'rc-c9cf24e87307ac',
                                 type: 'video',
                                 title: 'The Slowest Turtle',
@@ -727,7 +763,7 @@
                                 }
                             });
 
-                            expect(deck[1]).toEqual({
+                            expect(deck[2]).toEqual({
                                 id: 'rc-17721b74ce2584',
                                 type: 'videoBallot',
                                 title: 'The Ugliest Turtle',
@@ -751,7 +787,7 @@
                                 }
                             });
 
-                            expect(deck[2]).toEqual({
+                            expect(deck[3]).toEqual({
                                 id: 'rc-61fa9683714e13',
                                 type: 'videoBallot',
                                 title: 'The Smartest Turtle',
@@ -775,7 +811,7 @@
                                 }
                             });
 
-                            expect(deck[3]).toEqual({
+                            expect(deck[4]).toEqual({
                                 id: 'rc-d8ebd5461ba524',
                                 type: 'video',
                                 title: 'The Dumbest Turtle',
@@ -842,7 +878,7 @@
                         });
 
                         it('should transpile the links cards', function() {
-                            expect(deck[6]).toEqual({
+                            expect(deck[7]).toEqual({
                                 id: 'rc-25c1f60b933186',
                                 type: 'links',
                                 title: 'If You Love Turtles',
@@ -851,14 +887,14 @@
                                 ad: false,
                                 view: 'links',
                                 displayAdSource: 'cinema6',
-                                data: minireel.data.deck[7].data
+                                data: minireel.data.deck[8].data
                             });
 
-                            expect(deck[6].data.links).not.toBe(minireel.data.deck[7].data.links);
+                            expect(deck[7].data.links).not.toBe(minireel.data.deck[8].data.links);
                         });
 
                         it('should transpile the recap cards', function() {
-                            expect(deck[7]).toEqual({
+                            expect(deck[8]).toEqual({
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
                                 title: null,
@@ -954,8 +990,8 @@
                                         branding: portal.cModel.branding,
                                         splash: {
                                             source: 'generated',
-                                            ratio: '1-1',
-                                            theme: 'img-only'
+                                            ratio: '3-2',
+                                            theme: 'img-text-overlay'
                                         },
                                         collateral: {
                                             splash: null
@@ -1072,9 +1108,9 @@
                                                 videoAdSource: portal.cModel.org.waterfalls.video[0],
                                                 videoAdSkip: portal.cModel.org.videoAdSkip,
                                                 splash: {
-                                                    ratio: '1-1',
+                                                    ratio: '3-2',
                                                     source: 'generated',
-                                                    theme: 'img-only'
+                                                    theme: 'img-text-overlay'
                                                 },
                                                 collateral: {
                                                     splash: null
@@ -1148,13 +1184,13 @@
                             $rootScope.$apply(function() {
                                 converted = MiniReelService.convertForEditor(minireel);
                             });
-                            converted.data.deck[0].title = 'New Title';
+                            converted.data.deck[1].title = 'New Title';
 
                             result = MiniReelService.convertForPlayer(converted, minireel);
 
                             expect(result).toBe(minireel);
                             expect(result.data).not.toBe(converted.data);
-                            expect(minireel.data.deck[0].title).toBe('New Title');
+                            expect(minireel.data.deck[1].title).toBe('New Title');
                         });
 
                         describe('inserting ads', function() {
