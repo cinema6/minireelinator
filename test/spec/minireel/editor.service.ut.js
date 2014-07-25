@@ -177,6 +177,115 @@
                 });
 
                 describe('methods', function() {
+                    describe('performPresync(proxy)', function() {
+                        var proxy, success,
+                            generateCollageDeferred;
+
+                        beforeEach(function() {
+                            success = jasmine.createSpy('success()');
+
+                            generateCollageDeferred = $q.defer();
+
+                            spyOn(CollateralService, 'generateCollage').and.returnValue(generateCollageDeferred.promise);
+
+                            $rootScope.$apply(function() {
+                                proxy = EditorService.open(minireel);
+                            });
+
+                            $rootScope.$apply(function() {
+                                _private.performPresync(proxy).then(success);
+                            });
+                        });
+
+                        describe('if the splash.source is specified', function() {
+                            beforeEach(function() {
+                                proxy.data.splash.source = 'specified';
+
+                                $rootScope.$apply(function() {
+                                    _private.performPresync(proxy).then(success);
+                                });
+                            });
+
+                            it('should not generate a splash image', function() {
+                                expect(CollateralService.generateCollage).not.toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('if the splash.source is generated', function() {
+                            beforeEach(function() {
+                                proxy.data.splash.source = 'generated';
+
+                                $rootScope.$apply(function() {
+                                    _private.performPresync(proxy).then(success);
+                                });
+                            });
+
+                            it('should generate a splash image', function() {
+                                expect(CollateralService.generateCollage).toHaveBeenCalledWith({
+                                    minireel: proxy,
+                                    name: 'splash',
+                                    cache: false
+                                });
+                            });
+
+                            describe('if the minireel is published', function() {
+                                beforeEach(function() {
+                                    $rootScope.$apply(function() {
+                                        generateCollageDeferred.reject('ERROR');
+                                    });
+
+                                    _private.editorMinireel.status = 'active';
+
+                                    CollateralService.generateCollage.calls.reset();
+                                    $rootScope.$apply(function() {
+                                        _private.performPresync(proxy).then(success);
+                                    });
+                                });
+
+                                it('should cache the image', function() {
+                                    expect(CollateralService.generateCollage).toHaveBeenCalledWith({
+                                        minireel: proxy,
+                                        name: 'splash',
+                                        cache: true
+                                    });
+                                });
+                            });
+
+                            describe('if the generation fails', function() {
+                                beforeEach(function() {
+                                    $rootScope.$apply(function() {
+                                        generateCollageDeferred.reject('ERROR');
+                                    });
+                                });
+
+                                it('should still succeed', function() {
+                                    expect(success).toHaveBeenCalledWith(proxy);
+                                });
+                            });
+
+                            describe('if the generation succeeds', function() {
+                                beforeEach(function() {
+                                    $rootScope.$apply(function() {
+                                        generateCollageDeferred.resolve({
+                                            '16-9': '/collateral/e-123/splash',
+                                            toString: function() {
+                                                return this['16-9'];
+                                            }
+                                        });
+                                    });
+                                });
+
+                                it('should set the collateral splash as the generated image', function() {
+                                    expect(proxy.data.collateral.splash).toBe('/collateral/e-123/splash');
+                                });
+
+                                it('should succeed', function() {
+                                    expect(success).toHaveBeenCalledWith(proxy);
+                                });
+                            });
+                        });
+                    });
+
                     describe('syncToMinireel(minireel, editorMinireel, proxy)', function() {
                         var proxy, editorMinireel,
                             result;
@@ -404,6 +513,7 @@
                             beforeEach(function() {
                                 spyOn(_private, 'syncToMinireel').and.callThrough();
                                 spyOn(_private, 'syncToProxy').and.callThrough();
+                                spyOn(_private, 'performPresync').and.returnValue($q.when());
 
                                 $rootScope.$apply(function() {
                                     proxy = EditorService.open(minireel);
@@ -412,6 +522,10 @@
                                 $rootScope.$apply(function() {
                                     EditorService.publish().then(success);
                                 });
+                            });
+
+                            it('should do a presync', function() {
+                                expect(_private.performPresync).toHaveBeenCalledWith(proxy);
                             });
 
                             it('should sync the proxy to the minireel', function() {
@@ -458,6 +572,7 @@
                             unpublishDeferred = $q.defer();
 
                             spyOn(MiniReelService, 'unpublish').and.returnValue(unpublishDeferred.promise);
+                            spyOn(_private, 'performPresync').and.returnValue($q.when());
 
                             minireel.status = 'active';
 
@@ -495,6 +610,10 @@
                                 $rootScope.$apply(function() {
                                     EditorService.unpublish().then(success);
                                 });
+                            });
+
+                            it('should perform a presync', function() {
+                                expect(_private.performPresync).toHaveBeenCalledWith(proxy);
                             });
 
                             it('should sync the proxy to the minireel', function() {
@@ -613,7 +732,6 @@
                         beforeEach(function() {
                             success = jasmine.createSpy('success');
                             proxy = EditorService.open(minireel);
-                            spyOn(minireel, 'save').and.returnValue($q.when(minireel));
                         });
 
                         it('should call all of the functions at the start of a sync', function() {
@@ -629,25 +747,24 @@
                             EditorService.beforeSync('two', fn2);
 
                             $rootScope.$apply(function() {
-                                EditorService.sync().then(success);
+                                _private.performPresync(proxy).then(success);
                             });
 
                             expect(fn1).toHaveBeenCalledWith(proxy);
                             expect(fn2).toHaveBeenCalledWith(proxy);
 
-                            expect(minireel.save).not.toHaveBeenCalled();
+                            expect(success).not.toHaveBeenCalled();
 
                             $rootScope.$apply(function() {
                                 deferred1.resolve();
                             });
 
-                            expect(minireel.save).not.toHaveBeenCalled();
+                            expect(success).not.toHaveBeenCalled();
 
                             $rootScope.$apply(function() {
                                 deferred2.resolve(proxy);
                             });
 
-                            expect(minireel.save).toHaveBeenCalled();
                             expect(success).toHaveBeenCalledWith(proxy);
                         });
 
@@ -657,13 +774,13 @@
                             EditorService.beforeSync('foo', fn);
 
                             $rootScope.$apply(function() {
-                                EditorService.sync().then(success);
+                                _private.performPresync(proxy).then(success);
                             });
                             expect(success).toHaveBeenCalled();
                             fn.calls.reset();
 
                             $rootScope.$apply(function() {
-                                EditorService.sync().then(success);
+                                _private.performPresync(proxy).then(success);
                             });
                             expect(fn).not.toHaveBeenCalled();
                         });
@@ -676,7 +793,7 @@
                             EditorService.beforeSync('fn', fn2);
 
                             $rootScope.$apply(function() {
-                                EditorService.sync().then(success);
+                                _private.performPresync(proxy).then(success);
                             });
 
                             expect(fn2).toHaveBeenCalledWith(proxy);
@@ -722,14 +839,11 @@
                         });
 
                         describe('if there is an open MiniReel', function() {
-                            var proxy,
-                                generateCollageDeferred;
+                            var proxy;
 
                             beforeEach(function() {
-                                generateCollageDeferred = $q.defer();
-
-                                spyOn(CollateralService, 'generateCollage').and.returnValue(generateCollageDeferred.promise);
                                 spyOn(MiniReelService, 'convertForPlayer').and.callThrough();
+                                spyOn(_private, 'performPresync').and.returnValue($q.when());
 
                                 $rootScope.$apply(function() {
                                     proxy = EditorService.open(minireel);
@@ -746,6 +860,10 @@
                                 MiniReelService.convertForEditor.calls.reset();
                             });
 
+                            it('should perform a presync', function() {
+                                expect(_private.performPresync).toHaveBeenCalledWith(proxy);
+                            });
+
                             it('should not save the election with status pending',function(){
                                 expect(VoteService.update).not.toHaveBeenCalled();
                                 expect(VoteService.initialize).not.toHaveBeenCalled();
@@ -758,100 +876,6 @@
 
                             it('should convert the editorMinireel to the player Minireel', function() {
                                 expect(MiniReelService.convertForPlayer).toHaveBeenCalledWith(_private.editorMinireel, minireel);
-                            });
-
-                            describe('if the splash.source is specified', function() {
-                                beforeEach(function() {
-                                    proxy.data.splash.source = 'specified';
-
-                                    $rootScope.$apply(function() {
-                                        EditorService.sync().then(success);
-                                    });
-                                });
-
-                                it('should not generate a splash image', function() {
-                                    expect(CollateralService.generateCollage).not.toHaveBeenCalled();
-                                });
-                            });
-
-                            describe('if the splash.source is generated', function() {
-                                beforeEach(function() {
-                                    minireel.save.calls.reset();
-                                    $rootScope.$apply(function() {
-                                        saveDeferred.resolve(minireel);
-                                    });
-
-                                    proxy.data.splash.source = 'generated';
-
-                                    $rootScope.$apply(function() {
-                                        EditorService.sync().then(success);
-                                    });
-                                    expect(minireel.save).not.toHaveBeenCalled();
-                                });
-
-                                it('should generate a splash image', function() {
-                                    expect(CollateralService.generateCollage).toHaveBeenCalledWith({
-                                        minireel: proxy,
-                                        name: 'splash',
-                                        cache: false
-                                    });
-                                });
-
-                                describe('if the minireel is published', function() {
-                                    beforeEach(function() {
-                                        $rootScope.$apply(function() {
-                                            generateCollageDeferred.reject('ERROR');
-                                        });
-
-                                        _private.editorMinireel.status = 'active';
-
-                                        CollateralService.generateCollage.calls.reset();
-                                        $rootScope.$apply(function() {
-                                            EditorService.sync().then(success);
-                                        });
-                                    });
-
-                                    it('should cache the image', function() {
-                                        expect(CollateralService.generateCollage).toHaveBeenCalledWith({
-                                            minireel: proxy,
-                                            name: 'splash',
-                                            cache: true
-                                        });
-                                    });
-                                });
-
-                                describe('if the generation fails', function() {
-                                    beforeEach(function() {
-                                        $rootScope.$apply(function() {
-                                            generateCollageDeferred.reject('ERROR');
-                                        });
-                                    });
-
-                                    it('should still save the minireel', function() {
-                                        expect(minireel.save).toHaveBeenCalled();
-                                    });
-                                });
-
-                                describe('if the generation succeeds', function() {
-                                    beforeEach(function() {
-                                        $rootScope.$apply(function() {
-                                            generateCollageDeferred.resolve({
-                                                '16-9': '/collateral/e-123/splash',
-                                                toString: function() {
-                                                    return this['16-9'];
-                                                }
-                                            });
-                                        });
-                                    });
-
-                                    it('should set the collateral splash as the generated image', function() {
-                                        expect(proxy.data.collateral.splash).toBe('/collateral/e-123/splash');
-                                    });
-
-                                    it('should save the minireel', function() {
-                                        expect(minireel.save).toHaveBeenCalled();
-                                    });
-                                });
                             });
 
                             it('should save the MiniReel', function() {

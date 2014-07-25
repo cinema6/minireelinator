@@ -61,6 +61,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 return _private.syncToProxy(_private.proxy, _private.editorMinireel, minireel);
             }
 
+            function performPresync() {
+                return _private.performPresync(_private.proxy);
+            }
+
             function syncToMinireel() {
                 return _private.syncToMinireel(
                     _private.minireel,
@@ -72,6 +76,38 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
             _private.minireel = null;
             _private.editorMinireel = null;
             _private.proxy = null;
+
+            _private.performPresync = function(proxy) {
+                function syncWithCollateral(proxy) {
+                    if (proxy.data.splash.source === 'specified') {
+                        return $q.when(proxy);
+                    }
+
+                    return CollateralService.generateCollage({
+                        minireel: proxy,
+                        name: 'splash',
+                        cache: proxy.status === 'active'
+                    }).then(function store(data) {
+                        proxy.data.collateral.splash = data.toString();
+                    })
+                    .catch(function rescue() {
+                        return proxy;
+                    });
+                }
+
+                function beforeSync(proxy) {
+                    return $q.all(Object.keys(beforeSyncFns).map(function(id) {
+                        return beforeSyncFns[id](proxy);
+                    })).finally(function() {
+                        beforeSyncFns = {};
+                    });
+                }
+
+                return beforeSync(proxy)
+                    .then(function() {
+                        return syncWithCollateral(proxy);
+                    });
+            };
 
             _private.syncToMinireel = function(minireel, editorMinireel, proxy) {
                 copy(proxy.data, editorMinireel.data);
@@ -158,33 +194,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
             };
 
             this.sync = queue.wrap(function() {
-                var minireel = _private.minireel,
-                    proxy = _private.proxy;
-
-                function beforeSync() {
-                    return $q.all(Object.keys(beforeSyncFns).map(function(id) {
-                        return beforeSyncFns[id](proxy);
-                    })).finally(function() {
-                        beforeSyncFns = {};
-                    });
-                }
-
-                function syncWithCollateral() {
-                    if (proxy.data.splash.source === 'specified') {
-                        return $q.when(proxy);
-                    }
-
-                    return CollateralService.generateCollage({
-                        minireel: proxy,
-                        name: 'splash',
-                        cache: proxy.status === 'active'
-                    }).then(function store(data) {
-                        proxy.data.collateral.splash = data.toString();
-                    })
-                    .catch(function rescue() {
-                        return proxy;
-                    });
-                }
+                var minireel = _private.minireel;
 
                 function syncWithElection(miniReel) {
                     if (miniReel.status !== 'active'){
@@ -210,15 +220,14 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     return rejectNothingOpen();
                 }
 
-                return beforeSync()
-                    .then(syncWithCollateral)
+                return performPresync()
                     .then(syncToMinireel)
-                   .then(syncWithElection)
-                   .then(function save(minireel){
+                    .then(syncWithElection)
+                    .then(function save(minireel){
                         return minireel.save();
                     })
-                   .then(syncToProxy)
-                   .then(function updateElection(proxy){
+                    .then(syncToProxy)
+                    .then(function updateElection(proxy){
                         // See comment in publish
                         proxy.data.election = minireel.data.election;
                         return proxy;
@@ -233,7 +242,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     return rejectNothingOpen();
                 }
 
-                return MiniReelService.publish(syncToMinireel())
+                return performPresync()
+                    .then(function publish() {
+                        return MiniReelService.publish(syncToMinireel());
+                    })
                     .then(syncToProxy)
                     .then(function updateElection(proxy) {
                         // Because the proxy is the source of truth for the data object, we need to
@@ -251,7 +263,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     return rejectNothingOpen();
                 }
 
-                return MiniReelService.unpublish(syncToMinireel())
+                return performPresync()
+                    .then(function unpublish() {
+                        return MiniReelService.unpublish(syncToMinireel());
+                    })
                     .then(syncToProxy);
             }, this);
 
