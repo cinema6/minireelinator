@@ -300,10 +300,24 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
         }])
 
         .controller('EmbedCodeController', ['$scope','$attrs','MiniReelService','c6State',
-        function                           ( $scope , $attrs , MiniReelService , c6State ) {
+                                            'SettingsService',
+        function                           ( $scope , $attrs , MiniReelService , c6State ,
+                                             SettingsService ) {
             var minireelState = c6State.get('MiniReel'),
                 categories = minireelState.cModel.data.modes,
-                c6EmbedSrc = minireelState.cModel.data.c6EmbedSrc;
+                c6EmbedSrc = minireelState.cModel.data.c6EmbedSrc,
+                orgSettings = SettingsService.getReadOnly('MR::org');
+
+            var allFormats = {
+                script: {
+                    name: 'Script Tag',
+                    value: 'script'
+                },
+                shortcode: {
+                    name: 'Wordpress Shortcode',
+                    value: 'shortcode'
+                }
+            };
 
             function formatEmbed(template, data) {
                 var repeatedMatcher = (/\|.+?\|/),
@@ -338,7 +352,11 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                 }
             ];
             this.mode = this.modes[0].value;
-            this.format = 'shortcode';
+
+            this.formats = orgSettings.embedTypes.map(function(type) {
+                return allFormats[type];
+            });
+            this.format = this.formats[0].value;
 
             this.size = {
                 width: '650px',
