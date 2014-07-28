@@ -12,14 +12,9 @@ define( ['app', 'angular'], function(appModule, angular) {
             $rootScope,
             $timeout;
 
-        var stub;
-
         beforeEach(function() {
             module(appModule.name, function($injector) {
                 SettingsServiceProvider = $injector.get('SettingsServiceProvider');
-            });
-            module(function($provide) {
-                $provide.value('stub', {});
             });
 
             inject(function($injector) {
@@ -27,8 +22,6 @@ define( ['app', 'angular'], function(appModule, angular) {
                 SettingsService = $injector.get('SettingsService');
                 c6LocalStorage = $injector.get('c6LocalStorage');
                 $timeout = $injector.get('$timeout');
-
-                stub = $injector.get('stub');
             });
 
             c6LocalStorage.removeAll();
@@ -147,7 +140,7 @@ define( ['app', 'angular'], function(appModule, angular) {
 
                         $rootScope.$apply(function() {
                             result = SettingsService.register('user', userSettings, {
-                                sync: ['stub', syncSpy]
+                                sync: syncSpy
                             });
                         });
                     });
@@ -181,7 +174,7 @@ define( ['app', 'angular'], function(appModule, angular) {
                         });
                         $timeout.flush();
 
-                        expect(syncSpy).toHaveBeenCalledWith(stub);
+                        expect(syncSpy).toHaveBeenCalledWith(userSettings);
                     });
 
                     describe('if defaults are provided', function() {
