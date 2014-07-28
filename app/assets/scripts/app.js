@@ -5,7 +5,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
     'use strict';
 
     var forEach = angular.forEach,
-        noop = angular.noop;
+        copy = angular.copy,
+        noop = angular.noop,
+        isObject = angular.isObject;
 
     return angular.module('c6.app', [
         templates.name,
@@ -72,7 +74,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         function                ( $http , $q , config ) {
             function clean(model) {
                 delete model.id;
-                delete model.org;
                 delete model.created;
 
                 return model;
@@ -240,6 +241,106 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             };
 
             cinema6Provider.useAdapter(c6Defines.kLocal ? FixtureAdapter : CWRXAdapter);
+        }])
+
+        .service('SettingsService', ['c6LocalStorage','$rootScope','c6Debounce',
+        function                    ( c6LocalStorage , $rootScope , c6Debounce ) {
+            var settings = {};
+
+            function setDefaults(defaults, object) {
+                forEach(defaults, function(value, key) {
+                    if (!object.hasOwnProperty(key)) {
+                        object[key] = value;
+                    }
+                });
+            }
+
+            function deepFreeze(object) {
+                Object.freeze(object);
+
+                forEach(object, function(value) {
+                    if (isObject(value)) {
+                        deepFreeze(value);
+                    }
+                });
+
+                return object;
+            }
+
+            function get(object, props) {
+                return props.reduce(function(result, prop) {
+                    return result[prop];
+                }, object);
+            }
+
+            this.get = function(id) {
+                return settings[id];
+            };
+
+            this.getReadOnly = function(id) {
+                return deepFreeze(copy(settings[id]));
+            };
+
+            this.createBinding = function(object, prop, binding) {
+                var props = binding.split('.'),
+                    settings = this.get(props.shift()),
+                    lastProp = props.pop();
+
+                Object.defineProperty(object, prop, {
+                    get: function() {
+                        return get(settings, props)[lastProp];
+                    },
+                    set: function(value) {
+                        /* jshint boss:true */
+                        return get(settings, props)[lastProp] = value;
+                    }
+                });
+
+                return this;
+            };
+
+            this.register = function(id, object, _config) {
+                var config = _config || {};
+
+                var localStorageKey = 'SettingsService::' + id,
+                    sync = c6Debounce(function() {
+                        config.sync(object);
+                    }, 30000);
+
+                function pullLatestFromLocalStorage() {
+                    var latest = c6LocalStorage.get(localStorageKey);
+
+                    if (latest) {
+                        copy(latest, object);
+                    }
+                }
+
+                setDefaults({
+                    localSync: true,
+                    sync: noop,
+                    defaults: {}
+                }, config);
+
+                if (config.localSync) {
+                    pullLatestFromLocalStorage();
+                }
+
+                setDefaults(config.defaults, object);
+
+                settings[id] = object;
+
+                $rootScope.$watch(function() { return object; }, function(object, prevObject) {
+                    if (config.localSync) {
+                        c6LocalStorage.set(localStorageKey, object);
+                    }
+
+                    if (object !== prevObject) {
+                        sync();
+                    }
+                }, true);
+
+                return this;
+            };
         }])
 
         .run   (['$rootScope',

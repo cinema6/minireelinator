@@ -20,6 +20,9 @@
                     "cinema6-publisher",
                     "publisher-cinema6"
                 ]
+            },
+            "config": {
+                "minireelinator": {}
             }
         },
         {
@@ -41,7 +44,8 @@
                     "cinema6-publisher",
                     "publisher-cinema6"
                 ]
-            }
+            },
+            "config": {}
         }
     ],
     "experience": [

@@ -1,21 +1,52 @@
 (function(){
     'use strict';
 
-    define(['minireel/app', 'c6ui', 'c6_defines'], function(minireelModule, c6uiModule, c6Defines) {
+    define(['app', 'minireel/app', 'c6ui', 'c6_defines'], function(appModule, minireelModule, c6uiModule, c6Defines) {
         describe('MiniReelController', function() {
             var $rootScope,
                 $scope,
+                $controller,
                 $q,
                 c6State,
                 $window,
+                SettingsService,
+                PortalCtrl,
                 MiniReelCtrl,
                 tracker;
 
             var gsap,
+                user,
                 appData,
                 cinema6Session;
 
+            function instantiate() {
+                $scope = $rootScope.$new();
+                $scope.$apply(function() {
+                    PortalCtrl = $scope.PortalCtrl = {
+                        model: user
+                    };
+                    MiniReelCtrl = $controller('MiniReelController', {
+                        tracker        : tracker,
+                        c6Defines      : c6Defines,
+                        $scope: $scope
+                    });
+                });
+
+                return MiniReelCtrl;
+            }
+
             beforeEach(function() {
+                user = {
+                    id: 'u-5dd4066eb1c277',
+                    name: 'team member',
+                    org: {
+                        config: {
+                            minireelinator: {}
+                        },
+                        save: jasmine.createSpy('org.save()')
+                    }
+                };
+
                 gsap = {
                     TweenLite: {
                         ticker: {
@@ -41,23 +72,22 @@
                     user: {}
                 };
 
+                module(appModule.name);
                 module(minireelModule.name, function($provide) {
                     $provide.value('gsap', gsap);
                 });
 
-                inject(function($injector, $controller, c6EventEmitter) {
+                inject(function($injector, c6EventEmitter) {
                     $rootScope = $injector.get('$rootScope');
                     $q = $injector.get('$q');
                     c6State = $injector.get('c6State');
                     spyOn(c6State, 'goTo');
                     $window = $injector.get('$window');
+                    $controller = $injector.get('$controller');
+                    SettingsService = $injector.get('SettingsService');
+                    spyOn(SettingsService, 'register');
 
-                    $scope = $rootScope.$new();
-                    MiniReelCtrl = $controller('MiniReelController', {
-                        tracker        : tracker,
-                        c6Defines      : c6Defines,
-                        $scope: $scope
-                    });
+                    MiniReelCtrl = instantiate();
 
                     cinema6Session = c6EventEmitter({
                         ping: jasmine.createSpy('session.ping()'),
@@ -69,6 +99,29 @@
 
             it('should exist',function() {
                 expect(MiniReelCtrl).toBeDefined();
+            });
+
+            describe('construction', function() {
+                it('should register org settings with the settings service', function() {
+                    expect(SettingsService.register).toHaveBeenCalledWith('MR::org', user.org.config.minireelinator, {
+                        localSync: false,
+                        defaults: {
+                            embedTypes: ['script']
+                        }
+                    });
+                });
+
+                describe('if there is no minireelinator config', function() {
+                    beforeEach(function() {
+                        delete user.org.config.minireelinator;
+
+                        MiniReelCtrl = instantiate();
+                    });
+
+                    it('should create a minireelinator config', function() {
+                        expect(user.org.config.minireelinator).toEqual({});
+                    });
+                });
             });
 
             describe('properties', function() {

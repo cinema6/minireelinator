@@ -7,15 +7,21 @@
                 $scope,
                 $controller,
                 $q,
+                SettingsService,
                 c6State,
                 MiniReelState,
                 EmbedCodeCtrl;
 
             var ensureFulfillmentDeferred,
-                $attrs;
+                $attrs,
+                orgSettings;
 
             beforeEach(function() {
                 $attrs = {};
+
+                orgSettings = {
+                    embedTypes: ['shortcode', 'script']
+                };
 
                 module(appModule.name);
 
@@ -24,6 +30,7 @@
                     $controller = $injector.get('$controller');
                     $q = $injector.get('$q');
                     c6State = $injector.get('c6State');
+                    SettingsService = $injector.get('SettingsService');
 
                     MiniReelState = c6State.get('MiniReel');
                     MiniReelState.cModel = {
@@ -56,6 +63,9 @@
                         }
                     };
 
+                    SettingsService.register('MR::org', orgSettings, {
+                        localSync: false
+                    });
                     ensureFulfillmentDeferred = $q.defer();
 
                     $scope = $rootScope.$new();
@@ -110,9 +120,24 @@
                     });
                 });
 
+                describe('formats', function() {
+                    it('should be an array of the org\'s embedTypes', function() {
+                        expect(EmbedCodeCtrl.formats).toEqual([
+                            {
+                                name: 'Wordpress Shortcode',
+                                value: 'shortcode'
+                            },
+                            {
+                                name: 'Script Tag',
+                                value: 'script'
+                            }
+                        ]);
+                    });
+                });
+
                 describe('format', function() {
-                    it('should be initialized as shortcode', function() {
-                        expect(EmbedCodeCtrl.format).toBe('shortcode');
+                    it('should be initialized as the first format in the list', function() {
+                        expect(EmbedCodeCtrl.format).toBe(EmbedCodeCtrl.formats[0].value);
                     });
                 });
 

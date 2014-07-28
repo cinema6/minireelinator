@@ -66,18 +66,6 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                 .ratios(['1-1', '6-5', '3-2', '16-9']);
         }])
 
-        .service('c6Runner', ['$timeout',
-        function             ( $timeout ) {
-            this.runOnce = function(fn, waitTime) {
-                var timer;
-
-                return function() {
-                    $timeout.cancel(timer);
-                    timer = $timeout(fn, waitTime);
-                };
-            };
-        }])
-
         .service('ConfirmDialogService', [function() {
             var model = {},
                 dialog = null;
@@ -226,9 +214,13 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
             }]);
         }])
 
-        .controller('MiniReelController', ['$scope','$log','c6State','tracker',
-        function                          ( $scope , $log , c6State , tracker ) {
+        .controller('MiniReelController', ['$scope','$log','c6State','tracker','SettingsService',
+        function                          ( $scope , $log , c6State , tracker , SettingsService ) {
             var self = this;
+
+            var PortalCtrl = $scope.PortalCtrl;
+
+            var user = PortalCtrl.model;
 
             $log.info('AppCtlr loaded.');
 
@@ -273,6 +265,17 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                     self.config.title + ' - ' + pageObject.title);
             };
 
+            if (!user.org.config.minireelinator) {
+                user.org.config.minireelinator = {};
+            }
+
+            SettingsService.register('MR::org', user.org.config.minireelinator, {
+                localSync: false,
+                defaults: {
+                    embedTypes: ['script']
+                }
+            });
+
             c6State.on('stateChange', this.trackStateChange);
 
             $log.info('Initialize tracker with:',c6Defines.kTracker);
@@ -297,10 +300,24 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
         }])
 
         .controller('EmbedCodeController', ['$scope','$attrs','MiniReelService','c6State',
-        function                           ( $scope , $attrs , MiniReelService , c6State ) {
+                                            'SettingsService',
+        function                           ( $scope , $attrs , MiniReelService , c6State ,
+                                             SettingsService ) {
             var minireelState = c6State.get('MiniReel'),
                 categories = minireelState.cModel.data.modes,
-                c6EmbedSrc = minireelState.cModel.data.c6EmbedSrc;
+                c6EmbedSrc = minireelState.cModel.data.c6EmbedSrc,
+                orgSettings = SettingsService.getReadOnly('MR::org');
+
+            var allFormats = {
+                script: {
+                    name: 'Script Tag',
+                    value: 'script'
+                },
+                shortcode: {
+                    name: 'Wordpress Shortcode',
+                    value: 'shortcode'
+                }
+            };
 
             function formatEmbed(template, data) {
                 var repeatedMatcher = (/\|.+?\|/),
@@ -335,7 +352,11 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                 }
             ];
             this.mode = this.modes[0].value;
-            this.format = 'shortcode';
+
+            this.formats = orgSettings.embedTypes.map(function(type) {
+                return allFormats[type];
+            });
+            this.format = this.formats[0].value;
 
             this.size = {
                 width: '650px',
