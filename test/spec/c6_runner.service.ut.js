@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/app'], function(minireelModule) {
+    define(['app'], function(appModule) {
         describe('c6Runner', function() {
             var c6Runner,
                 $timeout;
@@ -30,7 +30,7 @@
                     });
                 });
 
-                module(minireelModule.name);
+                module(appModule.name);
 
                 inject(function($injector) {
                     c6Runner = $injector.get('c6Runner');

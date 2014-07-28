@@ -63,18 +63,6 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                 .ratios(['1-1', '6-5', '3-2', '16-9']);
         }])
 
-        .service('c6Runner', ['$timeout',
-        function             ( $timeout ) {
-            this.runOnce = function(fn, waitTime) {
-                var timer;
-
-                return function() {
-                    $timeout.cancel(timer);
-                    timer = $timeout(fn, waitTime);
-                };
-            };
-        }])
-
         .service('ConfirmDialogService', [function() {
             var model = {},
                 dialog = null;

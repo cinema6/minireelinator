@@ -5,7 +5,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
     'use strict';
 
     var forEach = angular.forEach,
-        noop = angular.noop;
+        copy = angular.copy,
+        noop = angular.noop,
+        isObject = angular.isObject;
 
     return angular.module('c6.app', [
         templates.name,
@@ -239,6 +241,124 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             };
 
             cinema6Provider.useAdapter(c6Defines.kLocal ? FixtureAdapter : CWRXAdapter);
+        }])
+
+        .service('c6Runner', ['$timeout',
+        function             ( $timeout ) {
+            this.runOnce = function(fn, waitTime) {
+                var timer;
+
+                return function() {
+                    $timeout.cancel(timer);
+                    timer = $timeout(fn, waitTime);
+                };
+            };
+        }])
+
+        .provider('SettingsService', [function() {
+            function setDefaults(defaults, object) {
+                forEach(defaults, function(value, key) {
+                    if (!object.hasOwnProperty(key)) {
+                        object[key] = value;
+                    }
+                });
+            }
+
+            function deepFreeze(object) {
+                Object.freeze(object);
+
+                forEach(object, function(value) {
+                    if (isObject(value)) {
+                        deepFreeze(value);
+                    }
+                });
+
+                return object;
+            }
+
+            function get(object, props) {
+                return props.reduce(function(result, prop) {
+                    return result[prop];
+                }, object);
+            }
+
+            SettingsService.$inject = ['c6LocalStorage','$rootScope','c6Runner','$injector'];
+            function SettingsService  ( c6LocalStorage , $rootScope , c6Runner , $injector ) {
+                var settings = {};
+
+                this.get = function(id) {
+                    return settings[id];
+                };
+
+                this.getReadOnly = function(id) {
+                    return deepFreeze(copy(settings[id]));
+                };
+
+                this.createBinding = function(object, prop, binding) {
+                    var props = binding.split('.'),
+                        settings = this.get(props.shift()),
+                        lastProp = props.pop();
+
+                    Object.defineProperty(object, prop, {
+                        get: function() {
+                            return get(settings, props)[lastProp];
+                        },
+                        set: function(value) {
+                            return (get(settings, props)[lastProp] = value);
+                        }
+                    });
+
+                    return this;
+                };
+
+                this.register = function(id, object, _config) {
+                    var config = _config || {};
+
+                    var localStorageKey = 'SettingsService::' + id,
+                        sync = c6Runner.runOnce(function() {
+                            $injector.invoke(config.sync);
+                        }, 30000);
+
+                    function pullLatestFromLocalStorage() {
+                        var latest = c6LocalStorage.get(localStorageKey);
+
+                        if (latest) {
+                            copy(latest, object);
+                        }
+                    }
+
+                    setDefaults({
+                        localSync: true,
+                        sync: noop,
+                        defaults: {}
+                    }, config);
+
+                    if (config.localSync) {
+                        pullLatestFromLocalStorage();
+                    }
+
+                    setDefaults(config.defaults, object);
+
+                    settings[id] = object;
+
+                    $rootScope.$watch(function() { return object; }, function(object, prevObject) {
+                        if (config.localSync) {
+                            c6LocalStorage.set(localStorageKey, object);
+                        }
+
+                        if (object !== prevObject) {
+                            sync();
+                        }
+                    }, true);
+
+                    return this;
+                };
+            }
+
+            this.$get = ['$injector',
+            function    ( $injector ) {
+                return $injector.instantiate(SettingsService);
+            }];
         }])
 
         .run   (['$rootScope',
