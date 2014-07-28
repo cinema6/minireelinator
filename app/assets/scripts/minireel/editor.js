@@ -40,7 +40,8 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
         function                  ( MiniReelService , $q , c6AsyncQueue , VoteService ,
                                     CollateralService ) {
             var _private = {},
-                queue = c6AsyncQueue();
+                queue = c6AsyncQueue(),
+                beforeSyncFns = {};
 
             function readOnly(source, key, target) {
                 Object.defineProperty(target, key, {
@@ -60,6 +61,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 return _private.syncToProxy(_private.proxy, _private.editorMinireel, minireel);
             }
 
+            function performPresync() {
+                return _private.performPresync(_private.proxy);
+            }
+
             function syncToMinireel() {
                 return _private.syncToMinireel(
                     _private.minireel,
@@ -71,6 +76,38 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
             _private.minireel = null;
             _private.editorMinireel = null;
             _private.proxy = null;
+
+            _private.performPresync = function(proxy) {
+                function syncWithCollateral(proxy) {
+                    if (proxy.data.splash.source === 'specified') {
+                        return $q.when(proxy);
+                    }
+
+                    return CollateralService.generateCollage({
+                        minireel: proxy,
+                        name: 'splash',
+                        cache: proxy.status === 'active'
+                    }).then(function store(data) {
+                        proxy.data.collateral.splash = data.toString();
+                    })
+                    .catch(function rescue() {
+                        return proxy;
+                    });
+                }
+
+                function beforeSync(proxy) {
+                    return $q.all(Object.keys(beforeSyncFns).map(function(id) {
+                        return beforeSyncFns[id](proxy);
+                    })).finally(function() {
+                        beforeSyncFns = {};
+                    });
+                }
+
+                return beforeSync(proxy)
+                    .then(function() {
+                        return syncWithCollateral(proxy);
+                    });
+            };
 
             _private.syncToMinireel = function(minireel, editorMinireel, proxy) {
                 copy(proxy.data, editorMinireel.data);
@@ -152,27 +189,12 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     });
             };
 
+            this.beforeSync = function(id, fn) {
+                beforeSyncFns[id] = fn;
+            };
+
             this.sync = queue.wrap(function() {
-                var minireel = _private.minireel,
-                    proxy = _private.proxy;
-
-                function syncWithCollateral() {
-                    if (proxy.data.splash.source === 'specified' ||
-                        proxy.status === 'active') {
-                        return $q.when(proxy);
-                    }
-
-                    return CollateralService.generateCollage({
-                        minireel: proxy,
-                        name: 'splash',
-                        cache: proxy.status === 'active'
-                    }).then(function store(data) {
-                        proxy.data.collateral.splash = data.toString();
-                    })
-                    .catch(function rescue() {
-                        return proxy;
-                    });
-                }
+                var minireel = _private.minireel;
 
                 function syncWithElection(miniReel) {
                     if (miniReel.status !== 'active'){
@@ -198,18 +220,18 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     return rejectNothingOpen();
                 }
 
-                return syncWithCollateral()
-                        .then(syncToMinireel)
-                       .then(syncWithElection)
-                       .then(function save(minireel){
-                            return minireel.save();
-                        })
-                       .then(syncToProxy)
-                       .then(function updateElection(proxy){
-                            // See comment in publish
-                            proxy.data.election = minireel.data.election;
-                            return proxy;
-                        });
+                return performPresync()
+                    .then(syncToMinireel)
+                    .then(syncWithElection)
+                    .then(function save(minireel){
+                        return minireel.save();
+                    })
+                    .then(syncToProxy)
+                    .then(function updateElection(proxy){
+                        // See comment in publish
+                        proxy.data.election = minireel.data.election;
+                        return proxy;
+                    });
             }, this);
 
             this.publish = queue.wrap(function() {
@@ -220,7 +242,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     return rejectNothingOpen();
                 }
 
-                return MiniReelService.publish(syncToMinireel())
+                return performPresync()
+                    .then(function publish() {
+                        return MiniReelService.publish(syncToMinireel());
+                    })
                     .then(syncToProxy)
                     .then(function updateElection(proxy) {
                         // Because the proxy is the source of truth for the data object, we need to
@@ -238,7 +263,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     return rejectNothingOpen();
                 }
 
-                return MiniReelService.unpublish(syncToMinireel())
+                return performPresync()
+                    .then(function unpublish() {
+                        return MiniReelService.unpublish(syncToMinireel());
+                    })
                     .then(syncToProxy);
             }, this);
 
@@ -277,10 +305,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
 
         .controller('EditorController', ['c6State','$scope','EditorService','cinema6',
                                          'ConfirmDialogService','c6Debounce','$q','$log',
-                                         'MiniReelService',
+                                         'MiniReelService','CollateralService',
         function                        ( c6State , $scope , EditorService , cinema6 ,
                                           ConfirmDialogService , c6Debounce , $q , $log ,
-                                          MiniReelService ) {
+                                          MiniReelService , CollateralService ) {
             var self = this,
                 MiniReelCtrl = $scope.MiniReelCtrl,
                 PortalCtrl = $scope.PortalCtrl,
@@ -292,6 +320,23 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
 
                     $log.info('Autosaving MiniReel');
                     self.save();
+                }, 10000),
+                generateTemporaryCollage = c6Debounce(function() {
+                    var isSpecified = self.model.data.splash.source === 'specified';
+
+                    if (shouldAutoSave() || isSpecified || !self.minireelState.dirty) { return; }
+
+                    $log.info('Generating temporary collage.');
+
+                    CollateralService.generateCollage({
+                        minireel: self.model,
+                        name: 'splash--temp.jpg',
+                        allRatios: false,
+                        cache: false
+                    }).then(function attach(collage) {
+                        self.model.data.collateral.splash = collage.toString();
+                        self.bustCache();
+                    });
                 }, 10000);
 
             function shouldAutoSave() {
@@ -350,9 +395,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 },
                 splashSrc: {
                     get: function() {
-                        var splash = this.model.data.collateral.splash;
+                        var splash = this.model.data.collateral.splash,
+                            isBlob = (/^blob:/).test(splash);
 
-                        return splash && (splash + '?cb=' + this.cacheBuster);
+                        return splash && (splash + (isBlob ? '' : ('?cb=' + this.cacheBuster)));
                     }
                 }
             });
@@ -561,6 +607,9 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
             $scope.$watch(function() { return self.minireelState.dirty; }, function(isDirty) {
                 if (!isDirty) { return; }
 
+                $log.info('MiniReel is dirty!');
+                generateTemporaryCollage();
+
                 if (!shouldAutoSave()) {
                     $log.warn('MiniReel is published. Will not autosave.');
                     return;
@@ -750,9 +799,9 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
         }])
 
         .controller('SplashImageController', ['$scope','CollateralService','$log','$q','c6State',
-                                              'FileService',
+                                              'FileService','EditorService',
         function                             ( $scope , CollateralService , $log , $q , c6State ,
-                                               FileService ) {
+                                               FileService , EditorService ) {
             var EditorCtrl = $scope.EditorCtrl,
                 EditorSplashCtrl = $scope.EditorSplashCtrl;
             var self = this,
@@ -768,7 +817,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
             this.generatedSrcs = {
                 '1-1': null,
                 '6-5': null,
-                '6-4': null,
+                '3-2': null,
                 '16-9': null
             };
             Object.defineProperties(this, {
@@ -790,15 +839,12 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 }
             });
 
-            this.uploadSplash = function() {
+            this.uploadSplash = function(minireel) {
                 var upload;
 
                 $log.info('Upload started: ', this.splash);
-                this.currentUpload = upload = CollateralService.set(
-                    'splash',
-                    this.splash,
-                    EditorSplashCtrl.model
-                );
+                this.currentUpload = upload =
+                    CollateralService.set('splash', this.splash, minireel);
 
                 return upload
                     .finally(function cleanup() {
@@ -828,26 +874,39 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
             this.save = function() {
                 var data = EditorCtrl.model.data;
 
-                function handleImageAsset() {
-                    switch (splash.source) {
-                    case 'specified':
-                        return !!self.splash ?
-                            self.uploadSplash() :
-                            $q.when(minireel);
-                    case 'generated':
-                        return self.generateSplash(true)
-                            .then(function save(data) {
-                                minireel.data.collateral.splash = data.toString();
+                function handleImageAsset(minireel) {
+                    function generated(minireel) {
+                        minireel.data.collateral.splash = self.splashSrc;
 
-                                return minireel;
-                            })
-                            .catch(function fix() {
-                                return minireel;
-                            });
+                        return EditorService.beforeSync('splash', noop);
                     }
+
+                    function specified(minireel) {
+                        if (!self.splash) { return; }
+
+                        minireel.data.collateral.splash = self.splashSrc;
+
+                        return EditorService.beforeSync('splash', function(proxy) {
+                            return self.uploadSplash(proxy)
+                                .then(function close() {
+                                    return FileService.open(self.splash).close();
+                                });
+                        });
+                    }
+
+                    switch (splash.source) {
+                    case 'generated':
+                        generated(minireel);
+                        break;
+                    case 'specified':
+                        specified(minireel);
+                        break;
+                    }
+
+                    return $q.when(minireel);
                 }
 
-                return handleImageAsset()
+                return handleImageAsset(minireel)
                     .then(function copyData(minireel) {
                         $log.info('Saving data: ', minireel);
                         copy(minireel.data.collateral, data.collateral);
@@ -860,12 +919,6 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                         return EditorCtrl.model;
                     });
             };
-
-            $scope.$on('$destroy', function() {
-                if (!self.splash) { return; }
-
-                FileService.open(self.splash).close();
-            });
 
             $scope.$watch(function() { return self.splash; }, function(newImage, oldImage) {
                 var file;

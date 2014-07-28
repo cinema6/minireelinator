@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/editor'], function(editorModule) {
+    define(['minireel/editor', 'angular'], function(editorModule, angular) {
         describe('SplashImageController', function() {
             var $rootScope,
                 $scope,
@@ -10,6 +10,7 @@
                 c6State,
                 FileService,
                 CollateralService,
+                EditorService,
                 SplashImageCtrl;
 
             var EditorSplashCtrl,
@@ -37,9 +38,10 @@
                     $controller = $injector.get('$controller');
                     $q = $injector.get('$q');
                     c6State = $injector.get('c6State');
+                    EditorService = $injector.get('EditorService');
 
                     FileService = $injector.get('FileService');
-                    spyOn(FileService, 'open').and.returnValue({ url: '' });
+                    spyOn(FileService, 'open').and.returnValue({ url: 'temp.jpg' });
 
                     CollateralService = $injector.get('CollateralService');
                     spyOn(CollateralService, 'generateCollage')
@@ -68,6 +70,8 @@
                         SplashImageCtrl = $controller('SplashImageController', { $scope: $scope });
                     });
                 });
+
+                spyOn(EditorService, 'beforeSync').and.callThrough();
             });
 
             it('should exist', function() {
@@ -240,13 +244,13 @@
                             SplashImageCtrl.generatedSrcs = {
                                 '1-1': 'splash--1-1',
                                 '6-5': 'splash--6-5',
-                                '6-4': 'splash--6-4',
+                                '3-2': 'splash--3-2',
                                 '16-9': 'splash--16-9'
                             };
                         });
 
                         it('should return the generated splash for that ratio', function() {
-                            ['1-1', '6-5', '6-4', '16-9'].forEach(function(ratio) {
+                            ['1-1', '6-5', '3-2', '16-9'].forEach(function(ratio) {
                                 minireel.data.splash.ratio = ratio;
 
                                 expect(SplashImageCtrl.splashSrc).toBe(SplashImageCtrl.generatedSrcs[ratio]);
@@ -260,7 +264,7 @@
                         expect(SplashImageCtrl.generatedSrcs).toEqual({
                             '1-1': null,
                             '6-5': null,
-                            '6-4': null,
+                            '3-2': null,
                             '16-9': null
                         });
                     });
@@ -305,7 +309,7 @@
                                     result = {
                                         '1-1': '/collateral/foo--1-1',
                                         '6-5': '/collateral/foo--6-5',
-                                        '6-4': '/collateral/foo--6-4',
+                                        '3-2': '/collateral/foo--3-2',
                                         '16-9': '/collateral/foo--16-9'
                                     };
 
@@ -343,11 +347,14 @@
                     });
                 });
 
-                describe('uploadSplash()', function() {
+                describe('uploadSplash(minireel)', function() {
                     var setDeferred,
-                        success;
+                        success,
+                        minireel;
 
                     beforeEach(function() {
+                        minireel = {};
+
                         success = jasmine.createSpy('uploadSplash() success');
                         setDeferred = $q.defer();
 
@@ -357,7 +364,7 @@
                         SplashImageCtrl.splash = {};
 
                         $scope.$apply(function() {
-                            SplashImageCtrl.uploadSplash().then(success);
+                            SplashImageCtrl.uploadSplash(minireel).then(success);
                         });
                     });
 
@@ -400,17 +407,12 @@
 
                 describe('save()', function() {
                     var originalData,
-                        uploadDeferred, generateDeferred,
                         success;
 
                     beforeEach(function() {
                         success = jasmine.createSpy('save() success');
-                        uploadDeferred = $q.defer();
-                        generateDeferred = $q.defer();
 
                         spyOn(c6State, 'goTo');
-                        spyOn(SplashImageCtrl, 'uploadSplash').and.returnValue(uploadDeferred.promise);
-                        spyOn(SplashImageCtrl, 'generateSplash').and.returnValue(generateDeferred.promise);
 
                         SplashImageCtrl.splash = {};
 
@@ -418,151 +420,124 @@
                     });
 
                     describe('if the source is specified', function() {
+                        var proxy, wrapper;
+
                         beforeEach(function() {
-                            minireel.data.splash.source = 'specified';
+                            wrapper = {
+                                close: jasmine.createSpy('wrapper.close()'),
+                                url: 'temp.jpg'
+                            };
+
+                            FileService.open.and.returnValue(wrapper);
+                            spyOn(SplashImageCtrl, 'uploadSplash').and.returnValue($q.when(proxy));
+
+                            $scope.$apply(function() {
+                                minireel.data.splash.source = 'specified';
+                            });
+
+                            $scope.$apply(function() {
+                                SplashImageCtrl.save().then(success);
+                            });
+
+                             proxy= {};
+                        });
+
+                        it('should set the MiniReel\'s splash to its splashSrc', function() {
+                            expect(minireel.data.collateral.splash).toBe(SplashImageCtrl.splashSrc);
+                        });
+
+                        it('should register a beforeSync function that uploads the splash image', function() {
+                            var fn = EditorService.beforeSync.calls.mostRecent().args[1];
+
+                            expect(EditorService.beforeSync).toHaveBeenCalledWith('splash', jasmine.any(Function));
+
+                            $scope.$apply(function() {
+                                fn(proxy);
+                            });
+
+                            expect(SplashImageCtrl.uploadSplash).toHaveBeenCalledWith(proxy);
+                            expect(FileService.open).toHaveBeenCalledWith(SplashImageCtrl.splash);
+                            expect(wrapper.close).toHaveBeenCalled();
+                        });
+
+                        describe('if there is no splash', function() {
+                            beforeEach(function() {
+                                success.calls.reset();
+
+                                minireel.data.collateral.splash = 'splash.jpg';
+                                SplashImageCtrl.splash = null;
+
+                                EditorService.beforeSync.calls.reset();
+                                $scope.$apply(function() {
+                                    SplashImageCtrl.save().then(success);
+                                });
+                            });
+
+                            it('should not set the MiniReel\'s splash to its splashSrc', function() {
+                                expect(minireel.data.collateral.splash).not.toBe(SplashImageCtrl.splashSrc);
+                            });
+
+                            it('should not try to upload anything on the next sync', function() {
+                                expect(EditorService.beforeSync).not.toHaveBeenCalled();
+                            });
+                        });
+
+                    });
+
+                    describe('if the source is generated', function() {
+                        beforeEach(function() {
+                            $scope.$apply(function() {
+                                minireel.data.splash.source = 'generated';
+                                SplashImageCtrl.generatedSrcs[minireel.data.splash.ratio] = 'generated.jpg';
+                            });
 
                             $scope.$apply(function() {
                                 SplashImageCtrl.save().then(success);
                             });
                         });
 
-                        describe('if there is no splash', function() {
-                            beforeEach(function() {
-                                SplashImageCtrl.uploadSplash.calls.reset();
-                                success.calls.reset();
+                        it('should set the MiniReel\'s splash to its splashSrc', function() {
+                            expect(minireel.data.collateral.splash).toBe(SplashImageCtrl.splashSrc);
+                        });
 
-                                SplashImageCtrl.splash = null;
+                        it('should register a noop beforeSync function with the editor service', function() {
+                            expect(EditorService.beforeSync).toHaveBeenCalledWith('splash', angular.noop);
+                        });
+                    });
+
+                    ['specified', 'generated'].forEach(function(source) {
+                        describe('if the source is ' + source, function() {
+                            beforeEach(function() {
+                                $scope.$apply(function() {
+                                    minireel.data.splash.source = source;
+                                });
 
                                 $scope.$apply(function() {
                                     SplashImageCtrl.save().then(success);
                                 });
                             });
 
-                            it('should not upload anything', function() {
-                                expect(SplashImageCtrl.uploadSplash).not.toHaveBeenCalled();
-                                expect(success).toHaveBeenCalled();
-                            });
-                        });
-
-                        it('should upload the splash image', function() {
-                            expect(SplashImageCtrl.uploadSplash).toHaveBeenCalled();
-                        });
-                    });
-
-                    describe('if the source is generated', function() {
-                        beforeEach(function() {
-                            minireel.data.splash = 'generated';
-
-                            $scope.$apply(function() {
-                                SplashImageCtrl.save().then(success);
-                            });
-                        });
-
-                        it('should generate a splash image', function() {
-                            expect(SplashImageCtrl.generateSplash).toHaveBeenCalledWith(true);
-                        });
-
-                        describe('if the upload fails', function() {
-                            beforeEach(function() {
-                                $scope.$apply(function() {
-                                    generateDeferred.reject('EROOR');
-                                });
+                            it('should copy the collateral hash of its model to the EditorCtrl\'s model', function() {
+                                expect(EditorCtrl.model.data.collateral).toEqual(minireel.data.collateral);
+                                expect(EditorCtrl.model.data).toBe(originalData);
                             });
 
-                            it('should still reach the end of the chain', function() {
+                            it('should copy the splash object', function() {
+                                expect(EditorCtrl.model.data.splash).toEqual(minireel.data.splash);
+                                expect(EditorCtrl.model.data).toBe(originalData);
+                            });
+
+                            it('should transition back to the editor', function() {
                                 expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor');
                             });
-                        });
 
-                        describe('if the upload succeeds', function() {
-                            beforeEach(function() {
-                                $scope.$apply(function() {
-                                    generateDeferred.resolve({
-                                        '1-1': '/collateral/test/splash.jpg',
-                                        toString: function() {
-                                            return this['1-1'];
-                                        }
-                                    });
-                                });
+                            it('should bust the caches', function() {
+                                expect(EditorCtrl.bustCache).toHaveBeenCalled();
                             });
 
-                            it('should set the "splash" key on the collateral object of the minireel', function() {
-                                expect(minireel.data.collateral.splash).toBe('/collateral/test/splash.jpg');
+                            it('should resolve the promsise', function() {
+                                expect(success).toHaveBeenCalledWith(EditorCtrl.model);
                             });
-                        });
-                    });
-
-                    describe('after the upload completes', function() {
-                        beforeEach(function() {
-                            $scope.$apply(function() {
-                                SplashImageCtrl.save().then(success);
-                            });
-
-                            expect(EditorCtrl.model.data.collateral).not.toEqual(minireel.data.collateral);
-                            expect(EditorCtrl.model.data.splash).not.toEqual(minireel.data.splash);
-                            expect(c6State.goTo).not.toHaveBeenCalled();
-
-                            $scope.$apply(function() {
-                                generateDeferred.resolve('/collateral/src/foo.jpg');
-                            });
-                        });
-
-                        it('should copy the collateral hash of its model to the EditorCtrl\'s model', function() {
-                            expect(EditorCtrl.model.data.collateral).toEqual(minireel.data.collateral);
-                            expect(EditorCtrl.model.data).toBe(originalData);
-                        });
-
-                        it('should copy the splash object', function() {
-                            expect(EditorCtrl.model.data.splash).toEqual(minireel.data.splash);
-                            expect(EditorCtrl.model.data).toBe(originalData);
-                        });
-
-                        it('should transition back to the editor', function() {
-                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor');
-                        });
-
-                        it('should bust the caches', function() {
-                            expect(EditorCtrl.bustCache).toHaveBeenCalled();
-                        });
-
-                        it('should resolve the promsise', function() {
-                            expect(success).toHaveBeenCalledWith(EditorCtrl.model);
-                        });
-                    });
-                });
-            });
-
-            describe('events', function() {
-                describe('$destroy', function() {
-                    function trigger() {
-                        $scope.$emit('$destroy');
-                    }
-
-                    describe('if the user did not select an image', function() {
-                        beforeEach(trigger);
-
-                        it('should do nothing', function() {
-                            expect(FileService.open).not.toHaveBeenCalled();
-                        });
-                    });
-
-                    describe('if the user did select an image', function() {
-                        var wrapper;
-
-                        beforeEach(function() {
-                            wrapper = {
-                                close: jasmine.createSpy('wrapper.close()')
-                            };
-
-                            SplashImageCtrl.splash = {};
-                            FileService.open.and.returnValue(wrapper);
-
-                            trigger();
-                        });
-
-                        it('should close the file', function() {
-                            expect(FileService.open).toHaveBeenCalledWith(SplashImageCtrl.splash);
-                            expect(wrapper.close).toHaveBeenCalled();
                         });
                     });
                 });
