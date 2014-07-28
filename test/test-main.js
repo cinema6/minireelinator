@@ -51,8 +51,8 @@
                 angular: libUrl('angular/v1.2.14-0-g729fb13/angular'),
                 ngMock: libUrl('angular/v1.2.14-0-g729fb13/angular-mocks'),
                 ngAnimate: libUrl('angular/v1.2.14-0-g729fb13/angular-animate'),
-                c6ui: libUrl('c6ui/v2.6.4-0-g0df471c/c6uilib.min'),
-                c6log: libUrl('c6ui/v2.6.4-0-g0df471c/c6log.min'),
+                c6ui: libUrl('c6ui/v2.6.5-0-g2bd27aa/c6uilib.min'),
+                c6log: libUrl('c6ui/v2.6.5-0-g2bd27aa/c6log.min'),
                 templates: '/base/.tmp/templates',
                 'helpers/drag': '/base/test/helpers/drag'
             },
