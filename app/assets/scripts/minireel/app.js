@@ -211,9 +211,13 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
             }]);
         }])
 
-        .controller('MiniReelController', ['$scope','$log','c6State','tracker',
-        function                          ( $scope , $log , c6State , tracker ) {
+        .controller('MiniReelController', ['$scope','$log','c6State','tracker','SettingsService',
+        function                          ( $scope , $log , c6State , tracker , SettingsService ) {
             var self = this;
+
+            var PortalCtrl = $scope.PortalCtrl;
+
+            var user = PortalCtrl.model;
 
             $log.info('AppCtlr loaded.');
 
@@ -257,6 +261,20 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                 tracker.pageview('/' + self.config.uri + '/' + pageObject.page,
                     self.config.title + ' - ' + pageObject.title);
             };
+
+            if (!user.org.config.minireelinator) {
+                user.org.config.minireelinator = {};
+            }
+
+            SettingsService.register('MR::org', user.org.config.minireelinator, {
+                localSync: false,
+                sync: function() {
+                    return user.org.save();
+                },
+                defaults: {
+                    embedTypes: ['script']
+                }
+            });
 
             c6State.on('stateChange', this.trackStateChange);
 
