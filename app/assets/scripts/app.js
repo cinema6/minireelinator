@@ -243,18 +243,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             cinema6Provider.useAdapter(c6Defines.kLocal ? FixtureAdapter : CWRXAdapter);
         }])
 
-        .service('c6Runner', ['$timeout',
-        function             ( $timeout ) {
-            this.runOnce = function(fn, waitTime) {
-                var timer;
-
-                return function() {
-                    $timeout.cancel(timer);
-                    timer = $timeout(fn, waitTime);
-                };
-            };
-        }])
-
         .service('SettingsService', ['c6LocalStorage','$rootScope','c6Debounce',
         function                    ( c6LocalStorage , $rootScope , c6Debounce ) {
             var settings = {};
