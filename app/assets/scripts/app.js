@@ -304,7 +304,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             return get(settings, props)[lastProp];
                         },
                         set: function(value) {
-                            return (get(settings, props)[lastProp] = value);
+                            /* jshint boss:true */
+                            return get(settings, props)[lastProp] = value;
                         }
                     });
 
