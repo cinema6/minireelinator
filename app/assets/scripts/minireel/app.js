@@ -268,9 +268,6 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
 
             SettingsService.register('MR::org', user.org.config.minireelinator, {
                 localSync: false,
-                sync: function() {
-                    return user.org.save();
-                },
                 defaults: {
                     embedTypes: ['script']
                 }

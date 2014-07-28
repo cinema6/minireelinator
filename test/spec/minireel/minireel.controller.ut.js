@@ -105,7 +105,6 @@
                 it('should register org settings with the settings service', function() {
                     expect(SettingsService.register).toHaveBeenCalledWith('MR::org', user.org.config.minireelinator, {
                         localSync: false,
-                        sync: jasmine.any(Function),
                         defaults: {
                             embedTypes: ['script']
                         }
@@ -121,18 +120,6 @@
 
                     it('should create a minireelinator config', function() {
                         expect(user.org.config.minireelinator).toEqual({});
-                    });
-                });
-
-                describe('MR::org settings sync method', function() {
-                    beforeEach(function() {
-                        var config = SettingsService.register.calls.mostRecent().args[2];
-
-                        config.sync();
-                    });
-
-                    it('should save the org', function() {
-                        expect(user.org.save).toHaveBeenCalled();
                     });
                 });
             });
