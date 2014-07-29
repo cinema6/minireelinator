@@ -1,7 +1,5 @@
-define (['app', 'angular'], function(appModule, angular) {
+define (['app'], function(appModule) {
     'use strict';
-
-    var copy = angular.copy;
 
     describe('Portal State', function() {
         var $rootScope,
@@ -98,105 +96,6 @@ define (['app', 'angular'], function(appModule, angular) {
 
             it('should go to the "Apps" state', function() {
                 expect(c6State.goTo).toHaveBeenCalledWith('Apps', null, null, true);
-            });
-        });
-
-        describe('afterModel()', function() {
-            var success, failure,
-                user, org,
-                origUser;
-
-            beforeEach(function() {
-                success = jasmine.createSpy('success');
-                failure = jasmine.createSpy('failure');
-
-                org = {
-                    id: 'o-e7fcd57733d708'
-                };
-
-                user = {
-                    org: 'o-e7fcd57733d708',
-                    applications: ['e-bc1ed2bce16aa3']
-                };
-                origUser = copy(user);
-
-                spyOn(cinema6.db, 'find').and.returnValue($q.when(org));
-            });
-
-            describe('if the user has no org', function() {
-                beforeEach(function() {
-                    cinema6.db.find.and.returnValue($q.reject('404!!!'));
-                    spyOn(c6State, 'goTo');
-
-                    $rootScope.$apply(function() {
-                        portal.afterModel(user).then(success, failure);
-                    });
-                });
-
-                it('should reject the promise', function() {
-                    expect(failure).toHaveBeenCalledWith('404!!!');
-                });
-
-                it('should transition to the Error state', function() {
-                    expect(c6State.goTo).toHaveBeenCalledWith('Error', [jasmine.any(String)], null, true);
-                });
-            });
-
-            [
-                {
-                    org: 'o-e7fcd57733d708',
-                    applications: ['e-bc1ed2bce16aa3']
-                },
-                {
-                    org: 'o-e7fcd57733d708'
-                }
-            ].forEach(function(user) {
-                describe('if the user is ' + JSON.stringify(user), function() {
-                    var orgId;
-
-                    beforeEach(function() {
-                        orgId = user.org;
-
-                        $rootScope.$apply(function() {
-                            portal.afterModel(user).then(success, failure);
-                        });
-                    });
-
-                    it('should get the user\'s org', function() {
-                        expect(cinema6.db.find).toHaveBeenCalledWith('org', orgId);
-                    });
-
-                    it('should attach the org to the user', function() {
-                        expect(user.org).toBe(org);
-                    });
-                });
-            });
-
-            describe('if the user has no applications', function() {
-                beforeEach(function() {
-                    delete user.applications;
-
-                    $rootScope.$apply(function() {
-                        portal.afterModel(user).then(success, failure);
-                    });
-                });
-
-                it('should give the user an empty applications array', function() {
-                    expect(success).toHaveBeenCalledWith(user);
-                    expect(user.applications).toEqual([]);
-                });
-            });
-
-            describe('if the user has applications', function() {
-                beforeEach(function() {
-                    $rootScope.$apply(function() {
-                        portal.afterModel(user).then(success, failure);
-                    });
-                });
-
-                it('should not overwrite them', function() {
-                    expect(user.applications).toEqual(origUser.applications);
-                });
             });
         });
     });
