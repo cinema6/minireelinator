@@ -199,8 +199,8 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MiniReel', ['c6State',
-            function                          ( c6State ) {
+            c6StateProvider.state('MiniReel', ['c6State','SettingsService',
+            function                          ( c6State , SettingsService ) {
                 this.templateUrl = 'views/minireel/app.html';
                 this.controller = 'MiniReelController';
                 this.controllerAs = 'MiniReelCtrl';
@@ -208,19 +208,45 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                 this.model = function() {
                     return this.cParent.cModel[0];
                 };
+                this.afterModel = function() {
+                    var user = c6State.get('Portal').cModel;
+
+                    if (!user.org.config.minireelinator) {
+                        user.org.config.minireelinator = {};
+                    }
+                    if (!user.config.minireelinator) {
+                        user.config.minireelinator = {};
+                    }
+
+
+                    SettingsService
+                        .register('MR::org', user.org.config.minireelinator, {
+                            localSync: false,
+                            defaults: {
+                                embedTypes: ['script']
+                            }
+                        })
+                        .register('MR::user', user.config.minireelinator, {
+                            defaults: {
+                                defaultSplash: {
+                                    ratio: '3-2',
+                                    theme: 'img-text-overlay'
+                                }
+                            },
+                            sync: function() {
+                                return user.save();
+                            }
+                        });
+                };
                 this.enter = function() {
                     c6State.goTo('MR:Manager', null, null, true);
                 };
             }]);
         }])
 
-        .controller('MiniReelController', ['$scope','$log','c6State','tracker','SettingsService',
-        function                          ( $scope , $log , c6State , tracker , SettingsService ) {
+        .controller('MiniReelController', ['$scope','$log','c6State','tracker',
+        function                          ( $scope , $log , c6State , tracker ) {
             var self = this;
-
-            var PortalCtrl = $scope.PortalCtrl;
-
-            var user = PortalCtrl.model;
 
             $log.info('AppCtlr loaded.');
 
@@ -264,33 +290,6 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                 tracker.pageview('/' + self.config.uri + '/' + pageObject.page,
                     self.config.title + ' - ' + pageObject.title);
             };
-
-            if (!user.org.config.minireelinator) {
-                user.org.config.minireelinator = {};
-            }
-            if (!user.config.minireelinator) {
-                user.config.minireelinator = {};
-            }
-
-
-            SettingsService
-                .register('MR::org', user.org.config.minireelinator, {
-                    localSync: false,
-                    defaults: {
-                        embedTypes: ['script']
-                    }
-                })
-                .register('MR::user', user.config.minireelinator, {
-                    defaults: {
-                        defaultSplash: {
-                            ratio: '3-2',
-                            theme: 'img-text-overlay'
-                        }
-                    },
-                    sync: function() {
-                        return user.save();
-                    }
-                });
 
             c6State.on('stateChange', this.trackStateChange);
 
