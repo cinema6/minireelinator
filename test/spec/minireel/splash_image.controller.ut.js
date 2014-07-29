@@ -23,7 +23,8 @@
                     data: {
                         splash: {
                             source: 'generated',
-                            ratio: '1-1'
+                            ratio: '1-1',
+                            theme: 'img-only'
                         },
                         collateral: {
                             splash: 'splash.jpg'
@@ -61,7 +62,8 @@
                                     },
                                     splash: {
                                         source: 'generated',
-                                        ratio: '16-9'
+                                        ratio: '16-9',
+                                        theme: 'vertical-stack'
                                     }
                                 }
                             },
@@ -507,7 +509,34 @@
 
                     ['specified', 'generated'].forEach(function(source) {
                         describe('if the source is ' + source, function() {
+                            var setTheme, setRatio;
+
                             beforeEach(function() {
+                                var theme = EditorCtrl.model.data.splash.theme,
+                                    ratio = EditorCtrl.model.data.splash.ratio;
+
+                                setTheme = jasmine.createSpy('theme').and.callFake(function(value) {
+                                    return (theme = value);
+                                });
+                                setRatio = jasmine.createSpy('ratio').and.callFake(function(value) {
+                                    return (ratio = value);
+                                });
+
+                                Object.defineProperties(EditorCtrl.model.data.splash, {
+                                    theme: {
+                                        get: function() {
+                                            return theme;
+                                        },
+                                        set: setTheme
+                                    },
+                                    ratio: {
+                                        get: function() {
+                                            return ratio;
+                                        },
+                                        set: setRatio
+                                    }
+                                });
+
                                 $scope.$apply(function() {
                                     minireel.data.splash.source = source;
                                 });
@@ -525,6 +554,11 @@
                             it('should copy the splash object', function() {
                                 expect(EditorCtrl.model.data.splash).toEqual(minireel.data.splash);
                                 expect(EditorCtrl.model.data).toBe(originalData);
+                            });
+
+                            it('should copy the splash method in a way that updates computed properties', function() {
+                                expect(setTheme).toHaveBeenCalled();
+                                expect(setRatio).toHaveBeenCalled();
                             });
 
                             it('should transition back to the editor', function() {

@@ -880,6 +880,14 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
             this.save = function() {
                 var data = EditorCtrl.model.data;
 
+                function copy(source, dest) {
+                    forEach(source, function(value, prop) {
+                        dest[prop] = source[prop];
+                    });
+
+                    return dest;
+                }
+
                 function handleImageAsset(minireel) {
                     function generated(minireel) {
                         minireel.data.collateral.splash = self.splashSrc;
