@@ -77,9 +77,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             function clean(model) {
                 delete model.id;
                 delete model.created;
-                if (isObject(model.org)) {
-                    model.org = model.org.id;
-                }
+                delete model.org;
+                delete model.email;
 
                 return model;
             }
@@ -136,7 +135,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             };
 
             this.create = function(type, data) {
-                return $http.post(config.apiBase + '/account/user', clean(data))
+                return $http.post(config.apiBase + '/account/user', data)
                     .then(returnData)
                     .then(self.decorateWithOrg)
                     .then(arrayify);

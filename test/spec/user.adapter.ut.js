@@ -231,7 +231,6 @@
 
                     /* jshint quotmark:false */
                     user = {
-                        id: 'o-1234',
                         name: 'e2e-getOrg3'
                     };
                     /* jshint quotmark:single */
@@ -297,6 +296,7 @@
                         org: {
                             id: 'o-ec16f3ee949c80'
                         },
+                        email: "josh@cinema6.com",
                         status: "active",
                         access: "public",
                         created: "fkdslf",
@@ -313,7 +313,6 @@
 
                     $httpBackend.expectPUT('/api/account/user/e2e-put1', {
                         title: 'origTitle',
-                        org: model.org.id,
                         status: 'active',
                         access: 'public',
                         lastUpdated: 'fkdsjfkd',
