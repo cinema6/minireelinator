@@ -5,6 +5,8 @@
     take effect until the "Publish" button is clicked
   * Splash image settings are now editable even when the MiniReel is
     published
+  * The last splash theme/ratio the user selected is now stored in
+    LocalStorage/the user DB
 
 ## Beta14 (July 25, 2014)
 * *[Beta14.rc1]*
