@@ -268,13 +268,29 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
             if (!user.org.config.minireelinator) {
                 user.org.config.minireelinator = {};
             }
+            if (!user.config.minireelinator) {
+                user.config.minireelinator = {};
+            }
 
-            SettingsService.register('MR::org', user.org.config.minireelinator, {
-                localSync: false,
-                defaults: {
-                    embedTypes: ['script']
-                }
-            });
+
+            SettingsService
+                .register('MR::org', user.org.config.minireelinator, {
+                    localSync: false,
+                    defaults: {
+                        embedTypes: ['script']
+                    }
+                })
+                .register('MR::user', user.config.minireelinator, {
+                    defaults: {
+                        defaultSplash: {
+                            ratio: '3-2',
+                            theme: 'img-text-overlay'
+                        }
+                    },
+                    sync: function() {
+                        return user.save();
+                    }
+                });
 
             c6State.on('stateChange', this.trackStateChange);
 

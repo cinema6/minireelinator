@@ -44,7 +44,11 @@
                             minireelinator: {}
                         },
                         save: jasmine.createSpy('org.save()')
-                    }
+                    },
+                    config: {
+                        minireelinator: {}
+                    },
+                    save: jasmine.createSpy('user.save()')
                 };
 
                 gsap = {
@@ -85,7 +89,7 @@
                     $window = $injector.get('$window');
                     $controller = $injector.get('$controller');
                     SettingsService = $injector.get('SettingsService');
-                    spyOn(SettingsService, 'register');
+                    spyOn(SettingsService, 'register').and.returnValue(SettingsService);
 
                     MiniReelCtrl = instantiate();
 
@@ -111,7 +115,45 @@
                     });
                 });
 
-                describe('if there is no minireelinator config', function() {
+                it('should register user settings with the settings service', function() {
+                    expect(SettingsService.register).toHaveBeenCalledWith('MR::user', user.config.minireelinator, {
+                        defaults: {
+                            defaultSplash: {
+                                ratio: '3-2',
+                                theme: 'img-text-overlay'
+                            }
+                        },
+                        sync: jasmine.any(Function)
+                    });
+                });
+
+                describe('user settings sync', function() {
+                    beforeEach(function() {
+                        var sync = SettingsService.register.calls.all().reduce(function(result, next) {
+                            return next.args[0] === 'MR::user' ? next.args[2].sync : result;
+                        }, null);
+
+                        sync();
+                    });
+
+                    it('should save the user', function() {
+                        expect(user.save).toHaveBeenCalled();
+                    });
+                });
+
+                describe('if there is no user minireelinator config', function() {
+                    beforeEach(function() {
+                        delete user.config.minireelinator;
+
+                        MiniReelCtrl = instantiate();
+                    });
+
+                    it('should create a minireelinator config', function() {
+                        expect(user.config.minireelinator).toEqual(jasmine.any(Object));
+                    });
+                });
+
+                describe('if there is no org minireelinator config', function() {
                     beforeEach(function() {
                         delete user.org.config.minireelinator;
 
@@ -119,7 +161,7 @@
                     });
 
                     it('should create a minireelinator config', function() {
-                        expect(user.org.config.minireelinator).toEqual({});
+                        expect(user.org.config.minireelinator).toEqual(jasmine.any(Object));
                     });
                 });
             });
