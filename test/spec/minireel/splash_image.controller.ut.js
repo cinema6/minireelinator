@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/editor', 'angular'], function(editorModule, angular) {
+    define(['app', 'angular'], function(appModule, angular) {
         describe('SplashImageController', function() {
             var $rootScope,
                 $scope,
@@ -31,7 +31,7 @@
                     }
                 };
 
-                module(editorModule.name);
+                module(appModule.name);
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');

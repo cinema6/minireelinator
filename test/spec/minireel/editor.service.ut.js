@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/editor'], function(editorModule) {
+    define(['app'], function(appModule) {
         /* global angular:true */
         var forEach = angular.forEach;
 
@@ -23,7 +23,7 @@
             beforeEach(function() {
                 queuedFns = [];
 
-                module(editorModule.name, function($provide) {
+                module(appModule.name, function($provide) {
                     $provide.decorator('MiniReelService', function($delegate) {
                         var originals = {
                             convertForEditor: $delegate.convertForEditor

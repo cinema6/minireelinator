@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/editor','minireel/app'], function(editorModule, minireelModule) {
+    define(['minireel/editor','app'], function(editorModule, appModule) {
         describe('EditorController', function() {
             var $rootScope,
                 $scope,
@@ -57,7 +57,7 @@
                     }
                 };
 
-                module(minireelModule.name);
+                module(appModule.name);
                 module(editorModule.name, function($provide) {
                     $provide.decorator('MiniReelService', function($delegate) {
                         var createCard = $delegate.createCard;
