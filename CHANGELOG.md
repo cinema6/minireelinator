@@ -5,6 +5,8 @@
     take effect until the "Publish" button is clicked
   * Splash image settings are now editable even when the MiniReel is
     published
+  * Generated Wordpress Shortcode has been updated to the latest format
+    based on feedback from USAToday
 
 ## Beta14 (July 25, 2014)
 * *[Beta14.rc1]*
