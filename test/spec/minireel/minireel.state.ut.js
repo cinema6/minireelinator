@@ -85,12 +85,22 @@ define (['app'], function(appModule) {
             });
 
             describe('user settings sync', function() {
+                var settings;
+
                 beforeEach(function() {
                     var sync = SettingsService.register.calls.all().reduce(function(result, next) {
                         return next.args[0] === 'MR::user' ? next.args[2].sync : result;
                     }, null);
 
-                    sync();
+                    settings = {
+                        defaultSplash: {}
+                    };
+
+                    sync(settings);
+                });
+
+                it('should update the config on the user', function() {
+                    expect(user.config.minireelinator).toBe(settings);
                 });
 
                 it('should save the user', function() {
