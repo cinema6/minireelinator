@@ -71,6 +71,22 @@
             });
 
             describe('findAll(type)', function() {
+                var failure;
+
+                beforeEach(function() {
+                    failure = jasmine.createSpy('failure()');
+
+                    $rootScope.$apply(function() {
+                        adapter.findAll('user').catch(failure);
+                    });
+                });
+
+                it('should reject the promise', function() {
+                    expect(failure).toHaveBeenCalledWith('UserAdapter.findAll() method is not implemented.');
+                });
+            });
+
+            xdescribe('findAll(type)', function() {
                 var users,
                     success;
 
@@ -108,6 +124,22 @@
             });
 
             describe('find(type, id)', function() {
+                var failure;
+
+                beforeEach(function() {
+                    failure = jasmine.createSpy('failure()');
+
+                    $rootScope.$apply(function() {
+                        adapter.find('user', 'o-1234').catch(failure);
+                    });
+                });
+
+                it('should reject the promise', function() {
+                    expect(failure).toHaveBeenCalledWith('UserAdapter.find() method is not implemented.');
+                });
+            });
+
+            xdescribe('find(type, id)', function() {
                 var user,
                     success;
 
@@ -140,6 +172,25 @@
             });
 
             describe('findQuery(type, query)', function() {
+                var failure;
+
+                beforeEach(function() {
+                    failure = jasmine.createSpy('failure()');
+
+                    $rootScope.$apply(function() {
+                        adapter.findQuery('user', {
+                            user: 'e2e-user',
+                            sort: 'id,1'
+                        }).catch(failure);
+                    });
+                });
+
+                it('should reject the promise', function() {
+                    expect(failure).toHaveBeenCalledWith('UserAdapter.findQuery() method is not implemented.');
+                });
+            });
+
+            xdescribe('findQuery(type, query)', function() {
                 var success, failure,
                     users;
 
@@ -222,6 +273,29 @@
             });
 
             describe('create(type, data)', function() {
+                var failure,
+                    user;
+
+                beforeEach(function() {
+                    failure = jasmine.createSpy('failure()');
+
+                    /* jshint quotmark:false */
+                    user = {
+                        name: 'e2e-getOrg3'
+                    };
+                    /* jshint quotmark:single */
+
+                    $rootScope.$apply(function() {
+                        adapter.create('user', copy(user)).catch(failure);
+                    });
+                });
+
+                it('should reject the promise', function() {
+                    expect(failure).toHaveBeenCalledWith('UserAdapter.create() method is not implemented.');
+                });
+            });
+
+            xdescribe('create(type, data)', function() {
                 var success,
                     user,
                     response;
@@ -258,6 +332,29 @@
             });
 
             describe('erase(type, model)', function() {
+                var failure,
+                    user;
+
+                beforeEach(function() {
+                    failure = jasmine.createSpy('failure()');
+
+                    /* jshint quotmark:false */
+                    user = {
+                        name: 'e2e-getOrg3'
+                    };
+                    /* jshint quotmark:single */
+
+                    $rootScope.$apply(function() {
+                        adapter.erase('user', user).catch(failure);
+                    });
+                });
+
+                it('should reject the promise', function() {
+                    expect(failure).toHaveBeenCalledWith('UserAdapter.erase() method is not implemented.');
+                });
+            });
+
+            xdescribe('erase(type, model)', function() {
                 var success,
                     user;
 

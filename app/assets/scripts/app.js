@@ -72,7 +72,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
         .constant('UserAdapter', ['$http','$q','cinema6','config',
         function                 ( $http , $q , cinema6 , config ) {
-            var self = this;
+            //var self = this;
 
             function clean(model) {
                 delete model.id;
@@ -91,9 +91,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 return [data];
             }
 
-            function decorateAllUsersWithOrgs(users) {
+            /*function decorateAllUsersWithOrgs(users) {
                 return $q.all(users.map(self.decorateWithOrg));
-            }
+            }*/
 
             this.decorateWithOrg = function(user) {
                 return cinema6.db.find('org', user.org)
@@ -103,20 +103,20 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     });
             };
 
-            this.findAll = function() {
+            /*this.findAll = function() {
                 return $http.get(config.apiBase + '/account/users')
                     .then(returnData)
                     .then(decorateAllUsersWithOrgs);
-            };
+            };*/
 
-            this.find = function(type, id) {
+            /*this.find = function(type, id) {
                 return $http.get(config.apiBase + '/account/user/' + id)
                     .then(returnData)
                     .then(this.decorateWithOrg)
                     .then(arrayify);
-            };
+            };*/
 
-            this.findQuery = function(type, query) {
+            /*this.findQuery = function(type, query) {
                 function returnData(response) {
                     return response.data;
                 }
@@ -132,21 +132,21 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     .then(returnData)
                     .then(decorateAllUsersWithOrgs)
                     .catch(handleError);
-            };
+            };*/
 
-            this.create = function(type, data) {
+            /*this.create = function(type, data) {
                 return $http.post(config.apiBase + '/account/user', data)
                     .then(returnData)
                     .then(self.decorateWithOrg)
                     .then(arrayify);
-            };
+            };*/
 
-            this.erase = function(type, model) {
+            /*this.erase = function(type, model) {
                 return $http.delete(config.apiBase + '/account/user/' + model.id)
                     .then(function returnNull() {
                         return null;
                     });
-            };
+            };*/
 
             this.update = function(type, model) {
                 return $http.put(config.apiBase + '/account/user/' + model.id, clean(model))
@@ -154,6 +154,12 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     .then(this.decorateWithOrg)
                     .then(arrayify);
             };
+
+            ['findAll', 'find', 'findQuery', 'create', 'erase'].forEach(function(method) {
+                this[method] = function() {
+                    return $q.reject('UserAdapter.' + method + '() method is not implemented.');
+                };
+            }, this);
         }])
 
         .constant('OrgAdapter', ['$http','$q','config',
