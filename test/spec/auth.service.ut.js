@@ -1,7 +1,7 @@
 (function(){
     'use strict';
 
-    define(['login', 'c6ui', 'angular'], function(loginModule, c6uiModule, angular) {
+    define(['app', 'c6ui', 'angular'], function(appModule, c6uiModule, angular) {
         var extend = angular.extend;
 
         describe('AuthService', function() {
@@ -17,16 +17,7 @@
                     config: {}
                 };
 
-                module(c6uiModule.name, ['$provide', function($provide) {
-                    $provide.provider('c6UrlMaker', function(){
-                        this.location = jasmine.createSpy('urlMaker.location');
-                        this.makeUrl  = jasmine.createSpy('urlMaker.makeUrl');
-                        this.$get     = function(){
-                            return jasmine.createSpy('urlMaker.get');
-                        };
-                    });
-                }]);
-                module(loginModule.name);
+                module(appModule.name);
                 module(function($provide) {
                     $provide.decorator('cinema6', function($delegate) {
                         var actualPush = $delegate.db.push;
@@ -51,13 +42,51 @@
 
             });
 
+            describe('requestPasswordReset(email)', function() {
+                var success, failure;
+
+                beforeEach(function() {
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
+
+                    $httpBackend.expectPOST('/api/auth/password/forgot', {
+                        email: 'josh@cinema6.com',
+                        target: 'portal'
+                    }).respond(200, 'Successfully generated reset token');
+
+                    AuthService.requestPasswordReset('josh@cinema6.com').then(success, failure);
+
+                    $httpBackend.flush();
+                });
+
+                it('should resolve to the success message', function() {
+                    expect(success).toHaveBeenCalledWith('Successfully generated reset token');
+                });
+
+                describe('in the event of failure', function() {
+                    beforeEach(function() {
+                        $httpBackend.expectPOST('/api/auth/password/forgot', {
+                            email: 'evan@cinema6.com',
+                            target: 'portal'
+                        }).respond(404, 'That user does not exist');
+
+                        AuthService.requestPasswordReset('evan@cinema6.com').then(success, failure);
+
+                        $httpBackend.flush();
+                    });
+
+                    it('should resolve to the failure message', function() {
+                        expect(failure).toHaveBeenCalledWith('That user does not exist');
+                    });
+                });
+            });
+
             describe('login method', function(){
                 beforeEach(function(){
                     successSpy = jasmine.createSpy('login.success');
                     failureSpy = jasmine.createSpy('login.failure');
                     spyOn($timeout,'cancel');
                     spyOn(cinema6.db, 'find').and.returnValue($q.when(org));
-                    c6UrlMaker.and.returnValue('/api/auth/login'); 
                 });
 
                 it('will resolve promise if successfull',function(){
@@ -88,7 +117,6 @@
                     failureSpy = jasmine.createSpy('checkStatus.failure');
                     spyOn($timeout,'cancel');
                     spyOn(cinema6.db, 'find').and.returnValue($q.when(org));
-                    c6UrlMaker.and.returnValue('/api/auth/status'); 
                 });
 
                 it('will resolve promise if successfull',function(){
@@ -118,7 +146,6 @@
                     successSpy = jasmine.createSpy('logout.success');
                     failureSpy = jasmine.createSpy('logout.failure');
                     spyOn($timeout,'cancel');
-                    c6UrlMaker.and.returnValue('/api/auth/logout'); 
                 });
 
                 it('will resolve promise if successfull',function(){
