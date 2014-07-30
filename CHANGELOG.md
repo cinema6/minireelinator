@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## Beta15 (July 30, 2014)
 * *[Beta15.rc1]*
   * [FIX]: If a MiniReel is published, editing image settings does not
     take effect until the "Publish" button is clicked
@@ -11,6 +12,7 @@
     LocalStorage/the user DB
   * Generated Wordpress Shortcode has been updated to the latest format
     based on feedback from USAToday
+* *[/Beta15.rc1]*
 
 ## Beta14 (July 25, 2014)
 * *[Beta14.rc1]*
