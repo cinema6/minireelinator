@@ -233,7 +233,8 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                                     theme: 'img-text-overlay'
                                 }
                             },
-                            sync: function() {
+                            sync: function(settings) {
+                                user.config.minireelinator = settings;
                                 return user.save();
                             }
                         });

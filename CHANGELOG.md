@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## Beta15 (July 30, 2014)
+* *[Beta15.rc3]*
+  * [FIX]: Fix for an issue that caused user settings not to be changed
+    when they were saved to the users database
+* *[/Beta15.rc3]*
+
 * *[Beta15.rc2]*
   * [FIX]: Fix for an issue that caused user settings not to be saved
     back to the users database
