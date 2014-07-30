@@ -398,7 +398,8 @@
                         access: "public",
                         created: "fkdslf",
                         lastUpdated: "fkdsjfkd",
-                        user: "e2e-user"
+                        user: "e2e-user",
+                        permissions: {}
                     };
                     /* jshint quotmark:single */
 
