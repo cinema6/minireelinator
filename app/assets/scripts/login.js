@@ -73,6 +73,18 @@ function( angular , c6State  ) {
                     });
             }
 
+            this.resetPassword = function(userId, token, password) {
+                return $http.post(c6UrlMaker('auth/password/reset', 'api'), {
+                    id: userId,
+                    token: token,
+                    password: password
+                }, {
+                    timeout: 10000
+                })
+                .then(returnData, returnRejectedData)
+                .then(handleAuthSuccess);
+            };
+
             this.requestPasswordReset = function(email) {
                 return $http.post(c6UrlMaker('auth/password/forgot', 'api'), {
                     email: email,

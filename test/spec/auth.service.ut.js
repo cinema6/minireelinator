@@ -42,6 +42,63 @@
 
             });
 
+            describe('resetPassword(userId, token, password)', function() {
+                var userJSON,
+                    success, failure;
+
+                beforeEach(function() {
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
+                    spyOn(cinema6.db, 'find').and.returnValue($q.when(org));
+
+                    userJSON = {
+                        id: 'u-956a985182e6aa',
+                        org: 'o-44342fd02ee28d',
+                        config: {}
+                    };
+
+                    $httpBackend.expectPOST('/api/auth/password/reset', {
+                        id: 'u-956a985182e6aa',
+                        token: '4510d0785dcfa5',
+                        password: 'password2'
+                    }).respond(200, extend(userJSON, { org: org }));
+
+                    AuthService.resetPassword('u-956a985182e6aa', '4510d0785dcfa5', 'password2')
+                        .then(success, failure);
+
+                    $httpBackend.flush();
+                });
+
+                it('should attach the org to the user', function() {
+                    expect(cinema6.db.find).toHaveBeenCalledWith('org', userJSON.org);
+                    expect(success.calls.mostRecent().args[0].org).toBe(org);
+                });
+
+                it('should resolve to the cinema6.db user model', function() {
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', userJSON.id, userJSON);
+                    expect(success).toHaveBeenCalledWith(user);
+                });
+
+                describe('in the event of failure', function() {
+                    beforeEach(function() {
+                        $httpBackend.expectPOST('/api/auth/password/reset', {
+                            id: 'u-ae1b702b26c2ff',
+                            token: '9a784d7d4d63b8',
+                            password: 'passy'
+                        }).respond(403, 'No reset token found');
+
+                        AuthService.resetPassword('u-ae1b702b26c2ff', '9a784d7d4d63b8', 'passy')
+                            .then(success, failure);
+
+                        $httpBackend.flush();
+                    });
+
+                    it('should resolve to the failure message', function() {
+                        expect(failure).toHaveBeenCalledWith('No reset token found');
+                    });
+                });
+            });
+
             describe('requestPasswordReset(email)', function() {
                 var success, failure;
 
