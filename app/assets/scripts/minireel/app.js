@@ -319,10 +319,14 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                 }
             };
 
-            function formatEmbed(template, data) {
+            function formatEmbed(template, data, processors) {
                 var repeatedMatcher = (/\|.+?\|/),
                     repeated = template.match(repeatedMatcher)[0].replace(/^.|.$/g, ''),
                     bookends = template.split(repeatedMatcher);
+
+                function identity(arg) {
+                    return arg;
+                }
 
                 return bookends[0] +
                     Object.keys(data)
@@ -330,12 +334,13 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                             return data[attr] !== false;
                         })
                         .map(function(attr) {
-                            var value = data[attr];
+                            var value = data[attr],
+                                processor = processors[attr] || identity;
 
-                            return (value === true ?
+                            return processor((value === true ?
                                 repeated.split('=')[0] : repeated)
                                     .replace('{attr}', attr)
-                                    .replace('{value}', data[attr]);
+                                    .replace('{value}', data[attr]));
                         }).join(' ') +
                     bookends[1];
             }
@@ -363,34 +368,57 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                 height: '522px'
             };
 
-            Object.defineProperties(this, {
-                code: {
-                    get: function() {
-                        var minireel = $scope.minireel,
-                            splash = minireel.data.splash,
-                            branding = minireel.data.branding,
-                            isInline = MiniReelService.modeCategoryOf(minireel, categories)
-                                .value === 'inline',
-                            explicitDimensions = this.mode === 'custom';
+            Object.defineProperty(this, 'code', {
+                get: function() {
+                    var minireel = $scope.minireel,
+                        splash = minireel.data.splash,
+                        branding = minireel.data.branding,
+                        isInline = MiniReelService.modeCategoryOf(minireel, categories)
+                            .value === 'inline',
+                        explicitDimensions = this.mode === 'custom';
 
-                        var data = {
-                            'exp': minireel.id,
-                            ':title': btoa(minireel.data.title),
-                            ':splash': btoa(splash.theme + ':' + splash.ratio.replace('-', '/')),
-                            ':branding': branding ? btoa(branding) : false,
-                            'width': explicitDimensions ? this.size.width : false,
-                            'height': explicitDimensions ? this.size.height : false,
-                            'preload': isInline
-                        };
+                    function shortcodeBase64(string) {
+                        var value = string.match(/"(.*?)"/)[1];
 
-                        switch (this.format) {
-                        case 'shortcode':
-                            return formatEmbed('[minireel version="1" |{attr}="{value}"|]', data);
-                        case 'script':
-                            return formatEmbed('<script src="' +
-                                c6EmbedSrc +
-                                '" |data-{attr}="{value}"|></script>', data);
-                        }
+                        return string.replace(value, 'data:text/plain;base64,' + btoa(value));
+                    }
+
+                    function scriptBase64(string) {
+                        var value = string.match(/"(.*?)"/)[1];
+
+                        return string
+                            .replace(/^data-/, 'data-:')
+                            .replace(value, btoa(value));
+                    }
+
+                    var data = {
+                        'exp': minireel.id,
+                        'title': minireel.data.title,
+                        'splash': splash.theme + ':' + splash.ratio.replace('-', '/'),
+                        'branding': branding ? branding : false,
+                        'width': explicitDimensions ? this.size.width : false,
+                        'height': explicitDimensions ? this.size.height : false,
+                        'preload': isInline
+                    };
+
+                    switch (this.format) {
+                    case 'shortcode':
+                        return formatEmbed('[minireel version="1" |{attr}="{value}"|]', data, {
+                            title: shortcodeBase64,
+                            branding: shortcodeBase64,
+                            preload: function(string) {
+                                return string + '="preload"';
+                            }
+                        });
+                    case 'script':
+                        return formatEmbed(
+                            '<script src="' + c6EmbedSrc + '" |data-{attr}="{value}"|></script>',
+                            data,
+                            {
+                                title: scriptBase64,
+                                branding: scriptBase64
+                            }
+                        );
                     }
                 }
             });
