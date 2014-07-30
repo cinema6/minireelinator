@@ -5,6 +5,8 @@
     take effect until the "Publish" button is clicked
   * Splash image settings are now editable even when the MiniReel is
     published
+  * MiniReel Editor now creates MiniReels that will use the dynamic ad
+    configuration
 
 ## Beta14 (July 25, 2014)
 * *[Beta14.rc1]*

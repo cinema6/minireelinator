@@ -829,54 +829,6 @@
                             });
                         });
 
-                        xit('should transpile the ad cards', function() {
-                            expect(deck[2]).toEqual({
-                                id: 'rc-1c7a46097a5d4a',
-                                type: 'ad',
-                                title: 'Advertisement',
-                                note: null,
-                                label: 'Advertisement',
-                                ad: true,
-                                view: 'ad',
-                                displayAdSource: 'cinema6',
-                                data: {
-                                    autoplay: true,
-                                    source: 'cinema6-publisher',
-                                    skip: 'never'
-                                }
-                            });
-                            expect(deck[5]).toEqual({
-                                id: 'rc-f31cabb9193ef9',
-                                type: 'ad',
-                                title: 'Advertisement',
-                                note: null,
-                                label: 'Advertisement',
-                                ad: true,
-                                view: 'ad',
-                                displayAdSource: 'cinema6',
-                                data: {
-                                    autoplay: false,
-                                    source: 'publisher-cinema6',
-                                    skip: 'delay'
-                                }
-                            });
-                            expect(deck[8]).toEqual({
-                                id: 'rc-5065695912f286',
-                                type: 'ad',
-                                title: 'Advertisement',
-                                note: null,
-                                label: 'Advertisement',
-                                ad: true,
-                                view: 'ad',
-                                displayAdSource: 'cinema6',
-                                data: {
-                                    autoplay: false,
-                                    source: 'publisher',
-                                    skip: 'anytime'
-                                }
-                            });
-                        });
-
                         it('should transpile the links cards', function() {
                             expect(deck[7]).toEqual({
                                 id: 'rc-25c1f60b933186',
@@ -1191,50 +1143,6 @@
                             expect(result).toBe(minireel);
                             expect(result.data).not.toBe(converted.data);
                             expect(minireel.data.deck[1].title).toBe('New Title');
-                        });
-
-                        describe('inserting ads', function() {
-                            beforeEach(function() {
-                                minireel = {
-                                    data: {
-                                        deck: [
-                                            MiniReelService.createCard('video'),
-                                            MiniReelService.createCard('video'),
-                                            MiniReelService.createCard('video'),
-                                            MiniReelService.createCard('recap')
-                                        ]
-                                    }
-                                };
-                            });
-
-                            describe('if there are at least two videos', function() {
-                                it('should put the ad card after the second video', function() {
-                                    expect(MiniReelService.convertForPlayer(minireel).data.deck[2].type).toBe('ad');
-                                });
-                            });
-
-                            describe('if there is only one video', function() {
-                                beforeEach(function() {
-                                    minireel.data.deck.splice(0, 2);
-                                });
-
-                                it('should insert the ad card after the video', function() {
-                                    expect(MiniReelService.convertForPlayer(minireel).data.deck[1].type).toBe('ad');
-                                });
-                            });
-
-                            describe('if there are no videos', function() {
-                                beforeEach(function() {
-                                    minireel.data.deck.splice(0, 3);
-                                });
-
-                                it('should not insert an ad', function() {
-                                    var converted = MiniReelService.convertForPlayer(minireel);
-
-                                    expect(converted.data.deck[0].type).toBe('recap');
-                                    expect(converted.data.deck.length).toBe(1);
-                                });
-                            });
                         });
                     });
 
