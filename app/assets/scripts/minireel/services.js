@@ -745,21 +745,6 @@ function( angular , c6ui , cryptojs ) {
                 return card;
             }
 
-            function adCardFor(minireel) {
-                return {
-                    id: generateId('rc'),
-                    type: 'ad',
-                    ad: true,
-                    modules: ['displayAd'],
-                    displayAdSource: minireel.data.displayAdSource,
-                    data: {
-                        autoplay: true,
-                        source: minireel.data.videoAdSource,
-                        skip: minireel.data.videoAdSkip
-                    }
-                };
-            }
-
             this.modeCategoryOf = function(minireel, categories) {
                 var result = {},
                     modeValue = minireel && minireel.data.mode;
@@ -888,7 +873,15 @@ function( angular , c6ui , cryptojs ) {
                         })
                         .map(function(card) {
                             return makeCard(card);
-                        })
+                        }),
+                    ads: minireel.data.deck
+                        .reduce(function(ads, card, index) {
+                            if (card.ad) {
+                                ads[index] = card;
+                            }
+
+                            return ads;
+                        }, {})
                 };
 
                 // Loop through the experience and copy everything but
@@ -928,19 +921,7 @@ function( angular , c6ui , cryptojs ) {
                                 collateral: {
                                     splash: null
                                 },
-                                // TODO: Delete this code
-                                deck: [/*(function() {
-                                    var deck = [],
-                                        count = 0;
-
-                                    for ( ; count < user.org.minAdCount; count++) {
-                                        deck.push(self.createCard('ad'));
-                                    }
-
-                        deck.push(*/self.createCard('recap')/*);
-
-                                    return deck;
-                          }())*/]
+                                deck: [self.createCard('recap')]
                             }
                         });
                 }
@@ -1124,12 +1105,13 @@ function( angular , c6ui , cryptojs ) {
                 var deck = minireel.data.deck,
                     convertedDeck = deck.map(function(card) {
                         return self.convertCard(card, minireel);
-                    }),
-                    videoCards = deck.filter(function(card) {
-                        return (/^video/).test(card.type);
-                    }),
-                    videoBeforeAd = videoCards[Math.min(1, videoCards.length - 1)],
-                    adInsertionIndex = deck.indexOf(videoBeforeAd) + 1;
+                    });
+
+                forEach(minireel.data.ads, function(card, _index) {
+                    var index = parseInt(_index);
+
+                    convertedDeck.splice(index, 0, card);
+                });
 
                 target = target || {};
 
@@ -1141,12 +1123,10 @@ function( angular , c6ui , cryptojs ) {
                     }
                 });
                 forEach(minireel.data, function(value, key) {
+                    if (key === 'ads') { return; }
+
                     target.data[key] = value;
                 });
-
-                if (videoBeforeAd) {
-                    convertedDeck.splice(adInsertionIndex, 0, adCardFor(minireel));
-                }
 
                 target.data.deck = convertedDeck;
 

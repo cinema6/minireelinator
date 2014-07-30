@@ -5,6 +5,8 @@
     take effect until the "Publish" button is clicked
   * Splash image settings are now editable even when the MiniReel is
     published
+  * MiniReel Editor now creates MiniReels that will use the dynamic ad
+    configuration
   * The last splash theme/ratio the user selected is now stored in
     LocalStorage/the user DB
   * Generated Wordpress Shortcode has been updated to the latest format
