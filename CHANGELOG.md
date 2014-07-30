@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## Beta15 (July 30, 2014)
+* *[Beta15.rc2]*
+  * [FIX]: Fix for an issue that caused user settings not to be saved
+    back to the users database
+* *[/Beta15.rc2]*
+
 * *[Beta15.rc1]*
   * [FIX]: If a MiniReel is published, editing image settings does not
     take effect until the "Publish" button is clicked

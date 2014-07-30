@@ -79,6 +79,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 delete model.created;
                 delete model.org;
                 delete model.email;
+                delete model.permissions;
 
                 return model;
             }
