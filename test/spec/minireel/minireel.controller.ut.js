@@ -10,21 +10,16 @@
                 c6State,
                 $window,
                 SettingsService,
-                PortalCtrl,
                 MiniReelCtrl,
                 tracker;
 
             var gsap,
-                user,
                 appData,
                 cinema6Session;
 
             function instantiate() {
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
-                    PortalCtrl = $scope.PortalCtrl = {
-                        model: user
-                    };
                     MiniReelCtrl = $controller('MiniReelController', {
                         tracker        : tracker,
                         c6Defines      : c6Defines,
@@ -36,17 +31,6 @@
             }
 
             beforeEach(function() {
-                user = {
-                    id: 'u-5dd4066eb1c277',
-                    name: 'team member',
-                    org: {
-                        config: {
-                            minireelinator: {}
-                        },
-                        save: jasmine.createSpy('org.save()')
-                    }
-                };
-
                 gsap = {
                     TweenLite: {
                         ticker: {
@@ -85,7 +69,7 @@
                     $window = $injector.get('$window');
                     $controller = $injector.get('$controller');
                     SettingsService = $injector.get('SettingsService');
-                    spyOn(SettingsService, 'register');
+                    spyOn(SettingsService, 'register').and.returnValue(SettingsService);
 
                     MiniReelCtrl = instantiate();
 
@@ -99,29 +83,6 @@
 
             it('should exist',function() {
                 expect(MiniReelCtrl).toBeDefined();
-            });
-
-            describe('construction', function() {
-                it('should register org settings with the settings service', function() {
-                    expect(SettingsService.register).toHaveBeenCalledWith('MR::org', user.org.config.minireelinator, {
-                        localSync: false,
-                        defaults: {
-                            embedTypes: ['script']
-                        }
-                    });
-                });
-
-                describe('if there is no minireelinator config', function() {
-                    beforeEach(function() {
-                        delete user.org.config.minireelinator;
-
-                        MiniReelCtrl = instantiate();
-                    });
-
-                    it('should create a minireelinator config', function() {
-                        expect(user.org.config.minireelinator).toEqual({});
-                    });
-                });
             });
 
             describe('properties', function() {

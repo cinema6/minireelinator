@@ -10,6 +10,7 @@
                 VoteService,
                 CollateralService,
                 VideoThumbnailService,
+                SettingsService,
                 $rootScope,
                 cinema6,
                 c6State,
@@ -48,7 +49,17 @@
                     $q = $injector.get('$q');
                     CollateralService = $injector.get('CollateralService');
                     VideoThumbnailService = $injector.get('VideoThumbnailService');
+                    SettingsService = $injector.get('SettingsService');
                     c6State = $injector.get('c6State');
+                });
+
+                SettingsService.register('MR::user', {
+                    defaultSplash: {
+                        ratio: '3-2',
+                        theme: 'img-text-overlay'
+                    }
+                }, {
+                    localSync: false
                 });
 
                 portal = c6State.get('Portal');
@@ -971,111 +982,6 @@
                             it('should resolve the promise', function() {
                                 expect(success).toHaveBeenCalledWith(newModel);
                                 expect(newModel.status).toBe('pending');
-                            });
-
-                            describe('if the user has a previous minireel', function() {
-                                var firstMiniReel;
-
-                                beforeEach(function() {
-                                    minireels = [
-                                        {
-                                            id: 'e-e9c896c460453d',
-                                            data: {
-                                                splash: {
-                                                    ratio: '6-5',
-                                                    source: 'specified',
-                                                    theme: 'text-only'
-                                                }
-                                            }
-                                        }
-                                    ];
-
-                                    firstMiniReel = success.calls.mostRecent().args[0];
-                                    success.calls.reset();
-
-                                    cinema6.db.findAll.and.returnValue($q.when(minireels));
-
-                                    $rootScope.$apply(function() {
-                                        MiniReelService.create().then(success);
-                                    });
-                                });
-
-                                it('should be almost identical to the first one', function() {
-                                    expect(cinema6.db.findAll).toHaveBeenCalledWith('experience', {
-                                        type: 'minireel',
-                                        user: portal.cModel.id,
-                                        sort: 'lastUpdated,-1',
-                                        limit: 1
-                                    });
-
-                                    expect(success).toHaveBeenCalledWith(jasmine.objectContaining({
-                                        type: 'minireel',
-                                        org: firstMiniReel.org,
-                                        appUri: 'rumble',
-                                        data: {
-                                            title: null,
-                                            mode: 'lightbox',
-                                            branding: portal.cModel.branding,
-                                            displayAdSource: portal.cModel.org.waterfalls.display[0],
-                                            videoAdSource: portal.cModel.org.waterfalls.video[0],
-                                            videoAdSkip: portal.cModel.org.videoAdSkip,
-                                            splash: {
-                                                ratio: minireels[0].data.splash.ratio,
-                                                source: firstMiniReel.data.splash.source,
-                                                theme: minireels[0].data.splash.theme
-                                            },
-                                            collateral: {
-                                                splash: null
-                                            },
-                                            deck: firstMiniReel.data.deck.map(function(card) {
-                                                card.id = jasmine.any(String);
-
-                                                return card;
-                                            })
-                                        }
-                                    }));
-                                });
-
-                                describe('if it is an old minireel', function() {
-                                    beforeEach(function() {
-                                        success.calls.reset();
-
-                                        delete minireels[0].data.splash;
-
-                                        $rootScope.$apply(function() {
-                                            MiniReelService.create().then(success);
-                                        });
-                                    });
-
-                                    it('should still succeed', function() {
-                                        expect(success).toHaveBeenCalledWith(jasmine.objectContaining({
-                                            type: 'minireel',
-                                            org: firstMiniReel.org,
-                                            appUri: 'rumble',
-                                            data: {
-                                                title: null,
-                                                mode: 'lightbox',
-                                                branding: portal.cModel.branding,
-                                                displayAdSource: portal.cModel.org.waterfalls.display[0],
-                                                videoAdSource: portal.cModel.org.waterfalls.video[0],
-                                                videoAdSkip: portal.cModel.org.videoAdSkip,
-                                                splash: {
-                                                    ratio: '3-2',
-                                                    source: 'generated',
-                                                    theme: 'img-text-overlay'
-                                                },
-                                                collateral: {
-                                                    splash: null
-                                                },
-                                                deck: firstMiniReel.data.deck.map(function(card) {
-                                                    card.id = jasmine.any(String);
-
-                                                    return card;
-                                                })
-                                            }
-                                        }));
-                                    });
-                                });
                             });
                         });
                     });

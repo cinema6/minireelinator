@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/editor'], function(editorModule) {
+    define(['app'], function(appModule) {
         describe('EditCardController', function() {
             var $rootScope,
                 $scope,
@@ -76,7 +76,7 @@
                     }
                 };
 
-                module(editorModule.name);
+                module(appModule.name);
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');

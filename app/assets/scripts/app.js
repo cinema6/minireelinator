@@ -70,6 +70,98 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             };
         }])
 
+        .constant('UserAdapter', ['$http','$q','cinema6','config',
+        function                 ( $http , $q , cinema6 , config ) {
+            //var self = this;
+
+            function clean(model) {
+                delete model.id;
+                delete model.created;
+                delete model.org;
+                delete model.email;
+
+                return model;
+            }
+
+            function returnData(response) {
+                return response.data;
+            }
+
+            function arrayify(data) {
+                return [data];
+            }
+
+            /*function decorateAllUsersWithOrgs(users) {
+                return $q.all(users.map(self.decorateWithOrg));
+            }*/
+
+            this.decorateWithOrg = function(user) {
+                return cinema6.db.find('org', user.org)
+                    .then(function attach(org) {
+                        user.org = org;
+                        return user;
+                    });
+            };
+
+            /*this.findAll = function() {
+                return $http.get(config.apiBase + '/account/users')
+                    .then(returnData)
+                    .then(decorateAllUsersWithOrgs);
+            };*/
+
+            /*this.find = function(type, id) {
+                return $http.get(config.apiBase + '/account/user/' + id)
+                    .then(returnData)
+                    .then(this.decorateWithOrg)
+                    .then(arrayify);
+            };*/
+
+            /*this.findQuery = function(type, query) {
+                function returnData(response) {
+                    return response.data;
+                }
+
+                function handleError(response) {
+                    return response.status === 404 ?
+                        [] : $q.reject(response);
+                }
+
+                return $http.get(config.apiBase + '/account/users', {
+                        params: query
+                    })
+                    .then(returnData)
+                    .then(decorateAllUsersWithOrgs)
+                    .catch(handleError);
+            };*/
+
+            /*this.create = function(type, data) {
+                return $http.post(config.apiBase + '/account/user', data)
+                    .then(returnData)
+                    .then(self.decorateWithOrg)
+                    .then(arrayify);
+            };*/
+
+            /*this.erase = function(type, model) {
+                return $http.delete(config.apiBase + '/account/user/' + model.id)
+                    .then(function returnNull() {
+                        return null;
+                    });
+            };*/
+
+            this.update = function(type, model) {
+                return $http.put(config.apiBase + '/account/user/' + model.id, clean(model))
+                    .then(returnData)
+                    .then(this.decorateWithOrg)
+                    .then(arrayify);
+            };
+
+            ['findAll', 'find', 'findQuery', 'create', 'erase'].forEach(function(method) {
+                this[method] = function() {
+                    return $q.reject('UserAdapter.' + method + '() method is not implemented.');
+                };
+            }, this);
+        }])
+
         .constant('OrgAdapter', ['$http','$q','config',
         function                ( $http , $q , config ) {
             function clean(model) {
@@ -215,9 +307,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         }])
 
         .config(['cinema6Provider','ContentAdapter','CWRXAdapter',
-                 'VoteAdapter','OrgAdapter','c6Defines',
+                 'VoteAdapter','OrgAdapter','UserAdapter','c6Defines',
         function( cinema6Provider , ContentAdapter , CWRXAdapter ,
-                  VoteAdapter , OrgAdapter , c6Defines ) {
+                  VoteAdapter , OrgAdapter , UserAdapter , c6Defines ) {
             var FixtureAdapter = cinema6Provider.adapters.fixture;
 
             ContentAdapter.config = {
@@ -229,11 +321,15 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             OrgAdapter.config = {
                 apiBase: '/api'
             };
+            UserAdapter.config = {
+                apiBase: '/api'
+            };
 
             CWRXAdapter.config = {
                 election: VoteAdapter,
                 experience: ContentAdapter,
-                org: OrgAdapter
+                org: OrgAdapter,
+                user: UserAdapter
             };
 
             FixtureAdapter.config = {

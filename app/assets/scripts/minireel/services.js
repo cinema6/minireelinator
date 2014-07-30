@@ -542,7 +542,9 @@ function( angular , c6ui , cryptojs ) {
         }])
 
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
-        function                    ( $window , cinema6 , $q , VoteService , c6State ) {
+                                     'SettingsService',
+        function                    ( $window , cinema6 , $q , VoteService , c6State ,
+                                      SettingsService ) {
             var self = this,
                 portal = c6State.get('Portal');
 
@@ -894,30 +896,10 @@ function( angular , c6ui , cryptojs ) {
             };
 
             this.create = function(toCopy) {
-                function getLastMinireel(user) {
-                    return $q.all({
-                        minireels: cinema6.db.findAll('experience', {
-                            type: 'minireel',
-                            user: user.id,
-                            sort: 'lastUpdated,-1',
-                            limit: 1
-                        }),
-                        user: user
-                    });
-                }
+                var settings = SettingsService.getReadOnly('MR::user');
 
-                function fetchTemplate(data) {
-                    var lastMinireel = data.minireels[0] || {
-                            data: {}
-                        },
-                        splash = lastMinireel.data.splash || {
-                            ratio: '3-2',
-                            theme: 'img-text-overlay'
-                        },
-                        ratio = splash.ratio,
-                        theme = splash.theme,
-                        user = data.user,
-                        org = user.org;
+                function fetchTemplate(user) {
+                    var org = user.org;
 
                     return $q.when(toCopy ? toCopy.pojoify() :
                         {
@@ -933,8 +915,8 @@ function( angular , c6ui , cryptojs ) {
                                 branding: user.branding,
                                 splash: {
                                     source: 'generated',
-                                    ratio: ratio,
-                                    theme: theme
+                                    ratio: settings.defaultSplash.ratio,
+                                    theme: settings.defaultSplash.theme
                                 },
                                 collateral: {
                                     splash: null
@@ -955,8 +937,7 @@ function( angular , c6ui , cryptojs ) {
                     return minireel;
                 }
 
-                return getLastMinireel(portal.cModel)
-                    .then(fetchTemplate)
+                return fetchTemplate(portal.cModel)
                     .then(createMinireel);
             };
 

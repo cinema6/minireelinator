@@ -36,9 +36,9 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
         }])
 
         .service('EditorService', ['MiniReelService','$q','c6AsyncQueue','VoteService',
-                                   'CollateralService',
+                                   'CollateralService','SettingsService',
         function                  ( MiniReelService , $q , c6AsyncQueue , VoteService ,
-                                    CollateralService ) {
+                                    CollateralService , SettingsService ) {
             var _private = {},
                 queue = c6AsyncQueue(),
                 beforeSyncFns = {};
@@ -174,6 +174,12 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
 
                     return readOnly(editorMinireel, key, proxy);
                 });
+
+                SettingsService
+                    .createBinding(proxy.data.splash, 'ratio', 'MR::user.defaultSplash.ratio')
+                    .createBinding(proxy.data.splash, 'theme', 'MR::user.defaultSplash.theme');
+                proxy.data.splash.ratio = minireel.data.splash.ratio;
+                proxy.data.splash.theme = minireel.data.splash.theme;
 
                 _private.minireel = minireel;
                 _private.editorMinireel = editorMinireel;
@@ -873,6 +879,14 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
 
             this.save = function() {
                 var data = EditorCtrl.model.data;
+
+                function copy(source, dest) {
+                    forEach(source, function(value, prop) {
+                        dest[prop] = source[prop];
+                    });
+
+                    return dest;
+                }
 
                 function handleImageAsset(minireel) {
                     function generated(minireel) {
