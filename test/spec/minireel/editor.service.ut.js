@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/editor'], function(editorModule) {
+    define(['app'], function(appModule) {
         /* global angular:true */
         var forEach = angular.forEach;
 
@@ -13,6 +13,7 @@
                 VoteService,
                 EditorService,
                 CollateralService,
+                SettingsService,
                 _private;
 
             var minireel,
@@ -23,7 +24,7 @@
             beforeEach(function() {
                 queuedFns = [];
 
-                module(editorModule.name, function($provide) {
+                module(appModule.name, function($provide) {
                     $provide.decorator('MiniReelService', function($delegate) {
                         var originals = {
                             convertForEditor: $delegate.convertForEditor
@@ -68,9 +69,19 @@
                     VoteService = $injector.get('VoteService');
                     cinema6 = $injector.get('cinema6');
                     CollateralService = $injector.get('CollateralService');
+                    SettingsService = $injector.get('SettingsService');
 
                     EditorService = $injector.get('EditorService');
                     _private = EditorService._private;
+                });
+
+                SettingsService.register('MR::user', {
+                    defaultSplash: {
+                        ratio: '3-2',
+                        theme: 'img-text-overlay'
+                    }
+                }, {
+                    localSync: false
                 });
 
                 minireel = cinema6.db.create('experience', {
@@ -92,7 +103,9 @@
                             splash: 'splash.jpg'
                         },
                         splash: {
-                            source: 'specified'
+                            source: 'specified',
+                            ratio: '1-1',
+                            theme: 'img-only'
                         },
                         deck: [
                             {
@@ -437,6 +450,7 @@
                         var proxy;
 
                         beforeEach(function() {
+                            spyOn(SettingsService, 'createBinding').and.callThrough();
                             $rootScope.$apply(function() {
                                 proxy = EditorService.open(minireel);
                             });
@@ -471,6 +485,13 @@
                                 }).not.toThrow();
                                 expect(proxy.data[key]).not.toBe(value);
                             });
+                        });
+
+                        it('should set up bindings to the splash ratio and theme', function() {
+                            expect(SettingsService.createBinding).toHaveBeenCalledWith(proxy.data.splash, 'ratio', 'MR::user.defaultSplash.ratio');
+                            expect(SettingsService.createBinding).toHaveBeenCalledWith(proxy.data.splash, 'theme', 'MR::user.defaultSplash.theme');
+                            expect(proxy.data.splash.ratio).toBe(minireel.data.splash.ratio);
+                            expect(proxy.data.splash.theme).toBe(minireel.data.splash.theme);
                         });
 
                         it('should save a reference to the proxy', function() {

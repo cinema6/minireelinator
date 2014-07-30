@@ -18,24 +18,6 @@ function( angular , c6State  , c6ui ) {
                             return $q.reject(reason);
                         });
                 };
-                this.afterModel = function(user) {
-                    return cinema6.db.find('org', user.org)
-                        .then(function decorate(org) {
-                            user.org = org;
-                            return user;
-                        })
-                        .then(function validate(user) {
-                            user.applications = user.applications || [];
-                            return user;
-                        })
-                        .catch(function error(reason) {
-                            c6State.goTo('Error', [
-                                'There is a problem with your account. Please contact customer' +
-                                ' service. Message: ' + reason
-                            ], null, true);
-                            return $q.reject(reason);
-                        });
-                };
                 this.enter = function() {
                     c6State.goTo('Apps', null, null, true);
                 };

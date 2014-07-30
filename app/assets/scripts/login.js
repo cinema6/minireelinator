@@ -55,68 +55,45 @@ function( angular , c6State  ) {
             };
         }])
 
-        .service('AuthService',['c6UrlMaker','$http','$q','$timeout',
-            function(c6UrlMaker,$http,$q,$timeout){
+        .service('AuthService',['c6UrlMaker','$http','$q','$timeout','cinema6',
+        function               ( c6UrlMaker , $http , $q , $timeout , cinema6 ) {
+
+            function handleAuthSuccess(response) {
+                var user = response.data;
+
+                return cinema6.db.find('org', user.org)
+                    .then(function(org) {
+                        user.org = org;
+                        return cinema6.db.push('user', user.id, user);
+                    });
+            }
+
+            function handleAuthFailure(response) {
+                return $q.reject(response.data);
+            }
 
             this.login = function(email,password){
-                var deferred = $q.defer(), deferredTimeout = $q.defer(), cancelTimeout,
-                    body = {
-                        email    : email,
-                        password : password
-                    };
+                var body = {
+                    email    : email,
+                    password : password
+                };
 
-                $http({
+                return $http({
                     method       : 'POST',
                     url          : c6UrlMaker('auth/login','api'),
                     data         : body,
-                    timeout      : deferredTimeout.promise
+                    timeout      : 10000
                 })
-                .success(function(data ){
-                    $timeout.cancel(cancelTimeout);
-                    deferred.resolve(data);
-                })
-                .error(function(data){
-                    if (!data){
-                        data = 'Login failed';
-                    }
-                    $timeout.cancel(cancelTimeout);
-                    deferred.reject(data);
-                });
-
-                cancelTimeout = $timeout(function(){
-                    deferredTimeout.resolve();
-                    deferred.reject('Request timed out.');
-                },10000);
-
-                return deferred.promise;
+                .then(handleAuthSuccess, handleAuthFailure);
             };
 
             this.checkStatus = function() {
-                var deferred = $q.defer(), deferredTimeout = $q.defer(), cancelTimeout;
-
-                $http({
+                return $http({
                     method       : 'GET',
                     url          : c6UrlMaker('auth/status','api'),
-                    timeout      : deferredTimeout.promise
+                    timeout      : 10000
                 })
-                .success(function(data ){
-                    $timeout.cancel(cancelTimeout);
-                    deferred.resolve(data);
-                })
-                .error(function(data, status){
-                    if (!data){
-                        data = status;
-                    }
-                    $timeout.cancel(cancelTimeout);
-                    deferred.reject(data);
-                });
-
-                cancelTimeout = $timeout(function(){
-                    deferredTimeout.resolve();
-                    deferred.reject('Request timed out.');
-                },10000);
-
-                return deferred.promise;
+                .then(handleAuthSuccess, handleAuthFailure);
             };
 
             this.logout = function(){

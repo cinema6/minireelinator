@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/editor','c6_defines'], function(editorModule, c6Defines) {
+    define(['app','c6_defines'], function(appModule, c6Defines) {
         describe('PreviewController', function() {
             var $rootScope,
                 $scope,
@@ -36,7 +36,7 @@
                     });
                 });
 
-                module(editorModule.name, function($provide) {
+                module(appModule.name, function($provide) {
                     $provide.value('playerMeta', {});
                 });
 
