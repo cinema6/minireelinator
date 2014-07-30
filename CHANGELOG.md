@@ -7,6 +7,8 @@
     published
   * The last splash theme/ratio the user selected is now stored in
     LocalStorage/the user DB
+  * Generated Wordpress Shortcode has been updated to the latest format
+    based on feedback from USAToday
 
 ## Beta14 (July 25, 2014)
 * *[Beta14.rc1]*
