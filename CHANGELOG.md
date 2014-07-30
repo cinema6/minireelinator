@@ -7,6 +7,8 @@
     published
   * MiniReel Editor now creates MiniReels that will use the dynamic ad
     configuration
+  * Generated Wordpress Shortcode has been updated to the latest format
+    based on feedback from USAToday
 
 ## Beta14 (July 25, 2014)
 * *[Beta14.rc1]*

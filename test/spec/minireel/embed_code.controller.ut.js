@@ -186,15 +186,15 @@
                         });
 
                         it('should include the title', function() {
-                            expect(EmbedCodeCtrl.code).toContain(' :title="' + btoa($scope.minireel.data.title) + '"');
+                            expect(EmbedCodeCtrl.code).toContain(' title="data:text/plain;base64,' + btoa($scope.minireel.data.title) + '"');
                         });
 
                         it('should include the splash settings', function() {
-                            expect(EmbedCodeCtrl.code).toContain(' :splash="' + btoa('img-text-overlay:6/4') + '"');
+                            expect(EmbedCodeCtrl.code).toContain(' splash="img-text-overlay:6/4"');
                         });
 
                         it('should include the branding', function() {
-                            expect(EmbedCodeCtrl.code).toContain(' :branding="' + btoa($scope.minireel.data.branding) + '"');
+                            expect(EmbedCodeCtrl.code).toContain(' branding="data:text/plain;base64,' + btoa($scope.minireel.data.branding) + '"');
                         });
 
                         ['lightbox', 'lightbox-ads'].forEach(function(mode) {
@@ -204,7 +204,7 @@
                                 });
 
                                 it('should not preload', function() {
-                                    expect(EmbedCodeCtrl.code).not.toContain(' preload');
+                                    expect(EmbedCodeCtrl.code).not.toContain(' preload="preload"');
                                 });
                             });
                         });
@@ -216,7 +216,7 @@
                                 });
 
                                 it('should preload', function() {
-                                    expect(EmbedCodeCtrl.code).toContain(' preload');
+                                    expect(EmbedCodeCtrl.code).toContain(' preload="preload"');
                                 });
                             });
                         });
@@ -262,6 +262,26 @@
                     describe('if the format is "script"', function() {
                         beforeEach(function() {
                             EmbedCodeCtrl.format = 'script';
+                        });
+
+                        it('should be a script tag', function() {
+                            expect(EmbedCodeCtrl.code).toMatch(/<script .+?><\/script>/);
+                        });
+
+                        it('should include the experience id', function() {
+                            expect(EmbedCodeCtrl.code).toContain(' data-exp="' + $scope.minireel.id + '"');
+                        });
+
+                        it('should include the title', function() {
+                            expect(EmbedCodeCtrl.code).toContain(' data-:title="' + btoa($scope.minireel.data.title) + '"');
+                        });
+
+                        it('should include the splash settings', function() {
+                            expect(EmbedCodeCtrl.code).toContain(' data-splash="img-text-overlay:6/4"');
+                        });
+
+                        it('should include the branding', function() {
+                            expect(EmbedCodeCtrl.code).toContain(' data-:branding="' + btoa($scope.minireel.data.branding) + '"');
                         });
 
                         ['lightbox', 'lightbox-ads'].forEach(function(mode) {
