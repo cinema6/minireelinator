@@ -77,7 +77,7 @@ function( angular , c6State  ) {
                 return $http.post(c6UrlMaker('auth/password/reset', 'api'), {
                     id: userId,
                     token: token,
-                    password: password
+                    newPassword: password
                 }, {
                     timeout: 10000
                 })

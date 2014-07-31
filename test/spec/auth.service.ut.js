@@ -60,7 +60,7 @@
                     $httpBackend.expectPOST('/api/auth/password/reset', {
                         id: 'u-956a985182e6aa',
                         token: '4510d0785dcfa5',
-                        password: 'password2'
+                        newPassword: 'password2'
                     }).respond(200, extend(userJSON, { org: org }));
 
                     AuthService.resetPassword('u-956a985182e6aa', '4510d0785dcfa5', 'password2')
@@ -84,7 +84,7 @@
                         $httpBackend.expectPOST('/api/auth/password/reset', {
                             id: 'u-ae1b702b26c2ff',
                             token: '9a784d7d4d63b8',
-                            password: 'passy'
+                            newPassword: 'passy'
                         }).respond(403, 'No reset token found');
 
                         AuthService.resetPassword('u-ae1b702b26c2ff', '9a784d7d4d63b8', 'passy')
