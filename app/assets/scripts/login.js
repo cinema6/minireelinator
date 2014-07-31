@@ -57,10 +57,15 @@ function( angular , c6State  ) {
 
         .service('AuthService',['c6UrlMaker','$http','$q','$timeout','cinema6',
         function               ( c6UrlMaker , $http , $q , $timeout , cinema6 ) {
+            function returnData(response) {
+                return response.data;
+            }
 
-            function handleAuthSuccess(response) {
-                var user = response.data;
+            function returnRejectedData(response) {
+                return $q.reject(response.data);
+            }
 
+            function handleAuthSuccess(user) {
                 return cinema6.db.find('org', user.org)
                     .then(function(org) {
                         user.org = org;
@@ -68,9 +73,27 @@ function( angular , c6State  ) {
                     });
             }
 
-            function handleAuthFailure(response) {
-                return $q.reject(response.data);
-            }
+            this.resetPassword = function(userId, token, password) {
+                return $http.post(c6UrlMaker('auth/password/reset', 'api'), {
+                    id: userId,
+                    token: token,
+                    newPassword: password
+                }, {
+                    timeout: 10000
+                })
+                .then(returnData, returnRejectedData)
+                .then(handleAuthSuccess);
+            };
+
+            this.requestPasswordReset = function(email) {
+                return $http.post(c6UrlMaker('auth/password/forgot', 'api'), {
+                    email: email,
+                    target: 'portal'
+                }, {
+                    timeout: 10000
+                })
+                .then(returnData, returnRejectedData);
+            };
 
             this.login = function(email,password){
                 var body = {
@@ -84,7 +107,8 @@ function( angular , c6State  ) {
                     data         : body,
                     timeout      : 10000
                 })
-                .then(handleAuthSuccess, handleAuthFailure);
+                .then(returnData, returnRejectedData)
+                .then(handleAuthSuccess);
             };
 
             this.checkStatus = function() {
@@ -93,7 +117,8 @@ function( angular , c6State  ) {
                     url          : c6UrlMaker('auth/status','api'),
                     timeout      : 10000
                 })
-                .then(handleAuthSuccess, handleAuthFailure);
+                .then(returnData, returnRejectedData)
+                .then(handleAuthSuccess);
             };
 
             this.logout = function(){
