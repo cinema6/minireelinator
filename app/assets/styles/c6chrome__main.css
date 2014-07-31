@@ -385,6 +385,10 @@
         position:absolute; top:50%; left:50%;
         margin:-8.625em 0 0 -12.1875em;
     }
+        .login__group--fixed {
+            top:6em;
+            margin-top:0;
+        }
         .login__group .c6__brand {
             margin:0 auto 1em auto;
         }
@@ -393,6 +397,17 @@
             color:#949494;
             margin:0 0 0.5em 0;
         }
+        .login__instructions {
+            text-align: center;
+        }
+            .login__instructions h1 {
+                font-size:1.125em;
+                margin:0;
+            }
+            .login__instructions p {
+                font-size:0.875em;
+                margin:0 0 1.5em 0;
+            }
         .login__form {
             border:3px solid #ccc;
             -webkit-border-radius: 5px; border-radius: 5px;
@@ -427,8 +442,19 @@
             margin:0 0 1rem 6.75rem;
             color:#d61212;
         }
+            .login__error p {
+                margin:0;
+            }
         .login__submitBtn {
             margin:0 0 0 6.75rem;
+        }
+        .login__inlineLinks {
+            margin:0 0 0 6.75rem;
+            font-size:0.875em;
+        }
+        .login__footerLinks {
+            margin:0.5em 0; text-align: center;
+            font-size:0.875em;
         }
 
 
