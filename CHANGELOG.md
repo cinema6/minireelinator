@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[Beta16.rc1]*
+  * [FEATURE]: Added pages to reset the user's password if they forget
+    it
+
 ## Beta15 (July 30, 2014)
 * *[Beta15.rc3]*
   * [FIX]: Fix for an issue that caused user settings not to be changed
