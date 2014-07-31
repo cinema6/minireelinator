@@ -150,7 +150,8 @@ function( angular , c6ui , youtube ) {
                                 ended: false,
                                 paused: true,
                                 readyState: -1,
-                                seeking: false
+                                seeking: false,
+                                error: null
                             };
                         }
 
@@ -268,6 +269,11 @@ function( angular , c6ui , youtube ) {
                             seeking: {
                                 get: function() {
                                     return state.seeking;
+                                }
+                            },
+                            error: {
+                                get: function() {
+                                    return state.error;
                                 }
                             }
                         });
