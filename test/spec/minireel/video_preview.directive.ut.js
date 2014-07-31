@@ -10,7 +10,7 @@
                 c6EventEmitter,
                 $q,
                 $preview,
-                $httpBackend;
+                YouTubeDataService;
 
             beforeEach(function() {
                 module(appModule.name);
@@ -26,7 +26,7 @@
                     c6EventEmitter = $injector.get('c6EventEmitter');
                     $timeout = $injector.get('$timeout');
                     $q = $injector.get('$q');
-                    $httpBackend = $injector.get('$httpBackend');
+                    YouTubeDataService = $injector.get('YouTubeDataService');
 
                     $scope = $rootScope.$new();
                 });
@@ -350,6 +350,9 @@
 
             describe('youtube', function() {
                 beforeEach(function() {
+                    spyOn(YouTubeDataService.videos, 'list')
+                        .and.returnValue($q.defer().promise);
+
                     $scope.$apply(function() {
                         $scope.service = 'youtube';
                     });
@@ -361,9 +364,6 @@
 
                 it('should create a youtube player when a videoid is provided', function() {
                     var $youtube;
-
-                    $httpBackend.expectGET('//gdata.youtube.com/feeds/api/videos/gy1B3agGNxw?v=2&alt=jsonc')
-                        .respond(200, {data:{duration:100}});
 
                     $scope.$apply(function() {
                         $scope.videoid = 'gy1B3agGNxw';

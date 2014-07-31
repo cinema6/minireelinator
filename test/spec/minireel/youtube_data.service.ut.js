@@ -1,7 +1,7 @@
 define(['minireel/services'], function(servicesModule) {
     'use strict';
 
-    ddescribe('YouTubeDataService', function() {
+    describe('YouTubeDataService', function() {
         var YouTubeDataService,
             $httpBackend;
 
@@ -41,6 +41,7 @@ define(['minireel/services'], function(servicesModule) {
                         var response;
 
                         beforeEach(function() {
+                            /* jshint quotmark:false */
                             response = {
                                 "kind": "youtube#videoListResponse",
                                 "etag": "\"gMjDJfS6nsym0T-NKCXALC_u_rM/9ysUGIwA2ijAY7HMmh49vOeveug\"",
@@ -94,6 +95,7 @@ define(['minireel/services'], function(servicesModule) {
                                     }
                                 ]
                             };
+                            /* jshint quotmark:single */
 
                             $httpBackend.expectGET('//www.googleapis.com/youtube/v3/videos?id=MYC-waukYWo&key=' + apiKey + '&part=snippet,contentDetails')
                                 .respond(200, response);
@@ -116,6 +118,7 @@ define(['minireel/services'], function(servicesModule) {
                         var response;
 
                         beforeEach(function() {
+                            /* jshint quotmark:false */
                             response = {
                                 "kind": "youtube#videoListResponse",
                                 "etag": "\"gMjDJfS6nsym0T-NKCXALC_u_rM/9ysUGIwA2ijAY7HMmh49vOeveug\"",
@@ -162,6 +165,7 @@ define(['minireel/services'], function(servicesModule) {
                                     }
                                 ]
                             };
+                            /* jshint quotmark:single */
 
                             $httpBackend.expectGET('//www.googleapis.com/youtube/v3/videos?id=MYC-waukYWo&key=' + apiKey + '&part=snippet')
                                 .respond(200, response);
@@ -183,6 +187,7 @@ define(['minireel/services'], function(servicesModule) {
                         var response;
 
                         beforeEach(function() {
+                            /* jshint quotmark:false */
                             response = {
                                 "kind": "youtube#videoListResponse",
                                 "etag": "\"gMjDJfS6nsym0T-NKCXALC_u_rM/9ysUGIwA2ijAY7HMmh49vOeveug\"",
@@ -229,6 +234,7 @@ define(['minireel/services'], function(servicesModule) {
                                     }
                                 ]
                             };
+                            /* jshint quotmark:single */
 
                             $httpBackend.expectGET('//www.googleapis.com/youtube/v3/videos?id=MYC-waukYWo&key=' + apiKey + '&part=snippet')
                                 .respond(200, response);
