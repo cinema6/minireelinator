@@ -481,6 +481,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 });
                 this.state('Login');
                 this.route('/password/forgot', 'ForgotPassword');
+                this.route('/password/reset', 'ResetPassword');
             });
         }])
 

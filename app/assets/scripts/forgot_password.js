@@ -46,5 +46,50 @@ function( angular , login , c6State  ) {
                         return $q.reject(self.errorMessage = error);
                     });
             };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('ResetPassword', [function() {
+                this.templateUrl = 'views/reset_password.html';
+                this.controller = 'ResetPasswordController';
+                this.controllerAs = 'ResetPasswordCtrl';
+
+                this.queryParams = {
+                    userId: '&id',
+                    token: '&'
+                };
+
+                this.model = function() {
+                    return {
+                        passwords: [null, null]
+                    };
+                };
+            }]);
+        }])
+
+        .controller('ResetPasswordController', ['AuthService','c6State','$q',
+        function                               ( AuthService , c6State , $q ) {
+            var self = this;
+
+            // Set by c6State via query parameters
+            this.userId = null;
+            this.token = null;
+
+            this.pattern = /(^\S+$)()/;
+            this.errorMessage = null;
+
+            this.submit = function() {
+                this.errorMessage = null;
+
+                return AuthService.resetPassword(this.userId, this.token, this.model.passwords[0])
+                    .then(function proceed(user) {
+                        c6State.goTo('Portal', [user], null, true);
+                        return user;
+                    })
+                    .catch(function onError(error) {
+                        return $q.reject(self.errorMessage = error);
+                    });
+            };
         }]);
 });
