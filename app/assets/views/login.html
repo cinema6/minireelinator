@@ -1,9 +1,14 @@
+<style type="text/css">
+    body {
+        background:#333;
+    }
+</style>
 <div class="login__group" ng-hide="user">
     <h2 class="login__title">Please log in to continue.</h2>
     <form class="login__form" ng-submit="LoginCtrl.submit()">
         <div class="c6__brand c6__brand--dark c6Sprite--alpha">
-                                <span class="ir">Cinema6</span>
-                            </div>
+            <span class="ir">Cinema6</span>
+        </div>
         <div class="login__nvPair">
             <label class="login__label" for="login__Email" > Email </label>
             <input id="login__Email" class="login__input" type="email" name="email" ng-model="LoginCtrl.model.email" autofocus autocomplete="off">
@@ -13,8 +18,11 @@
             <label class="login__label" for="login__password" > Password </label>
             <input id="login__password" class="login__input" type="password" name="password" ng-model="LoginCtrl.model.password" autocomplete="off">
         </div>
+        <p class="login__inlineLinks">
+            <a href="/#/password/forgot" title="Forgot Password?">Forgot Password?</a>
+        </p>
 
         <p class="login__error">{{LoginCtrl.error}}</p>
         <input class="form__submitBtn login__submitBtn" type="submit" value="Login">
-    <form>
+    </form>
 </div>
