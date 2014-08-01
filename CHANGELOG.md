@@ -3,6 +3,7 @@
 * *[Beta16.rc1]*
   * [FEATURE]: Added pages to reset the user's password if they forget
     it
+  * [FEATURE]: Added error messages for when YouTube disables video embedding.
 
 ## Beta15 (July 30, 2014)
 * *[Beta15.rc3]*
