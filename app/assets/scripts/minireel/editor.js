@@ -1126,6 +1126,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 }
             });
 
+            this.error = null;
             VideoService.createVideoUrl(c, this, 'EditCardCtrl');
 
             this.initWithModel = function(model) {
@@ -1223,6 +1224,17 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     }
                 }
             );
+
+            $scope.$watch(
+                function() { return self.model.data.videoid; },
+                function() {
+                    self.error = null;
+                }
+            );
+
+            $scope.$on('<video-preview>:error', function(event, error) {
+                self.error = error;
+            });
         }])
 
         .controller('NewCardController', ['c6State','MiniReelService',
