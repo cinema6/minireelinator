@@ -822,6 +822,22 @@ function( angular , c6ui , cryptojs ) {
                 return minireel.save();
             };
 
+            this.previewParamsOf = function(minireel) {
+                var splash = minireel.data.splash;
+
+                return [
+                    ['preload'],
+                    ['exp', minireel.id],
+                    ['title', minireel.data.title],
+                    ['splash', splash.theme + ':' + splash.ratio.replace('-', '/')],
+                    ['branding', minireel.data.branding]
+                ].map(function(pair) {
+                    return pair.map(encodeURIComponent)
+                        .join('=');
+                })
+                .join('&');
+            };
+
             this.publish = function(minireel) {
                 function saveElection(minireel) {
                     function returnMiniReel(){

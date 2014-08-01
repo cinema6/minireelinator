@@ -5,7 +5,7 @@
         /* global angular:true */
         var copy = angular.copy;
 
-        ddescribe('MiniReelService', function() {
+        describe('MiniReelService', function() {
             var MiniReelService,
                 VoteService,
                 CollateralService,
@@ -97,7 +97,8 @@
                         branding: 'elitedaily',
                         splash: {
                             source: 'specified',
-                            ratio: '3-2'
+                            ratio: '3-2',
+                            theme: 'vertical-stack'
                         },
                         collateral: {
                             splash: 'splash.jpg'
@@ -636,6 +637,23 @@
                             it('should resolve the promise', function() {
                                 expect(success).toHaveBeenCalledWith(minireel);
                             });
+                        });
+                    });
+
+                    describe('previewParamsOf(minireel)', function() {
+                        var result;
+
+                        beforeEach(function() {
+                            result = MiniReelService.previewParamsOf(minireel);
+                        });
+
+                        it('should be the MR embed properties as query parameters', function() {
+                            expect(result).toBe(
+                                'preload&exp=' + encodeURIComponent(minireel.id) +
+                                '&title=' + encodeURIComponent(minireel.data.title) +
+                                '&splash=' + encodeURIComponent('vertical-stack:3/2') +
+                                '&branding=' + encodeURIComponent(minireel.data.branding)
+                            );
                         });
                     });
 
