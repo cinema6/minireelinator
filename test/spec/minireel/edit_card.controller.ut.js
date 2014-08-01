@@ -725,6 +725,27 @@
                         return EditCardCtrl.canSave;
                     }
 
+                    ['video', 'videoBallot', 'ad'].forEach(function(type) {
+                        describe('on a ' + type + ' card', function() {
+                            beforeEach(function() {
+                                model.title = 'Foo';
+                                model.data.service = 'youtube';
+                                model.data.videoid = 'abc';
+                                model.type = type;
+                            });
+
+                            describe('if there is an error', function() {
+                                beforeEach(function() {
+                                    EditCardCtrl.error = {};
+                                });
+
+                                it('should be false', function() {
+                                    expect(canSave()).toBe(false);
+                                });
+                            });
+                        });
+                    });
+
                     describe('on a video or videoBallot card', function() {
                         beforeEach(function() {
                             model.type = 'video';

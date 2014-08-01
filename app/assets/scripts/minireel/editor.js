@@ -1045,6 +1045,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 canSave: {
                     configurable: true,
                     get: function() {
+                        if (this.error) {
+                            return false;
+                        }
+
                         switch (this.model.type) {
                         case 'video':
                         case 'videoBallot':
