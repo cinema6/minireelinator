@@ -479,6 +479,7 @@ function( angular , c6ui , cryptojs ) {
             }
 
             this.apiKey = function(key) {
+                /* jshint boss:true */
                 return (apiKey = key);
             };
 
