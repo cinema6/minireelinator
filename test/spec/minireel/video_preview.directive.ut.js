@@ -42,7 +42,7 @@
             });
 
             describe('when the chosen player has an interface', function() {
-                var video,
+                var video, scope,
                     $player;
 
                 function VideoInterface() {
@@ -50,6 +50,7 @@
 
                     this.currentTime = 0;
                     this.readyState = 3;
+                    this.error = null;
 
                     this.pause = jasmine.createSpy('video.pause()');
                     this.play = jasmine.createSpy('video.play()');
@@ -73,7 +74,10 @@
                 }
 
                 beforeEach(function() {
+                    scope = $preview.isolateScope();
                     $player = $('<mock-player></mock-player>');
+
+                    spyOn(scope, '$emit').and.callThrough();
 
                     video = new VideoInterface();
                     $player.data('video', video);
@@ -84,8 +88,31 @@
                     $preview.find('div').append($player);
                     $timeout.flush();
 
-                    expect($preview.isolateScope().video).not.toBeDefined();
+                    expect(scope.video).not.toBeDefined();
                     video.emit('ready');
+                });
+
+                describe('if the video has an error', function() {
+                    beforeEach(function() {
+                        video.error = {
+                            name: 'YouTubePlayerError',
+                            message: 'There was a problem'
+                        };
+
+                        $scope.$apply(function() {
+                            $scope.videoid = '85377979';
+                        });
+                        $preview.find('div').append($player);
+                        $timeout.flush();
+                    });
+
+                    it('should emit the <video-preview>:error event', function() {
+                        expect(scope.$emit).toHaveBeenCalledWith('<video-preview>:error', video.error);
+                    });
+                });
+
+                it('should not emit the <video-preview>:error event', function() {
+                    expect(scope.$emit).not.toHaveBeenCalledWith('<video-preview>:error', null);
                 });
 
                 describe('when switching to a video without an interface', function() {
@@ -104,6 +131,21 @@
 
                 it('should put the video on the scope', function() {
                     expect($preview.isolateScope().video).toBe(video);
+                });
+
+                describe('when the error event is emitted', function() {
+                    beforeEach(function() {
+                        video.error = {
+                            name: 'YouTubePlayerError',
+                            message: 'There was an async problem'
+                        };
+
+                        video.emit('error');
+                    });
+
+                    it('should emit the <video-preview>:error event', function() {
+                        expect(scope.$emit).toHaveBeenCalledWith('<video-preview>:error', video.error);
+                    });
                 });
 
                 describe('scanning', function() {

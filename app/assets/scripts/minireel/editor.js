@@ -1743,6 +1743,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                             return scope.end || Infinity;
                         }
 
+                        function $emitError() {
+                            scope.$emit('<video-preview>:error', video.error);
+                        }
+
                         function handleEvents() {
                             video.on('timeupdate', function timeupdate() {
                                     var startTime = start(),
@@ -1764,7 +1768,8 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                                     if (video.currentTime >= end()) {
                                         video.currentTime = start();
                                     }
-                                });
+                                })
+                                .on('error', $emitError);
 
                             scope.video = video;
                         }
@@ -1788,6 +1793,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                         scope.video = undefined;
 
                         if (!video) { return; }
+
+                        if (video.error) {
+                            $emitError();
+                        }
 
                         scope.onMarkerSeek = function(promise) {
                             startScanTime = video.currentTime;
