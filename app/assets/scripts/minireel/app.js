@@ -26,6 +26,11 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
             ]);
         }])
 
+        .config(['YouTubeDataServiceProvider',
+        function( YouTubeDataServiceProvider ) {
+            YouTubeDataServiceProvider.apiKey(c6Defines.kYouTubeDataApiKey);
+        }])
+
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.map('MiniReel', function() {
