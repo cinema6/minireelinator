@@ -33,6 +33,7 @@
                                             '<script>',
                                             '(' + function(window) {
                                                 window.DEBUG = true;
+                                                window.YouTubeApiKey = 'AIzaSyBDBaBHNS3RIyB0iDzr-SC-I1G9LtRUjkM';
                                             }.toString() + '(window))',
                                             '</script>'
                                         ].join('\n');

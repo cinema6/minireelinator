@@ -13,6 +13,7 @@ define(function() {
         config    : (c6.kLocal) ? { 'cookieDomain' : 'none' } : 'auto'
     };
     c6.kApiUrl = '/api';
+    c6.kYouTubeDataApiKey = window.YouTubeApiKey || 'AIzaSyCmHsFIiXhjAuHM_piTxSHPsQgvZwueLlk';
 
     return c6;
 });

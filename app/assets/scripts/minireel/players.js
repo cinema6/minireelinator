@@ -150,7 +150,8 @@ function( angular , c6ui , youtube ) {
                                 ended: false,
                                 paused: true,
                                 readyState: -1,
-                                seeking: false
+                                seeking: false,
+                                error: null
                             };
                         }
 
@@ -269,6 +270,11 @@ function( angular , c6ui , youtube ) {
                                 get: function() {
                                     return state.seeking;
                                 }
+                            },
+                            error: {
+                                get: function() {
+                                    return state.error;
+                                }
                             }
                         });
 
@@ -322,8 +328,14 @@ function( angular , c6ui , youtube ) {
             };
         }])
 
-        .directive('youtubePlayer', ['c6EventEmitter','$interval','$compile', '$http',
-        function                    ( c6EventEmitter , $interval , $compile ,  $http ) {
+        .directive('youtubePlayer', ['c6EventEmitter','$interval','$compile','YouTubeDataService',
+        function                    ( c6EventEmitter , $interval , $compile , YouTubeDataService ) {
+            function YouTubePlayerError(message) {
+                this.name = 'YouTubePlayerError';
+                this.message = message || '';
+            }
+            YouTubePlayerError.prototype = Object.create(Error.prototype);
+
             return {
                 restrict: 'E',
                 scope: {
@@ -362,7 +374,8 @@ function( angular , c6ui , youtube ) {
                                     ended: false,
                                     paused: true,
                                     seeking: false,
-                                    readyState: -1
+                                    readyState: -1,
+                                    error: null
                                 };
                             }
 
@@ -413,6 +426,11 @@ function( angular , c6ui , youtube ) {
                                     get: function() {
                                         return id;
                                     }
+                                },
+                                error: {
+                                    get: function() {
+                                        return state.error;
+                                    }
                                 }
                             });
 
@@ -444,13 +462,21 @@ function( angular , c6ui , youtube ) {
 
                                 state = setupState();
 
-                                $http.get('//gdata.youtube.com/feeds/api/videos/'+
-                                    id+'?v=2&alt=jsonc')
-                                        .then(function(data){
-                                            state.duration = data.data.data.duration;
-                                            state.readyState = 1;
-                                            self.emit('loadedmetadata');
-                                        });
+                                YouTubeDataService.videos.list({
+                                    id: id,
+                                    part: ['status', 'contentDetails']
+                                }).then(function(metaData) {
+                                    state.duration = metaData.contentDetails.duration;
+                                    state.readyState = 1;
+                                    self.emit('loadedmetadata');
+
+                                    if (!metaData.status.embeddable) {
+                                        state.error = new YouTubePlayerError(
+                                            'The video ' + id + ' is not embeddable.'
+                                        );
+                                        self.emit('error');
+                                    }
+                                });
 
                                 $iframe = $compile(iframeTemplate)(scope, function($iframe) {
                                     $element.append($iframe);

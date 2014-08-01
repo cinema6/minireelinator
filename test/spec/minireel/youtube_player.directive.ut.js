@@ -6,25 +6,20 @@
             var $rootScope,
                 $scope,
                 $compile,
-                $interval,
-                $httpBackend;
+                $q,
+                YouTubeDataService,
+                $interval;
 
             var players,
                 player,
                 intervals,
-                interval,
-                metadata;
+                interval;
 
             var $player;
 
             beforeEach(function() {
                 players = [];
                 intervals = [];
-                metadata = {
-                    data: {
-                        duration: 100
-                    }
-                };
 
                 spyOn(youtube, 'Player')
                     .and.callFake(function(iframe, config) {
@@ -88,19 +83,24 @@
                     $rootScope = $injector.get('$rootScope');
                     $compile = $injector.get('$compile');
                     $interval = $injector.get('$interval');
-                    $httpBackend = $injector.get('$httpBackend');
+                    $q = $injector.get('$q');
+                    YouTubeDataService = $injector.get('YouTubeDataService');
 
                     $scope = $rootScope.$new();
                 });
-
-                $httpBackend.expectGET('//gdata.youtube.com/feeds/api/videos/gy1B3agGNxw?v=2&alt=jsonc')
-                    .respond(200, metadata);
 
                 $scope.id = 'gy1B3agGNxw';
             });
 
             describe('initialization', function() {
+                var listDeferred;
+
                 beforeEach(function() {
+                    listDeferred = $q.defer();
+
+                    spyOn(YouTubeDataService.videos, 'list')
+                        .and.returnValue(listDeferred.promise);
+
                     $scope.$apply(function() {
                         $player = $compile('<youtube-player videoid="{{id}}"></youtube-player>')($scope);
                     });
@@ -117,6 +117,13 @@
                     var iframe = $player.find('iframe')[0];
 
                     expect(youtube.Player).toHaveBeenCalledWith(iframe, jasmine.any(Object));
+                });
+
+                it('should make a request for data about the video', function() {
+                    expect(YouTubeDataService.videos.list).toHaveBeenCalledWith({
+                        id: $scope.id,
+                        part: ['status', 'contentDetails']
+                    });
                 });
 
                 it('should create an interval after the player is ready', function() {
@@ -139,16 +146,16 @@
                     $interval.flush(250);
                     player._trigger('onStateChange', { data: youtube.PlayerState.ENDED });
 
-                    $httpBackend.expectGET('//gdata.youtube.com/feeds/api/videos/f9h85495jf?v=2&alt=jsonc')
-                        .respond(200, metadata);
-                    
                     $scope.$apply(function() {
                         $scope.id = 'f9h85495jf';
                     });
-                    
-                    $httpBackend.flush();
-                    
-                    expect(video.readyState).toBe(1);
+
+                    expect(YouTubeDataService.videos.list).toHaveBeenCalledWith({
+                        id: $scope.id,
+                        part: ['status', 'contentDetails']
+                    });
+
+                    expect(video.readyState).toBe(-1);
                     expect(video.currentTime).toBe(0);
                     expect(video.ended).toBe(false);
                     $newFrame = $player.find('iframe');
@@ -169,6 +176,8 @@
                 beforeEach(function() {
                     destroySpy = jasmine.createSpy('destroy');
 
+                    spyOn(YouTubeDataService.videos, 'list').and.returnValue($q.defer().promise);
+
                     $scope.$apply(function() {
                         $player = $compile('<youtube-player videoid="gy1B3agGNxw"></youtube-player>')($scope);
                     });
@@ -188,9 +197,23 @@
             });
 
             describe('player interface', function() {
-                var video;
+                var video,
+                    metaData, metaDataDeferred;
 
                 beforeEach(function() {
+                    metaDataDeferred = $q.defer();
+                    metaData = {
+                        contentDetails: {
+                            duration: 30
+                        },
+                        status: {
+                            embeddable: true
+                        }
+                    };
+
+                    spyOn(YouTubeDataService.videos, 'list')
+                        .and.returnValue(metaDataDeferred.promise);
+
                     $scope.$apply(function() {
                         $player = $compile('<youtube-player videoid="gy1B3agGNxw"></youtube-player>')($scope);
                     });
@@ -209,7 +232,8 @@
                         paused: true,
                         readyState: -1,
                         seeking: false,
-                        videoid: 'gy1B3agGNxw'
+                        videoid: 'gy1B3agGNxw',
+                        error: null
                     }));
                 });
 
@@ -267,12 +291,20 @@
 
                     describe('duration', function() {
                         describe('getting', function() {
-                            it('should come from youtube http request', function() {
+                            it('should be initialized as 0', function() {
                                 expect(video.duration).toBe(0);
-                                
-                                $httpBackend.flush();
+                            });
 
-                                expect(video.duration).toBe(100);
+                            describe('after the video data is loaded', function() {
+                                beforeEach(function() {
+                                    $scope.$apply(function() {
+                                        metaDataDeferred.resolve(metaData);
+                                    });
+                                });
+
+                                it('should be the duration from the metaData', function() {
+                                    expect(video.duration).toBe(metaData.contentDetails.duration);
+                                });
                             });
                         });
 
@@ -363,7 +395,9 @@
                             });
 
                             it('should be 1 after metadata is loaded', function() {
-                                $httpBackend.flush();
+                                $scope.$apply(function() {
+                                    metaDataDeferred.resolve(metaData);
+                                });
 
                                 expect(video.readyState).toBe(1);
                             });
@@ -442,6 +476,38 @@
                             });
                         });
                     });
+
+                    describe('error', function() {
+                        describe('getting', function() {
+                            it('should be null', function() {
+                                expect(video.error).toBeNull();
+                            });
+
+                            describe('if the video is not embeddable', function() {
+                                beforeEach(function() {
+                                    metaData.status.embeddable = false;
+
+                                    $scope.$apply(function() {
+                                        metaDataDeferred.resolve(metaData);
+                                    });
+                                });
+
+                                it('should be an error', function() {
+                                    expect(video.error).toEqual(jasmine.any(Error));
+                                    expect(video.error.name).toBe('YouTubePlayerError');
+                                    expect(video.error.message).toBe('The video ' + $scope.id + ' is not embeddable.');
+                                });
+                            });
+                        });
+
+                        describe('setting', function() {
+                            it('should throw an error', function() {
+                                expect(function() {
+                                    video.error = 'foo';
+                                }).toThrow();
+                            });
+                        });
+                    });
                 });
 
                 describe('methods', function() {
@@ -478,13 +544,51 @@
                         });
                     });
 
+                    describe('error', function() {
+                        var errorSpy;
+
+                        beforeEach(function() {
+                            errorSpy = jasmine.createSpy('error');
+
+                            video.on('error', errorSpy);
+                        });
+
+                        describe('if the video is embeddable', function() {
+                            beforeEach(function() {
+                                $scope.$apply(function() {
+                                    metaDataDeferred.resolve(metaData);
+                                });
+                            });
+
+                            it('should not be called', function() {
+                                expect(errorSpy).not.toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('if the video is not embeddable', function() {
+                            beforeEach(function() {
+                                metaData.status.embeddable = false;
+
+                                $scope.$apply(function() {
+                                    metaDataDeferred.resolve(metaData);
+                                });
+                            });
+
+                            it('should be called if the video is not embeddable', function() {
+                                expect(errorSpy).toHaveBeenCalledWith();
+                            });
+                        });
+                    });
+
                     describe('loadedmetadata', function() {
                         it('should be emitted when we request data from youtube', function() {
                             var metadataSpy = jasmine.createSpy('loadedmetadata');
 
                             video.on('loadedmetadata', metadataSpy);
 
-                            $httpBackend.flush();
+                            $scope.$apply(function() {
+                                metaDataDeferred.resolve(metaData);
+                            });
 
                             expect(metadataSpy).toHaveBeenCalled();
                         });

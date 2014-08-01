@@ -400,6 +400,12 @@
                     });
                 }
 
+                describe('error', function() {
+                    it('should be null', function() {
+                        expect(EditCardCtrl.error).toBeNull();
+                    });
+                });
+
                 describe('currentTab', function() {
                     describe('if the current state is not represented by a tab', function() {
                         beforeEach(function() {
@@ -719,6 +725,27 @@
                         return EditCardCtrl.canSave;
                     }
 
+                    ['video', 'videoBallot', 'ad'].forEach(function(type) {
+                        describe('on a ' + type + ' card', function() {
+                            beforeEach(function() {
+                                model.title = 'Foo';
+                                model.data.service = 'youtube';
+                                model.data.videoid = 'abc';
+                                model.type = type;
+                            });
+
+                            describe('if there is an error', function() {
+                                beforeEach(function() {
+                                    EditCardCtrl.error = {};
+                                });
+
+                                it('should be false', function() {
+                                    expect(canSave()).toBe(false);
+                                });
+                            });
+                        });
+                    });
+
                     describe('on a video or videoBallot card', function() {
                         beforeEach(function() {
                             model.type = 'video';
@@ -877,7 +904,40 @@
                 });
             });
 
+            describe('$events', function() {
+                describe('<video-preview>:error', function() {
+                    var error;
+
+                    beforeEach(function() {
+                        error = {
+                            name: 'YouTubePlayerError',
+                            message: 'It failed...'
+                        };
+
+                        $scope.$emit('<video-preview>:error', error);
+                    });
+
+                    it('should set its error property to the provided error', function() {
+                        expect(EditCardCtrl.error).toBe(error);
+                    });
+                });
+            });
+
             describe('$watchers', function() {
+                describe('this.model.data.videoid', function() {
+                    beforeEach(function() {
+                        EditCardCtrl.error = {};
+
+                        $scope.$apply(function() {
+                            model.data.videoid = '38rhunr93f4';
+                        });
+                    });
+
+                    it('should nullify the error', function() {
+                        expect(EditCardCtrl.error).toBeNull();
+                    });
+                });
+
                 describe('this.tabs', function() {
                     it('should go to the first tab on initialization', function() {
                         expect(c6State.goTo).toHaveBeenCalledWith(tabs[0].sref);

@@ -1045,6 +1045,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 canSave: {
                     configurable: true,
                     get: function() {
+                        if (this.error) {
+                            return false;
+                        }
+
                         switch (this.model.type) {
                         case 'video':
                         case 'videoBallot':
@@ -1126,6 +1130,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 }
             });
 
+            this.error = null;
             VideoService.createVideoUrl(c, this, 'EditCardCtrl');
 
             this.initWithModel = function(model) {
@@ -1223,6 +1228,17 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     }
                 }
             );
+
+            $scope.$watch(
+                function() { return self.model.data.videoid; },
+                function() {
+                    self.error = null;
+                }
+            );
+
+            $scope.$on('<video-preview>:error', function(event, error) {
+                self.error = error;
+            });
         }])
 
         .controller('NewCardController', ['c6State','MiniReelService',
@@ -1743,6 +1759,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                             return scope.end || Infinity;
                         }
 
+                        function $emitError() {
+                            scope.$emit('<video-preview>:error', video.error);
+                        }
+
                         function handleEvents() {
                             video.on('timeupdate', function timeupdate() {
                                     var startTime = start(),
@@ -1764,7 +1784,8 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                                     if (video.currentTime >= end()) {
                                         video.currentTime = start();
                                     }
-                                });
+                                })
+                                .on('error', $emitError);
 
                             scope.video = video;
                         }
@@ -1788,6 +1809,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                         scope.video = undefined;
 
                         if (!video) { return; }
+
+                        if (video.error) {
+                            $emitError();
+                        }
 
                         scope.onMarkerSeek = function(promise) {
                             startScanTime = video.currentTime;

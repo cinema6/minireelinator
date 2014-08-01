@@ -622,6 +622,22 @@
                             });
                         });
                     });
+
+                    describe('error', function() {
+                        describe('getting', function() {
+                            it('should be null', function() {
+                                expect(video.error).toBeNull();
+                            });
+                        });
+
+                        describe('setting', function() {
+                            it('should throw an error', function() {
+                                expect(function() {
+                                    video.error = 'sdfh942';
+                                }).toThrow();
+                            });
+                        });
+                    });
                 });
 
                 describe('methods', function() {
