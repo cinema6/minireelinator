@@ -461,8 +461,13 @@ function( angular , c6ui , cryptojs ) {
                 };
             }
 
-            YouTubeDataService.$inject = ['$injector','$http'];
-            function YouTubeDataService  ( $injector , $http ) {
+            this.apiKey = function(key) {
+                /* jshint boss:true */
+                return (apiKey = key);
+            };
+
+            this.$get = ['$injector','$http',
+            function    ( $injector , $http ) {
                 var locals = {
                     get: get
                 };
@@ -475,17 +480,9 @@ function( angular , c6ui , cryptojs ) {
                     return $http.get(url, config);
                 }
 
-                this.videos = $injector.instantiate(Videos, locals);
-            }
-
-            this.apiKey = function(key) {
-                /* jshint boss:true */
-                return (apiKey = key);
-            };
-
-            this.$get = ['$injector',
-            function    ( $injector ) {
-                return $injector.instantiate(YouTubeDataService);
+                return {
+                    videos: $injector.instantiate(Videos, locals)
+                };
             }];
         }])
 
