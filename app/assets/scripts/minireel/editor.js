@@ -240,6 +240,30 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     });
             }, this);
 
+            this.enablePreview = queue.wrap(function() {
+                if (!_private.minireel) {
+                    return rejectNothingOpen();
+                }
+
+                return performPresync()
+                    .then(function enablePreview() {
+                        return MiniReelService.enablePreview(syncToMinireel());
+                    })
+                    .then(syncToProxy);
+            }, this);
+
+            this.disablePreview = queue.wrap(function() {
+                if (!_private.minireel) {
+                    return rejectNothingOpen();
+                }
+
+                return performPresync()
+                    .then(function enablePreview() {
+                        return MiniReelService.disablePreview(syncToMinireel());
+                    })
+                    .then(syncToProxy);
+            }, this);
+
             this.publish = queue.wrap(function() {
                 var minireel = _private.minireel,
                     editorMinireel = _private.editorMinireel;
