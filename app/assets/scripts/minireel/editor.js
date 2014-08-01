@@ -36,9 +36,9 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
         }])
 
         .service('EditorService', ['MiniReelService','$q','c6AsyncQueue','VoteService',
-                                   'CollateralService','SettingsService',
+                                   'CollateralService','SettingsService','c6UrlParser',
         function                  ( MiniReelService , $q , c6AsyncQueue , VoteService ,
-                                    CollateralService , SettingsService ) {
+                                    CollateralService , SettingsService , c6UrlParser ) {
             var _private = {},
                 queue = c6AsyncQueue(),
                 beforeSyncFns = {};
@@ -193,6 +193,18 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                     .forEach(function(prop) {
                         _private[prop] = null;
                     });
+            };
+
+            this.previewUrlWithPath = function(path) {
+                var proxy = _private.proxy;
+
+                if (!proxy) {
+                    throw new Error('There is no open MiniReel.');
+                }
+
+                return (proxy.access === 'public') ?
+                    c6UrlParser(path + '?' + MiniReelService.previewParamsOf(proxy)).href :
+                    false;
             };
 
             this.beforeSync = function(id, fn) {
