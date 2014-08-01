@@ -85,6 +85,7 @@
                     type: 'minireel',
                     theme: 'ed-videos',
                     status: 'pending',
+                    access: 'public',
                     data: {
                         title: 'My MiniReel',
                         mode: 'lightbox',
@@ -720,6 +721,7 @@
                                 type: 'minireel',
                                 theme: 'ed-videos',
                                 status: 'pending',
+                                access: 'public',
                                 _type: 'experience',
                                 _erased: false,
                                 data: jasmine.any(Object)
@@ -911,6 +913,7 @@
                                     type: 'minireel',
                                     theme: 'ed-videos',
                                     status: 'pending',
+                                    access: 'public',
                                     data: jasmine.any(Object)
                                 });
 
@@ -925,6 +928,7 @@
                                 expect(success).toHaveBeenCalledWith(newModel);
                                 expect(newModel.data.title).toBe('My MiniReel (copy)');
                                 expect(newModel.status).toBe('pending');
+                                expect(newModel.access).toBe('private');
                             });
                         });
 
@@ -982,6 +986,7 @@
                             it('should resolve the promise', function() {
                                 expect(success).toHaveBeenCalledWith(newModel);
                                 expect(newModel.status).toBe('pending');
+                                expect(newModel.access).toBe('private');
                             });
                         });
                     });
