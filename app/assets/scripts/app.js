@@ -1,7 +1,7 @@
 define( ['angular','ngAnimate','minireel/app','account/app','login','portal','c6ui','c6_defines',
-         'templates','forgot_password'],
+         'templates','forgot_password','preview_minireel'],
 function( angular , ngAnimate , minireel     , account     , login , portal , c6ui , c6Defines  ,
-          templates , forgotPassword  ) {
+          templates , forgotPassword  , previewMiniReel  ) {
     'use strict';
 
     var forEach = angular.forEach,
@@ -17,7 +17,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         login.name,
         c6ui.name,
         portal.name,
-        forgotPassword.name
+        forgotPassword.name,
+        previewMiniReel.name
     ])
         .config(['c6UrlMakerProvider',
         function( c6UrlMakerProvider ) {
@@ -479,9 +480,13 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     });
                     this.route('/account', 'Account');
                 });
+
                 this.state('Login');
+
                 this.route('/password/forgot', 'ForgotPassword');
                 this.route('/password/reset', 'ResetPassword');
+
+                this.route('/preview/minireel', 'PreviewMiniReel');
             });
         }])
 
