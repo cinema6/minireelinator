@@ -10,7 +10,7 @@ function( angular , c6State  ) {
             c6StateProvider.state('PreviewMiniReel', ['$location',
             function                                 ( $location ) {
                 this.templateUrl = 'views/preview_minireel.html';
-                this.controller = 'PreviewMiniReelController';
+                this.controller = 'GenericController';
                 this.controllerAs = 'PreviewMiniReelCtrl';
 
                 this.model = function() {
@@ -18,8 +18,6 @@ function( angular , c6State  ) {
                 };
             }]);
         }])
-
-        .controller('PreviewMiniReelController', [function() {}])
 
         .directive('c6Embed', ['$window','$compile',
         function              ( $window , $compile ) {
