@@ -37,25 +37,24 @@ function( angular , c6State  ) {
 
                     $compile([
                         '<script ',
-                        Object.keys(config)
-                            .map(function(attr) {
-                                return [attr, config[attr]]
-                                    .filter(function(item, index) {
-                                        return index === 0 || item !== true;
-                                    })
-                                    .map(function(item, index) {
-                                        return index === 0 ?
-                                            ('data-' + item) : ('"' + item + '"');
-                                    });
-                            })
-                            .concat([
-                                ['id', id],
-                                ['src', scope.src]
-                            ])
-                            .map(function(pairs) {
-                                return pairs.join('=');
-                            })
-                            .join(' '),
+                        Object.keys(config).map(function(attr) {
+                            return [attr, config[attr]]
+                                .filter(function(item, index) {
+                                    return index === 0 || item !== true;
+                                })
+                                .map(function(item, index) {
+                                    return index === 0 ?
+                                        ('data-' + item) : ('"' + item + '"');
+                                });
+                        })
+                        .concat([
+                            ['id', id],
+                            ['src', scope.src]
+                        ])
+                        .map(function(pairs) {
+                            return pairs.join('=');
+                        })
+                        .join(' '),
                         '></script>'
                     ].join(''))(scope)
                         .appendTo($element);
