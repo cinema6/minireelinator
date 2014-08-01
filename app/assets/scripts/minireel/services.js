@@ -810,6 +810,18 @@ function( angular , c6ui , cryptojs ) {
                 });
             };
 
+            this.enablePreview = function(minireel) {
+                minireel.access = 'public';
+
+                return minireel.save();
+            };
+
+            this.disablePreview = function(minireel) {
+                minireel.access = 'private';
+
+                return minireel.save();
+            };
+
             this.publish = function(minireel) {
                 function saveElection(minireel) {
                     function returnMiniReel(){

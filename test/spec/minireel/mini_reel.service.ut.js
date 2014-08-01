@@ -5,7 +5,7 @@
         /* global angular:true */
         var copy = angular.copy;
 
-        describe('MiniReelService', function() {
+        ddescribe('MiniReelService', function() {
             var MiniReelService,
                 VoteService,
                 CollateralService,
@@ -556,6 +556,86 @@
                             expect(MiniReelService.findCard(deck, 'rc-54dffdc85035fd')).toBe(deck[4]);
                             expect(MiniReelService.findCard(deck, 'rc-3a6be290d90577')).toBe(deck[1]);
                             expect(MiniReelService.findCard(deck, 'rc-351a409bf1493e')).toBe(deck[3]);
+                        });
+                    });
+
+                    describe('enablePreview(minireel)', function() {
+                        var success, failure,
+                            saveDeferred;
+
+                        beforeEach(function() {
+                            saveDeferred = $q.defer();
+
+                            minireel.access = 'private';
+
+                            success = jasmine.createSpy('success()');
+                            failure = jasmine.createSpy('failure()');
+
+                            spyOn(minireel, 'save').and.returnValue(saveDeferred.promise);
+
+                            $rootScope.$apply(function() {
+                                MiniReelService.enablePreview(minireel).then(success, failure);
+                            });
+                        });
+
+                        it('should set the access to public', function() {
+                            expect(minireel.access).toBe('public');
+                        });
+
+                        it('should save the minireel', function() {
+                            expect(minireel.save).toHaveBeenCalled();
+                        });
+
+                        describe('after the save completes', function() {
+                            beforeEach(function() {
+                                $rootScope.$apply(function() {
+                                    saveDeferred.resolve(minireel);
+                                });
+                            });
+
+                            it('should resolve the promise', function() {
+                                expect(success).toHaveBeenCalledWith(minireel);
+                            });
+                        });
+                    });
+
+                    describe('disablePreview(minireel)', function() {
+                        var success, failure,
+                            saveDeferred;
+
+                        beforeEach(function() {
+                            saveDeferred = $q.defer();
+
+                            minireel.access = 'public';
+
+                            success = jasmine.createSpy('success()');
+                            failure = jasmine.createSpy('failure()');
+
+                            spyOn(minireel, 'save').and.returnValue(saveDeferred.promise);
+
+                            $rootScope.$apply(function() {
+                                MiniReelService.disablePreview(minireel).then(success, failure);
+                            });
+                        });
+
+                        it('should set the access to private', function() {
+                            expect(minireel.access).toBe('private');
+                        });
+
+                        it('should save the minireel', function() {
+                            expect(minireel.save).toHaveBeenCalled();
+                        });
+
+                        describe('after the save completes', function() {
+                            beforeEach(function() {
+                                $rootScope.$apply(function() {
+                                    saveDeferred.resolve(minireel);
+                                });
+                            });
+
+                            it('should resolve the promise', function() {
+                                expect(success).toHaveBeenCalledWith(minireel);
+                            });
                         });
                     });
 
