@@ -97,7 +97,7 @@ define(['minireel/services'], function(servicesModule) {
                             };
                             /* jshint quotmark:single */
 
-                            $httpBackend.expectGET('//www.googleapis.com/youtube/v3/videos?id=MYC-waukYWo&key=' + apiKey + '&part=snippet,contentDetails')
+                            $httpBackend.expectGET('https://www.googleapis.com/youtube/v3/videos?id=MYC-waukYWo&key=' + apiKey + '&part=snippet,contentDetails')
                                 .respond(200, response);
 
                             YouTubeDataService.videos.list({
@@ -167,7 +167,7 @@ define(['minireel/services'], function(servicesModule) {
                             };
                             /* jshint quotmark:single */
 
-                            $httpBackend.expectGET('//www.googleapis.com/youtube/v3/videos?id=MYC-waukYWo&key=' + apiKey + '&part=snippet')
+                            $httpBackend.expectGET('https://www.googleapis.com/youtube/v3/videos?id=MYC-waukYWo&key=' + apiKey + '&part=snippet')
                                 .respond(200, response);
 
                             YouTubeDataService.videos.list({
@@ -236,7 +236,7 @@ define(['minireel/services'], function(servicesModule) {
                             };
                             /* jshint quotmark:single */
 
-                            $httpBackend.expectGET('//www.googleapis.com/youtube/v3/videos?id=MYC-waukYWo&key=' + apiKey + '&part=snippet')
+                            $httpBackend.expectGET('https://www.googleapis.com/youtube/v3/videos?id=MYC-waukYWo&key=' + apiKey + '&part=snippet')
                                 .respond(200, response);
 
                             YouTubeDataService.videos.list({

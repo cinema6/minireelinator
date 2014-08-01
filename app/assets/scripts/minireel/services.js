@@ -468,7 +468,7 @@ function( angular , c6ui , cryptojs ) {
                 };
 
                 function get(_url, config) {
-                    var url = '//www.googleapis.com/youtube/v3/' + _url;
+                    var url = 'https://www.googleapis.com/youtube/v3/' + _url;
 
                     config.params.key = apiKey;
 
