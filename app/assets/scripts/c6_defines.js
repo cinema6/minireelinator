@@ -15,5 +15,9 @@ define(function() {
     c6.kApiUrl = '/api';
     c6.kYouTubeDataApiKey = window.YouTubeApiKey || 'AIzaSyCmHsFIiXhjAuHM_piTxSHPsQgvZwueLlk';
 
+    if (c6.kDebug) {
+        window.__C6_URL_ROOT__ = '//staging.cinema6.com';
+    }
+
     return c6;
 });
