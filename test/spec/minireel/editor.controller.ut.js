@@ -16,6 +16,7 @@
                 MiniReelService,
                 ConfirmDialogService,
                 CollateralService,
+                VideoErrorService,
                 MiniReelCtrl,
                 PortalCtrl,
                 EditorCtrl;
@@ -39,19 +40,29 @@
                         deck: [
                             {
                                 id: 'rc-e91e76c0ce486a',
-                                type: 'ad'
+                                type: 'ad',
+                                data: {}
                             },
                             {
                                 id: 'rc-2ba11eda2b2300',
-                                type: 'video'
+                                type: 'video',
+                                data: {
+                                    service: 'youtube',
+                                    videoid: 'X-CjbR1GAmU'
+                                }
                             },
                             {
                                 id: 'rc-968f823aa61637',
-                                type: 'videoBallot'
+                                type: 'videoBallot',
+                                data: {
+                                    service: 'vimeo',
+                                    videoid: '84687115'
+                                }
                             },
                             {
                                 id: 'rc-fbccf72de29c63',
-                                type: 'recap'
+                                type: 'recap',
+                                data: {}
                             }
                         ]
                     }
@@ -87,6 +98,7 @@
                     MiniReelService = $injector.get('MiniReelService');
                     ConfirmDialogService = $injector.get('ConfirmDialogService');
                     CollateralService = $injector.get('CollateralService');
+                    VideoErrorService = $injector.get('VideoErrorService');
                     $timeout = $injector.get('$timeout');
                     cinema6 = $injector.get('cinema6');
                     $log = $injector.get('$log');
@@ -172,6 +184,31 @@
             });
 */
             describe('properties', function() {
+                describe('videoErrors', function() {
+                    var VideoError,
+                        result;
+
+                    beforeEach(function() {
+                        VideoError = VideoErrorService.getErrorFor().constructor;
+
+                        spyOn(VideoErrorService, 'getErrorFor').and.callThrough();
+
+                        result = EditorCtrl.videoErrors;
+                    });
+
+                    it('should be an array of video errors for each card', function() {
+                        expect(result).toEqual(jasmine.any(Array));
+                        expect(result.length).toBe(cModel.data.deck.length);
+
+                        result.forEach(function(error, index) {
+                            var card = cModel.data.deck[index];
+
+                            expect(error).toEqual(jasmine.any(VideoError));
+                            expect(VideoErrorService.getErrorFor).toHaveBeenCalledWith(card.data.service, card.data.videoid);
+                        });
+                    });
+                });
+
                 describe('splashSrc', function() {
                     describe('if collateral.splash is null', function() {
                         beforeEach(function() {
@@ -331,6 +368,26 @@
 
                         setLimits({ copy: 20 });
                         expect(error({ note: '1234567890123456789012345' })).toBe('Character limit exceeded (+5).');
+                    });
+
+                    it('should be a message if a particular card has an associated error', function() {
+                        var deck = cModel.data.deck,
+                            errors = EditorCtrl.videoErrors;
+
+                        expect(error(deck[0])).toBeNull();
+                        errors[0].present = true;
+                        errors[0].code = 403;
+                        expect(error(deck[0])).toBe('Video not embeddable.');
+
+                        expect(error(deck[1])).toBeNull();
+                        errors[1].present = true;
+                        errors[1].code = 404;
+                        expect(error(deck[1])).toBe('Video not found.');
+
+                        expect(error(deck[2])).toBeNull();
+                        errors[2].present = true;
+                        errors[2].message = 'An unknown error occurred.';
+                        expect(error(deck[2])).toBe(errors[2].message);
                     });
                 });
 

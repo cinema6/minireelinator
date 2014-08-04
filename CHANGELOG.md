@@ -3,6 +3,8 @@
 * *[Beta17.rc1]*
   * [FEATURE]: Added error messages for when a YouTube video cannot be
     found
+  * [FEATURE]: Error messages for missing/unembeddable videos are now
+    displayed in the list of cards (drag and drop interface)
 
 ## Beta16 (August 1, 2014)
 * *[Beta16.rc1]*
