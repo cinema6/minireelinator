@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[Beta17.rc1]*
+  * [FEATURE]: Added error messages for when a YouTube video cannot be
+    found
+
 ## Beta16 (August 1, 2014)
 * *[Beta16.rc1]*
   * [FEATURE]: Added pages to reset the user's password if they forget
