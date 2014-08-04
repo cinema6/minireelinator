@@ -436,8 +436,8 @@ function( angular , c6ui , cryptojs ) {
                     }, {});
             }
 
-            Videos.$inject = ['get'];
-            function Videos  ( get ) {
+            Videos.$inject = ['get','expectResult'];
+            function Videos  ( get , expectResult ) {
                 this.list = function(config) {
                     var manyVideos = isArray(config.id),
                         // If "part" is not provided, set default to
@@ -457,7 +457,11 @@ function( angular , c6ui , cryptojs ) {
                         .then(returnData)
                         .then(returnItems)
                         .then(processAllItems)
-                        .then(manyVideos ? identity : first);
+                        .then(manyVideos ? identity : first)
+                        .then(manyVideos ? identity : expectResult({
+                            code: 404,
+                            message: 'No video was found.'
+                        }));
                 };
             }
 
@@ -466,11 +470,18 @@ function( angular , c6ui , cryptojs ) {
                 return (apiKey = key);
             };
 
-            this.$get = ['$injector','$http',
-            function    ( $injector , $http ) {
+            this.$get = ['$injector','$http','$q',
+            function    ( $injector , $http , $q ) {
                 var locals = {
-                    get: get
+                    get: get,
+                    expectResult: expectResult
                 };
+
+                function expectResult(message) {
+                    return function(value) {
+                        return isDefined(value) ? value : $q.reject(message);
+                    };
+                }
 
                 function get(_url, config) {
                     var url = 'https://www.googleapis.com/youtube/v3/' + _url;
