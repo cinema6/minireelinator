@@ -689,9 +689,9 @@ function( angular , c6ui , cryptojs ) {
         }])
 
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
-                                     'SettingsService',
+                                     'SettingsService','c6UrlParser',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
-                                      SettingsService ) {
+                                      SettingsService , c6UrlParser ) {
             var self = this,
                 portal = c6State.get('Portal');
 
@@ -957,6 +957,39 @@ function( angular , c6ui , cryptojs ) {
                 });
             };
 
+            this.enablePreview = function(minireel) {
+                minireel.access = 'public';
+
+                return minireel.save();
+            };
+
+            this.disablePreview = function(minireel) {
+                minireel.access = 'private';
+
+                return minireel.save();
+            };
+
+            this.previewUrlOf = function(minireel, path) {
+                var splash = minireel.data.splash;
+
+                return minireel.access === 'public' ?
+                    c6UrlParser([
+                        path + '?',
+                        [
+                            ['preload'],
+                            ['exp', minireel.id],
+                            ['title', minireel.data.title],
+                            ['splash', splash.theme + ':' + splash.ratio.replace('-', '/')],
+                            ['branding', minireel.data.branding]
+                        ].map(function(pair) {
+                            return pair.map(encodeURIComponent)
+                                .join('=');
+                        })
+                        .join('&')
+                    ].join('')).href :
+                    null;
+            };
+
             this.publish = function(minireel) {
                 function saveElection(minireel) {
                     function returnMiniReel(){
@@ -1080,6 +1113,7 @@ function( angular , c6ui , cryptojs ) {
                     delete minireel.id;
                     minireel.data.title = toCopy ? (title + ' (copy)') : null;
                     minireel.status = 'pending';
+                    minireel.access = 'private';
 
                     return minireel;
                 }

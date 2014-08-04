@@ -12,6 +12,7 @@
                 VideoThumbnailService,
                 SettingsService,
                 $rootScope,
+                c6UrlParser,
                 cinema6,
                 c6State,
                 portal,
@@ -51,6 +52,7 @@
                     VideoThumbnailService = $injector.get('VideoThumbnailService');
                     SettingsService = $injector.get('SettingsService');
                     c6State = $injector.get('c6State');
+                    c6UrlParser = $injector.get('c6UrlParser');
                 });
 
                 SettingsService.register('MR::user', {
@@ -85,6 +87,7 @@
                     type: 'minireel',
                     theme: 'ed-videos',
                     status: 'pending',
+                    access: 'public',
                     data: {
                         title: 'My MiniReel',
                         mode: 'lightbox',
@@ -96,7 +99,8 @@
                         branding: 'elitedaily',
                         splash: {
                             source: 'specified',
-                            ratio: '3-2'
+                            ratio: '3-2',
+                            theme: 'vertical-stack'
                         },
                         collateral: {
                             splash: 'splash.jpg'
@@ -558,6 +562,118 @@
                         });
                     });
 
+                    describe('enablePreview(minireel)', function() {
+                        var success, failure,
+                            saveDeferred;
+
+                        beforeEach(function() {
+                            saveDeferred = $q.defer();
+
+                            minireel.access = 'private';
+
+                            success = jasmine.createSpy('success()');
+                            failure = jasmine.createSpy('failure()');
+
+                            spyOn(minireel, 'save').and.returnValue(saveDeferred.promise);
+
+                            $rootScope.$apply(function() {
+                                MiniReelService.enablePreview(minireel).then(success, failure);
+                            });
+                        });
+
+                        it('should set the access to public', function() {
+                            expect(minireel.access).toBe('public');
+                        });
+
+                        it('should save the minireel', function() {
+                            expect(minireel.save).toHaveBeenCalled();
+                        });
+
+                        describe('after the save completes', function() {
+                            beforeEach(function() {
+                                $rootScope.$apply(function() {
+                                    saveDeferred.resolve(minireel);
+                                });
+                            });
+
+                            it('should resolve the promise', function() {
+                                expect(success).toHaveBeenCalledWith(minireel);
+                            });
+                        });
+                    });
+
+                    describe('disablePreview(minireel)', function() {
+                        var success, failure,
+                            saveDeferred;
+
+                        beforeEach(function() {
+                            saveDeferred = $q.defer();
+
+                            minireel.access = 'public';
+
+                            success = jasmine.createSpy('success()');
+                            failure = jasmine.createSpy('failure()');
+
+                            spyOn(minireel, 'save').and.returnValue(saveDeferred.promise);
+
+                            $rootScope.$apply(function() {
+                                MiniReelService.disablePreview(minireel).then(success, failure);
+                            });
+                        });
+
+                        it('should set the access to private', function() {
+                            expect(minireel.access).toBe('private');
+                        });
+
+                        it('should save the minireel', function() {
+                            expect(minireel.save).toHaveBeenCalled();
+                        });
+
+                        describe('after the save completes', function() {
+                            beforeEach(function() {
+                                $rootScope.$apply(function() {
+                                    saveDeferred.resolve(minireel);
+                                });
+                            });
+
+                            it('should resolve the promise', function() {
+                                expect(success).toHaveBeenCalledWith(minireel);
+                            });
+                        });
+                    });
+
+                    describe('previewUrlOf(minireel, path)', function() {
+                        var result;
+
+                        describe('if the minireel is public', function() {
+                            beforeEach(function() {
+                                minireel.access = 'public';
+                                result = MiniReelService.previewUrlOf(minireel, '/#/preview/minireel');
+                            });
+
+                            it('should be the MR embed properties as query parameters', function() {
+                                expect(result).toBe(c6UrlParser(
+                                    '/#/preview/minireel?' +
+                                    'preload&exp=' + encodeURIComponent(minireel.id) +
+                                    '&title=' + encodeURIComponent(minireel.data.title) +
+                                    '&splash=' + encodeURIComponent('vertical-stack:3/2') +
+                                    '&branding=' + encodeURIComponent(minireel.data.branding)
+                                ).href);
+                            });
+                        });
+
+                        describe('if the minireel is private', function() {
+                            beforeEach(function() {
+                                minireel.access = 'private';
+                                result = MiniReelService.previewUrlOf(minireel, '/#/preview/minireel');
+                            });
+
+                            it('should return null', function() {
+                                expect(result).toBeNull();
+                            });
+                        });
+                    });
+
                     describe('publish(minireel)', function() {
                         var result,
                             success,
@@ -720,6 +836,7 @@
                                 type: 'minireel',
                                 theme: 'ed-videos',
                                 status: 'pending',
+                                access: 'public',
                                 _type: 'experience',
                                 _erased: false,
                                 data: jasmine.any(Object)
@@ -911,6 +1028,7 @@
                                     type: 'minireel',
                                     theme: 'ed-videos',
                                     status: 'pending',
+                                    access: 'public',
                                     data: jasmine.any(Object)
                                 });
 
@@ -925,6 +1043,7 @@
                                 expect(success).toHaveBeenCalledWith(newModel);
                                 expect(newModel.data.title).toBe('My MiniReel (copy)');
                                 expect(newModel.status).toBe('pending');
+                                expect(newModel.access).toBe('private');
                             });
                         });
 
@@ -982,6 +1101,7 @@
                             it('should resolve the promise', function() {
                                 expect(success).toHaveBeenCalledWith(newModel);
                                 expect(newModel.status).toBe('pending');
+                                expect(newModel.access).toBe('private');
                             });
                         });
                     });
