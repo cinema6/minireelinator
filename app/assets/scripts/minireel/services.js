@@ -571,6 +571,57 @@ function( angular , c6ui , cryptojs ) {
             if (window.c6.kHasKarma) { this._private = _private; }
         }])
 
+        .service('VideoErrorService', ['YouTubeDataService','$q','$cacheFactory',
+        function                      ( YouTubeDataService , $q , $cacheFactory ) {
+            var cache = $cacheFactory('VideoErrorServiceCache');
+
+            function VideoError(promise) {
+                var self = this;
+
+                this.code = null;
+                this.message = null;
+                this.present = false;
+
+                promise.then(function(error) {
+                    if (!error) { return; }
+
+                    error.forEach(function(part, index) {
+                        self[this[index]] = part;
+                    }, ['code', 'message']);
+                    self.present = true;
+                });
+            }
+
+            function checkForYouTubeErrors(videoid) {
+                return YouTubeDataService.videos.list({
+                    id: videoid,
+                    part: ['status']
+                }).then(function(data) {
+                    if (!data.status.embeddable) {
+                        return [403, 'Embedding disabled by request'];
+                    }
+
+                    return null;
+                }).catch(function(error) {
+                    return [error.code, error.message];
+                });
+            }
+
+            this.getErrorFor = function(service, videoid) {
+                var cacheId = service + ':' + videoid;
+
+                return cache.get(cacheId) ||
+                    cache.put(cacheId, new VideoError((function() {
+                        switch (service) {
+                        case 'youtube':
+                            return checkForYouTubeErrors(videoid);
+                        default:
+                            return $q.when(null);
+                        }
+                    }())));
+            };
+        }])
+
         .service('VideoService', ['c6UrlParser',
         function                 ( c6UrlParser ) {
             var VideoService = this;
