@@ -1831,8 +1831,7 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                                     if (video.currentTime >= end()) {
                                         video.currentTime = start();
                                     }
-                                })
-                                .on('error', $emitError);
+                                });
 
                             scope.video = video;
                         }
@@ -1880,7 +1879,8 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                             }
                         });
 
-                        video.once('ready', handleEvents);
+                        video.once('ready', handleEvents)
+                            .on('error', $emitError);
                     }
 
 
