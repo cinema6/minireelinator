@@ -312,9 +312,11 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
         .controller('EditorController', ['c6State','$scope','EditorService','cinema6',
                                          'ConfirmDialogService','c6Debounce','$q','$log',
                                          'MiniReelService','CollateralService',
+                                         'VideoErrorService',
         function                        ( c6State , $scope , EditorService , cinema6 ,
                                           ConfirmDialogService , c6Debounce , $q , $log ,
-                                          MiniReelService , CollateralService ) {
+                                          MiniReelService , CollateralService ,
+                                          VideoErrorService ) {
             var self = this,
                 MiniReelCtrl = $scope.MiniReelCtrl,
                 PortalCtrl = $scope.PortalCtrl,
@@ -359,6 +361,15 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
             this.cacheBuster = 0;
 
             Object.defineProperties(this, {
+                videoErrors: {
+                    get: function() {
+                        return this.model.data.deck.map(function(card) {
+                            var data = card.data;
+
+                            return VideoErrorService.getErrorFor(data.service, data.videoid);
+                        });
+                    }
+                },
                 prettyMode: {
                     get: function() {
                         var categories = MiniReelCtrl.model.data.modes,
@@ -421,7 +432,19 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
 
             this.errorForCard = function(card) {
                 var limit = this.cardLimits.copy,
-                    text = card.note || '';
+                    text = card.note || '',
+                    error = this.videoErrors[this.model.data.deck.indexOf(card)] || {};
+
+                if (error.present) {
+                    switch (error.code) {
+                    case 403:
+                        return 'Video not embeddable.';
+                    case 404:
+                        return 'Video not found.';
+                    default:
+                        return error.message;
+                    }
+                }
 
                 return (text.length > limit) ?
                     'Character limit exceeded (+' + (text.length - limit) + ').' :
