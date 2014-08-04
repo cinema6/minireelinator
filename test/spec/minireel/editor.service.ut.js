@@ -502,43 +502,6 @@
                         });
                     });
 
-                    describe('previewUrlWithPath(path)', function() {
-                        describe('if there is no open minireel', function() {
-                            it('should throw an error', function() {
-                                expect(function() {
-                                    EditorService.previewUrlWithPath('/#/preview/minireel');
-                                }).toThrow();
-                            });
-                        });
-
-                        describe('if there is an open minireel', function() {
-                            beforeEach(function() {
-                                EditorService.open(minireel);
-                            });
-
-                            describe('if the minireel is private', function() {
-                                beforeEach(function() {
-                                    _private.editorMinireel.access = 'private';
-                                });
-
-                                it('should return false', function() {
-                                    expect(EditorService.previewUrlWithPath('/#/preview/minireel')).toBe(false);
-                                });
-                            });
-
-                            describe('if the minireel is public', function() {
-                                beforeEach(function() {
-                                    _private.editorMinireel.access = 'public';
-                                });
-
-                                it('should return an absolute URL for the MiniReel preview', function() {
-                                    expect(EditorService.previewUrlWithPath('/#/preview/minireel'))
-                                        .toBe(c6UrlParser('/#/preview/minireel?' + MiniReelService.previewParamsOf(_private.proxy)).href);
-                                });
-                            });
-                        });
-                    });
-
                     describe('enablePreview()', function() {
                         var success, failure,
                             enablePreviewDeferred;

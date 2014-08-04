@@ -12,6 +12,7 @@
                 VideoThumbnailService,
                 SettingsService,
                 $rootScope,
+                c6UrlParser,
                 cinema6,
                 c6State,
                 portal,
@@ -51,6 +52,7 @@
                     VideoThumbnailService = $injector.get('VideoThumbnailService');
                     SettingsService = $injector.get('SettingsService');
                     c6State = $injector.get('c6State');
+                    c6UrlParser = $injector.get('c6UrlParser');
                 });
 
                 SettingsService.register('MR::user', {
@@ -640,20 +642,35 @@
                         });
                     });
 
-                    describe('previewParamsOf(minireel)', function() {
+                    describe('previewUrlOf(minireel, path)', function() {
                         var result;
 
-                        beforeEach(function() {
-                            result = MiniReelService.previewParamsOf(minireel);
+                        describe('if the minireel is public', function() {
+                            beforeEach(function() {
+                                minireel.access = 'public';
+                                result = MiniReelService.previewUrlOf(minireel, '/#/preview/minireel');
+                            });
+
+                            it('should be the MR embed properties as query parameters', function() {
+                                expect(result).toBe(c6UrlParser(
+                                    '/#/preview/minireel?' +
+                                    'preload&exp=' + encodeURIComponent(minireel.id) +
+                                    '&title=' + encodeURIComponent(minireel.data.title) +
+                                    '&splash=' + encodeURIComponent('vertical-stack:3/2') +
+                                    '&branding=' + encodeURIComponent(minireel.data.branding)
+                                ).href);
+                            });
                         });
 
-                        it('should be the MR embed properties as query parameters', function() {
-                            expect(result).toBe(
-                                'preload&exp=' + encodeURIComponent(minireel.id) +
-                                '&title=' + encodeURIComponent(minireel.data.title) +
-                                '&splash=' + encodeURIComponent('vertical-stack:3/2') +
-                                '&branding=' + encodeURIComponent(minireel.data.branding)
-                            );
+                        describe('if the minireel is private', function() {
+                            beforeEach(function() {
+                                minireel.access = 'private';
+                                result = MiniReelService.previewUrlOf(minireel, '/#/preview/minireel');
+                            });
+
+                            it('should return null', function() {
+                                expect(result).toBeNull();
+                            });
                         });
                     });
 
