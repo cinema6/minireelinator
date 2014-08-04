@@ -14,6 +14,7 @@
                 EditorService,
                 CollateralService,
                 SettingsService,
+                c6UrlParser,
                 _private;
 
             var minireel,
@@ -70,6 +71,7 @@
                     cinema6 = $injector.get('cinema6');
                     CollateralService = $injector.get('CollateralService');
                     SettingsService = $injector.get('SettingsService');
+                    c6UrlParser = $injector.get('c6UrlParser');
 
                     EditorService = $injector.get('EditorService');
                     _private = EditorService._private;
@@ -88,6 +90,7 @@
                     id: 'e-15aa87f5da34c3',
                     type: 'minireel',
                     status: 'pending',
+                    access: 'private',
                     created: '2014-03-13T21:53:19.218Z',
                     lastUpdated: '2014-05-06T22:07:20.132Z',
                     appUri: 'rumble',
@@ -496,6 +499,176 @@
 
                         it('should save a reference to the proxy', function() {
                             expect(_private.proxy).toBe(proxy);
+                        });
+                    });
+
+                    describe('enablePreview()', function() {
+                        var success, failure,
+                            enablePreviewDeferred;
+
+                        beforeEach(function() {
+                            enablePreviewDeferred = $q.defer();
+
+                            spyOn(MiniReelService, 'enablePreview').and.returnValue(enablePreviewDeferred.promise);
+
+                            success = jasmine.createSpy('success');
+                            failure = jasmine.createSpy('failure');
+                        });
+
+                        it('should be wrapped in an async queue', function() {
+                            expect(queuedFns).toContain(EditorService.enablePreview);
+                        });
+
+                        describe('if there is no open minireel', function() {
+                            beforeEach(function() {
+                                $rootScope.$apply(function() {
+                                    EditorService.enablePreview().catch(failure);
+                                });
+                            });
+
+                            it('should return a rejected promise', function() {
+                                expect(failure).toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('if there is an open minireel', function() {
+                            var proxy;
+
+                            beforeEach(function() {
+                                spyOn(_private, 'syncToMinireel').and.callThrough();
+                                spyOn(_private, 'syncToProxy').and.callThrough();
+                                spyOn(_private, 'performPresync').and.returnValue($q.when());
+
+                                $rootScope.$apply(function() {
+                                    proxy = EditorService.open(minireel);
+                                });
+
+                                $rootScope.$apply(function() {
+                                    EditorService.enablePreview().then(success);
+                                });
+                            });
+
+                            it('should do a presync', function() {
+                                expect(_private.performPresync).toHaveBeenCalledWith(proxy);
+                            });
+
+                            it('should sync the proxy to the minireel', function() {
+                                expect(_private.syncToMinireel).toHaveBeenCalledWith(minireel, _private.editorMinireel, proxy);
+                            });
+
+                            it('should enable preview on the minireel', function() {
+                                expect(MiniReelService.enablePreview).toHaveBeenCalledWith(minireel);
+                            });
+
+                            describe('when enabling the preview is completed', function() {
+                                beforeEach(function() {
+                                    expect(_private.syncToProxy).not.toHaveBeenCalled();
+
+                                    minireel.access = 'public';
+
+                                    $rootScope.$apply(function() {
+                                        enablePreviewDeferred.resolve(minireel);
+                                    });
+                                });
+
+                                it('should sync the minireel back to the proxy', function() {
+                                    expect(_private.syncToProxy).toHaveBeenCalledWith(proxy, _private.editorMinireel, minireel);
+                                });
+
+                                it('should make sure the proxy gets the election and status', function() {
+                                    expect(proxy.access).toBe('public');
+                                });
+
+                                it('should resolve to the proxy', function() {
+                                    expect(success).toHaveBeenCalledWith(proxy);
+                                });
+                            });
+                        });
+                    });
+
+                    describe('disablePreview()', function() {
+                        var success, failure,
+                            disablePreviewDeferred;
+
+                        beforeEach(function() {
+                            disablePreviewDeferred = $q.defer();
+
+                            spyOn(MiniReelService, 'disablePreview').and.returnValue(disablePreviewDeferred.promise);
+
+                            minireel.access = 'public';
+
+                            success = jasmine.createSpy('success');
+                            failure = jasmine.createSpy('failure');
+                        });
+
+                        it('should be wrapped in an async queue', function() {
+                            expect(queuedFns).toContain(EditorService.disablePreview);
+                        });
+
+                        describe('if there is no open minireel', function() {
+                            beforeEach(function() {
+                                $rootScope.$apply(function() {
+                                    EditorService.disablePreview().catch(failure);
+                                });
+                            });
+
+                            it('should return a rejected promise', function() {
+                                expect(failure).toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('if there is an open minireel', function() {
+                            var proxy;
+
+                            beforeEach(function() {
+                                spyOn(_private, 'syncToMinireel').and.callThrough();
+                                spyOn(_private, 'syncToProxy').and.callThrough();
+                                spyOn(_private, 'performPresync').and.returnValue($q.when());
+
+                                $rootScope.$apply(function() {
+                                    proxy = EditorService.open(minireel);
+                                });
+
+                                $rootScope.$apply(function() {
+                                    EditorService.disablePreview().then(success);
+                                });
+                            });
+
+                            it('should do a presync', function() {
+                                expect(_private.performPresync).toHaveBeenCalledWith(proxy);
+                            });
+
+                            it('should sync the proxy to the minireel', function() {
+                                expect(_private.syncToMinireel).toHaveBeenCalledWith(minireel, _private.editorMinireel, proxy);
+                            });
+
+                            it('should enable preview on the minireel', function() {
+                                expect(MiniReelService.disablePreview).toHaveBeenCalledWith(minireel);
+                            });
+
+                            describe('when enabling the preview is completed', function() {
+                                beforeEach(function() {
+                                    expect(_private.syncToProxy).not.toHaveBeenCalled();
+
+                                    minireel.access = 'private';
+
+                                    $rootScope.$apply(function() {
+                                        disablePreviewDeferred.resolve(minireel);
+                                    });
+                                });
+
+                                it('should sync the minireel back to the proxy', function() {
+                                    expect(_private.syncToProxy).toHaveBeenCalledWith(proxy, _private.editorMinireel, minireel);
+                                });
+
+                                it('should make sure the proxy gets the election and status', function() {
+                                    expect(proxy.access).toBe('private');
+                                });
+
+                                it('should resolve to the proxy', function() {
+                                    expect(success).toHaveBeenCalledWith(proxy);
+                                });
+                            });
                         });
                     });
 

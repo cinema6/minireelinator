@@ -495,7 +495,30 @@
                                 it('should be an error', function() {
                                     expect(video.error).toEqual(jasmine.any(Error));
                                     expect(video.error.name).toBe('YouTubePlayerError');
+                                    expect(video.error.code).toBe(403);
                                     expect(video.error.message).toBe('The video ' + $scope.id + ' is not embeddable.');
+                                });
+                            });
+
+                            describe('if the video is not found', function() {
+                                var error;
+
+                                beforeEach(function() {
+                                    error = {
+                                        code: 404,
+                                        message: 'The video was not found.'
+                                    };
+
+                                    $scope.$apply(function() {
+                                        metaDataDeferred.reject(error);
+                                    });
+                                });
+
+                                it('should be an error', function() {
+                                    expect(video.error).toEqual(jasmine.any(Error));
+                                    expect(video.error.name).toBe('YouTubePlayerError');
+                                    expect(video.error.code).toBe(error.code);
+                                    expect(video.error.message).toBe(error.message);
                                 });
                             });
                         });
@@ -575,6 +598,18 @@
                             });
 
                             it('should be called if the video is not embeddable', function() {
+                                expect(errorSpy).toHaveBeenCalledWith();
+                            });
+                        });
+
+                        describe('if the video is not found', function() {
+                            beforeEach(function() {
+                                $scope.$apply(function() {
+                                    metaDataDeferred.reject({});
+                                });
+                            });
+
+                            it('should be called', function() {
                                 expect(errorSpy).toHaveBeenCalledWith();
                             });
                         });

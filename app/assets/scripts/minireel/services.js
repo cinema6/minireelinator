@@ -436,8 +436,8 @@ function( angular , c6ui , cryptojs ) {
                     }, {});
             }
 
-            Videos.$inject = ['get'];
-            function Videos  ( get ) {
+            Videos.$inject = ['get','expectResult'];
+            function Videos  ( get , expectResult ) {
                 this.list = function(config) {
                     var manyVideos = isArray(config.id),
                         // If "part" is not provided, set default to
@@ -457,7 +457,11 @@ function( angular , c6ui , cryptojs ) {
                         .then(returnData)
                         .then(returnItems)
                         .then(processAllItems)
-                        .then(manyVideos ? identity : first);
+                        .then(manyVideos ? identity : first)
+                        .then(manyVideos ? identity : expectResult({
+                            code: 404,
+                            message: 'No video was found.'
+                        }));
                 };
             }
 
@@ -466,11 +470,18 @@ function( angular , c6ui , cryptojs ) {
                 return (apiKey = key);
             };
 
-            this.$get = ['$injector','$http',
-            function    ( $injector , $http ) {
+            this.$get = ['$injector','$http','$q',
+            function    ( $injector , $http , $q ) {
                 var locals = {
-                    get: get
+                    get: get,
+                    expectResult: expectResult
                 };
+
+                function expectResult(message) {
+                    return function(value) {
+                        return isDefined(value) ? value : $q.reject(message);
+                    };
+                }
 
                 function get(_url, config) {
                     var url = 'https://www.googleapis.com/youtube/v3/' + _url;
@@ -729,9 +740,9 @@ function( angular , c6ui , cryptojs ) {
         }])
 
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
-                                     'SettingsService',
+                                     'SettingsService','c6UrlParser',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
-                                      SettingsService ) {
+                                      SettingsService , c6UrlParser ) {
             var self = this,
                 portal = c6State.get('Portal');
 
@@ -997,6 +1008,39 @@ function( angular , c6ui , cryptojs ) {
                 });
             };
 
+            this.enablePreview = function(minireel) {
+                minireel.access = 'public';
+
+                return minireel.save();
+            };
+
+            this.disablePreview = function(minireel) {
+                minireel.access = 'private';
+
+                return minireel.save();
+            };
+
+            this.previewUrlOf = function(minireel, path) {
+                var splash = minireel.data.splash;
+
+                return minireel.access === 'public' ?
+                    c6UrlParser([
+                        path + '?',
+                        [
+                            ['preload'],
+                            ['exp', minireel.id],
+                            ['title', minireel.data.title],
+                            ['splash', splash.theme + ':' + splash.ratio.replace('-', '/')],
+                            ['branding', minireel.data.branding]
+                        ].map(function(pair) {
+                            return pair.map(encodeURIComponent)
+                                .join('=');
+                        })
+                        .join('&')
+                    ].join('')).href :
+                    null;
+            };
+
             this.publish = function(minireel) {
                 function saveElection(minireel) {
                     function returnMiniReel(){
@@ -1120,6 +1164,7 @@ function( angular , c6ui , cryptojs ) {
                     delete minireel.id;
                     minireel.data.title = toCopy ? (title + ' (copy)') : null;
                     minireel.status = 'pending';
+                    minireel.access = 'private';
 
                     return minireel;
                 }

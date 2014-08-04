@@ -112,6 +112,36 @@ define(['minireel/services'], function(servicesModule) {
                             response.items[0].contentDetails.duration = 237;
                             expect(success).toHaveBeenCalledWith(response.items);
                         });
+
+                        describe('if there are no results', function() {
+                            beforeEach(function() {
+                                /* jshint quotmark:false */
+                                response = {
+                                    "kind": "youtube#videoListResponse",
+                                    "etag": "\"gMjDJfS6nsym0T-NKCXALC_u_rM/9ysUGIwA2ijAY7HMmh49vOeveug\"",
+                                    "pageInfo": {
+                                        "totalResults": 1,
+                                        "resultsPerPage": 1
+                                    },
+                                    "items": []
+                                };
+                                /* jshint quotmark:single */
+
+                                $httpBackend.expectGET('https://www.googleapis.com/youtube/v3/videos?id=MYC-waukYWo&key=' + apiKey + '&part=snippet,contentDetails')
+                                    .respond(200, response);
+
+                                YouTubeDataService.videos.list({
+                                    part: ['snippet', 'contentDetails'],
+                                    id: ['MYC-waukYWo']
+                                }).then(success, failure);
+
+                                $httpBackend.flush();
+                            });
+
+                            it('should succeed with no results', function() {
+                                expect(success).toHaveBeenCalledWith([]);
+                            });
+                        });
                     });
 
                     describe('with a string id', function() {
@@ -180,6 +210,39 @@ define(['minireel/services'], function(servicesModule) {
 
                         it('should return a singular item', function() {
                             expect(success).toHaveBeenCalledWith(response.items[0]);
+                        });
+
+                        describe('if there are no results', function() {
+                            beforeEach(function() {
+                            /* jshint quotmark:false */
+                                response = {
+                                    "kind": "youtube#videoListResponse",
+                                    "etag": "\"gMjDJfS6nsym0T-NKCXALC_u_rM/9ysUGIwA2ijAY7HMmh49vOeveug\"",
+                                    "pageInfo": {
+                                        "totalResults": 0,
+                                        "resultsPerPage": 0
+                                    },
+                                    "items": []
+                                };
+                                /* jshint quotmark:single */
+
+                                $httpBackend.expectGET('https://www.googleapis.com/youtube/v3/videos?id=nrjp6e04dZ8&key=' + apiKey + '&part=snippet')
+                                    .respond(200, response);
+
+                                YouTubeDataService.videos.list({
+                                    part: ['snippet'],
+                                    id: 'nrjp6e04dZ8'
+                                }).then(success, failure);
+
+                                $httpBackend.flush();
+                            });
+
+                            it('should reject the promise', function() {
+                                expect(failure).toHaveBeenCalledWith({
+                                    code: 404,
+                                    message: 'No video was found.'
+                                });
+                            });
                         });
                     });
 

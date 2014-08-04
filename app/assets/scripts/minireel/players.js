@@ -330,8 +330,9 @@ function( angular , c6ui , youtube ) {
 
         .directive('youtubePlayer', ['c6EventEmitter','$interval','$compile','YouTubeDataService',
         function                    ( c6EventEmitter , $interval , $compile , YouTubeDataService ) {
-            function YouTubePlayerError(message) {
+            function YouTubePlayerError(code, message) {
                 this.name = 'YouTubePlayerError';
+                this.code = code || null;
                 this.message = message || '';
             }
             YouTubePlayerError.prototype = Object.create(Error.prototype);
@@ -377,6 +378,11 @@ function( angular , c6ui , youtube ) {
                                     readyState: -1,
                                     error: null
                                 };
+                            }
+
+                            function setError(err) {
+                                state.error = err;
+                                self.emit('error');
                             }
 
                             Object.defineProperties(this, {
@@ -471,11 +477,12 @@ function( angular , c6ui , youtube ) {
                                     self.emit('loadedmetadata');
 
                                     if (!metaData.status.embeddable) {
-                                        state.error = new YouTubePlayerError(
+                                        setError(new YouTubePlayerError(403,
                                             'The video ' + id + ' is not embeddable.'
-                                        );
-                                        self.emit('error');
+                                        ));
                                     }
+                                }).catch(function(error) {
+                                    setError(new YouTubePlayerError(error.code, error.message));
                                 });
 
                                 $iframe = $compile(iframeTemplate)(scope, function($iframe) {
