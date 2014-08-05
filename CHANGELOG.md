@@ -6,6 +6,13 @@
   * [FEATURE]: Error messages for missing/unembeddable videos are now
     displayed in the list of cards (drag and drop interface)
   * [FEATURE]: Added a preview page for MiniReels
+  * [FEATURE]: Added support for "Content Provider" users; These users
+    will not have the ability to edit MiniReel properties that affect
+    its presentation
+  * More default MiniReel attributes (autoplay/type) can be specified in
+    the user's organization
+  * Default explicit embed size (non-responsive) can be specified in the
+    user's organization
 
 ## Beta16 (August 1, 2014)
 * *[Beta16.rc1]*
