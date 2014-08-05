@@ -254,6 +254,10 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                             sync: function(settings) {
                                 user.config.minireelinator = settings;
                                 return user.save();
+                            },
+                            localSync: user.id,
+                            validateLocal: function(currentUserId, prevUserId) {
+                                return currentUserId === prevUserId;
                             }
                         });
                 };

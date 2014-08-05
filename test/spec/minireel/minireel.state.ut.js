@@ -91,8 +91,25 @@ define (['app'], function(appModule) {
                             theme: SettingsService.getReadOnly('MR::org').minireelDefaults.splash.theme
                         }
                     },
-                    sync: jasmine.any(Function)
+                    sync: jasmine.any(Function),
+                    validateLocal: jasmine.any(Function),
+                    localSync: user.id
                 }));
+            });
+
+            describe('user settings localStore validation', function() {
+                var validateLocal;
+
+                beforeEach(function() {
+                    validateLocal = SettingsService.register.calls.all().reduce(function(result, next) {
+                        return next.args[0] === 'MR::user' ? next.args[2].validateLocal : result;
+                    }, null);
+                });
+
+                it('should be true if both arguments are the same', function() {
+                    expect(validateLocal('a', 'b')).toBe(false);
+                    expect(validateLocal('a', 'a')).toBe(true);
+                });
             });
 
             describe('user settings sync', function() {
