@@ -9,6 +9,7 @@
                 $controller,
                 c6State,
                 EditorService,
+                PortalCtrl,
                 MiniReelCtrl,
                 NewCtrl;
 
@@ -63,6 +64,11 @@
 
                     $scope = $rootScope.$new();
                     $scope.$apply(function() {
+                        PortalCtrl = $scope.PortalCtrl = {
+                            model: {
+                                type: 'Publisher'
+                            }
+                        };
                         MiniReelCtrl = $scope.MiniReelCtrl = {
                             model: {
                                 data: {
@@ -245,7 +251,7 @@
                             });
                         });
 
-                        it('should have four tabs', function() {
+                        it('should have three tabs', function() {
                             expect(NewCtrl.tabs).toEqual([
                                 jasmine.objectContaining({
                                     name: jasmine.any(String),
@@ -270,6 +276,28 @@
                                 })
                             ]);
                         });
+
+                        describe('if the user is a ContentProvider', function() {
+                            beforeEach(function() {
+                                PortalCtrl.model.type = 'ContentProvider';
+                                NewCtrl = $controller('NewController', {
+                                    $scope: $scope,
+                                    cState: c6State.get('MR:New')
+                                });
+                            });
+
+                            it('should have one tab', function() {
+                                expect(NewCtrl.tabs).toEqual([
+                                    jasmine.objectContaining({
+                                        name: jasmine.any(String),
+                                        sref: 'MR:New.General',
+                                        visits: 0,
+                                        required: true,
+                                        requiredVisits: 1
+                                    })
+                                ]);
+                            });
+                        });
                     });
 
                     describe('on the "MR:Editor.Settings" state', function() {
@@ -280,7 +308,7 @@
                             });
                         });
 
-                        it('should have three tabs', function() {
+                        it('should have two tabs', function() {
                             expect(NewCtrl.tabs).toEqual([
                                 jasmine.objectContaining({
                                     name: jasmine.any(String),

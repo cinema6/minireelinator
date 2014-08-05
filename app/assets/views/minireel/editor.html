@@ -36,8 +36,10 @@
                 </form>
                 <div class="pageHeader__actions clearfix">
                     <div class="metaData__group">
-                        Type: <a c6-sref="MR:Settings.Mode" class="miniReel__type" title="AutoPlay MiniReel"><strong>{{EditorCtrl.prettyMode}}</strong></a> 
-                        <span class="ui__divider--bar">&nbsp;|&nbsp;</span>
+                        <span ng-if="PortalCtrl.model.type !== 'ContentProvider'">
+                            Type: <a c6-sref="MR:Settings.Mode" class="miniReel__type" title="AutoPlay MiniReel"><strong>{{EditorCtrl.prettyMode}}</strong></a> 
+                            <span class="ui__divider--bar">&nbsp;|&nbsp;</span>
+                        </span>
                         Created {{minireel.created | date:'M/d/yyyy' }}
                         <span class="ui__divider--bar">&nbsp;|&nbsp;</span>
                         {{minireel.data.deck.length}} Slides
@@ -120,4 +122,4 @@
 </c6-alias>
 <c6-view></c6-view>
 
-<embed-code ng-if="EditorCtrl.model.status === 'active'" minireel="EditorCtrl.model" splash-src="{{EditorCtrl.splashSrc}}" class="embed__group container clearifx"></embed-code>
+<embed-code ng-if="EditorCtrl.model.status === 'active' && PortalCtrl.model.type !== 'ContentProvider'" minireel="EditorCtrl.model" splash-src="{{EditorCtrl.splashSrc}}" class="embed__group container clearifx"></embed-code>

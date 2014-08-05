@@ -58,7 +58,7 @@
                 <form class="miniReel__quickActions">
                     <button ng-show="this.status === 'active'" ng-click="ManagerCtrl.makePrivate(this)" class="quickActions__btn" type="button">Make Private</button>
                     <button ng-show="this.status === 'pending'" ng-click="ManagerCtrl.makePublic(this)" class="quickActions__btn" type="button">Make Public</button> &nbsp;|&nbsp; 
-                    <span ng-show="this.status === 'active'"><button c6-sref="MR:Manager.Embed" c6-models="[this]" class="quickActions__btn" type="button">Embed</button> &nbsp;|&nbsp; </span>
+                    <span ng-show="this.status === 'active' && PortalCtrl.model.type !== 'ContentProvider'"><button c6-sref="MR:Manager.Embed" c6-models="[this]" class="quickActions__btn" type="button">Embed</button> &nbsp;|&nbsp; </span>
                     <button ng-click="ManagerCtrl.copy(this)" class="quickActions__btn" type="button">Copy</button> &nbsp;|&nbsp; 
                     <button ng-click="ManagerCtrl.remove(this)" class="quickActions__btn quickActions__delete" type="button">Delete</button>
                 </form>

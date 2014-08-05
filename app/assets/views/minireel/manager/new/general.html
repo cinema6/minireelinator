@@ -9,6 +9,9 @@
 <div class="modal__fineprint typo--attention">* Indicates required field.</div>
 <footer class="modal__btnFooter">
     <button class="modal__btn modal__btn--first toolbar__delete" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
-    <button ng-click="NewCtrl.nextTab()" ng-disabled="!NewCtrl.title" class="modal__btn modal__btn--last" type="button" title="Next Step">Next Step</button>
+    <ng-switch on="NewCtrl.tabs.length">
+        <button ng-switch-when="1" ng-click="NewCtrl.save()" class="modal__btn modal__btn--last toolbar__confirm" type="button" title="Done!" ng-disabled="!NewCtrl.title">I&rsquo;m Done!</button>
+        <button ng-switch-default ng-click="NewCtrl.nextTab()" ng-disabled="!NewCtrl.title" class="modal__btn modal__btn--last" type="button" title="Next Step">Next Step</button>
+    </ng-switch>
     <div class="guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</div>
 </footer>
