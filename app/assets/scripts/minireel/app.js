@@ -7,7 +7,8 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
     /* jshint -W106 */
     'use strict';
 
-    var isDefined = angular.isDefined;
+    var isDefined = angular.isDefined,
+        copy = angular.copy;
 
     return angular.module('c6.app.minireel', [
         c6ui.name, c6log.name, c6State.name, c6Drag.name,
@@ -394,14 +395,14 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                     value: 'custom'
                 }
             ];
-            this.mode = this.modes[0].value;
+            this.mode = orgSettings.embedDefaults.size ? 'custom' : this.modes[0].value;
 
             this.formats = orgSettings.embedTypes.map(function(type) {
                 return allFormats[type];
             });
             this.format = this.formats[0].value;
 
-            this.size = {
+            this.size = copy(orgSettings.embedDefaults.size) || {
                 width: '650px',
                 height: '522px'
             };

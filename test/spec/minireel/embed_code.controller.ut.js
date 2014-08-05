@@ -20,7 +20,10 @@
                 $attrs = {};
 
                 orgSettings = {
-                    embedTypes: ['shortcode', 'script']
+                    embedTypes: ['shortcode', 'script'],
+                    embedDefaults: {
+                        size: null
+                    }
                 };
 
                 module(appModule.name);
@@ -145,6 +148,23 @@
                     it('should be initialized as responsive', function() {
                         expect(EmbedCodeCtrl.mode).toBe('responsive');
                     });
+
+                    describe('if the org has a default embed size', function() {
+                        beforeEach(function() {
+                            orgSettings.embedDefaults.size = {
+                                width: '400px',
+                                height: '522px'
+                            };
+
+                            $scope.$apply(function() {
+                                EmbedCodeCtrl = $controller('EmbedCodeController', { $scope: $scope, $attrs: $attrs });
+                            });
+                        });
+
+                        it('should be "custom"', function() {
+                            expect(EmbedCodeCtrl.mode).toBe('custom');
+                        });
+                    });
                 });
 
                 describe('modes', function() {
@@ -167,6 +187,24 @@
                         expect(EmbedCodeCtrl.size).toEqual({
                             width: '650px',
                             height: '522px'
+                        });
+                    });
+
+                    describe('if the org has a default embed size', function() {
+                        beforeEach(function() {
+                            orgSettings.embedDefaults.size = {
+                                width: '400px',
+                                height: '522px'
+                            };
+
+                            $scope.$apply(function() {
+                                EmbedCodeCtrl = $controller('EmbedCodeController', { $scope: $scope, $attrs: $attrs });
+                            });
+                        });
+
+                        it('should be a copy of the org\'s size', function() {
+                            expect(EmbedCodeCtrl.size).toEqual(orgSettings.embedDefaults.size);
+                            expect(EmbedCodeCtrl.size).not.toBe(orgSettings.embedDefaults.size);
                         });
                     });
                 });
