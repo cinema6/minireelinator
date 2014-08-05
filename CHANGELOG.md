@@ -5,6 +5,7 @@
     found
   * [FEATURE]: Error messages for missing/unembeddable videos are now
     displayed in the list of cards (drag and drop interface)
+  * [FEATURE]: Added a preview page for MiniReels
 
 ## Beta16 (August 1, 2014)
 * *[Beta16.rc1]*
