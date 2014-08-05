@@ -184,8 +184,10 @@ function( angular , c6ui , c6State  , services          ) {
         function                     ( $scope , MiniReelService , c6State , $q , cState,
                                        EditorService ) {
             var self = this,
+                PortalCtrl = $scope.PortalCtrl,
                 MiniReelCtrl = $scope.MiniReelCtrl,
                 stateName = cState.cName,
+                user = PortalCtrl.model,
                 modes = MiniReelCtrl.model.data.modes;
 
             function Tab(name, sref, required) {
@@ -220,10 +222,12 @@ function( angular , c6ui , c6State  , services          ) {
                     return 'MR:Settings.';
                 }
             }());
-            this.tabs = [
-                new Tab('MiniReel Type', this.baseState + 'Mode'),
-                new Tab('Autoplay', this.baseState + 'Autoplay')
-            ];
+            this.tabs = user.type === 'ContentProvider' ?
+                [] :
+                [
+                    new Tab('MiniReel Type', this.baseState + 'Mode'),
+                    new Tab('Autoplay', this.baseState + 'Autoplay')
+                ];
             if (this.baseState === 'MR:New.') {
                 this.tabs.unshift(new Tab('Title Settings', 'MR:New.General', true));
 

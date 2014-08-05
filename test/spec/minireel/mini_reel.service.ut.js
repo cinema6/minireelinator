@@ -76,6 +76,7 @@
                 portal = c6State.get('Portal');
                 portal.cModel = {
                     id: 'u-5b67ee6000ce6f',
+                    type: 'Publisher',
                     org: {
                         id: 'o-17593d7a2bf294',
                         minAdCount: 3,
@@ -1112,6 +1113,21 @@
                                 expect(success).toHaveBeenCalledWith(newModel);
                                 expect(newModel.status).toBe('pending');
                                 expect(newModel.access).toBe('private');
+                            });
+
+                            describe('if the user is a ContentProvider', function() {
+                                beforeEach(function() {
+                                    portal.cModel.type = 'ContentProvider';
+                                    success.calls.reset();
+
+                                    $rootScope.$apply(function() {
+                                        MiniReelService.create().then(success);
+                                    });
+                                });
+
+                                it('should make the minireel public', function() {
+                                    expect(success.calls.mostRecent().args[0].access).toBe('public');
+                                });
                             });
                         });
                     });

@@ -1128,7 +1128,8 @@ function( angular , c6ui , cryptojs ) {
 
             this.create = function(toCopy) {
                 var userSettings = SettingsService.getReadOnly('MR::user'),
-                    orgSettings = SettingsService.getReadOnly('MR::org');
+                    orgSettings = SettingsService.getReadOnly('MR::org'),
+                    user = portal.cModel;
 
                 function fetchTemplate(user) {
                     var org = user.org;
@@ -1166,12 +1167,12 @@ function( angular , c6ui , cryptojs ) {
                     delete minireel.id;
                     minireel.data.title = toCopy ? (title + ' (copy)') : null;
                     minireel.status = 'pending';
-                    minireel.access = 'private';
+                    minireel.access = user.type === 'ContentProvider' ? 'public' : 'private';
 
                     return minireel;
                 }
 
-                return fetchTemplate(portal.cModel)
+                return fetchTemplate(user)
                     .then(createMinireel);
             };
 
