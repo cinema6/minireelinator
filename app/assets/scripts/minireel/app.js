@@ -228,14 +228,27 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                         .register('MR::org', user.org.config.minireelinator, {
                             localSync: false,
                             defaults: {
-                                embedTypes: ['script']
+                                embedTypes: ['script'],
+                                minireelDefaults: {
+                                    mode: 'lightbox',
+                                    autoplay: true,
+                                    splash: {
+                                        ratio: '3-2',
+                                        theme: 'img-text-overlay'
+                                    }
+                                },
+                                embedDefaults: {
+                                    size: null
+                                }
                             }
                         })
                         .register('MR::user', user.config.minireelinator, {
                             defaults: {
                                 defaultSplash: {
-                                    ratio: '3-2',
-                                    theme: 'img-text-overlay'
+                                    ratio: SettingsService.getReadOnly('MR::org')
+                                        .minireelDefaults.splash.ratio,
+                                    theme: SettingsService.getReadOnly('MR::org')
+                                        .minireelDefaults.splash.theme
                                 }
                             },
                             sync: function(settings) {

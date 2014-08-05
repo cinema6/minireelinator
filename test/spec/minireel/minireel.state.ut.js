@@ -59,29 +59,40 @@ define (['app'], function(appModule) {
 
         describe('afterModel()', function() {
             beforeEach(function() {
-                spyOn(SettingsService, 'register').and.returnValue(SettingsService);
+                spyOn(SettingsService, 'register').and.callThrough();
                 minireel.afterModel();
             });
 
             it('should register org settings with the settings service', function() {
-                expect(SettingsService.register).toHaveBeenCalledWith('MR::org', user.org.config.minireelinator, {
+                expect(SettingsService.register).toHaveBeenCalledWith('MR::org', user.org.config.minireelinator, jasmine.objectContaining({
                     localSync: false,
                     defaults: {
-                        embedTypes: ['script']
+                        embedTypes: ['script'],
+                        minireelDefaults: {
+                            mode: 'lightbox',
+                            autoplay: true,
+                            splash: {
+                                ratio: '3-2',
+                                theme: 'img-text-overlay'
+                            }
+                        },
+                        embedDefaults: {
+                            size: null
+                        }
                     }
-                });
+                }));
             });
 
             it('should register user settings with the settings service', function() {
-                expect(SettingsService.register).toHaveBeenCalledWith('MR::user', user.config.minireelinator, {
+                expect(SettingsService.register).toHaveBeenCalledWith('MR::user', user.config.minireelinator, jasmine.objectContaining({
                     defaults: {
                         defaultSplash: {
-                            ratio: '3-2',
-                            theme: 'img-text-overlay'
+                            ratio: SettingsService.getReadOnly('MR::org').minireelDefaults.splash.ratio,
+                            theme: SettingsService.getReadOnly('MR::org').minireelDefaults.splash.theme
                         }
                     },
                     sync: jasmine.any(Function)
-                });
+                }));
             });
 
             describe('user settings sync', function() {
