@@ -64,6 +64,15 @@
                     localSync: false
                 });
 
+                SettingsService.register('MR::org', {
+                    minireelDefaults: {
+                        mode: 'lightbox-ads',
+                        autoplay: true
+                    }
+                }, {
+                    localSync: false
+                });
+
                 portal = c6State.get('Portal');
                 portal.cModel = {
                     id: 'u-5b67ee6000ce6f',
@@ -1065,7 +1074,8 @@
                                     appUri: 'rumble',
                                     data: {
                                         title: null,
-                                        mode: 'lightbox',
+                                        mode: 'lightbox-ads',
+                                        autoplay: true,
                                         displayAdSource: portal.cModel.org.waterfalls.display[0],
                                         videoAdSource: portal.cModel.org.waterfalls.video[0],
                                         videoAdSkip: portal.cModel.org.videoAdSkip,
