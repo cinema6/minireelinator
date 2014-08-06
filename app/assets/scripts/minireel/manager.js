@@ -307,6 +307,10 @@ function( angular , c6ui , c6State  , services          ) {
                 }
             };
 
+            if (this.tabs.length === 0) {
+                c6State.goTo(cState.cParent.cName);
+            }
+
             c6State.on('stateChange', incrementTabVisits);
 
             $scope.$on('$destroy', function() {
