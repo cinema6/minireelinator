@@ -326,6 +326,29 @@
                                 })
                             ]);
                         });
+
+                        describe('if the user is a ContentProvider', function() {
+                            var state;
+
+                            beforeEach(function() {
+                                state = c6State.get('MR:Editor.Settings');
+
+                                spyOn(c6State, 'goTo');
+                                PortalCtrl.model.type = 'ContentProvider';
+                                NewCtrl = $controller('NewController', {
+                                    $scope: $scope,
+                                    cState: state
+                                });
+                            });
+
+                            it('should have one tab', function() {
+                                expect(NewCtrl.tabs).toEqual([]);
+                            });
+
+                            it('should also go back to the baseState', function() {
+                                expect(c6State.goTo).toHaveBeenCalledWith(state.cParent.cName);
+                            });
+                        });
                     });
                 });
 
