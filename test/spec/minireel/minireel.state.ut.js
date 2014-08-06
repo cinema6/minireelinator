@@ -69,7 +69,7 @@ define (['app'], function(appModule) {
                     defaults: {
                         embedTypes: ['script'],
                         minireelDefaults: {
-                            mode: 'lightbox',
+                            mode: 'light',
                             autoplay: true,
                             splash: {
                                 ratio: '3-2',

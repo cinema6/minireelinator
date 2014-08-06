@@ -231,7 +231,7 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                             defaults: {
                                 embedTypes: ['script'],
                                 minireelDefaults: {
-                                    mode: 'lightbox',
+                                    mode: 'light',
                                     autoplay: true,
                                     splash: {
                                         ratio: '3-2',
