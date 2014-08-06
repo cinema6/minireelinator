@@ -59,28 +59,56 @@ define (['app'], function(appModule) {
 
         describe('afterModel()', function() {
             beforeEach(function() {
-                spyOn(SettingsService, 'register').and.returnValue(SettingsService);
+                spyOn(SettingsService, 'register').and.callThrough();
                 minireel.afterModel();
             });
 
             it('should register org settings with the settings service', function() {
-                expect(SettingsService.register).toHaveBeenCalledWith('MR::org', user.org.config.minireelinator, {
+                expect(SettingsService.register).toHaveBeenCalledWith('MR::org', user.org.config.minireelinator, jasmine.objectContaining({
                     localSync: false,
                     defaults: {
-                        embedTypes: ['script']
+                        embedTypes: ['script'],
+                        minireelDefaults: {
+                            mode: 'light',
+                            autoplay: true,
+                            splash: {
+                                ratio: '3-2',
+                                theme: 'img-text-overlay'
+                            }
+                        },
+                        embedDefaults: {
+                            size: null
+                        }
                     }
-                });
+                }));
             });
 
             it('should register user settings with the settings service', function() {
-                expect(SettingsService.register).toHaveBeenCalledWith('MR::user', user.config.minireelinator, {
+                expect(SettingsService.register).toHaveBeenCalledWith('MR::user', user.config.minireelinator, jasmine.objectContaining({
                     defaults: {
                         defaultSplash: {
-                            ratio: '3-2',
-                            theme: 'img-text-overlay'
+                            ratio: SettingsService.getReadOnly('MR::org').minireelDefaults.splash.ratio,
+                            theme: SettingsService.getReadOnly('MR::org').minireelDefaults.splash.theme
                         }
                     },
-                    sync: jasmine.any(Function)
+                    sync: jasmine.any(Function),
+                    validateLocal: jasmine.any(Function),
+                    localSync: user.id
+                }));
+            });
+
+            describe('user settings localStore validation', function() {
+                var validateLocal;
+
+                beforeEach(function() {
+                    validateLocal = SettingsService.register.calls.all().reduce(function(result, next) {
+                        return next.args[0] === 'MR::user' ? next.args[2].validateLocal : result;
+                    }, null);
+                });
+
+                it('should be true if both arguments are the same', function() {
+                    expect(validateLocal('a', 'b')).toBe(false);
+                    expect(validateLocal('a', 'a')).toBe(true);
                 });
             });
 

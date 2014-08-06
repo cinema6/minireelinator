@@ -407,17 +407,21 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     }, 30000);
 
                 function pullLatestFromLocalStorage() {
-                    var latest = c6LocalStorage.get(localStorageKey);
+                    var latest = c6LocalStorage.get(localStorageKey) || {},
+                        isValid = config.validateLocal(config.localSync, latest.meta);
 
-                    if (latest) {
-                        copy(latest, object);
+                    if (latest.settings && isValid) {
+                        copy(latest.settings, object);
                     }
                 }
 
                 setDefaults({
                     localSync: true,
                     sync: noop,
-                    defaults: {}
+                    defaults: {},
+                    validateLocal: function() {
+                        return true;
+                    }
                 }, config);
 
                 if (config.localSync) {
@@ -430,7 +434,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 $rootScope.$watch(function() { return object; }, function(object, prevObject) {
                     if (config.localSync) {
-                        c6LocalStorage.set(localStorageKey, object);
+                        c6LocalStorage.set(localStorageKey, {
+                            meta: config.localSync === true ? null : config.localSync,
+                            settings: object
+                        });
                     }
 
                     if (object !== prevObject) {

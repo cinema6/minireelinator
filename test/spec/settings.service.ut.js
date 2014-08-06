@@ -131,7 +131,10 @@ define( ['app', 'angular'], function(appModule, angular) {
                             foo: true,
                             name: 'cinema6'
                         };
-                        c6LocalStorage.set('SettingsService::user', localUserSettings);
+                        c6LocalStorage.set('SettingsService::user', {
+                            meta: null,
+                            settings: localUserSettings
+                        });
 
                         spyOn(c6LocalStorage, 'set').and.callThrough();
                         spyOn(c6LocalStorage, 'get').and.callThrough();
@@ -154,7 +157,10 @@ define( ['app', 'angular'], function(appModule, angular) {
                     });
 
                     it('should put the settings into localstorage', function() {
-                        expect(c6LocalStorage.set).toHaveBeenCalledWith('SettingsService::user', userSettings);
+                        expect(c6LocalStorage.set).toHaveBeenCalledWith('SettingsService::user', {
+                            meta: null,
+                            settings: userSettings
+                        });
                     });
 
                     it('should sync the settings to localStorage every time they change', function() {
@@ -162,7 +168,10 @@ define( ['app', 'angular'], function(appModule, angular) {
                         $rootScope.$apply(function() {
                             userSettings.name = 'josh';
                         });
-                        expect(c6LocalStorage.set).toHaveBeenCalledWith('SettingsService::user', userSettings);
+                        expect(c6LocalStorage.set).toHaveBeenCalledWith('SettingsService::user', {
+                            meta: null,
+                            settings: userSettings
+                        });
                     });
 
                     it('should sync the settings permanently save the changes within 30 seconds of a change', function() {
@@ -195,6 +204,68 @@ define( ['app', 'angular'], function(appModule, angular) {
                         });
                     });
 
+                    describe('if localSync is a value', function() {
+                        var orgSettings;
+
+                        beforeEach(function() {
+                            orgSettings = {};
+                            c6LocalStorage.set.calls.reset();
+
+                            $rootScope.$apply(function() {
+                                result = SettingsService.register('org', orgSettings, {
+                                    sync: ['stub', syncSpy],
+                                    localSync: 'u-e43ef4886e1681'
+                                });
+                            });
+                        });
+
+                        it('should set the value as the localStorage meta data', function() {
+                            expect(c6LocalStorage.set).toHaveBeenCalledWith('SettingsService::org', {
+                                meta: 'u-e43ef4886e1681',
+                                settings: orgSettings
+                            });
+                        });
+                    });
+
+                    describe('if a validateLocal function is provided', function() {
+                        var previousMeta, previousSettings,
+                            currentMeta, currentSettings,
+                            validateLocal;
+
+                        beforeEach(function() {
+                            previousMeta = 'u-e43ef4886e1681';
+                            previousSettings = {};
+                            currentMeta = 'u-86dc5dcfa662f4';
+                            currentSettings = {
+                                name: 'test'
+                            };
+
+                            validateLocal = jasmine.createSpy('validateLocal()')
+                                .and.returnValue(false);
+
+                            c6LocalStorage.set('SettingsService::org', {
+                                meta: previousMeta,
+                                settings: previousSettings
+                            });
+
+                            $rootScope.$apply(function() {
+                                result = SettingsService.register('org', currentSettings, {
+                                    sync: ['stub', syncSpy],
+                                    localSync: currentMeta,
+                                    validateLocal: validateLocal
+                                });
+                            });
+                        });
+
+                        it('should call the validateLocal() function with the currentMeta and previous meta', function() {
+                            expect(validateLocal).toHaveBeenCalledWith(currentMeta, previousMeta);
+                        });
+
+                        it('should not update from localstorage if validateLocal returns false', function() {
+                            expect(currentSettings).not.toEqual(previousSettings);
+                        });
+                    });
+
                     describe('if localSync is false', function() {
                         var orgSettings;
 
@@ -203,9 +274,11 @@ define( ['app', 'angular'], function(appModule, angular) {
                             c6LocalStorage.set.calls.reset();
                             c6LocalStorage.get.calls.reset();
 
-                            result = SettingsService.register('org', orgSettings, {
-                                sync: ['stub', syncSpy],
-                                localSync: false
+                            $rootScope.$apply(function() {
+                                result = SettingsService.register('org', orgSettings, {
+                                    sync: ['stub', syncSpy],
+                                    localSync: false
+                                });
                             });
                         });
 

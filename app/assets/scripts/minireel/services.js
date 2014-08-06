@@ -1127,7 +1127,8 @@ function( angular , c6ui , cryptojs ) {
             };
 
             this.create = function(toCopy) {
-                var settings = SettingsService.getReadOnly('MR::user'),
+                var userSettings = SettingsService.getReadOnly('MR::user'),
+                    orgSettings = SettingsService.getReadOnly('MR::org'),
                     user = portal.cModel;
 
                 function fetchTemplate(user) {
@@ -1140,15 +1141,16 @@ function( angular , c6ui , cryptojs ) {
                             appUri: 'rumble',
                             data: {
                                 title: null,
-                                mode: 'lightbox',
+                                mode: orgSettings.minireelDefaults.mode,
+                                autoplay: orgSettings.minireelDefaults.autoplay,
                                 displayAdSource: org.waterfalls.display[0],
                                 videoAdSource: org.waterfalls.video[0],
                                 videoAdSkip: org.videoAdSkip || 6,
                                 branding: user.branding,
                                 splash: {
                                     source: 'generated',
-                                    ratio: settings.defaultSplash.ratio,
-                                    theme: settings.defaultSplash.theme
+                                    ratio: userSettings.defaultSplash.ratio,
+                                    theme: userSettings.defaultSplash.theme
                                 },
                                 collateral: {
                                     splash: null
