@@ -13,6 +13,8 @@
     the user's organization
   * Default explicit embed size (non-responsive) can be specified in the
     user's organization
+  * Embed code is no longer generated with the title and branding
+    included (those are now fetched from the database)
 
 ## Beta16 (August 1, 2014)
 * *[Beta16.rc1]*
