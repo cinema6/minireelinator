@@ -223,16 +223,8 @@
                             expect(EmbedCodeCtrl.code).toContain(' exp="' + $scope.minireel.id + '"');
                         });
 
-                        it('should include the title', function() {
-                            expect(EmbedCodeCtrl.code).toContain(' title="data:text/plain;base64,' + btoa($scope.minireel.data.title) + '"');
-                        });
-
                         it('should include the splash settings', function() {
                             expect(EmbedCodeCtrl.code).toContain(' splash="img-text-overlay:6/4"');
-                        });
-
-                        it('should include the branding', function() {
-                            expect(EmbedCodeCtrl.code).toContain(' branding="data:text/plain;base64,' + btoa($scope.minireel.data.branding) + '"');
                         });
 
                         ['lightbox', 'lightbox-ads'].forEach(function(mode) {
@@ -269,16 +261,6 @@
                             });
                         });
 
-                        describe('if there is no branding', function() {
-                            beforeEach(function() {
-                                delete $scope.minireel.data.branding;
-                            });
-
-                            it('should not include the branding attribute', function() {
-                                expect(EmbedCodeCtrl.code).not.toMatch(/ branding=".+?"/);
-                            });
-                        });
-
                         describe('if the size is explicit', function() {
                             beforeEach(function() {
                                 EmbedCodeCtrl.mode = 'custom';
@@ -310,16 +292,8 @@
                             expect(EmbedCodeCtrl.code).toContain(' data-exp="' + $scope.minireel.id + '"');
                         });
 
-                        it('should include the title', function() {
-                            expect(EmbedCodeCtrl.code).toContain(' data-:title="' + btoa($scope.minireel.data.title) + '"');
-                        });
-
                         it('should include the splash settings', function() {
                             expect(EmbedCodeCtrl.code).toContain(' data-splash="img-text-overlay:6/4"');
-                        });
-
-                        it('should include the branding', function() {
-                            expect(EmbedCodeCtrl.code).toContain(' data-:branding="' + btoa($scope.minireel.data.branding) + '"');
                         });
 
                         ['lightbox', 'lightbox-ads'].forEach(function(mode) {
@@ -353,16 +327,6 @@
 
                             it('should not include an explicit width and height', function() {
                                 expect(EmbedCodeCtrl.code).not.toMatch(/ data-width=".+?" data-height=".+?"/);
-                            });
-                        });
-
-                        describe('if there is no branding', function() {
-                            beforeEach(function() {
-                                delete $scope.minireel.data.branding;
-                            });
-
-                            it('should not include the branding', function() {
-                                expect(EmbedCodeCtrl.code).not.toContain('data-:branding="' + btoa('undefined') + '"');
                             });
                         });
 
