@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## Beta17 (August 7, 2014)
 * *[Beta17.rc1]*
   * [FEATURE]: Added error messages for when a YouTube video cannot be
     found
@@ -15,6 +16,7 @@
     user's organization
   * Embed code is no longer generated with the title and branding
     included (those are now fetched from the database)
+* *[/Beta17.rc1]*
 
 ## Beta16 (August 1, 2014)
 * *[Beta16.rc1]*
