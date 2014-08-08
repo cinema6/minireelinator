@@ -1,6 +1,13 @@
 # MiniReelinator
 
 ## Beta17 (August 7, 2014)
+* *[Beta17.rc2]*
+  * [FIX]: Fix for an issue that could cause a MiniReel not to load on
+    the preview page in staging on FireFox
+  * User-level settings are now stored in the same format as ProShop is
+    saving them
+* *[/Beta17.rc2]*
+
 * *[Beta17.rc1]*
   * [FEATURE]: Added error messages for when a YouTube video cannot be
     found
