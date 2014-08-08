@@ -739,6 +739,10 @@ function( angular , c6ui , cryptojs ) {
             };
         }])
 
+        .service('VideoSearchService', [function() {
+
+        }])
+
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
                                      'SettingsService','c6UrlParser',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
