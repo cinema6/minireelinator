@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[Beta17.rc3]
+  * [FEATURE]: Preview links - mobile view styles added
+
 ## Beta17 (August 7, 2014)
 * *[Beta17.rc2]*
   * [FIX]: Fix for an issue that could cause a MiniReel not to load on
