@@ -245,11 +245,13 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                         })
                         .register('MR::user', user.config.minireelinator, {
                             defaults: {
-                                defaultSplash: {
-                                    ratio: SettingsService.getReadOnly('MR::org')
-                                        .minireelDefaults.splash.ratio,
-                                    theme: SettingsService.getReadOnly('MR::org')
-                                        .minireelDefaults.splash.theme
+                                minireelDefaults: {
+                                    splash: {
+                                        ratio: SettingsService.getReadOnly('MR::org')
+                                            .minireelDefaults.splash.ratio,
+                                        theme: SettingsService.getReadOnly('MR::org')
+                                            .minireelDefaults.splash.theme
+                                    }
                                 }
                             },
                             sync: function(settings) {

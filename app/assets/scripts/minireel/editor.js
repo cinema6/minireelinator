@@ -176,8 +176,10 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
                 });
 
                 SettingsService
-                    .createBinding(proxy.data.splash, 'ratio', 'MR::user.defaultSplash.ratio')
-                    .createBinding(proxy.data.splash, 'theme', 'MR::user.defaultSplash.theme');
+                    .createBinding(proxy.data.splash, 'ratio',
+                        'MR::user.minireelDefaults.splash.ratio')
+                    .createBinding(proxy.data.splash, 'theme',
+                        'MR::user.minireelDefaults.splash.theme');
                 proxy.data.splash.ratio = minireel.data.splash.ratio;
                 proxy.data.splash.theme = minireel.data.splash.theme;
 
