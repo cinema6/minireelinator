@@ -1149,8 +1149,8 @@ function( angular , c6ui , cryptojs ) {
                                 branding: user.branding,
                                 splash: {
                                     source: 'generated',
-                                    ratio: userSettings.defaultSplash.ratio,
-                                    theme: userSettings.defaultSplash.theme
+                                    ratio: userSettings.minireelDefaults.splash.ratio,
+                                    theme: userSettings.minireelDefaults.splash.theme
                                 },
                                 collateral: {
                                     splash: null

@@ -56,9 +56,11 @@
                 });
 
                 SettingsService.register('MR::user', {
-                    defaultSplash: {
-                        ratio: '3-2',
-                        theme: 'img-text-overlay'
+                    minireelDefaults: {
+                        splash: {
+                            ratio: '3-2',
+                            theme: 'img-text-overlay'
+                        }
                     }
                 }, {
                     localSync: false

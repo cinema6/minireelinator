@@ -86,9 +86,11 @@ define (['app'], function(appModule) {
             it('should register user settings with the settings service', function() {
                 expect(SettingsService.register).toHaveBeenCalledWith('MR::user', user.config.minireelinator, jasmine.objectContaining({
                     defaults: {
-                        defaultSplash: {
-                            ratio: SettingsService.getReadOnly('MR::org').minireelDefaults.splash.ratio,
-                            theme: SettingsService.getReadOnly('MR::org').minireelDefaults.splash.theme
+                        minireelDefaults: {
+                            splash: {
+                                ratio: SettingsService.getReadOnly('MR::org').minireelDefaults.splash.ratio,
+                                theme: SettingsService.getReadOnly('MR::org').minireelDefaults.splash.theme
+                            }
                         }
                     },
                     sync: jasmine.any(Function),

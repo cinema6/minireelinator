@@ -78,9 +78,11 @@
                 });
 
                 SettingsService.register('MR::user', {
-                    defaultSplash: {
-                        ratio: '3-2',
-                        theme: 'img-text-overlay'
+                    minireelDefaults: {
+                        splash: {
+                            ratio: '3-2',
+                            theme: 'img-text-overlay'
+                        }
                     }
                 }, {
                     localSync: false
@@ -491,8 +493,8 @@
                         });
 
                         it('should set up bindings to the splash ratio and theme', function() {
-                            expect(SettingsService.createBinding).toHaveBeenCalledWith(proxy.data.splash, 'ratio', 'MR::user.defaultSplash.ratio');
-                            expect(SettingsService.createBinding).toHaveBeenCalledWith(proxy.data.splash, 'theme', 'MR::user.defaultSplash.theme');
+                            expect(SettingsService.createBinding).toHaveBeenCalledWith(proxy.data.splash, 'ratio', 'MR::user.minireelDefaults.splash.ratio');
+                            expect(SettingsService.createBinding).toHaveBeenCalledWith(proxy.data.splash, 'theme', 'MR::user.minireelDefaults.splash.theme');
                             expect(proxy.data.splash.ratio).toBe(minireel.data.splash.ratio);
                             expect(proxy.data.splash.theme).toBe(minireel.data.splash.theme);
                         });
