@@ -16,7 +16,8 @@ define(function() {
     c6.kYouTubeDataApiKey = window.YouTubeApiKey || 'AIzaSyCmHsFIiXhjAuHM_piTxSHPsQgvZwueLlk';
 
     if (c6.kDebug) {
-        window.__C6_URL_ROOT__ = '//staging.cinema6.com';
+        // This URL must include the page's protocol to work in Firefox
+        window.__C6_URL_ROOT__ = window.location.protocol + '//staging.cinema6.com';
     }
 
     return c6;
