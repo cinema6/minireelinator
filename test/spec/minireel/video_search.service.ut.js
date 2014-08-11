@@ -112,14 +112,6 @@ define(['minireel/services'], function(servicesModule) {
                         expect(result.position).toBe((meta.skipped / meta.numResults) + 1);
                     });
 
-                    it('should maintain an array of all of the results it has fetched', function() {
-                        var meta = response.meta;
-
-                        expect(result.allVideos).toEqual(jasmine.any(Array));
-                        expect(result.allVideos.length).toBe(meta.totalResults);
-                        expect(result.allVideos.slice(meta.skipped, meta.skipped + meta.numResults)).toEqual(response.items);
-                    });
-
                     describe('methods', function() {
                         var initialVideos;
 
@@ -166,13 +158,6 @@ define(['minireel/services'], function(servicesModule) {
                                 expect(result.after).toBe(meta.totalResults - (meta.skipped + meta.numResults));
                                 expect(result.position).toBe((meta.skipped / meta.numResults) + 1);
                             });
-
-                            it('should update the list of all videos', function() {
-                                var meta = response.meta;
-
-                                expect(result.allVideos.slice(meta.skipped, meta.skipped + meta.numResults)).toEqual(response.items);
-                                expect(result.allVideos.slice(meta.skipped - 15, (meta.skipped - 15) + meta.numResults)).toEqual(initialVideos);
-                            });
                         });
 
                         describe('prev()', function() {
@@ -210,13 +195,6 @@ define(['minireel/services'], function(servicesModule) {
                                 expect(result.after).toBe(meta.totalResults - (meta.skipped + meta.numResults));
                                 expect(result.position).toBe((meta.skipped / meta.numResults) + 1);
                             });
-
-                            it('should update the list of all videos', function() {
-                                var meta = response.meta;
-
-                                expect(result.allVideos.slice(meta.skipped, meta.skipped + meta.numResults)).toEqual(response.items);
-                                expect(result.allVideos.slice(meta.skipped + 15, (meta.skipped + 15) + meta.numResults)).toEqual(initialVideos);
-                            });
                         });
 
                         describe('page(num)', function() {
@@ -253,13 +231,6 @@ define(['minireel/services'], function(servicesModule) {
                                 expect(result.total).toBe(meta.totalResults);
                                 expect(result.after).toBe(meta.totalResults - (meta.skipped + meta.numResults));
                                 expect(result.position).toBe((meta.skipped / meta.numResults) + 1);
-                            });
-
-                            it('should update the list of all videos', function() {
-                                var meta = response.meta;
-
-                                expect(result.allVideos.slice(meta.skipped, meta.skipped + meta.numResults)).toEqual(response.items);
-                                expect(result.allVideos.slice(30, 45)).toEqual(initialVideos);
                             });
 
                             describe('if it already has a page', function() {

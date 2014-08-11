@@ -742,7 +742,7 @@ function( angular , c6ui , cryptojs ) {
         .service('VideoSearchService', ['$http','c6UrlMaker','$q',
         function                       ( $http , c6UrlMaker , $q ) {
             function VideoSearchResult(videos, meta) {
-                var allVideos = this.allVideos || new Array(meta.totalResults);
+                this.visited = this.visited || {};
 
                 this.query = meta.query;
                 this.limit = meta.limit;
@@ -755,12 +755,7 @@ function( angular , c6ui , cryptojs ) {
                 this.pages = Math.ceil(this.total / this.length);
                 this.position = (this.before / this.limit) + 1;
 
-                this.videos = videos;
-                this.allVideos = [].concat(
-                    allVideos.slice(0, this.before),
-                    this.videos,
-                    allVideos.slice(this.before + this.length)
-                );
+                this.videos = this.visited[visitedKey(this.before, this.length)] = videos;
 
                 return this;
             }
@@ -775,11 +770,9 @@ function( angular , c6ui , cryptojs ) {
                     var self = this,
                         query = this.query, limit = this.limit,
                         toSkip = (num - 1) * limit,
-                        existing = this.allVideos.slice(toSkip, toSkip + limit);
+                        existing = this.visited[visitedKey(toSkip, limit)];
 
-                    // Check if we already have this page by comparing the number of actual values
-                    // we already have for this page vs the amount of items we need for the page.
-                    if (Object.keys(existing).length === limit) {
+                    if (existing) {
                         return $q.when(VideoSearchResult.call(this, existing, {
                             limit: limit,
                             query: query,
@@ -804,6 +797,10 @@ function( angular , c6ui , cryptojs ) {
                         }, null);
                         return merged;
                     }, {});
+            }
+
+            function visitedKey(skipped, size) {
+                return skipped + '-' + (skipped + size);
             }
 
             function find(query, limit, skip) {
