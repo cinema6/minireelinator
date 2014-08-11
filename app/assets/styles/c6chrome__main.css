@@ -316,6 +316,20 @@
         }
     }
 
+    .mast__group--previewMode .mainNav,
+    .mast__group--previewMode .mainNav__c6BrandItem {
+        float:none;
+    }
+    .mast__group--previewMode .mainNav__c6BrandItem {
+        padding:0.4375em 0 0 0;
+    }
+    .mast__group--previewMode .c6__brand {
+        margin:0 auto;
+    }
+    .mast__group--previewMode .mast__title {
+        position:static; margin:0.75em 0;
+    }
+
 /*  ==========================================================================
     userPane__group
     ========================================================================== */
