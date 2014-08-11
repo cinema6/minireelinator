@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## Beta17 (August 7, 2014)
+* *[Beta17.rc4]
+  * [FIX]: Fix for an issue that caused visual bugs on mobile devices
+    when previewing a MiniReel
+* *[/Beta17.rc4]
+
 * *[Beta17.rc3]
   * [FEATURE]: Preview links - mobile view styles added
 * *[/Beta17.rc3]
