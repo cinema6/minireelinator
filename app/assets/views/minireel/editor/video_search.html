@@ -12,4 +12,8 @@
             <p>{{video.description}}</p>
         </li>
     </ul>
+    <nav>
+        <p>{{result.position}} of {{result.pages}}</p>
+        <button ng-click="result.prev()">Prev</button> <button ng-click="result.next()">Next</button>
+    </nav>
 </section>
