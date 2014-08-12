@@ -1,0 +1,19 @@
+<h2>Search for Videos</h2>
+<form ng-submit="VideoSearchCtrl.search()">
+    <label>Query: <input type="text" ng-model="VideoSearchCtrl.query" /></label>
+    <button>Search!</button>
+</form>
+<section ng-if="VideoSearchCtrl.result" c6-alias="VideoSearchCtrl.result as result">
+    <ul>
+        <li ng-repeat="video in result.videos">
+            <h4>{{video.title}}<span ng-if="video.hd"> (HD)</span></h4>
+            <p>Via: <a ng-href="{{video.link}}">{{video.type}}</a></p>
+            <img ng-src="{{video.thumbnail.src}}" />
+            <p>{{video.description}}</p>
+        </li>
+    </ul>
+    <nav>
+        <p>{{result.position}} of {{result.pages}}</p>
+        <button ng-click="result.prev()">Prev</button> <button ng-click="result.next()">Next</button>
+    </nav>
+</section>

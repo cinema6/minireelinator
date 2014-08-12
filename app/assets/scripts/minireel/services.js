@@ -739,6 +739,94 @@ function( angular , c6ui , cryptojs ) {
             };
         }])
 
+        .service('VideoSearchService', ['$http','c6UrlMaker','$q',
+        function                       ( $http , c6UrlMaker , $q ) {
+            function VideoSearchResult(videos, meta) {
+                this.visited = this.visited || {};
+
+                this.query = meta.query;
+                this.limit = meta.limit || meta.numResults;
+
+                this.before = meta.skipped;
+                this.length = meta.numResults;
+                this.total = meta.totalResults;
+                this.after = this.total - (this.before + this.length);
+
+                this.pages = Math.ceil(this.total / this.length);
+                this.position = (this.before / this.limit) + 1;
+
+                this.videos = this.visited[visitedKey(this.before, this.length)] = videos;
+
+                return this;
+            }
+            VideoSearchResult.prototype = {
+                next: function() {
+                    return this.page(this.position + 1);
+                },
+                prev: function() {
+                    return this.page(this.position - 1);
+                },
+                page: function(num) {
+                    var self = this,
+                        query = this.query, limit = this.limit,
+                        toSkip = (num - 1) * limit,
+                        existing = this.visited[visitedKey(toSkip, limit)];
+
+                    if (existing) {
+                        return $q.when(VideoSearchResult.call(this, existing, {
+                            limit: limit,
+                            query: query,
+                            skipped: toSkip,
+                            numResults: limit,
+                            totalResults: this.total
+                        }));
+                    }
+
+                    return find(query, limit, toSkip)
+                        .then(function update(data) {
+                            return VideoSearchResult.call(self, data.items, data.meta);
+                        });
+                }
+            };
+
+            function merge(object1, object2) {
+                return Object.keys(object1).concat(Object.keys(object2))
+                    .reduce(function(merged, prop) {
+                        merged[prop] = [object1, object2].reduce(function(result, object) {
+                            return object.hasOwnProperty(prop) ? object[prop] : result;
+                        }, null);
+                        return merged;
+                    }, {});
+            }
+
+            function visitedKey(skipped, size) {
+                return skipped + '-' + (skipped + size);
+            }
+
+            function find(query, limit, skip) {
+                return $http.get(c6UrlMaker('search/videos', 'api'), {
+                    params: merge(query, { limit: limit, skip: skip || 0 })
+                }).then(function transform(response) {
+                    var data = response.data;
+
+                    return {
+                        meta: merge(data.meta, {
+                            limit: limit,
+                            query: query
+                        }),
+                        items: data.items
+                    };
+                });
+            }
+
+            this.find = function(query, limit, skip) {
+                return find(query, limit, skip)
+                    .then(function wrap(data) {
+                        return new VideoSearchResult(data.items, data.meta);
+                    });
+            };
+        }])
+
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
                                      'SettingsService','c6UrlParser',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
