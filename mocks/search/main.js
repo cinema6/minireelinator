@@ -70,8 +70,8 @@ module.exports = function(http) {
 
     http.whenGET('/api/search/videos', function(request) {
         var query = request.query.query,
-            skip = request.query.skip || 0,
-            limit = request.query.limit || 10,
+            skip = parseInt(request.query.skip) || 0,
+            limit = parseInt(request.query.limit) || 10,
             total = queryCache[query] || (queryCache[query] = randomNumberBetween(50, 1000));
 
         this.respond(200, {
