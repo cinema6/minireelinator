@@ -61,6 +61,8 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                         this.state('MR:EditCard.Ballot');
                     });
                     this.route('/card/new', 'MR:Editor.NewCard');
+
+                    this.route('/search', 'MR:VideoSearch');
                 });
             });
         }])

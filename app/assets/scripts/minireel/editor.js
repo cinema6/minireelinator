@@ -1,5 +1,5 @@
-define( ['angular','c6ui','c6_state','minireel/services','c6_defines'],
-function( angular , c6ui , c6State  , services          , c6Defines  ) {
+define( ['angular','c6ui','c6_state','minireel/video_search','minireel/services','c6_defines'],
+function( angular , c6ui , c6State  , videoSearch           , services          , c6Defines  ) {
     'use strict';
 
     var isNumber = angular.isNumber,
@@ -10,7 +10,12 @@ function( angular , c6ui , c6State  , services          , c6Defines  ) {
         isDefined = angular.isDefined,
         noop = angular.noop;
 
-    return angular.module('c6.app.minireel.editor', [c6ui.name , c6State.name, services.name])
+    return angular.module('c6.app.minireel.editor', [
+        videoSearch.name,
+        c6ui.name,
+        c6State.name,
+        services.name
+    ])
         .animation('.toolbar__publish', ['$timeout',
         function                        ( $timeout ) {
             return {
