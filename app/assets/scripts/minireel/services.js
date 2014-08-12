@@ -745,7 +745,7 @@ function( angular , c6ui , cryptojs ) {
                 this.visited = this.visited || {};
 
                 this.query = meta.query;
-                this.limit = meta.limit;
+                this.limit = meta.limit || meta.numResults;
 
                 this.before = meta.skipped;
                 this.length = meta.numResults;
@@ -805,7 +805,7 @@ function( angular , c6ui , cryptojs ) {
 
             function find(query, limit, skip) {
                 return $http.get(c6UrlMaker('search/videos', 'api'), {
-                    params: merge(query, { limit: limit, skip: skip })
+                    params: merge(query, { limit: limit, skip: skip || 0 })
                 }).then(function transform(response) {
                     var data = response.data;
 

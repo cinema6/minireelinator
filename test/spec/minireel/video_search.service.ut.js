@@ -94,6 +94,31 @@ define(['minireel/services'], function(servicesModule) {
                     }));
                 });
 
+                describe('if limit and skip are omitted', function() {
+                    var result;
+
+                    beforeEach(function() {
+                        [success, failure].forEach(function(spy) {
+                            spy.calls.reset();
+                        });
+
+                        $httpBackend.expectGET('/api/search/videos?query=' + query.split(' ').join('+') + '&skip=0')
+                            .respond(200, response);
+
+                        $rootScope.$apply(function() {
+                            VideoSearchService.find({ query: query }).then(success, failure);
+                        });
+
+                        $httpBackend.flush();
+                        result = success.calls.mostRecent().args[0];
+                    });
+
+                    it('should still have all of its properties', function() {
+                        expect(result.limit).toBe(response.meta.numResults);
+                        expect(result.position).toBe(3);
+                    });
+                });
+
                 describe('the search results object', function() {
                     var result;
 
