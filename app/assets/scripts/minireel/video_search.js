@@ -1,5 +1,5 @@
-define( ['angular','c6_state','minireel/services'],
-function( angular , c6State  , services          ) {
+define( ['angular','c6_state','minireel/services','c6_defines'],
+function( angular , c6State  , services          , c6Defines  ) {
     'use strict';
 
     return angular.module('c6.app.minireel.editor.videoSearch', [c6State.name, services.name])
@@ -9,6 +9,13 @@ function( angular , c6State  , services          ) {
                 this.templateUrl = 'views/minireel/editor/video_search.html';
                 this.controller = 'VideoSearchController';
                 this.controllerAs = 'VideoSearchCtrl';
+
+                // TODO: REMOVE THIS BEFORE GOING TO PRODUCTION
+                this.beforeModel = function() {
+                    if (!c6Defines.kDebug) {
+                        c6State.goTo('MR:Editor');
+                    }
+                };
             }]);
         }])
 
