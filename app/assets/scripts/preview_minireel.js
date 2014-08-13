@@ -16,6 +16,9 @@ function( angular , c6State  ) {
                 this.model = function() {
                     return copy($location.search());
                 };
+                this.title = function(model) {
+                    return 'Cinema6 MiniReel Preview: ' + model.title;
+                };
             }]);
         }])
 
