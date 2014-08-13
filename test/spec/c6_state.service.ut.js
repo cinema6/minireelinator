@@ -795,6 +795,8 @@
                                             .and.returnValue({});
                                         this.model = jasmine.createSpy('application.model()');
                                         this.afterModel = jasmine.createSpy('application.afterModel()');
+                                        this.title = jasmine.createSpy('application.title()')
+                                            .and.returnValue('My App!');
                                     })
                                     .state('Posts', function($q) {
                                         this.templateUrl = 'assets/views/posts.html';
@@ -809,6 +811,8 @@
                                             .and.returnValue($q.when(this.myModel));
                                         this.afterModel = jasmine.createSpy('posts.afterModel()')
                                             .and.returnValue(this.afterModelDeferred.promise);
+                                        this.title = jasmine.createSpy('posts.title()')
+                                            .and.returnValue('My App: Posts');
                                     })
                                     .state('Post', function() {
                                         this.template = [
@@ -858,6 +862,8 @@
                                     expect(application.model).not.toHaveBeenCalled();
                                     expect(application.cModel).toEqual({});
                                     expect(application.afterModel).toHaveBeenCalled();
+                                    expect(application.title).toHaveBeenCalledWith(application.cModel);
+                                    expect(application.cTitle).toBe('My App!');
                                 });
                             });
 
@@ -940,6 +946,11 @@
                                     it('should call afterModel() with the model', function() {
                                         expect(posts.afterModel).toHaveBeenCalledWith(posts.myModel);
                                     });
+
+                                    it('should call the title() hook with the model and assign the result to the cTitle property', function() {
+                                        expect(posts.title).toHaveBeenCalledWith(posts.myModel);
+                                        expect(posts.cTitle).toBe('My App: Posts');
+                                    });
                                 });
                             });
 
@@ -962,6 +973,10 @@
 
                                 it('should resolve the model', function() {
                                     expect(post.model).toHaveBeenCalled();
+                                });
+
+                                it('should inherit its parent\'s cTitle', function() {
+                                    expect(post.cTitle).toBe(posts.cTitle);
                                 });
                             });
 
@@ -991,6 +1006,10 @@
 
                                 it('should call afterModel()', function() {
                                     expect(comments.afterModel).toHaveBeenCalledWith({});
+                                });
+
+                                it('should inherit its parent\'s cTitle', function() {
+                                    expect(comments.cTitle).toBe(post.cTitle);
                                 });
 
                                 it('should succeed with the family', function() {
@@ -1421,6 +1440,7 @@
                                     expect(application.cName).toBe('Application');
                                     expect(application.cParams).toEqual({});
                                     expect(application.cRendered).toBe(false);
+                                    expect(application.cTitle).toBeNull();
                                 });
 
                                 it('should be overwriteable', function() {
@@ -1461,6 +1481,7 @@
                                     expect(home.cName).toBe('Home');
                                     expect(home.cParams).toBeNull();
                                     expect(home.cRendered).toBe(false);
+                                    expect(home.cTitle).toBeNull();
                                 });
 
                                 it('should return the same instance', function() {

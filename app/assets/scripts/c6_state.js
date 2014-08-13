@@ -115,6 +115,26 @@ function( angular , c6ui ) {
             };
         }])
 
+        .directive('c6Title', ['c6State',
+        function              ( c6State ) {
+            function link(scope, $element, attrs) {
+                scope.$watch(function() {
+                    return c6State.in(attrs.context || 'main', function() {
+                        return c6State.current && c6State.get(c6State.current).cTitle;
+                    });
+                }, function(title) {
+                    $element.text(title || '');
+                });
+            }
+
+            return {
+                restrict: 'E',
+                template: '<title></title>',
+                replace: true,
+                link: link
+            };
+        }])
+
         .directive('c6Sref', ['c6State','$animate',
         function             ( c6State , $animate ) {
             return {
@@ -771,6 +791,9 @@ function( angular , c6ui ) {
                                 result;
 
                             state.cModel = model || null;
+                            state.cTitle = (state.title || function() {
+                                return this.cParent && this.cParent.cTitle;
+                            }).call(state, state.cModel);
 
                             result = shouldBeCalled ?
                                 afterModelFn.call(state, model) : null;
@@ -860,6 +883,7 @@ function( angular , c6ui ) {
 
                             initializers.push(function(c6State) {
                                 this.cParent = parent && c6State.get(parent);
+                                this.cTitle = null;
                                 this.cUrl = parentUrl;
                                 this.cModel = null;
                                 this.cTemplate = null;
