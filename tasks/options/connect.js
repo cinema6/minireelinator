@@ -23,7 +23,8 @@
                 middleware: function(connect) {
                     return [
                         require('http-mock')({
-                            '/api/search': 'mocks/search/main.js'
+                            '/api/search': 'mocks/search/main.js',
+                            '/api/auth': 'mocks/auth/main.js'
                         }),
                         require('grunt-connect-proxy/lib/utils').proxyRequest,
                         require('connect-livereload')({
