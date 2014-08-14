@@ -8,7 +8,14 @@
         <li ng-repeat="video in result.videos">
             <h4>{{video.title}}<span ng-if="video.hd"> (HD)</span></h4>
             <p>Via: <a ng-href="{{video.link}}">{{video.type}}</a></p>
-            <img ng-src="{{video.thumbnail.src}}" />
+            <a href="" ng-show="VideoSearchCtrl.currentPreview !== video" ng-click="VideoSearchCtrl.preview(video)">
+                <img ng-src="{{video.thumbnail.src}}" />
+            </a>
+            <ng-switch on="video.type" ng-if="VideoSearchCtrl.currentPreview === video">
+                <youtube-player ng-switch-when="youtube" videoid="{{video.videoid}}" style="width: 300px;"></youtube-player>
+                <vimeo-player ng-switch-when="vimeo" videoid="{{video.videoid}}" style="width: 300px;"></vimeo-player>
+                <iframe class="vidFrame" ng-switch-when="dailymotion" frameborder="0" style="width: 300px;" src="{{'//www.dailymotion.com/embed/video/' + video.videoid}}" allowfullscreen></iframe>
+            </ng-switch>
             <p>{{video.description}}</p>
         </li>
     </ul>
