@@ -7,6 +7,87 @@ function( angular , c6ui , youtube ) {
         isDefined = angular.isDefined;
 
     return angular.module('c6.app.minireel.players', [c6ui.name])
+        .service('DailymotionPlayerService', ['c6EventEmitter','c6UrlParser','$window',
+        function                             ( c6EventEmitter , c6UrlParser , $window ) {
+            var players = {};
+
+            function objectWithout(object, props) {
+                return Object.keys(object)
+                    .filter(function(key) {
+                        return props.indexOf(key) < 0;
+                    })
+                    .reduce(function(result, key) {
+                        result[key] = object[key];
+                        return result;
+                    }, {});
+            }
+
+            function objectify(query) {
+                function convert(value) {
+                    if ((/\d+\.?\d+?/).test(value)) {
+                        return parseFloat(value);
+                    }
+
+                    return value;
+                }
+
+                return query.split('&')
+                    .map(function(pair) {
+                        return pair.split('=')
+                            .map(decodeURIComponent);
+                    })
+                    .map(function boolify(pair) {
+                        return pair.length === 2 ? pair : [pair[0], true];
+                    })
+                    .reduce(function(object, pair) {
+                        object[pair[0]] = convert(pair[1]);
+                        return object;
+                    }, {});
+            }
+
+            function delegateMessage(event) {
+                var hostname = c6UrlParser(event.origin).hostname,
+                    data;
+
+                if (hostname !== 'www.dailymotion.com') { return; }
+
+                data = objectify(event.data);
+
+                players[data.id].emit(data.event, objectWithout(data, ['id', 'event']));
+            }
+
+            this.Player = function($iframe) {
+                var params = objectify(c6UrlParser($iframe.attr('src')).search);
+
+                if (!params.id) {
+                    throw new Error(
+                        'Provided iFrame has no id specified in the search params.'
+                    );
+                }
+
+                if (params.api !== 'postMessage') {
+                    throw new Error(
+                        'Provided iFrame must have "api" set to "postMessage" in the search params.'
+                    );
+                }
+
+                this.call = function() {
+                    var args = Array.prototype.slice.call(arguments),
+                        playerWindow = $iframe.prop('contentWindow');
+
+                    playerWindow.postMessage(args.map(encodeURIComponent).join('='), '*');
+                };
+
+                players[params.id] = c6EventEmitter(this);
+
+                $iframe.on('$destroy', function() {
+                    delete players[params.id];
+                });
+            };
+
+            $window.addEventListener('message', delegateMessage, false);
+        }])
+
         .service('VimeoPlayerService', ['$q','$window','$rootScope','c6EventEmitter',
                                         'c6UrlParser',
         function                       ( $q , $window , $rootScope , c6EventEmitter ,
