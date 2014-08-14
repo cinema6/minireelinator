@@ -24,28 +24,6 @@
             "config": {
                 "minireelinator": {}
             }
-        },
-        {
-            "created": "2014-06-12T22:05:59.173Z",
-            "id": "o-829ede2a66cf37",
-            "lastUpdated": "2014-06-12T22:05:59.173Z",
-            "minAdCount": 2,
-            "name": "C6 Josh Org",
-            "status": "active",
-            "waterfalls": {
-                "video": [
-                    "publisher",
-                    "cinema6-publisher",
-                    "publisher-cinema6"
-                ],
-                "display": [
-                    "cinema6",
-                    "publisher",
-                    "cinema6-publisher",
-                    "publisher-cinema6"
-                ]
-            },
-            "config": {}
         }
     ],
     "experience": [
@@ -1125,7 +1103,7 @@
             "appUri": "rumble",
             "title": "Rumble Video",
             "img": {},
-            "org": "o-829ede2a66cf37",
+            "org": "o-e4e8b0f244bafc",
             "status": "pending",
             "created": "2014-02-08T10:42:51+00:00",
             "lastModified": "2014-04-18T14:07:20+00:00",
