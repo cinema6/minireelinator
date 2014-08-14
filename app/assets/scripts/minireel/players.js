@@ -3,7 +3,8 @@ function( angular , c6ui , youtube ) {
     'use strict';
 
     var fromJson = angular.fromJson,
-        jqLite = angular.element;
+        jqLite = angular.element,
+        isDefined = angular.isDefined;
 
     return angular.module('c6.app.minireel.players', [c6ui.name])
         .service('VimeoPlayerService', ['$q','$window','$rootScope','c6EventEmitter',
@@ -358,7 +359,7 @@ function( angular , c6ui , youtube ) {
                     // VideoPlayer is created.
                     $element.empty();
 
-                    return function postLink(scope, $element) {
+                    return function postLink(scope, $element, attrs) {
                         function VideoPlayer(id) {
                             var self = this,
                                 hasPaused = false,
@@ -517,6 +518,10 @@ function( angular , c6ui , youtube ) {
                                                 },
                                                 250
                                             );
+
+                                            if (isDefined(attrs.autoplay)) {
+                                                player.playVideo();
+                                            }
                                         },
                                         onStateChange: function onStateChange(event) {
                                             var PlayerState = youtube.PlayerState;

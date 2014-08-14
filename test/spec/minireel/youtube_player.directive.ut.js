@@ -31,7 +31,7 @@
 
                         this.seekTo = jasmine.createSpy('youtube.seekTo()');
                         this.pauseVideo = jasmine.createSpy('youtube.pauseVideo()');
-                        this.playVideo = jasmine.createSpy('youtube.pauseVideo()');
+                        this.playVideo = jasmine.createSpy('youtube.playVideo()');
                         this.destroy = jasmine.createSpy('youtube.destroy()')
                             .and.callFake(function() {
                                 iframe.parentNode.removeChild(iframe);
@@ -134,6 +134,12 @@
                     expect($interval).toHaveBeenCalled();
                 });
 
+                it('should not autoplay the video', function() {
+                    player._trigger('onReady', {});
+
+                    expect(player.playVideo).not.toHaveBeenCalled();
+                });
+
                 it('should support changing the video', function() {
                     var $iframe = $player.find('iframe'),
                         video = $player.data('video'),
@@ -167,6 +173,24 @@
                     expect($iframe[0]).not.toBe($newFrame[0]);
                     expect(player).not.toBe(players[0]);
                     expect($newFrame.attr('src')).toBe('https://www.youtube.com/embed/f9h85495jf?rel=0&enablejsapi=1');
+                });
+
+                describe('if the autoplay attribute is present', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            $player = $compile('<youtube-player videoid="TRrL5j3MIvo" autoplay></youtube-player>')($scope);
+                        });
+                    });
+
+                    describe('after the video is ready', function() {
+                        beforeEach(function() {
+                            player._trigger('onReady');
+                        });
+
+                        it('should play the video', function() {
+                            expect(player.playVideo).toHaveBeenCalled();
+                        });
+                    });
                 });
             });
 
