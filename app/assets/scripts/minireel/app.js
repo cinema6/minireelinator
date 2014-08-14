@@ -1,9 +1,9 @@
 define( ['angular','c6ui','c6log','c6_state','minireel/services','minireel/tracker',
          'minireel/c6_drag','minireel/card_table','minireel/editor','minireel/manager',
-         'minireel/players','c6_defines'],
+         'minireel/ad_manager','minireel/players','c6_defines'],
 function( angular , c6ui , c6log , c6State  , services          , tracker          ,
           c6Drag           , cardTable           , editor          , manager          ,
-          players          , c6Defines  ) {
+          adManager           , players          , c6Defines  ) {
     /* jshint -W106 */
     'use strict';
 
@@ -12,7 +12,7 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
 
     return angular.module('c6.app.minireel', [
         c6ui.name, c6log.name, c6State.name, c6Drag.name,
-        services.name, tracker.name, cardTable.name, editor.name, manager.name, players.name
+        services.name, tracker.name, cardTable.name, editor.name, manager.name, adManager.name, players.name
     ])
         .config(['$sceDelegateProvider','$compileProvider',
         function( $sceDelegateProvider , $compileProvider ) {
@@ -43,6 +43,14 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                         this.route('/', 'MR:New.Autoplay');
                     });
                     this.route('/embed/:minireelId', 'MR:Manager.Embed');
+                });
+
+                this.route('/advertising', 'MR:AdManager', function() {
+                    this.route('/settings', 'MR:AdManager.Settings', function() {
+                        this.route('/frequency', 'MR:AdManager.Settings.Frequency');
+                        this.route('/video', 'MR:AdManager.Settings.VideoServer');
+                        this.route('/display', 'MR:AdManager.Settings.DisplayServer');
+                    });
                 });
 
                 this.route('/edit/:minireelId', 'MR:Editor', function() {
