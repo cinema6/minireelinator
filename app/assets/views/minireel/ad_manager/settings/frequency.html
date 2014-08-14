@@ -1,0 +1,12 @@
+two drop downs
+
+here's an ng-ified dropdown from proshop
+the options are bound
+this example sets a default option but it's not necessary
+I'll have a data model for the drop down options that connects readable values
+like "Before 1st video is played" to the value we need to save ("0")
+so if you want to hard code the options I can take the values form there
+
+<select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs | orderBy:'name'" required>
+    <option value="">-- choose org --</option>
+</select>
