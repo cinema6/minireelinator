@@ -12,7 +12,8 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
 
     return angular.module('c6.app.minireel', [
         c6ui.name, c6log.name, c6State.name, c6Drag.name,
-        services.name, tracker.name, cardTable.name, editor.name, manager.name, adManager.name, players.name
+        services.name, tracker.name, cardTable.name, editor.name,
+        manager.name, adManager.name, players.name
     ])
         .config(['$sceDelegateProvider','$compileProvider',
         function( $sceDelegateProvider , $compileProvider ) {
