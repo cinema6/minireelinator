@@ -465,6 +465,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     this.controller = 'AppController';
                     this.controllerAs = 'AppCtrl';
 
+                    this.title = function() {
+                        return 'Cinema6 Dashboard';
+                    };
                     this.enter = function() {
                         c6State.goTo('Portal', null, null, true);
                     };

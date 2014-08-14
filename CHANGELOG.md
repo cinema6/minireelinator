@@ -1,5 +1,12 @@
 # MiniReelinator
 
+* *[Beta18.rc1]*
+  * [FIX]: MiniReel Preview page title no longer says "Cinema6
+    Dashboard".
+  * Browser title now changes as the user navigates to different "pages"
+    of the app
+
+
 ## Beta17 (August 7, 2014)
 * *[Beta17.rc4]
   * [FIX]: Fix for an issue that caused visual bugs on mobile devices

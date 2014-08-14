@@ -13,6 +13,9 @@ function( angular , c6State  , password         , email         ) {
                 this.model = function() {
                     return this.cParent.cModel;
                 };
+                this.title = function() {
+                    return 'Cinema6: Account Settings';
+                };
             }]);
 
             c6StateProvider.map('Account', function() {

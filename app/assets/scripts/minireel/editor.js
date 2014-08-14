@@ -337,6 +337,9 @@ function( angular , c6ui , c6State  , videoSearch           , services          
                             return EditorService.open(minireel);
                         });
                 };
+                this.title = function(model) {
+                    return 'Cinema6: Editing "' + model.data.title + '"';
+                };
             }]);
         }])
 
