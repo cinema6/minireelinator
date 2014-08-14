@@ -5,6 +5,8 @@
     Dashboard".
   * Browser title now changes as the user navigates to different "pages"
     of the app
+  * Add template files for what will become the Ad Manager, and wire
+    up the routes for development
 
 
 ## Beta17 (August 7, 2014)
