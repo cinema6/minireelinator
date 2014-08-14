@@ -134,7 +134,7 @@ function( angular , c6ui , youtube ) {
                     videoid: '@',
                     id: '@'
                 },
-                link: function(scope, $element) {
+                link: function(scope, $element, attrs) {
                     var $iframe = $element.find('iframe');
 
                     function VideoPlayer($iframe) {
@@ -311,6 +311,10 @@ function( angular , c6ui , youtube ) {
                                             state.duration = duration;
                                             self.emit('loadedmetadata');
                                         });
+
+                                    if (isDefined(attrs.autoplay)) {
+                                        player.call('play');
+                                    }
                                 });
                             } else {
                                 // This only happens when the video is changed from one to another.
