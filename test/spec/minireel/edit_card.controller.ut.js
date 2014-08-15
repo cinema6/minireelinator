@@ -951,6 +951,24 @@
                 });
 
                 describe('this.model.data.service', function() {
+                    describe('when initialized as dailymotion', function() {
+                        beforeEach(function() {
+                            model.data.service = 'dailymotion';
+                            $scope.$apply(function() {
+                                EditCardCtrl = $controller('EditCardController', {
+                                    $scope: $scope
+                                });
+                                EditCardCtrl.initWithModel(model);
+                            });
+                        });
+
+                        it('should set the start/end to undefined', function() {
+                            [model.data.start, model.data.end].forEach(function(value) {
+                                expect(value).toBeUndefined();
+                            });
+                        });
+                    });
+
                     describe('when changing to dailymotion', function() {
                         beforeEach(function() {
                             expect(model.data.start).toBe(10);

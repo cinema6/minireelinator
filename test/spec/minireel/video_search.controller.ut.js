@@ -41,6 +41,12 @@ define(['minireel/video_search'], function(videoSearchModule) {
                     expect(VideoSearchCtrl.query).toBe('');
                 });
             });
+
+            describe('currentPreview', function() {
+                it('should be null', function() {
+                    expect(VideoSearchCtrl.currentPreview).toBeNull();
+                });
+            });
         });
 
         describe('methods', function() {
@@ -98,6 +104,27 @@ define(['minireel/video_search'], function(videoSearchModule) {
 
                 it('should assign the result to its "result" property', function() {
                     expect(VideoSearchCtrl.result).toBe(result);
+                });
+            });
+
+            describe('preview(video)', function() {
+                var video,
+                    result;
+
+                beforeEach(function() {
+                    video = {};
+
+                    $scope.$apply(function() {
+                        result = VideoSearchCtrl.preview(video);
+                    });
+                });
+
+                it('should set the currentPreview property', function() {
+                    expect(VideoSearchCtrl.currentPreview).toBe(video);
+                });
+
+                it('should return the video', function() {
+                    expect(result).toBe(video);
                 });
             });
         });
