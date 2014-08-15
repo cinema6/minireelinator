@@ -56,29 +56,7 @@
     }
 
 
-/*  ==========================================================================
-    c6-copy classes : general type & color styles
-    ========================================================================== */
-    a {
-        text-decoration: none; color:#4a9cd1;
-        -webkit-transition: color 0.5s; transition: color 0.5s;
-    }
-        a:hover {
-            border-bottom:1px dotted #13a2ff;
-            color:#13a2ff;
-        }
-    a:focus, button:focus, input:focus, textarea:focus {
-        outline:none; border:0;
-    }
-    .typo--attention {
-        color:#d61212;
-    }
-    .typo--suggestion {
-        border-bottom:1px dotted #ff7e00;
-    }
-    .typo--context {
-        color:#ff7e00;
-    }
+
 
 /*  ==========================================================================
     Helper classes

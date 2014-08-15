@@ -1,9 +1,12 @@
 /*  ==========================================================================
     global styles
     ========================================================================== */
+    html {
+        font-size:100%;
+    }
     body {
         font-family: 'museo-sans', Arial, Helvetica, sans-serif; 
-        font-size: 100%; font-weight:300; line-height: 1.5;
+        font-size: 75%; font-weight:300; line-height: 1.5;
         background:#fff; color:#646464;
         margin:0;
     }
@@ -31,7 +34,7 @@
     ul, ol {
         margin:0; padding:0; list-style:none;
     }
-    label {
+    label, button {
         cursor:pointer;
     }
 
@@ -43,7 +46,6 @@
         -webkit-transition: color 0.5s; transition: color 0.5s;
     }
         a:hover {
-            border-bottom:1px dotted #13a2ff;
             color:#13a2ff;
         }
     a:focus, button:focus, input:focus, textarea:focus {
@@ -51,6 +53,12 @@
     }
     .typo--attention {
         color:#d61212;
+    }
+    .typo--suggestion {
+        border-bottom:1px dotted #ff7e00;
+    }
+    .typo--context {
+        color:#ff7e00;
     }
 
 /*  ==========================================================================
@@ -82,12 +90,8 @@
         border:0; margin:0; padding:0; overflow: hidden;
         font-size:1rem; line-height: 1;
     }
-    .css-promote {
-        transform: translateZ(0);
-        -webkit-transform: translateZ(0); /* Safari and Chrome */
-    }
     .container {
-        max-width:70.5em; margin:0 auto; padding:0 1.5em;
+        max-width:94rem; margin:0 auto; padding:0 2rem;
     }
 
 /*  ==========================================================================
@@ -161,14 +165,14 @@
 /*  ==========================================================================
     generic page styles
     ========================================================================== */
-    .c6__brand {
-        width:11.5em; height:2.75em; display: block;
+    .c6Brand {
+        width:15.333em; height:3.667em; display: block;
         font-size:1em;
         background-position:0 0;
-        border:0; padding:0;
+        border:0;
     }
-        .c6__brand--dark {
-            background-position: -11.5625em 0
+        .c6Brand--dark {
+            background-position: -15.41667em 0
         }
     .bg--light {
         background:#eee;
@@ -276,7 +280,7 @@
     ========================================================================== */
     .mast__group {
         min-height:3.75em;
-        background:#eeeeee; color:#626262;
+        background:#eee; color:#626262;
         border-bottom:1px solid #dddddd;
     }
         .mainNav {
@@ -286,14 +290,18 @@
             margin:0; padding:0; list-style: none;
         }
             .mainNav__item {
-                padding:1.5em 0 0 0; margin:0 2em 0 0; float:left;
+                padding:0; margin:0; float:left;
+                border-right:1px solid #ddd;
+            }
+            .mainNav__icon {
+                fill:#fff;
             }
             .mainNav__link {
                 color:#fff;
             }
             
-            .mainNav__c6BrandItem {
-                padding:0.4375em 0 0 0; margin-right:3em;
+            .mainNav .c6Brand {
+                margin:0.667em 2em; padding:0;
             }
         .mast__titleBox {
             position: relative;
