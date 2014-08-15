@@ -3,6 +3,7 @@ define(['minireel/players'], function(playersModule) {
 
     describe('DailymotionPlayerService', function() {
         var $window,
+            $rootScope,
             DailymotionPlayerService;
 
         beforeEach(function() {
@@ -10,6 +11,7 @@ define(['minireel/players'], function(playersModule) {
 
             inject(function($injector) {
                 $window = $injector.get('$window');
+                $rootScope = $injector.get('$rootScope');
                 spyOn($window, 'addEventListener').and.callThrough();
                 DailymotionPlayerService = $injector.get('DailymotionPlayerService');
             });
@@ -31,7 +33,7 @@ define(['minireel/players'], function(playersModule) {
                     player;
 
                 beforeEach(function() {
-                    $iframe = $('<iframe src="http://www.dailymotion.com/embed/video/x23h8sn?api=postMessage&html&id=foo"></iframe>');
+                    $iframe = $('<iframe src="http://www.dailymotion.com/embed/video/x23h8sn?api=postMessage&html&id=foo23"></iframe>');
                     player = new DailymotionPlayerService.Player($iframe);
 
                     $('body').append($iframe);
@@ -59,7 +61,7 @@ define(['minireel/players'], function(playersModule) {
                     ['fragment', 'location'].forEach(function(apiMode) {
                         describe('if api is set to ' + apiMode, function() {
                             beforeEach(function() {
-                                $iframe = $('<iframe src="http://www.dailymotion.com/embed/video/x23h8sn?api=' + apiMode + '&html&id=foo"></iframe>');
+                                $iframe = $('<iframe src="http://www.dailymotion.com/embed/video/x23h8sn?api=' + apiMode + '&html&id=foo23"></iframe>');
                             });
 
                             it('should throw an error', function() {
@@ -141,21 +143,43 @@ define(['minireel/players'], function(playersModule) {
                         }).not.toThrow();
                     });
 
+                    it('should cause a $digest on the $scope when an event is emitted', function() {
+                        var spy = jasmine.createSpy('spy()');
+
+                        $rootScope.ready = false;
+
+                        player.on('apiready', function() {
+                            $rootScope.ready = true;
+                        });
+
+                        $rootScope.$apply(function() {
+                            $rootScope.$watch('ready', spy);
+                        });
+                        spy.calls.reset();
+
+                        trigger({
+                            id: 'foo23',
+                            event: 'apiready'
+                        });
+
+                        expect(spy).toHaveBeenCalled();
+                    });
+
                     it('should make the player emit the event', function() {
                         trigger({
-                            id: 'foo',
+                            id: 'foo23',
                             event: 'apiready'
                         });
                         expect(apireadySpy).toHaveBeenCalledWith({});
 
                         trigger({
-                            id: 'foo',
+                            id: 'foo23',
                             event: 'play'
                         });
                         expect(playSpy).toHaveBeenCalledWith({});
 
                         trigger({
-                            id: 'foo',
+                            id: 'foo23',
                             event: 'timeupdate',
                             time: '3.14'
                         });
@@ -181,7 +205,7 @@ define(['minireel/players'], function(playersModule) {
 
                         it('should delegate events', function() {
                             trigger({
-                                id: 'foo',
+                                id: 'foo23',
                                 event: 'play'
                             });
                             expect(playSpy).toHaveBeenCalled();
@@ -212,7 +236,7 @@ define(['minireel/players'], function(playersModule) {
                             expect(function() {
                                 messageHandler({
                                     origin: 'http://www.dailymotion.com',
-                                    data: 'id=foo&event=play'
+                                    data: 'id=foo23&event=play'
                                 });
                             }).toThrow();
                         });
