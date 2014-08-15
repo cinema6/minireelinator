@@ -1,0 +1,18 @@
+here's a form from when we had ad settings in the minireelinator<br>
+disregard all the Ctrl and bindings, but the structure will be similar,<br>
+there will be an ng-repeat to show the available options<br>
+
+<form c6-alias="NewCtrl.mode as config" class="form__adSettings">
+    <ul class="wizard__group" ng-if="config.value === 'lightbox-ads'">
+        <li ng-repeat="choice in NewAdsCtrl.adChoices.display" class="wizard__choice wizard__choice--textOnly wizard__choice--ads">
+            <input id="displayAd_{{choice.value}}" type="radio"
+                name="minireel-category" ng-model="NewCtrl.displayAdSource" ng-value="choice.value"
+                class="modal__radioBtn" />
+            <label class="wizard__hitarea" for="displayAd_{{choice.value}}"><span class="ir">{{choice.name}}</span></label>
+            <div class="wizard__copy">
+                <h2 class="wizard__title">{{choice.name}}</h2>
+                <p class="wizard__p">{{choice.description}}</p>
+            </div>
+        </li>
+    </ul>
+</form>
