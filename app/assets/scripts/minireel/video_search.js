@@ -26,6 +26,8 @@ function( angular , c6State  , services          , c6Defines  ) {
             this.query = '';
             this.result = null;
 
+            this.currentPreview = null;
+
             this.search = function() {
                 return VideoSearchService.find({
                     query: this.query
@@ -33,6 +35,11 @@ function( angular , c6State  , services          , c6Defines  ) {
                     /* jshint boss:true */
                     return (self.result = result);
                 });
+            };
+
+            this.preview = function(video) {
+                /* jshint boss:true */
+                return this.currentPreview = video;
             };
         }]);
 });

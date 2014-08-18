@@ -1274,14 +1274,14 @@ function( angular , c6ui , c6State  , videoSearch           , services          
                 function(service, prevService) {
                     var data = self.model.data;
 
-                    if (service === 'dailymotion') {
-                        data.start = undefined;
-                        data.end = undefined;
-                    }
-
                     if (prevService === 'dailymotion') {
                         data.start = null;
                         data.end = null;
+                    }
+
+                    if (service === 'dailymotion') {
+                        data.start = undefined;
+                        data.end = undefined;
                     }
                 }
             );

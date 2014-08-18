@@ -8,8 +8,10 @@
                 $compile,
                 $timeout,
                 c6EventEmitter,
+                c6VideoService,
                 $q,
                 $preview,
+                $httpBackend,
                 YouTubeDataService;
 
             beforeEach(function() {
@@ -24,12 +26,16 @@
                     $rootScope = $injector.get('$rootScope');
                     $compile = $injector.get('$compile');
                     c6EventEmitter = $injector.get('c6EventEmitter');
+                    c6VideoService = $injector.get('c6VideoService');
                     $timeout = $injector.get('$timeout');
                     $q = $injector.get('$q');
                     YouTubeDataService = $injector.get('YouTubeDataService');
+                    $httpBackend = $injector.get('$httpBackend');
 
                     $scope = $rootScope.$new();
                 });
+
+                spyOn(c6VideoService, 'bestFormat').and.returnValue();
 
                 $scope.service = null;
                 $scope.videoid = null;
@@ -384,7 +390,7 @@
                 beforeEach(function() {
                     $scope.$apply(function() {
                         $scope.videoid = 'abc123';
-                        $scope.service = 'dailymotion';
+                        $scope.service = 'bleh';
                     });
                 });
 
@@ -451,26 +457,29 @@
 
             describe('dailymotion', function() {
                 beforeEach(function() {
+                    $httpBackend.whenGET('https://api.dailymotion.com/video/x199caf?fields=duration')
+                        .respond(404, 'NOT FOUND');
                     $scope.$apply(function() {
                         $scope.service = 'dailymotion';
                     });
                 });
 
                 it('should not create any iframes when there is no videoid', function() {
-                    expect($preview.find('iframe').length).toBe(0);
+                    expect($preview.find('dailymotion-player').length).toBe(0);
                 });
 
-                it('should create a vimeo embed iframe when a videoid is provided', function() {
-                    var $iframe;
+                it('should create a dailymotion-player when the videoid is provided', function() {
+                    var $dailymotion;
 
                     $scope.$apply(function() {
                         $scope.videoid = 'x199caf';
                     });
-                    $iframe = $preview.find('iframe');
+                    $dailymotion = $preview.find('dailymotion-player');
 
-                    expect($iframe.length).toBe(1);
+                    expect($dailymotion.length).toBe(1);
 
-                    expect($iframe.attr('src')).toBe('//www.dailymotion.com/embed/video/x199caf');
+                    expect($dailymotion.attr('id')).toBe('preview');
+                    expect($dailymotion.attr('videoid')).toBe('x199caf');
                 });
             });
         });

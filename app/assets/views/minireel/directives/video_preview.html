@@ -2,7 +2,7 @@
     <div id="videoEmbedPlayer" ng-switch="service" ng-if="!!videoid">
         <youtube-player ng-switch-when="youtube" videoid="{{videoid}}"></youtube-player>
         <vimeo-player ng-switch-when="vimeo" id="preview" videoid="{{videoid}}"></vimeo-player>
-        <iframe class="vidFrame" ng-switch-when="dailymotion" frameborder="0" width="480" height="270" src="{{'//www.dailymotion.com/embed/video/' + videoid}}" allowfullscreen></iframe>
+        <dailymotion-player ng-switch-when="dailymotion" id="preview" videoid="{{videoid}}"></dailymotion-player>
     </div>
 </div>
 <video-trimmer start="start"

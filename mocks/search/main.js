@@ -11,7 +11,8 @@ module.exports = function(http) {
         ' change things. They push the human race forward. And while some may see them as the ',
         'crazy ones, we see genius. Because the people who are crazy enough to think they can ',
         'change the world, are the ones who do.'
-    ].join('').replace(/\.|,|;|:/g, '').toLowerCase().split(' ');
+    ].join('').replace(/\.|,|;|:/g, '').toLowerCase().split(' '),
+        videos = require('./videos.json');
 
     function randomNumberBetween(min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
@@ -19,10 +20,6 @@ module.exports = function(http) {
 
     function randomMember(array) {
         return array[Math.floor(Math.random() * array.length)];
-    }
-
-    function randomString() {
-        return Math.random().toString(34).slice(2);
     }
 
     function makeArray(length) {
@@ -40,8 +37,7 @@ module.exports = function(http) {
     }
 
     function makeRandomVideo() {
-        var id = randomString().slice(20),
-            service = randomMember(['youtube', 'vimeo', 'dailymotion']);
+        var video = randomMember(videos);
 
         return {
             title: makeArray(randomNumberBetween(5, 10))
@@ -50,7 +46,7 @@ module.exports = function(http) {
                 })
                 .map(capitalize)
                 .join(' '),
-            link: 'http://www.' + service + '.com/' + id + '.html',
+            link: 'http://www.' + video.type + '.com/' + video.videoid + '.html',
             description: capitalize(makeArray(randomNumberBetween(10, 20))
                 .map(function() {
                     return randomMember(seed);
@@ -61,8 +57,8 @@ module.exports = function(http) {
                 width: 300,
                 height: 200
             },
-            videoid: id,
-            type: service,
+            videoid: video.videoid,
+            type: video.type,
             hd: randomMember([true, false]),
             duration: randomNumberBetween(30, 300)
         };

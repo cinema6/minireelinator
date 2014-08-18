@@ -1,7 +1,31 @@
 /*  ==========================================================================
     global styles
     ========================================================================== */
-    youtube-player, vimeo-player, .vidFrame {
+    ::-moz-selection {
+        background: #e900a4; text-shadow: none; color:#fff;
+    }
+    ::selection {
+        background: #e900a4; text-shadow: none; color:#fff;
+    }
+    strong {
+        font-weight:bold;
+    }
+    p {
+        margin: 1em 0;
+    }
+    input, textarea {
+        font-family: 'museo-sans', Arial, Helvetica, sans-serif;
+    }
+    textarea {
+        resize: vertical;
+    }
+    ul, ol {
+        margin:0; padding:0; list-style:none;
+    }
+    label {
+        cursor:pointer;
+    }
+    youtube-player, vimeo-player, dailymotion-player, .vidFrame {
         display: block;
         width: 100%; height:16.875em;
     }
@@ -15,7 +39,7 @@
     ========================================================================== */
     .grid {
         list-style: none;
-        margin: 0 0 0 -2rem; padding: 0;
+        margin: 0 0 0 -1.5rem; padding: 0;
         letter-spacing: -0.31em;
     }
     .opera:-o-prefocus,
@@ -23,7 +47,7 @@
         word-spacing: -0.43em;
     }
     .grid__item {
-        display: inline-block; padding-left: 2rem; width: 100%;
+        display: inline-block; padding-left: 1.5rem; width: 100%;
         vertical-align: top;
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
@@ -31,7 +55,71 @@
         letter-spacing: normal; word-spacing: normal;
     }
 
-    
+
+/*  ==========================================================================
+    c6-copy classes : general type & color styles
+    ========================================================================== */
+    a {
+        text-decoration: none; color:#4a9cd1;
+        -webkit-transition: color 0.5s; transition: color 0.5s;
+    }
+        a:hover {
+            border-bottom:1px dotted #13a2ff;
+            color:#13a2ff;
+        }
+    a:focus, button:focus, input:focus, textarea:focus {
+        outline:none; border:0;
+    }
+    .typo--attention {
+        color:#d61212;
+    }
+    .typo--suggestion {
+        border-bottom:1px dotted #ff7e00;
+    }
+    .typo--context {
+        color:#ff7e00;
+    }
+
+/*  ==========================================================================
+    Helper classes
+    ========================================================================== */
+    .ir {
+        background-color: transparent;
+        border: 0; width:0; height:0;
+        overflow: hidden; display: block; position:absolute;
+    }
+    .clearfix:before,
+    .clearfix:after {
+        content: ' ';
+        display: table;
+    }
+    .clearfix:after {
+        clear: both;
+    }
+    .hidden {
+        visibility: hidden;
+    }
+    .sprite--alpha {
+        background:url('../../img/minireel/sprite--alpha@2x.png') 0 0 / 12.5rem 6.25rem no-repeat;
+        border:0; margin:0; padding:0; overflow: hidden;
+        font-size:1rem; line-height: 1;
+    }
+    .sprite--fff {
+        background:url('../../img/minireel/sprite--white@2x.png') 0 0 / 50.625rem 15.625rem no-repeat;
+        border:0; margin:0; padding:0; overflow: hidden;
+        font-size:1rem; line-height: 1;
+    }
+        .wizard__choice--small .sprite--fff {
+            background-size:40.5rem 12.5rem;
+        }
+    .css-promote {
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0); /* Safari and Chrome */
+    }
+    .container {
+        max-width:70.5em; margin:0 auto; padding:0 1.5em;
+    }
+
 
 /*  ==========================================================================
     ui classes

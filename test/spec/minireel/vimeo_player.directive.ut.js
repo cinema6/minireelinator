@@ -74,6 +74,29 @@
                     expect($iframe.length).toBe(1);
                     expect($iframe.attr('src')).toBe('//player.vimeo.com/video/abc123?api=1&player_id=rc-1');
                 });
+
+                describe('after the video is ready', function() {
+                    beforeEach(function() {
+                        player.emit('ready');
+                    });
+
+                    it('should not autoplay the video', function() {
+                        expect(player.call).not.toHaveBeenCalledWith('play');
+                    });
+
+                    describe('if the "autoplay" attribute is present', function() {
+                        beforeEach(function() {
+                            $scope.$apply(function() {
+                                $vimeo = $compile('<vimeo-player id="rc-2" videoid="abc1234" autoplay></vimeo-player>')($scope);
+                            });
+                            player.emit('ready');
+                        });
+
+                        it('should autoplay the video', function() {
+                            expect(player.call).toHaveBeenCalledWith('play');
+                        });
+                    });
+                });
             });
 
             describe('video interface', function() {
