@@ -1,17 +1,14 @@
 /*  ==========================================================================
     global styles
     ========================================================================== */
-    html {
-        font-size:100%;
+    html, body {
+        font-size: 12px; height:100%;
     }
     body {
         font-family: 'museo-sans', Arial, Helvetica, sans-serif; 
-        font-size: 75%; font-weight:300; line-height: 1.5;
-        background:#fff; color:#646464;
+        font-weight:300; line-height: 1.5;
+        background:#fff; color:#626262;
         margin:0;
-    }
-    html, body {
-        height:100%;
     }
     ::-moz-selection {
         background: #e900a4; text-shadow: none; color:#fff;
@@ -22,8 +19,9 @@
     p {
         margin: 1em 0;
     }
-    input, textarea {
+    input, textarea, button {
         font-family: 'museo-sans', Arial, Helvetica, sans-serif;
+        color:#626262;
     }
         input:required {
             box-shadow: none;
@@ -43,7 +41,7 @@
     ========================================================================== */
     a {
         text-decoration: none; color:#4a9cd1;
-        -webkit-transition: color 0.5s; transition: color 0.5s;
+        -webkit-transition: color 0.25s; transition: color 0.25s;
     }
         a:hover {
             color:#13a2ff;
@@ -81,7 +79,7 @@
         visibility: hidden;
     }
     .c6Sprite--alpha {
-        background:url('../img/sprite--alpha@2x.png') 0 0 / 25rem 6.25rem no-repeat;
+        background:url('../img/sprite--alpha@2x.png') 0 0 / 33.333rem 8.333rem no-repeat;
         border:0; margin:0; padding:0; overflow: hidden;
         font-size:1rem; line-height: 1;
     }
@@ -90,6 +88,19 @@
         border:0; margin:0; padding:0; overflow: hidden;
         font-size:1rem; line-height: 1;
     }
+    .sprite--alpha {
+        background:url('../../img/minireel/sprite--alpha@2x.png') 0 0 / 12.5rem 6.25rem no-repeat;
+        border:0; margin:0; padding:0; overflow: hidden;
+        font-size:1rem; line-height: 1;
+    }
+    .sprite--fff {
+        background:url('../../img/minireel/sprite--white@2x.png') 0 0 / 50.625rem 15.625rem no-repeat;
+        border:0; margin:0; padding:0; overflow: hidden;
+        font-size:1rem; line-height: 1;
+    }
+        .wizard__choice--small .sprite--fff {
+            background-size:40.5rem 12.5rem;
+        }
     .container {
         max-width:94rem; margin:0 auto; padding:0 2rem;
     }
@@ -97,10 +108,6 @@
 /*  ==========================================================================
     ui classes
     ========================================================================== */
-    .ui__gear {
-        background-position:0 -2.8125em; display:block;
-        width:1.5em; height:1.5em;
-    }
     .ui__viewHolder--extend {
         min-height:80%;
     }
@@ -122,6 +129,158 @@
     .body .chrome {
         display: block;
     }
+    .ui__iconHolder18 {
+        width:1.5rem; height:1.5rem;
+        display:inline-block; 
+        vertical-align: middle;
+    }
+        .ui__icon {
+            -webkit-transition:fill 0.25s; transition:fill 0.25s;
+            fill:#626262;
+        }
+
+    /*  buttons: default  */
+        .btn {
+            background:#eee; color:#626262;
+            border:1px solid rgba(0,0,0,0.16); border-radius:0.25em;
+            font-weight:700;
+            padding:7px 0 6px 0;
+            display: inline-block;
+        }
+            .btn__label {
+                font-size:1.1667em;
+                vertical-align: middle;
+            }
+        .btn--primary {
+            background:#eaf7ff; color:#2398db;
+        }
+        .btn--info {
+            background:#e5f9ff; color:#0082a9;
+        }
+        .btn--success {
+            background:#eee; color:#3dc667;
+        }
+        .btn--warning {
+            background:#eee; color:orange;
+        }
+        .btn--danger {
+            background:#ffeaea; color:#dc4141;
+        }
+
+    /*  buttons: key action  */
+        .btnAction,
+        .btnAction:focus {
+            background:#626262; color:#fff;
+            border:1px solid rgba(0,0,0,0.16); border-radius:0.25rem;
+            font-weight:700;
+            padding:0.58333em 2em 0.5em 2em;
+            display: inline-block; position: relative;
+            -webkit-box-shadow:inset 0 1px 0 0 rgba(255,255,255,0.28);
+            box-shadow:inset 0 1px 0 0 rgba(255,255,255,0.28);
+        }
+            .btnAction:hover {
+                color:#fff;
+                background: linear-gradient(to bottom,  rgba(0,0,0,0) 0%,rgba(255,255,255,0.3) 100%);
+            }
+            .btnAction:active {
+                background: linear-gradient(to bottom,  rgba(0,0,0,0.2) 0%,rgba(0,0,0,0) 100%);
+
+                border:1px solid rgba(0,0,0,0.16);
+                -webkit-box-shadow:none;
+                box-shadow:none;
+            }
+            .btnAction .ui__iconHolder18 {
+                margin:0 0.3333em 0 0;
+            }
+            .btnAction .ui__icon {
+                fill:#fff;
+            }
+            
+        .btnAction--primary,
+        .btnAction--primary:hover,
+        .btnAction--primary:active,
+        .btnAction--primary:focus {
+            background-color:#2398db;
+        }
+        .btnAction--primary,
+        .btnAction--primary:hover,
+        .btnAction--primary:active,
+        .btnAction--primary:focus {
+            background-color:#2398db;
+        }
+        .btnAction--info,
+        .btnAction--info:hover,
+        .btnAction--info:active,
+        .btnAction--info:focus {
+            background-color:#0082a9;
+        }
+        .btnAction--success,
+        .btnAction--success:hover,
+        .btnAction--success:active,
+        .btnAction--success:focus {
+            background-color:#3dc667;
+        }
+        .btnAction--warning,
+        .btnAction--warning:hover,
+        .btnAction--warning:active,
+        .btnAction--warning:focus {
+            background-color:orange;
+        }
+        .btnAction--danger,
+        .btnAction--danger:hover,
+        .btnAction--danger:active,
+        .btnAction--danger:focus {
+            background-color:#dc4141;
+        }
+
+    /*  tabs: filters  */
+        .tabFilters {
+
+        }
+            .tabFilters__item {
+                margin:0 2em 0 0; padding:0;
+                list-style: none;
+                display: inline-block;
+            }
+            .filters__btn {
+                background:none; border:0; 
+                padding:0; margin:0;
+                display: inline-block;
+                font-size:1.08333em;
+            }
+                .filters__counter {
+                    background:#eee; color:#626262;
+                    border-radius:1em; border:1px solid rgba(0,0,0,0.16);
+                    padding:1px 0.5em;
+                    display: inline-block;
+                }
+                .filters__btn--active .btn__label {
+                    border-bottom:1px dotted #626262;
+                }
+                .filters__btn--active .filters__counter {
+                    background:#626262; color:#fff;
+                }
+                .filters__btn:hover .filters__counter {
+                    background:#eaf7ff; color:#2398db;
+                }
+
+/*  ==========================================================================
+    layout styles
+    ========================================================================== */
+    .pageHeader {
+        margin-bottom:1.5em; margin-top:2em;
+    }
+        .pageTitle {
+            color:#626262; font-weight:100; font-size:2em; 
+            margin:-0.25rem 0 1.1667rem 0;
+            float:left;
+        }
+        .pageHeader .btnAction {
+            float:right; margin:-1px 0 0 0;
+        }
+
+
+        
 
 /*  ==========================================================================
     viewLoader styles
@@ -283,46 +442,110 @@
         background:#eee; color:#626262;
         border-bottom:1px solid #dddddd;
     }
-        .mainNav {
-            float:left;
-        }
         .mainNav__list {
             margin:0; padding:0; list-style: none;
         }
             .mainNav__item {
                 padding:0; margin:0; float:left;
                 border-right:1px solid #ddd;
+                position:relative;
             }
-            .mainNav__icon {
-                fill:#fff;
-            }
+                .mainNav__item--user {
+                    float:right;
+                    border-left:1px solid #ddd; border-right:0;
+                }
+                .mainNav__item:last-child {
+                    border:0;
+                }
             .mainNav__link {
-                color:#fff;
+                color:#626262; 
+                padding:1.667em 2em 1.5833em 2em;
+                min-height:60px; 
+                display:inline-block; box-sizing:border-box;
+                vertical-align: middle;
+                -webkit-transition:background 0.25s; transition:background 0.25s;
             }
-            
+                .mainNav__label {
+                    display:inline-block; 
+                    vertical-align: middle;
+                    font-size:1.1667em;
+                    margin:0 0 0 0.2857em;
+                }
+                .mainNav__profileHolder {
+                    width:3em; height:3em; 
+                    display: inline-block;
+                    vertical-align: middle;
+                    background:url('../img/default_square.jpg') 50% 50% / cover no-repeat;
+                }
+                /* active states */
+                .mainNav__link--active {
+                    background:#fff;
+                }
+                    .mainNav__link--active:after {
+                        content:'';
+                        position:absolute;
+                        height:1px;
+                        background:#fff;
+                        bottom:-1px; left:0; right:0;
+                    }
+                /* hovers */
+                .mainNav__link:hover .ui__icon {
+                    fill:#4a9cd1;
+                }
+                .mainNav__link:hover .mainNav__label {
+                    color:#4a9cd1;
+                }
+                .mainNav__link:hover {
+                    background:#fff;
+                }
+
+            .mainNav__link--userInfo {
+                padding:1em 2em;
+            }
+                .mainNav__link--userInfo .mainNav__label {
+                    margin:0 0.2857em 0 0;
+                }
+            .mainNav__link--userSettings .ui__iconHolder18 {
+                -webkit-transition: all 0.25s; transition: all 0.25s;
+            }
+                .mainNav__link--userSettings:hover .mainNav__iconHolder {
+                    transform:rotate(90deg);
+                    -ms-transform:rotate(90deg); /* IE 9 */
+                    -webkit-transform:rotate(90deg); /* Opera, Chrome, and Safari */
+                }
             .mainNav .c6Brand {
                 margin:0.667em 2em; padding:0;
             }
-        .mast__titleBox {
-            position: relative;
-        }
-            .mast__title {
-                font-size:1em; font-weight:300; text-align: center;
-                width:100%;
-                position:absolute;
-                margin:1.1875em 0 0 0;
+            .userNav__child {
+                display: none;
+                position:absolute; right:0; top:100%; z-index:100;
+                border:1px solid #ddd; border-bottom:0;
             }
-    @media screen and (max-width:42em) {
-        .mast__group {
-            min-height:4.5em;
-        }
-        .mast__title {
-            margin:0.4375em 0 0 0;
-        }
-        .mainNav__c6BrandItem {
-            padding:1.1875em 0 0 0;
-        }
-    }
+                .mainNav__item--userSettings:hover .userNav__child {
+                    display:block;
+                }
+                .userNav__item {
+                    border-bottom:1px solid #ddd; 
+                }
+                .userNav__link {
+                    background:white;
+                    display: block;
+                    margin:0; padding:1em 0; border:0;
+                    -webkit-transition: all 0.25s; transition: all 0.25s;
+                    width:12em;
+                    font-size:1.1667em; line-height:1; color:#646464;
+                    cursor:pointer;
+                    text-align: center; font-weight:300;
+                    -webkit-box-sizing: content-box;
+                    -moz-box-sizing: content-box;
+                    box-sizing: content-box;
+                }
+                    .userNav__link:hover {
+                        background:#eaf7ff;
+                        border:0;
+                        color:#2398db;
+                    }
+        
 
     .mast__group--previewMode .mainNav,
     .mast__group--previewMode .mainNav__c6BrandItem {
@@ -338,78 +561,7 @@
         position:static; margin:0.75em 0;
     }
 
-/*  ==========================================================================
-    userPane__group
-    ========================================================================== */
-    .userPane__group {
-        display: block;
-        float:right;
-        position: relative; z-index:5;
-    }
-        .userPane__display {
-            float:left; margin:1.1875em 0 0 0;
-        }
-        .userPane__avatar {
-            float:left; margin:0.875em 0;
-            width:2.75em; height:2.75em;
-            background:#000 url('../img/default_square.jpg') center center / cover no-repeat;
-        }
-        .userPane__settings {
-            margin:0;
-            cursor:pointer;
-            -webkit-transition: all 0.5s; transition: all 0.5s;
-        }
 
-    /*  user navigation styles
-        ========================================================================== */
-        .userNav__group {
-            float:left; position:relative;
-            margin:1.125em 0 0; padding:0 0 0.5em 0.75em;
-        }
-            .userNav__group:hover .userPane__settings {
-                transform:rotate(90deg);
-                -ms-transform:rotate(90deg); /* IE 9 */
-                -webkit-transform:rotate(90deg); /* Opera, Chrome, and Safari */
-            }
-            .userNav__group:hover .userNav__child {
-                display:block;
-            }
-            .userNav__child {
-                display:none;
-                position:absolute; right:0; top:100%; z-index:100;
-                
-                -webkit-box-shadow: 3px 3px 5px 0 rgba(0,0,0,0.5);
-                box-shadow: 3px 3px 5px 0 rgba(0,0,0,0.5);
-            }
-                .userNav__item {
-                    border-bottom:1px solid #ccc; 
-                }
-                .userNav__btn {
-                    background:white;
-                    display: block;
-                    margin:0; padding:0.75rem 0.5rem; border:0;
-                    -webkit-transition: all 0.5s; transition: all 0.5s;
-                    width:9rem;
-                    font-size:0.875rem; line-height:1; color:#646464;
-                    cursor:pointer;
-                    text-align: center; font-weight:300;
-                    -webkit-box-sizing: content-box;
-                    -moz-box-sizing: content-box;
-                    box-sizing: content-box;
-                }
-                    .userNav__btn:hover {
-                        background:#eff9ff;
-                        border:0;
-                        color:#13a2ff;
-                    }
-        @media screen and (max-width:42em) {
-            .userPane__display {
-                margin:1.9375em 0 0 0;
-            }
-            .userNav__group {
-                margin:1.875em 0 0 0;
-            }
-        }
 
 /*  ==========================================================================
     login styles
@@ -530,6 +682,6 @@
     footer
     ========================================================================== */
     .footer__group {
-        padding:0.875rem 0 0.8125rem 0;
-        color:#7d7d7d; text-align: center; font-size:0.75em;
+        padding:1.1667em 0 1.08333em 0;
+        color:#949494; text-align: center;
     }

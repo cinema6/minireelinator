@@ -1,24 +1,36 @@
 <main c6-alias="ManagerCtrl.model as minireels">
 <header class="pageHeader container">
-    <h1 class="pageTitle">Dashboard</h1>
-    <div class="pageHeader__actions clearfix">
-        <ul class="filters__list">
-            <li class="filters__item">
-                <button ng-click="ManagerCtrl.filter = 'all'" ng-class="{'filtersBtn__showAll--active': ManagerCtrl.filter === 'all'}" class="filters__btn filtersBtn__showAll" type="button" title="Show All">Show All</button>
-            </li>
-            <li class="filters__item">
-                <button ng-click="ManagerCtrl.filter = 'active'" ng-class="{'filtersBtn__published--active': ManagerCtrl.filter === 'active'}" class="filters__btn filtersBtn__published" type="button" title="Published">Published</button>
-            </li>
-            <li class="filters__item">
-                <button ng-click="ManagerCtrl.filter = 'pending'" ng-class="{'filtersBtn__private--active': ManagerCtrl.filter === 'pending'}" class="filters__btn filtersBtn__private" type="button" title="Private">Private</button>
-            </li>
-        </ul>
-        <ul class="toolbar__group">
-            <li class="toolbar__item">
-                <button c6-sref="MR:New.General" class="toolbar__btn toolbar__newMiniReel" type="button"><span class="ui__plus sprite--alpha">&nbsp;</span>New MiniReel</button>
-            </li>
-        </ul>
+    <div class="clearfix">
+        <h1 class="pageTitle">Studio</h1>
+        <a c6-sref="MR:New.General" title="New MiniReel" class="btnAction btnAction--primary" >
+            <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M9,0C4,0,0,4,0,9c0,5,4,9,9,9s9-4,9-9C18,4,14,0,9,0z M9,16c-3.9,0-7-3.1-7-7
+                    c0-3.9,3.1-7,7-7s7,3.1,7,7C16,12.9,12.9,16,9,16z M10,5H8v3H5v2h3v3h2v-3h3V8h-3V5z"/>
+            </svg>
+            <span class="btn__label">New MiniReel</span>
+        </a>
     </div>
+    <ul class="tabFilters clearfix">
+        <li class="tabFilters__item">
+            <button ng-click="ManagerCtrl.filter = 'all'" ng-class="{'filters__btn--active': ManagerCtrl.filter === 'all'}" class="filters__btn" type="button" title="Show All">
+                <span class="btn__label">Show All</span>
+                <span class="filters__counter">100</span>
+            </button>
+        </li>
+        <li class="tabFilters__item">
+            <button ng-click="ManagerCtrl.filter = 'active'" ng-class="{'filters__btn--active': ManagerCtrl.filter === 'active'}" class="filters__btn" type="button" title="Published">
+                <span class="btn__label">Published</span>
+                <span class="filters__counter">100</span>
+            </button>
+        </li>
+        <li class="tabFilters__item">
+            <button ng-click="ManagerCtrl.filter = 'pending'" ng-class="{'filters__btn--active': ManagerCtrl.filter === 'pending'}" class="filters__btn" type="button" title="Private">
+                <span class="btn__label">Private</span>
+                <span class="filters__counter">100</span>
+            </button>
+        </li>
+    </ul>
     <span class="ui__divider--border"><br></span>
 </header>
 
