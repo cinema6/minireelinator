@@ -5,9 +5,9 @@ there will be an ng-repeat to show the available options<br>
 <div class="modal__content modal__editor clearfix">
     <form class="form__adSettings">
         <ul class="wizard__group">
-            <li ng-repeat="choice in NewAdsCtrl.adChoices.video" class="wizard__choice wizard__choice--textOnly wizard__choice--ads">
+            <li ng-repeat="choice in AdSettingsCtrl.adChoices.video" class="wizard__choice wizard__choice--textOnly wizard__choice--ads">
                 <input id="videoAd_{{choice.value}}" type="radio"
-                    name="minireel-category" ng-model="NewCtrl.videoAdSource" ng-value="choice.value"
+                    name="minireel-category" ng-model="AdSettingsCtrl.videoServer" ng-value="choice.value"
                     class="modal__radioBtn" />
                 <label class="wizard__hitarea" for="videoAd_{{choice.value}}"><span class="ir">{{choice.name}}</span></label>
                 <div class="wizard__copy">

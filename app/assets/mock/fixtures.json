@@ -467,15 +467,6 @@
                         }
                     },
                     {
-                        "id": "rc-392f3546f0cfc3",
-                        "type": "ad",
-                        "ad": true,
-                        "modules": [],
-                        "data": {
-                            "autoplay": true
-                        }
-                    },
-                    {
                         "id": "rc-77d0ea2794cc6b",
                         "type": "youtube",
                         "title": "Avalanche Cliff Jump",

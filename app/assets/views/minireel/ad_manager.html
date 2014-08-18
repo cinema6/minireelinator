@@ -29,5 +29,17 @@ display count (bound to something)<br>
 paginator (not sure how this will work yet, josh is on it)<br>
 <br>
 we need a c6-view at the bottom for modal sub views
+<input type="button" ng-click="AdManagerCtrl.editSettings('orgDefaults', PortalCtrl.model.org.adConfig)" value="Click">
+<div c6-alias="AdManagerCtrl.model as minireels">
+    <ul>
+        <li ng-repeat="this in minireels">
+            {{this.data.title}}
+            {{this.status}}
+            {{this.user}}
+            Ads: {{AdManagerCtrl.adCountOf(this)}}
+            Slides: {{this.data.deck.length}}
+        </li>
+    </ul>
 </div>
-<c6-view></c6-view> 
+</div>
+<c6-view></c6-view>

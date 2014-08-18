@@ -226,8 +226,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             };
         }])
 
-        .constant('ContentAdapter', ['$http','$q','config',
-        function                    ( $http , $q , config ) {
+        .constant('ContentAdapter', ['$http','$q','config','cinema6',
+        function                    ( $http , $q , config , cinema6 ) {
             function clean(model) {
                 delete model.id;
                 delete model.org;
@@ -236,11 +236,25 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 return model;
             }
 
+            function decorateWithUser(experiences) {
+                // will this work? or do we need an array
+                // of promises to be resolved first?
+                return experiences.map(function(exp) {
+                    return cinema6.db.find('user', exp.user)
+                        .then(function attach(user) {
+                            exp.user = user;
+                            return exp;
+                        });
+                });
+            }
+
             this.findAll = function() {
+                function returnData(response) {
+                    return response.data;
+                }
                 return $http.get(config.apiBase + '/content/experiences')
-                    .then(function returnData(response) {
-                        return response.data;
-                    });
+                    .then(returnData)
+                    .then(decorateWithUser);
             };
 
             this.find = function(type, id) {
