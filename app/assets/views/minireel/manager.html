@@ -1,6 +1,6 @@
 <main c6-alias="ManagerCtrl.model as minireels">
 <header class="pageHeader container">
-    <div class="clearfix">
+    <div class="pageHeader__titleBar clearfix">
         <h1 class="pageTitle">Studio</h1>
         <a c6-sref="MR:New.General" title="New MiniReel" class="btnAction btnAction--primary" >
             <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -14,27 +14,26 @@
     <ul class="tabFilters clearfix">
         <li class="tabFilters__item">
             <button ng-click="ManagerCtrl.filter = 'all'" ng-class="{'filters__btn--active': ManagerCtrl.filter === 'all'}" class="filters__btn" type="button" title="Show All">
-                <span class="btn__label">Show All</span>
+                <span class="btn__label">All MiniReels</span>
                 <span class="filters__counter">100</span>
             </button>
         </li>
         <li class="tabFilters__item">
             <button ng-click="ManagerCtrl.filter = 'active'" ng-class="{'filters__btn--active': ManagerCtrl.filter === 'active'}" class="filters__btn" type="button" title="Published">
-                <span class="btn__label">Published</span>
+                <span class="btn__label">Published MiniReels</span>
                 <span class="filters__counter">100</span>
             </button>
         </li>
         <li class="tabFilters__item">
             <button ng-click="ManagerCtrl.filter = 'pending'" ng-class="{'filters__btn--active': ManagerCtrl.filter === 'pending'}" class="filters__btn" type="button" title="Private">
-                <span class="btn__label">Private</span>
+                <span class="btn__label">Private MiniReels</span>
                 <span class="filters__counter">100</span>
             </button>
         </li>
     </ul>
-    <span class="ui__divider--border"><br></span>
 </header>
 
-<div class="container miniReels__group">
+<section class="container miniReels__group">
     <ul class="miniReels__list grid">
         <li class="miniReels__item grid__item" ng-show="!minireels.length">
             <article class="miniReel__group miniReelCreator" c6-sref="MR:New.General">
@@ -78,6 +77,6 @@
         </li>
     </ul>
     <p ng-show="!minireels.length">You have no Mini Reels. Would you like to <a c6-sref="MR:New.General" title="Create A MiniReel">create one?</a></p>
-</div>
+</section>
 </main>
 <c6-view></c6-view>
