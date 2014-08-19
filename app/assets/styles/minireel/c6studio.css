@@ -54,6 +54,24 @@
                 .miniReel__metaData span {
                     color:#626262;
                 }
+        .miniReel__status {
+            font-size:0.75em;
+            color:#929292;
+            margin-top:0.3125rem;
+        }
+            .miniReel__statusText--active {
+                color:#3dc667;
+            }
+            .miniReel__statusText--pending {
+                color:#626262;
+            }
+            .miniReel__date {
+                color:#626262;
+            }
+            .miniReel__count {
+                line-height: 1;
+                margin:0.125rem 0 0 0; 
+            }
 
 
 /*  ==========================================================================
