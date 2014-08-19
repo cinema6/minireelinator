@@ -35,10 +35,26 @@
 
 <section class="container miniReels__group">
     <header class="tableHeader__group">
-        <label class="checkbox--inline">
-            <input type="checkbox" class="checkbox__input">
-            <span class="checkbox__label">Label</span>
-        </label>
+        <nav class="selectorActions__group">
+                <div class="selector__dropDown btn">
+                    <label class="checkbox--inline">
+                        <input type="checkbox" class="checkbox__input">
+                        <span class="btn__label">Label</span>
+                    </label>
+                </div>
+                <div class="btnGroup clearfix">
+                    <button class="btn btn--primary" type="button" title="Publish">
+                        <span class="btn__label">Publish</span>
+                    </button>
+                    <button class="btn btn--primary" type="button" title="Make Private">
+                        <span class="btn__label">Make Private</span>
+                    </button>
+                    <button class="btn btn--primary" type="button" title="Copy">
+                        <span class="btn__label">Copy</span>
+                    </button>
+                </div>
+            
+        </div>
     </header>
     <ul class="miniReels__list grid">
         <li class="miniReels__item grid__item" ng-show="!minireels.length">

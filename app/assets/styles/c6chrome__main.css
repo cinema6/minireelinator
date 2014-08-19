@@ -21,6 +21,7 @@
     }
     input, textarea, button {
         font-family: 'museo-sans', Arial, Helvetica, sans-serif;
+        font-size:1em;
         color:#626262;
     }
         input:required {
@@ -142,10 +143,13 @@
     /*  buttons: default  */
         .btn {
             background:#eee; color:#626262;
-            border:1px solid rgba(0,0,0,0.16); border-radius:0.1875em;
-            font-weight:700;
-            padding:0.4375em 0 0.375em 0;
+            border:1px solid #ddd; border-radius:0.1875em;
+            font-weight:700; line-height: 1;
+            padding:0 1.5em 0 1.5em; margin:0;
             display: inline-block;
+            box-sizing:border-box;
+            vertical-align: middle;
+            min-height:2.25em;
         }
             .btn__label {
                 font-size:0.875em;
@@ -153,19 +157,32 @@
             }
         .btn--primary {
             background:#eaf7ff; color:#2398db;
+            border:1px solid #bfe7ff; 
         }
         .btn--info {
             background:#e5f9ff; color:#0082a9;
+            border:1px solid #ddd; 
         }
         .btn--success {
             background:#eee; color:#3dc667;
+            border:1px solid #ddd; 
         }
         .btn--warning {
             background:#eee; color:orange;
+            border:1px solid #ddd; 
         }
         .btn--danger {
             background:#ffeaea; color:#dc4141;
+            border:1px solid #ddd; 
         }
+    /*  buttons : default : groups;  */
+        .btnGroup {
+            display: inline-block;
+            vertical-align: middle;
+        }
+            .btnGroup .btn {
+                float:left;
+            }
 
     /*  buttons: key action  */
         .btnAction,
@@ -235,8 +252,9 @@
 
     /*  tabs: filters  */
         .tabFilters {
-            line-height:1;
-            margin:2px 0 0 0;
+            line-height:1; 
+            margin:0.125em 0 0 0;
+            min-height:1.625em;
         }
             .tabFilters__item {
                 margin:0 1.5em 0 0; padding:0;
@@ -261,8 +279,9 @@
                 .filters__counter {
                     background:#eee; color:#626262;
                     border-radius:1em; border:1px solid rgba(0,0,0,0.16);
-                    padding:1px 0.5em;
+                    padding:2px 0.5em;
                     display: inline-block;
+                    line-height: 1;
                     vertical-align: middle;
                     -webkit-transition:all 0.25s; transition:all 0.25s;
                 }
@@ -393,39 +412,39 @@
     generic form styles
     ========================================================================== */
     .checkbox--inline {
-        padding:0 0 0 1.25em; margin:0;
+        padding:0 0 0 1.25em; margin:0.5625em 0 0 0; border:0;
+        display:block;
         position: relative;
     }
         .checkbox--inline .checkbox__input {
             position:absolute; left:-1000000em;
             margin:0; padding:0;
         }
-        .checkbox--inline .checkbox__label {
-
+        .checkbox--inline .btn__label {
         }
-            .checkbox--inline .checkbox__label:before {
+            .checkbox--inline .btn__label:before {
                 content:'';
-                position:absolute; top:1px;
+                position:absolute; top:0; left:0;
                 display:block;
-                width:1em; height:1em;
+                width:1rem; height:1rem;
                 border:1px solid #ddd; margin:0; padding:0;
                 box-sizing:border-box;
                 background:#fff;
                 -webkit-transition: all 0.25s; transition: all 0.25s;
             }
-            .checkbox--inline .checkbox__label:after {
+            .checkbox--inline .btn__label:after {
                 content:'x';
                 position:absolute; top:-4px; left:4px;
                 display: none;
             }
-                .checkbox--inline .checkbox__input:checked + .checkbox__label:after {
+                .checkbox--inline .checkbox__input:checked + .btn__label:after {
                     display:block;
                 }
-                .checkbox--inline .checkbox__input:focus + .checkbox__label:before {
+                .checkbox--inline .checkbox__input:focus + .btn__label:before {
                     border-color:#2398db;
                 }
 
-            .checkbox--inline:hover .checkbox__label:before {
+            .checkbox--inline:hover .btn__label:before {
                 background:#eaf7ff;
                 border-color:#bfe7ff;
             }
