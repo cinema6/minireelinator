@@ -4,6 +4,56 @@
     .miniReels__group {
         margin-top:1.25em;
     }
+    .selectorActions__group {
+        float:left;
+    }
+    .pager__group {
+        float:right;
+    }
+        .pager__pageIndicator:hover,
+        .pager__pageIndicator:active {
+            border-color:#ddd;
+            background:#eee;
+        }
+        .pager__pageIndicator .textField {
+            width:2em; margin:-0.25em 0 0 0;
+            text-align: center;
+        }
+/*  ==========================================================================
+    .miniReel__group
+    ========================================================================== */
+    .miniReel__group {
+        padding:0.75em 0;
+        position: relative;
+    }
+        .miniReel__selector { 
+            position: absolute;
+        }
+            .miniReel__selector .checkbox__input {
+                padding:0 1.375em 1em 1.5em;
+            }
+        .miniReel__imgBox {
+            position: absolute; left:3.75em;
+            width:3.75em; height:3em;
+            background:50% 50% / cover no-repeat;
+            margin:0 0.75em 0 0;
+        }
+        .miniReel__titleBox {
+            float:left;
+            margin:0 1.5em 0 8.25em;
+            width:28.7%;
+        }
+            .miniReel__title {
+                margin:0.1875rem 0 0 0; font-size:0.875em;
+            }
+            .miniReel__metaData {
+                color:#929292; 
+                font-size:0.75em; line-height: 1;
+                margin:0.125rem 0 0 0; 
+            }
+                .miniReel__metaData span {
+                    color:#626262;
+                }
 
 
 /*  ==========================================================================

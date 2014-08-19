@@ -59,6 +59,40 @@
     .typo--context {
         color:#ff7e00;
     }
+    @font-face {
+        font-family: 'FontAwesome';
+        src: url('fonts/fontawesome-webfont.eot?v=4.1.0');
+        src: url('fonts/fontawesome-webfont.eot?#iefix&v=4.1.0') format('embedded-opentype'), url('fonts/fontawesome-webfont.woff?v=4.1.0') format('woff'), url('fonts/fontawesome-webfont.ttf?v=4.1.0') format('truetype'), url('fonts/fontawesome-webfont.svg?v=4.1.0#fontawesomeregular') format('svg');
+        font-weight: normal;
+        font-style: normal;
+    }
+        .faa:after {
+            font-family: 'FontAwesome';
+            font-style: normal;
+            font-weight: normal;
+            line-height: 1;
+            display: inline-block;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .fab:before {
+            font-family: 'FontAwesome';
+            font-style: normal;
+            font-weight: normal;
+            line-height: 1;
+            display: inline-block;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .fa-caret-down:after {
+            content: '\f0d7';
+        }
+        .fa-chevron-left:after {
+            content: '\f053';
+        }
+        .fa-chevron-right:after {
+            content: '\f054';
+        }
 
 /*  ==========================================================================
     Helper classes
@@ -141,47 +175,68 @@
         }
 
     /*  buttons: default  */
-        .btn {
+        .btn, .btn:focus {
             background:#eee; color:#626262;
             border:1px solid #ddd; border-radius:0.1875em;
             font-weight:700; line-height: 1;
-            padding:0 1.5em 0 1.5em; margin:0;
+            padding:0.5625em 1.375em; margin:0;
             display: inline-block;
-            box-sizing:border-box;
+            box-sizing:content-box;
             vertical-align: middle;
-            min-height:2.25em;
+            height:1em;
+            -webkit-transition:all 0.25s; transition:all 0.25s;
         }
             .btn__label {
                 font-size:0.875em;
                 vertical-align: middle;
             }
-        .btn--primary {
+            .btn:hover {
+                border-color:#626262;
+            }
+            .btn:active {
+                background:#fff;
+            }
+        .btn--primary, .btn--primary:focus {
             background:#eaf7ff; color:#2398db;
             border:1px solid #bfe7ff; 
         }
-        .btn--info {
-            background:#e5f9ff; color:#0082a9;
+            .btn--primary:hover {
+                border-color:#2398db;
+            }
+        .btn--info, .btn--info:focus {
+            background-color:#e5f9ff; color:#0082a9;
             border:1px solid #ddd; 
         }
-        .btn--success {
-            background:#eee; color:#3dc667;
+        .btn--success, .btn--success:focus {
+            background-color:#eee; color:#3dc667;
             border:1px solid #ddd; 
         }
-        .btn--warning {
-            background:#eee; color:orange;
+        .btn--warning, .btn--warning:focus {
+            background-color:#eee; color:orange;
             border:1px solid #ddd; 
         }
-        .btn--danger {
-            background:#ffeaea; color:#dc4141;
+        .btn--danger, .btn--danger:focus {
+            background-color:#ffeaea; color:#dc4141;
             border:1px solid #ddd; 
         }
     /*  buttons : default : groups;  */
         .btnGroup {
-            display: inline-block;
+            display: none;
             vertical-align: middle;
+            -webkit-transition: all 0.25s; transition:all 0.25s;
         }
+            .btnGroup--show {
+                display:inline-block;
+            }
             .btnGroup .btn {
                 float:left;
+                border-radius:0;
+            }
+            .btnGroup .btn:first-child {
+                border-radius:0.1875em 0 0 0.1875em;
+            }
+            .btnGroup .btn:last-child {
+                border-radius:0 0.1875em 0.1875rem 0;
             }
 
     /*  buttons: key action  */
@@ -278,7 +333,7 @@
                 }
                 .filters__counter {
                     background:#eee; color:#626262;
-                    border-radius:1em; border:1px solid rgba(0,0,0,0.16);
+                    border-radius:1em; border:1px solid #ddd;
                     padding:2px 0.5em;
                     display: inline-block;
                     line-height: 1;
@@ -287,6 +342,7 @@
                 }
                 .filters__btn:hover .filters__counter {
                     background:#eaf7ff; color:#2398db;
+                    border-color:#2398db;
                 }
 
                 .filters__btn--active .btn__label {
@@ -295,6 +351,7 @@
                 .filters__btn--active .filters__counter,
                 .filters__btn--active:hover .filters__counter {
                     background:#626262; color:#fff;
+                    border-color:#333;
                 }
                 
 
@@ -318,7 +375,8 @@
     table styles
     ========================================================================== */
     .tableHeader__group {
-        margin:0;
+        margin:0; padding:0 0 0.625em 0;
+        border-bottom:2px solid #626262;
     }
         
 
@@ -412,42 +470,51 @@
     generic form styles
     ========================================================================== */
     .checkbox--inline {
-        padding:0 0 0 1.25em; margin:0.5625em 0 0 0; border:0;
-        display:block;
+        padding-left:2.5em; margin:0;
         position: relative;
+        width:1em; height:1em;
     }
         .checkbox--inline .checkbox__input {
             position:absolute; left:-1000000em;
             margin:0; padding:0;
         }
-        .checkbox--inline .btn__label {
+        .checkbox--inline .btn__label:before {
+            content:'';
+            position:absolute; left:1.5rem; top:0.5rem;
+            display:block;
+            width:1rem; height:1rem;
+            border:1px solid #ddd; margin:0; padding:0;
+            box-sizing:border-box;
+            background:#fff;
+            -webkit-transition: all 0.25s; transition: all 0.25s;
         }
-            .checkbox--inline .btn__label:before {
-                content:'';
-                position:absolute; top:0; left:0;
+        .checkbox--inline .btn__label:after {
+            content:'\f00c';
+            position:absolute; top:0.625rem; left:1.5625rem;
+            display: none;
+        }
+            .checkbox--inline .checkbox__input:checked + .btn__label:after {
                 display:block;
-                width:1rem; height:1rem;
-                border:1px solid #ddd; margin:0; padding:0;
-                box-sizing:border-box;
-                background:#fff;
-                -webkit-transition: all 0.25s; transition: all 0.25s;
             }
-            .checkbox--inline .btn__label:after {
-                content:'x';
-                position:absolute; top:-4px; left:4px;
-                display: none;
+            .checkbox--inline .checkbox__input:focus + .btn__label:before {
+                border-color:#2398db;
             }
-                .checkbox--inline .checkbox__input:checked + .btn__label:after {
-                    display:block;
-                }
-                .checkbox--inline .checkbox__input:focus + .btn__label:before {
-                    border-color:#2398db;
-                }
 
             .checkbox--inline:hover .btn__label:before {
                 background:#eaf7ff;
-                border-color:#bfe7ff;
+                border-color:#2398db;
             }
+    .textField {
+        height:1.125em; border:1px solid #ddd;
+        padding:0 0.5em;
+    }
+        .textField:focus {
+            border:1px solid #2398db;
+            background:#eaf7ff;
+        }
+        .textField:hover {
+            border-color:#2398db;
+        }
 
     .form__group {
         margin:0;
@@ -582,7 +649,7 @@
             .mainNav__link--userSettings .ui__iconHolder18 {
                 -webkit-transition: all 0.25s; transition: all 0.25s;
             }
-                .mainNav__link--userSettings:hover .mainNav__iconHolder {
+                .mainNav__link--userSettings:hover .ui__iconHolder18 {
                     transform:rotate(90deg);
                     -ms-transform:rotate(90deg); /* IE 9 */
                     -webkit-transform:rotate(90deg); /* Opera, Chrome, and Safari */

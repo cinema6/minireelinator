@@ -34,27 +34,50 @@
 </header>
 
 <section class="container miniReels__group">
-    <header class="tableHeader__group">
+    <header class="tableHeader__group clearfix">
         <nav class="selectorActions__group">
-                <div class="selector__dropDown btn">
-                    <label class="checkbox--inline">
-                        <input type="checkbox" class="checkbox__input">
-                        <span class="btn__label">Label</span>
-                    </label>
+            <label class="checkbox--inline btn faa fa-caret-down">
+                <input type="checkbox" class="checkbox__input">
+                <span class="btn__label faa">&nbsp;</span>
+            </label>
+            <div class="btnGroup btnGroup--show clearfix">
+                <button class="btn btn--primary" type="button" title="Publish">
+                    <span class="btn__label">Publish</span>
+                </button>
+                <button class="btn btn--primary" type="button" title="Make Private">
+                    <span class="btn__label">Make Private</span>
+                </button>
+                <button class="btn btn--primary" type="button" title="Copy">
+                    <span class="btn__label">Copy</span>
+                </button>
+                <button class="btn btn--primary" type="button" title="Delete">
+                    <span class="btn__label">Delete</span>
+                </button>
+            </div>
+        </nav>
+
+        <nav class="pager__group">
+            <button class="btn faa fa-caret-down" type="button" title="Items on Page : 50">
+                <span class="btn__label">50</span>
+            </button>
+
+            <div class="btnGroup btnGroup--show clearfix">
+                <button class="btn" type="button" title="Publish">
+                    <span class="btn__label faa fa-chevron-left">
+                        <span class="ir">Previous</span>
+                    </span>
+                </button>
+                <div class="btn pager__pageIndicator" type="button" title="Make Private">
+                    <input type="text" value="1" class="textField">
+                    <span class="btn__label">of 12</span>
                 </div>
-                <div class="btnGroup clearfix">
-                    <button class="btn btn--primary" type="button" title="Publish">
-                        <span class="btn__label">Publish</span>
-                    </button>
-                    <button class="btn btn--primary" type="button" title="Make Private">
-                        <span class="btn__label">Make Private</span>
-                    </button>
-                    <button class="btn btn--primary" type="button" title="Copy">
-                        <span class="btn__label">Copy</span>
-                    </button>
-                </div>
-            
-        </div>
+                <button class="btn" type="button" title="Copy">
+                    <span class="btn__label faa fa-chevron-right">
+                        <span class="ir">Next</span>
+                    </span>
+                </button>
+            </div>
+        </nav>
     </header>
     <ul class="miniReels__list grid">
         <li class="miniReels__item grid__item" ng-show="!minireels.length">
@@ -66,7 +89,26 @@
         </li>
 
         <li class="miniReels__item grid__item" ng-repeat="this in minireels | filter:ManagerCtrl.determineInclusionWithFilter track by this.id">
-            <article class="miniReel__group">
+            <article class="miniReel__group clearfix">
+                <div class="miniReel__selector">
+                    <label class="checkbox--inline">
+                        <input type="checkbox" class="checkbox__input">
+                        <span class="btn__label faa">&nbsp;</span>
+                    </label>
+                </div>
+                <div class="miniReel__imgBox"
+                    c6-bg-img="{{this.data.collateral.splash}}">
+                    &nbsp;
+                </div>
+                <div class="miniReel__titleBox">
+                    <h1 class="miniReel__title">
+                        {{this.data.title}}
+                    </h1>
+                    <p class="miniReel__metaData">
+                        by <span class="miniReel__author">Hank Pym</span> | 
+                        <span class="miniReel__type">{{ManagerCtrl.modeNameFor(this)}}</span>
+                    </p>
+                </div>
                 <div class="miniReel__status miniReel__status--{{this.status}}">
                     <strong ng-show="this.status === 'active'" class="statusText">
                         Published
@@ -74,18 +116,13 @@
                     <strong ng-show="this.status === 'pending'" class="statusText">
                         Private
                     </strong> 
-                    {{this.lastModified | date:'M/d/yyyy'}}
+                    - {{this.lastModified | date:'M/d/yyyy'}}
                 </div>
+
                 <div class="miniReel__body" ng-click="ManagerCtrl.edit(this)">
-                    <div class="miniReel__imgBox"
-                        c6-bg-img="{{this.data.collateral.splash}}">
-                        &nbsp;
-                    </div>
+                    
                     <div class="miniReel__copy">
-                        <h1 class="miniReel__title">
-                            <span class="miniReel__titleText">{{this.data.title}}</span>
-                            <span class="miniReel__type">{{ManagerCtrl.modeNameFor(this)}}</span>
-                        </h1>
+                        
                     </div>
                 </div>
                 <form class="miniReel__quickActions">
