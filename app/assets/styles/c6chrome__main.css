@@ -392,6 +392,44 @@
 /*  ==========================================================================
     generic form styles
     ========================================================================== */
+    .checkbox--inline {
+        padding:0 0 0 1.25em; margin:0;
+        position: relative;
+    }
+        .checkbox--inline .checkbox__input {
+            position:absolute; left:-1000000em;
+            margin:0; padding:0;
+        }
+        .checkbox--inline .checkbox__label {
+
+        }
+            .checkbox--inline .checkbox__label:before {
+                content:'';
+                position:absolute; top:1px;
+                display:block;
+                width:1em; height:1em;
+                border:1px solid #ddd; margin:0; padding:0;
+                box-sizing:border-box;
+                background:#fff;
+                -webkit-transition: all 0.25s; transition: all 0.25s;
+            }
+            .checkbox--inline .checkbox__label:after {
+                content:'x';
+                position:absolute; top:-4px; left:4px;
+                display: none;
+            }
+                .checkbox--inline .checkbox__input:checked + .checkbox__label:after {
+                    display:block;
+                }
+                .checkbox--inline .checkbox__input:focus + .checkbox__label:before {
+                    border-color:#2398db;
+                }
+
+            .checkbox--inline:hover .checkbox__label:before {
+                background:#eaf7ff;
+                border-color:#bfe7ff;
+            }
+
     .form__group {
         margin:0;
     }
