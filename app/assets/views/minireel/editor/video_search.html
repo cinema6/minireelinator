@@ -1,6 +1,6 @@
 <h2>Search for Videos</h2>
 <form ng-submit="VideoSearchCtrl.search()">
-    <label>Query: <input type="text" ng-model="VideoSearchCtrl.query" /></label>
+    <label>Query: <input type="text" ng-model="VideoSearchCtrl.query.query" /></label>
     <button>Search!</button>
 </form>
 <section ng-if="VideoSearchCtrl.result" c6-alias="VideoSearchCtrl.result as result">

@@ -37,8 +37,12 @@ define(['minireel/video_search'], function(videoSearchModule) {
             });
 
             describe('query', function() {
-                it('should be an empty string', function() {
-                    expect(VideoSearchCtrl.query).toBe('');
+                it('should be an object', function() {
+                    expect(VideoSearchCtrl.query).toEqual({
+                        query: '',
+                        site: null,
+                        hd: null
+                    });
                 });
             });
 
@@ -83,7 +87,7 @@ define(['minireel/video_search'], function(videoSearchModule) {
                         }
                     ]);
 
-                    VideoSearchCtrl.query = 'Find Me Something Awesome!';
+                    VideoSearchCtrl.query.query = 'Find Me Something Awesome!';
 
                     spyOn(VideoSearchService, 'find').and.returnValue($q.when(result));
 
@@ -93,9 +97,7 @@ define(['minireel/video_search'], function(videoSearchModule) {
                 });
 
                 it('should search for the video', function() {
-                    expect(VideoSearchService.find).toHaveBeenCalledWith({
-                        query: VideoSearchCtrl.query
-                    });
+                    expect(VideoSearchService.find).toHaveBeenCalledWith(VideoSearchCtrl.query);
                 });
 
                 it('should resolve to the result', function() {
