@@ -15,11 +15,11 @@
     <ul>
         <li ng-repeat="video in result.videos">
             <h4>{{video.title}}<span ng-if="video.hd"> (HD)</span></h4>
-            <p>Via: <a ng-href="{{video.link}}">{{video.type}}</a></p>
+            <p>Via: <a ng-href="{{video.link}}">{{video.site}}</a></p>
             <a href="" ng-show="VideoSearchCtrl.currentPreview !== video" ng-click="VideoSearchCtrl.preview(video)">
                 <img ng-src="{{video.thumbnail.src}}" />
             </a>
-            <ng-switch on="video.type" ng-if="VideoSearchCtrl.currentPreview === video">
+            <ng-switch on="video.site" ng-if="VideoSearchCtrl.currentPreview === video">
                 <youtube-player ng-switch-when="youtube" videoid="{{video.videoid}}" autoplay style="width: 300px;"></youtube-player>
                 <vimeo-player id="vimeo__{{video.videoid}}" ng-switch-when="vimeo" videoid="{{video.videoid}}" autoplay style="width: 300px;"></vimeo-player>
                 <dailymotion-player id="dailymotion__{{video.videoid}}" ng-switch-when="dailymotion" videoid="{{video.videoid}}" autoplay style="width: 300px;"></dailymotion-player>

@@ -60,7 +60,7 @@ module.exports = function(http) {
                 height: 200
             },
             videoid: video.videoid,
-            type: video.type,
+            site: video.type,
             hd: hd,
             duration: randomNumberBetween(30, 300)
         };
