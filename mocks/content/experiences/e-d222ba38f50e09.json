@@ -1,0 +1,253 @@
+{
+    "uri": "superbowl",
+    "appUriPrefix": "<%= settings.appUrl %>",
+    "appUri": "rumble",
+    "title": "The 10 Greatest Super Bowl Plays Of All Time",
+    "org": "o-e4e8b0f244bafc",
+    "status": "active",
+    "created": "2014-02-08T10:42:51+00:00",
+    "lastModified": "2014-04-01T14:06:36+00:00",
+    "type": "minireel",
+    "sort": "lastUpdated,-1",
+    "data": {
+        "title": "The 10 Greatest Super Bowl Plays Of All Time",
+        "mode": "lightbox",
+        "branding": "elitedaily",
+        "splash": {
+            "source": "specified",
+            "ratio": "6-4",
+            "theme": "img-only"
+        },
+        "deck": [
+            {
+                "id": "rc-080fb573e704cf",
+                "type": "youtube",
+                "title": "John Elway's \"Helicopter\" Scramble Spin",
+                "note": "Before Peyton Manning was breaking passing records out in Denver, it was John Elway who called the shots as the Broncos legendary signal caller from 1983 to 1998.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "All Skill",
+                        "All Luck"
+                    ]
+                },
+                "data": {
+                    "videoid": "WpJaJM4Cy8o",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-7311404ad44b52",
+                "type": "youtube",
+                "title": "Desmond Howard's 100-yard Touchdown Return",
+                "note": "It doesn't feel like too long ago when Desmond Howard was in the NFL returning kicks and scoring touchdowns, as we most remember his signature moment in Super Bowl XXXI when he returned a second-half kickoff return for a touchdown.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "All Skill",
+                        "All Luck"
+                    ]
+                },
+                "data": {
+                    "videoid": "-T1D_H-vOSA",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-df375fb28cc776",
+                "type": "youtube",
+                "title": "Marcus Allen's 74-yard Cutback Touchdown Run",
+                "note": "Marcus Allen put on one of the most impressive Super Bowl performances of all time in 1984 when he ran for 191 yards and two touchdowns.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "All Skill",
+                        "All Luck"
+                    ]
+                },
+                "data": {
+                    "videoid": "oPrm4PpOStA",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-4f9cb78c41dcd9",
+                "type": "youtube",
+                "title": "John Riggins Scores On 4th And 1",
+                "note": "Back when power running was actually a thing in the NFL, Redskins back John Riggins showed us what real football looks like when he bulldozed his way to a 43-yard score on a pivotal 4th and 1 situation.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "All Skill",
+                        "All Luck"
+                    ]
+                },
+                "data": {
+                    "videoid": "u_Hrv5TNb2Y",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-b0f8f58e21f202",
+                "type": "youtube",
+                "title": "Devin Hester's Kickoff Return To Start The Game",
+                "note": "Devin Hester tore the lid off Super Bowl XLI by returning the opening kickoff for a touchdown, putting the Bears up 7-0 over the Colts in just the opening seconds of the game.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "All Skill",
+                        "All Luck"
+                    ]
+                },
+                "data": {
+                    "videoid": "MVT91mNMS8A",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-ca8adce82b632f",
+                "type": "youtube",
+                "title": "Joe Montana's Game-Winning Drive And TD Pass To John Taylor",
+                "note": "During the final drive of Super Bowl XXIII, we saw the best of Joe Montana and the 49ers.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "All Skill",
+                        "All Luck"
+                    ]
+                },
+                "data": {
+                    "videoid": "O-5mLe8n9QI",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-cd2a90ac077d87",
+                "type": "youtube",
+                "title": "Mike Jones Tackles Kevin Dyson At The 1-Yard Line To Save The Game",
+                "note": "After a miraculous scramble and throw on 3rd and 5 with just 22 seconds left to play, McNair set his team up to win it all, when receiver Kevin Dyson got denied by linebacker Mike Jones right at the goal line.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "All Skill",
+                        "All Luck"
+                    ]
+                },
+                "data": {
+                    "videoid": "xKaGdvnQUz4",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-392f3546f0cfc3",
+                "type": "ad",
+                "ad": true,
+                "modules": [],
+                "data": {
+                    "autoplay": true
+                }
+            },
+            {
+                "id": "rc-cd6b62c0bf1025",
+                "type": "youtube",
+                "title": "Santonio Holmes' Game-Winning, Toe-Drag Touchdown",
+                "note": "When healthy, Santonio Holmes is an elite receiver. His Super Bowl XLIII matchup against Larry Fitzgerald was one for the ages, as the two went blow-for-blow with huge performances.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "All Skill",
+                        "All Luck"
+                    ]
+                },
+                "data": {
+                    "videoid": "lmvQVz1-bOU",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-ef6ffe2bab25f5",
+                "type": "youtube",
+                "title": "Eli Manning's Evasion And David Tyree's Impossible Helmet Catch",
+                "note": "Eli Manning's tenacity was just as big a part of this play as David Tyree's unbelievable catch itself. Coming from behind late in the game, the Giants pulled the upset victory over the Patriots thanks to the grit of one of the game's most unlikely heroes.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "All Skill",
+                        "All Luck"
+                    ]
+                },
+                "data": {
+                    "videoid": "27XeNefwABw",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-7c2c6b5040f21b",
+                "type": "youtube",
+                "title": "James Harrison's 100-yard Interception Return For Touchdown",
+                "note": "James Harrison's 100-yard interception return for a touchdown right before the half of Super Bowl XLIII could be the greatest football play of all time.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "All Skill",
+                        "All Luck"
+                    ]
+                },
+                "data": {
+                    "videoid": "RqnQwKAI4OE",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            }
+        ]
+    }
+}

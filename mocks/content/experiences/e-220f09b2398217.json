@@ -1,0 +1,355 @@
+{
+    "uri": "gopro",
+    "appUriPrefix": "<%= settings.appUrl %>",
+    "appUri": "rumble",
+    "title": "The 15 Most Amazing GoPro Videos Ever Recorded",
+    "org": "o-e4e8b0f244bafc",
+    "status": "active",
+    "created": "2014-02-08T10:42:51+00:00",
+    "lastModified": "2014-03-27T14:06:36+00:00",
+    "type": "minireel",
+    "sort": "lastUpdated,-1",
+    "data": {
+        "title": "The 15 Most Amazing GoPro Videos Ever Recorded",
+        "mode": "light",
+        "branding": "elitedaily",
+        "splash": {
+            "source": "specified",
+            "ratio": "6-5",
+            "theme": "img-only"
+        },
+        "deck": [
+            {
+                "id": "rc-22119a8cf9f755",
+                "type": "youtube",
+                "title": "F18 Fighter",
+                "note": "This guy recorded himself in an F18 fighter jet.",
+                "source": "YouTube",
+                "modules": [
+                ],
+                "data": {
+                    "videoid": "IqVPwcvgOWQ",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-337f092e881524",
+                "type": "youtube",
+                "title": "Lions",
+                "note": "If you ever get the chance to hang out with lions, record it.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Cool",
+                        "Boring"
+                    ]
+                },
+                "data": {
+                    "videoid": "MNCzSfv4hX8",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-facb167546a4ff",
+                "type": "youtube",
+                "title": "Vetical Skydive",
+                "note": "Vertical skydiving looks like a breeze, doesn't it?",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Cool",
+                        "Boring"
+                    ]
+                },
+                "data": {
+                    "videoid": "HrqXTHCGVEo",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-4b9dc6b9651428",
+                "type": "youtube",
+                "title": "Canyon Backflip",
+                "note": "Kelly McGarry flips over a 72-foot-long canyon gap.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Cool",
+                        "Boring"
+                    ]
+                },
+                "data": {
+                    "videoid": "x76VEPXYaI0",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-9b524d0c0535db",
+                "type": "youtube",
+                "title": "Afghanistan",
+                "note": "Six months in Afghanistan in a two-minute video.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Cool",
+                        "Boring"
+                    ]
+                },
+                "data": {
+                    "videoid": "af2m0gf6TtA",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-828007b55441ca",
+                "type": "youtube",
+                "title": "Waterski Breakdancing",
+                "note": "Yes, there is such a thing as waterski-breakdancing.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Cool",
+                        "Boring"
+                    ]
+                },
+                "data": {
+                    "videoid": "GdEKSyad_rk",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-4ea854fd34d960",
+                "type": "youtube",
+                "title": "Cat Bike Guy",
+                "note": "This guy rides all around Philly with his cat on his shoulder.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Cool",
+                        "Boring"
+                    ]
+                },
+                "data": {
+                    "videoid": "T8F8WR2rzPA",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-392f3546f0cfc3",
+                "type": "ad",
+                "ad": true,
+                "modules": [],
+                "data": {
+                    "autoplay": true
+                }
+            },
+            {
+                "id": "rc-77d0ea2794cc6b",
+                "type": "youtube",
+                "title": "Avalanche Cliff Jump",
+                "note": "You're going to want to add avalanche cliff jumping to your bucket list.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Cool",
+                        "Boring"
+                    ]
+                },
+                "data": {
+                    "videoid": "SwbP9WLX3fY",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-389f9dea3498d2",
+                "type": "youtube",
+                "title": "Toy Robot in Space",
+                "note": "Who said sending a toy robot to space was impossible?!",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Cool",
+                        "Boring"
+                    ]
+                },
+                "data": {
+                    "videoid": "ZCAnLxRvNNc",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-065050baf27d98",
+                "type": "youtube",
+                "title": "Flash Flood Biker",
+                "note": "Genius biker thinks he can make it through a flood on his motorcycle.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Cool",
+                        "Boring"
+                    ]
+                },
+                "data": {
+                    "videoid": "pOoy7_l2EbI",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-3194c992829ad5",
+                "type": "youtube",
+                "title": "Seagull GoPro Thief!",
+                "note": "Oh, what about the time a seagull stole a GoPro? Insane.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Cool",
+                        "Boring"
+                    ]
+                },
+                "data": {
+                    "videoid": "rIu5B3Fsstg",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-974e99904a58fd",
+                "type": "youtube",
+                "title": "Rattlesnake Attack!",
+                "note": "Want to see what an angry rattlesnake looks like?",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Cool",
+                        "Boring"
+                    ]
+                },
+                "data": {
+                    "videoid": "oEG1V7rkIK8",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-0518f251954d3d",
+                "type": "youtube",
+                "title": "Rope-Swing!",
+                "note": "Rope-swinging from a moving boat sounds like fun.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Cool",
+                        "Boring"
+                    ]
+                },
+                "data": {
+                    "videoid": "zqIjZFV4YAU",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-3502759494071f",
+                "type": "youtube",
+                "title": "Kitten Rescue!",
+                "note": "The world's greatest fireman rescues a kitten.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Cool",
+                        "Boring"
+                    ]
+                },
+                "data": {
+                    "videoid": "CjB_oVeq8Lo",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            },
+            {
+                "id": "rc-3502759494071f",
+                "type": "youtube",
+                "title": "Red Sox Victory!",
+                "note": "Shane Victorino captures the moment the Red Sox won the World Series.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Cool",
+                        "Boring"
+                    ]
+                },
+                "data": {
+                    "videoid": "eesJwsJoczY",
+                    "rel": 0,
+                    "modestbranding": 1
+                }
+            }
+        ]
+    }
+}

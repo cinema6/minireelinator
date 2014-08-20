@@ -1,0 +1,101 @@
+{
+    "uri": "mini-reel-maker",
+    "title": "Minireelinator",
+    "appUriPrefix": "<%= settings.appUrl %>",
+    "appUri": "mini-reel-maker",
+    "data": {
+        "c6EmbedSrc": "//lib.cinema6.com/c6embed/v0.7.0-0-g495dfa0/c6embed.min.js",
+        "modes": [
+            {
+                "name": "View in a lightbox",
+                "value": "lightbox",
+                "description": "When triggered, this MiniReel will open a lightbox on top of the web page.",
+                "modes": [
+                    {
+                        "name": "Lightbox, without Companion Ad",
+                        "value": "lightbox",
+                        "description": "Simple video and text MiniReel. No character limits, the content space will scroll as needed.",
+                        "limits": {},
+                        "autoplayable": true
+                    },
+                    {
+                        "name": "Lightbox, with Companion Ad",
+                        "disabled": false,
+                        "value": "lightbox-ads",
+                        "description": "A 300x250 ad will be displayed on every slide. No character limits, the content space will scroll as needed.",
+                        "limits": {},
+                        "autoplayable": true
+                    }
+                ]
+            },
+            {
+                "name": "View within the web page",
+                "value": "inline",
+                "description": "When triggered, this MiniReel will display itself in the allotted content space of your website.",
+                "modes": [
+                    {
+                        "name": "Embedded",
+                        "value": "light",
+                        "description": "Recommended for content that is light on text. We suggest limiting copy to 200-300 characters, but the content area will scroll to allow for longer text.",
+                        "limits": {},
+                        "autoplayable": true
+                    },
+                    {
+                        "name": "Embedded, Heavy Text",
+                        "value": "full",
+                        "description": "Provides more room for editorial content. Copy is limited to approximately 420 characters.",
+                        "limits": {
+                            "copy": 420
+                        },
+                        "autoplayable": false,
+                        "deprecated": true
+                    }
+                ]
+            }
+        ],
+        "videoAdSources": [
+            {
+                "name": "Cinema6 Ad Server Only",
+                "value": "cinema6",
+                "description": "Only call the Cinema6 ad server"
+            },
+            {
+                "name": "Cinema6 with Publisher Fallback",
+                "value": "cinema6-publisher",
+                "description": "Try calling Cinema6 ad server first, but fall back to publisher ad tag"
+            },
+            {
+                "name": "Publisher Only",
+                "value": "publisher",
+                "description": "Only call the Publisher's provided ad tag"
+            },
+            {
+                "name": "Publisher with Cinema6 Fallback",
+                "value": "publisher-cinema6",
+                "description": "Try calling Publisher ad tag first, but fall back to Cinema6 ad server"
+            }
+        ],
+        "displayAdSources": [
+            {
+                "name": "Cinema6 Only",
+                "value": "cinema6",
+                "description": "Only call the Cinema6 ad server"
+            },
+            {
+                "name": "Cinema6 with Publisher Fallback",
+                "value": "cinema6-publisher",
+                "description": "Try calling Cinema6 ad server first, but fall back to publisher ad tag"
+            },
+            {
+                "name": "Publisher Only",
+                "value": "publisher",
+                "description": "Only call the Publisher's provided ad tag"
+            },
+            {
+                "name": "Publisher with Cinema6 Fallback",
+                "value": "publisher-cinema6",
+                "description": "Try calling Publisher ad tag first, but fall back to Cinema6 ad server"
+            }
+        ]
+    }
+}

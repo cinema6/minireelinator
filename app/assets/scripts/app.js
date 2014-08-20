@@ -310,11 +310,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         }])
 
         .config(['cinema6Provider','ContentAdapter','CWRXAdapter',
-                 'VoteAdapter','OrgAdapter','UserAdapter','c6Defines',
+                 'VoteAdapter','OrgAdapter','UserAdapter',
         function( cinema6Provider , ContentAdapter , CWRXAdapter ,
-                  VoteAdapter , OrgAdapter , UserAdapter , c6Defines ) {
-            var FixtureAdapter = cinema6Provider.adapters.fixture;
-
+                  VoteAdapter , OrgAdapter , UserAdapter ) {
             ContentAdapter.config = {
                 apiBase: '/api'
             };
@@ -335,11 +333,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 user: UserAdapter
             };
 
-            FixtureAdapter.config = {
-                jsonSrc: 'mock/fixtures.json'
-            };
-
-            cinema6Provider.useAdapter(c6Defines.kLocal ? FixtureAdapter : CWRXAdapter);
+            cinema6Provider.useAdapter(CWRXAdapter);
         }])
 
         .service('SettingsService', ['c6LocalStorage','$rootScope','c6Debounce',
