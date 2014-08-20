@@ -97,15 +97,6 @@
         background-position:0 -2.8125em; display:block;
         width:1.5em; height:1.5em;
     }
-    .ui__iconHolder18 {
-        width:1.125rem; height:1.125rem;
-        display:inline-block; 
-        vertical-align: middle;
-    }
-        .ui__icon {
-            -webkit-transition:fill 0.25s; transition:fill 0.25s;
-            fill:#626262;
-        }
     .ui__viewHolder--extend {
         min-height:80%;
     }
@@ -164,147 +155,19 @@
         }
         
 
-/*  ==========================================================================
-    masthead navigation
-    ========================================================================== */
-    .mast__group {
-        min-height:2.8125em;
-        background:#eee; color:#626262;
-        border-bottom:1px solid #dddddd;
-    }
-        .mast__group a:hover {
-            border:0;
-        }
-        .mainNav__list {
-            margin:0; padding:0; list-style: none;
-        }
-            .mainNav__item {
-                padding:0; margin:0; float:left;
-                border-right:1px solid #ddd;
-                position:relative;
-            }
-                .mainNav__item--user {
-                    float:right;
-                    border-left:1px solid #ddd; border-right:0;
-                }
-                .mainNav__item:last-child {
-                    border:0;
-                }
-            .mainNav__link {
-                color:#626262; 
-                padding:1.0625em 1.5em 0 1.5em;
-                min-height:3.75em; 
-                display:inline-block; box-sizing:border-box;
-                vertical-align: middle;
-                -webkit-transition:background 0.25s; transition:background 0.25s;
-            }
-                .mainNav__label {
-                    display:inline-block; 
-                    vertical-align: middle;
-                    font-size:0.875em;
-                    margin:0 0 0 0.2857em;
-                }
-                .mainNav__profileHolder {
-                    width:2.25em; height:2.25em; 
-                    display: inline-block;
-                    vertical-align: middle;
-                    background:url('../img/default_square.jpg') 50% 50% / cover no-repeat;
-                }
-                /* active states */
-                .mainNav__link--active {
-                    background:#fff;
-                }
-                    .mainNav__link--active:after {
-                        content:'';
-                        position:absolute;
-                        height:1px;
-                        background:#fff;
-                        bottom:-1px; left:0; right:0;
-                    }
-                /* hovers */
-                .mainNav__link:hover .ui__icon {
-                    fill:#4a9cd1;
-                }
-                .mainNav__link:hover .mainNav__label {
-                    color:#4a9cd1;
-                }
-                .mainNav__link:hover {
-                    background:#fff;
-                }
 
-            .mainNav__link--userInfo {
-                padding:0.75em 1.5em;
-            }
-                .mainNav__link--userInfo .mainNav__label {
-                    margin:0 0.2857em 0 0;
-                }
-            .mainNav__link--userSettings .ui__iconHolder18 {
-                -webkit-transition: all 0.25s; transition: all 0.25s;
-            }
-                .mainNav__link--userSettings:hover .ui__iconHolder18 {
-                    transform:rotate(90deg);
-                    -ms-transform:rotate(90deg); /* IE 9 */
-                    -webkit-transform:rotate(90deg); /* Opera, Chrome, and Safari */
-                }
-            .mainNav .c6Brand {
-                margin:0.5em 1.5em; padding:0;
-            }
-            .userNav__child {
-                display: none;
-                position:absolute; right:0; top:100%; z-index:100;
-                border:1px solid #ddd; border-bottom:0;
-            }
-                .mainNav__item--userSettings:hover .userNav__child {
-                    display:block;
-                }
-                .userNav__item {
-                    border-bottom:1px solid #ddd; 
-                }
-                .userNav__link {
-                    background:#fff; color:#646464;
-                    display: block;
-                    margin:0; padding:1em 0; border:0;
-                    -webkit-transition: all 0.25s; transition: all 0.25s;
-                    width:12em;
-                    font-size:0.875em; line-height:1;
-                    cursor:pointer;
-                    text-align: center; font-weight:300;
-                    -webkit-box-sizing: content-box;
-                    -moz-box-sizing: content-box;
-                    box-sizing: content-box;
-                }
-                    .userNav__link:hover {
-                        background:#eaf7ff;
-                        border:0;
-                        color:#2398db;
-                    }
-        
-
-    .mast__group--previewMode .mainNav,
-    .mast__group--previewMode .mainNav__c6BrandItem {
-        float:none;
-    }
-    .mast__group--previewMode .mainNav__c6BrandItem {
-        padding:0.4375em 0 0 0;
-    }
-    .mast__group--previewMode .c6__brand {
-        margin:0 auto;
-    }
-    .mast__group--previewMode .mast__title {
-        position:static; margin:0.75em 0;
-    }
 
 
 /*  ==========================================================================
     generic page styles
     ========================================================================== */
-    .c6__brand, .c6Brand {
+    .c6__brand {
         width:11.5em; height:2.75em; display: block;
         font-size:1em;
         background-position:0 0;
         border:0; padding:0;
     }
-        .c6__brand--dark, .c6Brand--dark {
+        .c6__brand--dark {
             background-position: -11.5625em 0
         }
     .bg--light {
@@ -408,7 +271,137 @@
     }
 
 
+/*  ==========================================================================
+    masthead navigation
+    ========================================================================== */
+    .mast__group {
+        min-height:3.75em;
+        background:#eeeeee; color:#626262;
+        border-bottom:1px solid #dddddd;
+    }
+        .mainNav {
+            float:left;
+        }
+        .mainNav__list {
+            margin:0; padding:0; list-style: none;
+        }
+            .mainNav__item {
+                padding:1.5em 0 0 0; margin:0 2em 0 0; float:left;
+            }
+            .mainNav__link {
+                color:#fff;
+            }
+            
+            .mainNav__c6BrandItem {
+                padding:0.4375em 0 0 0; margin-right:3em;
+            }
+        .mast__titleBox {
+            position: relative;
+        }
+            .mast__title {
+                font-size:1em; font-weight:300; text-align: center;
+                width:100%;
+                position:absolute;
+                margin:1.1875em 0 0 0;
+            }
+    @media screen and (max-width:42em) {
+        .mast__group {
+            min-height:4.5em;
+        }
+        .mast__title {
+            margin:0.4375em 0 0 0;
+        }
+        .mainNav__c6BrandItem {
+            padding:1.1875em 0 0 0;
+        }
+    }
 
+    .mast__group--previewMode .mainNav,
+    .mast__group--previewMode .mainNav__c6BrandItem {
+        float:none;
+    }
+    .mast__group--previewMode .mainNav__c6BrandItem {
+        padding:0.4375em 0 0 0;
+    }
+    .mast__group--previewMode .c6__brand {
+        margin:0 auto;
+    }
+    .mast__group--previewMode .mast__title {
+        position:static; margin:0.75em 0;
+    }
+
+/*  ==========================================================================
+    userPane__group
+    ========================================================================== */
+    .userPane__group {
+        display: block;
+        float:right;
+        position: relative; z-index:5;
+    }
+        .userPane__display {
+            float:left; margin:1.1875em 0 0 0;
+        }
+        .userPane__avatar {
+            float:left; margin:0.875em 0;
+            width:2.75em; height:2.75em;
+            background:#000 url('../img/default_square.jpg') center center / cover no-repeat;
+        }
+        .userPane__settings {
+            margin:0;
+            cursor:pointer;
+            -webkit-transition: all 0.5s; transition: all 0.5s;
+        }
+
+    /*  user navigation styles
+        ========================================================================== */
+        .userNav__group {
+            float:left; position:relative;
+            margin:1.125em 0 0; padding:0 0 0.5em 0.75em;
+        }
+            .userNav__group:hover .userPane__settings {
+                transform:rotate(90deg);
+                -ms-transform:rotate(90deg); /* IE 9 */
+                -webkit-transform:rotate(90deg); /* Opera, Chrome, and Safari */
+            }
+            .userNav__group:hover .userNav__child {
+                display:block;
+            }
+            .userNav__child {
+                display:none;
+                position:absolute; right:0; top:100%; z-index:100;
+                
+                -webkit-box-shadow: 3px 3px 5px 0 rgba(0,0,0,0.5);
+                box-shadow: 3px 3px 5px 0 rgba(0,0,0,0.5);
+            }
+                .userNav__item {
+                    border-bottom:1px solid #ccc; 
+                }
+                .userNav__btn {
+                    background:white;
+                    display: block;
+                    margin:0; padding:0.75rem 0.5rem; border:0;
+                    -webkit-transition: all 0.5s; transition: all 0.5s;
+                    width:9rem;
+                    font-size:0.875rem; line-height:1; color:#646464;
+                    cursor:pointer;
+                    text-align: center; font-weight:300;
+                    -webkit-box-sizing: content-box;
+                    -moz-box-sizing: content-box;
+                    box-sizing: content-box;
+                }
+                    .userNav__btn:hover {
+                        background:#eff9ff;
+                        border:0;
+                        color:#13a2ff;
+                    }
+        @media screen and (max-width:42em) {
+            .userPane__display {
+                margin:1.9375em 0 0 0;
+            }
+            .userNav__group {
+                margin:1.875em 0 0 0;
+            }
+        }
 
 /*  ==========================================================================
     login styles
