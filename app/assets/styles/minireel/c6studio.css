@@ -7,6 +7,17 @@
     .selectorActions__group {
         float:left;
     }
+        .selectorActions__selector {
+            display: inline-block;
+        }
+            .selectorActions__selectorCheckBox {
+                position:absolute;
+                margin:0.125em 0 0 0;
+                padding:0;
+            }
+            .selectorActions__selector .ui__clickDrop {
+                padding-left:2.5em;
+            }
     .pager__group {
         float:right;
     }
@@ -22,10 +33,18 @@
 /*  ==========================================================================
     .miniReel__group
     ========================================================================== */
+    .miniReels__item {
+        border-bottom:1px solid #ddd;
+    }
+        .miniReels__item:last-child {
+            border-bottom:0;
+        }
+            .miniReels__item:last-child .miniReel__group {
+                padding-bottom:0.75em;
+            }
     .miniReel__group {
         padding:0.75em 0 0.6875em;
-        position: relative;
-        border-bottom:1px solid #ddd;
+        position: relative;   
         min-height:3em;
     }
         .miniReel__selector { 
@@ -59,16 +78,16 @@
                 }
             .miniReel__metaData {
                 color:#929292; 
-                font-size:0.75em; line-height: 1;
+                font-size:0.8125em; line-height: 1;
                 margin:0.125rem 0 0 0; 
             }
                 .miniReel__metaData span {
                     color:#626262;
                 }
         .miniReel__status {
-            font-size:0.75em;
+            font-size:0.8125em;
             color:#929292;
-            margin:0.3125rem 0.75rem 0 0;
+            margin:0.25rem 0.75rem 0 0;
             float:left; width:14.8%;
         }
             .miniReel__statusText--active {
@@ -82,11 +101,11 @@
             }
             .miniReel__count {
                 line-height: 1;
-                margin:0.1875rem 0 0 0; 
+                margin:0.125rem 0 0 0; 
             }
         .miniReel__stats {
             margin:0.5rem 0 0 0;
-            font-size:0.75em;
+            font-size:0.8125em;
             width:12.76%;
             float:left;
         }

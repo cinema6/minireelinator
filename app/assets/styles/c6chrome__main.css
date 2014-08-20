@@ -353,6 +353,36 @@
                     background:#626262; color:#fff;
                     border-color:#333;
                 }
+
+    /*  menu: clickDrop  */
+        .ui__clickDrop:focus {
+            pointer-events: none;
+        }
+        .ui__clickDropMenu {
+            display:none;
+            position:absolute; z-index: 1;
+            background:#fff;
+            border:2px solid #ddd;
+        }
+            .ui__clickDrop:focus + .ui__clickDropMenu {
+                display: block;
+                pointer-events: auto;
+            }
+            .ui__clickDropBtn {
+                display: block;
+                border:0; margin:0; padding:0.5rem 1rem;
+                font-size:0.8125em;
+                background:none;
+                width:10em;
+                text-align: left;
+            }
+                .ui__clickDropBtn:hover {
+                    background:#2398db;
+                    color:#fff;
+                }
+                .ui__clickDropBtn--current {
+                    background:#ddd;
+                }
                 
 
 /*  ==========================================================================
@@ -378,6 +408,17 @@
         margin:0; padding:0 0 0.625em 0;
         border-bottom:2px solid #626262;
     }
+    .tableFooter__group {
+        border-top:2px solid #626262;
+        margin:0; padding:0.625em 0 0 0;
+    }
+        .tableFooter__displayText {
+            margin:0.5rem 0 0 0;
+            color:#929292; font-size:0.875em;
+        }
+            .tableFooter__displayText strong {
+                color:#626262;
+            }
         
 
 /*  ==========================================================================
@@ -474,7 +515,7 @@
         position: relative;
         width:1em; height:1em;
     }
-        .checkbox--inline .checkbox__input {
+        .checkbox__input {
             position:absolute; left:-1000000em;
             margin:0; padding:0;
         }
@@ -824,5 +865,7 @@
     ========================================================================== */
     .footer__group {
         padding:1.1667em 0 1.08333em 0;
+        margin:5em 0 0 0;
         color:#949494; text-align: center;
+        font-size:0.75em;
     }
