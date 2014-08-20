@@ -1,6 +1,14 @@
 <h2>Search for Videos</h2>
 <form ng-submit="VideoSearchCtrl.search()">
     <label>Query: <input type="text" ng-model="VideoSearchCtrl.query.query" /></label>
+    <label>
+        Site: 
+        <select ng-options="(site ? site.toLowerCase() : site) as (site || 'All') for site in [undefined, 'YouTube', 'Vimeo', 'Dailymotion']" ng-model="VideoSearchCtrl.query.site"></select>
+    </label>
+    <label>
+        HD: 
+        <select ng-options="label for (label, value) in { 'Both': undefined, 'Only HD': true, 'Only SD': false }" ng-model="VideoSearchCtrl.query.hd"></select>
+    </label>
     <button>Search!</button>
 </form>
 <section ng-if="VideoSearchCtrl.result" c6-alias="VideoSearchCtrl.result as result">

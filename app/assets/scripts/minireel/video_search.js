@@ -25,8 +25,8 @@ function( angular , c6State  , services          , c6Defines  ) {
 
             this.query = {
                 query: '',
-                site: null,
-                hd: null
+                site: undefined,
+                hd: undefined
             };
             this.result = null;
 
