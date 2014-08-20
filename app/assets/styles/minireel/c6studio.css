@@ -23,8 +23,10 @@
     .miniReel__group
     ========================================================================== */
     .miniReel__group {
-        padding:0.75em 0;
+        padding:0.75em 0 0.6875em;
         position: relative;
+        border-bottom:1px solid #ddd;
+        min-height:3em;
     }
         .miniReel__selector { 
             position: absolute;
@@ -35,17 +37,26 @@
         .miniReel__imgBox {
             position: absolute; left:3.75em;
             width:3.75em; height:3em;
-            background:50% 50% / cover no-repeat;
+            background:url('../../img/default_square.jpg') 50% 50% / cover no-repeat;
             margin:0 0.75em 0 0;
         }
+            .miniReel__img {
+                width:100%; height:100%;
+                background:50% 50% / cover no-repeat;
+                cursor:pointer;
+            }
         .miniReel__titleBox {
             float:left;
             margin:0 1.5em 0 8.25em;
-            width:28.7%;
+            width:36%;
         }
             .miniReel__title {
                 margin:0.1875rem 0 0 0; font-size:0.875em;
+                cursor:pointer;
             }
+                .miniReel__title:hover {
+                    color:#2398db;
+                }
             .miniReel__metaData {
                 color:#929292; 
                 font-size:0.75em; line-height: 1;
@@ -57,7 +68,8 @@
         .miniReel__status {
             font-size:0.75em;
             color:#929292;
-            margin-top:0.3125rem;
+            margin:0.3125rem 0.75rem 0 0;
+            float:left; width:14.8%;
         }
             .miniReel__statusText--active {
                 color:#3dc667;
@@ -70,8 +82,40 @@
             }
             .miniReel__count {
                 line-height: 1;
-                margin:0.125rem 0 0 0; 
+                margin:0.1875rem 0 0 0; 
             }
+        .miniReel__stats {
+            margin:0.5rem 0 0 0;
+            font-size:0.75em;
+            width:12.76%;
+            float:left;
+        }
+            .miniReel__views {
+                line-height: 1;
+                margin:0;
+            }
+        .miniReel__quickActions {
+            float:right;
+            margin:0 0.75em 0 0;
+        }
+            .miniReel__quickActions .quickActions__holder {
+                float:left;
+                display:block;
+                width:2.25em; height:2.25em;
+                margin:0 0 0 0.375em;
+            }
+            .quickActions__btn {
+                margin:0; padding:0;
+                border:0;
+                display:block;
+                width:2.25em; height:2.25em;
+                background:none;
+                line-height: 1;
+                -webkit-transition:all 0.25s; transition:all 0.25s;
+            }
+                .quickActions__btn:hover .ui__icon {
+                    fill:#2398db;
+                }
 
 
 /*  ==========================================================================

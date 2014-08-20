@@ -490,7 +490,7 @@
         }
         .checkbox--inline .btn__label:after {
             content:'\f00c';
-            position:absolute; top:0.625rem; left:1.5625rem;
+            position:absolute; top:0.5625rem; left:1.5625rem;
             display: none;
         }
             .checkbox--inline .checkbox__input:checked + .btn__label:after {
