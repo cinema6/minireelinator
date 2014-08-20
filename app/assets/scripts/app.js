@@ -500,6 +500,14 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             });
         }])
 
-        .controller('AppController', [function() {}]);
+        .controller('AppController', ['c6State','$rootScope',
+        function                     ( c6State , $rootScope ) {
+            // TODO: Delete all of this when the styles are fixed!
+            Object.defineProperty($rootScope, 'useNewStyles', {
+                get: function() {
+                    return c6State.isActive(c6State.get('MR:Manager'));
+                }
+            });
+        }]);
 
 });
