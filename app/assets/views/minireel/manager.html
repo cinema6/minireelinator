@@ -15,19 +15,19 @@
         <li class="tabFilters__item">
             <button ng-click="ManagerCtrl.filter = 'all'" ng-class="{'filters__btn--active': ManagerCtrl.filter === 'all'}" class="filters__btn" type="button" title="Show All">
                 <span class="btn__label">All MiniReels</span>
-                <span class="filters__counter">100</span>
+                <!--<span class="filters__counter">100</span>-->
             </button>
         </li>
         <li class="tabFilters__item">
             <button ng-click="ManagerCtrl.filter = 'active'" ng-class="{'filters__btn--active': ManagerCtrl.filter === 'active'}" class="filters__btn" type="button" title="Published">
                 <span class="btn__label">Published MiniReels</span>
-                <span class="filters__counter">100</span>
+                <!--<span class="filters__counter">100</span>-->
             </button>
         </li>
         <li class="tabFilters__item">
             <button ng-click="ManagerCtrl.filter = 'pending'" ng-class="{'filters__btn--active': ManagerCtrl.filter === 'pending'}" class="filters__btn" type="button" title="Private">
                 <span class="btn__label">Private MiniReels</span>
-                <span class="filters__counter">100</span>
+                <!--<span class="filters__counter">100</span>-->
             </button>
         </li>
     </ul>
@@ -131,11 +131,11 @@
                             Private
                         </strong> 
                         - <span class="miniReel__date">{{this.lastModified | date:'M/d/yyyy'}}</span>
-                        <p class="miniReel__count">5 slides</p>
+                        <p class="miniReel__count">{{this.data.deck.length}} slides</p>
                     </div>
-                    <div class="miniReel__stats">
+                    <!--<div class="miniReel__stats">
                         <p class="miniReel__views">12123123 views</p>
-                    </div>
+                    </div>-->
 
 
 
