@@ -26,6 +26,7 @@
                             '/api/search': 'mocks/search/main.js',
                             '/api/auth': 'mocks/auth/main.js',
                             '/api/account/org': 'mocks/org/main.js',
+                            '/api/account/user': 'mocks/user/main.js',
                             '/api/content': 'mocks/content/main.js'
                         }),
                         require('grunt-connect-proxy/lib/utils').proxyRequest,
