@@ -1,31 +1,29 @@
-<div class="modal__content modal__editor-slide clearfix">
+<div class="modalBody__group mrConfigure__mode">
     <ul class="wizard__group">
         <li ng-repeat="$this in NewCtrl.modes" 
-            class="wizard__choice wizard__choice--small"
+            class="wizard__choice"
             ng-class="{'wizard__choice--disabled': $this.disabled}">
-            <div class="wizard__disabler" ng-if="$this.disabled">
-                <h3 class="disabler__title">Coming Soon</h3>
-            </div>
-            <input id="mode-{{$this.value}}" type="radio" 
-                ng-disabled="$this.disabled"
-                name="minireel-mode" ng-value="$this"
-                class="modal__radioBtn" ng-model="NewCtrl.mode"/>
-            <label class="wizard__hitarea" for="mode-{{$this.value}}"><span class="ir">{{$this.name}}</span></label>
-            <div class="wizard__diagram sprite--fff diagram__{{$this.value}}">&nbsp;</div>
-            <div class="wizard__copy">
-                <h2 class="wizard__title">{{$this.name}} <span class="typo--context">*</span></h2>
-                <p class="wizard__p">{{$this.description}}</p>
-            </div>
+            <label class="radiobox radiobox--large wizard__hitarea" for="mode-{{$this.value}}">
+                <input id="mode-{{$this.value}}" type="radio" 
+                    ng-disabled="$this.disabled"
+                    name="minireel-mode" ng-value="$this"
+                    class="radiobox__input" ng-model="NewCtrl.mode"/>
+                <span class="btn__label faa fab">&nbsp;</span>
+                <span class="wizard__diagram c6studioSprite--fff diagram__{{$this.value}}">&nbsp;</span>
+                <span class="wizard__copy">
+                    <span class="wizard__title">{{$this.name}}</span>
+                    <span class="wizard__description">{{$this.description}}</span>
+                </span>
+            </label>
         </li>
     </ul>
 </div>
-<div class="modal__fineprint typo--context">
-    ! Making changes on this tab may affect settings on other tabs. <br>
-    * These changes affect desktop experiences only.
-</div>
-<footer class="modal__btnFooter">
-    <button ng-show="NewCtrl.currentTab !== NewCtrl.tabs[0]" ng-click="NewCtrl.prevTab()" class="modal__btn modal__btn--first" title="Previous Step">Prev Step</button>
-    <button ng-show="NewCtrl.currentTab === NewCtrl.tabs[0]" class="modal__btn modal__btn--first toolbar__delete" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
-    <button ng-click="NewCtrl.nextTab()" class="modal__btn modal__btn--last" type="button" title="Next Step">Next Step</button>
-    <div class="guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</div>
+<p class="modalBody__fineprint typo--warning">
+    <strong>!</strong> These changes affect desktop experiences only.
+</p>
+<footer class="modalFooter__group">
+    <button ng-show="NewCtrl.currentTab !== NewCtrl.tabs[0]" ng-click="NewCtrl.prevTab()" class="btnAction btnAction--first" title="Previous Step">Prev Step</button>
+    <button ng-show="NewCtrl.currentTab === NewCtrl.tabs[0]" class="btnAction btnAction--first" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
+    <button ng-click="NewCtrl.nextTab()" class="btnAction btnAction--primary btnAction--last" type="button" title="Next Step">Next Step</button>
+    <p class="modalFooter__guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</p>
 </footer>
