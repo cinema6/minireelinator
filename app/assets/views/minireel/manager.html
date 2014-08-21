@@ -1,4 +1,4 @@
-<main c6-alias="ManagerCtrl.model as minireels">
+<main c6-alias="ManagerCtrl.model.value as minireels">
 <header class="pageHeader container">
     <div class="pageHeader__titleBar clearfix">
         <h1 class="pageTitle">Studio</h1>
@@ -94,7 +94,7 @@
     </header>
 
     <div class="tableBody__group">
-        <ul class="miniReels__list grid">
+        <ul class="miniReels__list grid" ng-if="minireels">
             <li class="miniReels__item grid__item" ng-show="!minireels.length">
                 <article class="miniReel__group miniReelCreator" c6-sref="MR:New.General">
                     <div class="miniReel__body">

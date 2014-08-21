@@ -19,8 +19,8 @@ function( angular , c6ui , c6State  , services          ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Manager', ['cinema6','c6State',
-            function                            ( cinema6 , c6State ) {
+            c6StateProvider.state('MR:Manager', ['cinema6','c6State','scopePromise',
+            function                            ( cinema6 , c6State , scopePromise ) {
                 this.controller = 'ManagerController';
                 this.controllerAs = 'ManagerCtrl';
                 this.templateUrl = 'views/minireel/manager.html';
@@ -31,14 +31,19 @@ function( angular , c6ui , c6State  , services          ) {
                     filter: '='
                 };
 
-                this.model = function() {
+                this.modelWithFilter = function(filter) {
                     var org = c6State.get('Portal').cModel.org;
 
-                    return cinema6.db.findAll('experience', {
+                    return scopePromise(cinema6.db.findAll('experience', {
                         type: 'minireel',
                         org: org.id,
-                        sort: 'lastUpdated,-1'
-                    });
+                        sort: 'lastUpdated,-1',
+                        status: (filter === 'all') ? null : filter
+                    }));
+                };
+
+                this.model = function() {
+                    return this.modelWithFilter(this.filter);
                 };
             }]);
         }])
