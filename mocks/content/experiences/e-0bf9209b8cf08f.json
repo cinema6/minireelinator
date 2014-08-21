@@ -3,6 +3,7 @@
     "appUriPrefix": "<%= settings.appUrl %>",
     "appUri": "rumble",
     "title": "The 7 Most Legendary Pro Wrestling Intros Of All Time",
+    "user": "u-9c2832ae79833a",
     "org": "o-e4e8b0f244bafc",
     "status": "pending",
     "created": "2014-02-08T10:42:51+00:00",

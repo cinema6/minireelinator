@@ -1,6 +1,7 @@
 {
     "uri": "mini-reel-maker",
     "title": "Minireelinator",
+    "user": "u-0a3bfb41bd3564",
     "appUriPrefix": "<%= settings.appUrl %>",
     "appUri": "mini-reel-maker",
     "data": {

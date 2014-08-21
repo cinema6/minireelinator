@@ -3,6 +3,7 @@
     "appUriPrefix": "<%= settings.appUrl %>",
     "appUri": "rumble",
     "title": "The 15 Most Amazing GoPro Videos Ever Recorded",
+    "user": "u-9c2832ae79833a",
     "org": "o-e4e8b0f244bafc",
     "status": "active",
     "created": "2014-02-08T10:42:51+00:00",
