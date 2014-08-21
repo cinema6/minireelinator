@@ -4,61 +4,14 @@ module.exports = function(http) {
     var grunt = require('grunt'),
         path = require('path');
 
-    var genId = require('../../tasks/resources/helpers').genId;
-
-    function extend() {
-        return Array.prototype.slice.call(arguments)
-            .reduce(function(extension, object) {
-                return Object.keys(object)
-                    .reduce(function(extension, key) {
-                        extension[key] = object[key];
-
-                        return extension;
-                    }, extension);
-            }, {});
-    }
-
-    function withDefaults(object, defaults) {
-        return Object.keys(defaults).concat(Object.keys(object))
-            .filter(function(key, index, keys) {
-                return keys.indexOf(key) === index;
-            })
-            .reduce(function(result, key) {
-                if (!object.hasOwnProperty(key)) {
-                    result[key] = defaults[key];
-                } else {
-                    result[key] = object[key];
-                }
-
-                return result;
-            }, {});
-    }
-
-    function pluckExcept(object, keys) {
-        return Object.keys(object)
-            .reduce(function(result, key) {
-                if (keys.indexOf(key) < 0) {
-                    result[key] = object[key];
-                }
-
-                return result;
-            }, {});
-    }
-
-    function pluck(object, keys) {
-        return Object.keys(object)
-            .reduce(function(result, key) {
-                if (keys.indexOf(key) > -1) {
-                    result[key] = object[key];
-                }
-
-                return result;
-            }, {});
-    }
-
-    function idFromPath(path) {
-        return path.match(/[^\/]+$/)[0];
-    }
+    var genId = require('../../tasks/resources/helpers').genId,
+        fn = require('../utils/fn'),
+        db = require('../utils/db'),
+        idFromPath = db.idFromPath,
+        extend = fn.extend,
+        pluck = fn.pluck,
+        pluckExcept = fn.pluckExcept,
+        withDefaults = fn.withDefaults;
 
     function experiencePath(id) {
         return path.resolve(__dirname, './experiences/' + id + '.json');
