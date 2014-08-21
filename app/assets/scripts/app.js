@@ -112,12 +112,12 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     .then(decorateAllUsersWithOrgs);
             };*/
 
-            /*this.find = function(type, id) {
+            this.find = function(type, id) {
                 return $http.get(config.apiBase + '/account/user/' + id)
                     .then(returnData)
                     .then(this.decorateWithOrg)
                     .then(arrayify);
-            };*/
+            };
 
             /*this.findQuery = function(type, query) {
                 function returnData(response) {
@@ -158,7 +158,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     .then(arrayify);
             };
 
-            ['findAll', 'find', 'findQuery', 'create', 'erase'].forEach(function(method) {
+            ['findAll', 'findQuery', 'create', 'erase'].forEach(function(method) {
                 this[method] = function() {
                     return $q.reject('UserAdapter.' + method + '() method is not implemented.');
                 };
