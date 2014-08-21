@@ -119,7 +119,7 @@
                             {{this.data.title}}
                         </h1>
                         <p class="miniReel__metaData">
-                            by <span class="miniReel__author">Hank Pym</span> | 
+                            by <span class="miniReel__author" c6-alias="this.user as author">{{author.firstName}} {{author.lastName}}</span> | 
                             <span class="miniReel__type">{{ManagerCtrl.modeNameFor(this)}}</span>
                         </p>
                     </div>
