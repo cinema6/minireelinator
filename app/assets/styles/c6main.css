@@ -453,8 +453,11 @@
     }
     .modalBody__group {
         position:absolute; 
-        left:13.5em; right:1.5em; top:3em; bottom:3.75em;
+        left:1.5em; right:1.5em; top:3em; bottom:3.75em;
     }
+        .modalBody__group--sideTabs {
+            left:13.5em;
+        }
         .modalBody__fineprint {
             position: absolute;
             bottom:4.5rem; left:13.5rem;

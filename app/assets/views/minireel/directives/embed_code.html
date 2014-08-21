@@ -12,6 +12,13 @@
         <div class="mr-splashBlocker">&nbsp;</div>
     </div>
 </div>
+<div ng-if="Ctrl.readOnly" class="embedPreview__group embedPreview__group--small">
+    <h3 class="embed__label">Embed Preview:</h3>
+    <div class="embedPreview">
+        <div class="mr-splash__group" splash-page="minireel" splash-src="{{splashSrc}}"></div>
+        <div class="mr-splashBlocker">&nbsp;</div>
+    </div>
+</div>
 <div class="embedCode__group">
     <label class="embed__label" for="embed-size">Embed Code Size:</label>
     <select ng-model="Ctrl.mode" ng-options="mode.value as mode.name for mode in Ctrl.modes" class="embed__selector" name="embed-size" id="embed-size"></select>
