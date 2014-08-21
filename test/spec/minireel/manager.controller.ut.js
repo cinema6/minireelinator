@@ -8,6 +8,7 @@
                 $controller,
                 $q,
                 c6State,
+                scopePromise,
                 EditorService,
                 ConfirmDialogService,
                 MiniReelService,
@@ -18,8 +19,6 @@
                 model;
 
             beforeEach(function() {
-                model = [];
-
                 module(appModule.name);
                 module(managerModule.name);
 
@@ -27,6 +26,7 @@
                     $rootScope = $injector.get('$rootScope');
                     $controller = $injector.get('$controller');
                     $q = $injector.get('$q');
+                    scopePromise = $injector.get('scopePromise');
                     EditorService = $injector.get('EditorService');
 
 
@@ -38,6 +38,8 @@
 
                     manager = c6State.get('MR:Manager');
                     manager.filter = 'foo';
+
+                    model = scopePromise($q.defer().promise, []);
 
                     $scope = $rootScope.$new();
                     MiniReelCtrl = $scope.MiniReelCtrl = {
@@ -74,10 +76,13 @@
                             }
                         }
                     };
+
+                    spyOn(manager, 'modelWithFilter');
                     $scope.$apply(function() {
                         ManagerCtrl = $controller('ManagerController', { $scope: $scope, cState: manager });
                         ManagerCtrl.model = model;
                     });
+                    expect(ManagerCtrl.model).toBe(model);
                 });
 
                 spyOn(ConfirmDialogService, 'display');
@@ -98,6 +103,28 @@
 
                     it('should set the filter on the state', function() {
                         expect(manager.filter).toBe(ManagerCtrl.filter);
+                    });
+                });
+            });
+
+            describe('$watchers', function() {
+                ['all', 'active', 'pending'].forEach(function(status) {
+                    describe('when changed to ' + status, function() {
+                        var scopedPromise;
+
+                        beforeEach(function() {
+                            scopedPromise = scopePromise($q.defer().promise);
+                            manager.modelWithFilter.and.returnValue(scopedPromise);
+
+                            $scope.$apply(function() {
+                                ManagerCtrl.filter = status;
+                            });
+                        });
+
+                        it('should get a new model', function() {
+                            expect(manager.modelWithFilter).toHaveBeenCalledWith(status);
+                            expect(ManagerCtrl.model).toBe(scopedPromise);
+                        });
                     });
                 });
             });
@@ -390,7 +417,7 @@
                             eraseDeferred = $q.defer();
                             spyOn(MiniReelService, 'erase').and.returnValue(eraseDeferred.promise);
 
-                            ManagerCtrl.model.push(
+                            ManagerCtrl.model.value.push(
                                 {
                                     id: 'e-9286cac37b4cd1'
                                 },
@@ -415,13 +442,13 @@
                         });
 
                         it('should remove the minireel from the model array when erasing is finished', function() {
-                            expect(ManagerCtrl.model).toContain(minireel);
+                            expect(ManagerCtrl.model.value).toContain(minireel);
 
                             $scope.$apply(function() {
                                 eraseDeferred.resolve(null);
                             });
 
-                            expect(ManagerCtrl.model).not.toContain(minireel);
+                            expect(ManagerCtrl.model.value).not.toContain(minireel);
                         });
                     });
                 });

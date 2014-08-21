@@ -127,7 +127,7 @@ function( angular , c6ui , c6State  , services          ) {
                     onAffirm: function() {
                         MiniReelService.erase(minireel)
                             .then(function removeFromModel() {
-                                var minireels = self.model;
+                                var minireels = self.model.value;
 
                                 minireels.splice(minireels.indexOf(minireel), 1);
                             });
@@ -143,6 +143,15 @@ function( angular , c6ui , c6State  , services          ) {
                     MiniReelCtrl.model.data.modes
                 ).name;
             };
+
+            $scope.$watch(
+                function() { return self.filter; },
+                function(filter, prevFilter) {
+                    if (filter === prevFilter) { return; }
+
+                    self.model = cState.modelWithFilter(filter);
+                }
+            );
 
             $scope.$on('$destroy', function() {
                 cState.filter = self.filter;
