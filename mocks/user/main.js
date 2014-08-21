@@ -26,4 +26,15 @@ module.exports = function(http) {
 
         this.respond(200, (userCache.user = extend(newUser, { id: id })));
     });
+
+    http.whenGET('/api/account/user/**', function(request) {
+        var id = idFromPath(request.pathname),
+            filePath = userPath(id);
+
+        try {
+            this.respond(200, extend(grunt.file.readJSON(filePath), { id: id }));
+        } catch(e) {
+            this.respond(401, 'Not Authorized');
+        }
+    });
 };
