@@ -1,14 +1,16 @@
 (function() {
     'use strict';
 
-    define(['app'], function(appModule) {
-        /* global angular:true */
+    define(['app', 'angular'], function(appModule, angular) {
         var copy = angular.copy,
             extend = angular.extend;
 
         describe('ContentAdapter', function() {
             var ContentAdapter,
-                adapter;
+                adapter,
+                $q,
+                $rootScope,
+                cinema6;
 
             var $httpBackend;
 
@@ -16,6 +18,10 @@
                 module(appModule.name);
 
                 inject(function($injector) {
+                    $rootScope = $injector.get('$rootScope');
+                    $q = $injector.get('$q');
+                    cinema6 = $injector.get('cinema6');
+
                     ContentAdapter = $injector.get('ContentAdapter');
                     ContentAdapter.config = {
                         apiBase: '/api'
@@ -33,12 +39,51 @@
                 expect(adapter).toEqual(jasmine.any(Object));
             });
 
+            describe('decorateWithUser(experience)', function() {
+                var experience, user,
+                    success, failure;
+
+                beforeEach(function() {
+                    experience = {
+                        user: 'u-8da73bf276bb97'
+                    };
+                    user = {
+                        id: 'u-8da73bf276bb97'
+                    };
+
+                    success = jasmine.createSpy('success()'); failure = jasmine.createSpy('failure()');
+
+                    spyOn(cinema6.db, 'find').and.returnValue($q.when(user));
+
+                    $rootScope.$apply(function() {
+                        adapter.decorateWithUser(experience).then(success, failure);
+                    });
+                });
+
+                it('should fetch the user', function() {
+                    expect(cinema6.db.find).toHaveBeenCalledWith('user', 'u-8da73bf276bb97');
+                });
+
+                it('should put the user on the experience', function() {
+                    expect(experience.user).toBe(user);
+                });
+
+                it('should be fulfilled with the experience', function() {
+                    expect(success).toHaveBeenCalledWith(experience);
+                });
+            });
+
             describe('findAll(type)', function() {
                 var experiences,
                     success;
 
                 beforeEach(function() {
                     success = jasmine.createSpy('success');
+
+                    spyOn(adapter, 'decorateWithUser')
+                        .and.callFake(function(experience) {
+                            return $q.when(experience);
+                        });
 
                     /* jshint quotmark:false */
                     experiences = [
@@ -87,6 +132,12 @@
                 it('should resolve to all the experiences', function() {
                     expect(success).toHaveBeenCalledWith(experiences);
                 });
+
+                it('should decorate all the experiences with their user', function() {
+                    experiences.forEach(function(experience, index, array) {
+                        expect(adapter.decorateWithUser).toHaveBeenCalledWith(experience, index, array);
+                    });
+                });
             });
 
             describe('find(type, id)', function() {
@@ -106,6 +157,8 @@
                     };
                     /* jshint quotmark:single */
 
+                    spyOn(adapter, 'decorateWithUser').and.returnValue($q.when(experience));
+
                     $httpBackend.expectGET('/api/content/experience/e2e-getid1')
                         .respond(200, experience);
 
@@ -117,6 +170,10 @@
                 it('should return the experience in an array', function() {
                     expect(success).toHaveBeenCalledWith([experience]);
                 });
+
+                it('should decorate the experience with its user', function() {
+                    expect(adapter.decorateWithUser).toHaveBeenCalledWith(experience);
+                });
             });
 
             describe('findQuery(type, query)', function() {
@@ -124,6 +181,11 @@
                     experiences;
 
                 beforeEach(function() {
+                    spyOn(adapter, 'decorateWithUser')
+                        .and.callFake(function(experience) {
+                            return $q.when(experience);
+                        });
+
                     /* jshint quotmark:false */
                     experiences = [
                         {
@@ -169,6 +231,12 @@
 
                     it('should resolve to the experiences', function() {
                         expect(success).toHaveBeenCalledWith(experiences);
+                    });
+
+                    it('should decorate all the experiences with their users', function() {
+                        experiences.forEach(function(experience, index, array) {
+                            expect(adapter.decorateWithUser).toHaveBeenCalledWith(experience, index, array);
+                        });
                     });
                 });
 
@@ -222,7 +290,6 @@
                         title: "test experience",
                         access: "public",
                         status: "inactive",
-                        user: "e2e-user",
                         org: "784hf785",
                         created: "Blah Blah"
                     };
@@ -230,11 +297,12 @@
 
                     response = extend(copy(experience), { id: 'e-8bf47900eb6fd6' });
 
+                    spyOn(adapter, 'decorateWithUser').and.returnValue($q.when(response));
+
                     $httpBackend.expectPOST('/api/content/experience', {
                         title: 'test experience',
                         access: 'public',
-                        status: 'inactive',
-                        user: 'e2e-user'
+                        status: 'inactive'
                     }).respond(201, response);
 
                     adapter.create('experience', copy(experience)).then(success);
@@ -244,6 +312,10 @@
 
                 it('should respond with the response in an array', function() {
                     expect(success).toHaveBeenCalledWith([response]);
+                });
+
+                it('should decorate the experience with its user', function() {
+                    expect(adapter.decorateWithUser).toHaveBeenCalledWith(response);
                 });
             });
 
@@ -288,13 +360,17 @@
                         created: "fkdslf",
                         lastUpdated: "fkdsjfkd",
                         org: "483fh38",
-                        user: "e2e-user"
+                        user: {
+                            id: "e2e-user"
+                        }
                     };
                     /* jshint quotmark:single */
 
                     response = extend(copy(model), {
                         lastUpdated: 'YASSS'
                     });
+
+                    spyOn(adapter, 'decorateWithUser').and.returnValue($q.when(response));
 
                     $httpBackend.expectPUT('/api/content/experience/e2e-put1', {
                         title: 'origTitle',
@@ -311,6 +387,10 @@
 
                 it('should resolve to the response in an array', function() {
                     expect(success).toHaveBeenCalledWith([response]);
+                });
+
+                it('should decorate the experience with its user', function() {
+                    expect(adapter.decorateWithUser).toHaveBeenCalledWith(response);
                 });
             });
         });

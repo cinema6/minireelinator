@@ -226,35 +226,55 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             };
         }])
 
-        .constant('ContentAdapter', ['$http','$q','config',
-        function                    ( $http , $q , config ) {
+        .constant('ContentAdapter', ['$http','$q','cinema6','config',
+        function                    ( $http , $q , cinema6 , config ) {
+            var self = this;
+
             function clean(model) {
                 delete model.id;
                 delete model.org;
                 delete model.created;
+                model.user = model.user && model.user.id;
 
                 return model;
             }
+
+            function returnData(response) {
+                return response.data;
+            }
+
+            function arrayify(object) {
+                return [object];
+            }
+
+            function decorateWithUsers(experiences) {
+                return $q.all(experiences.map(self.decorateWithUser));
+            }
+
+            this.decorateWithUser = function(experience) {
+                return cinema6.db.find('user', experience.user)
+                    .then(function decorate(user) {
+                        experience.user = user;
+                        return experience;
+                    });
+            };
 
             this.findAll = function() {
                 return $http.get(config.apiBase + '/content/experiences')
                     .then(function returnData(response) {
                         return response.data;
-                    });
+                    })
+                    .then(decorateWithUsers);
             };
 
             this.find = function(type, id) {
                 return $http.get(config.apiBase + '/content/experience/' + id)
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
+                    .then(returnData)
+                    .then(this.decorateWithUser)
+                    .then(arrayify);
             };
 
             this.findQuery = function(type, query) {
-                function returnData(response) {
-                    return response.data;
-                }
-
                 function handleError(response) {
                     return response.status === 404 ?
                         [] : $q.reject(response);
@@ -262,15 +282,15 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 return $http.get(config.apiBase + '/content/experiences', {
                         params: query
-                    })
-                    .then(returnData, handleError);
+                    }).then(returnData, handleError)
+                        .then(decorateWithUsers);
             };
 
             this.create = function(type, data) {
                 return $http.post(config.apiBase + '/content/experience', clean(data))
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
+                    .then(returnData)
+                    .then(this.decorateWithUser)
+                    .then(arrayify);
             };
 
             this.erase = function(type, model) {
@@ -282,9 +302,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
             this.update = function(type, model) {
                 return $http.put(config.apiBase + '/content/experience/' + model.id, clean(model))
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
+                    .then(returnData)
+                    .then(this.decorateWithUser)
+                    .then(arrayify);
             };
         }])
 
