@@ -144,10 +144,6 @@ function( angular , c6ui , c6State  , services          ) {
                 ).name;
             };
 
-            this.determineInclusionWithFilter = function(minireel) {
-                return self.filter === 'all' || self.filter === minireel.status;
-            };
-
             $scope.$on('$destroy', function() {
                 cState.filter = self.filter;
             });
