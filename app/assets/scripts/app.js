@@ -256,6 +256,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     .then(function decorate(user) {
                         experience.user = user;
                         return experience;
+                    })
+                    .catch(function nullify() {
+                        experience.user = null;
+                        return experience;
                     });
             };
 

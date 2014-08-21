@@ -71,6 +71,28 @@
                 it('should be fulfilled with the experience', function() {
                     expect(success).toHaveBeenCalledWith(experience);
                 });
+
+                describe('if the service fails to get the user', function() {
+                    beforeEach(function() {
+                        [success, failure].forEach(function(spy) {
+                            spy.calls.reset();
+                        });
+
+                        cinema6.db.find.and.returnValue($q.reject('NOT AUTHORIZED'));
+
+                        $rootScope.$apply(function() {
+                            adapter.decorateWithUser(experience).then(success, failure);
+                        });
+                    });
+
+                    it('should still succeed', function() {
+                        expect(success).toHaveBeenCalledWith(experience);
+                    });
+
+                    it('should set the user to null', function() {
+                        expect(experience.user).toBeNull();
+                    });
+                });
             });
 
             describe('findAll(type)', function() {
