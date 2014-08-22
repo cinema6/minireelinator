@@ -372,19 +372,11 @@
                 }
 
     /*  menu: clickDrop  */
-        .ui__clickDrop:focus {
-            pointer-events: none;
-        }
         .ui__clickDropMenu {
-            display:none;
             position:absolute; z-index: 1;
             background:#fff;
             border:2px solid #ddd;
         }
-            .ui__clickDrop:focus + .ui__clickDropMenu {
-                display: block;
-                pointer-events: auto;
-            }
             .ui__clickDropBtn {
                 display: block;
                 border:0; margin:0; padding:0.5rem 1rem;
