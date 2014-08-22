@@ -161,9 +161,9 @@
                     });
                 });
 
-                it('should call this.modelWithFilter() with the current filter property and return the result', function() {
+                it('should call this.modelWithFilter() with the current filter property and return the resolved result', function() {
                     expect(ManagerState.modelWithFilter).toHaveBeenCalledWith(ManagerState.filter);
-                    expect(result).toBe(scopedPromise);
+                    expect(result).toBe(scopedPromise.ensureResolution());
                 });
             });
         });

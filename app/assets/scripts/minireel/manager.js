@@ -53,7 +53,7 @@ function( angular , c6ui , c6State  , services          ) {
                 };
 
                 this.model = function() {
-                    return this.modelWithFilter(this.filter);
+                    return this.modelWithFilter(this.filter).ensureResolution();
                 };
             }]);
         }])
