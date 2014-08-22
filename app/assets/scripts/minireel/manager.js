@@ -60,9 +60,9 @@ function( angular , c6ui , c6State  , services          ) {
         }])
 
         .controller('ManagerController', ['$scope','c6State','MiniReelService','cState',
-                                          'ConfirmDialogService','EditorService',
+                                          'ConfirmDialogService','EditorService','$q',
         function                         ( $scope , c6State , MiniReelService , cState ,
-                                           ConfirmDialogService , EditorService ) {
+                                           ConfirmDialogService , EditorService , $q ) {
             var self = this,
                 MiniReelCtrl = $scope.MiniReelCtrl;
 
@@ -83,6 +83,10 @@ function( angular , c6ui , c6State  , services          ) {
                         return array[index];
                     });
                 });
+            }
+
+            function refetchMiniReels() {
+                self.model = cState.modelWithFilter(self.filter, self.model.value);
             }
 
             function DropDownModel() {
@@ -122,22 +126,22 @@ function( angular , c6ui , c6State  , services          ) {
                 return c6State.goTo('MR:Editor', [EditorService.open(minireel)], {});
             };
 
-            this.copy = function(minireel) {
+            this.copy = function(minireels) {
                 ConfirmDialogService.display({
-                    prompt: 'Are you sure you want to copy this MiniReel?',
+                    prompt: 'Are you sure you want to copy ' + minireels.length + ' MiniReel(s)?',
                     affirm: 'Yes',
                     cancel: 'No',
                     onAffirm: function() {
                         ConfirmDialogService.close();
 
-                        return MiniReelService.create(minireel)
-                            .then(function save(minireel) {
-                                return minireel.save();
-                            })
-                            .then(function editCopy(minireel) {
-                                c6State.goTo('MR:Editor', [EditorService.open(minireel)]);
-                                c6State.goTo('MR:Settings.Mode');
-                            });
+                        return $q.all(minireels.map(function(minireel) {
+                            return MiniReelService.create(minireel)
+                                .then(function save(minireel) {
+                                    return minireel.save();
+                                });
+                        })).then(function() {
+                            return refetchMiniReels();
+                        });
                     },
                     onCancel: function() {
                         ConfirmDialogService.close();
@@ -248,7 +252,7 @@ function( angular , c6ui , c6State  , services          ) {
                 function(filter, prevFilter) {
                     if (filter === prevFilter) { return; }
 
-                    self.model = cState.modelWithFilter(filter, self.model.value);
+                    return refetchMiniReels();
                 }
             );
 

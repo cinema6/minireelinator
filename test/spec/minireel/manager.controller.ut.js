@@ -310,27 +310,44 @@
                     });
                 });
 
-                describe('copy(minireel)', function() {
-                    var minireel,
-                        newMiniReel,
-                        newMiniReelDeferred,
-                        saveDeferred;
+                describe('copy(minireels)', function() {
+                    var minireels,
+                        newMiniReel1, newMiniReel2,
+                        newMiniReelDeferred1, newMiniReelDeferred2,
+                        saveDeferred1, saveDeferred2;
 
                     beforeEach(function() {
-                        saveDeferred = $q.defer();
-                        minireel = {};
-                        newMiniReel = {
-                            save: jasmine.createSpy('newMiniReel.save()')
+                        saveDeferred1 = $q.defer();
+                        saveDeferred2 = $q.defer();
+
+                        minireels = [{}, {}];
+                        newMiniReel1 = {
+                            save: jasmine.createSpy('newMiniReel1.save()')
                                 .and.callFake(function() {
-                                    return saveDeferred.promise;
+                                    return saveDeferred1.promise;
                                 })
                         };
-                        newMiniReelDeferred = $q.defer();
+                        newMiniReel2 = {
+                            save: jasmine.createSpy('newMiniReel2.save()')
+                                .and.callFake(function() {
+                                    return saveDeferred2.promise;
+                                })
+                        };
 
-                        spyOn(MiniReelService, 'create').and.returnValue(newMiniReelDeferred.promise);
+                        newMiniReelDeferred1 = $q.defer();
+                        newMiniReelDeferred2 = $q.defer();
+
+                        spyOn(MiniReelService, 'create').and.callFake(function() {
+                            switch (this.create.calls.count()) {
+                            case 1:
+                                return newMiniReelDeferred1.promise;
+                            case 2:
+                                return newMiniReelDeferred2.promise;
+                            }
+                        });
 
                         $scope.$apply(function() {
-                            ManagerCtrl.copy(minireel);
+                            ManagerCtrl.copy(minireels);
                         });
                     });
 
@@ -357,41 +374,42 @@
                             });
                         });
 
-                        it('should create a new minireel, passing in the minireelId', function() {
-                            expect(MiniReelService.create).toHaveBeenCalledWith(minireel);
+                        it('should create a new minireel, passing in the minireel', function() {
+                            minireels.forEach(function(minireel) {
+                                expect(MiniReelService.create).toHaveBeenCalledWith(minireel);
+                            });
                         });
 
                         describe('after the minireel is created', function() {
                             beforeEach(function() {
                                 $scope.$apply(function() {
-                                    newMiniReelDeferred.resolve(newMiniReel);
+                                    newMiniReelDeferred1.resolve(newMiniReel1);
+                                    newMiniReelDeferred2.resolve(newMiniReel2);
                                 });
                             });
 
                             it('should save the minireel', function() {
-                                expect(newMiniReel.save).toHaveBeenCalled();
+                                [newMiniReel1, newMiniReel2].forEach(function(minireel) {
+                                    expect(minireel.save).toHaveBeenCalled();
+                                });
                             });
 
                             describe('after the minireel is saved', function() {
-                                var editorMinireel;
-
                                 beforeEach(function() {
-                                    newMiniReel.id = 'e-28113695539bd2';
-                                    editorMinireel = {
-                                        id: 'e-aeb7b161e6b5d9'
-                                    };
-
-                                    spyOn(EditorService, 'open').and.returnValue(editorMinireel);
+                                    manager.modelWithFilter.and.returnValue(scopePromise($q.defer().promise));
 
                                     $scope.$apply(function() {
-                                        saveDeferred.resolve(newMiniReel);
+                                        saveDeferred1.resolve(newMiniReel1);
+                                        saveDeferred2.resolve(newMiniReel2);
                                     });
                                 });
 
-                                it('should transition to the MR:Editor state, then the MR:Settings.Mode state', function() {
-                                    expect(EditorService.open).toHaveBeenCalledWith(newMiniReel);
-                                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [editorMinireel]);
-                                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Settings.Mode');
+                                it('should fetch the MiniReels from the server again', function() {
+                                    var ScopedPromise = model.constructor;
+
+                                    expect(manager.modelWithFilter).toHaveBeenCalledWith(ManagerCtrl.filter, model.value);
+                                    expect(ManagerCtrl.model).not.toBe(model);
+                                    expect(ManagerCtrl.model).toEqual(jasmine.any(ScopedPromise));
                                 });
                             });
                         });
