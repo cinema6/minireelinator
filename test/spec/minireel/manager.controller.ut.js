@@ -734,6 +734,29 @@
                         });
                     });
                 });
+
+                describe('previewUrlOf(minireel)', function() {
+                    var minireel;
+
+                    beforeEach(function() {
+                        minireel = {
+                            id: 'e-f0124e276d1474',
+                            access: 'public',
+                            data: {
+                                title: 'My MiniReel',
+                                splash: {
+                                    theme: 'img-text-overlay',
+                                    ratio: '16-9'
+                                },
+                                branding: 'urbantimes'
+                            }
+                        };
+                    });
+
+                    it('should be a full preview URL', function() {
+                        expect(ManagerCtrl.previewUrlOf(minireel)).toBe(MiniReelService.previewUrlOf(minireel, '/#/preview/minireel'));
+                    });
+                });
             });
         });
     });

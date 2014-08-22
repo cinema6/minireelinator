@@ -143,13 +143,13 @@
                         <!--<button ng-show="this.status === 'active'" ng-click="ManagerCtrl.makePrivate(this)" class="quickActions__btn" type="button">Make Private</button>
                         <button ng-show="this.status === 'pending'" ng-click="ManagerCtrl.makePublic(this)" class="quickActions__btn" type="button">Make Public</button> &nbsp;|&nbsp; -->
                         <div class="quickActions__holder">
-                            <button class="quickActions__btn" type="button">
+                            <a class="quickActions__btn" ng-href="{{ManagerCtrl.previewUrlOf(this)}}" ng-show="ManagerCtrl.previewUrlOf(this)" target="_blank">
                                 <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                     viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
                                     <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M13.4,7.9L5.7,2.2C5.5,2,5,1.9,4.6,2.1C4.3,2.2,4,2.7,4,3v11.9
                                         c0,0.3,0.3,0.8,0.6,1c0.2,0.1,0.6,0.2,1.1-0.2l7.7-5.7C13.6,9.9,14,9.6,14,9C14,8.3,13.6,8,13.4,7.9z"/>
                                 </svg>
-                            </button>
+                            </a>
                         </div>
                         <div class="quickActions__holder">
                             <button ng-show="this.status === 'active' && PortalCtrl.model.type !== 'ContentProvider'" c6-sref="MR:Manager.Embed" c6-models="[this]" class="quickActions__btn" type="button">

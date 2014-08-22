@@ -248,6 +248,10 @@ function( angular , c6ui , c6State  , services          ) {
                 ).name;
             };
 
+            this.previewUrlOf = function(minireel) {
+                return MiniReelService.previewUrlOf(minireel, '/#/preview/minireel');
+            };
+
             $scope.$watch(
                 function() { return self.filter; },
                 function(filter, prevFilter) {
