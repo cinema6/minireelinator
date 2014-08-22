@@ -60,7 +60,7 @@
                 });
             });
 
-            describe('modelWithFilter(filter)', function() {
+            describe('modelWithFilter(filter, initial)', function() {
                 var result,
                     deferred, promise,
                     ScopedPromise;
@@ -104,6 +104,28 @@
 
                             it('should set selected to an array equal to the result, but filled with false', function() {
                                 expect(result.selected).toEqual(value.map(function() { return false; }));
+                            });
+                        });
+
+                        describe('when called with an initial value', function() {
+                            var initial;
+
+                            beforeEach(function() {
+                                initial = [{}, {}, {}];
+
+                                $rootScope.$apply(function() {
+                                    result = ManagerState.modelWithFilter(status, initial);
+                                });
+                            });
+
+                            it('should set the initial value on the scoped promise', function() {
+                                expect(result.value).toBe(initial);
+                            });
+
+                            it('should set the selected property', function() {
+                                expect(result.selected).toEqual(initial.map(function() {
+                                    return false;
+                                }));
                             });
                         });
                     });

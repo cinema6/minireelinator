@@ -140,7 +140,7 @@
                         });
 
                         it('should get a new model', function() {
-                            expect(manager.modelWithFilter).toHaveBeenCalledWith(status);
+                            expect(manager.modelWithFilter).toHaveBeenCalledWith(status, model.value);
                             expect(ManagerCtrl.model).toBe(scopedPromise);
                         });
                     });

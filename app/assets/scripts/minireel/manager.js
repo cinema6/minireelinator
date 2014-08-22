@@ -31,16 +31,17 @@ function( angular , c6ui , c6State  , services          ) {
                     filter: '='
                 };
 
-                this.modelWithFilter = function(filter) {
+                this.modelWithFilter = function(filter, initial) {
                     var org = c6State.get('Portal').cModel.org,
                         scopedPromise = scopePromise(cinema6.db.findAll('experience', {
                             type: 'minireel',
                             org: org.id,
                             sort: 'lastUpdated,-1',
                             status: (filter === 'all') ? null : filter
-                        }));
+                        }), initial);
 
-                    scopedPromise.selected = null;
+                    scopedPromise.selected = scopedPromise.value && scopedPromise.value
+                        .map(function() { return false; });
 
                     scopedPromise.ensureResolution()
                         .then(function(scopedPromise) {
@@ -247,7 +248,7 @@ function( angular , c6ui , c6State  , services          ) {
                 function(filter, prevFilter) {
                     if (filter === prevFilter) { return; }
 
-                    self.model = cState.modelWithFilter(filter);
+                    self.model = cState.modelWithFilter(filter, self.model.value);
                 }
             );
 
