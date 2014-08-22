@@ -10,10 +10,10 @@
             <span ng-show="!config.autoplayable">The <strong class="typo--attention">{{config.name}}</strong> MiniReel Type does not support autoplaying videos.</span>
         </label>
     </form>
+    <p class="modalBody__fineprint typo--warning">
+        <strong>!</strong> These changes affect desktop experiences only.
+    </p>
 </div>
-<p class="modalBody__fineprint typo--warning">
-    <strong>!</strong> These changes affect desktop experiences only.
-</p>
 <footer class="modalFooter__group">
     <button class="btnAction btnAction--first" ng-click="NewCtrl.prevTab()" title="Previous Step">Prev Step</button>
     <button ng-click="NewCtrl.save()" class="btnAction btnAction--success btnAction--last toolbar__confirm" type="button" title="Done!" ng-disabled="!NewCtrl.title">I&rsquo;m Done!</button>

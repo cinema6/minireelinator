@@ -408,11 +408,11 @@
     modal styles
     ========================================================================== */
     .modal__overlay {
-        position:fixed; top:0; left:0; right:0; bottom:0;
+        position:fixed; z-index: 99; top:0; left:0; right:0; bottom:0;
         background:#000; opacity:0.75;
     }
     .modal__group {
-        position:fixed; z-index: 10; top:50%; left:50%;
+        position:fixed; z-index: 100; top:50%; left:50%;
         width:61.5em; height:37.5em;
         margin:-18.75em 0 0 -30.75em;
         background:#fff;
@@ -460,12 +460,12 @@
         }
         .modalBody__fineprint {
             position: absolute;
-            bottom:4.5rem; left:13.5rem;
+            bottom:1rem;
             font-size:0.75em;
             margin:0;
         }
     .modalFooter__group {
-        position:absolute; bottom:0; left:0; right:0; z-index:1;
+        position:absolute; bottom:0; left:0; right:0; z-index:5;
         background:#eee; border-top:1px solid #ddd;
         height:3.75em;
     }
@@ -482,6 +482,28 @@
             margin:1.75em 8em 0; 
             text-align: center; font-size:0.75em;
         }
+
+    @media screen and (max-width:65em), screen and (max-height:39.375em) {
+        /* w:1040px 
+           h: 630px */
+        .modal__group {
+            position:fixed;
+            top:0.75em; left:0.75em; right:0.75em; bottom:0.75em;
+            background:#fff;
+            width:auto; height:auto;
+            border-radius:0.25em; margin:0;
+        }
+        .modalBody__group {
+            overflow: auto;
+            right:0.5em; top:3.0625em !important;
+            padding-right:1em; padding-top:1.5em;
+        }
+        .modalBody__fineprint {
+            position: static;
+            bottom:auto; left:auto;
+            margin:4rem 0;
+        }
+    }
                 
 
 /*  ==========================================================================
@@ -518,6 +540,12 @@
             .tableFooter__displayText strong {
                 color:#626262;
             }
+    @media screen and (max-width:55em) {
+        /* width: 880px */
+        .tableHeader__group, .tableFooter__group {
+            font-size:0.8125em;
+        }
+    }
         
 
 /*  ==========================================================================
@@ -885,6 +913,16 @@
     }
     .mast__group--previewMode .mast__title {
         position:static; margin:0.75em 0;
+    }
+
+    @media screen and (max-width:55em) {
+        /* width: 880px */
+        .mainNav__link:not(.mainNav__link--userSettings) .ui__iconHolder18 {
+            display: none;
+        }
+        .mainNav__label {
+            margin:0;
+        }
     }
 
 
