@@ -139,9 +139,7 @@ function( angular , c6ui , c6State  , services          ) {
                                 .then(function save(minireel) {
                                     return minireel.save();
                                 });
-                        })).then(function() {
-                            return refetchMiniReels();
-                        });
+                        })).then(refetchMiniReels);
                     },
                     onCancel: function() {
                         ConfirmDialogService.close();
@@ -187,23 +185,20 @@ function( angular , c6ui , c6State  , services          ) {
                 });
             };
 
-            this.remove = function(minireel) {
+            this.remove = function(minireels) {
                 ConfirmDialogService.display({
-                    prompt: 'Are you sure you want to delete this MiniReel?',
+                    prompt: 'Are you sure you want to delete ' + minireels.length + ' MiniReel(s)?',
                     affirm: 'Delete',
                     cancel: 'Keep',
                     onCancel: function() {
                         ConfirmDialogService.close();
                     },
                     onAffirm: function() {
-                        MiniReelService.erase(minireel)
-                            .then(function removeFromModel() {
-                                var minireels = self.model.value;
-
-                                minireels.splice(minireels.indexOf(minireel), 1);
-                            });
-
                         ConfirmDialogService.close();
+
+                        return $q.all(minireels.map(function(minireel) {
+                            return MiniReelService.erase(minireel);
+                        })).then(refetchMiniReels);
                     }
                 });
             };

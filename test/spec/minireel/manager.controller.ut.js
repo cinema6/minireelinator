@@ -552,14 +552,20 @@
                 });
 
                 describe('remove(minireel)', function() {
-                    var minireel;
+                    var minireel1, minireel2,
+                        minireels;
 
                     beforeEach(function() {
-                        minireel = {
+                        minireel1 = {
                             id: 'e-e5c83f0c89ee1a'
                         };
+                        minireel2 = {
+                            id: 'e-1fcb1ad1b582a7'
+                        };
 
-                        ManagerCtrl.remove(minireel);
+                        minireels = [minireel1, minireel2];
+
+                        ManagerCtrl.remove(minireels);
                     });
 
                     it('should display a confirmation', assertDialogPresented);
@@ -575,44 +581,55 @@
                     });
 
                     describe('if the confirmation is affirmed', function() {
-                        var eraseDeferred;
+                        var eraseDeferred1, eraseDeferred2;
 
                         beforeEach(function() {
-                            eraseDeferred = $q.defer();
-                            spyOn(MiniReelService, 'erase').and.returnValue(eraseDeferred.promise);
+                            eraseDeferred1 = $q.defer(); eraseDeferred2 = $q.defer();
 
-                            ManagerCtrl.model.value.push(
-                                {
-                                    id: 'e-9286cac37b4cd1'
-                                },
-                                {
-                                    id: 'e-c7be2af57c3b72'
-                                },
-                                minireel,
-                                {
-                                    id: 'e-530de8630e9990'
+                            spyOn(MiniReelService, 'erase').and.callFake(function() {
+                                switch (this.erase.calls.count()) {
+                                case 1:
+                                    return eraseDeferred1.promise;
+                                case 2:
+                                    return eraseDeferred2.promise;
                                 }
-                            );
+                            });
 
                             dialog().onAffirm();
                         });
 
-                        it('should erase the provided minireel', function() {
-                            expect(MiniReelService.erase).toHaveBeenCalledWith(minireel);
+                        it('should erase the provided minireels', function() {
+                            minireels.forEach(function(minireel) {
+                                expect(MiniReelService.erase).toHaveBeenCalledWith(minireel);
+                            });
                         });
 
                         it('should close the confirmation', function() {
                             expect(ConfirmDialogService.close).toHaveBeenCalled();
                         });
 
-                        it('should remove the minireel from the model array when erasing is finished', function() {
-                            expect(ManagerCtrl.model.value).toContain(minireel);
+                        describe('when erasing is finished', function() {
+                            var fetchPromise;
 
-                            $scope.$apply(function() {
-                                eraseDeferred.resolve(null);
+                            beforeEach(function() {
+                                fetchPromise = $q.defer().promise;
+
+                                manager.modelWithFilter.and.returnValue(scopePromise(fetchPromise));
+
+                                $scope.$apply(function() {
+                                    [eraseDeferred1, eraseDeferred2].forEach(function(deferred) {
+                                        deferred.resolve(null);
+                                    });
+                                });
                             });
 
-                            expect(ManagerCtrl.model.value).not.toContain(minireel);
+                            it('should refetch the minireels', function() {
+                                var ScopedPromise = model.constructor;
+
+                                expect(ManagerCtrl.model.promise).toBe(fetchPromise);
+                                expect(ManagerCtrl.model).not.toBe(model);
+                                expect(ManagerCtrl.model).toEqual(jasmine.any(ScopedPromise));
+                            });
                         });
                     });
                 });
