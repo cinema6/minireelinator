@@ -2,7 +2,7 @@
     'use strict';
 
     define(['minireel/manager', 'app'], function(managerModule, appModule) {
-        describe('ManagerController', function() {
+        ddescribe('ManagerController', function() {
             var $rootScope,
                 $scope,
                 $controller,
@@ -39,7 +39,23 @@
                     manager = c6State.get('MR:Manager');
                     manager.filter = 'foo';
 
-                    model = scopePromise($q.defer().promise, []);
+                    model = scopePromise($q.defer().promise, [
+                        {
+                            status: 'active'
+                        },
+                        {
+                            status: 'pending'
+                        },
+                        {
+                            status: 'active'
+                        },
+                        {
+                            status: 'pending'
+                        }
+                    ]);
+                    model.selected = model.value.map(function() {
+                        return false;
+                    });
 
                     $scope = $rootScope.$new();
                     MiniReelCtrl = $scope.MiniReelCtrl = {
@@ -133,6 +149,66 @@
                 describe('filter', function() {
                     it('should be initialized as the state\'s filter', function() {
                         expect(ManagerCtrl.filter).toBe(manager.filter);
+                    });
+                });
+
+                describe('allAreSelected', function() {
+                    describe('getting', function() {
+                        describe('if all are selected', function() {
+                            beforeEach(function() {
+                                model.selected = model.value.map(function() {
+                                    return true;
+                                });
+                            });
+
+                            it('should be true', function() {
+                                expect(ManagerCtrl.allAreSelected).toBe(true);
+                            });
+                        });
+
+                        describe('if all are not selected', function() {
+                            beforeEach(function() {
+                                model.selected = [true, true, true, false];
+                            });
+
+                            it('should be false', function() {
+                                expect(ManagerCtrl.allAreSelected).toBe(false);
+                            });
+                        });
+                    });
+
+                    describe('setting', function() {
+                        describe('to true', function() {
+                            beforeEach(function() {
+                                model.selected = model.value.map(function() {
+                                    return false;
+                                });
+
+                                ManagerCtrl.allAreSelected = true;
+                            });
+
+                            it('should select everything', function() {
+                                expect(model.selected).toEqual(model.value.map(function() {
+                                    return true;
+                                }));
+                            });
+                        });
+
+                        describe('to false', function() {
+                            beforeEach(function() {
+                                model.selected = model.value.map(function() {
+                                    return true;
+                                });
+
+                                ManagerCtrl.allAreSelected = false;
+                            });
+
+                            it('should select everything', function() {
+                                expect(model.selected).toEqual(model.value.map(function() {
+                                    return false;
+                                }));
+                            });
+                        });
                     });
                 });
             });
@@ -449,6 +525,107 @@
                             });
 
                             expect(ManagerCtrl.model.value).not.toContain(minireel);
+                        });
+                    });
+                });
+
+                describe('selectAll()', function() {
+                    beforeEach(function() {
+                        ManagerCtrl.selectAll();
+                    });
+
+                    it('should make the selected array all true', function() {
+                        expect(model.selected).toEqual(model.value.map(function() {
+                            return true;
+                        }));
+                    });
+                });
+
+                describe('selectNone()', function() {
+                    beforeEach(function() {
+                        model.selected = model.value.map(function() {
+                            return true;
+                        });
+
+                        ManagerCtrl.selectNone();
+                    });
+
+                    it('should make the selected array all false', function() {
+                        expect(model.selected).toEqual(model.value.map(function() {
+                            return false;
+                        }));
+                    });
+                });
+
+                describe('selectAllWithStatus(status)', function() {
+                    ['active', 'pending'].forEach(function(status) {
+                        describe('when called with "' + status + '"', function() {
+                            beforeEach(function() {
+                                ManagerCtrl.selectAllWithStatus(status);
+                            });
+
+                            it('should set the selected array to an array of true/falses that correspond to the minireel statuses', function() {
+                                expect(model.selected).toEqual(model.value.map(function(minireel) {
+                                    return minireel.status === status;
+                                }));
+                            });
+                        });
+                    });
+                });
+
+                describe('getSelected()', function() {
+                    var result;
+
+                    beforeEach(function() {
+                        model.selected = [true, true, false, true];
+
+                        result = ManagerCtrl.getSelected();
+                    });
+
+                    it('should return an array of only the selected MiniReels', function() {
+                        var minireels = model.value;
+
+                        expect(result).toEqual([minireels[0], minireels[1], minireels[3]]);
+                    });
+                });
+
+                describe('areAllSelected(status)', function() {
+                    describe('if no status is provided', function() {
+                        it('should return a bool indicating if all minireels are selected', function() {
+                            model.selected = [true, true, false, true];
+                            expect(ManagerCtrl.areAllSelected()).toBe(false);
+
+                            model.selected = model.value.map(function() {
+                                return true;
+                            });
+                            expect(ManagerCtrl.areAllSelected()).toBe(true);
+                        });
+                    });
+
+                    describe('if a status is provided', function() {
+                        beforeEach(function() {
+                            model.value = [
+                                {
+                                    status: 'active'
+                                },
+                                {
+                                    status: 'pending'
+                                },
+                                {
+                                    status: 'active'
+                                },
+                                {
+                                    status: 'pending'
+                                }
+                            ];
+                        });
+
+                        it('should return a bool indicating if all minireels of that type are selected', function() {
+                            model.selected = [true, true, false, true];
+                            expect(ManagerCtrl.areAllSelected('active')).toBe(false);
+
+                            model.selected = [true, false, true, true];
+                            expect(ManagerCtrl.areAllSelected('active')).toBe(true);
                         });
                     });
                 });

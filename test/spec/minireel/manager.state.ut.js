@@ -62,15 +62,51 @@
 
             describe('modelWithFilter(filter)', function() {
                 var result,
-                    promise,
+                    deferred, promise,
                     ScopedPromise;
 
                 beforeEach(function() {
                     ScopedPromise = scopePromise($q.defer().promise).constructor;
-                    promise = $q.defer().promise;
+                    deferred = $q.defer();
+                    promise = deferred.promise;
 
                     spyOn(cinema6.db, 'findAll')
                         .and.returnValue(promise);
+                });
+
+                ['active', 'pending', 'all'].forEach(function(status) {
+                    describe('when called with ' + status, function() {
+                        beforeEach(function() {
+                            $rootScope.$apply(function() {
+                                result = ManagerState.modelWithFilter(status);
+                            });
+                        });
+
+                        it('should return a scoped promise', function() {
+                            expect(result.promise).toBe(promise);
+                            expect(result).toEqual(jasmine.any(ScopedPromise));
+                        });
+
+                        it('should decorate the scoped promise with a null "selected" property', function() {
+                            expect(result.selected).toBeNull();
+                        });
+
+                        describe('when the promise is resolved', function() {
+                            var value;
+
+                            beforeEach(function() {
+                                value = [{}, {}, {}, {}, {}, {}, {}];
+
+                                $rootScope.$apply(function() {
+                                    deferred.resolve(value);
+                                });
+                            });
+
+                            it('should set selected to an array equal to the result, but filled with false', function() {
+                                expect(result.selected).toEqual(value.map(function() { return false; }));
+                            });
+                        });
+                    });
                 });
 
                 describe('when called with "all"', function() {
@@ -78,11 +114,6 @@
                         $rootScope.$apply(function() {
                             result = ManagerState.modelWithFilter('all');
                         });
-                    });
-
-                    it('should return a scoped promise', function() {
-                        expect(result.promise).toBe(promise);
-                        expect(result).toEqual(jasmine.any(ScopedPromise));
                     });
 
                     it('should find experiences of all statuses', function() {
@@ -101,11 +132,6 @@
                             $rootScope.$apply(function() {
                                 result = ManagerState.modelWithFilter(status);
                             });
-                        });
-
-                        it('should return a scoped promise', function() {
-                            expect(result.promise).toBe(promise);
-                            expect(result).toEqual(jasmine.any(ScopedPromise));
                         });
 
                         it('should find experiences with the specified status', function() {

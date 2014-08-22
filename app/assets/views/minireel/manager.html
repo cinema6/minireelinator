@@ -65,12 +65,12 @@
         <nav class="selectorActions__group">
             <div class="selectorActions__selector">
                 <label class="checkbox--inline selectorActions__selectorCheckBox">
-                    <input type="checkbox" class="checkbox__input">
+                    <input type="checkbox" ng-model="ManagerCtrl.allAreSelected" class="checkbox__input">
                     <span class="btn__label faa">&nbsp;</span>
                 </label>
                 <button class="btn faa fa-caret-down ui__clickDrop">&nbsp;</button>
                 <div class="pager__itemsPerPage ui__clickDropMenu">
-                    <button class="ui__clickDropBtn" type="button" title="Select All">Select All</button>
+                    <button class="ui__clickDropBtn" type="button" title="Select All" ng-click="ManagerCtrl.selectAll()">Select All</button>
                     <button class="ui__clickDropBtn" type="button" title="Select Public">Select Public</button>
                     <button class="ui__clickDropBtn" type="button" title="Select Private">Select Private</button>
                     <button class="ui__clickDropBtn" type="button" title="Select None">Select None</button>
@@ -107,7 +107,7 @@
                 <article class="miniReel__group clearfix">
                     <div class="miniReel__selector">
                         <label class="checkbox--inline">
-                            <input type="checkbox" class="checkbox__input">
+                            <input type="checkbox" ng-model="ManagerCtrl.model.selected[$index]" class="checkbox__input">
                             <span class="btn__label faa">&nbsp;</span>
                         </label>
                     </div>

@@ -32,14 +32,24 @@ function( angular , c6ui , c6State  , services          ) {
                 };
 
                 this.modelWithFilter = function(filter) {
-                    var org = c6State.get('Portal').cModel.org;
+                    var org = c6State.get('Portal').cModel.org,
+                        scopedPromise = scopePromise(cinema6.db.findAll('experience', {
+                            type: 'minireel',
+                            org: org.id,
+                            sort: 'lastUpdated,-1',
+                            status: (filter === 'all') ? null : filter
+                        }));
 
-                    return scopePromise(cinema6.db.findAll('experience', {
-                        type: 'minireel',
-                        org: org.id,
-                        sort: 'lastUpdated,-1',
-                        status: (filter === 'all') ? null : filter
-                    }));
+                    scopedPromise.selected = null;
+
+                    scopedPromise.ensureResolution()
+                        .then(function(scopedPromise) {
+                            scopedPromise.selected = scopedPromise.value.map(function() {
+                                return false;
+                            });
+                        });
+
+                    return scopedPromise;
                 };
 
                 this.model = function() {
@@ -55,7 +65,37 @@ function( angular , c6ui , c6State  , services          ) {
             var self = this,
                 MiniReelCtrl = $scope.MiniReelCtrl;
 
+            function value(val) {
+                return function() {
+                    return val;
+                };
+            }
+
+            function juxtapose() {
+                var args = Array.prototype.slice.call(arguments),
+                    longestArray = args.reduce(function(result, array) {
+                        return array.length > result.length ? array : result;
+                    });
+
+                return longestArray.map(function(value, index) {
+                    return args.map(function(array) {
+                        return array[index];
+                    });
+                });
+            }
+
             this.filter = cState.filter;
+
+            Object.defineProperties(this, {
+                allAreSelected: {
+                    get: function() {
+                        return this.areAllSelected();
+                    },
+                    set: function(bool) {
+                        return bool ? this.selectAll() : this.selectNone();
+                    }
+                }
+            });
 
             this.edit = function(minireel) {
                 return c6State.goTo('MR:Editor', [EditorService.open(minireel)], {});
@@ -135,6 +175,44 @@ function( angular , c6ui , c6State  , services          ) {
                         ConfirmDialogService.close();
                     }
                 });
+            };
+
+            this.selectAll = function() {
+                this.model.selected = this.model.value
+                    .map(value(true));
+            };
+
+            this.selectNone = function() {
+                this.model.selected = this.model.value
+                    .map(value(false));
+            };
+
+            this.selectAllWithStatus = function(status) {
+                this.model.selected = this.model.value
+                    .map(function(minireel) {
+                        return minireel.status === status;
+                    });
+            };
+
+            this.getSelected = function() {
+                return juxtapose(this.model.selected, this.model.value)
+                    .filter(function(pair) {
+                        return pair[0];
+                    })
+                    .map(function(pair) {
+                        return pair[1];
+                    });
+            };
+
+            this.areAllSelected = function(status) {
+                return juxtapose(this.model.selected, this.model.value)
+                    .filter(function(pair) {
+                        return status ? (pair[1].status === status) : true;
+                    })
+                    .map(function(pair) {
+                        return pair[0];
+                    })
+                    .indexOf(false) < 0;
             };
 
             this.modeNameFor = function(minireel) {
