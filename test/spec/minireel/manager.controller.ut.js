@@ -140,7 +140,7 @@
                         });
 
                         it('should get a new model', function() {
-                            expect(manager.modelWithFilter).toHaveBeenCalledWith(status, model.value);
+                            expect(manager.modelWithFilter).toHaveBeenCalledWith(status, ManagerCtrl.limit, ManagerCtrl.page, model);
                             expect(ManagerCtrl.model).toBe(scopedPromise);
                         });
                     });
@@ -151,6 +151,18 @@
                 describe('filter', function() {
                     it('should be initialized as the state\'s filter', function() {
                         expect(ManagerCtrl.filter).toBe(manager.filter);
+                    });
+                });
+
+                describe('limit', function() {
+                    it('should be initialized as the state\'s limit', function() {
+                        expect(ManagerCtrl.limit).toBe(manager.limit);
+                    });
+                });
+
+                describe('page', function() {
+                    it('should be initialized as the state\'s page', function() {
+                        expect(ManagerCtrl.page).toBe(manager.page);
                     });
                 });
 
@@ -407,7 +419,7 @@
                                 it('should fetch the MiniReels from the server again', function() {
                                     var ScopedPromise = model.constructor;
 
-                                    expect(manager.modelWithFilter).toHaveBeenCalledWith(ManagerCtrl.filter, model.value);
+                                    expect(manager.modelWithFilter).toHaveBeenCalledWith(ManagerCtrl.filter, ManagerCtrl.limit, ManagerCtrl.page, model);
                                     expect(ManagerCtrl.model).not.toBe(model);
                                     expect(ManagerCtrl.model).toEqual(jasmine.any(ScopedPromise));
                                 });
@@ -625,6 +637,8 @@
 
                             it('should refetch the minireels', function() {
                                 var ScopedPromise = model.constructor;
+
+                                expect(manager.modelWithFilter).toHaveBeenCalledWith(ManagerCtrl.filter, ManagerCtrl.limit, ManagerCtrl.page, model);
 
                                 expect(ManagerCtrl.model.promise).toBe(fetchPromise);
                                 expect(ManagerCtrl.model).not.toBe(model);

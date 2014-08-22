@@ -6,6 +6,7 @@
             var ManagerState,
                 $rootScope,
                 $q,
+                $location,
                 cinema6,
                 $injector,
                 c6State,
@@ -40,10 +41,13 @@
 
                     $rootScope = $injector.get('$rootScope');
                     $q = $injector.get('$q');
+                    $location = $injector.get('$location');
                     cinema6 = $injector.get('cinema6');
                     c6State = $injector.get('c6State');
                     scopePromise = $injector.get('scopePromise');
                 });
+
+                spyOn($location, 'search').and.returnValue({});
 
                 ManagerState = c6State.get('MR:Manager');
                 portal = c6State.get('Portal');
@@ -60,7 +64,37 @@
                 });
             });
 
-            describe('modelWithFilter(filter, initial)', function() {
+            describe('limit', function() {
+                it('should be 50', function() {
+                    expect(ManagerState.limit).toBe(50);
+                });
+            });
+
+            describe('page', function() {
+                it('should be 1', function() {
+                    expect(ManagerState.page).toBe(1);
+                });
+            });
+
+            describe('filter, limit and page if they are set in the query params', function() {
+                beforeEach(function() {
+                    $location.search.and.returnValue({
+                        filter: 'active',
+                        limit: '100',
+                        page: '3'
+                    });
+
+                    ManagerState = $injector.instantiate(ManagerState.constructor);
+                });
+
+                it('should take those properties', function() {
+                    expect(ManagerState.filter).toBe('active');
+                    expect(ManagerState.limit).toBe(100);
+                    expect(ManagerState.page).toBe(3);
+                });
+            });
+
+            describe('modelWithFilter(filter, limit, page, previous)', function() {
                 var result,
                     deferred, promise,
                     ScopedPromise;
@@ -78,7 +112,7 @@
                     describe('when called with ' + status, function() {
                         beforeEach(function() {
                             $rootScope.$apply(function() {
-                                result = ManagerState.modelWithFilter(status);
+                                result = ManagerState.modelWithFilter(status, 7, 1);
                             });
                         });
 
@@ -91,11 +125,22 @@
                             expect(result.selected).toBeNull();
                         });
 
+                        it('should decorate the scoped promise with a null "page" property', function() {
+                            expect(result.page).toBeNull();
+                        });
+
                         describe('when the promise is resolved', function() {
                             var value;
 
                             beforeEach(function() {
                                 value = [{}, {}, {}, {}, {}, {}, {}];
+                                value.meta = {
+                                    items: {
+                                        start: 22,
+                                        end: 28,
+                                        total: 500
+                                    }
+                                };
 
                                 $rootScope.$apply(function() {
                                     deferred.resolve(value);
@@ -105,27 +150,42 @@
                             it('should set selected to an array equal to the result, but filled with false', function() {
                                 expect(result.selected).toEqual(value.map(function() { return false; }));
                             });
+
+                            it('should set page as the page info', function() {
+                                expect(result.page).toEqual({
+                                    current: 4,
+                                    total: 72
+                                });
+                            });
                         });
 
                         describe('when called with an initial value', function() {
-                            var initial;
+                            var previous;
 
                             beforeEach(function() {
-                                initial = [{}, {}, {}];
+                                previous = ManagerState.modelWithFilter(status, 50, 1);
+                                previous.value = [{}, {}, {}];
+                                previous.selected = [false, false, true];
+                                previous.page = {
+                                    current: 1,
+                                    total: 10
+                                };
 
                                 $rootScope.$apply(function() {
-                                    result = ManagerState.modelWithFilter(status, initial);
+                                    result = ManagerState.modelWithFilter(status, 50, 1, previous);
                                 });
                             });
 
                             it('should set the initial value on the scoped promise', function() {
-                                expect(result.value).toBe(initial);
+                                expect(result.value).toBe(previous.value);
                             });
 
                             it('should set the selected property', function() {
-                                expect(result.selected).toEqual(initial.map(function() {
-                                    return false;
-                                }));
+                                expect(result.selected).toBe(previous.selected);
+                            });
+
+                            it('should set the page value', function() {
+                                expect(result.page).toBe(previous.page);
                             });
                         });
                     });
@@ -134,7 +194,7 @@
                 describe('when called with "all"', function() {
                     beforeEach(function() {
                         $rootScope.$apply(function() {
-                            result = ManagerState.modelWithFilter('all');
+                            result = ManagerState.modelWithFilter('all', 50, 1);
                         });
                     });
 
@@ -143,7 +203,9 @@
                             type: 'minireel',
                             org: portal.cModel.org.id,
                             sort: 'lastUpdated,-1',
-                            status: null
+                            status: null,
+                            limit: 50,
+                            skip: 0
                         });
                     });
                 });
@@ -152,7 +214,7 @@
                     describe('when called with ' + status, function() {
                         beforeEach(function() {
                             $rootScope.$apply(function() {
-                                result = ManagerState.modelWithFilter(status);
+                                result = ManagerState.modelWithFilter(status, 25, 3);
                             });
                         });
 
@@ -161,7 +223,9 @@
                                 type: 'minireel',
                                 org: portal.cModel.org.id,
                                 sort: 'lastUpdated,-1',
-                                status: status
+                                status: status,
+                                limit: 25,
+                                skip: 50
                             });
                         });
                     });
@@ -184,7 +248,7 @@
                 });
 
                 it('should call this.modelWithFilter() with the current filter property and return the resolved result', function() {
-                    expect(ManagerState.modelWithFilter).toHaveBeenCalledWith(ManagerState.filter);
+                    expect(ManagerState.modelWithFilter).toHaveBeenCalledWith(ManagerState.filter, ManagerState.limit, ManagerState.page);
                     expect(result).toBe(scopedPromise.ensureResolution());
                 });
             });

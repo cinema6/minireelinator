@@ -19,42 +19,58 @@ function( angular , c6ui , c6State  , services          ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Manager', ['cinema6','c6State','scopePromise',
-            function                            ( cinema6 , c6State , scopePromise ) {
+            c6StateProvider.state('MR:Manager', ['cinema6','c6State','scopePromise','$location',
+            function                            ( cinema6 , c6State , scopePromise , $location ) {
+                var query = $location.search();
+
                 this.controller = 'ManagerController';
                 this.controllerAs = 'ManagerCtrl';
                 this.templateUrl = 'views/minireel/manager.html';
 
-                this.filter = 'all';
+                this.filter = query.filter || 'all';
+                this.limit = parseInt(query.limit) || 50;
+                this.page = parseInt(query.page) || 1;
 
                 this.queryParams = {
-                    filter: '='
+                    filter: '=',
+                    limit: '=',
+                    page: '='
                 };
 
-                this.modelWithFilter = function(filter, initial) {
+                this.modelWithFilter = function(filter, limit, page, previous) {
                     var org = c6State.get('Portal').cModel.org,
                         scopedPromise = scopePromise(cinema6.db.findAll('experience', {
                             type: 'minireel',
                             org: org.id,
                             sort: 'lastUpdated,-1',
-                            status: (filter === 'all') ? null : filter
-                        }), initial);
+                            status: (filter === 'all') ? null : filter,
+                            limit: limit,
+                            skip: (page - 1) * limit
+                        }), previous && previous.value);
 
-                    scopedPromise.selected = scopedPromise.value && scopedPromise.value
-                        .map(function() { return false; });
+                    scopedPromise.selected = (previous || null) && previous.selected;
+                    scopedPromise.page = (previous || null) && previous.page;
 
                     scopedPromise.ensureResolution()
                         .then(function(scopedPromise) {
-                            scopedPromise.selected = scopedPromise.value.map(function() {
+                            var minireels = scopedPromise.value,
+                                items = minireels.meta.items;
+
+                            scopedPromise.selected = minireels.map(function() {
                                 return false;
                             });
+                            scopedPromise.page = {
+                                current: ((items.start - 1) / limit) + 1,
+                                total: Math.ceil(items.total / limit)
+                            };
                         });
 
                     return scopedPromise;
                 };
 
                 this.model = function() {
-                    return this.modelWithFilter(this.filter).ensureResolution();
+                    return this.modelWithFilter(this.filter, this.limit, this.page)
+                        .ensureResolution();
                 };
             }]);
         }])
@@ -86,7 +102,7 @@ function( angular , c6ui , c6State  , services          ) {
             }
 
             function refetchMiniReels() {
-                self.model = cState.modelWithFilter(self.filter, self.model.value);
+                self.model = cState.modelWithFilter(self.filter, self.limit, self.page, self.model);
             }
 
             function DropDownModel() {
@@ -105,6 +121,8 @@ function( angular , c6ui , c6State  , services          ) {
             };
 
             this.filter = cState.filter;
+            this.limit = cState.limit;
+            this.page = cState.page;
             this.dropDowns = {
                 select: new DropDownModel(),
                 topPager: new DropDownModel(),

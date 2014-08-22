@@ -45,15 +45,15 @@
                 <button class="ui__clickDropBtn" type="button" title="20">100 per page</button>
             </div>
 
-            <div class="btnGroup btnGroup--show clearfix">
+            <div class="btnGroup btnGroup--show clearfix" c6-alias="ManagerCtrl.model.page as pages">
                 <button class="btn" type="button" title="Publish">
                     <span class="btn__label faa fa-chevron-left">
                         <span class="ir">Previous</span>
                     </span>
                 </button>
                 <div class="btn pager__pageIndicator" type="button" title="Make Private">
-                    <input type="text" value="1" class="forms__textField">
-                    <span class="btn__label">of 12</span>
+                    <input type="text" value="{{ManagerCtrl.page}}" class="forms__textField">
+                    <span class="btn__label">of {{pages.total}}</span>
                 </div>
                 <button class="btn" type="button" title="Copy">
                     <span class="btn__label faa fa-chevron-right">
@@ -179,15 +179,15 @@
                 <button class="ui__clickDropBtn" type="button" title="20">100 per page</button>
             </div>
 
-            <div class="btnGroup btnGroup--show clearfix">
+            <div class="btnGroup btnGroup--show clearfix" c6-alias="ManagerCtrl.model.page as pages">
                 <button class="btn" type="button" title="Publish">
                     <span class="btn__label faa fa-chevron-left">
                         <span class="ir">Previous</span>
                     </span>
                 </button>
                 <div class="btn pager__pageIndicator" type="button" title="Make Private">
-                    <input type="text" value="1" class="forms__textField">
-                    <span class="btn__label">of 12</span>
+                    <input type="text" value="{{ManagerCtrl.page}}" class="forms__textField">
+                    <span class="btn__label">of {{pages.total}}</span>
                 </div>
                 <button class="btn" type="button" title="Copy">
                     <span class="btn__label faa fa-chevron-right">
