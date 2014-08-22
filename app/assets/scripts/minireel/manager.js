@@ -149,15 +149,18 @@ function( angular , c6ui , c6State  , services          ) {
                 });
             };
 
-            this.makePublic = function(minireel) {
+            this.makePublic = function(minireels) {
                 ConfirmDialogService.display({
-                    prompt: 'Are you sure you want to make this MiniReel public?',
+                    prompt: 'Are you sure you want to make ' +
+                        minireels.length + ' MiniReel(s) public?',
                     affirm: 'Publish',
                     cancel: 'Cancel',
                     onAffirm: function() {
                         ConfirmDialogService.close();
 
-                        MiniReelService.publish(minireel);
+                        return $q.all(minireels.map(function(minireel) {
+                            return MiniReelService.publish(minireel);
+                        }));
                     },
                     onCancel: function() {
                         ConfirmDialogService.close();
@@ -165,15 +168,18 @@ function( angular , c6ui , c6State  , services          ) {
                 });
             };
 
-            this.makePrivate = function(minireel) {
+            this.makePrivate = function(minireels) {
                 ConfirmDialogService.display({
-                    prompt: 'Are you sure you want to make this MiniReel private?',
+                    prompt: 'Are you sure you want to make ' +
+                        minireels.length + ' MiniReel(s) private?',
                     affirm: 'Make Private',
                     cancel: 'Cancel',
                     onAffirm: function() {
                         ConfirmDialogService.close();
 
-                        MiniReelService.unpublish(minireel);
+                        return $q.all(minireels.map(function(minireel) {
+                            return MiniReelService.unpublish(minireel);
+                        }));
                     },
                     onCancel: function() {
                         ConfirmDialogService.close();

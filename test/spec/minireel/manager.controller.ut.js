@@ -445,17 +445,24 @@
                     });
                 });
 
-                describe('makePublic(minireel)', function() {
-                    var minireel;
+                describe('makePublic(minireels)', function() {
+                    var minireel1, minireel2,
+                        minireels;
 
                     beforeEach(function() {
-                        minireel = {
+                        minireel1 = {
                             id: 'e-a618062c3a1be1',
                             status: 'pending'
                         };
+                        minireel2 = {
+                            id: 'e-b2ba8529af0ffa',
+                            status: 'pending'
+                        };
+
+                        minireels = [minireel1, minireel2];
 
                         spyOn(MiniReelService, 'publish');
-                        ManagerCtrl.makePublic(minireel);
+                        ManagerCtrl.makePublic(minireels);
                     });
 
                     it('should not publish the minireel', function() {
@@ -480,7 +487,9 @@
                         });
 
                         it('should publish the minireel', function() {
-                            expect(MiniReelService.publish).toHaveBeenCalledWith(minireel);
+                            minireels.forEach(function(minireel) {
+                                expect(MiniReelService.publish).toHaveBeenCalledWith(minireel);
+                            });
                         });
 
                         it('should close the dialog', function() {
@@ -489,17 +498,24 @@
                     });
                 });
 
-                describe('makePrivate(minireel)', function() {
-                    var minireel;
+                describe('makePrivate(minireels)', function() {
+                    var minireel1, minireel2,
+                        minireels;
 
                     beforeEach(function() {
-                        minireel = {
+                        minireel1 = {
                             id: 'e-a618062c3a1be1',
                             status: 'active'
                         };
+                        minireel2 = {
+                            id: 'e-b2ba8529af0ffa',
+                            status: 'active'
+                        };
+
+                        minireels = [minireel1, minireel2];
 
                         spyOn(MiniReelService, 'unpublish');
-                        ManagerCtrl.makePrivate(minireel);
+                        ManagerCtrl.makePrivate(minireels);
                     });
 
                     it('should not unpublish the minireel', function() {
@@ -528,7 +544,9 @@
                         });
 
                         it('should unpublish the minireel', function() {
-                            expect(MiniReelService.unpublish).toHaveBeenCalledWith(minireel);
+                            minireels.forEach(function(minireel) {
+                                expect(MiniReelService.unpublish).toHaveBeenCalledWith(minireel);
+                            });
                         });
                     });
                 });
