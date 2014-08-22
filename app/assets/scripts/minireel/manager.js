@@ -84,7 +84,27 @@ function( angular , c6ui , c6State  , services          ) {
                 });
             }
 
+            function DropDownModel() {
+                this.shown = false;
+            }
+            DropDownModel.prototype = {
+                show: function() {
+                    this.shown = true;
+                },
+                hide: function() {
+                    this.shown = false;
+                },
+                toggle: function() {
+                    this.shown = !this.shown;
+                }
+            };
+
             this.filter = cState.filter;
+            this.dropDowns = {
+                select: new DropDownModel(),
+                topPager: new DropDownModel(),
+                bottomPager: new DropDownModel()
+            };
 
             Object.defineProperties(this, {
                 allAreSelected: {

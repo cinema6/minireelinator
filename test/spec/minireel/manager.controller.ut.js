@@ -1,8 +1,10 @@
 (function() {
     'use strict';
 
-    define(['minireel/manager', 'app'], function(managerModule, appModule) {
-        ddescribe('ManagerController', function() {
+    define(['minireel/manager', 'app', 'angular'], function(managerModule, appModule, angular) {
+        var forEach = angular.forEach;
+
+        describe('ManagerController', function() {
             var $rootScope,
                 $scope,
                 $controller,
@@ -207,6 +209,56 @@
                                 expect(model.selected).toEqual(model.value.map(function() {
                                     return false;
                                 }));
+                            });
+                        });
+                    });
+                });
+
+                describe('dropDowns', function() {
+                    it('should have a drop down object for every drop down on the page', function() {
+                        expect(ManagerCtrl.dropDowns).toEqual({
+                            select: {
+                                shown: false
+                            },
+                            topPager: {
+                                shown: false
+                            },
+                            bottomPager: {
+                                shown: false
+                            }
+                        });
+                    });
+
+                    describe('DropDownModel() show() method', function() {
+                        it('should set "shown" to true', function() {
+                            forEach(ManagerCtrl.dropDowns, function(dropDown) {
+                                dropDown.show();
+
+                                expect(dropDown.shown).toBe(true);
+                            });
+                        });
+                    });
+
+                    describe('DropDownModel() hide() method', function() {
+                        it('should set "shown" to false', function() {
+                            forEach(ManagerCtrl.dropDowns, function(dropDown) {
+                                dropDown.shown = true;
+
+                                dropDown.hide();
+
+                                expect(dropDown.shown).toBe(false);
+                            });
+                        });
+                    });
+
+                    describe('DropDownModel() toggle() method', function() {
+                        it('should toggle the shown property', function() {
+                            forEach(ManagerCtrl.dropDowns, function(dropDown) {
+                                dropDown.toggle();
+                                expect(dropDown.shown).toBe(true);
+
+                                dropDown.toggle();
+                                expect(dropDown.shown).toBe(false);
                             });
                         });
                     });

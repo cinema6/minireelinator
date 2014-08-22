@@ -39,7 +39,7 @@
             <button class="btn faa fa-caret-down ui__clickDrop" type="button" title="Items on Page : 50">
                 <span class="btn__label">50</span>
             </button>
-            <div class="pager__itemsPerPage ui__clickDropMenu">
+            <div ng-show="ManagerCtrl.dropDowns.topPager.shown" class="pager__itemsPerPage ui__clickDropMenu">
                 <button class="ui__clickDropBtn" type="button" title="20">20 per page</button>
                 <button class="ui__clickDropBtn ui__clickDropBtn--current" type="button" title="20">50 per page</button>
                 <button class="ui__clickDropBtn" type="button" title="20">100 per page</button>
@@ -68,12 +68,12 @@
                     <input type="checkbox" ng-model="ManagerCtrl.allAreSelected" class="checkbox__input">
                     <span class="btn__label faa">&nbsp;</span>
                 </label>
-                <button class="btn faa fa-caret-down ui__clickDrop">&nbsp;</button>
-                <div class="pager__itemsPerPage ui__clickDropMenu">
-                    <button class="ui__clickDropBtn" type="button" title="Select All" ng-click="ManagerCtrl.selectAll()">Select All</button>
-                    <button class="ui__clickDropBtn" type="button" title="Select Public">Select Public</button>
-                    <button class="ui__clickDropBtn" type="button" title="Select Private">Select Private</button>
-                    <button class="ui__clickDropBtn" type="button" title="Select None">Select None</button>
+                <button ng-click="ManagerCtrl.dropDowns.select.toggle()" c6-click-outside="ManagerCtrl.dropDowns.select.hide()" class="btn faa fa-caret-down ui__clickDrop">&nbsp;</button>
+                <div ng-show="ManagerCtrl.dropDowns.select.shown" class="pager__itemsPerPage ui__clickDropMenu">
+                    <button class="ui__clickDropBtn" type="button" title="Select All" ng-show="!ManagerCtrl.allAreSelected" ng-click="ManagerCtrl.selectAll()">Select All</button>
+                    <button class="ui__clickDropBtn" type="button" title="Select Public" ng-click="ManagerCtrl.selectAllWithStatus('active')">Select Public</button>
+                    <button class="ui__clickDropBtn" type="button" title="Select Private" ng-click="ManagerCtrl.selectAllWithStatus('pending')">Select Private</button>
+                    <button class="ui__clickDropBtn" type="button" title="Select None" ng-show="ManagerCtrl.model.selected.indexOf(true) > -1" ng-click="ManagerCtrl.selectNone()">Select None</button>
                 </div>
             </div>
             <div class="btnGroup btnGroup--show clearfix">
@@ -173,7 +173,7 @@
             <button class="btn faa fa-caret-down ui__clickDrop" type="button" title="Items on Page : 50">
                 <span class="btn__label">50</span>
             </button>
-            <div class="pager__itemsPerPage ui__clickDropMenu">
+            <div ng-show="ManagerCtrl.dropDowns.bottomPager.shown" class="pager__itemsPerPage ui__clickDropMenu">
                 <button class="ui__clickDropBtn" type="button" title="20">20 per page</button>
                 <button class="ui__clickDropBtn ui__clickDropBtn--current" type="button" title="20">50 per page</button>
                 <button class="ui__clickDropBtn" type="button" title="20">100 per page</button>
