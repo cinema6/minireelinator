@@ -35,7 +35,7 @@ module.exports = function(http) {
                 skip: 0
             }),
             sort = (request.query.sort || null) && request.query.sort.split(','),
-            experiences = grunt.file.expand(path.resolve(__dirname, './experiences/*.json'))
+            allExperiences = grunt.file.expand(path.resolve(__dirname, './experiences/*.json'))
                 .map(function(path) {
                     var id = path.match(/[^\/]+(?=\.json)/)[0];
 
@@ -46,7 +46,8 @@ module.exports = function(http) {
                         .every(function(key) {
                             return filters[key] === experience[key];
                         });
-                })
+                }),
+            experiences = allExperiences
                 .filter(function(experience, index) {
                     var startIndex = page.skip,
                         endIndex = startIndex + page.limit;
@@ -71,9 +72,14 @@ module.exports = function(http) {
                     }
 
                     return 0;
-                });
+                }),
+            startPosition = page.skip + 1,
+            endPosition = page.skip + Math.min(page.limit, experiences.length);
 
-        this.respond(200, experiences);
+        this.respond(200, experiences)
+            .setHeaders({
+                'Content-Range': startPosition + '-' + endPosition + '/' + allExperiences.length
+            });
     });
 
     http.whenPUT('/api/content/experience/**', function(request) {

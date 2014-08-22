@@ -196,8 +196,8 @@
                 </button>
             </div>
         </nav>
-        <p class="tableFooter__displayText">
-            Displaying <strong>1-50</strong> of 600 MiniReels
+        <p class="tableFooter__displayText" c6-alias="ManagerCtrl.model.value.meta.items as items">
+            Displaying <strong>{{items.start}}-{{items.end}}</strong> of {{items.total}} MiniReels
         </p>
     </footer>
 </section>
