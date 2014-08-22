@@ -10,6 +10,7 @@
             "status": "active",
             "waterfalls": {
                 "video": [
+                    "cinema6",
                     "publisher",
                     "cinema6-publisher",
                     "publisher-cinema6"

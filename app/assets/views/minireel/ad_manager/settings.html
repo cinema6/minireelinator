@@ -2,7 +2,7 @@
     <navigation class="tabNav__group clearfix">
         <h1 class="tabNav__title">MiniReel Settings</h1>
         <ul class="tabNav__list clearfix">
-            <li ng-repeat="tab in NewCtrl.tabs" class="tabNav__item">
+            <li ng-repeat="tab in AdSettingsCtrl.tabs" class="tabNav__item">
                 <a c6-sref="{{tab.sref}}"
                     class="tabNav__link tabNav__link--skinny"
                     title="{{tab.title}}">
@@ -20,9 +20,17 @@
     </navigation>
 
     <div class="modal__viewHolder">
-        {{AdSettingsCtrl.model}}
+        <code>{{AdSettingsCtrl.model}}</code>
+        <br>
         <c6-view></c6-view>
     </div>
+
+    <footer class="modal__btnFooter">
+        <button class="modal__btn modal__btn--first toolbar__delete" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
+        <button ng-click="AdManagerCtrl.saveSettings(AdSettingsCtrl.settings)" class="modal__btn modal__btn--last toolbar__confirm" type="button" title="Save!">Save Changes</button>
+    </footer>
+
+    <!-- <input type="button" value="Save Settings" ng-click="AdManagerCtrl.saveSettings(AdSettingsCtrl.model)"> -->
 
 </div>
 <div class="ui__overlay">&nbsp;</div>

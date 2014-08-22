@@ -237,15 +237,13 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             }
 
             function decorateWithUser(experiences) {
-                // will this work? or do we need an array
-                // of promises to be resolved first?
-                return experiences.map(function(exp) {
+                return $q.all(experiences.map(function(exp) {
                     return cinema6.db.find('user', exp.user)
                         .then(function attach(user) {
                             exp.user = user;
                             return exp;
                         });
-                });
+                }));
             }
 
             this.findAll = function() {

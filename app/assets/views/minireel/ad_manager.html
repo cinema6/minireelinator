@@ -1,6 +1,6 @@
 
 <input type="button" ng-click="AdManagerCtrl.editSettings('org', null)" value="Edit Defaults">
-<div ng-show="AdManagerCtrl.isSelected">
+<div ng-show="AdManagerCtrl.selectedExperiences.length">
     <input type="button" ng-click="AdManagerCtrl.useDefaultSettings()" value="Use Defaults">
     <input type="button" ng-click="AdManagerCtrl.removeAds()" value="Remove Ads">
     <input type="button" ng-click="AdManagerCtrl.editSettings('minireels', null)" value="Edit Ad Settings">
@@ -18,7 +18,9 @@
                 <th>Setting Type</th>
             </tr>
             <tr ng-repeat="this in minireels">
-                <td><input type="checkbox" ng-change="AdManagerCtrl.selectChange()" ng-model="AdManagerCtrl.experienceMap[this.id].selected"></td>
+                <td>
+                    <input type="checkbox" ng-model="AdManagerCtrl.experienceMap[this.id].selected">
+                </td>
                 <td>{{this.data.title}}</td>
                 <td>{{this.status}}</td>
                 <td>{{this.user}}</td>

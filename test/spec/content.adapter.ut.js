@@ -8,7 +8,9 @@
 
         describe('ContentAdapter', function() {
             var ContentAdapter,
-                adapter;
+                adapter,
+                cinema6,
+                $q;
 
             var $httpBackend;
 
@@ -25,6 +27,9 @@
                         config: ContentAdapter.config
                     });
 
+                    cinema6 = $injector.get('cinema6');
+                    $q = $injector.get('$q');
+
                     $httpBackend = $injector.get('$httpBackend');
                 });
             });
@@ -35,6 +40,7 @@
 
             describe('findAll(type)', function() {
                 var experiences,
+                    users,
                     success;
 
                 beforeEach(function() {
@@ -73,11 +79,34 @@
                             user: "not-e2e-user",
                             org: "not-e2e-org",
                         }
+                    ],
+                    users = [
+                        {
+                            id: "e2e-user",
+                            org: "e2e-org",
+                            status: "active"
+                        },
+                        {
+                            id: "not-e2e-user",
+                            org: "not-e2e-org",
+                            status: "active"
+                        }
                     ];
                     /* jshint quotmark:single */
 
                     $httpBackend.expectGET('/api/content/experiences')
                         .respond(200, experiences);
+
+                    spyOn(cinema6.db, 'find').and.callFake(function(type, user) {
+                        switch (user) {
+                        case 'e2e-user':
+                            return $q.when(users[0]);
+                            break;
+                        case 'not-e2e-user':
+                            return $q.when(users[1]);
+                            break;
+                        }
+                    });
 
                     adapter.findAll('experience').then(success);
 
@@ -85,7 +114,18 @@
                 });
 
                 it('should resolve to all the experiences', function() {
-                    expect(success).toHaveBeenCalledWith(experiences);
+                    var decoratedExperiences = copy(experiences);
+                    decoratedExperiences.forEach(function(exp) {
+                        switch (exp.user) {
+                        case 'e2e-user':
+                            exp.user = users[0];
+                            break;
+                        case 'not-e2e-user':
+                            exp.user = users[1];
+                            break;
+                        }
+                    });
+                    expect(success).toHaveBeenCalledWith(decoratedExperiences);
                 });
             });
 
