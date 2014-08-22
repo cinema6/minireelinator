@@ -239,16 +239,30 @@
                 });
 
                 describe('when there are results', function() {
+                    var meta;
+
                     beforeEach(function() {
+                        meta = {};
+
                         $httpBackend.expectGET('/api/content/experiences?sort=id,1&user=e2e-user')
-                            .respond(200, experiences);
+                            .respond(200, experiences, {
+                                'Content-Range': 'items 10-12/72'
+                            });
 
                         adapter.findQuery('experience', {
                             user: 'e2e-user',
                             sort: 'id,1'
-                        }).then(success);
+                        }, meta).then(success);
 
                         $httpBackend.flush();
+                    });
+
+                    it('should decorate the meta object with pagination info', function() {
+                        expect(meta.items).toEqual({
+                            start: 10,
+                            end: 12,
+                            total: 72
+                        });
                     });
 
                     it('should resolve to the experiences', function() {

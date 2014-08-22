@@ -278,7 +278,21 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     .then(arrayify);
             };
 
-            this.findQuery = function(type, query) {
+            this.findQuery = function(type, query, meta) {
+                function setPageInfo(response) {
+                    meta.items = response.headers('Content-Range')
+                        .match(/\d+/g)
+                        .map(function(num, index) {
+                            return [this[index], parseInt(num)];
+                        }, ['start', 'end', 'total'])
+                        .reduce(function(obj, pair) {
+                            obj[pair[0]] = pair[1];
+                            return obj;
+                        }, {});
+
+                    return response;
+                }
+
                 function handleError(response) {
                     return response.status === 404 ?
                         [] : $q.reject(response);
@@ -286,7 +300,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 return $http.get(config.apiBase + '/content/experiences', {
                         params: query
-                    }).then(returnData, handleError)
+                    }).then(setPageInfo)
+                        .then(returnData, handleError)
                         .then(decorateWithUsers);
             };
 
