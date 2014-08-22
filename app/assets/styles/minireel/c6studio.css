@@ -438,6 +438,9 @@
                 position:absolute; z-index:5; 
                 top:0; left:0; bottom:0; right:0;
             }
+        .embed__fineprint {
+            font-size:0.8125em;
+        }
         .embedPreview__group .embed__selector {
             width:100%; margin:0 0 1em 0;
         }
