@@ -317,7 +317,10 @@
                 "splash": {
                     "source": "specified",
                     "ratio": "6-5",
-                    "theme": "img-only"
+                    "theme": "img-text-overlay"
+                },
+                "collateral": {
+                    "splash": "http://www.reactiongifs.us/wp-content/uploads/2013/11/brent_rambo_approves.gif"
                 },
                 "deck": [
                     {
