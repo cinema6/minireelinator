@@ -64,6 +64,9 @@
     .pager__group {
         float:right;
     }
+        .pager__pageIndicator {
+            font-weight:normal;
+        }
         .pager__pageIndicator:hover,
         .pager__pageIndicator:active {
             border-color:#ddd;
@@ -86,6 +89,10 @@
             .miniReels__item:last-child .miniReel__group {
                 padding-bottom:0.75em;
             }
+    .miniReels__welcomeMsg {
+        text-align: center; 
+        margin:1.9375em 0 2em;
+    }
     .miniReel__group {
         padding:0.75em 0 0.6875em;
         position: relative;   
@@ -176,6 +183,11 @@
                 line-height: 1;
                 -webkit-transition:all 0.25s; transition:all 0.25s;
             }
+                .quickActions__btn .ui__iconHolder18 {
+                    width:1.125em; height:1.125em;
+                    display: block;
+                    padding:0.5625em;
+                }
                 .quickActions__btn:hover .ui__icon {
                     fill:#2398db;
                 }
