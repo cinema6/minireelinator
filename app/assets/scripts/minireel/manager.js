@@ -256,10 +256,10 @@ function( angular , c6ui , c6State  , services          ) {
                     });
             };
 
-            this.getSelected = function() {
+            this.getSelected = function(status) {
                 return juxtapose(this.model.selected, this.model.value)
                     .filter(function(pair) {
-                        return pair[0];
+                        return pair[0] && (status ? pair[1].status === status : true);
                     })
                     .map(function(pair) {
                         return pair[1];

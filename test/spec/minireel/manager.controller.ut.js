@@ -757,6 +757,20 @@
 
                     beforeEach(function() {
                         model.selected = [true, true, false, true];
+                        model.value = [
+                            {
+                                status: 'active'
+                            },
+                            {
+                                status: 'pending'
+                            },
+                            {
+                                status: 'active'
+                            },
+                            {
+                                status: 'pending'
+                            }
+                        ];
 
                         result = ManagerCtrl.getSelected();
                     });
@@ -765,6 +779,18 @@
                         var minireels = model.value;
 
                         expect(result).toEqual([minireels[0], minireels[1], minireels[3]]);
+                    });
+
+                    describe('if a status is provided', function() {
+                        beforeEach(function() {
+                            model.selected = [true, false, false, true];
+                        });
+
+                        it('should only return selected MiniReels of that status', function() {
+                            expect(ManagerCtrl.getSelected('active')).toEqual([model.value[0]]);
+
+                            expect(ManagerCtrl.getSelected('pending')).toEqual([model.value[3]]);
+                        });
                     });
                 });
 
