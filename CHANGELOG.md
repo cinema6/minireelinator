@@ -5,8 +5,8 @@
     Dashboard".
   * Browser title now changes as the user navigates to different "pages"
     of the app
-  * Add template files for what will become the Ad Manager, and wire
-    up the routes for development
+  * [FIX]: Fix for an issue that could cause the video length trimmer to
+    render incorrectly and not function
 
 
 ## Beta17 (August 7, 2014)
