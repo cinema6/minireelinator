@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## Beta18 (August 25, 2014)
 * *[Beta18.rc1]*
   * [FIX]: MiniReel Preview page title no longer says "Cinema6
     Dashboard".
@@ -7,7 +8,7 @@
     of the app
   * [FIX]: Fix for an issue that could cause the video length trimmer to
     render incorrectly and not function
-
+* *[/Beta18.rc1]*
 
 ## Beta17 (August 7, 2014)
 * *[Beta17.rc4]
