@@ -124,10 +124,9 @@ function( angular , c6ui , c6State  , services          ) {
             this.limit = cState.limit;
             this.page = cState.page;
             this.dropDowns = {
-                select: new DropDownModel(),
-                topPager: new DropDownModel(),
-                bottomPager: new DropDownModel()
+                select: new DropDownModel()
             };
+            this.limits = [20, 50, 100];
 
             Object.defineProperties(this, {
                 allAreSelected: {

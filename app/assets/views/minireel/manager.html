@@ -35,33 +35,7 @@
 
 <section class="container miniReels__group">
     <header class="tableHeader__group clearfix">
-        <nav class="pager__group">
-            <button class="btn faa fa-caret-down ui__clickDrop" type="button" title="Items on Page : 50">
-                <span class="btn__label">50</span>
-            </button>
-            <div ng-show="ManagerCtrl.dropDowns.topPager.shown" class="pager__itemsPerPage ui__clickDropMenu">
-                <button class="ui__clickDropBtn" type="button" title="20">20 per page</button>
-                <button class="ui__clickDropBtn ui__clickDropBtn--current" type="button" title="20">50 per page</button>
-                <button class="ui__clickDropBtn" type="button" title="20">100 per page</button>
-            </div>
-
-            <div class="btnGroup btnGroup--show clearfix" c6-alias="ManagerCtrl.model.page as pages">
-                <button class="btn" type="button" title="Publish">
-                    <span class="btn__label faa fa-chevron-left">
-                        <span class="ir">Previous</span>
-                    </span>
-                </button>
-                <div class="btn pager__pageIndicator" type="button" title="Make Private">
-                    <input type="text" value="{{ManagerCtrl.page}}" class="forms__textField">
-                    <span class="btn__label">of {{pages.total}}</span>
-                </div>
-                <button class="btn" type="button" title="Copy">
-                    <span class="btn__label faa fa-chevron-right">
-                        <span class="ir">Next</span>
-                    </span>
-                </button>
-            </div>
-        </nav>
+        <paginator-controls page="ManagerCtrl.page" limit="ManagerCtrl.limit" limits="ManagerCtrl.limits" total="ManagerCtrl.model.page.total"></paginator-controls>
         <nav class="selectorActions__group">
             <div class="selectorActions__selector">
                 <label class="checkbox--inline selectorActions__selectorCheckBox">
@@ -169,33 +143,7 @@
         <p ng-show="!minireels.length">You have no Mini Reels. Would you like to <a c6-sref="MR:New.General" title="Create A MiniReel">create one?</a></p>
     </div>
     <footer class="tableFooter__group">
-        <nav class="pager__group">
-            <button class="btn faa fa-caret-down ui__clickDrop" type="button" title="Items on Page : 50">
-                <span class="btn__label">50</span>
-            </button>
-            <div ng-show="ManagerCtrl.dropDowns.bottomPager.shown" class="pager__itemsPerPage ui__clickDropMenu">
-                <button class="ui__clickDropBtn" type="button" title="20">20 per page</button>
-                <button class="ui__clickDropBtn ui__clickDropBtn--current" type="button" title="20">50 per page</button>
-                <button class="ui__clickDropBtn" type="button" title="20">100 per page</button>
-            </div>
-
-            <div class="btnGroup btnGroup--show clearfix" c6-alias="ManagerCtrl.model.page as pages">
-                <button class="btn" type="button" title="Publish">
-                    <span class="btn__label faa fa-chevron-left">
-                        <span class="ir">Previous</span>
-                    </span>
-                </button>
-                <div class="btn pager__pageIndicator" type="button" title="Make Private">
-                    <input type="text" value="{{ManagerCtrl.page}}" class="forms__textField">
-                    <span class="btn__label">of {{pages.total}}</span>
-                </div>
-                <button class="btn" type="button" title="Copy">
-                    <span class="btn__label faa fa-chevron-right">
-                        <span class="ir">Next</span>
-                    </span>
-                </button>
-            </div>
-        </nav>
+        <paginator-controls page="ManagerCtrl.page" limit="ManagerCtrl.limit" limits="ManagerCtrl.limits" total="ManagerCtrl.model.page.total"></paginator-controls>
         <p class="tableFooter__displayText" c6-alias="ManagerCtrl.model.value.meta.items as items">
             Displaying <strong>{{items.start}}-{{items.end}}</strong> of {{items.total}} MiniReels
         </p>

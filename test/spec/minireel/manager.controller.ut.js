@@ -166,6 +166,12 @@
                     });
                 });
 
+                describe('limits', function() {
+                    it('should be an array of the available limits', function() {
+                        expect(ManagerCtrl.limits).toEqual([20, 50, 100]);
+                    });
+                });
+
                 describe('allAreSelected', function() {
                     describe('getting', function() {
                         describe('if all are selected', function() {
@@ -230,12 +236,6 @@
                     it('should have a drop down object for every drop down on the page', function() {
                         expect(ManagerCtrl.dropDowns).toEqual({
                             select: {
-                                shown: false
-                            },
-                            topPager: {
-                                shown: false
-                            },
-                            bottomPager: {
                                 shown: false
                             }
                         });

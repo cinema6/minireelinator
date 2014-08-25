@@ -214,6 +214,47 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
             };
         }])
 
+        .directive('paginatorControls', [function() {
+            return {
+                scope: {
+                    limit: '=',
+                    page: '=',
+                    total: '=',
+                    limits: '='
+                },
+                restrict: 'E',
+                templateUrl: 'views/minireel/directives/paginator_controls.html',
+                controller: 'PaginatorControlsController',
+                controllerAs: 'Ctrl'
+            };
+        }])
+
+        .controller('PaginatorControlsController', ['$scope',
+        function                                   ( $scope ) {
+            var self = this;
+
+            function limitTo(num, min, max) {
+                return Math.max(Math.min(num, max), min);
+            }
+
+            this.showDropDown = false;
+            this.page = $scope.page;
+
+            this.goTo = function(page) {
+                /* jshint boss:true */
+                return $scope.page = limitTo(page, 1, $scope.total);
+            };
+
+            this.setLimit = function(limit) {
+                /* jshint boss:true */
+                return $scope.limit = limit;
+            };
+
+            $scope.$watch('page', function(page) {
+                self.page = page;
+            });
+        }])
+
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('MiniReel', ['c6State','SettingsService',

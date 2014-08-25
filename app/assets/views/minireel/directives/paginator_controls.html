@@ -1,0 +1,25 @@
+<nav class="pager__group">
+    <button class="btn faa fa-caret-down ui__clickDrop" type="button" title="Items on Page : {{limit}}" ng-click="Ctrl.showDropDown = true" c6-click-outside="Ctrl.showDropDown = false">
+        <span class="btn__label">{{limit}}</span>
+    </button>
+    <div ng-show="Ctrl.showDropDown" class="pager__itemsPerPage ui__clickDropMenu">
+        <button ng-repeat="num in limits" class="ui__clickDropBtn" ng-class="{'ui__clickDropBtn--current': (num === limit)}" type="button" title="{{num}}" ng-click="Ctrl.setLimit(num)">{{num}} per page</button>
+    </div>
+
+    <div class="btnGroup btnGroup--show clearfix">
+        <button class="btn" type="button" title="Publish" ng-click="Ctrl.goTo(page - 1)" ng-disabled="page < 2">
+            <span class="btn__label faa fa-chevron-left">
+                <span class="ir">Previous</span>
+            </span>
+        </button>
+        <form class="btn pager__pageIndicator" type="button" title="Make Private" ng-submit="Ctrl.goTo(Ctrl.page)">
+            <input type="text" ng-model="Ctrl.page" class="forms__textField">
+            <span class="btn__label">of {{total}}</span>
+        </form>
+        <button class="btn" type="button" title="Copy" ng-click="Ctrl.goTo(page + 1)" ng-disabled="page >= total">
+            <span class="btn__label faa fa-chevron-right">
+                <span class="ir">Next</span>
+            </span>
+        </button>
+    </div>
+</nav>
