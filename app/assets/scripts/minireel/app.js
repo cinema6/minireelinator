@@ -248,14 +248,31 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
 
         .controller('PaginatorControlsController', ['$scope',
         function                                   ( $scope ) {
-            var self = this;
+            var self = this,
+                state = {
+                    page: $scope.page
+                };
 
             function limitTo(num, min, max) {
                 return Math.max(Math.min(num, max), min);
             }
 
             this.showDropDown = false;
-            this.page = $scope.page;
+            Object.defineProperties(this, {
+                page: {
+                    get: function() {
+                        return state.page;
+                    },
+                    set: function(page) {
+                        /* jshint boss:true */
+                        if (!(/^(\d+|)$/).test(page)) {
+                            return state.page;
+                        }
+
+                        return state.page = page;
+                    }
+                }
+            });
 
             this.goTo = function(page) {
                 /* jshint boss:true */
