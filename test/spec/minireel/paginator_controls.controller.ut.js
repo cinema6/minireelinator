@@ -39,6 +39,20 @@ define(['minireel/app'], function(appModule) {
                 it('should be initialized with the provided page property', function() {
                     expect(PaginatorControlsCtrl.page).toBe($scope.page);
                 });
+
+                it('should not be changeable to anything other than a number', function() {
+                    PaginatorControlsCtrl.page = '8';
+                    expect(PaginatorControlsCtrl.page).toBe('8');
+
+                    PaginatorControlsCtrl.page = '8f';
+                    expect(PaginatorControlsCtrl.page).toBe('8');
+
+                    PaginatorControlsCtrl.page = '40';
+                    expect(PaginatorControlsCtrl.page).toBe('40');
+
+                    PaginatorControlsCtrl.page = '';
+                    expect(PaginatorControlsCtrl.page).toBe('');
+                });
             });
         });
 
