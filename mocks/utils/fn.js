@@ -51,4 +51,12 @@
                 return result;
             }, {});
     };
+
+    exports.mapObject = function(object, extractor) {
+        return Object.keys(object)
+            .reduce(function(result, key) {
+                result[key] = extractor(object[key], key, object);
+                return result;
+            }, {});
+    };
 }());

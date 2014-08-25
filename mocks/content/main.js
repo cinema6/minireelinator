@@ -11,7 +11,8 @@ module.exports = function(http) {
         extend = fn.extend,
         pluck = fn.pluck,
         pluckExcept = fn.pluckExcept,
-        withDefaults = fn.withDefaults;
+        withDefaults = fn.withDefaults,
+        mapObject = fn.mapObject;
 
     function experiencePath(id) {
         return path.resolve(__dirname, './experiences/' + id + '.json');
@@ -30,7 +31,7 @@ module.exports = function(http) {
 
     http.whenGET('/api/content/experiences', function(request) {
         var filters = pluckExcept(request.query, ['sort', 'limit', 'skip']),
-            page = withDefaults(pluck(request.query, ['limit', 'skip']), {
+            page = withDefaults(mapObject(pluck(request.query, ['limit', 'skip']), parseFloat), {
                 limit: Infinity,
                 skip: 0
             }),
