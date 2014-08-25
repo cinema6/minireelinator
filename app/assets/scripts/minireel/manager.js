@@ -289,11 +289,13 @@ function( angular , c6ui , c6State  , services          ) {
             };
 
             $scope.$watchCollection(
-                function() { return [
-                    self.page,
-                    self.limit,
-                    self.filter
-                ]; },
+                function() {
+                    return [
+                        self.page,
+                        self.limit,
+                        self.filter
+                    ];
+                },
                 function(props, prevProps) {
                     var samePage = isSame(0, props, prevProps);
 

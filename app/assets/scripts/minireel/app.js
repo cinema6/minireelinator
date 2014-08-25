@@ -8,7 +8,8 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
     'use strict';
 
     var isDefined = angular.isDefined,
-        copy = angular.copy;
+        copy = angular.copy,
+        jqLite = angular.element;
 
     return angular.module('c6.app.minireel', [
         c6ui.name, c6log.name, c6State.name, c6Drag.name,
@@ -187,6 +188,22 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                         element.css('background-image', (src || '') && ('url("' + src + '")'));
                     });
                 }
+            };
+        }])
+
+        .directive('c6Autoselect', [function() {
+            function link(scope, $element) {
+                $element.on('focus', function() {
+                    this.select();
+
+                    jqLite(this).one('mouseup', function($event) {
+                        $event.preventDefault();
+                    });
+                });
+            }
+
+            return {
+                link: link
             };
         }])
 
