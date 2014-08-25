@@ -2,6 +2,8 @@ define( ['angular','c6ui','c6_state','minireel/services'],
 function( angular , c6ui , c6State  , services          ) {
     'use strict';
 
+    var equals = angular.equals;
+
     return angular.module('c6.app.minireel.manager', [c6ui.name, c6State.name, services.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
@@ -101,8 +103,21 @@ function( angular , c6ui , c6State  , services          ) {
                 });
             }
 
-            function refetchMiniReels() {
-                self.model = cState.modelWithFilter(self.filter, self.limit, self.page, self.model);
+            function limitArgs(max, fn) {
+                return function() {
+                    var args = Array.prototype.slice.call(arguments, 0, max);
+
+                    return fn.apply(null, args);
+                };
+            }
+
+            function refetchMiniReels(fromStart) {
+                self.model = cState.modelWithFilter(
+                    self.filter,
+                    self.limit,
+                    fromStart ? 1 : self.page,
+                    self.model
+                );
             }
 
             function DropDownModel() {
@@ -156,7 +171,7 @@ function( angular , c6ui , c6State  , services          ) {
                                 .then(function save(minireel) {
                                     return minireel.save();
                                 });
-                        })).then(refetchMiniReels);
+                        })).then(limitArgs(0, refetchMiniReels));
                     },
                     onCancel: function() {
                         ConfirmDialogService.close();
@@ -215,7 +230,7 @@ function( angular , c6ui , c6State  , services          ) {
 
                         return $q.all(minireels.map(function(minireel) {
                             return MiniReelService.erase(minireel);
-                        })).then(refetchMiniReels);
+                        })).then(limitArgs(0, refetchMiniReels));
                     }
                 });
             };
@@ -269,10 +284,22 @@ function( angular , c6ui , c6State  , services          ) {
                 return MiniReelService.previewUrlOf(minireel, '/#/preview/minireel');
             };
 
-            $scope.$watch(
-                function() { return self.filter; },
-                function(filter, prevFilter) {
-                    if (filter === prevFilter) { return; }
+            $scope.$watchCollection(
+                function() { return [
+                    self.limit,
+                    self.page,
+                    self.filter
+                ]; },
+                function(props, prevProps) {
+                    var limit = { new: props[0], old: prevProps[0] };
+
+                    if (equals(props, prevProps)) { return; }
+
+                    if (limit.new !== limit.old && self.page !== 1) {
+                        /* jshint boss:true */
+                        return self.page = 1;
+                        /* jshint boss:false */
+                    }
 
                     return refetchMiniReels();
                 }

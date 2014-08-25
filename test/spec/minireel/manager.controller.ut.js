@@ -126,21 +126,71 @@
             });
 
             describe('$watchers', function() {
-                ['all', 'active', 'pending'].forEach(function(status) {
-                    describe('when changed to ' + status, function() {
-                        var scopedPromise;
+                describe('props that will refetch the model', function() {
+                    var scopedPromise;
 
+                    beforeEach(function() {
+                        ManagerCtrl.page = 3;
+
+                        scopedPromise = scopePromise($q.defer().promise);
+                        manager.modelWithFilter.and.returnValue(scopedPromise);
+                    });
+
+                    describe('this.filter', function() {
+                        ['all', 'active', 'pending'].forEach(function(status) {
+                            describe('when changed to ' + status, function() {
+                                beforeEach(function() {
+                                    $scope.$apply(function() {
+                                        ManagerCtrl.filter = status;
+                                    });
+                                });
+
+                                it('should get a new model', function() {
+                                    expect(manager.modelWithFilter).toHaveBeenCalledWith(status, ManagerCtrl.limit, ManagerCtrl.page, model);
+                                    expect(ManagerCtrl.model).toBe(scopedPromise);
+                                });
+                            });
+                        });
+                    });
+
+                    describe('this.limit', function() {
                         beforeEach(function() {
-                            scopedPromise = scopePromise($q.defer().promise);
-                            manager.modelWithFilter.and.returnValue(scopedPromise);
-
                             $scope.$apply(function() {
-                                ManagerCtrl.filter = status;
+                                ManagerCtrl.limit = 100;
                             });
                         });
 
                         it('should get a new model', function() {
-                            expect(manager.modelWithFilter).toHaveBeenCalledWith(status, ManagerCtrl.limit, ManagerCtrl.page, model);
+                            expect(manager.modelWithFilter).toHaveBeenCalledWith(ManagerCtrl.filter, 100, 1, model);
+                            expect(manager.modelWithFilter.calls.count()).toBe(1);
+                            expect(ManagerCtrl.model).toBe(scopedPromise);
+                        });
+
+                        it('should still make a request if the page is already 1', function() {
+                            manager.modelWithFilter.calls.reset();
+                            $scope.$apply(function() {
+                                ManagerCtrl.limit = 20;
+                            });
+
+                            expect(manager.modelWithFilter).toHaveBeenCalledWith(ManagerCtrl.filter, 20, 1, jasmine.any(Object));
+                        });
+
+                        it('should set the ManagerCtrl.page back to 1', function() {
+                            expect(ManagerCtrl.page).toBe(1);
+                        });
+                    });
+
+                    describe('this.page', function() {
+                        var page;
+
+                        beforeEach(function() {
+                            $scope.$apply(function() {
+                                page = ++ManagerCtrl.page;
+                            });
+                        });
+
+                        it('should get a new model', function() {
+                            expect(manager.modelWithFilter).toHaveBeenCalledWith(ManagerCtrl.filter, ManagerCtrl.limit, page, model);
                             expect(ManagerCtrl.model).toBe(scopedPromise);
                         });
                     });
@@ -408,6 +458,8 @@
 
                             describe('after the minireel is saved', function() {
                                 beforeEach(function() {
+                                    ManagerCtrl.page = 3;
+
                                     manager.modelWithFilter.and.returnValue(scopePromise($q.defer().promise));
 
                                     $scope.$apply(function() {
@@ -627,6 +679,8 @@
                                 fetchPromise = $q.defer().promise;
 
                                 manager.modelWithFilter.and.returnValue(scopePromise(fetchPromise));
+
+                                ManagerCtrl.page = 3;
 
                                 $scope.$apply(function() {
                                     [eraseDeferred1, eraseDeferred2].forEach(function(deferred) {
