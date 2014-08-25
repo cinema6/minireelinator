@@ -505,7 +505,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             // TODO: Delete all of this when the styles are fixed!
             Object.defineProperty($rootScope, 'useNewStyles', {
                 get: function() {
-                    return c6State.isActive(c6State.get('MR:Manager'));
+                    return c6State.isActive(c6State.get('MR:Manager')) ||
+                        c6State.isActive(c6State.get('MR:AdManager'));
                 }
             });
         }]);
