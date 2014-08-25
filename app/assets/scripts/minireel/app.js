@@ -8,7 +8,8 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
     'use strict';
 
     var isDefined = angular.isDefined,
-        copy = angular.copy;
+        copy = angular.copy,
+        jqLite = angular.element;
 
     return angular.module('c6.app.minireel', [
         c6ui.name, c6log.name, c6State.name, c6Drag.name,
@@ -190,6 +191,22 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
             };
         }])
 
+        .directive('c6Autoselect', [function() {
+            function link(scope, $element) {
+                $element.on('focus', function() {
+                    this.select();
+
+                    jqLite(this).one('mouseup', function($event) {
+                        $event.preventDefault();
+                    });
+                });
+            }
+
+            return {
+                link: link
+            };
+        }])
+
         .filter('percent', [function() {
             return function(number) {
                 return ((number || 0) * 100) + '%';
@@ -212,6 +229,47 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                     ('/collateral/splash/' + splash.theme + '/' + splash.ratio + '.html')
                 );
             };
+        }])
+
+        .directive('paginatorControls', [function() {
+            return {
+                scope: {
+                    limit: '=',
+                    page: '=',
+                    total: '=',
+                    limits: '='
+                },
+                restrict: 'E',
+                templateUrl: 'views/minireel/directives/paginator_controls.html',
+                controller: 'PaginatorControlsController',
+                controllerAs: 'Ctrl'
+            };
+        }])
+
+        .controller('PaginatorControlsController', ['$scope',
+        function                                   ( $scope ) {
+            var self = this;
+
+            function limitTo(num, min, max) {
+                return Math.max(Math.min(num, max), min);
+            }
+
+            this.showDropDown = false;
+            this.page = $scope.page;
+
+            this.goTo = function(page) {
+                /* jshint boss:true */
+                return $scope.page = limitTo(page, 1, $scope.total);
+            };
+
+            this.setLimit = function(limit) {
+                /* jshint boss:true */
+                return $scope.limit = limit;
+            };
+
+            $scope.$watch('page', function(page) {
+                self.page = page;
+            });
         }])
 
         .config(['c6StateProvider',

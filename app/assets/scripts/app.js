@@ -112,12 +112,12 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     .then(decorateAllUsersWithOrgs);
             };*/
 
-            /*this.find = function(type, id) {
+            this.find = function(type, id) {
                 return $http.get(config.apiBase + '/account/user/' + id)
                     .then(returnData)
                     .then(this.decorateWithOrg)
                     .then(arrayify);
-            };*/
+            };
 
             /*this.findQuery = function(type, query) {
                 function returnData(response) {
@@ -158,7 +158,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     .then(arrayify);
             };
 
-            ['findAll', 'find', 'findQuery', 'create', 'erase'].forEach(function(method) {
+            ['findAll', 'findQuery', 'create', 'erase'].forEach(function(method) {
                 this[method] = function() {
                     return $q.reject('UserAdapter.' + method + '() method is not implemented.');
                 };
@@ -226,33 +226,71 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             };
         }])
 
-        .constant('ContentAdapter', ['$http','$q','config',
-        function                    ( $http , $q , config ) {
+        .constant('ContentAdapter', ['$http','$q','cinema6','config',
+        function                    ( $http , $q , cinema6 , config ) {
+            var self = this;
+
             function clean(model) {
                 delete model.id;
                 delete model.org;
                 delete model.created;
+                model.user = model.user && model.user.id;
 
                 return model;
             }
+
+            function returnData(response) {
+                return response.data;
+            }
+
+            function arrayify(object) {
+                return [object];
+            }
+
+            function decorateWithUsers(experiences) {
+                return $q.all(experiences.map(self.decorateWithUser));
+            }
+
+            this.decorateWithUser = function(experience) {
+                return cinema6.db.find('user', experience.user)
+                    .then(function decorate(user) {
+                        experience.user = user;
+                        return experience;
+                    })
+                    .catch(function nullify() {
+                        experience.user = null;
+                        return experience;
+                    });
+            };
 
             this.findAll = function() {
                 return $http.get(config.apiBase + '/content/experiences')
                     .then(function returnData(response) {
                         return response.data;
-                    });
+                    })
+                    .then(decorateWithUsers);
             };
 
             this.find = function(type, id) {
                 return $http.get(config.apiBase + '/content/experience/' + id)
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
+                    .then(returnData)
+                    .then(this.decorateWithUser)
+                    .then(arrayify);
             };
 
-            this.findQuery = function(type, query) {
-                function returnData(response) {
-                    return response.data;
+            this.findQuery = function(type, query, meta) {
+                function setPageInfo(response) {
+                    meta.items = response.headers('Content-Range')
+                        .match(/\d+/g)
+                        .map(function(num, index) {
+                            return [this[index], parseInt(num)];
+                        }, ['start', 'end', 'total'])
+                        .reduce(function(obj, pair) {
+                            obj[pair[0]] = pair[1];
+                            return obj;
+                        }, {});
+
+                    return response;
                 }
 
                 function handleError(response) {
@@ -262,15 +300,16 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 return $http.get(config.apiBase + '/content/experiences', {
                         params: query
-                    })
-                    .then(returnData, handleError);
+                    }).then(setPageInfo)
+                        .then(returnData, handleError)
+                        .then(decorateWithUsers);
             };
 
             this.create = function(type, data) {
                 return $http.post(config.apiBase + '/content/experience', clean(data))
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
+                    .then(returnData)
+                    .then(this.decorateWithUser)
+                    .then(arrayify);
             };
 
             this.erase = function(type, model) {
@@ -282,9 +321,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
             this.update = function(type, model) {
                 return $http.put(config.apiBase + '/content/experience/' + model.id, clean(model))
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
+                    .then(returnData)
+                    .then(this.decorateWithUser)
+                    .then(arrayify);
             };
         }])
 
@@ -310,11 +349,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         }])
 
         .config(['cinema6Provider','ContentAdapter','CWRXAdapter',
-                 'VoteAdapter','OrgAdapter','UserAdapter','c6Defines',
+                 'VoteAdapter','OrgAdapter','UserAdapter',
         function( cinema6Provider , ContentAdapter , CWRXAdapter ,
-                  VoteAdapter , OrgAdapter , UserAdapter , c6Defines ) {
-            var FixtureAdapter = cinema6Provider.adapters.fixture;
-
+                  VoteAdapter , OrgAdapter , UserAdapter ) {
             ContentAdapter.config = {
                 apiBase: '/api'
             };
@@ -335,11 +372,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 user: UserAdapter
             };
 
-            FixtureAdapter.config = {
-                jsonSrc: 'mock/fixtures.json'
-            };
-
-            cinema6Provider.useAdapter(c6Defines.kLocal ? FixtureAdapter : CWRXAdapter);
+            cinema6Provider.useAdapter(CWRXAdapter);
         }])
 
         .service('SettingsService', ['c6LocalStorage','$rootScope','c6Debounce',

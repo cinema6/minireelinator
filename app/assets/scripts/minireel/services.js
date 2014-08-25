@@ -36,6 +36,34 @@ function( angular , c6ui , cryptojs ) {
             };
         }])
 
+        .factory('scopePromise', ['$q',
+        function                 ( $q ) {
+            function ScopedPromise(promise, initialValue) {
+                var self = this,
+                    myPromise = promise
+                        .then(function setValue(value) {
+                            self.value = value;
+                            return self;
+                        }, function setError(reason) {
+                            self.error = reason;
+                            return $q.reject(self);
+                        });
+
+                this.promise = promise;
+
+                this.value = initialValue;
+                this.error = null;
+
+                this.ensureResolution = function() {
+                    return myPromise;
+                };
+            }
+
+            return function(promise, initialValue) {
+                return new ScopedPromise(promise, initialValue || null);
+            };
+        }])
+
         .provider('CollateralService', [function() {
             var defaultCollageWidth = null,
                 ratios = [];

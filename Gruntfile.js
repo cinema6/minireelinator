@@ -17,8 +17,6 @@ module.exports = function(grunt) {
 
             _.extend(this, settings);
 
-            this.openBrowser = process.env.GRUNT_BROWSER;
-
             this.saucelabs = loadGlobalConfig(settings.saucelabsJSON);
             this.browserstack = loadGlobalConfig(settings.browserstackJSON);
             this.aws = loadGlobalConfig(settings.awsJSON);

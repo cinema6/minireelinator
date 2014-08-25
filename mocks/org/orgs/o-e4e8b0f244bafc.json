@@ -1,0 +1,23 @@
+{
+    "created": "2014-06-12T22:05:59.173Z",
+    "lastUpdated": "2014-06-12T22:05:59.173Z",
+    "minAdCount": 2,
+    "name": "C6 Josh Org",
+    "status": "active",
+    "waterfalls": {
+        "video": [
+            "publisher",
+            "cinema6-publisher",
+            "publisher-cinema6"
+        ],
+        "display": [
+            "cinema6",
+            "publisher",
+            "cinema6-publisher",
+            "publisher-cinema6"
+        ]
+    },
+    "config": {
+        "minireelinator": {}
+    }
+}

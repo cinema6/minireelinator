@@ -3,13 +3,13 @@
         <nav class="mainNav">
             <ul class="mainNav__list clearfix">
                 <li class="mainNav__item">
-                    <a href="#" title="Cinema6" 
+                    <a c6-sref="Application" title="Cinema6" 
                         class="c6Brand c6Brand--dark c6Sprite--alpha">
                         <span class="ir">Cinema6</span>
                     </a>
                 </li>
                 <li class="mainNav__item">
-                    <a href="#" title="Studio" class="mainNav__link mainNav__link--active">
+                    <a c6-sref="MR:Manager" title="Studio" class="mainNav__link mainNav__link--active">
                         <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                              viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
                             <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" fill="#020202" d="M18,1v17H0V1H18z M11.7,8.5L7.8,6.1C7.7,6,7.5,6,7.3,6
@@ -20,7 +20,7 @@
                         <span class="mainNav__label">Studio</span>
                     </a>
                 </li>
-                <li class="mainNav__item">
+                <!--<li class="mainNav__item">
                     <a href="#" title="Ad Manager" class="mainNav__link">
                         <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                              viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
@@ -31,7 +31,7 @@
                         </svg>
                         <span class="mainNav__label">Ad Manager</span>
                     </a>
-                </li>
+                </li>-->
 
                 <li class="mainNav__item mainNav__item--user mainNav__item--userSettings">
                     <div title="Settings" class="mainNav__link mainNav__link--userSettings" >
@@ -55,16 +55,16 @@
                             <a c6-sref="Account:Password" c6-params="{}" class="userNav__link" title="Account Settings">Account Settings</a>
                         </li>
                         <li class="userNav__item">
-                            <a href="#" title="Log Out" class="userNav__link">Log Out</a>
+                            <a href="" ng-click="PortalCtrl.logout()" title="Log Out" class="userNav__link">Log Out</a>
                         </li>
                     </ul>
                 </li>
-                <li class="mainNav__item mainNav__item--user">
-                    <a c6-sref="Account:Password" c6-params="{}" title="Welcome Steve Rogers" class="mainNav__link mainNav__link--userInfo">
-                        <span class="mainNav__label">Steve Rogers</span>
-                        <span class="mainNav__profileHolder">
+                <li c6-alias="PortalCtrl.model as user" class="mainNav__item mainNav__item--user">
+                    <a c6-sref="Account:Password" c6-params="{}" title="Welcome {{user.firstName}} {{user.lastName}}" class="mainNav__link mainNav__link--userInfo">
+                        <span class="mainNav__label">{{user.firstName}} {{user.lastName}}</span>
+                        <!--<span class="mainNav__profileHolder">
                             <img src="http://lorempixel.com/36/36/" alt="User Name">
-                        </span>
+                        </span>-->
                     </a>
                 </li>
             </ul>

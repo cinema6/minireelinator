@@ -236,7 +236,9 @@ function( angular , c6ui ) {
 
                     Object.defineProperty(this, prop, {
                         get: function() {
-                            return $location.search()[param];
+                            var value = $location.search()[param];
+
+                            return (/^-?(\d+)\.?(\d+)?$/).test(value) ? parseFloat(value) : value;
                         },
                         set: isTwoWay ? function(value) {
                             $location.search(prop, value)
