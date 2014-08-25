@@ -36,8 +36,10 @@ module.exports = function(http) {
         return string.slice(0, 1).toUpperCase() + string.slice(1);
     }
 
-    function makeRandomVideo() {
-        var video = randomMember(videos);
+    function makeRandomVideo(site, hd) {
+        var video = randomMember(videos.filter(function(video) {
+            return video.type === site;
+        }));
 
         return {
             title: makeArray(randomNumberBetween(5, 10))
@@ -58,8 +60,8 @@ module.exports = function(http) {
                 height: 200
             },
             videoid: video.videoid,
-            type: video.type,
-            hd: randomMember([true, false]),
+            site: video.type,
+            hd: hd,
             duration: randomNumberBetween(30, 300)
         };
     }
@@ -68,6 +70,8 @@ module.exports = function(http) {
         var query = request.query.query,
             skip = parseInt(request.query.skip) || 0,
             limit = parseInt(request.query.limit) || 10,
+            site = request.query.site,
+            hd = request.query.hd && (request.query.hd === 'true'),
             total = queryCache[query] || (queryCache[query] = randomNumberBetween(50, 1000));
 
         this.respond(200, {
@@ -77,7 +81,12 @@ module.exports = function(http) {
                 totalResults: total
             },
             items: makeArray(limit)
-                .map(makeRandomVideo)
+                .map(function() {
+                    return makeRandomVideo(
+                        site || randomMember(['youtube', 'vimeo', 'dailymotion']),
+                        (hd !== undefined) ? hd : randomMember([true, false])
+                    );
+                })
         });
     });
 };

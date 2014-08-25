@@ -1,17 +1,25 @@
 <h2>Search for Videos</h2>
 <form ng-submit="VideoSearchCtrl.search()">
-    <label>Query: <input type="text" ng-model="VideoSearchCtrl.query" /></label>
+    <label>Query: <input type="text" ng-model="VideoSearchCtrl.query.query" /></label>
+    <label>
+        Site: 
+        <select ng-options="(site ? site.toLowerCase() : site) as (site || 'All') for site in [undefined, 'YouTube', 'Vimeo', 'Dailymotion']" ng-model="VideoSearchCtrl.query.site"></select>
+    </label>
+    <label>
+        HD: 
+        <select ng-options="label for (label, value) in { 'Both': undefined, 'Only HD': true, 'Only SD': false }" ng-model="VideoSearchCtrl.query.hd"></select>
+    </label>
     <button>Search!</button>
 </form>
 <section ng-if="VideoSearchCtrl.result" c6-alias="VideoSearchCtrl.result as result">
     <ul>
         <li ng-repeat="video in result.videos">
             <h4>{{video.title}}<span ng-if="video.hd"> (HD)</span></h4>
-            <p>Via: <a ng-href="{{video.link}}">{{video.type}}</a></p>
+            <p>Via: <a ng-href="{{video.link}}">{{video.site}}</a></p>
             <a href="" ng-show="VideoSearchCtrl.currentPreview !== video" ng-click="VideoSearchCtrl.preview(video)">
                 <img ng-src="{{video.thumbnail.src}}" />
             </a>
-            <ng-switch on="video.type" ng-if="VideoSearchCtrl.currentPreview === video">
+            <ng-switch on="video.site" ng-if="VideoSearchCtrl.currentPreview === video">
                 <youtube-player ng-switch-when="youtube" videoid="{{video.videoid}}" autoplay style="width: 300px;"></youtube-player>
                 <vimeo-player id="vimeo__{{video.videoid}}" ng-switch-when="vimeo" videoid="{{video.videoid}}" autoplay style="width: 300px;"></vimeo-player>
                 <dailymotion-player id="dailymotion__{{video.videoid}}" ng-switch-when="dailymotion" videoid="{{video.videoid}}" autoplay style="width: 300px;"></dailymotion-player>

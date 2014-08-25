@@ -394,7 +394,11 @@ function( angular , c6ui , cryptojs ) {
             // the chain if this string was passed to this function.
             function durationToSeconds(duration) {
                 // Get all numerical parts of duration as an array
-                return duration.match(/\d+/g) // ["4", "6", "33"]
+                return duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/).slice(1) // ["4", "6", "33"]
+                    // If any durations are not specified, default them to 0
+                    .map(function(num) {
+                        return num || 0;
+                    })
                     // Convert strings to numbers
                     .map(parseFloat) // [4, 6, 33]
                     // Reverse the numbers

@@ -23,18 +23,21 @@ function( angular , c6State  , services          , c6Defines  ) {
         function                             ( VideoSearchService ) {
             var self = this;
 
-            this.query = '';
+            this.query = {
+                query: '',
+                site: undefined,
+                hd: undefined
+            };
             this.result = null;
 
             this.currentPreview = null;
 
             this.search = function() {
-                return VideoSearchService.find({
-                    query: this.query
-                }).then(function assign(result) {
-                    /* jshint boss:true */
-                    return (self.result = result);
-                });
+                return VideoSearchService.find(this.query)
+                    .then(function assign(result) {
+                        /* jshint boss:true */
+                        return (self.result = result);
+                    });
             };
 
             this.preview = function(video) {
