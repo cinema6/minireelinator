@@ -221,13 +221,9 @@
         }
     /*  buttons : default : groups;  */
         .btnGroup {
-            display: none;
+            display:inline-block;
             vertical-align: middle;
-            -webkit-transition: all 0.25s; transition:all 0.25s;
         }
-            .btnGroup--show {
-                display:inline-block;
-            }
             .btnGroup .btn {
                 float:left;
                 border-radius:0;

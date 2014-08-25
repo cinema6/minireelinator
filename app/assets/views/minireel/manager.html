@@ -50,7 +50,8 @@
                     <button class="ui__clickDropBtn" type="button" title="Select None" ng-show="ManagerCtrl.model.selected.indexOf(true) > -1" ng-click="ManagerCtrl.selectNone()">Select None</button>
                 </div>
             </div>
-            <div class="btnGroup btnGroup--show clearfix">
+            <div class="btnGroup clearfix" 
+            ng-show="ManagerCtrl.getSelected().length > 0">
                 <button class="btn btn--primary" type="button" title="Publish" ng-show="ManagerCtrl.getSelected('pending').length > 0" ng-click="ManagerCtrl.makePublic(ManagerCtrl.getSelected())">
                     <span class="btn__label">Publish</span>
                 </button>
