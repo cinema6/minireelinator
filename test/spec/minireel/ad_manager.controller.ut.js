@@ -5,7 +5,7 @@
         /* global angular:true */
         var forEach = angular.forEach;
 
-        ddescribe('AdManagerController', function() {
+        describe('AdManagerController', function() {
             var $rootScope,
                 $scope,
                 $controller,
