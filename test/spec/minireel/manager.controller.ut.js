@@ -130,10 +130,14 @@
                     var scopedPromise;
 
                     beforeEach(function() {
-                        ManagerCtrl.page = 3;
-
                         scopedPromise = scopePromise($q.defer().promise);
                         manager.modelWithFilter.and.returnValue(scopedPromise);
+
+                        $scope.$apply(function() {
+                            ManagerCtrl.page = 3;
+                        });
+
+                        model = ManagerCtrl.model;
                     });
 
                     describe('this.filter', function() {
@@ -146,7 +150,7 @@
                                 });
 
                                 it('should get a new model', function() {
-                                    expect(manager.modelWithFilter).toHaveBeenCalledWith(status, ManagerCtrl.limit, ManagerCtrl.page, model);
+                                    expect(manager.modelWithFilter).toHaveBeenCalledWith(status, ManagerCtrl.limit, 1, model);
                                     expect(ManagerCtrl.model).toBe(scopedPromise);
                                 });
                             });
@@ -155,6 +159,8 @@
 
                     describe('this.limit', function() {
                         beforeEach(function() {
+                            manager.modelWithFilter.calls.reset();
+
                             $scope.$apply(function() {
                                 ManagerCtrl.limit = 100;
                             });

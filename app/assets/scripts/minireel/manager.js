@@ -84,6 +84,10 @@ function( angular , c6ui , c6State  , services          ) {
             var self = this,
                 MiniReelCtrl = $scope.MiniReelCtrl;
 
+            function isSame(prop, obj1, obj2) {
+                return obj1[prop] === obj2[prop];
+            }
+
             function value(val) {
                 return function() {
                     return val;
@@ -286,22 +290,22 @@ function( angular , c6ui , c6State  , services          ) {
 
             $scope.$watchCollection(
                 function() { return [
-                    self.limit,
                     self.page,
+                    self.limit,
                     self.filter
                 ]; },
                 function(props, prevProps) {
-                    var limit = { new: props[0], old: prevProps[0] };
+                    var samePage = isSame(0, props, prevProps);
 
                     if (equals(props, prevProps)) { return; }
 
-                    if (limit.new !== limit.old && self.page !== 1) {
+                    if (self.page !== 1 && samePage) {
                         /* jshint boss:true */
                         return self.page = 1;
                         /* jshint boss:false */
                     }
 
-                    return refetchMiniReels();
+                    return refetchMiniReels(samePage);
                 }
             );
 
