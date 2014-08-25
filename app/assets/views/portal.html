@@ -62,9 +62,9 @@
                 <li c6-alias="PortalCtrl.model as user" class="mainNav__item mainNav__item--user">
                     <a c6-sref="Account:Password" c6-params="{}" title="Welcome {{user.firstName}} {{user.lastName}}" class="mainNav__link mainNav__link--userInfo">
                         <span class="mainNav__label">{{user.firstName}} {{user.lastName}}</span>
-                        <!--<span class="mainNav__profileHolder">
-                            <img src="http://lorempixel.com/36/36/" alt="User Name">
-                        </span>-->
+                        <span class="mainNav__profileHolder">
+                            <img ng-src="{{user.email | gravatar}}" alt="User Name">
+                        </span>
                     </a>
                 </li>
             </ul>

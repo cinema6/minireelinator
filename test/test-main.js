@@ -61,6 +61,7 @@
                     exports: 'Modernizr'
                 },
                 cryptojs: {
+                    deps: [libUrl('cryptojs/v3.1.2/md5.js')],
                     exports: 'CryptoJS'
                 },
                 angular: {

@@ -1,9 +1,9 @@
 define( ['angular','c6ui','c6log','c6_state','minireel/services','minireel/tracker',
          'minireel/c6_drag','minireel/card_table','minireel/editor','minireel/manager',
-         'minireel/ad_manager','minireel/players','c6_defines'],
+         'minireel/ad_manager','minireel/players','c6_defines','cryptojs'],
 function( angular , c6ui , c6log , c6State  , services          , tracker          ,
           c6Drag           , cardTable           , editor          , manager          ,
-          adManager           , players          , c6Defines  ) {
+          adManager           , players          , c6Defines  , cryptojs ) {
     /* jshint -W106 */
     'use strict';
 
@@ -228,6 +228,13 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                 return $sce.trustAsResourceUrl(
                     ('/collateral/splash/' + splash.theme + '/' + splash.ratio + '.html')
                 );
+            };
+        }])
+
+        .filter('gravatar', [function() {
+            return function(email) {
+                return '//www.gravatar.com/avatar/' +
+                    cryptojs.MD5(email.trim().toLowerCase()).toString(cryptojs.enc.Hex);
             };
         }])
 
