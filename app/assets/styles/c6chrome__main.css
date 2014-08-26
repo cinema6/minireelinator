@@ -21,6 +21,7 @@
     }
     input, textarea {
         font-family: 'museo-sans', Arial, Helvetica, sans-serif;
+        color:#626262;
     }
         input:required {
             box-shadow: none;

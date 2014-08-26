@@ -11,10 +11,10 @@
         margin:0;
     }
     ::-moz-selection {
-        background: #e900a4; text-shadow: none; color:#fff;
+        background: #328efe; text-shadow: none; color:#fff;
     }
     ::selection {
-        background: #e900a4; text-shadow: none; color:#fff;
+        background: #328efe; text-shadow: none; color:#fff;
     }
     p {
         margin: 1em 0;
@@ -64,6 +64,9 @@
     }
     .typo--context {
         color:#ff7e00;
+    }
+    .typo--centered {
+        text-align: center;
     }
     @font-face {
         font-family: 'FontAwesome';
@@ -218,13 +221,9 @@
         }
     /*  buttons : default : groups;  */
         .btnGroup {
-            display: none;
+            display:inline-block;
             vertical-align: middle;
-            -webkit-transition: all 0.25s; transition:all 0.25s;
         }
-            .btnGroup--show {
-                display:inline-block;
-            }
             .btnGroup .btn {
                 float:left;
                 border-radius:0;
@@ -411,6 +410,14 @@
         border-radius:0.25em;
         overflow: hidden;
     }
+    .modalDialog__group {
+        position:fixed; z-index: 100; top:50%; left:50%;
+        width:37.5em; height:18em;
+        margin:-9em 0 0 -18.75em;
+        background:#fff;
+        border-radius:0.25em;
+        overflow: hidden;
+    }
     .modalHeader__group {
         min-height:3em;
         background:#eee;
@@ -437,7 +444,7 @@
             color:#626262; 
             font-size:1.25em; font-weight:500;
             text-align: center;
-            margin:0 3rem 0 0; padding:0.45em 0 0 0;
+            margin:0 3rem; padding:0.45em 0 0 0;
         }
     .modalTabs__group {
         width:10.5em;
@@ -449,6 +456,14 @@
     }
         .modalBody__group--sideTabs {
             left:13.5em;
+        }
+        .modalBody__title {
+            font-size:1.5em; font-weight:100;
+            margin:1.5625rem 0 0.5625rem 0;
+            line-height: 1.25;
+        }
+        .modalBody__message {
+            margin:0;
         }
         .modalBody__fineprint {
             position: absolute;
@@ -485,7 +500,7 @@
             width:auto; height:auto;
             border-radius:0.25em; margin:0;
         }
-        .modalBody__group {
+        .modal__group .modalBody__group {
             overflow: auto;
             right:0.5em; top:3.0625em !important;
             padding-right:1em; padding-top:1.5em;
