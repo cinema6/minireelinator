@@ -3,7 +3,7 @@
     <label>Query: <input type="text" ng-model="VideoSearchCtrl.query.query" /></label>
     <label>
         Site: 
-        <select ng-options="(site ? site.toLowerCase() : site) as (site || 'All') for site in [undefined, 'YouTube', 'Vimeo', 'Dailymotion']" ng-model="VideoSearchCtrl.query.site"></select>
+        <select ng-options="(site ? site.toLowerCase() : site) as (site || 'All') for site in [undefined, 'YouTube', 'Vimeo', 'Dailymotion']" ng-model="VideoSearchCtrl.query.sites"></select>
     </label>
     <label>
         HD: 
