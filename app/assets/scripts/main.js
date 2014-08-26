@@ -21,6 +21,7 @@
                 exports: 'Modernizr'
             },
             cryptojs: {
+                deps: ['https://lib.cinema6.com/cryptojs/v3.1.2/md5.js'],
                 exports: 'CryptoJS'
             },
             angular: {
