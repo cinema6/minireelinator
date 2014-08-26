@@ -124,22 +124,6 @@
             });
 
             describe('find(type, id)', function() {
-                var failure;
-
-                beforeEach(function() {
-                    failure = jasmine.createSpy('failure()');
-
-                    $rootScope.$apply(function() {
-                        adapter.find('user', 'o-1234').catch(failure);
-                    });
-                });
-
-                it('should reject the promise', function() {
-                    expect(failure).toHaveBeenCalledWith('UserAdapter.find() method is not implemented.');
-                });
-            });
-
-            xdescribe('find(type, id)', function() {
                 var user,
                     success;
 

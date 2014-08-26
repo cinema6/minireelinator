@@ -1,12 +1,45 @@
-<div style="padding-top:40px;">
-    <div style="width:40%;float:left;">
-        Frequency:<br>
-        <code>{{AdSettingsCtrl.frequency}}</code><br>
-        <select ng-model="AdSettingsCtrl.frequency" ng-options="option.label for option in AdSettingsCtrl.frequencyData"></select>
-    </div>
-    <div style="width:40%;float:right;">
-        First Placement:<br>
-        <code>{{AdSettingsCtrl.firstPlacement}}</code><br>
-        <select ng-model="AdSettingsCtrl.firstPlacement" ng-options="option.label for option in AdSettingsCtrl.firstPlacementData"></select>
-    </div>
+<div class="modalBody__group modalBody__group--sideTabs mrAdManager__frequency">
+    <form class="AMFrequency__form">
+        <div class="halfCol">
+            <h1 class="forms__name--title">First Ad Placement <strong class="typo--danger">*</strong></h1>
+            <button class="btn faa fa-caret-down ui__clickDrop" type="button" title="First Ad Placement">
+                <span class="btn__label">After 1st Video</span>
+            </button>
+            <div class="pager__itemsPerPage ui__clickDropMenu">
+                <button class="ui__clickDropBtn" type="button" title="Before 1st Video">Before 1st Video</button>
+                <button class="ui__clickDropBtn" type="button" title="After 1st Video">After 1st Video</button>
+                <button class="ui__clickDropBtn ui__clickDropBtn--current" type="button" title="After 2nd Video">After 2nd Video</button>
+            </div>
+
+            <h1 class="forms__name--title">Allow Users to Skip Ads? <strong class="typo--danger">*</strong></h1>
+            <button class="btn faa fa-caret-down ui__clickDrop" type="button" title="First Ad Placement">
+                <span class="btn__label">After 1st Video</span>
+            </button>
+            <div class="pager__itemsPerPage ui__clickDropMenu">
+                <button class="ui__clickDropBtn" type="button" title="No, users cannot skip ads">No, users cannot skip ads</button>
+                <button class="ui__clickDropBtn" type="button" title="Yes, after six seconds">Yes, after six seconds</button>
+                <button class="ui__clickDropBtn ui__clickDropBtn--current" type="button" title="Yes, after six seconds">Yes, skip ads at any time</button>
+            </div>
+        </div>
+        <div class="halfCol">
+            <h1 class="forms__name--title">Subsequent Ad Placement <strong class="typo--danger">*</strong></h1>
+            <button class="btn faa fa-caret-down ui__clickDrop" type="button" title="Subsequent Ad Placement">
+                <span class="btn__label">After Every 2 Videos</span>
+            </button>
+            <div class="pager__itemsPerPage ui__clickDropMenu">
+                <button class="ui__clickDropBtn" type="button" title="After Every 1 Video">After Every 1 Video</button>
+                <button class="ui__clickDropBtn ui__clickDropBtn--current" type="button" title="After Every 2 Videos">After Every 2 Videos</button>
+                <button class="ui__clickDropBtn ui__clickDropBtn--current" type="button" title="After Every 3 Videos">After Every 3 Videos</button>
+            </div>
+        </div>
+    </form>
+    <p class="modalBody__fineprint typo--danger"><strong>*</strong> Indicates required field.</p>
 </div>
+<footer class="modalFooter__group">
+    <button class="btnAction btnAction--first" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
+    <ng-switch on="NewCtrl.tabs.length">
+        <button ng-switch-when="1" ng-click="NewCtrl.save()" class="btnAction btnAction--success btnAction--last" type="button" title="Done!" ng-disabled="!NewCtrl.title">I&rsquo;m Done!</button>
+        <button ng-switch-default ng-click="NewCtrl.nextTab()" ng-disabled="!NewCtrl.title" class="btnAction btnAction--primary btnAction--last" type="button" title="Next Step">Next Step</button>
+    </ng-switch>
+    <p class="modalFooter__guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</p>
+</footer>

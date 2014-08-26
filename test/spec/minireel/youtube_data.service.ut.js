@@ -113,6 +113,29 @@ define(['minireel/services'], function(servicesModule) {
                             expect(success).toHaveBeenCalledWith(response.items);
                         });
 
+                        describe('if the duration string is missing units', function() {
+                            beforeEach(function() {
+                                success.calls.reset();
+
+                                response.items[0].contentDetails.duration = 'PT3M';
+                                $httpBackend.expectGET('https://www.googleapis.com/youtube/v3/videos?id=MYC-waukYWo&key=' + apiKey + '&part=snippet,contentDetails')
+                                    .respond(200, response);
+
+                                YouTubeDataService.videos.list({
+                                    part: ['snippet', 'contentDetails'],
+                                    id: 'MYC-waukYWo'
+                                }).then(success, failure);
+
+                                $httpBackend.flush();
+                            });
+
+                            it('should still work', function() {
+                                var video = success.calls.mostRecent().args[0];
+
+                                expect(video.contentDetails.duration).toBe(180);
+                            });
+                        });
+
                         describe('if there are no results', function() {
                             beforeEach(function() {
                                 /* jshint quotmark:false */

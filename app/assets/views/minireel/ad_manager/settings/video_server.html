@@ -1,16 +1,60 @@
-<div class="modal__content modal__editor clearfix">
-    <form class="form__adSettings">
-        <ul class="wizard__group">
-            <li ng-repeat="choice in AdSettingsCtrl.adChoices.video" class="wizard__choice wizard__choice--textOnly wizard__choice--ads">
-                <input id="videoAd_{{choice.value}}" type="radio"
-                    name="minireel-category" ng-model="AdSettingsCtrl.model.video.waterfall" ng-value="choice.value"
-                    class="modal__radioBtn" />
-                <label class="wizard__hitarea" for="videoAd_{{choice.value}}"><span class="ir">{{choice.name}}</span></label>
-                <div class="wizard__copy">
-                    <h2 class="wizard__title">{{choice.name}}</h2>
-                    <p class="wizard__p">{{choice.description}}</p>
-                </div>
-            </li>
-        </ul>
+<div class="modalBody__group modalBody__group--sideTabs mrAdManager__videoServer">
+    <form c6-alias="NewCtrl.mode as config">
+        <h1 class="forms__name--title">Choose Video Ad Server</h1>
+        <p>How do you want to load the <strong>video ads</strong> for this MiniReel?</p>
+        <div class="halfCol">
+            <label class="radiobox" for="videoServer_c6First">
+                <input id="videoServer_c6First" type="radio" 
+                    name="minireel-mode"
+                    class="radiobox__input"/>
+                <span class="btn__label faa fab"> 
+                    Use Cinema6 ad server <em>first</em>, <br> 
+                    with your ad server as a backup.
+                </span>
+            </label>
+            <label class="radiobox" for="videoServer_c6Only">
+                <input id="videoServer_c6Only" type="radio" 
+                    name="minireel-mode"
+                    class="radiobox__input"/>
+                <span class="btn__label faa fab"> 
+                    Use Cinema6 ad server <em>only</em>, <br> 
+                    <em>no backup ad server.</em>
+                </span>
+            </label>
+        </div>
+        <div class="halfCol">
+            <label class="radiobox" for="videoServer_pubFirst">
+                <input id="videoServer_pubFirst" type="radio" 
+                    name="minireel-mode"
+                    class="radiobox__input"/>
+                <span class="btn__label faa fab"> 
+                    Use your ad server <em>first</em>, <br> 
+                    with Cinema6 ad server as a backup.
+                </span>
+            </label>
+            <label class="radiobox" for="videoServer_pubOnly">
+                <input id="videoServer_pubOnly" type="radio" 
+                    name="minireel-mode"
+                    class="radiobox__input"/>
+                <span class="btn__label faa fab"> 
+                    Use your ad server <em>only</em>, <br> 
+                    <em>no backup ad server.</em>
+                </span>
+            </label>
+        </div>
     </form>
+    <p class="modalBody__fineprint typo--danger"><strong>*</strong> Indicates required field.</p>
 </div>
+<footer class="modalFooter__group">
+    <button class="btnAction btnAction--first" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
+    <ng-switch on="NewCtrl.tabs.length">
+        <button ng-switch-when="1" ng-click="NewCtrl.save()" class="btnAction btnAction--success btnAction--last" type="button" title="Done!" ng-disabled="!NewCtrl.title">I&rsquo;m Done!</button>
+        <button ng-switch-default ng-click="NewCtrl.nextTab()" ng-disabled="!NewCtrl.title" class="btnAction btnAction--primary btnAction--last" type="button" title="Next Step">Next Step</button>
+    </ng-switch>
+    <p class="modalFooter__guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</p>
+</footer>
+
+<!--
+    {{choice.name}}
+    {{choice.description}}
+-->

@@ -2,7 +2,7 @@
     'use strict';
 
     define(['minireel/ad_manager','app'], function(adModule, appModule) {
-        ddescribe('AdSettingsController', function() {
+        describe('AdSettingsController', function() {
             var $rootScope,
                 $scope,
                 $controller,

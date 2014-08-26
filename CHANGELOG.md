@@ -1,13 +1,17 @@
 # MiniReelinator
 
+* *[Beta19.rc1]*
+  * [FEATURE]: New front end for studio and ad manager added
+
+## Beta18 (August 25, 2014)
 * *[Beta18.rc1]*
   * [FIX]: MiniReel Preview page title no longer says "Cinema6
     Dashboard".
   * Browser title now changes as the user navigates to different "pages"
     of the app
-  * Add template files for what will become the Ad Manager, and wire
-    up the routes for development
-
+  * [FIX]: Fix for an issue that could cause the video length trimmer to
+    render incorrectly and not function
+* *[/Beta18.rc1]*
 
 ## Beta17 (August 7, 2014)
 * *[Beta17.rc4]

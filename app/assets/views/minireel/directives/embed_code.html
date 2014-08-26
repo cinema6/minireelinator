@@ -12,6 +12,14 @@
         <div class="mr-splashBlocker">&nbsp;</div>
     </div>
 </div>
+<div ng-if="Ctrl.readOnly" class="embedPreview__group embedPreview__group--small">
+    <h3 class="embed__label">Embed Preview:</h3>
+    <div class="embedPreview">
+        <div class="mr-splash__group" splash-page="minireel" splash-src="{{splashSrc}}"></div>
+        <div class="mr-splashBlocker">&nbsp;</div>
+    </div>
+    <p class="embed__fineprint">To change the embed code type, please use the MiniReel editor.</p>
+</div>
 <div class="embedCode__group">
     <label class="embed__label" for="embed-size">Embed Code Size:</label>
     <select ng-model="Ctrl.mode" ng-options="mode.value as mode.name for mode in Ctrl.modes" class="embed__selector" name="embed-size" id="embed-size"></select>
@@ -27,5 +35,5 @@
     </div>
     <textarea ng-model="Ctrl.code" name="" id="" class="embedCode__snippet" cols="30" rows="10"></textarea>
     <p ng-if="!Ctrl.readOnly" class="embedCode__tip"><strong><span class="typo--attention">*</span> Responsive Auto-Fit</strong> embedding will automatically resize the MiniReel widget to fit nicely into your page. This is the recommended embedding method.</p>
-    <p><a ng-if="!!splashSrc" ng-href="{{splashSrc}}" download target="_blank" class="toolbar__btn toolbar__preview" type="button" >Download Splash Image</a></p>
+    <p><a ng-if="!!splashSrc" ng-href="{{splashSrc}}" download target="_blank" class="btn btn--primary" type="button" >Download Splash Image</a></p>
 </div>

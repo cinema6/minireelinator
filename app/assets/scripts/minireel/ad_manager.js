@@ -357,7 +357,7 @@ function( angular , c6ui , c6State  , services  ) {
 
             if (!cState.cModel) {
                 c6State.goTo(cState.cParent.cName);
-                return;
+                // return;
             }
 
             self.adChoices = MiniReelService.adChoicesOf(org, data);
@@ -401,7 +401,7 @@ function( angular , c6ui , c6State  , services  ) {
 
             self.frequencyData = [
                 {
-                    label: 'Only show the first ad',
+                    label: 'No subsequent ads',
                     value: 0
                 },
                 {
