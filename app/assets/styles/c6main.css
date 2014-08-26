@@ -196,6 +196,9 @@
             .btn:active {
                 background:#fff;
             }
+            .btn:disabled {
+                opacity:0.5;
+            }
         .btn--primary, .btn--primary:focus {
             background:#eaf7ff; color:#2398db;
             border:1px solid #bfe7ff; 
@@ -277,6 +280,9 @@
                 border:1px solid rgba(0,0,0,0.16);
                 -webkit-box-shadow:none;
                 box-shadow:none;
+            }
+            .btnAction:disabled {
+                opacity:0.5;
             }
         .btnAction--hasIcon,
         .btnAction--hasIcon:focus {
