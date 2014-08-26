@@ -501,6 +501,69 @@ function( angular , c6ui , cryptojs ) {
             }];
         }])
 
+        .service('VimeoDataService', ['$http',
+        function                     ( $http ) {
+            function first(array) {
+                return array[0];
+            }
+
+            function returnData(response) {
+                return response.data;
+            }
+
+            function capitalize(word) {
+                return word.slice(0, 1).toUpperCase() + word.slice(1);
+            }
+
+            function mapObject(object, fn) {
+                return Object.keys(object)
+                    .reduce(function(result, key) {
+                        var data = fn(object[key], key, object);
+
+                        result[data[0]] = data[1];
+
+                        return result;
+                    }, {});
+            }
+
+            function processProperty(prop, value) {
+                switch (prop) {
+                    case 'tags':
+                        return value.split(/,\s*/);
+                    default:
+                        return value;
+                }
+            }
+
+            function processObject(object) {
+                return mapObject(object, function(value, key) {
+                    return [key, processProperty(key, value)];
+                });
+            }
+
+            function camelcaseify(object) {
+                return mapObject(object, function(value, key) {
+                    var words = key.split('_');
+
+                    return [
+                        words.slice(0, 1)
+                            .concat(words.slice(1)
+                                .map(capitalize))
+                            .join(''),
+                        value
+                    ];
+                });
+            }
+
+            this.getVideo = function(id) {
+                return $http.get('//vimeo.com/api/v2/video/' + id + '.json')
+                    .then(returnData)
+                    .then(first)
+                    .then(camelcaseify)
+                    .then(processObject);
+            };
+        }])
+
         .service('VideoThumbnailService', ['$q','$cacheFactory','$http',
         function                          ( $q , $cacheFactory , $http ) {
             var _private = {},
