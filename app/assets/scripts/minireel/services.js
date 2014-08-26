@@ -12,6 +12,35 @@ function( angular , c6ui , cryptojs ) {
         fromJson = angular.fromJson,
         isArray = angular.isArray;
 
+    function mapObject(object, fn) {
+        return Object.keys(object)
+            .reduce(function(result, key) {
+                var data = fn(object[key], key, object);
+
+                result[data[0]] = data[1];
+
+                return result;
+            }, {});
+    }
+
+    function capitalize(word) {
+        return word.slice(0, 1).toUpperCase() + word.slice(1);
+    }
+
+    function camelcaseify(object) {
+        return mapObject(object, function(value, key) {
+            var words = key.split('_');
+
+            return [
+                words.slice(0, 1)
+                    .concat(words.slice(1)
+                        .map(capitalize))
+                    .join(''),
+                value
+            ];
+        });
+    }
+
     return angular.module('c6.app.minireel.services', [c6ui.name])
         .factory('requireCJS', ['$http','$cacheFactory','$q',
         function               ( $http , $cacheFactory , $q ) {
@@ -539,21 +568,6 @@ function( angular , c6ui , cryptojs ) {
                 return response.data;
             }
 
-            function capitalize(word) {
-                return word.slice(0, 1).toUpperCase() + word.slice(1);
-            }
-
-            function mapObject(object, fn) {
-                return Object.keys(object)
-                    .reduce(function(result, key) {
-                        var data = fn(object[key], key, object);
-
-                        result[data[0]] = data[1];
-
-                        return result;
-                    }, {});
-            }
-
             function processProperty(prop, value) {
                 switch (prop) {
                     case 'tags':
@@ -569,26 +583,64 @@ function( angular , c6ui , cryptojs ) {
                 });
             }
 
-            function camelcaseify(object) {
-                return mapObject(object, function(value, key) {
-                    var words = key.split('_');
-
-                    return [
-                        words.slice(0, 1)
-                            .concat(words.slice(1)
-                                .map(capitalize))
-                            .join(''),
-                        value
-                    ];
-                });
-            }
-
             this.getVideo = function(id) {
                 return $http.get('//vimeo.com/api/v2/video/' + id + '.json')
                     .then(returnData)
                     .then(first)
                     .then(camelcaseify)
                     .then(processObject);
+            };
+        }])
+
+        .service('DailymotionDataService', ['$http',
+        function                           ( $http ) {
+            function snakecaseify(string) {
+                return string.match(/[A-Z]?[^A-Z]+/g)
+                    .map(function(word) { return word.toLowerCase(); })
+                    .join('_');
+            }
+
+            function returnData(response) {
+                return response.data;
+            }
+
+            function processProperty(prop, value) {
+                switch (prop) {
+                case 'createdTime':
+                    return new Date(value * 1000);
+                default:
+                    return value;
+                }
+            }
+
+            function processObject(object) {
+                return mapObject(object, function(value, key) {
+                    return [key, processProperty(key, value)];
+                });
+            }
+
+            function VideoFetcher(id) {
+                this.id = id;
+            }
+            VideoFetcher.prototype = {
+                get: function(query) {
+                    return $http.get('https://api.dailymotion.com/video/' + this.id, {
+                        params: mapObject(query, function(value, key) {
+                            return [
+                                snakecaseify(key),
+                                isArray(value) ?
+                                    value.map(snakecaseify).join(',') :
+                                    value
+                            ];
+                        })
+                    }).then(returnData)
+                        .then(camelcaseify)
+                        .then(processObject);
+                }
+            };
+
+            this.video = function(id) {
+                return new VideoFetcher(id);
             };
         }])
 
