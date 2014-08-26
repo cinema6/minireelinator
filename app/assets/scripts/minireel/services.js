@@ -644,6 +644,40 @@ function( angular , c6ui , cryptojs ) {
             };
         }])
 
+        .service('VideoDataService', ['$q','YouTubeDataService',
+        function                     ( $q , YouTubeDataService ) {
+            this.getVideos = function(config) {
+                function idsOfType(list, type) {
+                    return list.map(function(pair) {
+                        return pair[0] === type ? pair[1] : null;
+                    });
+                }
+
+                function resolveFromYouTube(list) {
+                    function YouTubeResult(data) {
+                        this.service = 'youtube';
+
+                        this.views = parseInt(data.statistics.viewCount);
+                    }
+
+                    return YouTubeDataService.videos.list({
+                        part: ['statistics'],
+                        id: list.filter(function(id) {
+                            return !!id;
+                        })
+                    }).then(function(videos) {
+                        return list.map(function(id) {
+                            return id && new YouTubeResult(videos.shift());
+                        });
+                    });
+                }
+
+                return $q.all([
+                    resolveFromYouTube(idsOfType(config, 'youtube'))
+                ]);
+            };
+        }])
+
         .service('VideoThumbnailService', ['$q','$cacheFactory','$http',
         function                          ( $q , $cacheFactory , $http ) {
             var _private = {},
