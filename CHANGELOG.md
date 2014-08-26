@@ -1,6 +1,6 @@
 # MiniReelinator
 
-* *[Beta18.rc2]*
+* *[Beta19.rc1]*
   * [FEATURE]: New front end for studio and ad manager added
 
 ## Beta18 (August 25, 2014)
