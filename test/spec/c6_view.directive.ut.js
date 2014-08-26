@@ -173,7 +173,8 @@
                                     queryParams: {
                                         sort: '=',
                                         coordinates: '=cors',
-                                        debug: '&'
+                                        debug: '&',
+                                        limit: '&'
                                     }
                                 };
 
@@ -202,6 +203,28 @@
                                 expect(function() {
                                     controller.debug = 'foo';
                                 }).toThrow();
+                            });
+
+                            it('should convert numbers in the query params to actual numbers', function() {
+                                $location.search.and.returnValue({
+                                    limit: '50'
+                                });
+                                expect(controller.limit).toBe(50);
+
+                                $location.search.and.returnValue({
+                                    limit: '2.25'
+                                });
+                                expect(controller.limit).toBe(2.25);
+
+                                $location.search.and.returnValue({
+                                    limit: '-100.46'
+                                });
+                                expect(controller.limit).toBe(-100.46);
+
+                                $location.search.and.returnValue({
+                                    limit: '1'
+                                });
+                                expect(controller.limit).toBe(1);
                             });
 
                             it('should create two-way bindings on the controller', function() {

@@ -27,7 +27,7 @@
     "grunt-karma": "^0.8.2",
     "grunt-open": "~0.2.2",
     "grunt-text-replace": "^0.3.12",
-    "http-mock": "git+ssh://git@bitbucket.org:cinema6/http-mock.git",
+    "http-mock": "cinema6/http-mock",
     "karma-jasmine": "~0.2.1",
     "karma-junit-reporter": "~0.2.1",
     "karma-phantomjs-launcher": "^0.1.4",

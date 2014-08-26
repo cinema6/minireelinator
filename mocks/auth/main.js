@@ -2,15 +2,26 @@ module.exports = function(http) {
     'use strict';
 
     var grunt = require('grunt'),
+        path = require('path'),
         userCache = require('./user_cache');
+
+    var fn = require('../utils/fn'),
+        extend = fn.extend;
+
+    var userId = 'u-35b096c999711b';
+
+    function userPath(id) {
+        return path.resolve(__dirname, '../user/users/' + id + '.json');
+    }
 
     http.whenPOST('/api/auth/login', function(request) {
         if ((/\w+@cinema6\.com$/).test(request.body.email)) {
-            var user = grunt.file.readJSON('mocks/auth/user.json');
+            var user = grunt.file.readJSON(userPath(userId));
 
-            user.email = request.body.email;
-
-            this.respond(200, (userCache.user = user));
+            this.respond(200, (userCache.user = extend(user, {
+                email: request.body.email,
+                id: userId
+            })));
         } else {
             this.respond(401, 'Invalid email or password');
         }

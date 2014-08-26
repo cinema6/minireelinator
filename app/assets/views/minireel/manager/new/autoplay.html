@@ -1,18 +1,21 @@
-<div class="modal__content modal__editor clearfix">
+<div class="modalBody__group modalBody__group--sideTabs mrConfigure__autoplay">
     <form c6-alias="NewCtrl.mode as config">
-        <input id="hasAutoplay" type="checkbox"
-        ng-model="NewCtrl.autoplay" ng-disabled="!config.autoplayable" />
+        <h1 class="forms__name--title">Do you want to play videos automatically?</h1>
+        <label class="checkbox--inline">
+            <input id="hasAutoplay" type="checkbox" ng-model="NewCtrl.autoplay" ng-disabled="!config.autoplayable" class="checkbox__input">
+            <span class="btn__label faa">&nbsp;</span>
+        </label>
         <label for="hasAutoplay">
-            <span ng-show="config.autoplayable">All videos should play automatically.</span>
+            <span ng-show="config.autoplayable">Yes, <strong>all</strong> videos should play automatically.</span>
             <span ng-show="!config.autoplayable">The <strong class="typo--attention">{{config.name}}</strong> MiniReel Type does not support autoplaying videos.</span>
         </label>
     </form>
+    <p class="modalBody__fineprint typo--warning">
+        <strong>!</strong> These changes affect desktop experiences only.
+    </p>
 </div>
-<div class="modal__fineprint typo--context">
-    * These changes affect desktop experiences only.
-</div>
-<footer class="modal__btnFooter">
-    <button class="modal__btn modal__btn--first" ng-click="NewCtrl.prevTab()" title="Previous Step">Prev Step</button>
-    <button ng-click="NewCtrl.save()" class="modal__btn modal__btn--last toolbar__confirm" type="button" title="Done!" ng-disabled="!NewCtrl.title">I&rsquo;m Done!</button>
-    <div class="guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</div>
+<footer class="modalFooter__group">
+    <button class="btnAction btnAction--first" ng-click="NewCtrl.prevTab()" title="Previous Step">Prev Step</button>
+    <button ng-click="NewCtrl.save()" class="btnAction btnAction--success btnAction--last toolbar__confirm" type="button" title="Done!" ng-disabled="!NewCtrl.title">I&rsquo;m Done!</button>
+    <p class="modalFooter__guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</p>
 </footer>
