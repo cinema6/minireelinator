@@ -11,10 +11,10 @@
         margin:0;
     }
     ::-moz-selection {
-        background: #e900a4; text-shadow: none; color:#fff;
+        background: #328efe; text-shadow: none; color:#fff;
     }
     ::selection {
-        background: #e900a4; text-shadow: none; color:#fff;
+        background: #328efe; text-shadow: none; color:#fff;
     }
     p {
         margin: 1em 0;
@@ -500,7 +500,7 @@
             width:auto; height:auto;
             border-radius:0.25em; margin:0;
         }
-        .modalBody__group {
+        .modal__group .modalBody__group {
             overflow: auto;
             right:0.5em; top:3.0625em !important;
             padding-right:1em; padding-top:1.5em;
