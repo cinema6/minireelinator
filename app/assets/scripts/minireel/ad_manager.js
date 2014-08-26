@@ -10,20 +10,58 @@ function( angular , c6ui , c6State  , services  ) {
     return angular.module('c6.app.minireel.adManager', [c6ui.name, c6State.name, services.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:AdManager', ['cinema6','c6State',
-            function                              ( cinema6 , c6State ) {
+            c6StateProvider.state('MR:AdManager', ['cinema6','c6State','scopePromise','$location',
+            function                              ( cinema6 , c6State , scopePromise , $location ) {
+                var query = $location.search();
+
                 this.controller = 'AdManagerController';
                 this.controllerAs = 'AdManagerCtrl';
                 this.templateUrl = 'views/minireel/ad_manager.html';
 
-                this.model = function() {
-                    var org = c6State.get('Portal').cModel.org;
+                this.filter = query.filter || 'all';
+                this.limit = parseInt(query.limit) || 50;
+                this.page = parseInt(query.page) || 1;
 
-                    return cinema6.db.findAll('experience', {
-                        type: 'minireel',
-                        org: org.id,
-                        sort: 'lastUpdated,-1'
-                    });
+                this.queryParams = {
+                    filter: '=',
+                    limit: '=',
+                    page: '='
+                };
+
+                this.modelWithFilter = function(filter, limit, page, previous) {
+                    var org = c6State.get('Portal').cModel.org,
+                        scopedPromise = scopePromise(cinema6.db.findAll('experience', {
+                            type: 'minireel',
+                            org: org.id,
+                            sort: 'lastUpdated,-1',
+                            status: (filter === 'all') ? null : filter,
+                            limit: limit,
+                            skip: (page - 1) * limit
+                        }), previous && previous.value);
+
+                    scopedPromise.selected = (previous || null) && previous.selected;
+                    scopedPromise.page = (previous || null) && previous.page;
+
+                    scopedPromise.ensureResolution()
+                        .then(function(scopedPromise) {
+                            var minireels = scopedPromise.value,
+                                items = minireels.meta.items;
+
+                            scopedPromise.selected = minireels.map(function() {
+                                return false;
+                            });
+                            scopedPromise.page = {
+                                current: ((items.start - 1) / limit) + 1,
+                                total: Math.ceil(items.total / limit)
+                            };
+                        });
+
+                    return scopedPromise;
+                };
+
+                this.model = function() {
+                    return this.modelWithFilter(this.filter, this.limit, this.page)
+                        .ensureResolution();
                 };
             }])
 
@@ -46,10 +84,11 @@ function( angular , c6ui , c6State  , services  ) {
             }]);
         }])
 
-        .controller('AdManagerController', ['$scope','c6State','cState', 'ConfirmDialogService',
-        function                           ( $scope , c6State , cState ,  ConfirmDialogService ) {
+        .controller('AdManagerController', ['$scope','c6State','cState', 'ConfirmDialogService', 'MiniReelService',
+        function                           ( $scope , c6State , cState ,  ConfirmDialogService ,  MiniReelService ) {
             var self = this,
                 org = c6State.get('Portal').cModel.org,
+                MiniReelCtrl = $scope.MiniReelCtrl,
                 settingsType;
 
             function getAdConfig(object) {
@@ -151,10 +190,12 @@ function( angular , c6ui , c6State  , services  ) {
                 });
             }
 
-            function removeAds() {
-                self.selectedExperiences.forEach(function(exp) {
+            function removeAds(minireels) {
+                minireels.forEach(function(exp) {
                     exp.data.adConfig = setZeroAdConfig(exp.data.adConfig);
                     exp.data.deck = cleanDeck(exp.data.deck);
+
+                    console.log(exp);
                     // exp.save();
                 });
 
@@ -194,6 +235,156 @@ function( angular , c6ui , c6State  , services  ) {
                 return config;
             }
 
+            function isSame(prop, obj1, obj2) {
+                return obj1[prop] === obj2[prop];
+            }
+
+            function value(val) {
+                return function() {
+                    return val;
+                };
+            }
+
+            function juxtapose() {
+                var args = Array.prototype.slice.call(arguments),
+                    longestArray = args.reduce(function(result, array) {
+                        return array.length > result.length ? array : result;
+                    });
+
+                return longestArray.map(function(value, index) {
+                    return args.map(function(array) {
+                        return array[index];
+                    });
+                });
+            }
+
+            function limitArgs(max, fn) {
+                return function() {
+                    var args = Array.prototype.slice.call(arguments, 0, max);
+
+                    return fn.apply(null, args);
+                };
+            }
+
+            function refetchMiniReels(fromStart) {
+                self.model = cState.modelWithFilter(
+                    self.filter,
+                    self.limit,
+                    fromStart ? 1 : self.page,
+                    self.model
+                );
+            }
+
+            function DropDownModel() {
+                this.shown = false;
+            }
+            DropDownModel.prototype = {
+                show: function() {
+                    this.shown = true;
+                },
+                hide: function() {
+                    this.shown = false;
+                },
+                toggle: function() {
+                    this.shown = !this.shown;
+                }
+            };
+
+            this.filter = cState.filter;
+            this.limit = cState.limit;
+            this.page = cState.page;
+            this.dropDowns = {
+                select: new DropDownModel()
+            };
+            this.limits = [20, 50, 100];
+
+            Object.defineProperties(this, {
+                allAreSelected: {
+                    get: function() {
+                        return this.areAllSelected();
+                    },
+                    set: function(bool) {
+                        return bool ? this.selectAll() : this.selectNone();
+                    }
+                }
+            });
+
+            this.selectAll = function() {
+                this.model.selected = this.model.value
+                    .map(value(true));
+            };
+
+            this.selectNone = function() {
+                this.model.selected = this.model.value
+                    .map(value(false));
+            };
+
+            this.selectAllWithStatus = function(status) {
+                this.model.selected = this.model.value
+                    .map(function(minireel) {
+                        return minireel.status === status;
+                    });
+            };
+
+            this.getSelected = function(status) {
+                return juxtapose(this.model.selected, this.model.value)
+                    .filter(function(pair) {
+                        return pair[0] && (status ? pair[1].status === status : true);
+                    })
+                    .map(function(pair) {
+                        return pair[1];
+                    });
+            };
+
+            this.areAllSelected = function(status) {
+                return juxtapose(this.model.selected, this.model.value)
+                    .filter(function(pair) {
+                        return status ? (pair[1].status === status) : true;
+                    })
+                    .map(function(pair) {
+                        return pair[0];
+                    })
+                    .indexOf(false) < 0;
+            };
+
+            this.previewUrlOf = function(minireel) {
+                return MiniReelService.previewUrlOf(minireel, '/#/preview/minireel');
+            };
+
+            this.modeNameFor = function(minireel) {
+                return MiniReelService.modeDataOf(
+                    minireel,
+                    MiniReelCtrl.model.data.modes
+                ).name;
+            };
+
+            $scope.$watchCollection(
+                function() {
+                    return [
+                        self.page,
+                        self.limit,
+                        self.filter
+                    ];
+                },
+                function(props, prevProps) {
+                    var samePage = isSame(0, props, prevProps);
+
+                    if (equals(props, prevProps)) { return; }
+
+                    if (self.page !== 1 && samePage) {
+                        /* jshint boss:true */
+                        return self.page = 1;
+                        /* jshint boss:false */
+                    }
+
+                    return refetchMiniReels(samePage);
+                }
+            );
+
+            $scope.$on('$destroy', function() {
+                cState.filter = self.filter;
+            });
+
             // when ad settings need to be set we store the type of settings
             // either: org, minireel, minireels.
             // We send the adConfig to the AdSettingsCtrl for UI binding
@@ -209,23 +400,23 @@ function( angular , c6ui , c6State  , services  ) {
             // sorted by creation date or published date, with published date
             // overiding the creation date within the same minireel
 
-            self.experienceMap = {};
-            self.isSelected = false;
+            // self.experienceMap = {};
+            // self.isSelected = false;
             self.returnState = 'MR:AdManager';
 
-            Object.defineProperty(self, 'selectedExperiences', {
-                get: function() {
-                    var experiences = [];
+            // Object.defineProperty(self, 'selectedExperiences', {
+            //     get: function() {
+            //         var experiences = [];
 
-                    forEach(self.experienceMap, function(experience, id) {
-                        if (experience.selected) {
-                            experiences.push(findExperienceById(id));
-                        }
-                    });
+            //         forEach(self.experienceMap, function(experience, id) {
+            //             if (experience.selected) {
+            //                 experiences.push(findExperienceById(id));
+            //             }
+            //         });
 
-                    return experiences;
-                }
-            });
+            //         return experiences;
+            //     }
+            // });
 
             self.settingsTypeOf = function(minireel) {
                 return !minireel.data.adConfig && !staticAdCount(minireel) ? 'Default' : 'Custom';
@@ -252,22 +443,21 @@ function( angular , c6ui , c6State  , services  ) {
                 return calculate(adConfig.video, totalCards);
             };
 
-            self.editSettings = function(type, minireel) {
+            self.editOrgSettings = function() {
+                var settings = getAdConfig(org);
+                settingsType = 'org';
+                c6State.goTo('MR:AdManager.Settings', [settings]);
+            }
+
+            self.editSettings = function(minireels) {
                 var settings;
 
-                settingsType = type;
+                if (minireels.length > 1) {
+                    settings = findMatchingAdConfigs(minireels);
+                }
 
-                switch (type) {
-                case 'org':
-                    settings = getAdConfig(org);
-                    break;
-                case 'minireel':
-                    self.experienceMap[minireel.id].selected = true;
-                    settings = getAdConfig(minireel);
-                    break;
-                case 'minireels':
-                    settings = findMatchingAdConfigs(self.selectedExperiences);
-                    break;
+                if (minireels.length === 1) {
+                    settings = getAdConfig(minireels[0]);
                 }
 
                 c6State.goTo('MR:AdManager.Settings', [settings]);
@@ -283,36 +473,38 @@ function( angular , c6ui , c6State  , services  ) {
                     org.adConfig = settings;
                     // org.save();
                 } else {
-                    self.selectedExperiences.forEach(function(exp) {
+                    self.getSelected().forEach(function(exp) {
                         exp.data.adConfig = convertNewSettings(exp, settings);
                         exp.data.deck = cleanDeck(exp.data.deck);
+
+                        console.log(exp);
                         // exp.save();
                     });
                 }
 
-                console.log(self.selectedExperiences);
-
                 c6State.goTo('MR:AdManager');
             };
 
-            self.useDefaultSettings = function() {
-                self.selectedExperiences.forEach(function(exp) {
+            self.useDefaultSettings = function(minireels) {
+                minireels.forEach(function(exp) {
                     exp.data.deck = cleanDeck(exp.data.deck);
                     delete exp.data.adConfig;
+
+                    console.log(exp);
                     // exp.save();
                 });
 
                 // console.log(self.selectedExperiences);
             };
 
-            self.removeAds = function() {
+            self.removeAds = function(minireels) {
                 ConfirmDialogService.display({
                     prompt: 'Are you sure you want to remove ads from these Minireels?',
                     affirm: 'Yes',
                     cancel: 'No',
                     onAffirm: function() {
                         ConfirmDialogService.close();
-                        removeAds();
+                        removeAds(minireels);
                     },
                     onCancel: function() {
                         ConfirmDialogService.close();
@@ -320,17 +512,17 @@ function( angular , c6ui , c6State  , services  ) {
                 });
             };
 
-            $scope.$watch(function() { return cState.cModel; }, function(experiences) {
-                if (!experiences) { return; }
+            // $scope.$watch(function() { return cState.cModel; }, function(experiences) {
+            //     if (!experiences) { return; }
 
-                experiences.forEach(function(exp) {
-                    if (!self.experienceMap[exp.id]) {
-                        self.experienceMap[exp.id] = {
-                            selected: false
-                        };
-                    }
-                });
-            });
+            //     experiences.forEach(function(exp) {
+            //         if (!self.experienceMap[exp.id]) {
+            //             self.experienceMap[exp.id] = {
+            //                 selected: false
+            //             };
+            //         }
+            //     });
+            // });
         }])
 
         .controller('AdSettingsController', ['$scope','MiniReelService','c6State','cState',
@@ -354,6 +546,27 @@ function( angular , c6ui , c6State  , services  ) {
                     return next.sref === sref ? next : result;
                 }, null);
             }
+
+            function DropDownModel() {
+                this.shown = false;
+            }
+            DropDownModel.prototype = {
+                show: function() {
+                    this.shown = true;
+                },
+                hide: function() {
+                    this.shown = false;
+                },
+                toggle: function() {
+                    this.shown = !this.shown;
+                }
+            };
+
+            this.dropDowns = {
+                firstPlacement: new DropDownModel(),
+                frequency: new DropDownModel(),
+                skip: new DropDownModel()
+            };
 
             if (!cState.cModel) {
                 c6State.goTo(cState.cParent.cName);

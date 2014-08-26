@@ -1,7 +1,8 @@
+<main c6-alias="AdManagerCtrl.model.value as minireels">
 <header class="pageHeader container">
     <div class="pageHeader__titleBar clearfix">
         <h1 class="pageTitle">Ad Manager</h1>
-        <a c6-sref="MR:New.General" title="New MiniReel" class="btnAction btnAction--primary btnAction--hasIcon" >
+        <a ng-click="AdManagerCtrl.editSettings('org', null)" href="" title="New MiniReel" class="btnAction btnAction--primary btnAction--hasIcon" >
             <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                  viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
                 <path class="ui__icon" d="M3.1,13.9H1.8L0,17.1L0.9,18l3.1-1.8v-1.3l3-3l-1-1L3.1,13.9z M14.5,1.4l0.8,0.8l-4.1,4.1l0.6,0.6l4.1-4.1l0.8,0.8
@@ -16,25 +17,25 @@
     </div>
     <ul class="tabFilters clearfix">
         <li class="tabFilters__item">
-            <button ng-click="ManagerCtrl.filter = 'all'" ng-class="{'filters__btn--active': ManagerCtrl.filter === 'all'}" class="filters__btn" type="button" title="Show All">
+            <button ng-click="AdManagerCtrl.filter = 'all'" ng-class="{'filters__btn--active': AdManagerCtrl.filter === 'all'}" class="filters__btn" type="button" title="Show All">
                 <span class="btn__label">All MiniReels</span>
                 <span class="filters__counter">100</span>
             </button>
         </li>
         <li class="tabFilters__item">
-            <button ng-click="ManagerCtrl.filter = 'active'" ng-class="{'filters__btn--active': ManagerCtrl.filter === 'active'}" class="filters__btn" type="button" title="Published">
+            <button ng-click="AdManagerCtrl.filter = 'active'" ng-class="{'filters__btn--active': AdManagerCtrl.filter === 'active'}" class="filters__btn" type="button" title="Published">
                 <span class="btn__label">Published MiniReels</span>
                 <span class="filters__counter">100</span>
             </button>
         </li>
         <li class="tabFilters__item">
-            <button ng-click="ManagerCtrl.filter = 'pending'" ng-class="{'filters__btn--active': ManagerCtrl.filter === 'pending'}" class="filters__btn" type="button" title="Private">
+            <button ng-click="AdManagerCtrl.filter = 'pending'" ng-class="{'filters__btn--active': AdManagerCtrl.filter === 'pending'}" class="filters__btn" type="button" title="Private">
                 <span class="btn__label">Private MiniReels</span>
                 <span class="filters__counter">100</span>
             </button>
         </li>
         <li class="tabFilters__item">
-            <button ng-click="ManagerCtrl.filter = 'pending'" ng-class="{'filters__btn--active': ManagerCtrl.filter === 'pending'}" class="filters__btn" type="button" title="Your MiniReels">
+            <button ng-click="AdManagerCtrl.filter = 'pending'" ng-class="{'filters__btn--active': AdManagerCtrl.filter === 'pending'}" class="filters__btn" type="button" title="Your MiniReels">
                 <span class="btn__label">Your MiniReels</span>
                 <span class="filters__counter">100</span>
             </button>
@@ -44,55 +45,29 @@
 
 <section class="container miniReels__group">
     <header class="tableHeader__group clearfix">
-        <nav class="pager__group">
-            <button class="btn faa fa-caret-down ui__clickDrop" type="button" title="Items on Page : 50">
-                <span class="btn__label">50</span>
-            </button>
-            <div class="pager__itemsPerPage ui__clickDropMenu">
-                <button class="ui__clickDropBtn" type="button" title="20">20 per page</button>
-                <button class="ui__clickDropBtn ui__clickDropBtn--current" type="button" title="20">50 per page</button>
-                <button class="ui__clickDropBtn" type="button" title="20">100 per page</button>
-            </div>
-
-            <div class="btnGroup btnGroup--show clearfix">
-                <button class="btn" type="button" title="Publish">
-                    <span class="btn__label faa fa-chevron-left">
-                        <span class="ir">Previous</span>
-                    </span>
-                </button>
-                <div class="btn pager__pageIndicator" type="button" title="Make Private">
-                    <input type="text" value="1" class="forms__textField">
-                    <span class="btn__label">of 12</span>
-                </div>
-                <button class="btn" type="button" title="Copy">
-                    <span class="btn__label faa fa-chevron-right">
-                        <span class="ir">Next</span>
-                    </span>
-                </button>
-            </div>
-        </nav>
+        <paginator-controls page="AdManagerCtrl.page" limit="AdManagerCtrl.limit" limits="AdManagerCtrl.limits" total="AdManagerCtrl.model.page.total"></paginator-controls>
         <nav class="selectorActions__group">
             <div class="selectorActions__selector">
                 <label class="checkbox--inline selectorActions__selectorCheckBox">
-                    <input type="checkbox" class="checkbox__input">
+                    <input type="checkbox" ng-model="AdManagerCtrl.allAreSelected" class="checkbox__input">
                     <span class="btn__label faa">&nbsp;</span>
                 </label>
-                <button class="btn faa fa-caret-down ui__clickDrop">&nbsp;</button>
-                <div class="pager__itemsPerPage ui__clickDropMenu">
-                    <button class="ui__clickDropBtn" type="button" title="Select All">Select All</button>
-                    <button class="ui__clickDropBtn" type="button" title="Select Public">Select Public</button>
-                    <button class="ui__clickDropBtn" type="button" title="Select Private">Select Private</button>
-                    <button class="ui__clickDropBtn" type="button" title="Select None">Select None</button>
+                <button ng-click="AdManagerCtrl.dropDowns.select.toggle()" c6-click-outside="AdManagerCtrl.dropDowns.select.hide()" class="btn faa fa-caret-down ui__clickDrop">&nbsp;</button>
+                <div ng-show="AdManagerCtrl.dropDowns.select.shown" class="pager__itemsPerPage ui__clickDropMenu">
+                    <button class="ui__clickDropBtn" type="button" title="Select All" ng-show="!AdManagerCtrl.allAreSelected" ng-click="ManagerCtrl.selectAll()">Select All</button>
+                    <button class="ui__clickDropBtn" type="button" title="Select Public" ng-click="AdManagerCtrl.selectAllWithStatus('active')">Select Public</button>
+                    <button class="ui__clickDropBtn" type="button" title="Select Private" ng-click="AdManagerCtrl.selectAllWithStatus('pending')">Select Private</button>
+                    <button class="ui__clickDropBtn" type="button" title="Select None" ng-show="AdManagerCtrl.model.selected.indexOf(true) > -1" ng-click="AdManagerCtrl.selectNone()">Select None</button>
                 </div>
             </div>
-            <div class="btnGroup btnGroup--show clearfix">
-                <button class="btn btn--primary" type="button" title="Use Default Settings">
+            <div class="btnGroup btnGroup--show clearfix" ng-show="AdManagerCtrl.getSelected().length > 0">
+                <button class="btn btn--primary" type="button" title="Use Default Settings" ng-click="AdManagerCtrl.useDefaultSettings(AdManagerCtrl.getSelected())">
                     <span class="btn__label">Use Default Settings</span>
                 </button>
-                <button class="btn btn--primary" type="button" title="Remove Ads">
+                <button class="btn btn--primary" type="button" title="Remove Ads" ng-click="AdManagerCtrl.removeAds(AdManagerCtrl.getSelected())">
                     <span class="btn__label">Remove Ads</span>
                 </button>
-                <button class="btn btn--primary" type="button" title="Edit Ad Settings">
+                <button class="btn btn--primary" type="button" title="Edit Ad Settings" ng-click="AdManagerCtrl.editSettings(AdManagerCtrl.getSelected())">
                     <span class="btn__label">Edit Ad Settings</span>
                 </button>
             </div>
@@ -108,24 +83,24 @@
                 </article>
             </li>
 
-            <li class="miniReels__item grid__item" ng-repeat="this in minireels | filter:ManagerCtrl.determineInclusionWithFilter track by this.id">
+            <li class="miniReels__item grid__item" ng-repeat="this in minireels track by this.id">
                 <article class="miniReel__group clearfix">
                     <div class="miniReel__selector">
                         <label class="checkbox--inline">
-                            <input type="checkbox" class="checkbox__input">
+                            <input type="checkbox" ng-model="AdManagerCtrl.model.selected[$index]" class="checkbox__input">
                             <span class="btn__label faa">&nbsp;</span>
                         </label>
                     </div>
                     <div class="miniReel__imgBox">
-                        <div class="miniReel__img" c6-bg-img="{{this.data.collateral.splash}}" ng-click="ManagerCtrl.edit(this)">&nbsp;</div>
+                        <div class="miniReel__img" c6-bg-img="{{this.data.collateral.splash}}" ng-click="AdManagerCtrl.editSettings([this])">&nbsp;</div>
                     </div>
                     <div class="miniReel__titleBox miniReel__titleBox--adManager">
-                        <h1 class="miniReel__title" ng-click="ManagerCtrl.edit(this)">
+                        <h1 class="miniReel__title" ng-click="AdManagerCtrl.editSettings([this])">
                             {{this.data.title}}
                         </h1>
                         <p class="miniReel__metaData">
-                            by <span class="miniReel__author">Hank Pym</span> | 
-                            <span class="miniReel__type">{{ManagerCtrl.modeNameFor(this)}}</span>
+                            by <span class="miniReel__author">{{this.user.firstName}} {{this.user.lastName}}</span> | 
+                            <span class="miniReel__type">{{AdManagerCtrl.modeNameFor(this)}}</span>
                         </p>
                     </div>
                     <div class="miniReel__status">
@@ -136,13 +111,13 @@
                             Private
                         </strong> 
                         - <span class="miniReel__date">{{this.lastModified | date:'M/d/yyyy'}}</span>
-                        <p class="miniReel__count">5 slides</p>
+                        <p class="miniReel__count">{{AdManagerCtrl.adCountOf(this)}} ad | {{this.data.deck.length}} slides</p>
                     </div>
                     <div class="miniReel__stats">
                         <p class="miniReel__views">12123123 views</p>
                     </div>
                     <div class="miniReel__configStatus">
-                        <p class="miniReel__views">Default Ad Settings</p>
+                        <p class="miniReel__views">{{AdManagerCtrl.settingsTypeOf(this)}}</p>
                     </div>
 
                     <form class="miniReel__quickActions">
@@ -186,36 +161,11 @@
         </ul>
     </div>
     <footer class="tableFooter__group">
-        <nav class="pager__group">
-            <button class="btn faa fa-caret-down ui__clickDrop" type="button" title="Items on Page : 50">
-                <span class="btn__label">50</span>
-            </button>
-            <div class="pager__itemsPerPage ui__clickDropMenu">
-                <button class="ui__clickDropBtn" type="button" title="20">20 per page</button>
-                <button class="ui__clickDropBtn ui__clickDropBtn--current" type="button" title="20">50 per page</button>
-                <button class="ui__clickDropBtn" type="button" title="20">100 per page</button>
-            </div>
-
-            <div class="btnGroup clearfix">
-                <button class="btn" type="button" title="Publish">
-                    <span class="btn__label faa fa-chevron-left">
-                        <span class="ir">Previous</span>
-                    </span>
-                </button>
-                <div class="btn pager__pageIndicator" type="button" title="Make Private">
-                    <input type="text" value="1" class="forms__textField">
-                    <span class="btn__label">of 12</span>
-                </div>
-                <button class="btn" type="button" title="Copy">
-                    <span class="btn__label faa fa-chevron-right">
-                        <span class="ir">Next</span>
-                    </span>
-                </button>
-            </div>
-        </nav>
-        <p class="tableFooter__displayText">
-            Displaying <strong>1-50</strong> of 600 MiniReels
+        <paginator-controls page="AdManagerCtrl.page" limit="AdManagerCtrl.limit" limits="AdManagerCtrl.limits" total="AdManagerCtrl.model.page.total"></paginator-controls>
+        <p class="tableFooter__displayText" c6-alias="AdManagerCtrl.model.value.meta.items as items">
+            Displaying <strong>{{items.start}}-{{items.end}}</strong> of {{items.total}} MiniReels
         </p>
     </footer>
 </section>
+</main>
 <c6-view></c6-view>
