@@ -63,7 +63,7 @@
                     <a c6-sref="Account:Password" c6-params="{}" title="Welcome {{user.firstName}} {{user.lastName}}" class="mainNav__link mainNav__link--userInfo">
                         <span class="mainNav__label">{{user.firstName}} {{user.lastName}}</span>
                         <span class="mainNav__profileHolder">
-                            <img ng-src="{{user.email | gravatar}}" alt="User Name">
+                            <img class="mainNav__profileImg" width="36" ng-src="{{user.email | gravatar}}" alt="{{user.firstName}} {{user.lastName}}">
                         </span>
                     </a>
                 </li>

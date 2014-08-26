@@ -220,10 +220,32 @@
             border:1px solid #ddd; 
         }
     /*  buttons : default : groups;  */
+        .btnGroup__animator {
+            display:inline-block;
+            vertical-align: middle;
+            position:relative;
+            width:26.125em; height:2.25em;
+            overflow: hidden;
+        }
         .btnGroup {
             display:inline-block;
             vertical-align: middle;
         }
+            .btnGroup__animator .btnGroup {
+                display:block;
+                position:absolute;
+                -webkit-transition:all 0.25s; transition:all 0.25s;
+                left:0;
+            }
+            .btnGroup.ng-hide {
+                left:-25em;
+            }
+            @media screen and (max-width:55em) {
+                /* width: 880px */
+                .btnGroup__animator {
+                    height:1.875rem;
+                }
+            }
             .btnGroup .btn {
                 float:left;
                 border-radius:0;
@@ -838,6 +860,10 @@
                     vertical-align: middle;
                     background:url('../img/default_square.jpg') 50% 50% / cover no-repeat;
                 }
+                    .mainNav__profileImg {
+                        width:2.25em; height:2.25em;
+                        display: block;
+                    }
                 /* active states */
                 .mainNav__link--active {
                     background:#fff;

@@ -78,29 +78,6 @@
             background:#fff;
         }
 
-    .btnGroup__animator {
-        display:inline-block;
-        vertical-align: middle;
-        position:relative;
-        width:25em; height:2.25em;
-        overflow: hidden;
-    }
-        .btnGroup__animator .btnGroup {
-            display:block;
-            position:absolute;
-            -webkit-transition:all 0.25s; transition:all 0.25s;
-            left:0;
-        }
-        .btnGroup.ng-hide {
-            left:-25em;
-        }
-
-        @media screen and (max-width:55em) {
-            /* width: 880px */
-            .btnGroup__animator {
-                height:1.875rem;
-            }
-        }
 
 
 /*  ==========================================================================
