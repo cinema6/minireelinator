@@ -1,0 +1,179 @@
+{
+    "uri": "rumble",
+    "appUriPrefix": "<%= settings.appUrl %>",
+    "appUri": "rumble",
+    "title": "Rumble Video",
+    "img": {},
+    "user": "u-35b096c999711b",
+    "org": "o-e4e8b0f244bafc",
+    "status": "pending",
+    "access": "public",
+    "created": "2014-02-08T10:42:51+00:00",
+    "lastUpdated": "2014-04-18T14:07:20+00:00",
+    "type": "minireel",
+    "sort": "lastUpdated,-1",
+    "data": {
+        "title": "Rumble Video",
+        "mode": "light",
+        "branding": "elitedaily",
+        "displayAdSource": "cinema6",
+        "videoAdSource": "cinema6",
+        "videoAdSkip": 6,
+        "collateral": {
+            "splash": "http://www.reactiongifs.us/wp-content/uploads/2013/11/brent_rambo_approves.gif"
+        },
+        "splash": {
+            "source": "generated",
+            "ratio": "1-1",
+            "theme": "img-only"
+        },
+        "deck": [
+            {
+                "data": {
+                    "modestbranding": 0,
+                    "rel": 0,
+                    "start": 42,
+                    "end": 130,
+                    "videoid": "gy1B3agGNxw"
+                },
+                "id": "rc-22119a8cf9f755",
+                "type": "youtube",
+                "title": "Epic Sax Guy",
+                "note": "He's back, and saxier than ever.",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Catchy",
+                        "Annoying"
+                    ]
+                },
+                "displayAdSource": null
+            },
+            {
+                "id": "rc-2d46a04b21b073",
+                "type": "ad",
+                "ad": true,
+                "modules": [
+                    "displayAd"
+                ],
+                "data": {
+                    "autoplay": true
+                },
+                "displayAd": "http://2.bp.blogspot.com/-TlM_3FT89Y0/UMzLr7kVykI/AAAAAAAACjs/lKrdhgp6OQg/s1600/brad-turner.jpg"
+            },
+            {
+                "data": {
+                    "related": 0,
+                    "videoid": "x18b09a"
+                },
+                "id": "rc-4770a2d7f85ce0",
+                "type": "dailymotion",
+                "title": "Kristen Stewart for Channel",
+                "note": "Psychotic glamour",
+                "source": "DailyMotion",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Funny",
+                        "Lame"
+                    ]
+                },
+                "displayAdSource": null
+            },
+            {
+                "data": {
+                    "start": 35,
+                    "end": 45,
+                    "videoid": "81766071"
+                },
+                "id": "rc-e489d1c6359fb3",
+                "type": "vimeo",
+                "title": "Aquatic paradise",
+                "note": "How may we help you?",
+                "source": "Vimeo",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": [
+                    "Cute",
+                    "Sad"
+                ],
+                "displayAdSource": null
+            },
+            {
+                "data": {
+                    "videoid": "18439821"
+                },
+                "id": "rc-89094f9b7f8c93",
+                "type": "vimeo",
+                "title": "ShapeShifter",
+                "note": "Pretty cool.",
+                "source": "Vimeo",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Cool",
+                        "Boring"
+                    ]
+                },
+                "displayAdSource": null
+            },
+            {
+                "data": {
+                    "modestbranding": 0,
+                    "rel": 0,
+                    "end": 18,
+                    "videoid": "Cn9yJrrm2tk"
+                },
+                "id": "rc-e2947c9bec017e",
+                "type": "youtube",
+                "title": "Geek cool",
+                "note": "Doctor Who #11 meets #4",
+                "source": "YouTube",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Too Cool",
+                        "Too Geeky"
+                    ]
+                },
+                "displayAdSource": null
+            },
+            {
+                "data": {
+                    "related": 0,
+                    "videoid": "xorbb7"
+                },
+                "id": "rc-99b87ea709d7ac",
+                "type": "dailymotion",
+                "title": "Farting dogs",
+                "note": "Enough said",
+                "source": "DailyMotion",
+                "modules": [
+                    "ballot"
+                ],
+                "ballot": {
+                    "prompt": "What did you think of this video?",
+                    "choices": [
+                        "Funny",
+                        "Gross"
+                    ]
+                },
+                "displayAdSource": null
+            }
+        ]
+    }
+}

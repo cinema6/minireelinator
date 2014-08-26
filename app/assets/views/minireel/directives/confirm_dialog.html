@@ -1,14 +1,27 @@
 <div ng-if="model.dialog">
-    <div c6-alias="model.dialog as dialog" class="ui__modal ui__modal--confirmation">
-        <h1 ng-show="dialog.prompt" class="modal__title">{{dialog.prompt}}</h1>
-        <div ng-show="dialog.message" class="modal__message">
-            {{dialog.message}}
+    <div c6-alias="model.dialog as dialog" class="modalDialog__group">
+        <header class="modalHeader__group">
+            <h1 class="modal__title">Please Confirm</h1>
+            <button class="modal__closeBtn btnInvis" ng-click="dialog.onCancel()"><span class="ir">Close</span>
+                <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                     viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                    <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M16.5,0L9,7.5L1.5,0L0,1.5L7.5,9L0,16.5L1.5,18L9,10.5l7.5,7.5l1.5-1.5L10.5,9
+                    L18,1.5L16.5,0z"/>
+                </svg>
+            </button>
+        </header>
+
+        <div class="modalBody__group typo--centered">
+            <h1 ng-show="dialog.prompt" class="modalBody__title">{{dialog.prompt}}</h1>
+            <p ng-show="dialog.message" class="modalBody__message">
+                Message here {{dialog.message}}
+            </p>
         </div>
-        <footer class="modal__btnFooter modal__btnFooter--confirmation">
-            <button class="modal__btn modal__btn--last toolbar__confirm" ng-click="dialog.onAffirm()" title="{{dialog.affirm}}">{{dialog.affirm}}</button>
-            <button class="modal__btn modal__btn--first toolbar__neutral" ng-click="dialog.onCancel()" title="{{dialog.cancel}}">{{dialog.cancel}}</button>
+        
+        <footer class="modalFooter__group">
+            <button class="btnAction btnAction btnAction--first" ng-click="dialog.onCancel()" title="{{dialog.cancel}}">{{dialog.cancel}}</button>
+            <button ng-click="dialog.onAffirm()" title="{{dialog.affirm}}" class="btnAction btnAction--success btnAction--last" type="button">{{dialog.affirm}}</button>
         </footer>
-        <button ng-click="dialog.onDismiss()" class="modal__closeBtn sprite--alpha"><span class="ir">Close</span></button>
     </div>
-    <div class="ui__overlay">&nbsp;</div>
+    <div class="modal__overlay">&nbsp;</div>
 </div>

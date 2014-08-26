@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[Beta19.rc1]*
+  * [FEATURE]: New front end for studio and ad manager added
+
 ## Beta18 (August 25, 2014)
 * *[Beta18.rc1]*
   * [FIX]: MiniReel Preview page title no longer says "Cinema6
