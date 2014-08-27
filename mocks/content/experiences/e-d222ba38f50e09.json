@@ -7,7 +7,7 @@
     "org": "o-e4e8b0f244bafc",
     "status": "active",
     "created": "2014-02-08T10:42:51+00:00",
-    "lastUpdated": "2014-04-01T14:06:36+00:00",
+    "lastUpdated": "2014-08-27T19:10:00.042Z",
     "type": "minireel",
     "sort": "lastUpdated,-1",
     "data": {
@@ -249,6 +249,7 @@
                     "modestbranding": 1
                 }
             }
-        ]
+        ],
+        "election": "el-12d858332d17e1"
     }
 }
