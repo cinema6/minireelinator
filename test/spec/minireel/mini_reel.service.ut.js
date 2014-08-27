@@ -1055,7 +1055,7 @@
                                 expect(success).toHaveBeenCalledWith(newModel);
                                 expect(newModel.data.title).toBe('My MiniReel (copy)');
                                 expect(newModel.status).toBe('pending');
-                                expect(newModel.access).toBe('private');
+                                expect(newModel.access).toBe('public');
                             });
                         });
 
@@ -1067,10 +1067,6 @@
                             });
 
                             it('should initialize a new minireel', function() {
-                                /*var adCard = MiniReelService.createCard('ad');
-
-                                delete adCard.id;*/
-
                                 expect(cinema6.db.create).toHaveBeenCalledWith('experience', {
                                     type: 'minireel',
                                     org: 'o-17593d7a2bf294',
@@ -1092,9 +1088,6 @@
                                             splash: null
                                         },
                                         deck: [
-                                            /*jasmine.objectContaining(adCard),
-                                            jasmine.objectContaining(adCard),
-                                            jasmine.objectContaining(adCard),*/
                                             {
                                                 id: jasmine.any(String),
                                                 title: null,
@@ -1114,22 +1107,7 @@
                             it('should resolve the promise', function() {
                                 expect(success).toHaveBeenCalledWith(newModel);
                                 expect(newModel.status).toBe('pending');
-                                expect(newModel.access).toBe('private');
-                            });
-
-                            describe('if the user is a ContentProvider', function() {
-                                beforeEach(function() {
-                                    portal.cModel.type = 'ContentProvider';
-                                    success.calls.reset();
-
-                                    $rootScope.$apply(function() {
-                                        MiniReelService.create().then(success);
-                                    });
-                                });
-
-                                it('should make the minireel public', function() {
-                                    expect(success.calls.mostRecent().args[0].access).toBe('public');
-                                });
+                                expect(newModel.access).toBe('public');
                             });
                         });
                     });

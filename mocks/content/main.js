@@ -84,7 +84,8 @@ module.exports = function(http) {
     });
 
     http.whenPUT('/api/content/experience/**', function(request) {
-        var filePath = experiencePath(idFromPath(request.pathname)),
+        var id = idFromPath(request.pathname),
+            filePath = experiencePath(id),
             current = grunt.file.readJSON(filePath),
             newExperience = extend(current, request.body, {
                 lastUpdated: (new Date()).toISOString()
@@ -92,7 +93,9 @@ module.exports = function(http) {
 
         grunt.file.write(filePath, JSON.stringify(newExperience, null, '    '));
 
-        this.respond(200, newExperience);
+        this.respond(200, extend(newExperience, {
+            id: id
+        }));
     });
 
     http.whenPOST('/api/content/experience', function(request) {

@@ -20,11 +20,21 @@ module.exports = function(http) {
             currentUser = grunt.file.readJSON(filePath),
             newUser = extend(currentUser, request.body, {
                 lastUpdated: (new Date()).toISOString()
-            });
+            }),
+            isLoggedInUser = userCache.user.id === id,
+            response;
 
         grunt.file.write(filePath, JSON.stringify(newUser, null, '    '));
 
-        this.respond(200, (userCache.user = extend(newUser, { id: id })));
+        this.respond(200, (response = extend(
+            newUser,
+            { id: id },
+            isLoggedInUser ? { email: userCache.user.email } : {}
+        )));
+
+        if (isLoggedInUser) {
+            userCache.user = response;
+        }
     });
 
     http.whenGET('/api/account/user/**', function(request) {
