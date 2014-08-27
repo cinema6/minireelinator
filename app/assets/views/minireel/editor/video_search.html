@@ -15,7 +15,7 @@
     <ul>
         <li ng-repeat="video in result.videos">
             <h4>{{video.title}}<span ng-if="video.hd"> (HD)</span></h4>
-            <p>Via: <a ng-href="{{video.link}}">{{video.site}}</a></p>
+            <p>Via: <a ng-href="{{video.link}}">{{video.site}}</a> | {{video.views}} Views</p>
             <a href="" ng-show="VideoSearchCtrl.currentPreview !== video" ng-click="VideoSearchCtrl.preview(video)">
                 <img ng-src="{{video.thumbnail.src}}" />
             </a>
