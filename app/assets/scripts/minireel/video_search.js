@@ -19,9 +19,10 @@ function( angular , c6State  , services          , c6Defines  ) {
             }]);
         }])
 
-        .controller('VideoSearchController', ['VideoSearchService',
-        function                             ( VideoSearchService ) {
-            var self = this;
+        .controller('VideoSearchController', ['$scope','VideoSearchService','MiniReelService',
+        function                             ( $scope , VideoSearchService , MiniReelService ) {
+            var self = this,
+                EditorCtrl = $scope.EditorCtrl;
 
             this.query = {
                 query: '',
@@ -43,6 +44,17 @@ function( angular , c6State  , services          , c6Defines  ) {
             this.preview = function(video) {
                 /* jshint boss:true */
                 return this.currentPreview = video;
+            };
+
+            this.addVideo = function(video) {
+                var card = MiniReelService.createCard('video');
+
+                card.title = video.title;
+                card.note = video.description;
+                card.data.service = video.site;
+                card.data.videoid = video.videoid;
+
+                return EditorCtrl.editCard(EditorCtrl.pushCard(card));
             };
         }]);
 });

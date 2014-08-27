@@ -577,6 +577,12 @@ function( angular , c6ui , c6State  , videoSearch           , services          
                 });
             };
 
+            this.pushCard = function(card) {
+                this.model.data.deck.splice(-1, 0, card);
+
+                return card;
+            };
+
             this.previewMode = function(card/*,evtSrc*/) {
 //                if (evtSrc){
 //                    MiniReelCtrl.sendPageEvent('Editor','Click','Preview Card',self.pageObject);
