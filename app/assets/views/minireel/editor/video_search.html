@@ -25,6 +25,7 @@
                 <dailymotion-player id="dailymotion__{{video.videoid}}" ng-switch-when="dailymotion" videoid="{{video.videoid}}" autoplay style="width: 300px;"></dailymotion-player>
             </ng-switch>
             <p>{{video.description}}</p>
+            <form><button ng-click="VideoSearchCtrl.addVideo(video)">Add Video</button></form>
         </li>
     </ul>
     <nav>
