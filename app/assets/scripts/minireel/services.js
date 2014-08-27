@@ -41,6 +41,18 @@ function( angular , c6ui , cryptojs ) {
         });
     }
 
+    function flatten() {
+        var args = Array.prototype.slice.call(arguments),
+            lengths = args.map(function(array) { return array.length; }),
+            longestArray = args[lengths.indexOf(Math.max.apply(null, lengths))];
+
+        return longestArray.map(function(item, index) {
+            return args.reduce(function(result, array) {
+                return array[index] || result;
+            }, null);
+        });
+    }
+
     return angular.module('c6.app.minireel.services', [c6ui.name])
         .factory('requireCJS', ['$http','$cacheFactory','$q',
         function               ( $http , $cacheFactory , $q ) {
@@ -644,8 +656,10 @@ function( angular , c6ui , cryptojs ) {
             };
         }])
 
-        .service('VideoDataService', ['$q','YouTubeDataService',
-        function                     ( $q , YouTubeDataService ) {
+        .service('VideoDataService', ['$q','YouTubeDataService','VimeoDataService',
+                                      'DailymotionDataService',
+        function                     ( $q , YouTubeDataService , VimeoDataService ,
+                                       DailymotionDataService ) {
             this.getVideos = function(config) {
                 function idsOfType(list, type) {
                     return list.map(function(pair) {
@@ -672,9 +686,44 @@ function( angular , c6ui , cryptojs ) {
                     });
                 }
 
+                function resolveFromVimeo(list) {
+                    function VimeoResult(data) {
+                        this.service = 'vimeo';
+
+                        this.views = data.statsNumberOfPlays;
+                    }
+
+                    return $q.all(list.map(function(id) {
+                        return id && VimeoDataService.getVideo(id)
+                            .then(function(data) {
+                                return new VimeoResult(data);
+                            });
+                    }));
+                }
+
+                function resolveFromDailymotion(list) {
+                    function DailymotionResult(data) {
+                        this.service = 'dailymotion';
+
+                        this.views = data.viewsTotal;
+                    }
+
+                    return $q.all(list.map(function(id) {
+                        return id && DailymotionDataService.video(id).get({
+                            fields: ['viewsTotal']
+                        }).then(function(data) {
+                            return new DailymotionResult(data);
+                        });
+                    }));
+                }
+
                 return $q.all([
-                    resolveFromYouTube(idsOfType(config, 'youtube'))
-                ]);
+                    resolveFromYouTube(idsOfType(config, 'youtube')),
+                    resolveFromVimeo(idsOfType(config, 'vimeo')),
+                    resolveFromDailymotion(idsOfType(config, 'dailymotion'))
+                ]).then(function(results) {
+                    return flatten.apply(null, results);
+                });
             };
         }])
 

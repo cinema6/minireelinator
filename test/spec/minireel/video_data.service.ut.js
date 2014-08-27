@@ -1,7 +1,7 @@
 define(['minireel/services'], function(servicesModule) {
     'use strict';
 
-    ddescribe('VideoDataService', function() {
+    describe('VideoDataService', function() {
         var $rootScope,
             $q,
             YouTubeDataService,
@@ -145,30 +145,30 @@ define(['minireel/services'], function(servicesModule) {
 
                 it('should resolve to normalized data from each service', function() {
                     expect(success).toHaveBeenCalledWith([
-                        {
+                        jasmine.objectContaining({
                             service: 'youtube',
                             views: 4209567
-                        },
-                        {
+                        }),
+                        jasmine.objectContaining({
                             service: 'dailymotion',
                             views: 36548
-                        },
-                        {
+                        }),
+                        jasmine.objectContaining({
                             service: 'vimeo',
                             views: 50909
-                        },
-                        {
+                        }),
+                        jasmine.objectContaining({
                             service: 'youtube',
                             views: 414038
-                        },
-                        {
+                        }),
+                        jasmine.objectContaining({
                             service: 'dailymotion',
                             views: 871
-                        },
-                        {
+                        }),
+                        jasmine.objectContaining({
                             service: 'vimeo',
                             views: 23719
-                        }
+                        })
                     ]);
                 });
             });
