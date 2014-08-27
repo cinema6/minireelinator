@@ -2,6 +2,8 @@
 
 * *[Beta19.rc1]*
   * [FEATURE]: New front end for studio and ad manager added
+  * All new MiniReels are now previewable with a public preview URL by
+    default
 
 ## Beta18 (August 25, 2014)
 * *[Beta18.rc1]*
