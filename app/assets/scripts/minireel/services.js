@@ -969,9 +969,17 @@ function( angular , c6ui , cryptojs ) {
             };
         }])
 
-        .service('VideoSearchService', ['$http','c6UrlMaker','$q',
-        function                       ( $http , c6UrlMaker , $q ) {
-            function VideoSearchResult(videos, meta) {
+        .service('VideoSearchService', ['$http','c6UrlMaker','$q','VideoDataService',
+        function                       ( $http , c6UrlMaker , $q , VideoDataService ) {
+            function VideoSearchResult(videos, _meta) {
+                var meta = _meta || {
+                    query: this.query,
+                    limit: this.limit,
+                    skipped: this.before,
+                    numResults: this.length,
+                    totalResults: this.total
+                };
+
                 this.visited = this.visited || {};
 
                 this.query = meta.query;
@@ -1015,7 +1023,8 @@ function( angular , c6ui , cryptojs ) {
                     return find(query, limit, toSkip)
                         .then(function update(data) {
                             return VideoSearchResult.call(self, data.items, data.meta);
-                        });
+                        })
+                        .then(extendWithMoreData);
                 }
             };
 
@@ -1049,11 +1058,24 @@ function( angular , c6ui , cryptojs ) {
                 });
             }
 
+            function extendWithMoreData(result) {
+                VideoDataService.getVideos(result.videos.map(function(video) {
+                    return [video.site, video.videoid];
+                })).then(function(data) {
+                    return VideoSearchResult.call(result, result.videos.map(function(video, index) {
+                        return extend(video, data[index]);
+                    }));
+                });
+
+                return result;
+            }
+
             this.find = function(query, limit, skip) {
                 return find(query, limit, skip)
                     .then(function wrap(data) {
                         return new VideoSearchResult(data.items, data.meta);
-                    });
+                    })
+                    .then(extendWithMoreData);
             };
         }])
 

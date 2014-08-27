@@ -3,6 +3,8 @@ define(['minireel/services'], function(servicesModule) {
 
     describe('VideoSearchService', function() {
         var $rootScope,
+            $q,
+            VideoDataService,
             VideoSearchService,
             $httpBackend;
 
@@ -14,6 +16,8 @@ define(['minireel/services'], function(servicesModule) {
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
+                $q = $injector.get('$q');
+                VideoDataService = $injector.get('VideoDataService');
                 VideoSearchService = $injector.get('VideoSearchService');
                 $httpBackend = $injector.get('$httpBackend');
             });
@@ -26,6 +30,7 @@ define(['minireel/services'], function(servicesModule) {
         describe('methods', function() {
             describe('find(query, limit, skip)', function() {
                 var query, response,
+                    videoData, videoDataDeferred,
                     success, failure;
 
                 function pickRandom(array) {
@@ -58,7 +63,7 @@ define(['minireel/services'], function(servicesModule) {
                                 height: pickRandom([200, 300, 400, 500])
                             },
                             videoid: Math.random().toString(34).slice(20),
-                            type: source,
+                            site: source,
                             hd: pickRandom([true, false]),
                             duration: randomIntBetween(10, 300)
                         };
@@ -78,6 +83,17 @@ define(['minireel/services'], function(servicesModule) {
                         items: generateResults(15)
                     };
 
+                    videoData = response.items.map(function(item) {
+                        return {
+                            service: item.site,
+                            views: randomIntBetween(600, 1000000)
+                        };
+                    });
+
+                    videoDataDeferred = $q.defer();
+
+                    spyOn(VideoDataService, 'getVideos').and.returnValue(videoDataDeferred.promise);
+
                     $httpBackend.expectGET('/api/search/videos?limit=15&query=' + query.split(' ').join('+') + '&skip=30')
                         .respond(200, response);
 
@@ -92,6 +108,28 @@ define(['minireel/services'], function(servicesModule) {
                     expect(success).toHaveBeenCalledWith(jasmine.objectContaining({
                         videos: response.items
                     }));
+                });
+
+                it('should fetch data for all of the videos', function() {
+                    expect(VideoDataService.getVideos).toHaveBeenCalledWith(response.items.map(function(item) {
+                        return [item.site, item.videoid];
+                    }));
+                });
+
+                describe('when the video data has been fetched', function() {
+                    beforeEach(function() {
+                        $rootScope.$apply(function() {
+                            videoDataDeferred.resolve(videoData);
+                        });
+                    });
+
+                    it('should extend each video result with the video data', function() {
+                        var videos = success.calls.mostRecent().args[0].videos;
+
+                        videos.forEach(function(video, index) {
+                            expect(video).toEqual(jasmine.objectContaining(videoData[index]));
+                        });
+                    });
                 });
 
                 describe('if limit and skip are omitted', function() {
@@ -138,14 +176,21 @@ define(['minireel/services'], function(servicesModule) {
                     });
 
                     describe('methods', function() {
-                        var initialVideos;
+                        var initialVideos, initialVideoData;
 
                         beforeEach(function() {
                             [success, failure].forEach(function(spy) {
                                 spy.calls.reset();
                             });
 
+                            $rootScope.$apply(function() {
+                                videoDataDeferred.resolve(videoData);
+                            });
+
+                            VideoDataService.getVideos.and.returnValue($q.defer().promise);
+
                             initialVideos = result.videos;
+                            initialVideoData = videoData;
                         });
 
                         describe('next()', function() {
@@ -233,6 +278,18 @@ define(['minireel/services'], function(servicesModule) {
                                     items: generateResults(15)
                                 };
 
+                                videoData = response.items.map(function(item) {
+                                    return {
+                                        service: item.site,
+                                        views: randomIntBetween(1000, 2000000)
+                                    };
+                                });
+
+                                videoDataDeferred = $q.defer();
+
+                                VideoDataService.getVideos.and.returnValue(videoDataDeferred.promise);
+
+
                                 $httpBackend.expectGET('/api/search/videos?limit=15&query=' + query.split(' ').join('+') + '&skip=165')
                                     .respond(200, response);
 
@@ -258,11 +315,32 @@ define(['minireel/services'], function(servicesModule) {
                                 expect(result.position).toBe((meta.skipped / meta.numResults) + 1);
                             });
 
+                            it('should fetch additional video data', function() {
+                                expect(VideoDataService.getVideos).toHaveBeenCalledWith(response.items.map(function(item) {
+                                    return [item.site, item.videoid];
+                                }));
+                            });
+
+                            describe('when the additional data is fetched', function() {
+                                beforeEach(function() {
+                                    $rootScope.$apply(function() {
+                                        videoDataDeferred.resolve(videoData);
+                                    });
+                                });
+
+                                it('should update the videos with the additional data', function() {
+                                    result.videos.forEach(function(video, index) {
+                                        expect(video).toEqual(jasmine.objectContaining(videoData[index]));
+                                    });
+                                });
+                            });
+
                             describe('if it already has a page', function() {
                                 beforeEach(function() {
                                     [success, failure].forEach(function(spy) {
                                         spy.calls.reset();
                                     });
+                                    VideoDataService.getVideos.calls.reset();
 
                                     $rootScope.$apply(function() {
                                         result.page(3).then(success, failure);
@@ -271,6 +349,10 @@ define(['minireel/services'], function(servicesModule) {
 
                                 it('should not hit the search service again', function() {
                                     $httpBackend.verifyNoOutstandingRequest();
+                                });
+
+                                it('should not hit the VideoDataService again', function() {
+                                    expect(VideoDataService.getVideos).not.toHaveBeenCalled();
                                 });
 
                                 it('should update to reflect the new page', function() {
