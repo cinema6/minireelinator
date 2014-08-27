@@ -19,6 +19,17 @@
             "ratio": "6-4",
             "theme": "img-only"
         },
+        "adConfig": {
+            "video": {
+                "firstPlacement": 1,
+                "frequency": 3,
+                "waterfall": "cinema6",
+                "skip": 6
+            },
+            "display": {
+                "waterfall": "cinema6"
+            }
+        },
         "deck": [
             {
                 "id": "rc-080fb573e704cf",
@@ -172,15 +183,6 @@
                     "videoid": "xKaGdvnQUz4",
                     "rel": 0,
                     "modestbranding": 1
-                }
-            },
-            {
-                "id": "rc-392f3546f0cfc3",
-                "type": "ad",
-                "ad": true,
-                "modules": [],
-                "data": {
-                    "autoplay": true
                 }
             },
             {

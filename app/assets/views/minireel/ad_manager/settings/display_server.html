@@ -55,11 +55,8 @@
     <p class="modalBody__fineprint typo--danger"><strong>*</strong> Indicates required field.</p>
 </div>
 <footer class="modalFooter__group">
-    <button class="btnAction btnAction--first" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
-    <ng-switch on="NewCtrl.tabs.length">
-        <button ng-switch-when="1" ng-click="NewCtrl.save()" class="btnAction btnAction--success btnAction--last" type="button" title="Done!" ng-disabled="!NewCtrl.title">I&rsquo;m Done!</button>
-        <button ng-switch-default ng-click="NewCtrl.nextTab()" ng-disabled="!NewCtrl.title" class="btnAction btnAction--primary btnAction--last" type="button" title="Next Step">Next Step</button>
-    </ng-switch>
+    <button class="btnAction btnAction--first" c6-sref="{{AdSettingsCtrl.returnState}}" title="Cancel">Cancel</button>
+    <button ng-click="AdManager.saveSettings(AdSettingsCtrl.model)" class="btnAction btnAction--success btnAction--last" type="button" title="Done!">I&rsquo;m Done!</button>
     <p class="modalFooter__guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</p>
 </footer>
 

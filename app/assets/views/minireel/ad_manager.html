@@ -2,7 +2,7 @@
 <header class="pageHeader container">
     <div class="pageHeader__titleBar clearfix">
         <h1 class="pageTitle">Ad Manager</h1>
-        <a ng-click="AdManagerCtrl.editSettings('org', null)" href="" title="New MiniReel" class="btnAction btnAction--primary btnAction--hasIcon" >
+        <a ng-click="AdManagerCtrl.editOrgSettings()" href="" title="New MiniReel" class="btnAction btnAction--primary btnAction--hasIcon" >
             <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                  viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
                 <path class="ui__icon" d="M3.1,13.9H1.8L0,17.1L0.9,18l3.1-1.8v-1.3l3-3l-1-1L3.1,13.9z M14.5,1.4l0.8,0.8l-4.1,4.1l0.6,0.6l4.1-4.1l0.8,0.8
@@ -54,7 +54,7 @@
                 </label>
                 <button ng-click="AdManagerCtrl.dropDowns.select.toggle()" c6-click-outside="AdManagerCtrl.dropDowns.select.hide()" class="btn faa fa-caret-down ui__clickDrop">&nbsp;</button>
                 <div ng-show="AdManagerCtrl.dropDowns.select.shown" class="pager__itemsPerPage ui__clickDropMenu">
-                    <button class="ui__clickDropBtn" type="button" title="Select All" ng-show="!AdManagerCtrl.allAreSelected" ng-click="ManagerCtrl.selectAll()">Select All</button>
+                    <button class="ui__clickDropBtn" type="button" title="Select All" ng-show="!AdManagerCtrl.allAreSelected" ng-click="AdManagerCtrl.selectAll()">Select All</button>
                     <button class="ui__clickDropBtn" type="button" title="Select Public" ng-click="AdManagerCtrl.selectAllWithStatus('active')">Select Public</button>
                     <button class="ui__clickDropBtn" type="button" title="Select Private" ng-click="AdManagerCtrl.selectAllWithStatus('pending')">Select Private</button>
                     <button class="ui__clickDropBtn" type="button" title="Select None" ng-show="AdManagerCtrl.model.selected.indexOf(true) > -1" ng-click="AdManagerCtrl.selectNone()">Select None</button>
@@ -122,14 +122,14 @@
 
                     <form class="miniReel__quickActions">
                         <div class="quickActions__holder">
-                            <button class="quickActions__btn" type="button">
+                            <a class="quickActions__btn quickActions__btn--play" ng-href="{{AdManagerCtrl.previewUrlOf(this)}}" ng-show="AdManagerCtrl.previewUrlOf(this)" target="_blank">
                                 <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                     viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
                                     <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M13.4,7.9L5.7,2.2C5.5,2,5,1.9,4.6,2.1C4.3,2.2,4,2.7,4,3v11.9
                                         c0,0.3,0.3,0.8,0.6,1c0.2,0.1,0.6,0.2,1.1-0.2l7.7-5.7C13.6,9.9,14,9.6,14,9C14,8.3,13.6,8,13.4,7.9z"/>
                                 </svg>
                                 <span class="ir">Preview</span>
-                            </button>
+                            </a>
                         </div>
                         <div class="quickActions__holder">
                             <button ng-show="this.status === 'active' && PortalCtrl.model.type !== 'ContentProvider'" c6-sref="MR:Manager.Embed" c6-models="[this]" class="quickActions__btn" type="button">
@@ -142,7 +142,7 @@
                             </button>
                         </div>
                         <div class="quickActions__holder">
-                            <button c6-models="[this]" class="quickActions__btn" type="button">
+                            <button c6-models="[this]" class="quickActions__btn" type="button" ng-click="AdManagerCtrl.editSettings([this])">
                                 <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                     viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
                                     <path class="ui__icon" d="M3.1,13.9H1.8L0,17.1L0.9,18l3.1-1.8v-1.3l3-3l-1-1L3.1,13.9z M14.5,1.4l0.8,0.8l-4.1,4.1l0.6,0.6l4.1-4.1l0.8,0.8
