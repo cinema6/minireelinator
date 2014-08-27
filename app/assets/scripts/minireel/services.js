@@ -1507,7 +1507,7 @@ function( angular , c6ui , cryptojs ) {
                     delete minireel.id;
                     minireel.data.title = toCopy ? (title + ' (copy)') : null;
                     minireel.status = 'pending';
-                    minireel.access = user.type === 'ContentProvider' ? 'public' : 'private';
+                    minireel.access = 'public';
 
                     return minireel;
                 }
