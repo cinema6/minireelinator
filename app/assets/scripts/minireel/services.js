@@ -12,6 +12,47 @@ function( angular , c6ui , cryptojs ) {
         fromJson = angular.fromJson,
         isArray = angular.isArray;
 
+    function mapObject(object, fn) {
+        return Object.keys(object)
+            .reduce(function(result, key) {
+                var data = fn(object[key], key, object);
+
+                result[data[0]] = data[1];
+
+                return result;
+            }, {});
+    }
+
+    function capitalize(word) {
+        return word.slice(0, 1).toUpperCase() + word.slice(1);
+    }
+
+    function camelcaseify(object) {
+        return mapObject(object, function(value, key) {
+            var words = key.split('_');
+
+            return [
+                words.slice(0, 1)
+                    .concat(words.slice(1)
+                        .map(capitalize))
+                    .join(''),
+                value
+            ];
+        });
+    }
+
+    function flatten() {
+        var args = Array.prototype.slice.call(arguments),
+            lengths = args.map(function(array) { return array.length; }),
+            longestArray = args[lengths.indexOf(Math.max.apply(null, lengths))];
+
+        return longestArray.map(function(item, index) {
+            return args.reduce(function(result, array) {
+                return array[index] || result;
+            }, null);
+        });
+    }
+
     return angular.module('c6.app.minireel.services', [c6ui.name])
         .factory('requireCJS', ['$http','$cacheFactory','$q',
         function               ( $http , $cacheFactory , $q ) {
@@ -529,6 +570,163 @@ function( angular , c6ui , cryptojs ) {
             }];
         }])
 
+        .service('VimeoDataService', ['$http',
+        function                     ( $http ) {
+            function first(array) {
+                return array[0];
+            }
+
+            function returnData(response) {
+                return response.data;
+            }
+
+            function processProperty(prop, value) {
+                switch (prop) {
+                    case 'tags':
+                        return value.split(/,\s*/);
+                    default:
+                        return value;
+                }
+            }
+
+            function processObject(object) {
+                return mapObject(object, function(value, key) {
+                    return [key, processProperty(key, value)];
+                });
+            }
+
+            this.getVideo = function(id) {
+                return $http.get('//vimeo.com/api/v2/video/' + id + '.json')
+                    .then(returnData)
+                    .then(first)
+                    .then(camelcaseify)
+                    .then(processObject);
+            };
+        }])
+
+        .service('DailymotionDataService', ['$http',
+        function                           ( $http ) {
+            function snakecaseify(string) {
+                return string.match(/[A-Z]?[^A-Z]+/g)
+                    .map(function(word) { return word.toLowerCase(); })
+                    .join('_');
+            }
+
+            function returnData(response) {
+                return response.data;
+            }
+
+            function processProperty(prop, value) {
+                switch (prop) {
+                case 'createdTime':
+                    return new Date(value * 1000);
+                default:
+                    return value;
+                }
+            }
+
+            function processObject(object) {
+                return mapObject(object, function(value, key) {
+                    return [key, processProperty(key, value)];
+                });
+            }
+
+            function VideoFetcher(id) {
+                this.id = id;
+            }
+            VideoFetcher.prototype = {
+                get: function(query) {
+                    return $http.get('https://api.dailymotion.com/video/' + this.id, {
+                        params: mapObject(query, function(value, key) {
+                            return [
+                                snakecaseify(key),
+                                isArray(value) ?
+                                    value.map(snakecaseify).join(',') :
+                                    value
+                            ];
+                        })
+                    }).then(returnData)
+                        .then(camelcaseify)
+                        .then(processObject);
+                }
+            };
+
+            this.video = function(id) {
+                return new VideoFetcher(id);
+            };
+        }])
+
+        .service('VideoDataService', ['$q','YouTubeDataService','VimeoDataService',
+                                      'DailymotionDataService',
+        function                     ( $q , YouTubeDataService , VimeoDataService ,
+                                       DailymotionDataService ) {
+            this.getVideos = function(config) {
+                function idsOfType(list, type) {
+                    return list.map(function(pair) {
+                        return pair[0] === type ? pair[1] : null;
+                    });
+                }
+
+                function resolveFromYouTube(list) {
+                    function YouTubeResult(data) {
+                        this.service = 'youtube';
+
+                        this.views = parseInt(data.statistics.viewCount);
+                    }
+
+                    return YouTubeDataService.videos.list({
+                        part: ['statistics'],
+                        id: list.filter(function(id) {
+                            return !!id;
+                        })
+                    }).then(function(videos) {
+                        return list.map(function(id) {
+                            return id && new YouTubeResult(videos.shift());
+                        });
+                    });
+                }
+
+                function resolveFromVimeo(list) {
+                    function VimeoResult(data) {
+                        this.service = 'vimeo';
+
+                        this.views = data.statsNumberOfPlays;
+                    }
+
+                    return $q.all(list.map(function(id) {
+                        return id && VimeoDataService.getVideo(id)
+                            .then(function(data) {
+                                return new VimeoResult(data);
+                            });
+                    }));
+                }
+
+                function resolveFromDailymotion(list) {
+                    function DailymotionResult(data) {
+                        this.service = 'dailymotion';
+
+                        this.views = data.viewsTotal;
+                    }
+
+                    return $q.all(list.map(function(id) {
+                        return id && DailymotionDataService.video(id).get({
+                            fields: ['viewsTotal']
+                        }).then(function(data) {
+                            return new DailymotionResult(data);
+                        });
+                    }));
+                }
+
+                return $q.all([
+                    resolveFromYouTube(idsOfType(config, 'youtube')),
+                    resolveFromVimeo(idsOfType(config, 'vimeo')),
+                    resolveFromDailymotion(idsOfType(config, 'dailymotion'))
+                ]).then(function(results) {
+                    return flatten.apply(null, results);
+                });
+            };
+        }])
+
         .service('VideoThumbnailService', ['$q','$cacheFactory','$http',
         function                          ( $q , $cacheFactory , $http ) {
             var _private = {},
@@ -771,9 +969,17 @@ function( angular , c6ui , cryptojs ) {
             };
         }])
 
-        .service('VideoSearchService', ['$http','c6UrlMaker','$q',
-        function                       ( $http , c6UrlMaker , $q ) {
-            function VideoSearchResult(videos, meta) {
+        .service('VideoSearchService', ['$http','c6UrlMaker','$q','VideoDataService',
+        function                       ( $http , c6UrlMaker , $q , VideoDataService ) {
+            function VideoSearchResult(videos, _meta) {
+                var meta = _meta || {
+                    query: this.query,
+                    limit: this.limit,
+                    skipped: this.before,
+                    numResults: this.length,
+                    totalResults: this.total
+                };
+
                 this.visited = this.visited || {};
 
                 this.query = meta.query;
@@ -817,7 +1023,8 @@ function( angular , c6ui , cryptojs ) {
                     return find(query, limit, toSkip)
                         .then(function update(data) {
                             return VideoSearchResult.call(self, data.items, data.meta);
-                        });
+                        })
+                        .then(extendWithMoreData);
                 }
             };
 
@@ -851,11 +1058,24 @@ function( angular , c6ui , cryptojs ) {
                 });
             }
 
+            function extendWithMoreData(result) {
+                VideoDataService.getVideos(result.videos.map(function(video) {
+                    return [video.site, video.videoid];
+                })).then(function(data) {
+                    return VideoSearchResult.call(result, result.videos.map(function(video, index) {
+                        return extend(video, data[index]);
+                    }));
+                });
+
+                return result;
+            }
+
             this.find = function(query, limit, skip) {
                 return find(query, limit, skip)
                     .then(function wrap(data) {
                         return new VideoSearchResult(data.items, data.meta);
-                    });
+                    })
+                    .then(extendWithMoreData);
             };
         }])
 

@@ -40,7 +40,7 @@ define(['minireel/video_search'], function(videoSearchModule) {
                 it('should be an object', function() {
                     expect(VideoSearchCtrl.query).toEqual({
                         query: '',
-                        site: undefined,
+                        sites: undefined,
                         hd: undefined
                     });
                 });

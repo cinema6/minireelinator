@@ -70,7 +70,9 @@ module.exports = function(http) {
         var query = request.query.query,
             skip = parseInt(request.query.skip) || 0,
             limit = parseInt(request.query.limit) || 10,
-            site = request.query.site,
+            sites = request.query.sites ?
+                request.query.sites.split(',') :
+                ['youtube', 'vimeo', 'dailymotion'],
             hd = request.query.hd && (request.query.hd === 'true'),
             total = queryCache[query] || (queryCache[query] = randomNumberBetween(50, 1000));
 
@@ -83,7 +85,7 @@ module.exports = function(http) {
             items: makeArray(limit)
                 .map(function() {
                     return makeRandomVideo(
-                        site || randomMember(['youtube', 'vimeo', 'dailymotion']),
+                        randomMember(sites),
                         (hd !== undefined) ? hd : randomMember([true, false])
                     );
                 })
