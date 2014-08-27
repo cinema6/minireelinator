@@ -197,10 +197,6 @@ define(['app', 'minireel/services'], function(appModule, servicesModule) {
                 it('should push the new card into the deck', function() {
                     expect(EditorCtrl.pushCard).toHaveBeenCalledWith(videoCard);
                 });
-
-                it('should open the card for editing', function() {
-                    expect(EditorCtrl.editCard).toHaveBeenCalledWith(videoCard);
-                });
             });
         });
     });

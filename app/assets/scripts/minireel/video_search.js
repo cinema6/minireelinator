@@ -54,7 +54,7 @@ function( angular , c6State  , services          , c6Defines  ) {
                 card.data.service = video.site;
                 card.data.videoid = video.videoid;
 
-                return EditorCtrl.editCard(EditorCtrl.pushCard(card));
+                return EditorCtrl.pushCard(card);
             };
         }]);
 });
