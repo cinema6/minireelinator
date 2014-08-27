@@ -7,7 +7,7 @@
                 <input id="videoServer_c6First" type="radio" 
                     name="minireel-mode"
                     class="radiobox__input"
-                    ng-model="AdSettingsCtrl.model.display.waterfall"
+                    ng-model="AdSettingsCtrl.model.settings.display.waterfall"
                     value="cinema6-publisher"/>
                 <span class="btn__label faa fab"> 
                     Use Cinema6 ad server <em>first</em>, <br> 
@@ -18,7 +18,7 @@
                 <input id="videoServer_c6Only" type="radio" 
                     name="minireel-mode"
                     class="radiobox__input"
-                    ng-model="AdSettingsCtrl.model.display.waterfall"
+                    ng-model="AdSettingsCtrl.model.settings.display.waterfall"
                     value="cinema6"/>
                 <span class="btn__label faa fab"> 
                     Use Cinema6 ad server <em>only</em>, <br> 
@@ -31,7 +31,7 @@
                 <input id="videoServer_pubFirst" type="radio" 
                     name="minireel-mode"
                     class="radiobox__input"
-                    ng-model="AdSettingsCtrl.model.display.waterfall"
+                    ng-model="AdSettingsCtrl.model.settings.display.waterfall"
                     value="publisher-cinema6"/>
                 <span class="btn__label faa fab"> 
                     Use your ad server <em>first</em>, <br> 
@@ -42,7 +42,7 @@
                 <input id="videoServer_pubOnly" type="radio" 
                     name="minireel-mode"
                     class="radiobox__input"
-                    ng-model="AdSettingsCtrl.model.display.waterfall"
+                    ng-model="AdSettingsCtrl.model.settings.display.waterfall"
                     value="publisher"/>
                 <span class="btn__label faa fab"> 
                     Use your ad server <em>only</em>, <br> 
@@ -56,8 +56,8 @@
 </div>
 <footer class="modalFooter__group">
     <button class="btnAction btnAction--first" c6-sref="{{AdSettingsCtrl.returnState}}" title="Cancel">Cancel</button>
-    <button ng-click="AdManager.saveSettings(AdSettingsCtrl.model)" class="btnAction btnAction--success btnAction--last" type="button" title="Done!">I&rsquo;m Done!</button>
-    <p class="modalFooter__guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</p>
+    <button ng-click="AdSettingsCtrl.save()" class="btnAction btnAction--success btnAction--last" type="button" ng-disabled="!AdSettingsCtrl.formIsValid()" title="Done!">I&rsquo;m Done!</button>
+    <p class="modalFooter__guideText">Step {{AdSettingsCtrl.tabs.indexOf(AdSettingsCtrl.currentTab) + 1}} of {{AdSettingsCtrl.tabs.length}}</p>
 </footer>
 
 <!--

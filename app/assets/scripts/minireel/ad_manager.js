@@ -69,13 +69,6 @@ function( angular , c6ui , c6State  , services  ) {
                 this.controller = 'AdSettingsController';
                 this.controllerAs = 'AdSettingsCtrl';
                 this.templateUrl = 'views/minireel/ad_manager/settings.html';
-
-                // this.afterModel = function(model) {
-                //     if (!model) { return; }
-
-                //     model.morestuff = {};
-                //     console.log(model);
-                // };
             }])
 
             .state('MR:AdManager.Settings.Frequency', [function() {
@@ -91,14 +84,13 @@ function( angular , c6ui , c6State  , services  ) {
             }]);
         }])
 
-        .controller('AdManagerController', ['$scope','c6State','cState',
+        .controller('AdManagerController', ['$scope','c6State','cState','$q',
                                             'ConfirmDialogService', 'MiniReelService',
-        function                           ( $scope , c6State , cState ,
+        function                           ( $scope , c6State , cState , $q ,
                                              ConfirmDialogService ,  MiniReelService ) {
             var self = this,
                 org = c6State.get('Portal').cModel.org,
-                MiniReelCtrl = $scope.MiniReelCtrl,
-                settingsType;
+                MiniReelCtrl = $scope.MiniReelCtrl;
 
             function getAdConfig(object) {
                 var systemDefault = {
@@ -134,22 +126,22 @@ function( angular , c6ui , c6State  , services  ) {
                 }).length;
             }
 
-            function findMatchingAdConfigs(experiences) {
+            function useMatchingAdConfigs(experiences) {
                 var customExperiences = experiences.filter(function(exp) {
                         return !!exp.data.adConfig;
                     }),
                     videoTemplate = {
-                        firstPlacement: _copy(),
-                        frequency: _copy(),
-                        waterfall: _copy(),
-                        skip: _copy()
+                        firstPlacement: equalOrUndefine(),
+                        frequency: equalOrUndefine(),
+                        waterfall: equalOrUndefine(),
+                        skip: equalOrUndefine()
                     },
                     displayTemplate = {
-                        waterfall: _copy()
+                        waterfall: equalOrUndefine()
                     },
                     sharedConfig;
 
-                function _copy() {
+                function equalOrUndefine() {
                     return function(target, current, key) {
                         return target[key] === current[key] ? target[key] : void 0;
                     };
@@ -157,6 +149,10 @@ function( angular , c6ui , c6State  , services  ) {
 
                 if (!customExperiences.length) {
                     return getAdConfig(org);
+                }
+
+                if (experiences.length === 1) {
+                    return getAdConfig(experiences[0]);
                 }
 
                 sharedConfig = copy(customExperiences[0].data.adConfig);
@@ -177,12 +173,12 @@ function( angular , c6ui , c6State  , services  ) {
             }
 
             function setZeroAdConfig(config) {
-                if (config) {
-                    config.video.firstPlacement = -1;
-                } else {
+                if (!config) {
                     config = getAdConfig();
-                    config.video.firstPlacement = -1;
                 }
+
+                config.video.firstPlacement = -1;
+                config.video.frequency = 0;
 
                 return config;
             }
@@ -191,51 +187,6 @@ function( angular , c6ui , c6State  , services  ) {
                 return deck.filter(function(card) {
                     return !card.ad;
                 });
-            }
-
-            function removeAds(minireels) {
-                minireels.forEach(function(exp) {
-                    exp.data.adConfig = setZeroAdConfig(exp.data.adConfig);
-                    exp.data.deck = cleanDeck(exp.data.deck);
-
-                    console.log(exp);
-                    // exp.save();
-                });
-
-                // console.log(self.selectedExperiences);
-            }
-
-            function convertNewSettings(exp, settings) {
-                var videoTemplate = {
-                    firstPlacement: _copy(),
-                    frequency: _copy(),
-                    waterfall: _copy(),
-                    skip: _copy()
-                },
-                displayTemplate = {
-                    waterfall: _copy()
-                },
-                config = getAdConfig(exp);
-
-                function _copy() {
-                    return function(data, key) {
-                        return data[key];
-                    };
-                }
-
-                forEach(videoTemplate, function(fn, key) {
-                    if (isDefined(settings.video[key])) {
-                        config.video[key] = fn(settings.video, key);
-                    }
-                });
-
-                forEach(displayTemplate, function(fn, key) {
-                    if (isDefined(settings.display[key])) {
-                        config.display[key] = fn(settings.display, key);
-                    }
-                });
-
-                return config;
             }
 
             function isSame(prop, obj1, obj2) {
@@ -259,14 +210,6 @@ function( angular , c6ui , c6State  , services  ) {
                         return array[index];
                     });
                 });
-            }
-
-            function limitArgs(max, fn) {
-                return function() {
-                    var args = Array.prototype.slice.call(arguments, 0, max);
-
-                    return fn.apply(null, args);
-                };
             }
 
             function refetchMiniReels(fromStart) {
@@ -293,7 +236,7 @@ function( angular , c6ui , c6State  , services  ) {
                 }
             };
 
-            // josh
+            this.returnState = 'MR:AdManager';
             this.filter = cState.filter;
             this.limit = cState.limit;
             this.page = cState.page;
@@ -302,8 +245,6 @@ function( angular , c6ui , c6State  , services  ) {
             };
             this.limits = [20, 50, 100];
 
-            // me
-            self.returnState = 'MR:AdManager';
 
             Object.defineProperties(this, {
                 allAreSelected: {
@@ -365,15 +306,11 @@ function( angular , c6ui , c6State  , services  ) {
                 ).name;
             };
 
-            // my methods
-            //
-            //
-
-            self.settingsTypeOf = function(minireel) {
+            this.settingsTypeOf = function(minireel) {
                 return !minireel.data.adConfig && !staticAdCount(minireel) ? 'Default' : 'Custom';
             };
 
-            self.adCountOf = function(minireel) {
+            this.adCountOf = function(minireel) {
                 var totalCards = minireel.data.deck.length,
                     adConfig = getAdConfig(minireel),
                     adCount = staticAdCount(minireel);
@@ -394,73 +331,30 @@ function( angular , c6ui , c6State  , services  ) {
                 return calculate(adConfig.video, totalCards);
             };
 
-            // check
-            self.editOrgSettings = function() {
-                var settings = getAdConfig(org);
-                settingsType = 'org';
+            this.editOrgSettings = function() {
                 c6State.goTo('MR:AdManager.Settings', [{
                     type: 'org',
-                    settings: settings,
+                    settings: getAdConfig(org),
                     data: org
                 }]);
             };
 
-            // check
-            self.editSettings = function(minireels) {
-                var settings;
-
-                if (minireels.length > 1) {
-                    settings = findMatchingAdConfigs(minireels);
-                }
-
-                if (minireels.length === 1) {
-                    settings = getAdConfig(minireels[0]);
-                }
-
+            this.editSettings = function(minireels) {
                 c6State.goTo('MR:AdManager.Settings', [{
                     type: 'minireels',
-                    settings: settings,
+                    settings: useMatchingAdConfigs(minireels),
                     data: minireels
                 }]);
             };
 
-            // check
-            self.saveSettings = function(settings) {
-                console.log('settings! ',settings);
-                // should users be able to save just some settings?
-                // If so I'll need a helper function to copy over new settings
-                // and default any missing settings
-
-                if (settingsType === 'org') {
-                    org.adConfig = settings;
-                    // org.save();
-                } else {
-                    self.getSelected().forEach(function(exp) {
-                        exp.data.adConfig = convertNewSettings(exp, settings);
-                        exp.data.deck = cleanDeck(exp.data.deck);
-
-                        console.log(exp);
-                        // exp.save();
-                    });
-                }
-
-                c6State.goTo('MR:AdManager');
-            };
-
-            // check
             self.useDefaultSettings = function(minireels) {
-                minireels.forEach(function(exp) {
+                return $q.all(minireels.map(function(exp) {
                     exp.data.deck = cleanDeck(exp.data.deck);
-                    delete exp.data.adConfig;
-
-                    console.log(exp);
-                    // exp.save();
-                });
-
-                // console.log(self.selectedExperiences);
+                    exp.data.adConfig = null;
+                    return exp.save();
+                }));
             };
 
-            // check
             self.removeAds = function(minireels) {
                 ConfirmDialogService.display({
                     prompt: 'Are you sure you want to remove ads from these Minireels?',
@@ -468,7 +362,12 @@ function( angular , c6ui , c6State  , services  ) {
                     cancel: 'No',
                     onAffirm: function() {
                         ConfirmDialogService.close();
-                        removeAds(minireels);
+
+                        return $q.all(minireels.map(function(exp) {
+                            exp.data.adConfig = setZeroAdConfig(exp.data.adConfig);
+                            exp.data.deck = cleanDeck(exp.data.deck);
+                            return exp.save();
+                        }));
                     },
                     onCancel: function() {
                         ConfirmDialogService.close();
@@ -504,15 +403,82 @@ function( angular , c6ui , c6State  , services  ) {
             });
         }])
 
-        .controller('AdSettingsController', ['$scope','MiniReelService','c6State','cState',
-        function                            ( $scope , MiniReelService , c6State , cState ) {
+        .controller('AdSettingsController', ['$scope','MiniReelService','c6State','cState','$q',
+        function                            ( $scope , MiniReelService , c6State , cState , $q ) {
             var self = this,
                 MiniReelCtrl = $scope.MiniReelCtrl,
                 PortalCtrl = $scope.PortalCtrl,
                 org = PortalCtrl.model.org,
                 data = MiniReelCtrl.model.data;
 
-            console.log(cState.cModel);
+            function ordinalSuffixOf(i) {
+                var j = i % 10,
+                    k = i % 100;
+
+                if (j === 1 && k !== 11) {
+                    return i + 'st';
+                }
+                if (j === 2 && k !== 12) {
+                    return i + 'nd';
+                }
+                if (j === 3 && k !== 13) {
+                    return i + 'rd';
+                }
+
+                return i + 'th';
+            }
+
+            function convertNewSettings(exp, settings) {
+                var config = getAdConfig(exp);
+
+                forEach(config.video, function(val, key) {
+                    config.video[key] = isDefined(settings.video[key]) ?
+                        settings.video[key] :
+                        val;
+                });
+
+                forEach(config.display, function(val, key) {
+                    config.display[key] = isDefined(settings.display[key]) ?
+                        settings.display[key] :
+                        val;
+                });
+
+                return config;
+            }
+
+            function getAdConfig(object) {
+                var systemDefault = {
+                    video: {
+                        firstPlacement: 2,
+                        frequency: 0,
+                        waterfall: 'cinema6',
+                        skip: 6
+                    },
+                    display: {
+                        waterfall: 'cinema6'
+                    }
+                };
+
+                if (object && object.adConfig) {
+                    return copy(object.adConfig);
+                }
+
+                if (object && object.data) {
+                    if (object.data.adConfig) {
+                        return copy(object.data.adConfig);
+                    } else {
+                        return copy(org.adConfig || systemDefault);
+                    }
+                }
+
+                return systemDefault;
+            }
+
+            function cleanDeck(deck) {
+                return deck.filter(function(card) {
+                    return !card.ad;
+                });
+            }
 
             function Tab(name, sref, required) {
                 this.name = name;
@@ -557,32 +523,21 @@ function( angular , c6ui , c6State  , services  ) {
                 return;
             }
 
+            this.adChoices = MiniReelService.adChoicesOf(org, data);
+            this.returnState = cState.cParent.cName;
+            this.baseState = 'MR:AdManager.Settings.';
             this.dropDowns = {
                 firstPlacement: new DropDownModel(),
                 frequency: new DropDownModel(),
                 skip: new DropDownModel()
             };
+            this.tabs = [
+                new Tab('Frequency', self.baseState + 'Frequency'),
+                new Tab('Video Server', self.baseState + 'VideoServer'),
+                new Tab('Display Server', self.baseState + 'DisplayServer')
+            ];
 
-            self.adChoices = MiniReelService.adChoicesOf(org, data);
-            self.returnState = cState.cParent.cName;
-            self.baseState = 'MR:AdManager.Settings.';
-
-            function ordinalSuffixOf(i) {
-                var j = i % 10,
-                    k = i % 100;
-                if (j === 1 && k !== 11) {
-                    return i + 'st';
-                }
-                if (j === 2 && k !== 12) {
-                    return i + 'nd';
-                }
-                if (j === 3 && k !== 13) {
-                    return i + 'rd';
-                }
-                return i + 'th';
-            }
-
-            self.firstPlacementOptions = (function() {
+            this.firstPlacementOptions = (function() {
                 var num,
                     options = [];
 
@@ -590,7 +545,7 @@ function( angular , c6ui , c6State  , services  ) {
                     num = 10;
                 } else {
                     num = cState.cModel.data.reduce(function(prev, curr) {
-                        var length = curr.data.deck.length
+                        var length = curr.data.deck.length;
                         return prev < length ? prev : length;
                     }, cState.cModel.data[0].data.deck.length);
                 }
@@ -614,7 +569,7 @@ function( angular , c6ui , c6State  , services  ) {
                 return options;
             }());
 
-            self.frequencyOptions = (function() {
+            this.frequencyOptions = (function() {
                 var i = 2,
                     options = [
                         {
@@ -637,8 +592,8 @@ function( angular , c6ui , c6State  , services  ) {
                 return options;
             }());
 
-            self.skipOptions = (function() {
-                var options = [
+            this.skipOptions = (function() {
+                return [
                     {
                         label: 'No, users cannot skip ads',
                         value: false
@@ -652,15 +607,25 @@ function( angular , c6ui , c6State  , services  ) {
                         value: true
                     }
                 ];
-
-                return options;
             }());
 
-            self.tabs = [
-                new Tab('Frequency', self.baseState + 'Frequency'),
-                new Tab('Video Server', self.baseState + 'VideoServer'),
-                new Tab('Display Server', self.baseState + 'DisplayServer')
-            ];
+            this.frequency = (function() {
+                return self.frequencyOptions.filter(function(option) {
+                    return cState.cModel.settings.video.frequency === option.value;
+                })[0];
+            }());
+
+            this.firstPlacement = (function() {
+                return self.firstPlacementOptions.filter(function(option) {
+                    return cState.cModel.settings.video.firstPlacement === option.value;
+                })[0];
+            }());
+
+            this.skip = (function() {
+                return self.skipOptions.filter(function(option) {
+                    return cState.cModel.settings.video.skip === option.value;
+                })[0];
+            }());
 
             Object.defineProperties(this, {
                 currentTab: {
@@ -676,12 +641,24 @@ function( angular , c6ui , c6State  , services  ) {
             };
 
             this.tabIsValid = function(tab) {
+                if (!tab) { return; }
+
                 switch (tab.sref) {
                 case 'MR:AdManager.Settings.Frequency':
-                    return !!this.frequency;
+                    return !!this.frequency && !!this.skip && !!this.firstPlacement;
+                case 'MR:AdManager.Settings.VideoServer':
+                    return !!cState.cModel.settings.video.waterfall;
+                case 'MR:AdManager.Settings.DisplayServer':
+                    return !!cState.cModel.settings.display.waterfall;
                 default:
                     return this.isAsFarAs(tab);
                 }
+            };
+
+            this.formIsValid = function() {
+                return this.tabs.length === this.tabs.filter(function(tab) {
+                    return self.tabIsValid(tab);
+                }).length;
             };
 
             this.nextTab = function() {
@@ -700,43 +677,51 @@ function( angular , c6ui , c6State  , services  ) {
                 }
             };
 
+            this.save = function() {
+                var settings = {
+                    video: {
+                        firstPlacement: self.firstPlacement && self.firstPlacement.value,
+                        frequency: self.frequency && self.frequency.value,
+                        waterfall: cState.cModel.settings.video.waterfall,
+                        skip: self.skip && self.skip.value
+                    },
+                    display: {
+                        waterfall: cState.cModel.settings.display.waterfall
+                    }
+                };
+
+                if (cState.cModel.type === 'org') {
+                    org.adConfig = settings;
+                    org.save().then(function() {
+                        c6State.goTo('MR:AdManager');
+                    });
+                } else {
+                    $q.all(cState.cModel.data.map(function(exp) {
+                        exp.data.adConfig = convertNewSettings(exp, settings);
+                        exp.data.deck = cleanDeck(exp.data.deck);
+                        return exp.save();
+                    })).then(function() {
+                        c6State.goTo('MR:AdManager');
+                    });
+                }
+            };
+
+            c6State.goTo(self.baseState + 'Frequency');
+
             c6State.on('stateChange', incrementTabVisits);
 
-            self.frequency = (function() {
-                return self.frequencyOptions.filter(function(option) {
-                    return cState.cModel.settings.video.frequency === option.value;
-                })[0];
-            }());
-
-            self.firstPlacement = (function() {
-                return self.firstPlacementOptions.filter(function(option) {
-                    return cState.cModel.settings.video.firstPlacement === option.value;
-                })[0];
-            }());
-
-            self.skip = (function() {
-                return self.skipOptions.filter(function(option) {
-                    return cState.cModel.settings.video.skip === option.value;
-                })[0];
-            }());
-
-            Object.defineProperty(self, 'settings', {
-                get: function() {
-                    return {
-                        video: {
-                            firstPlacement: self.firstPlacement && self.firstPlacement.value,
-                            frequency: self.frequency && self.frequency.value,
-                            waterfall: cState.cModel.settings.video.waterfall,
-                            skip: cState.cModel.settings.video.skip
-                        },
-                        display: {
-                            waterfall: cState.cModel.settings.display.waterfall
-                        }
-                    };
-                }
+            $scope.$on('$destroy', function() {
+                c6State.removeListener('stateChange', incrementTabVisits);
             });
 
-            // go to first/default tab
-            c6State.goTo(self.baseState + 'Frequency');
+            $scope.$watch(function() {
+                return self.firstPlacement;
+            }, function(firstPlacement) {
+                if (firstPlacement && firstPlacement.value === -1) {
+                    self.frequency = self.frequencyOptions.filter(function(opt) {
+                        return opt.value === 0;
+                    })[0];
+                }
+            });
         }]);
 });
