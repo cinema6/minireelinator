@@ -1,91 +1,82 @@
-<c6-alias model="EditorCtrl.model" as="minireel">
+<c6-alias model="EditorCtrl.model" as="minireel" >
     <div ng-if="minireel.status === 'active'" ng-show="EditorCtrl.minireelState.dirty && !EditorCtrl.dismissDirtyWarning" class="pageAlert__group">
-        <div class="ui__alert sprite--alpha"><span class="ir">Warning!</span></div>
+        <div class="ui__alert c6studioSprite--alpha"><span class="ir">Warning!</span></div>
         <p class="pageAlert__msg">
             <strong>Warning!</strong> You have unsaved changes. 
             Make sure you click <strong>&ldquo;Publish Changes&rdquo;</strong> to update your MiniReel.
         </p>
-        <button ng-click="EditorCtrl.dismissDirtyWarning = true" class="modal__closeBtn sprite--alpha"><span class="ir">Close</span></button>
+        <button ng-click="EditorCtrl.dismissDirtyWarning = true" class="modal__closeBtn c6studioSprite--alpha"><span class="ir">Close</span></button>
     </div>
-    <div class="pageHeader__group">
-        <header class="pageHeader pageHeader--editor container">
-            &lsaquo; <a href="" ng-click="EditorCtrl.backToDashboard()" title="Dashboard">Back to the Dashboard</a>
-            <div class="pageHeader__coverImg">
-                <div class="miniReel__imgBox miniReel__imgBox--{{minireel.data.splash.ratio}}"
-                    c6-bg-img="{{EditorCtrl.splashSrc}}">
-                    <div c6-sref="MR:Splash.Source" class="coverImg__edit">
-                        <span class="ui__editToolTip">
-                            <span class="ui__edit sprite--alpha"><span class="ir">Edit</span></span>
-                            Edit
-                        </span>
-                    </div>
-                </div>
+    <header class="pageHeader pageHeader--editor container">
+        <div class="pageHeader__titleBar clearfix">
+            <h1 class="pageTitle pageTitle--mrTitle" ng-show="!EditorCtrl.editTitle" ng-click="EditorCtrl.editTitle = true">
+                {{minireel.data.title}}
+                <span class="btnFill btnFill--primary btn__editTitle">
+                    <span class="btn__label fab fa-pencil-square-o"> Edit</span>
+                </span>
+            </h1>
+            <form ng-if="EditorCtrl.editTitle">
+                <input c6-click-outside="EditorCtrl.editTitle = false" type="text" autofocus ng-model="minireel.data.title" class="forms__textField mrTitle__textBox">
+                <button type="submit" class="mrTitle__submit" ng-click="EditorCtrl.editTitle = false">Done</button>
+            </form>
+        </div>
+        <div class="metaData__group">
+            <span ng-if="PortalCtrl.model.type !== 'ContentProvider'">
+                Type: <a c6-sref="MR:Settings.Mode" class="miniReel__type" title="AutoPlay MiniReel"><strong>{{EditorCtrl.prettyMode}}</strong></a> 
+                <span class="typo--faded">&nbsp;|&nbsp;</span>
+            </span>
+            <span ng-show="minireel.status === 'pending'">
+                <strong>Private</strong>, Created {{minireel.created | date:'M/d/yyyy' }}
+            </span>
+            <span ng-show="minireel.status === 'active'">
+                <strong class="typo--success">Published</strong> {{minireel.lastPublished | date:'M/d/yyyy' }}
+            </span>
+            <span class="typo--faded">&nbsp;|&nbsp;</span>
+            {{minireel.data.deck.length}} Slides
+        </div>
+        <div class="pageHeader__actionBar clearfix">
+            <div class="btnGroup pageHeader__btnGroup">
+                <button ng-click="EditorCtrl.publish()" ng-show="minireel.status === 'pending'" class="btn btn--primary" type="button" title="Publish">
+                    <span class="btn__label fab fa-cloud-upload">&nbsp; Publish</span>
+                </button>
+                <button ng-click="EditorCtrl.makePrivate()" ng-show="minireel.status === 'active'" class="btn btn--primary btn--first" type="button" title="Make Private">
+                    <span class="btn__label fab fa-lock">&nbsp; Make Private</span>
+                </button>
+                <button ng-click="EditorCtrl.deleteMinireel()" class="btn btn--primary" type="button" title="Delete">
+                    <span class="btn__label fab fa-trash">&nbsp; Delete</span>
+                </button>
+                <button class="btn btn--primary" type="button" title="Preview Link">
+                    <span class="btn__label fab fa-link">&nbsp; Preview Link</span>
+                </button>
             </div>
-            <div class="pageHeader__titlePane">
-                <h1 ng-show="!EditorCtrl.editTitle" ng-click="EditorCtrl.editTitle = true" class="pageTitle theTitle__text">{{minireel.data.title}} 
-                    <span ng-show="minireel.status === 'pending'" class="pageTitle__status">(<em class="pageTitle__status--private">private</em>)</span>
-                    <span ng-show="minireel.status === 'active'" class="pageTitle__status">(<em class="pageTitle__status--public">public</em>)</span>
-                    <span class="ui__editToolTip">
-                        <span class="ui__edit sprite--alpha"><span class="ir">Edit</span></span>
-                        Edit
-                    </span>
-                </h1>
-                <form ng-if="EditorCtrl.editTitle">
-                    <input c6-click-outside="EditorCtrl.editTitle = false" type="text" autofocus ng-model="minireel.data.title" class="theTitle__textBox">
-                    <button type="submit" class="theTitle__submit" ng-click="EditorCtrl.editTitle = false">Done</button>
-                </form>
-                <div class="pageHeader__actions clearfix">
-                    <div class="metaData__group">
-                        <span ng-if="PortalCtrl.model.type !== 'ContentProvider'">
-                            Type: <a c6-sref="MR:Settings.Mode" class="miniReel__type" title="AutoPlay MiniReel"><strong>{{EditorCtrl.prettyMode}}</strong></a> 
-                            <span class="ui__divider--bar">&nbsp;|&nbsp;</span>
-                        </span>
-                        Created {{minireel.created | date:'M/d/yyyy' }}
-                        <span class="ui__divider--bar">&nbsp;|&nbsp;</span>
-                        {{minireel.data.deck.length}} Slides
-                    </div>
-                </div>
-                <div class="publish__actions clearfix">
-                    <ul class="actionbar__group">
-                        <li class="toolbar__item">
-                            <button ng-click="EditorCtrl.makePrivate()" ng-show="minireel.status === 'active'" class="toolbar__btn toolbar__makePrivate" type="button">Make Private</button>
-                        </li>
-                        <li class="toolbar__item">
-                            <button ng-click="EditorCtrl.publish()" ng-show="minireel.status === 'pending'" class="toolbar__btn toolbar__confirm" type="button">Publish</button>
-                        </li>
-                        <li class="toolbar__item">
-                            <button ng-click="EditorCtrl.deleteMinireel()" class="toolbar__btn toolbar__delete" type="button">Delete</button>
-                        </li>
-                    </ul>
-                    <ul class="toolbar__group">
-                        <li class="toolbar__item">
-                            <button class="toolbar__btn toolbar__preview" type="button" ng-click="EditorCtrl.previewMode()">Preview</button>
-                        </li>
-                        <li ng-show="minireel.status === 'active'" class="toolbar__item">
-                            <button ng-click="EditorCtrl.confirmSave()" 
-                            class="toolbar__confirm toolbar__publish" 
-                            ng-class="{
-                                'toolbar__publish--alert': EditorCtrl.minireelState.dirty,
-                                'toolbar__publish--waiting': EditorCtrl.minireelState.inFlight,
-                                'toolbar__publish--disabled': !EditorCtrl.minireelState.dirty
-                            }"
-                            ng-disabled="!EditorCtrl.minireelState.dirty"
-                            type="button">
-                                <span class="pubState sprite--alpha">&nbsp;</span>
-                                <span class="pubText">Publish Changes</span>
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </header>
-    </div>
+            <button ng-click="EditorCtrl.confirmSave()" 
+            ng-class="{
+                'btn__publishChanges--alert': EditorCtrl.minireelState.dirty,
+                'btn__publishChanges--waiting': EditorCtrl.minireelState.inFlight,
+                'btn__publishChanges--disabled': !EditorCtrl.minireelState.dirty
+            }"
+            ng-disabled="!EditorCtrl.minireelState.dirty" title="Publish Changes" 
+            class="btnAction btnAction--success btn__publishChanges" type="button">
+                <span class="pubState c6studioSprite--alpha">&nbsp;</span>
+                <span class="btn__label">Publish Changes</span>
+            </button>
+            <button ng-click="EditorCtrl.previewMode()" title="Preview" 
+            class="btnAction btnAction--primary btnAction--hasIcon" type="button">
+                <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                    viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                    <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M13.4,7.9L5.7,2.2C5.5,2,5,1.9,4.6,2.1C4.3,2.2,4,2.7,4,3v11.9
+                        c0,0.3,0.3,0.8,0.6,1c0.2,0.1,0.6,0.2,1.1-0.2l7.7-5.7C13.6,9.9,14,9.6,14,9C14,8.3,13.6,8,13.4,7.9z"/>
+                </svg>
+                <span class="btn__label">Preview</span>
+            </button>
+        </div>
+    </header>
 
     <card-table></card-table>
 
     <div ng-show="EditorCtrl.preview" ng-controller="PreviewController as PreviewCtrl" class="preview__group">
         <div ng-class="{ 'preview__container--fullscreen' : (PreviewCtrl.fullscreen), 'preview__container--desktop' : (PreviewCtrl.device === 'desktop'), 'preview__container--mobile' : (PreviewCtrl.device === 'phone') }"
-            class="preview__container ui__modal"
+            class="preview__container preview__modal"
             ng-style="{height: (PreviewCtrl.fullscreen && PreviewCtrl.device === 'desktop') ? '0px' : ''}">
             <h1 class="modal__title">Preview Mode</h1>
             <form class="preview__form">
@@ -97,7 +88,7 @@
                 class="modal__radioBtn" />
                 <label for="previewMode_mobile">Mobile</label>
                 
-                <button class="modal__closeBtn sprite--alpha" ng-click="EditorCtrl.closePreview()"><span class="ir">Close</span></button>
+                <button class="modal__closeBtn c6studioSprite--alpha" ng-click="EditorCtrl.closePreview()"><span class="ir">Close</span></button>
             </form>
             <div class="preview__iframeHolder">
                 <mr-preview experience="minireel"
@@ -117,7 +108,7 @@
                     class="preview__splashHolder" splash-page="EditorCtrl.model" splash-src="{{EditorCtrl.splashSrc}}"></div>
             </div>
         </div>
-        <div class="ui__overlay">&nbsp;</div>
+        <div class="modal__overlay">&nbsp;</div>
     </div>
 </c6-alias>
 <c6-view></c6-view>

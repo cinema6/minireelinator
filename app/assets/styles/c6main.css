@@ -41,20 +41,26 @@
     c6-copy classes : general type & color styles
     ========================================================================== */
     a {
-        text-decoration: none; color:#4a9cd1;
+        text-decoration: none; color:#2398db;
         -webkit-transition: color 0.25s; transition: color 0.25s;
     }
         a:hover {
-            color:#13a2ff;
+            color:#00a2ff;
         }
     a:focus, button:focus, input:focus, textarea:focus {
         outline:none; border:0;
+    }
+    .typo--success {
+        color:#3dc667;
     }
     .typo--warning {
         color:#ff9000;
     }
     .typo--danger {
         color:#d94040;
+    }
+    .typo--faded {
+        color:#929292;
     }
     .typo--attention {
         color:#d61212;
@@ -94,13 +100,29 @@
             -moz-osx-font-smoothing: grayscale;
         }
         .fa-caret-down:after {
-            content: '\f0d7';
+            content:'\f0d7';
         }
         .fa-chevron-left:after {
-            content: '\f053';
+            content:'\f053';
         }
         .fa-chevron-right:after {
-            content: '\f054';
+            content:'\f054';
+        }
+
+        .fa-pencil-square-o:before {
+            content:'\f044';
+        }
+        .fa-cloud-upload:before {
+            content:'\f0ee';
+        }
+        .fa-trash:before {
+            content:'\f1f8';
+        }
+        .fa-link:before {
+            content:'\f0c1';
+        }
+        .fa-lock:before {
+            content:'\f023';
         }
 
 /*  ==========================================================================
@@ -222,6 +244,38 @@
             background-color:#ffeaea; color:#dc4141;
             border:1px solid #ddd; 
         }
+
+    /*  buttons: default  */
+        .btnFill, .btnFill:focus {
+            background:#626262; color:#fff;
+            border:0; border-radius:0.1875em;
+            font-weight:700; line-height: 1;
+            padding:0.5625em 1.375em; margin:0;
+            display: inline-block;
+            box-sizing:content-box;
+            vertical-align: middle;
+            height:1em;
+            -webkit-transition:all 0.25s; transition:all 0.25s;
+        }
+            .btnFill:disabled {
+                opacity:0.5;
+            }
+        .btnFill--primary, .btnFill--primary:focus {
+            background:#2398db;
+        }
+        .btnFill--info, .btnFill--info:focus {
+            background-color:#0082a9;
+        }
+        .btnFill--success, .btnFill--success:focus {
+            background-color:#3dc667;
+        }
+        .btnFill--warning, .btnFill--warning:focus {
+            background-color:orange;
+        }
+        .btnFill--danger, .btnFill--danger:focus {
+            background-color:#dc4141;
+        }
+
     /*  buttons : default : groups;  */
         .btnGroup__animator {
             display:inline-block;
@@ -253,10 +307,12 @@
                 float:left;
                 border-radius:0;
             }
-            .btnGroup .btn:first-child {
+            .btnGroup .btn:first-child,
+            .btnGroup .btn--first {
                 border-radius:0.1875em 0 0 0.1875em;
             }
-            .btnGroup .btn:last-child {
+            .btnGroup .btn:last-child,
+            .btnGroup .btn--last {
                 border-radius:0 0.1875em 0.1875rem 0;
             }
 
@@ -270,6 +326,8 @@
             display: inline-block; position: relative;
             -webkit-box-shadow:inset 0 1px 0 0 rgba(255,255,255,0.28);
             box-shadow:inset 0 1px 0 0 rgba(255,255,255,0.28);
+            box-sizing:content-box;
+            line-height:1em;
         }
             .btnAction:hover {
                 color:#fff;
@@ -286,7 +344,7 @@
             }
         .btnAction--hasIcon,
         .btnAction--hasIcon:focus {
-            padding:0.25em 1.5em 0.375em 1.5em;
+            padding:0.5625em 1.5em 0.4375em 1.5em;
         }
             .btnAction--hasIcon .ui__iconHolder18 {
                 margin:0 0.25em 0 0;
@@ -553,7 +611,7 @@
             float:left;
         }
         .pageHeader .btnAction {
-            float:right; margin:0;
+            float:right; margin:0 0 0 0.375em;
         }
 
 
