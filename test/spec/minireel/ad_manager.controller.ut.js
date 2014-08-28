@@ -1,8 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/ad_manager', 'app'], function(adModule, appModule) {
-        /* global angular:true */
+    define(['minireel/ad_manager', 'app', 'angular'], function(adModule, appModule, angular) {
         var forEach = angular.forEach;
 
         describe('AdManagerController', function() {
@@ -14,102 +13,13 @@
                 cState,
                 ConfirmDialogService,
                 AdManagerCtrl,
-                Portal,
-                model,
-                experiences;
+                PortalCtrl,
+                MiniReelCtrl,
+                MiniReelService,
+                scopePromise,
+                model;
 
             beforeEach(function() {
-                model = [];
-                /* jshint quotmark:false */
-                experiences = [
-                    {
-                        id: "e2e-getquery1",
-                        status: "active",
-                        access: "public",
-                        user: "e2e-user",
-                        org: "e2e-org",
-                        type: "foo",
-                        data: {
-                            deck: [
-                                {
-                                    id: 'c-1'
-                                },
-                                {
-                                    id: 'c-2',
-                                    ad: true
-                                },
-                                {
-                                    id: 'c-3'
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        id: "e2e-getquery2",
-                        status: "inactive",
-                        access: "private",
-                        user: "e2e-user",
-                        org: "not-e2e-org",
-                        type: "foo",
-                        data: {
-                            deck: [
-                                {
-                                    id: 'c-1'
-                                },
-                                {
-                                    id: 'c-2'
-                                },
-                                {
-                                    id: 'c-3'
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        id: "e2e-getquery3",
-                        status: "active",
-                        access: "public",
-                        user: "not-e2e-user",
-                        org: "e2e-org",
-                        type: "bar",
-                        data: {
-                            deck: [
-                                {
-                                    id: 'c-1'
-                                },
-                                {
-                                    id: 'c-2',
-                                    ad: true
-                                },
-                                {
-                                    id: 'c-3'
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        id: "e2e-getquery4",
-                        status: "inactive",
-                        access: "private",
-                        user: "not-e2e-user",
-                        org: "not-e2e-org",
-                        data: {
-                            deck: [
-                                {
-                                    id: 'c-1'
-                                },
-                                {
-                                    id: 'c-2',
-                                },
-                                {
-                                    id: 'c-3'
-                                }
-                            ]
-                        }
-                    }
-                ];
-                /* jshint quotmark:single */
-
                 module(adModule.name);
                 module(appModule.name);
 
@@ -117,21 +27,81 @@
                     $rootScope = $injector.get('$rootScope');
                     $controller = $injector.get('$controller');
                     $q = $injector.get('$q');
+                    scopePromise = $injector.get('scopePromise');
 
+                    MiniReelService = $injector.get('MiniReelService');
                     ConfirmDialogService = $injector.get('ConfirmDialogService');
 
                     c6State = $injector.get('c6State');
 
-                    Portal = c6State.get('Portal');
-                    Portal.cModel = {
-                        org: {
-                            id: 'org1'
+                    cState = c6State.get('MR:AdManager');
+                    cState.filter = 'foo';
+
+                    model = scopePromise($q.defer().promise, [
+                        {
+                            status: 'active'
+                        },
+                        {
+                            status: 'pending'
+                        },
+                        {
+                            status: 'active'
+                        },
+                        {
+                            status: 'pending'
+                        }
+                    ]);
+                    model.selected = model.value.map(function() {
+                        return false;
+                    });
+
+                    $scope = $rootScope.$new();
+
+                    PortalCtrl = $scope.PortalCtrl = {
+                        model: {
+                            org: {
+                                id: 'org1'
+                            }
                         }
                     };
 
-                    cState = c6State.get('MR:AdManager');
+                    MiniReelCtrl = $scope.MiniReelCtrl = {
+                        model: {
+                            data: {
+                                /* jshint quotmark:false */
+                                "modes": [
+                                    {
+                                        "modes": [
+                                            {
+                                                "name": "No Companion Ad",
+                                                "value": "lightbox"
+                                            },
+                                            {
+                                                "name": "With Companion Ad",
+                                                "value": "lightbox-ads"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "modes": [
+                                            {
+                                                "name": "Light Text",
+                                                "value": "light"
+                                            },
+                                            {
+                                                "name": "Heavy Text",
+                                                "value": "full"
+                                            }
+                                        ]
+                                    }
+                                ]
+                                /* jshint quotmark:single */
+                            }
+                        }
+                    };
 
-                    $scope = $rootScope.$new();
+                    spyOn(cState, 'modelWithFilter');
+
                     $scope.$apply(function() {
                         AdManagerCtrl = $controller('AdManagerController', { $scope: $scope, cState: cState });
                         AdManagerCtrl.model = model;
@@ -139,40 +109,228 @@
                 });
             });
 
-            describe('$watch', function() {
-                describe('cState.cModel', function() {
-                    it('should set up the experienceMap for UI binding', function() {
+            it('should exist', function() {
+                expect(AdManagerCtrl).toEqual(jasmine.any(Object));
+            });
+
+            describe('$events', function() {
+                describe('$destroy', function() {
+                    beforeEach(function() {
+                        AdManagerCtrl.filter = 'active';
+
+                        $scope.$destroy();
+                    });
+
+                    it('should set the filter on the state', function() {
+                        expect(cState.filter).toBe(AdManagerCtrl.filter);
+                    });
+                });
+            });
+
+            describe('$watchers', function() {
+                describe('props that will refetch the model', function() {
+                    var scopedPromise;
+
+                    beforeEach(function() {
+                        scopedPromise = scopePromise($q.defer().promise);
+                        cState.modelWithFilter.and.returnValue(scopedPromise);
+
                         $scope.$apply(function() {
-                            cState.cModel = experiences;
+                            AdManagerCtrl.page = 3;
                         });
 
-                        forEach(experiences, function(val, key) {
-                            expect(AdManagerCtrl.experienceMap[val.id]).toEqual({selected: false});
+                        model = AdManagerCtrl.model;
+                    });
+
+                    describe('this.filter', function() {
+                        ['all', 'active', 'pending'].forEach(function(status) {
+                            describe('when changed to ' + status, function() {
+                                beforeEach(function() {
+                                    $scope.$apply(function() {
+                                        AdManagerCtrl.filter = status;
+                                    });
+                                });
+
+                                it('should get a new model', function() {
+                                    expect(cState.modelWithFilter).toHaveBeenCalledWith(status, AdManagerCtrl.limit, 1, model);
+                                    expect(AdManagerCtrl.model).toBe(scopedPromise);
+                                });
+                            });
+                        });
+                    });
+
+                    describe('this.limit', function() {
+                        beforeEach(function() {
+                            cState.modelWithFilter.calls.reset();
+
+                            $scope.$apply(function() {
+                                AdManagerCtrl.limit = 100;
+                            });
+                        });
+
+                        it('should get a new model', function() {
+                            expect(cState.modelWithFilter).toHaveBeenCalledWith(AdManagerCtrl.filter, 100, 1, model);
+                            expect(cState.modelWithFilter.calls.count()).toBe(1);
+                            expect(AdManagerCtrl.model).toBe(scopedPromise);
+                        });
+
+                        it('should still make a request if the page is already 1', function() {
+                            cState.modelWithFilter.calls.reset();
+                            $scope.$apply(function() {
+                                AdManagerCtrl.limit = 20;
+                            });
+
+                            expect(cState.modelWithFilter).toHaveBeenCalledWith(AdManagerCtrl.filter, 20, 1, jasmine.any(Object));
+                        });
+
+                        it('should set the ManagerCtrl.page back to 1', function() {
+                            expect(AdManagerCtrl.page).toBe(1);
+                        });
+                    });
+
+                    describe('this.page', function() {
+                        var page;
+
+                        beforeEach(function() {
+                            $scope.$apply(function() {
+                                page = ++AdManagerCtrl.page;
+                            });
+                        });
+
+                        it('should get a new model', function() {
+                            expect(cState.modelWithFilter).toHaveBeenCalledWith(AdManagerCtrl.filter, AdManagerCtrl.limit, page, model);
+                            expect(AdManagerCtrl.model).toBe(scopedPromise);
                         });
                     });
                 });
             });
 
             describe('properties', function() {
-                describe('selectedExperiences', function() {
-                    it('should contain all selected experiences', function() {
-                        $scope.$apply(function() {
-                            cState.cModel = experiences;
+                describe('filter', function() {
+                    it('should be initialized as the state\'s filter', function() {
+                        expect(AdManagerCtrl.filter).toBe(cState.filter);
+                    });
+                });
+
+                describe('limit', function() {
+                    it('should be initialized as the state\'s limit', function() {
+                        expect(AdManagerCtrl.limit).toBe(cState.limit);
+                    });
+                });
+
+                describe('page', function() {
+                    it('should be initialized as the state\'s page', function() {
+                        expect(AdManagerCtrl.page).toBe(cState.page);
+                    });
+                });
+
+                describe('limits', function() {
+                    it('should be an array of the available limits', function() {
+                        expect(AdManagerCtrl.limits).toEqual([20, 50, 100]);
+                    });
+                });
+
+                describe('allAreSelected', function() {
+                    describe('getting', function() {
+                        describe('if all are selected', function() {
+                            beforeEach(function() {
+                                model.selected = model.value.map(function() {
+                                    return true;
+                                });
+                            });
+
+                            it('should be true', function() {
+                                expect(AdManagerCtrl.allAreSelected).toBe(true);
+                            });
                         });
 
-                        expect(AdManagerCtrl.selectedExperiences).toEqual([]);
+                        describe('if all are not selected', function() {
+                            beforeEach(function() {
+                                model.selected = [true, true, true, false];
+                            });
 
-                        AdManagerCtrl.experienceMap['e2e-getquery1'].selected = true;
-                        expect(AdManagerCtrl.selectedExperiences.length).toBe(1);
-                        expect(AdManagerCtrl.selectedExperiences[0]).toEqual(experiences[0]);
+                            it('should be false', function() {
+                                expect(AdManagerCtrl.allAreSelected).toBe(false);
+                            });
+                        });
+                    });
 
-                        AdManagerCtrl.experienceMap['e2e-getquery4'].selected = true;
-                        expect(AdManagerCtrl.selectedExperiences.length).toBe(2);
-                        expect(AdManagerCtrl.selectedExperiences[1]).toEqual(experiences[3]);
+                    describe('setting', function() {
+                        describe('to true', function() {
+                            beforeEach(function() {
+                                model.selected = model.value.map(function() {
+                                    return false;
+                                });
 
-                        AdManagerCtrl.experienceMap['e2e-getquery1'].selected = false;
-                        expect(AdManagerCtrl.selectedExperiences.length).toBe(1);
-                        expect(AdManagerCtrl.selectedExperiences[0]).toEqual(experiences[3]);
+                                AdManagerCtrl.allAreSelected = true;
+                            });
+
+                            it('should select everything', function() {
+                                expect(model.selected).toEqual(model.value.map(function() {
+                                    return true;
+                                }));
+                            });
+                        });
+
+                        describe('to false', function() {
+                            beforeEach(function() {
+                                model.selected = model.value.map(function() {
+                                    return true;
+                                });
+
+                                AdManagerCtrl.allAreSelected = false;
+                            });
+
+                            it('should select everything', function() {
+                                expect(model.selected).toEqual(model.value.map(function() {
+                                    return false;
+                                }));
+                            });
+                        });
+                    });
+                });
+
+                describe('dropDowns', function() {
+                    it('should have a drop down object for every drop down on the page', function() {
+                        expect(AdManagerCtrl.dropDowns).toEqual({
+                            select: {
+                                shown: false
+                            }
+                        });
+                    });
+
+                    describe('DropDownModel() show() method', function() {
+                        it('should set "shown" to true', function() {
+                            forEach(AdManagerCtrl.dropDowns, function(dropDown) {
+                                dropDown.show();
+
+                                expect(dropDown.shown).toBe(true);
+                            });
+                        });
+                    });
+
+                    describe('DropDownModel() hide() method', function() {
+                        it('should set "shown" to false', function() {
+                            forEach(AdManagerCtrl.dropDowns, function(dropDown) {
+                                dropDown.shown = true;
+
+                                dropDown.hide();
+
+                                expect(dropDown.shown).toBe(false);
+                            });
+                        });
+                    });
+
+                    describe('DropDownModel() toggle() method', function() {
+                        it('should toggle the shown property', function() {
+                            forEach(AdManagerCtrl.dropDowns, function(dropDown) {
+                                dropDown.toggle();
+                                expect(dropDown.shown).toBe(true);
+
+                                dropDown.toggle();
+                                expect(dropDown.shown).toBe(false);
+                            });
+                        });
                     });
                 });
             });
@@ -215,6 +373,173 @@
                                 ]
                         }
                     };
+                });
+
+                describe('modeNameFor(minireel)', function() {
+                    it('should return the name of the mode for the given minireel', function() {
+                        minireel.data.mode = 'full';
+
+                        expect(AdManagerCtrl.modeNameFor(minireel)).toBe('Heavy Text');
+
+                        minireel.data.mode = 'light';
+                        expect(AdManagerCtrl.modeNameFor(minireel)).toBe('Light Text');
+
+                        minireel.data.mode = 'lightbox';
+                        expect(AdManagerCtrl.modeNameFor(minireel)).toBe('No Companion Ad');
+
+                        minireel.data.mode = 'lightbox-ads';
+                        expect(AdManagerCtrl.modeNameFor(minireel)).toBe('With Companion Ad');
+                    });
+                });
+
+                describe('selectAll()', function() {
+                    beforeEach(function() {
+                        AdManagerCtrl.selectAll();
+                    });
+
+                    it('should make the selected array all true', function() {
+                        expect(model.selected).toEqual(model.value.map(function() {
+                            return true;
+                        }));
+                    });
+                });
+
+                describe('selectNone()', function() {
+                    beforeEach(function() {
+                        model.selected = model.value.map(function() {
+                            return true;
+                        });
+
+                        AdManagerCtrl.selectNone();
+                    });
+
+                    it('should make the selected array all false', function() {
+                        expect(model.selected).toEqual(model.value.map(function() {
+                            return false;
+                        }));
+                    });
+                });
+
+                describe('selectAllWithStatus(status)', function() {
+                    ['active', 'pending'].forEach(function(status) {
+                        describe('when called with "' + status + '"', function() {
+                            beforeEach(function() {
+                                AdManagerCtrl.selectAllWithStatus(status);
+                            });
+
+                            it('should set the selected array to an array of true/falses that correspond to the minireel statuses', function() {
+                                expect(model.selected).toEqual(model.value.map(function(minireel) {
+                                    return minireel.status === status;
+                                }));
+                            });
+                        });
+                    });
+                });
+
+                describe('getSelected()', function() {
+                    var result;
+
+                    beforeEach(function() {
+                        model.selected = [true, true, false, true];
+                        model.value = [
+                            {
+                                status: 'active'
+                            },
+                            {
+                                status: 'pending'
+                            },
+                            {
+                                status: 'active'
+                            },
+                            {
+                                status: 'pending'
+                            }
+                        ];
+
+                        result = AdManagerCtrl.getSelected();
+                    });
+
+                    it('should return an array of only the selected MiniReels', function() {
+                        var minireels = model.value;
+
+                        expect(result).toEqual([minireels[0], minireels[1], minireels[3]]);
+                    });
+
+                    describe('if a status is provided', function() {
+                        beforeEach(function() {
+                            model.selected = [true, false, false, true];
+                        });
+
+                        it('should only return selected MiniReels of that status', function() {
+                            expect(AdManagerCtrl.getSelected('active')).toEqual([model.value[0]]);
+
+                            expect(AdManagerCtrl.getSelected('pending')).toEqual([model.value[3]]);
+                        });
+                    });
+                });
+
+                describe('areAllSelected(status)', function() {
+                    describe('if no status is provided', function() {
+                        it('should return a bool indicating if all minireels are selected', function() {
+                            model.selected = [true, true, false, true];
+                            expect(AdManagerCtrl.areAllSelected()).toBe(false);
+
+                            model.selected = model.value.map(function() {
+                                return true;
+                            });
+                            expect(AdManagerCtrl.areAllSelected()).toBe(true);
+                        });
+                    });
+
+                    describe('if a status is provided', function() {
+                        beforeEach(function() {
+                            model.value = [
+                                {
+                                    status: 'active'
+                                },
+                                {
+                                    status: 'pending'
+                                },
+                                {
+                                    status: 'active'
+                                },
+                                {
+                                    status: 'pending'
+                                }
+                            ];
+                        });
+
+                        it('should return a bool indicating if all minireels of that type are selected', function() {
+                            model.selected = [true, true, false, true];
+                            expect(AdManagerCtrl.areAllSelected('active')).toBe(false);
+
+                            model.selected = [true, false, true, true];
+                            expect(AdManagerCtrl.areAllSelected('active')).toBe(true);
+                        });
+                    });
+                });
+
+                describe('previewUrlOf(minireel)', function() {
+                    var minireel;
+
+                    beforeEach(function() {
+                        minireel = {
+                            id: 'e-f0124e276d1474',
+                            access: 'public',
+                            data: {
+                                title: 'My MiniReel',
+                                splash: {
+                                    theme: 'img-text-overlay',
+                                    ratio: '16-9'
+                                },
+                                branding: 'urbantimes'
+                            }
+                        };
+                    });
+
+                    it('should be a full preview URL', function() {
+                        expect(AdManagerCtrl.previewUrlOf(minireel)).toBe(MiniReelService.previewUrlOf(minireel, '/#/preview/minireel'));
+                    });
                 });
 
                 describe('settingsTypeOf(minireel)', function() {
@@ -276,20 +601,15 @@
                     });
                 });
 
-                describe('editSettings(type, minireel)', function() {
-                    beforeEach(function() {
+                describe('editOrgSettings()', function() {
+                    it('should go to Settings state and pass default settings to be edited', function() {
                         spyOn(c6State, 'goTo');
 
-                        $scope.$apply(function() {
-                            cState.cModel = experiences;
-                        });
-                    });
+                        AdManagerCtrl.editOrgSettings();
 
-                    describe('when editing Org defaults', function() {
-                        it('should go to Settings state and pass the settings to be edited', function() {
-                            AdManagerCtrl.editSettings('org', null);
-
-                            expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [{
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [{
+                            type: 'org',
+                            settings: {
                                 video: {
                                     frequency: 0,
                                     firstPlacement: 2,
@@ -299,13 +619,68 @@
                                 display: {
                                     waterfall: 'cinema6'
                                 }
-                            }]);
-                        });
+                            },
+                            data: {
+                                id: 'org1'
+                            }
+                        }]);
+                    });
+
+                    it('should go to Settings state and pass the Org settings if defined', function() {
+                        spyOn(c6State, 'goTo');
+
+                        PortalCtrl.model.org.adConfig = {
+                            video: {
+                                frequency: 3,
+                                firstPlacement: 1,
+                                waterfall: 'publisher',
+                                skip: false
+                            },
+                            display: {
+                                waterfall: 'cinema6'
+                            }
+                        };
+
+                        AdManagerCtrl.editOrgSettings();
+
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [{
+                            type: 'org',
+                            settings: {
+                                video: {
+                                    frequency: 3,
+                                    firstPlacement: 1,
+                                    waterfall: 'publisher',
+                                    skip: false
+                                },
+                                display: {
+                                    waterfall: 'cinema6'
+                                }
+                            },
+                            data: {
+                                id: 'org1',
+                                adConfig: {
+                                    video: {
+                                        frequency: 3,
+                                        firstPlacement: 1,
+                                        waterfall: 'publisher',
+                                        skip: false
+                                    },
+                                    display: {
+                                        waterfall: 'cinema6'
+                                    }
+                                }
+                            }
+                        }]);
+                    });
+                });
+
+                describe('editSettings(minireels)', function() {
+                    beforeEach(function() {
+                        spyOn(c6State, 'goTo');
                     });
 
                     describe('when editing a single minireel', function() {
-                        it('should mark the minireel as "selected" and pass the settings to be edited', function() {
-                            minireel.id = 'e2e-getquery1';
+                        it('should pass the settings to be edited', function() {
                             minireel.data.adConfig = {
                                 video: {
                                     frequency: 2,
@@ -318,20 +693,22 @@
                                 }
                             };
 
-                            AdManagerCtrl.editSettings('minireel', minireel);
-
-                            expect(AdManagerCtrl.experienceMap['e2e-getquery1'].selected).toBe(true);
+                            AdManagerCtrl.editSettings([minireel]);
 
                             expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [{
-                                video: {
-                                    frequency: 2,
-                                    firstPlacement: 1,
-                                    waterfall: 'publisher',
-                                    skip: 6
+                                type: 'minireels',
+                                settings: {
+                                    video: {
+                                        frequency: 2,
+                                        firstPlacement: 1,
+                                        waterfall: 'publisher',
+                                        skip: 6
+                                    },
+                                    display: {
+                                        waterfall: 'cinema6'
+                                    }
                                 },
-                                display: {
-                                    waterfall: 'cinema6'
-                                }
+                                data: [minireel]
                             }]);
                         });
                     });
@@ -339,179 +716,282 @@
                     describe('when editing multiple minireels', function() {
                         it('should find matching settings and pass them to the Settings state', function() {
                             // round 1: same stetings
-
-                            cState.cModel[0].data.adConfig = {
-                                video: {
-                                    frequency: 3,
-                                    firstPlacement: 2,
-                                    waterfall: 'publisher',
-                                    skip: 6
+                            var minireels = [
+                                {
+                                    id: 'e-1',
+                                    data: {
+                                        adConfig: {
+                                            video: {
+                                                frequency: 3,
+                                                firstPlacement: 2,
+                                                waterfall: 'publisher',
+                                                skip: 6
+                                            },
+                                            display: {
+                                                waterfall: 'cinema6'
+                                            }
+                                        }
+                                    }
                                 },
-                                display: {
-                                    waterfall: 'cinema6'
+                                {
+                                    id: 'e-2',
+                                    data: {
+                                        adConfig: {
+                                            video: {
+                                                frequency: 3,
+                                                firstPlacement: 2,
+                                                waterfall: 'publisher',
+                                                skip: 6
+                                            },
+                                            display: {
+                                                waterfall: 'cinema6'
+                                            }
+                                        }
+                                    }
                                 }
-                            }
+                            ];
 
-                            cState.cModel[1].data.adConfig = {
-                                video: {
-                                    frequency: 3,
-                                    firstPlacement: 2,
-                                    waterfall: 'publisher',
-                                    skip: 6
-                                },
-                                display: {
-                                    waterfall: 'cinema6'
-                                }
-                            }
-
-                            AdManagerCtrl.experienceMap['e2e-getquery1'].selected = true;
-                            AdManagerCtrl.experienceMap['e2e-getquery2'].selected = true;
-
-                            AdManagerCtrl.editSettings('minireels', null);
+                            AdManagerCtrl.editSettings(minireels);
 
                             expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [{
-                                video: {
-                                    frequency: 3,
-                                    firstPlacement: 2,
-                                    waterfall: 'publisher',
-                                    skip: 6
+                                type: 'minireels',
+                                settings: {
+                                    video: {
+                                        frequency: 3,
+                                        firstPlacement: 2,
+                                        waterfall: 'publisher',
+                                        skip: 6
+                                    },
+                                    display: {
+                                        waterfall: 'cinema6'
+                                    }
                                 },
-                                display: {
-                                    waterfall: 'cinema6'
-                                }
+                                data: minireels
                             }]);
 
                             // round 2: different settings
-
-                            cState.cModel[0].data.adConfig = {
-                                video: {
-                                    frequency: 1,
-                                    firstPlacement: 3,
-                                    waterfall: 'publisher',
-                                    skip: true
+                            minireels = [
+                                {
+                                    id: 'e-1',
+                                    data: {
+                                        adConfig: {
+                                            video: {
+                                                frequency: 1,
+                                                firstPlacement: 3,
+                                                waterfall: 'publisher',
+                                                skip: true
+                                            },
+                                            display: {
+                                                waterfall: 'cinema6'
+                                            }
+                                        }
+                                    }
                                 },
-                                display: {
-                                    waterfall: 'cinema6'
+                                {
+                                    id: 'e-2',
+                                    data: {
+                                        adConfig: {
+                                            video: {
+                                                frequency: 3,
+                                                firstPlacement: 2,
+                                                waterfall: 'cinema6',
+                                                skip: 6
+                                            },
+                                            display: {
+                                                waterfall: 'publisher'
+                                            }
+                                        }
+                                    }
                                 }
-                            }
+                            ];
 
-                            cState.cModel[1].data.adConfig = {
-                                video: {
-                                    frequency: 3,
-                                    firstPlacement: 2,
-                                    waterfall: 'cinema6',
-                                    skip: 6
-                                },
-                                display: {
-                                    waterfall: 'publisher'
-                                }
-                            }
-
-                            AdManagerCtrl.experienceMap['e2e-getquery1'].selected = true;
-                            AdManagerCtrl.experienceMap['e2e-getquery2'].selected = true;
-
-                            AdManagerCtrl.editSettings('minireels', null);
+                            AdManagerCtrl.editSettings(minireels);
 
                             expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [{
-                                video: {
-                                    frequency: undefined,
-                                    firstPlacement: undefined,
-                                    waterfall: undefined,
-                                    skip: undefined
+                                type: 'minireels',
+                                settings: {
+                                    video: {
+                                        frequency: undefined,
+                                        firstPlacement: undefined,
+                                        waterfall: undefined,
+                                        skip: undefined
+                                    },
+                                    display: {
+                                        waterfall: undefined
+                                    }
                                 },
-                                display: {
-                                    waterfall: undefined
-                                }
+                                data: minireels
                             }]);
 
                             // round 3: some shared settings
-
-                            cState.cModel[0].data.adConfig = {
-                                video: {
-                                    frequency: 2,
-                                    firstPlacement: 3,
-                                    waterfall: 'cinema6',
-                                    skip: 6
+                            minireels = [
+                                {
+                                    id: 'e-1',
+                                    data: {
+                                        adConfig: {
+                                            video: {
+                                                frequency: 2,
+                                                firstPlacement: 3,
+                                                waterfall: 'cinema6',
+                                                skip: 6
+                                            },
+                                            display: {
+                                                waterfall: 'cinema6'
+                                            }
+                                        }
+                                    }
                                 },
-                                display: {
-                                    waterfall: 'cinema6'
+                                {
+                                    id: 'e-2',
+                                    data: {
+                                        adConfig: {
+                                            video: {
+                                                frequency: 2,
+                                                firstPlacement: 2,
+                                                waterfall: 'cinema6',
+                                                skip: 6
+                                            },
+                                            display: {
+                                                waterfall: 'publisher'
+                                            }
+                                        }
+                                    }
                                 }
-                            }
+                            ];
 
-                            cState.cModel[1].data.adConfig = {
-                                video: {
-                                    frequency: 2,
-                                    firstPlacement: 2,
-                                    waterfall: 'cinema6',
-                                    skip: 6
-                                },
-                                display: {
-                                    waterfall: 'publisher'
-                                }
-                            }
-
-                            AdManagerCtrl.experienceMap['e2e-getquery1'].selected = true;
-                            AdManagerCtrl.experienceMap['e2e-getquery2'].selected = true;
-
-                            AdManagerCtrl.editSettings('minireels', null);
+                            AdManagerCtrl.editSettings(minireels);
 
                             expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [{
-                                video: {
-                                    frequency: 2,
-                                    firstPlacement: undefined,
-                                    waterfall: 'cinema6',
-                                    skip: 6
+                                type: 'minireels',
+                                settings: {
+                                    video: {
+                                        frequency: 2,
+                                        firstPlacement: undefined,
+                                        waterfall: 'cinema6',
+                                        skip: 6
+                                    },
+                                    display: {
+                                        waterfall: undefined
+                                    }
                                 },
-                                display: {
-                                    waterfall: undefined
-                                }
+                                data: minireels
                             }]);
                         });
                     });
                 });
 
-                describe('saveSettings(settings)', function() {
-                    // TODO
-                });
-
                 describe('useDefaultSettings()', function() {
                     it('should go through all selected minireels and delete static ad cards and adConfig blocks', function() {
-                        experiences[0].data.adConfig = {};
-                        experiences[1].data.adConfig = {};
-                        experiences[3].data.adConfig = {};
+                        var minireels = [
+                            {
+                                id: 'e-1',
+                                data: {
+                                    adConfig: {},
+                                    deck: [
+                                        {
+                                            ad: true
+                                        }
+                                    ]
+                                },
+                                save: jasmine.createSpy('minireel.save()')
+                            },
+                            {
+                                id: 'e-2',
+                                data: {
+                                    adConfig: {},
+                                    deck: [
+                                        {
+                                            ad: true
+                                        },
+                                        {
+                                            ad: true
+                                        }
+                                    ]
+                                },
+                                save: jasmine.createSpy('minireel.save()')
+                            },
+                            {
+                                id: 'e-3',
+                                data: {
+                                    adConfig: {},
+                                    deck: []
+                                },
+                                save: jasmine.createSpy('minireel.save()')
+                            }
+                        ];
 
-                        $scope.$apply(function() {
-                            cState.cModel = experiences;
+                        AdManagerCtrl.useDefaultSettings(minireels);
+
+                        minireels.forEach(function(minireel) {
+                            expect(minireel.data.adConfig).toBe(null);
+                            expect(minireel.data.deck.length).toBe(0);
+                            expect(minireel.save).toHaveBeenCalled();
                         });
-
-                        AdManagerCtrl.experienceMap['e2e-getquery1'].selected = true;
-                        AdManagerCtrl.experienceMap['e2e-getquery2'].selected = true;
-                        AdManagerCtrl.experienceMap['e2e-getquery4'].selected = true;
-
-                        AdManagerCtrl.useDefaultSettings();
-
-                        expect(cState.cModel[0].data.deck.length).toBe(2);
-                        expect(cState.cModel[0].data.adConfig).not.toBeDefined();
-
-                        expect(cState.cModel[1].data.adConfig).not.toBeDefined();
-
-                        expect(cState.cModel[3].data.adConfig).not.toBeDefined();
                     });
                 });
 
                 describe('removeAds()', function() {
                     it('should display a ConfirmDialogService', function() {
-                        var onAffirm, onCancel;
-
-                        $scope.$apply(function() {
-                            cState.cModel = experiences;
-                        });
-
-                        AdManagerCtrl.experienceMap['e2e-getquery1'].selected = true;
-                        AdManagerCtrl.experienceMap['e2e-getquery2'].selected = true;
+                        var onAffirm, onCancel,
+                            minireels = [
+                            {
+                                id: 'e-1',
+                                data: {
+                                    adConfig: {
+                                        video: {
+                                            frequency: 2,
+                                            firstPlacement: 2,
+                                            waterfall: 'cinema6',
+                                            skip: 6
+                                        },
+                                        display: {
+                                            waterfall: 'publisher'
+                                        }
+                                    },
+                                    deck: [
+                                        {
+                                            ad: true
+                                        }
+                                    ]
+                                },
+                                save: jasmine.createSpy('minireel.save()')
+                            },
+                            {
+                                id: 'e-2',
+                                data: {
+                                    adConfig: {
+                                        video: {
+                                            frequency: 0,
+                                            firstPlacement: 3,
+                                            waterfall: 'publisher',
+                                            skip: 6
+                                        },
+                                        display: {
+                                            waterfall: 'publisher'
+                                        }
+                                    },
+                                    deck: [
+                                        {
+                                            ad: true
+                                        },
+                                        {
+                                            ad: true
+                                        }
+                                    ]
+                                },
+                                save: jasmine.createSpy('minireel.save()')
+                            },
+                            {
+                                id: 'e-3',
+                                data: {
+                                    deck: []
+                                },
+                                save: jasmine.createSpy('minireel.save()')
+                            }
+                        ];
 
                         spyOn(ConfirmDialogService, 'display');
-                        AdManagerCtrl.removeAds();
+                        AdManagerCtrl.removeAds(minireels);
 
                         onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
                         onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
@@ -520,9 +1000,12 @@
 
                         onAffirm();
 
-                        expect(cState.cModel[0].data.deck.length).toBe(2);
-                        expect(cState.cModel[0].data.adConfig.video.firstPlacement).toBe(-1);
-                        expect(cState.cModel[1].data.adConfig.video.firstPlacement).toBe(-1);
+                        minireels.forEach(function(minireel) {
+                            expect(minireel.data.adConfig.video.firstPlacement).toBe(-1);
+                            expect(minireel.data.adConfig.video.frequency).toBe(0);
+                            expect(minireel.data.deck.length).toBe(0);
+                            expect(minireel.save).toHaveBeenCalled();
+                        });
                     });
                 });
             });

@@ -1,19 +1,31 @@
 (function() {
     'use strict';
 
-    define(['minireel/ad_manager','app'], function(adModule, appModule) {
+    define(['minireel/ad_manager','app','angular'], function(adModule, appModule, angular) {
+        var forEach = angular.forEach;
+
         describe('AdSettingsController', function() {
             var $rootScope,
                 $scope,
                 $controller,
+                $q,
                 PortalCtrl,
                 MiniReelCtrl,
                 c6State,
                 cState,
                 AdSettingsCtrl,
                 model,
+                minireels,
                 settings,
                 initCtrl;
+
+            function setCurrentState(name) {
+                Object.defineProperty(c6State, 'current', {
+                    get: function() {
+                        return name;
+                    }
+                });
+            }
 
             beforeEach(function() {
                 model = [];
@@ -30,12 +42,39 @@
                     }
                 };
 
+                minireels = [
+                    {
+                        id: 'e-1',
+                        data: {
+                            deck: [{},{},{}],
+                            adConfig: {
+                                video: {
+                                    firstPlacement: 2,
+                                    frequency: 0,
+                                    waterfall: 'cinema6',
+                                    skip: 6
+                                },
+                                display: {
+                                    waterfall: 'cinema6'
+                                }
+                            }
+                        }
+                    },
+                    {
+                        id: 'e-2',
+                        data: {
+                            deck: [{},{},{},{},{}]
+                        }
+                    }
+                ];
+
                 module(adModule.name);
                 module(appModule.name);
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
                     $controller = $injector.get('$controller');
+                    $q = $injector.get('$q');
 
                     c6State = $injector.get('c6State');
                     spyOn(c6State, 'goTo');
@@ -121,7 +160,11 @@
                 });
 
                 it('should go to Frequency tab if there is a model', function() {
-                    initCtrl(settings);
+                    initCtrl({
+                        type: 'minireels',
+                        settings: settings,
+                        data: minireels
+                    });
                     expect(c6State.goTo).not.toHaveBeenCalledWith('MR:AdManager');
                     expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings.Frequency');
                 });
@@ -130,108 +173,628 @@
             describe('properties', function() {
                 describe('adChoices', function() {
                     it('should enable options based on org data', function() {
-                        initCtrl(settings, {
+                        var model = {
+                            type: 'minireels',
+                            settings: settings,
+                            data: minireels
+                        },
+                        org = {
                             id: 'org1',
                             waterfalls: {
                                 video: ['cinema6','publisher','publisher-cinema6'],
                                 display: ['cinema6','publisher']
                             }
-                        });
+                        };
+
+                        initCtrl(model, org);
 
                         expect(AdSettingsCtrl.adChoices.video.length).toBe(3);
                         expect(AdSettingsCtrl.adChoices.display.length).toBe(2);
                     });
                 });
-            });
 
-            describe('returnState', function() {
-                it('should be the parent state', function() {
-                    expect(AdSettingsCtrl.returnState).toBe('MR:AdManager');
+                describe('returnState', function() {
+                    it('should be the parent state', function() {
+                        expect(AdSettingsCtrl.returnState).toBe('MR:AdManager');
+                    });
+                });
+
+                describe('tabs', function() {
+                    it('should have three tabs', function() {
+                        expect(AdSettingsCtrl.tabs.length).toBe(3);
+                        expect(AdSettingsCtrl.tabs).toEqual([
+                                jasmine.objectContaining({
+                                    name: jasmine.any(String),
+                                    sref: 'MR:AdManager.Settings.Frequency',
+                                    visits: 0,
+                                    required: false,
+                                    requiredVisits: 0
+                                }),
+                                jasmine.objectContaining({
+                                    name: jasmine.any(String),
+                                    sref: 'MR:AdManager.Settings.VideoServer',
+                                    visits: 0,
+                                    required: false,
+                                    requiredVisits: 0
+                                }),
+                                jasmine.objectContaining({
+                                    name: jasmine.any(String),
+                                    sref: 'MR:AdManager.Settings.DisplayServer',
+                                    visits: 0,
+                                    required: false,
+                                    requiredVisits: 0
+                                })
+                            ]);
+                    });
+                });
+
+                describe('dropDowns', function() {
+                    it('should have a drop down object for every drop down on the page', function() {
+                        expect(AdSettingsCtrl.dropDowns).toEqual({
+                            firstPlacement: {
+                                shown: false
+                            },
+                            frequency: {
+                                shown: false
+                            },
+                            skip: {
+                                shown: false
+                            }
+                        });
+                    });
+
+                    describe('DropDownModel() show() method', function() {
+                        it('should set "shown" to true', function() {
+                            forEach(AdSettingsCtrl.dropDowns, function(dropDown) {
+                                dropDown.show();
+
+                                expect(dropDown.shown).toBe(true);
+                            });
+                        });
+                    });
+
+                    describe('DropDownModel() hide() method', function() {
+                        it('should set "shown" to false', function() {
+                            forEach(AdSettingsCtrl.dropDowns, function(dropDown) {
+                                dropDown.shown = true;
+
+                                dropDown.hide();
+
+                                expect(dropDown.shown).toBe(false);
+                            });
+                        });
+                    });
+
+                    describe('DropDownModel() toggle() method', function() {
+                        it('should toggle the shown property', function() {
+                            forEach(AdSettingsCtrl.dropDowns, function(dropDown) {
+                                dropDown.toggle();
+                                expect(dropDown.shown).toBe(true);
+
+                                dropDown.toggle();
+                                expect(dropDown.shown).toBe(false);
+                            });
+                        });
+                    });
+                });
+
+                describe('frequency', function() {
+                    it('should bind to UI value if set', function() {
+                        var model = {
+                            type: 'minireels',
+                            settings: settings,
+                            data: minireels
+                        };
+
+                        initCtrl(model);
+
+                        expect(AdSettingsCtrl.frequency).toEqual({
+                            label: 'No subsequent ads',
+                            value: 0
+                        });
+
+                        settings.video.frequency = 3;
+
+                        initCtrl(model);
+                        expect(AdSettingsCtrl.frequency).toEqual({
+                            label: 'After every 3rd video',
+                            value: 3
+                        });
+
+                        settings.video.frequency = void 0;
+
+                        initCtrl(model);
+                        expect(AdSettingsCtrl.frequency).not.toBeDefined();
+                    });
+                });
+
+                describe('firstPlacement', function() {
+                    it('should bind to UI value if set', function() {
+                        var model = {
+                            type: 'minireels',
+                            settings: settings,
+                            data: minireels
+                        };
+
+                        initCtrl(model);
+                        expect(AdSettingsCtrl.firstPlacement).toEqual({
+                            label: 'After 2nd Video',
+                            value: 2
+                        });
+
+                        settings.video.firstPlacement = -1;
+
+                        initCtrl(model);
+                        expect(AdSettingsCtrl.firstPlacement).toEqual({
+                            label: 'No ads',
+                            value: -1
+                        });
+
+                        settings.video.firstPlacement = void 0;
+
+                        initCtrl(model);
+                        expect(AdSettingsCtrl.firstPlacement).not.toBeDefined();
+                    });
+                });
+
+                describe('firstPlacementOptions', function() {
+                    describe('when editing Org', function() {
+                        it('should offer 12 options', function() {
+                            initCtrl({
+                                type: 'org',
+                                settings: settings,
+                                data: {id:'org1'}
+                            });
+
+                            expect(AdSettingsCtrl.firstPlacementOptions.length).toBe(12);
+                            expect(AdSettingsCtrl.firstPlacementOptions[0].value).toBe(-1);
+                            expect(AdSettingsCtrl.firstPlacementOptions[11].value).toBe(10);
+                        });
+                    });
+
+                    describe('when editing minireel(s)', function() {
+                        it('should offer (2 + the smallest number of cards in all the decks) options', function() {
+                            initCtrl({
+                                type: 'minireels',
+                                settings: settings,
+                                data: minireels
+                            });
+
+                            expect(AdSettingsCtrl.firstPlacementOptions.length).toBe(5);
+                            expect(AdSettingsCtrl.firstPlacementOptions[0].value).toBe(-1);
+                            expect(AdSettingsCtrl.firstPlacementOptions[4].value).toBe(3);
+                        });
+                    });
+                });
+
+                describe('frequencyOptions', function() {
+                    it('should show 11 options', function() {
+                        initCtrl({
+                            type: 'minireels',
+                            settings: settings,
+                            data: minireels
+                        });
+
+                        expect(AdSettingsCtrl.frequencyOptions.length).toBe(11);
+                        expect(AdSettingsCtrl.frequencyOptions[0].value).toBe(0);
+                        expect(AdSettingsCtrl.frequencyOptions[10].value).toBe(10);
+                    });
+                });
+
+                describe('frequencyOptions', function() {
+                    it('should show 3 options', function() {
+                        initCtrl({
+                            type: 'minireels',
+                            settings: settings,
+                            data: minireels
+                        });
+
+                        expect(AdSettingsCtrl.skipOptions.length).toBe(3);
+                        expect(AdSettingsCtrl.skipOptions[0].value).toBe(false);
+                        expect(AdSettingsCtrl.skipOptions[1].value).toBe(6);
+                        expect(AdSettingsCtrl.skipOptions[2].value).toBe(true);
+                    });
+                });
+
+                describe('currentTab', function() {
+                    describe('if there is no tab for the current state', function() {
+                        it('should be null', function() {
+                            initCtrl({
+                                type: 'minireels',
+                                settings: settings,
+                                data: minireels
+                            });
+
+                            setCurrentState('MR:New.Foo');
+
+                            expect(AdSettingsCtrl.currentTab).toBeNull();
+                        });
+                    });
+
+                    describe('if there is a tab for the current state', function() {
+                        it('should be the tab for the current state', function() {
+                            initCtrl({
+                                type: 'minireels',
+                                settings: settings,
+                                data: minireels
+                            });
+
+                            AdSettingsCtrl.tabs.forEach(function(tab) {
+                                setCurrentState(tab.sref);
+
+                                expect(AdSettingsCtrl.currentTab).toBe(tab);
+                            });
+                        });
+                    });
                 });
             });
 
-            describe('tabs', function() {
-                it('should have three tabs', function() {
-                    expect(AdSettingsCtrl.tabs.length).toBe(3);
+            describe('events', function() {
+                describe('c6State:stateChange', function() {
+                    [0, 1, 2].forEach(function(index) {
+                        describe('with the state of the tab at index: ' + index, function() {
+                            var tab,
+                                state,
+                                initialVisits;
+
+                            beforeEach(function() {
+                                initCtrl({
+                                    type: 'minireels',
+                                    settings: settings,
+                                    data: minireels
+                                });
+
+                                tab = AdSettingsCtrl.tabs[index];
+                                initialVisits = tab.visits;
+                                state = {
+                                    cName: tab.sref
+                                };
+
+                                c6State.emit('stateChange', state);
+                            });
+
+                            it('should bump up the visits of the corresponding tab', function() {
+                                expect(tab.visits).toBe(initialVisits + 1);
+                            });
+                        });
+                    });
+
+                    describe('after the $scope is destroyed', function() {
+                        var initialVisits;
+
+                        beforeEach(function() {
+                            initCtrl({
+                                type: 'minireels',
+                                settings: settings,
+                                data: minireels
+                            });
+
+                            $scope.$destroy();
+                            initialVisits = AdSettingsCtrl.tabs[2].visits;
+
+                            c6State.emit('stateChange', { name: AdSettingsCtrl.baseState + '.autoplay' });
+                        });
+
+                        it('should not increment visits', function() {
+                            expect(AdSettingsCtrl.tabs[2].visits).toBe(initialVisits);
+                        });
+                    });
                 });
             });
 
-            describe('frequency', function() {
-                it('should bind to UI value if set', function() {
-                    initCtrl(settings);
-                    expect(AdSettingsCtrl.frequency).toEqual({
-                        label: 'Only show the first ad',
-                        value: 0
+            describe('methods', function() {
+                describe('isAsFarAs(tab)', function() {
+                    beforeEach(function() {
+                        Object.defineProperty(AdSettingsCtrl, 'currentTab', {
+                            value: AdSettingsCtrl.tabs[1]
+                        });
                     });
 
-                    settings.video.frequency = 3;
+                    it('should be true if the currentTab is, or comes before, the currentTab', function() {
+                        AdSettingsCtrl.tabs.forEach(function(tab, index) {
+                            if (index <= 1) {
+                                expect(AdSettingsCtrl.isAsFarAs(tab)).toBe(true);
+                            } else {
+                                expect(AdSettingsCtrl.isAsFarAs(tab)).toBe(false);
+                            }
+                        });
+                    });
+                });
 
-                    initCtrl(settings);
-                    expect(AdSettingsCtrl.frequency).toEqual({
-                        label: 'After every 3rd video',
-                        value: 3
+                describe('tabIsValid', function() {
+                    var tab;
+
+                    describe('on the "frequency" tab', function() {
+                        beforeEach(function() {
+                            tab = AdSettingsCtrl.tabs[0];
+                        });
+
+                        describe('if there is no frequency || skip || firstPlacement', function() {
+                            it('should be false', function() {
+                                AdSettingsCtrl.frequency = '';
+                                AdSettingsCtrl.skip = {value:false};
+                                AdSettingsCtrl.firstPlacement = {value:3};
+
+                                expect(AdSettingsCtrl.tabIsValid(tab)).toBe(false);
+
+                                AdSettingsCtrl.frequency = {value:3};
+                                AdSettingsCtrl.skip = {value:false};
+                                AdSettingsCtrl.firstPlacement = '';
+
+                                expect(AdSettingsCtrl.tabIsValid(tab)).toBe(false);
+
+                                AdSettingsCtrl.frequency = {value:3};
+                                AdSettingsCtrl.skip = '';
+                                AdSettingsCtrl.firstPlacement = {value:3};
+
+                                expect(AdSettingsCtrl.tabIsValid(tab)).toBe(false);
+                            });
+                        });
+
+                        describe('if there is frequency && skip && firstPlacement', function() {
+                            it('should be true', function() {
+                                AdSettingsCtrl.frequency = {value:3};
+                                AdSettingsCtrl.skip = {value:false};
+                                AdSettingsCtrl.firstPlacement = {value:3};
+
+                                expect(AdSettingsCtrl.tabIsValid(tab)).toBe(true);
+                            });
+                        });
                     });
 
-                    settings.video.frequency = void 0;
+                    describe('on the "video server" tab', function() {
+                        beforeEach(function() {
+                            tab = AdSettingsCtrl.tabs[1];
+                        });
 
-                    initCtrl(settings);
-                    expect(AdSettingsCtrl.frequency).not.toBeDefined();
+                        describe('if there is no video waterfall', function() {
+                            it('should be false', function() {
+                                AdSettingsCtrl.model.settings.video.waterfall = '';
+
+                                expect(AdSettingsCtrl.tabIsValid(tab)).toBe(false);
+                            });
+                        });
+
+                        describe('if there is frequency && skip && firstPlacement', function() {
+                            it('should be true', function() {
+                                AdSettingsCtrl.model.settings.video.waterfall = 'cinema6';
+
+                                expect(AdSettingsCtrl.tabIsValid(tab)).toBe(true);
+                            });
+                        });
+                    });
+
+                    describe('on the "display server" tab', function() {
+                        beforeEach(function() {
+                            tab = AdSettingsCtrl.tabs[2];
+                        });
+
+                        describe('if there is no display waterfall', function() {
+                            it('should be false', function() {
+                                AdSettingsCtrl.model.settings.display.waterfall = '';
+
+                                expect(AdSettingsCtrl.tabIsValid(tab)).toBe(false);
+                            });
+                        });
+
+                        describe('if there is frequency && skip && firstPlacement', function() {
+                            it('should be true', function() {
+                                AdSettingsCtrl.model.settings.display.waterfall = 'cinema6';
+
+                                expect(AdSettingsCtrl.tabIsValid(tab)).toBe(true);
+                            });
+                        });
+                    });
+                });
+
+                describe('formIsValid', function() {
+                    describe('when any settings are missing', function() {
+                        it('should return false', function() {
+                            AdSettingsCtrl.frequency = '';
+                            AdSettingsCtrl.skip = {value:false};
+                            AdSettingsCtrl.firstPlacement = {value:3};
+                            AdSettingsCtrl.model.settings.video.waterfall = 'cinema6';
+                            AdSettingsCtrl.model.settings.display.waterfall = 'cinema6';
+
+                            expect(AdSettingsCtrl.formIsValid()).toBe(false);
+
+                            AdSettingsCtrl.frequency = {value:3};
+                            AdSettingsCtrl.skip = {value:false};
+                            AdSettingsCtrl.firstPlacement = {value:3};
+                            AdSettingsCtrl.model.settings.video.waterfall = '';
+                            AdSettingsCtrl.model.settings.display.waterfall = 'cinema6';
+
+                            expect(AdSettingsCtrl.formIsValid()).toBe(false);
+
+                            AdSettingsCtrl.frequency = {value:3};
+                            AdSettingsCtrl.skip = {value:false};
+                            AdSettingsCtrl.firstPlacement = {value:3};
+                            AdSettingsCtrl.model.settings.video.waterfall = 'cinema6';
+                            AdSettingsCtrl.model.settings.display.waterfall = '';
+
+                            expect(AdSettingsCtrl.formIsValid()).toBe(false);
+                        });
+                    });
+
+                    describe('when all settings are defined', function() {
+                        it('should return true', function() {
+                            AdSettingsCtrl.frequency = {value:3};
+                            AdSettingsCtrl.skip = {value:false};
+                            AdSettingsCtrl.firstPlacement = {value:3};
+                            AdSettingsCtrl.model.settings.video.waterfall = 'cinema6';
+                            AdSettingsCtrl.model.settings.display.waterfall = 'cinema6';
+
+                            expect(AdSettingsCtrl.formIsValid()).toBe(true);
+                        });
+                    });
+                });
+
+                describe('prevTab()', function() {
+                    beforeEach(function() {
+                        initCtrl({
+                            type: 'minireels',
+                            settings: settings,
+                            data: minireels
+                        });
+                    });
+
+                    describe('when there is a previous tab', function() {
+                        it('should go to the next tab state', function() {
+                            setCurrentState('MR:AdManager.Settings.VideoServer');
+
+                            AdSettingsCtrl.prevTab();
+
+                            expect(c6State.goTo).toHaveBeenCalledWith(AdSettingsCtrl.tabs[0].sref);
+                        });
+                    });
+
+                    describe('when there is not a next tab', function() {
+                        it('should do nothing', function() {
+                            var previousGoToCalls = c6State.goTo.calls.count();
+
+                            setCurrentState('MR:AdManager.Settings.Frequency');
+
+                            AdSettingsCtrl.prevTab();
+
+                            expect(c6State.goTo.calls.count()).toBe(previousGoToCalls);
+                        });
+                    });
+                });
+
+                describe('nextTab()', function() {
+                    beforeEach(function() {
+                        initCtrl({
+                            type: 'minireels',
+                            settings: settings,
+                            data: minireels
+                        });
+                    });
+
+                    describe('when there is a next tab', function() {
+                        it('should go to the next tab state', function() {
+                            setCurrentState('MR:AdManager.Settings.Frequency');
+
+                            AdSettingsCtrl.nextTab();
+
+                            expect(c6State.goTo).toHaveBeenCalledWith(AdSettingsCtrl.tabs[1].sref);
+                        });
+                    });
+
+                    describe('when there is not a next tab', function() {
+                        it('should do nothing', function() {
+                            var previousGoToCalls = c6State.goTo.calls.count();
+
+                            setCurrentState('MR:AdManager.Settings.DisplayServer');
+
+                            AdSettingsCtrl.nextTab();
+
+                            expect(c6State.goTo.calls.count()).toBe(previousGoToCalls);
+                        });
+                    });
+                });
+
+                describe('save', function() {
+                    describe('when editing an Org', function() {
+                        it('should put the settings on the org and save', function() {
+                            var goToCallCount,
+                                saveDeferred = $q.defer(),
+                                org = {
+                                    id: 'org1',
+                                    save: jasmine.createSpy('org.save()').and.returnValue(saveDeferred.promise)
+                                };
+
+                            initCtrl({
+                                type: 'org',
+                                settings: settings,
+                                data: {id: 'o-1'}
+                            }, org);
+
+                            goToCallCount = c6State.goTo.calls.count();
+
+                            AdSettingsCtrl.save();
+
+                            expect(PortalCtrl.model.org.adConfig).toEqual(settings);
+                            expect(org.save).toHaveBeenCalled();
+                            expect(c6State.goTo.calls.count()).toEqual(goToCallCount);
+
+                            $scope.$apply(function() {
+                                saveDeferred.resolve();
+                            });
+
+                            expect(c6State.goTo.calls.count()).toEqual(goToCallCount + 1);
+                        });
+                    });
+
+                    describe('when editing minireel(s)', function() {
+                        it('should put the settings on each minireel and save', function() {
+                            var goToCallCount,
+                                saveDeferred = $q.defer();
+
+                            minireels.forEach(function(minireel) {
+                                minireel.save = jasmine.createSpy('exp.save()').and.returnValue(saveDeferred.promise);
+                            });
+
+                            initCtrl({
+                                type: 'minireels',
+                                settings: settings,
+                                data: minireels
+                            });
+
+                            goToCallCount = c6State.goTo.calls.count();
+
+                            AdSettingsCtrl.save();
+
+                            minireels.forEach(function(minireel) {
+                                expect(minireel.data.adConfig).toEqual(settings);
+                                expect(minireel.save).toHaveBeenCalled();
+                            });
+
+                            expect(c6State.goTo.calls.count()).toEqual(goToCallCount);
+
+                            $scope.$apply(function() {
+                                saveDeferred.resolve();
+                            });
+
+                            expect(c6State.goTo.calls.count()).toEqual(goToCallCount + 1);
+                        });
+                    });
                 });
             });
 
-            describe('firstPlacement', function() {
-                it('should bind to UI value if set', function() {
-                    initCtrl(settings);
-                    expect(AdSettingsCtrl.firstPlacement).toEqual({
-                        label: 'After 2nd video',
-                        value: 2
+            describe('$watchers', function() {
+                describe('firstPlacement', function() {
+                    describe('when set to -1', function() {
+                        it('should set the frequency to 0', function() {
+                            initCtrl({
+                                type: 'minireels',
+                                settings: settings,
+                                data: minireels
+                            });
+
+                            $scope.$apply(function() {
+                                AdSettingsCtrl.firstPlacement.value = -1;
+                            });
+
+                            expect(AdSettingsCtrl.frequency.value).toBe(0);
+                        });
                     });
 
-                    settings.video.firstPlacement = -1;
+                    describe('when set to anything except -1', function() {
+                        it('should do nothing', function() {
+                            initCtrl({
+                                type: 'minireels',
+                                settings: settings,
+                                data: minireels
+                            });
 
-                    initCtrl(settings);
-                    expect(AdSettingsCtrl.firstPlacement).toEqual({
-                        label: 'No ads',
-                        value: -1
-                    });
+                            AdSettingsCtrl.frequency.value = 5;
 
-                    settings.video.firstPlacement = void 0;
+                            $scope.$apply(function() {
+                                AdSettingsCtrl.firstPlacement.value = 5;
+                            });
 
-                    initCtrl(settings);
-                    expect(AdSettingsCtrl.firstPlacement).not.toBeDefined();
-                });
-            });
-
-            describe('settings', function() {
-                it('should contain all settings in digestible format', function() {
-                    initCtrl(settings);
-                    expect(AdSettingsCtrl.settings).toEqual({
-                        video: {
-                            firstPlacement: 2,
-                            frequency: 0,
-                            waterfall: 'cinema6',
-                            skip: 6
-                        },
-                        display: {
-                            waterfall: 'cinema6'
-                        }
-                    });
-
-                    settings.video.frequency = void 0;
-                    settings.video.waterfall = void 0;
-                    settings.display.waterfall = void 0;
-
-                    initCtrl(settings);
-                    expect(AdSettingsCtrl.settings).toEqual({
-                        video: {
-                            firstPlacement: 2,
-                            frequency: undefined,
-                            waterfall: undefined,
-                            skip: 6
-                        },
-                        display: {
-                            waterfall: undefined
-                        }
+                            expect(AdSettingsCtrl.frequency.value).toBe(5);
+                        });
                     });
                 });
             });

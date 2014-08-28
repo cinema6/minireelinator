@@ -89,7 +89,7 @@ function( angular , c6ui , c6State  , services  ) {
         function                           ( $scope , c6State , cState , $q ,
                                              ConfirmDialogService ,  MiniReelService ) {
             var self = this,
-                org = c6State.get('Portal').cModel.org,
+                org = $scope.PortalCtrl.model.org,
                 MiniReelCtrl = $scope.MiniReelCtrl;
 
             function getAdConfig(object) {
@@ -663,6 +663,7 @@ function( angular , c6ui , c6State  , services  ) {
 
             this.nextTab = function() {
                 var index = this.tabs.indexOf(this.currentTab);
+
 
                 if (index+1 < this.tabs.length) {
                     c6State.goTo(this.tabs[index+1].sref);
