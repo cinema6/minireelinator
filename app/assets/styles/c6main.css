@@ -68,11 +68,11 @@
     .typo--suggestion {
         border-bottom:1px dotted #ff7e00;
     }
-    .typo--context {
-        color:#ff7e00;
-    }
     .typo--centered {
         text-align: center;
+    }
+    .typo--guidance {
+        font-size:0.75em;
     }
     @font-face {
         font-family: 'FontAwesome';
@@ -156,6 +156,14 @@
     }
     .container {
         max-width:70.5rem; margin:0 auto; padding:0 1.5rem;
+        display: block;
+    }
+    youtube-player, vimeo-player, dailymotion-player, .vidFrame {
+        display: block;
+        width: 100%; height:20em;
+    }
+    embed-code {
+        display: block;
     }
 
 /*  ==========================================================================
@@ -775,10 +783,22 @@
             content:'\f192';
         }
 
-    .forms__name--title {
-        font-size:1.5em; font-weight:100;
-        display: block;
-        margin:0 0 0.875rem;
+
+    .forms__pair {
+        font-size:1em;
+    }
+    .forms__name {
+        float:left; font-weight:700;
+        width:8rem;
+        margin:0.3125em 0 0 0;
+    }
+        .forms__name--title {
+            font-size:1.5em; font-weight:700;
+            display: block;
+            margin:0 0 0.875rem;
+        }
+    .forms__inputHolder {
+        float:right; width:37.5em;
     }
     .forms__textField {
         border:1px solid #ddd;
@@ -794,6 +814,12 @@
             border:1px solid #2398db;
             background:#eaf7ff;
         }
+        .forms__textField--block {
+            display: block; 
+            font-size:1em;
+            width:100%; padding:0.25em 0.25em 0.3125em;
+            box-sizing:border-box;
+        }
         .forms__textField--title {
             font-size:1.125em;
             display: block;
@@ -807,75 +833,24 @@
             background:#ffeaea;
         }
 
-    .textField {
-        height:1.125em; border:1px solid #ddd;
-        padding:0 0.5em;
+    .forms__textarea {
+        margin:2px 0 0 0; padding:0.25em 0.5em;
+        font-size:1rem; line-height: 1.5em;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        width:100%; height:18em;
+        resize: none;
     }
-        .textField:focus {
-            border:1px solid #2398db;
-            background:#eaf7ff;
-        }
-        .textField:hover {
-            border-color:#2398db;
-        }
 
-    .form__group {
-        margin:0;
+    
+    input[disabled="disabled"] {
+        opacity: 0.5; cursor:default;
     }
-    .form__spacer {
-        margin-bottom:1em;
-    }
-    .form__title {
-        font-weight:700;
-    }
-        .form__label {
-            width:10em;
-            display: inline-block;
-        }
-        .form__textBox {
-            width:14em;
-            padding:0.25em; border:2px solid #b0b0b0;
-            -webkit-border-radius: 0.25em; border-radius: 0.25em;
-            font-size:1em;
-            background:#f4f4f4;
-            margin:0 0 0.5em;
-            -webkit-transition:all 0.5s; transition:all 0.5s;
-        }
-            .form__textBox:focus {
-                border:2px solid #4a9cd1;
-                background:#eff9ff;
-            }
-        .form__errorBox {
-            display:inline-block;
-            color:#d61212; font-size:0.875em;
-            margin:0 0 0 0.5em;
-        }
-        .form__submitBtn {
-            margin:0 0 0 10.25rem; padding:0.6875rem 1.5rem 0.625rem 1.5rem; 
-            border:0; border-radius:0.25em;
-            font-size:1.125em; color:#fff; font-weight:700; line-height: 1;
+        input[disabled="disabled"]:hover {
             background:#4a9cd1;
-            cursor:pointer;
-            -webkit-transition: background 0.5s; transition: background 0.5s;
         }
-            .form__submitBtn:hover {
-                background:#13a2ff;
-            }
-        input[disabled="disabled"] {
-            opacity: 0.5; cursor:default;
-        }
-            input[disabled="disabled"]:hover {
-                background:#4a9cd1;
-            }
-    @media screen and (max-width:44em) {
-        /* 704px */
-        .form__label {
-            display: block;
-        }
-        .form__submitBtn {
-            margin:0;
-        }
-    }
+    
 
 
 /*  ==========================================================================

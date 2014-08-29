@@ -1,33 +1,27 @@
-<div class="ui__modal">
-    <navigation class="tabNav__group clearfix">
-        <h1 class="tabNav__title">Slide Settings</h1>
-        <ul class="tabNav__list clearfix">
-            <li ng-repeat="tab in EditCardCtrl.tabs" class="tabNav__item">
-                <a c6-sref="{{tab.sref}}"
-                    class="tabNav__link" 
-                    title="{{tab.name}}">
-                    <span class="tabNav__icon">
-                        <span class="ui__{{tab.icon}}IconSmall ui__{{tab.icon}}IconSmall--white sprite--alpha">&nbsp;</span>
-                    </span>
-                    <span class="tabNav__tabName">{{tab.name}} 
-                        <strong ng-show="tab.required" class="typo--attention">*</strong>
-                    </span>
+<div class="modal__group">
+
+    <header class="modalHeader__group">
+        <h1 class="modal__title">Slide Editor</h1>
+        <button class="modal__closeBtn btnInvis" c6-sref="MR:Editor" c6-params="{}"><span class="ir">Close</span>
+            <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M16.5,0L9,7.5L1.5,0L0,1.5L7.5,9L0,16.5L1.5,18L9,10.5l7.5,7.5l1.5-1.5L10.5,9
+                L18,1.5L16.5,0z"/>
+            </svg>
+        </button>
+    </header>
+
+    <nav class="modalTabs__group clearfix">
+        <ul class="sideTabs__list">
+            <li ng-repeat="tab in EditCardCtrl.tabs" class="sideTabs__item">
+                <a c6-sref="{{tab.sref}}" class="sideTabs__tab" title="{{tab.name}}">
+                    {{tab.name}}
+                    <strong ng-show="tab.required">*</strong>
                 </a>
             </li>
         </ul>
-        <button class="modal__closeBtn sprite--alpha" c6-sref="MR:Editor" c6-params="{}"><span class="ir">Close</span></button>
-    </navigation>
+    </nav>
 
-    <div class="modal__viewHolder">
-        <c6-view></c6-view>
-    </div>
-    
-    <footer class="modal__btnFooter">
-        <button class="modal__btn modal__btn--first toolbar__delete" ng-click="EditCardCtrl.negativeButton.action()" title="{{EditCardCtrl.negativeButton.text}}">{{EditCardCtrl.negativeButton.text}}</button>
-        <button class="modal__btn modal__btn--last" title="{{EditCardCtrl.primaryButton.text}}" ng-click="EditCardCtrl.primaryButton.action()" ng-disabled="!EditCardCtrl.primaryButton.enabled">{{EditCardCtrl.primaryButton.text}}</button>
-        <div class="guideText">
-            <span class="typo--attention">* {{EditCardCtrl.currentTab.customRequiredText || 'Indicates required field.'}}</span>
-        </div>
-    </footer>
+    <c6-view></c6-view>
 </div>
-<div class="ui__overlay">&nbsp;</div>
+<div class="modal__overlay">&nbsp;</div>

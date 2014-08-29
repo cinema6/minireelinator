@@ -1,12 +1,12 @@
-<div class="modal__content modal__editor-slide" c6-alias="EditCardCtrl.model as card">
+<div class="modalBody__group modalBody__group--sideTabs mrEdit__videoTab" c6-alias="EditCardCtrl.model as card">
     <form>
-        <label class="field field--noBreak clearfix">
-            <span class="modal__label">
-                Video URL <span class="typo--attention">*</span>
+        <label class="forms__pair clearfix">
+            <span class="forms__name">
+                Video URL
             </span>
-            <span class="modal__textBoxHolder">
-                <input type="text" class="modal__textBox" ng-model="EditCardCtrl.videoUrl">
-                <span class="field__context">Supported Sources: 
+            <span class="forms__inputHolder">
+                <input type="text" class="forms__textField forms__textField--block" ng-model="EditCardCtrl.videoUrl">
+                <span class="typo--guidance">Supported Sources: 
                     <a href="http://www.youtube.com" title="YouTube" target="_blank">YouTube</a>, 
                     <a href="http://www.vimeo.com" title="Vimeo" target="_blank">Vimeo</a>,
                     <a href="http://www.dailymotion.com" title="Daily Motion" target="_blank">Daily Motion</a>
@@ -25,3 +25,17 @@
     </div>
     <video-preview service="{{card.data.service}}" videoid="{{card.data.videoid}}" start="card.data.start" end="card.data.end"></video-preview>
 </div>
+
+<footer class="modalFooter__group">
+    <button class="btnAction btnAction--first" 
+    ng-click="EditCardCtrl.negativeButton.action()"
+    type="button" title="{{EditCardCtrl.negativeButton.text}}">
+        {{EditCardCtrl.negativeButton.text}}
+    </button>
+    <button class="btnAction btnAction--primary btnAction--last" 
+    ng-click="EditCardCtrl.primaryButton.action()" ng-disabled="!EditCardCtrl.primaryButton.enabled"
+    type="button" title="{{EditCardCtrl.primaryButton.text}}">
+        {{EditCardCtrl.primaryButton.text}}
+    </button>
+    <p class="modalFooter__guideText">Step {{EditCardCtrl.tabs.indexOf(EditCardCtrl.currentTab) + 1}} of {{EditCardCtrl.tabs.length}} : <strong>Optional</strong></p>
+</footer>
