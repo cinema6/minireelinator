@@ -54,6 +54,24 @@ define(['minireel/app'], function(appModule) {
                     expect(PaginatorControlsCtrl.page).toBe('');
                 });
             });
+
+            describe('limitsObject', function() {
+                it('should be the limits array in object form', function() {
+                    $scope.$apply(function() {
+                        $scope.limits = null;
+                    });
+                    expect(PaginatorControlsCtrl.limitsObject).toEqual({});
+
+                    $scope.$apply(function() {
+                        $scope.limits = [20, 50, 100];
+                    });
+                    expect(PaginatorControlsCtrl.limitsObject).toEqual({
+                        '20 per page': 20,
+                        '50 per page': 50,
+                        '100 per page': 100
+                    });
+                });
+            });
         });
 
         describe('methods', function() {

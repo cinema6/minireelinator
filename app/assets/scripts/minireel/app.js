@@ -253,9 +253,10 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
             };
         }])
 
-        .controller('PaginatorControlsController', ['$scope',
-        function                                   ( $scope ) {
+        .controller('PaginatorControlsController', ['$scope','c6Computed',
+        function                                   ( $scope , c6Computed ) {
             var self = this,
+                c = c6Computed($scope),
                 state = {
                     page: $scope.page
                 };
@@ -280,6 +281,13 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                     }
                 }
             });
+            c(this, 'limitsObject', function() {
+                return ($scope.limits || [])
+                    .reduce(function(object, limit) {
+                        object[limit + ' per page'] = limit;
+                        return object;
+                    }, {});
+            }, ['limits']);
 
             this.goTo = function(page) {
                 /* jshint boss:true */
