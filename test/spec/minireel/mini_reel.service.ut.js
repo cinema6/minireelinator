@@ -1178,7 +1178,7 @@
                         });
                     });
 
-                    describe('adChoicesOf(data)', function() {
+                    describe('adChoicesOf(org, data)', function() {
                         it('should return the correct choices for video and display ads', function() {
                             var data = {
                                 experience: {
@@ -1213,24 +1213,22 @@
                                         ]
                                     }
                                 },
-                                user: {
-                                    org: {
-                                        waterfalls: {
-                                            display: ['cinema6'],
-                                            video: ['cinema6']
-                                        }
-                                    }
+                            },
+                            org = {
+                                waterfalls: {
+                                    display: ['cinema6'],
+                                    video: ['cinema6']
                                 }
                             };
 
-                            expect(MiniReelService.adChoicesOf(data)).toEqual({
+                            expect(MiniReelService.adChoicesOf(org, data.experience.data)).toEqual({
                                 video: [{value:'cinema6'}],
                                 display: [{value:'cinema6'}]
                             });
 
-                            data.user.org.waterfalls.display = ['cinema6','publisher','cinema6-publisher','publisher-cinema6'];
+                            org.waterfalls.display = ['cinema6','publisher','cinema6-publisher','publisher-cinema6'];
 
-                            expect(MiniReelService.adChoicesOf(data)).toEqual({
+                            expect(MiniReelService.adChoicesOf(org, data.experience.data)).toEqual({
                                 video: [{value:'cinema6'}],
                                 display: [{value:'cinema6'}, {value:'cinema6-publisher'}, {value:'publisher'}, {value:'publisher-cinema6'}]
                             });

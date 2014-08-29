@@ -1312,9 +1312,9 @@ function( angular , c6ui , cryptojs ) {
                 return result;
             };
 
-            this.adChoicesOf = function(data) {
-                var w = data.user.org.waterfalls,
-                    d = data.experience.data,
+            this.adChoicesOf = function(org, data) {
+                var w = org.waterfalls,
+                    d = data,
                     choices = {};
 
                 angular.forEach(w, function(waterfallArray, type) {
