@@ -348,8 +348,6 @@ function( angular , c6ui , cryptojs ) {
                     }
                 });
 
-                delete election.id;
-
                 forEach(deck, function(card) {
                     var item;
 
