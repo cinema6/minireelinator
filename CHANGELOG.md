@@ -4,6 +4,8 @@
   * [FEATURE]: New front end for studio and ad manager added
   * All new MiniReels are now previewable with a public preview URL by
     default
+  * [FIX]: Fix for an issue where re-publishing a MiniReel would cause
+    its election data not to be updated
 
 ## Beta18 (August 25, 2014)
 * *[Beta18.rc1]*
