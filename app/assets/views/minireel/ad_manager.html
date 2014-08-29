@@ -19,27 +19,27 @@
         <li class="tabFilters__item">
             <button ng-click="AdManagerCtrl.filter = 'all'" ng-class="{'filters__btn--active': AdManagerCtrl.filter === 'all'}" class="filters__btn" type="button" title="Show All">
                 <span class="btn__label">All MiniReels</span>
-                <span class="filters__counter">100</span>
+                <!-- <span class="filters__counter">100</span> -->
             </button>
         </li>
         <li class="tabFilters__item">
             <button ng-click="AdManagerCtrl.filter = 'active'" ng-class="{'filters__btn--active': AdManagerCtrl.filter === 'active'}" class="filters__btn" type="button" title="Published">
                 <span class="btn__label">Published MiniReels</span>
-                <span class="filters__counter">100</span>
+                <!-- <span class="filters__counter">100</span> -->
             </button>
         </li>
         <li class="tabFilters__item">
             <button ng-click="AdManagerCtrl.filter = 'pending'" ng-class="{'filters__btn--active': AdManagerCtrl.filter === 'pending'}" class="filters__btn" type="button" title="Private">
                 <span class="btn__label">Private MiniReels</span>
-                <span class="filters__counter">100</span>
+                <!-- <span class="filters__counter">100</span> -->
             </button>
         </li>
-        <li class="tabFilters__item">
+        <!-- <li class="tabFilters__item">
             <button ng-click="AdManagerCtrl.filter = 'pending'" ng-class="{'filters__btn--active': AdManagerCtrl.filter === 'pending'}" class="filters__btn" type="button" title="Your MiniReels">
                 <span class="btn__label">Your MiniReels</span>
                 <span class="filters__counter">100</span>
             </button>
-        </li>
+        </li> -->
     </ul>
 </header>
 
@@ -113,9 +113,9 @@
                         - <span class="miniReel__date">{{this.lastModified | date:'M/d/yyyy'}}</span>
                         <p class="miniReel__count">{{AdManagerCtrl.adCountOf(this)}} ad | {{this.data.deck.length}} slides</p>
                     </div>
-                    <div class="miniReel__stats">
+                    <!-- <div class="miniReel__stats">
                         <p class="miniReel__views">12123123 views</p>
-                    </div>
+                    </div> -->
                     <div class="miniReel__configStatus">
                         <p class="miniReel__views">{{AdManagerCtrl.settingsTypeOf(this)}}</p>
                     </div>
