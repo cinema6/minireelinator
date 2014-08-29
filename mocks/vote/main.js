@@ -25,6 +25,21 @@ module.exports = function(http) {
         }));
     });
 
+    http.whenPUT('/api/election/**', function(request) {
+        var id = idFromPath(request.pathname),
+            path = electionPath(id),
+            election = grunt.file.readJSON(path),
+            newElection = extend(election, request.body);
+
+        console.log(newElection);
+
+        grunt.file.write(path, JSON.stringify(newElection, null, '    '));
+
+        this.respond(200, extend(newElection, {
+            id: id
+        }));
+    });
+
     http.whenGET('/api/election/**', function(request) {
         var id = idFromPath(request.pathname),
             election = grunt.file.readJSON(electionPath(id));
