@@ -615,6 +615,31 @@
                     });
                 });
 
+                describe('pushCard(card)', function() {
+                    var card,
+                        result,
+                        initialLength;
+
+                    beforeEach(function() {
+                        card = {};
+
+                        initialLength = cModel.data.deck.length;
+
+                        result = EditorCtrl.pushCard(card);
+                    });
+
+                    it('should return the card', function() {
+                        expect(result).toBe(card);
+                    });
+
+                    it('should push the card into the second-to-last slot', function() {
+                        var deck = cModel.data.deck;
+
+                        expect(deck.length).toBe(initialLength + 1);
+                        expect(deck[deck.length - 2]).toBe(card);
+                    });
+                });
+
                 describe('deleteMinireel()', function() {
                     beforeEach(function() {
                         EditorCtrl.deleteMinireel();

@@ -10,6 +10,7 @@
             "status": "active",
             "waterfalls": {
                 "video": [
+                    "cinema6",
                     "publisher",
                     "cinema6-publisher",
                     "publisher-cinema6"
@@ -470,15 +471,6 @@
                         }
                     },
                     {
-                        "id": "rc-392f3546f0cfc3",
-                        "type": "ad",
-                        "ad": true,
-                        "modules": [],
-                        "data": {
-                            "autoplay": true
-                        }
-                    },
-                    {
                         "id": "rc-77d0ea2794cc6b",
                         "type": "youtube",
                         "title": "Avalanche Cliff Jump",
@@ -678,6 +670,17 @@
                     "ratio": "6-4",
                     "theme": "img-only"
                 },
+                "adConfig": {
+                    "video": {
+                        "firstPlacement": 1,
+                        "frequency": 3,
+                        "waterfall": "cinema6",
+                        "skip": 6
+                    },
+                    "display": {
+                        "waterfall": "cinema6"
+                    }
+                },
                 "deck": [
                     {
                         "id": "rc-080fb573e704cf",
@@ -834,15 +837,6 @@
                         }
                     },
                     {
-                        "id": "rc-392f3546f0cfc3",
-                        "type": "ad",
-                        "ad": true,
-                        "modules": [],
-                        "data": {
-                            "autoplay": true
-                        }
-                    },
-                    {
                         "id": "rc-cd6b62c0bf1025",
                         "type": "youtube",
                         "title": "Santonio Holmes' Game-Winning, Toe-Drag Touchdown",
@@ -931,6 +925,17 @@
                     "source": "generated",
                     "ratio": "16-9",
                     "theme": "img-only"
+                },
+                "adConfig": {
+                    "video": {
+                        "firstPlacement": 2,
+                        "frequency": 0,
+                        "waterfall": "cinema6",
+                        "skip": 6
+                    },
+                    "display": {
+                        "waterfall": "cinema6"
+                    }
                 },
                 "deck": [
                     {
