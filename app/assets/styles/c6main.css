@@ -773,6 +773,11 @@
                 border-color:#2398db;
             }
 
+    select.btn,
+    select.btn:focus {
+        height:1.5em;
+    }
+
     .radiobox {
         padding:0; margin:0;
         position: relative;

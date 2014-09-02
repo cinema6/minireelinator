@@ -648,29 +648,31 @@
 
     /*  preview panel
     ========================================================================== */
-        .preview__modal {
-            width:46.5em; height:33.75em; 
-            padding:0 2.25em; margin:0 0 0 -25.5em;
-            position:absolute; z-index:100; top:5em; left:50%;
-            background:#fff;
-        }
         .preview__container {
+            height:auto;
+            padding:4em 1.5em 1.5em 1.5em;
+            position:fixed; z-index:100; top:50%; left:50%;
+            background:#fff;
             -webkit-transition: all 0.5s; transition: all 0.5s;
-            padding:1.5em;
         }
             .preview__container--mobile {
                 width:20em; height:auto; min-height:38.875em;
-                margin:0 0 0 -11.5em;
+                margin:-22.1875em 0 0 -11.5em;
             }
             .preview__container--desktop {
                 width: 43.75em; height:auto;
-                margin:0 0 0 -23.375em;
+                margin:-22.375em 0 0 -23.375em;
             }
-            .preview__container .modal__title {
-                margin:-0.5em 0 0.25em;
+            @media screen and (max-height:46em) {
+                /* height: 736px */
+                .preview__container {
+                    position:absolute; top:0.5em;
+                    margin-top:0;
+                }
             }
-            .preview__container .modal__closeBtn {
-                top:0.75em;
+
+            .preview__header {
+                position: absolute; top:0; left:0; right:0;
             }
             .preview__iframeHolder {
                 width:100%;
@@ -795,7 +797,85 @@
             margin:21px 0 14px;
             display: block;
         }
+    .mrSplash__sourceTab,
+    .mrSplash__imageTab {
+        margin:1.5em 0 0 0;
+    }
 
+    /*  image settings / uploader
+    ========================================================================== */
+        .imgSettings__group {
+            margin:0;
+        }
+            .imgSettings__imgHolder {
+                width:18.75em; position:absolute;
+            }
+            .imgSettings__imgBox {
+                width:100%; height:0;
+                position:absolute;
+                background:#ccc url('../../img/minireel/default_square.jpg') 50% 50% / cover no-repeat;
+            }
+                .imgSettings__imgBox--1-1 {
+                    padding-bottom:100%;
+                }
+                .imgSettings__imgBox--6-5 {
+                    padding-bottom:83.333%;
+                }
+                .imgSettings__imgBox--3-2 {
+                    padding-bottom:66.667%;
+                }
+                .imgSettings__imgBox--16-9 {
+                    padding-bottom:56.25%;
+                }
+            .imgSettings__copy {
+                margin-left:324px;
+            }
+                .imgSettings__group .modal__label {
+                    margin-bottom:0.1875em;
+                }
+                
+
+                .coverUploader__filePath {
+                    display: block;
+                    padding:0; margin:0;
+                    font-size:1rem;
+                }
+                    .coverUploader__filePath:focus {
+                        background:#eff9ff;
+                    }
+                .coverUploader__controls {
+                    height:6.1875em;
+                }
+                    .coverUploader__group .progressBar__statusText {
+                        font-size:0.75em;
+                        margin:0.25em 0 1em;
+                    }
+                    .coverUploader__controls .coverUploader__button {
+                        margin:0.75em 0 0 0;
+                    }
+                    .coverUploader__controls .typo--attention {
+                        margin:0.25em 0 0 0;
+                    }
+                .coverUploader__group .progressBar {
+                    border-radius:3px;
+                    height:0.5em; overflow: hidden;
+                    background:#ccc;
+                    margin:0.875em 0 0.25em 0;
+                }
+                    .coverUploader__group .progressBar__status {
+                        background:#72ad25;
+                    }
+                    .coverUploader__group .progressBar__statusText {
+                        margin:0;
+                    }
+                .coverUploader__helpTips {
+                    font-size:0.875em; line-height: 1.25;
+                    padding:0 0 0 2em; margin:0 0 1.25rem 0;
+                    list-style: disc;
+                }
+                    .coverUploader__helpTips li {
+                        margin:0.5em 0;
+                    }
 
 /*  ==========================================================================
     minireel wizard styles
@@ -891,7 +971,7 @@
             .wizard__choice--small .wizard__copy {
                 left:13.125em;
             }
-            .wizard__copy .wizard__title {
+            .wizard__title {
                 font-size:1.125em; color:#444; font-weight:700;
                 margin:5px 0;
                 display: block;
@@ -909,13 +989,6 @@
                 margin:5px 0;
                 display: block;
             }
-                .form__adSettings .wizard__copy .wizard__p {
-                    margin:0;
-                    font-size:0.875em;
-                }
-                .wizard__choice--small .wizard__copy .wizard__p {
-                    font-size:0.875em;
-                }
             .wizard__choice:hover .wizard__title {
                 color:#2398db;
             }

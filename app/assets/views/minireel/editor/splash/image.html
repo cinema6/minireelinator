@@ -1,4 +1,4 @@
-<div class="modalBody__group modalBody__group--sideTabs" c6-alias="EditorSplashCtrl.model.data as data">
+<div class="modalBody__group modalBody__group--sideTabs mrSplash__imageTab" c6-alias="EditorSplashCtrl.model.data as data">
     <form class="imgSettings__group">
         <div class="imgSettings__imgHolder">
             <div class="imgSettings__imgBox
@@ -17,7 +17,7 @@
         </div>
         <div class="imgSettings__copy">
             <div class="coverUploader__group" ng-if="data.splash.source === 'specified'">
-                <label class="modal__label" for="img-upload">Upload Your Image</label>
+                <label class="wizard__title" for="img-upload">Upload Your Image</label>
                 <input id="img-upload" class="coverUploader__filePath" ng-model="SplashImageCtrl.splash" type="file">
                 <div class="coverUploader__controls">
                     <div ng-show="!!SplashImageCtrl.currentUpload" c6-alias="SplashImageCtrl.currentUpload.progress as progress">
@@ -36,12 +36,12 @@
                 </ul>
             </div>
 
-            <label class="modal__label" for="aspect-ratio">Desired Aspect Ratio</label>
-            <select ng-model="data.splash.ratio" id="aspect-ratio" class="modal__selector">
-                <option value="1-1">Square (1:1)</option>
-                <option value="6-5">Medium Rectangle (6:5)</option>
-                <option value="3-2">Video Rectangle (3:2)</option>
-                <option value="16-9">Widescreen Rectangle (16:9)</option>
+            <label class="wizard__title" for="aspect-ratio">Desired Aspect Ratio</label>
+            <select ng-model="data.splash.ratio" id="aspect-ratio" class="btn">
+                <option class="forms__option" value="1-1">Square (1:1)</option>
+                <option class="forms__option" value="6-5">Medium Rectangle (6:5)</option>
+                <option class="forms__option" value="3-2">Video Rectangle (3:2)</option>
+                <option class="forms__option" value="16-9">Widescreen Rectangle (16:9)</option>
             </select>
         </div>
     </form>

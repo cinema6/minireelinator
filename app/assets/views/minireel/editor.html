@@ -80,9 +80,18 @@
 
     <div ng-show="EditorCtrl.preview" ng-controller="PreviewController as PreviewCtrl" class="preview__group">
         <div ng-class="{ 'preview__container--fullscreen' : (PreviewCtrl.fullscreen), 'preview__container--desktop' : (PreviewCtrl.device === 'desktop'), 'preview__container--mobile' : (PreviewCtrl.device === 'phone') }"
-            class="preview__container preview__modal"
-            ng-style="{height: (PreviewCtrl.fullscreen && PreviewCtrl.device === 'desktop') ? '0px' : ''}">
-            <h1 class="modal__title">Preview Mode</h1>
+        class="preview__container"
+        ng-style="{height: (PreviewCtrl.fullscreen && PreviewCtrl.device === 'desktop') ? '0px' : ''}">
+            <header class="modalHeader__group preview__header">
+                <h1 class="modal__title">Preview Modal</h1>
+                <button class="modal__closeBtn btnInvis" ng-click="EditorCtrl.closePreview()"><span class="ir">Close</span>
+                    <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                         viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                        <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M16.5,0L9,7.5L1.5,0L0,1.5L7.5,9L0,16.5L1.5,18L9,10.5l7.5,7.5l1.5-1.5L10.5,9
+                        L18,1.5L16.5,0z"/>
+                    </svg>
+                </button>
+            </header>
             <form class="preview__form">
                 <input id="previewMode_desktop" type="radio" ng-model="PreviewCtrl.device" value="desktop"
                 class="modal__radioBtn" />
@@ -91,8 +100,6 @@
                 <input id="previewMode_mobile" type="radio" ng-model="PreviewCtrl.device" value="phone"
                 class="modal__radioBtn" />
                 <label for="previewMode_mobile">Mobile</label>
-                
-                <button class="modal__closeBtn c6studioSprite--alpha" ng-click="EditorCtrl.closePreview()"><span class="ir">Close</span></button>
             </form>
             <div class="preview__iframeHolder">
                 <mr-preview experience="minireel"
