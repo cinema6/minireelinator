@@ -1181,7 +1181,9 @@
 /*  ==========================================================================
     account settings pages
     ========================================================================== */
-    .btnAccounts {
+    .btnAccounts,
+    .btnAccounts:focus,
+    .btnAccounts:active {
         margin:1.5em 0 0 12em;
     }
 
