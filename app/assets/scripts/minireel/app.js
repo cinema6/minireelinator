@@ -49,9 +49,9 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
 
                 this.route('/advertising', 'MR:AdManager', function() {
                     this.route('/settings', 'MR:AdManager.Settings', function() {
-                        this.route('/frequency', 'MR:AdManager.Settings.Frequency');
-                        this.route('/video', 'MR:AdManager.Settings.VideoServer');
-                        this.route('/display', 'MR:AdManager.Settings.DisplayServer');
+                        this.route('/', 'MR:AdManager.Settings.Frequency');
+                        this.route('/', 'MR:AdManager.Settings.VideoServer');
+                        this.route('/', 'MR:AdManager.Settings.DisplayServer');
                     });
                 });
 

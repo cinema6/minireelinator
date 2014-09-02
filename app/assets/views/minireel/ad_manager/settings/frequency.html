@@ -2,44 +2,35 @@
     <form class="AMFrequency__form">
         <div class="halfCol">
             <h1 class="forms__name--title">First Ad Placement <strong class="typo--danger">*</strong></h1>
-            <button class="btn faa fa-caret-down ui__clickDrop" type="button" title="First Ad Placement">
-                <span class="btn__label">After 1st Video</span>
+            <button class="btn faa fa-caret-down ui__clickDrop" type="button" title="First Ad Placement" ng-click="AdSettingsCtrl.dropDowns.firstPlacement.toggle()" c6-click-outside="AdSettingsCtrl.dropDowns.firstPlacement.hide()">
+                <span class="btn__label">{{AdSettingsCtrl.firstPlacement.label}}</span>
             </button>
-            <div class="pager__itemsPerPage ui__clickDropMenu">
-                <button class="ui__clickDropBtn" type="button" title="Before 1st Video">Before 1st Video</button>
-                <button class="ui__clickDropBtn" type="button" title="After 1st Video">After 1st Video</button>
-                <button class="ui__clickDropBtn ui__clickDropBtn--current" type="button" title="After 2nd Video">After 2nd Video</button>
+            <div class="pager__itemsPerPage ui__clickDropMenu" ng-show="AdSettingsCtrl.dropDowns.firstPlacement.shown">
+                <button class="ui__clickDropBtn" type="button" title="{{option.label}}" ng-repeat="option in AdSettingsCtrl.firstPlacementOptions" ng-click="AdSettingsCtrl.firstPlacement = option">{{option.label}}</button>
             </div>
 
             <h1 class="forms__name--title">Allow Users to Skip Ads? <strong class="typo--danger">*</strong></h1>
-            <button class="btn faa fa-caret-down ui__clickDrop" type="button" title="First Ad Placement">
-                <span class="btn__label">After 1st Video</span>
+            <button class="btn faa fa-caret-down ui__clickDrop" type="button" title="First Ad Placement" ng-click="AdSettingsCtrl.dropDowns.skip.toggle()" c6-click-outside="AdSettingsCtrl.dropDowns.skip.hide()">
+                <span class="btn__label">{{AdSettingsCtrl.skip.label}}</span>
             </button>
-            <div class="pager__itemsPerPage ui__clickDropMenu">
-                <button class="ui__clickDropBtn" type="button" title="No, users cannot skip ads">No, users cannot skip ads</button>
-                <button class="ui__clickDropBtn" type="button" title="Yes, after six seconds">Yes, after six seconds</button>
-                <button class="ui__clickDropBtn ui__clickDropBtn--current" type="button" title="Yes, after six seconds">Yes, skip ads at any time</button>
+            <div class="pager__itemsPerPage ui__clickDropMenu" ng-show="AdSettingsCtrl.dropDowns.skip.shown">
+                <button class="ui__clickDropBtn" type="button" title="{{option.label}}" ng-repeat="option in AdSettingsCtrl.skipOptions" ng-click="AdSettingsCtrl.skip = option">{{option.label}}</button>
             </div>
         </div>
         <div class="halfCol">
             <h1 class="forms__name--title">Subsequent Ad Placement <strong class="typo--danger">*</strong></h1>
-            <button class="btn faa fa-caret-down ui__clickDrop" type="button" title="Subsequent Ad Placement">
-                <span class="btn__label">After Every 2 Videos</span>
+            <button class="btn faa fa-caret-down ui__clickDrop" type="button" title="Subsequent Ad Placement" ng-click="AdSettingsCtrl.dropDowns.frequency.toggle()" c6-click-outside="AdSettingsCtrl.dropDowns.frequency.hide()">
+                <span class="btn__label">{{AdSettingsCtrl.frequency.label}}</span>
             </button>
-            <div class="pager__itemsPerPage ui__clickDropMenu">
-                <button class="ui__clickDropBtn" type="button" title="After Every 1 Video">After Every 1 Video</button>
-                <button class="ui__clickDropBtn ui__clickDropBtn--current" type="button" title="After Every 2 Videos">After Every 2 Videos</button>
-                <button class="ui__clickDropBtn ui__clickDropBtn--current" type="button" title="After Every 3 Videos">After Every 3 Videos</button>
+            <div class="pager__itemsPerPage ui__clickDropMenu" ng-show="AdSettingsCtrl.dropDowns.frequency.shown">
+                <button class="ui__clickDropBtn" type="button" title="{{option.label}}" ng-repeat="option in AdSettingsCtrl.frequencyOptions" ng-click="AdSettingsCtrl.frequency = option">{{option.label}}</button>
             </div>
         </div>
     </form>
     <p class="modalBody__fineprint typo--danger"><strong>*</strong> Indicates required field.</p>
 </div>
 <footer class="modalFooter__group">
-    <button class="btnAction btnAction--first" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
-    <ng-switch on="NewCtrl.tabs.length">
-        <button ng-switch-when="1" ng-click="NewCtrl.save()" class="btnAction btnAction--success btnAction--last" type="button" title="Done!" ng-disabled="!NewCtrl.title">I&rsquo;m Done!</button>
-        <button ng-switch-default ng-click="NewCtrl.nextTab()" ng-disabled="!NewCtrl.title" class="btnAction btnAction--primary btnAction--last" type="button" title="Next Step">Next Step</button>
-    </ng-switch>
-    <p class="modalFooter__guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</p>
+    <button class="btnAction btnAction--first" c6-sref="{{AdSettingsCtrl.returnState}}" title="Cancel">Cancel</button>
+    <button ng-click="AdSettingsCtrl.nextTab()" class="btnAction btnAction--primary btnAction--last" type="button" title="Next Step" ng-disabled="!AdSettingsCtrl.tabIsValid(AdSettingsCtrl.currentTab)">Next Step</button>
+    <p class="modalFooter__guideText">Step {{AdSettingsCtrl.tabs.indexOf(AdSettingsCtrl.currentTab) + 1}} of {{AdSettingsCtrl.tabs.length}}</p>
 </footer>
