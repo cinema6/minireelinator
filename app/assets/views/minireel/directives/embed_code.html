@@ -6,7 +6,7 @@
     </div>
     <p class="embed__fineprint">To change the embed code type, please use the MiniReel editor.</p>
 </div>
-<div ng-if="!Ctrl.readOnly" class="embedPreview__group embedPreview__group--lightbox">
+<div ng-if="!Ctrl.readOnly" class="embedPreview__group embedPreview__group--small">
     <label class="embed__label" for="embed-type">Embed Code Type:</label>
     <select ng-model="minireel.data.splash.theme" class="embed__selector" name="embed-type" id="embed-type">
         <option value="text-only">Text Only</option>
@@ -17,7 +17,11 @@
     </select>
     <div class="embedPreview">
         <div class="mr-splash__group" splash-page="minireel" splash-src="{{splashSrc}}"></div>
-        <div class="mr-splashBlocker">&nbsp;</div>
+        <div c6-sref="MR:Splash.Source" class="mr-splashBlocker">
+            <span class="btnFill btnFill--primary btn__editCover">
+                <span class="btn__label fab fa-pencil-square-o"> Edit</span>
+            </span>
+        </div>
     </div>
 </div>
 <div class="embedCode__group">

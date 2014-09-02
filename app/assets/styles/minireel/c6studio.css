@@ -1033,7 +1033,18 @@
             .mr-splashBlocker {
                 position:absolute; z-index:5; 
                 top:0; left:0; bottom:0; right:0;
+                cursor: pointer;
+                opacity:0;
+                background:rgba(0,0,0,0.4);
+                -webkit-transition:opacity 0.25s; transition:opacity 0.25s;
             }
+                .mr-splashBlocker:hover {
+                    opacity:1;
+                }
+                .btn__editCover {
+                    position:absolute; top:50%; left:50%;
+                    margin:-1.0625em 0 0 -2.75em;    
+                }
         .embed__fineprint {
             font-size:0.8125em;
         }

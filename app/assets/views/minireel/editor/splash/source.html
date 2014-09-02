@@ -1,4 +1,4 @@
-<div c6-alias="EditorSplashCtrl.model.data as data" class="modal__content modal__editor clearfix">
+<div c6-alias="EditorSplashCtrl.model.data as data" class="modalBody__group modalBody__group--sideTabs">
     <ul class="wizard__group">
         <li class="wizard__choice wizard__choice--textOnly">
             <input id="source-generate"
@@ -28,7 +28,15 @@
         </li>
     </ul>
 </div>
-<footer class="modal__btnFooter">
-    <button class="modal__btn modal__btn--first toolbar__delete" title="Cancel" c6-sref="MR:Editor">Cancel</button>
-    <button class="modal__btn modal__btn--last" title="Next Step" c6-sref="MR:Splash.Image">Next Step</button>
+
+<footer class="modalFooter__group">
+    <button class="btnAction btnAction--first" 
+    title="Cancel" type="button" c6-sref="MR:Editor">
+        Cancel
+    </button>
+    <button class="btnAction btnAction--primary btnAction--last" 
+    title="Next Step" c6-sref="MR:Splash.Image">
+        Next Step
+    </button>
+    <p class="modalFooter__guideText">Step {{EditorSplashCtrl.tabs.indexOf(EditorSplashCtrl.currentTab) + 1}} of {{EditorSplashCtrl.tabs.length}}</p>
 </footer>

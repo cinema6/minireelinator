@@ -81,15 +81,8 @@
         font-weight: normal;
         font-style: normal;
     }
-        .faa:after {
-            font-family: 'FontAwesome';
-            font-style: normal;
-            font-weight: normal;
-            line-height: 1;
-            display: inline-block;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
+        .fa,
+        .faa:after,
         .fab:before {
             font-family: 'FontAwesome';
             font-style: normal;
@@ -123,6 +116,15 @@
         }
         .fa-lock:before {
             content:'\f023';
+        }
+        .fa-bolt:before {
+            content:'\f0e7';
+        }
+        .fa-bell:before {
+            content:'\f0f3';
+        }
+        .fa-close:before {
+            content:'\f00d';
         }
 
 /*  ==========================================================================
@@ -190,15 +192,27 @@
     .body .chrome {
         display: block;
     }
+    .ui__iconHolder14,
+    .ui__iconHolder16,
     .ui__iconHolder18 {
         width:1.125rem; height:1.125rem;
         display:inline-block; 
         vertical-align: middle;
+        line-height: 1;
+        font-size:1.125rem;
     }
         .ui__icon {
             -webkit-transition:fill 0.25s; transition:fill 0.25s;
             fill:#626262;
         }
+    .ui__iconHolder14 {
+        width:0.875rem; height:0.875rem;
+        font-size:0.875rem;
+    }
+    .ui__iconHolder16 {
+        width:1rem; height:1rem;
+        font-size:1rem;
+    }
 
     .btnInvis {
         border:0; margin:0; padding:0;
@@ -236,21 +250,24 @@
             .btn--primary:hover {
                 border-color:#2398db;
             }
+            .btn--primary .ui__icon {
+                fill:#2398db;
+            }
         .btn--info, .btn--info:focus {
-            background-color:#e5f9ff; color:#0082a9;
-            border:1px solid #ddd; 
+            background-color:#eaf7ff; color:#2398db;
+            border:1px solid #bfe7ff; 
         }
         .btn--success, .btn--success:focus {
-            background-color:#eee; color:#3dc667;
-            border:1px solid #ddd; 
+            background-color:#d7ffe3; color:#3dc667;
+            border:1px solid #9be2b1; 
         }
         .btn--warning, .btn--warning:focus {
-            background-color:#eee; color:orange;
-            border:1px solid #ddd; 
+            background-color:#fff2e2; color:#fe8900;
+            border:1px solid #ffd5a3; 
         }
         .btn--danger, .btn--danger:focus {
             background-color:#ffeaea; color:#dc4141;
-            border:1px solid #ddd; 
+            border:1px solid #ffcbcb; 
         }
 
     /*  buttons: default  */
@@ -620,6 +637,24 @@
         }
         .pageHeader .btnAction {
             float:right; margin:0 0 0 0.375em;
+        }
+
+    .pageAlert__group {
+        margin:1.5em; padding:1em;
+        border-radius:0.1875em;
+        position: relative;
+        text-align: center;
+    }
+        .pageAlert__group .fa-bell {
+            position:absolute; top:1em; left:1em;
+        }
+        .pageAlert__msg {
+            margin:0 2em;
+        }
+        .pageAlert__closeBtn {
+            position:absolute; right:0; top:0;
+            padding:1em;
+            color:#fe8900;
         }
 
 

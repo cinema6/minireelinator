@@ -1,11 +1,14 @@
 <c6-alias model="EditorCtrl.model" as="minireel" >
-    <div ng-if="minireel.status === 'active'" ng-show="EditorCtrl.minireelState.dirty && !EditorCtrl.dismissDirtyWarning" class="pageAlert__group">
-        <div class="ui__alert c6studioSprite--alpha"><span class="ir">Warning!</span></div>
+    <div ng-if="minireel.status === 'active'" ng-show="EditorCtrl.minireelState.dirty && !EditorCtrl.dismissDirtyWarning" class="pageAlert__group btn--warning">
+        <span class="ui__iconHolder18 fab fa-bell"><span class="ir">Warning!</span></span>
         <p class="pageAlert__msg">
             <strong>Warning!</strong> You have unsaved changes. 
             Make sure you click <strong>&ldquo;Publish Changes&rdquo;</strong> to update your MiniReel.
         </p>
-        <button ng-click="EditorCtrl.dismissDirtyWarning = true" class="modal__closeBtn c6studioSprite--alpha"><span class="ir">Close</span></button>
+        <button ng-click="EditorCtrl.dismissDirtyWarning = true" class="pageAlert__closeBtn btnInvis" title="Dismiss">
+            <span class="ui__iconHolder18 fab fa-close">&nbsp;</span>
+            <span class="ir">Dismiss</span>
+        </button>
     </div>
     <header class="pageHeader pageHeader--editor container">
         <div class="pageHeader__titleBar clearfix">
@@ -46,7 +49,12 @@
                     <span class="btn__label fab fa-trash">&nbsp; Delete</span>
                 </button>
                 <button class="btn btn--primary" type="button" title="Preview Link">
-                    <span class="btn__label fab fa-link">&nbsp; Preview Link</span>
+                    <svg class="ui__iconHolder16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                        viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                        <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M13.4,7.9L5.7,2.2C5.5,2,5,1.9,4.6,2.1C4.3,2.2,4,2.7,4,3v11.9
+                            c0,0.3,0.3,0.8,0.6,1c0.2,0.1,0.6,0.2,1.1-0.2l7.7-5.7C13.6,9.9,14,9.6,14,9C14,8.3,13.6,8,13.4,7.9z"/>
+                    </svg>
+                    <span class="btn__label">Preview Link</span>
                 </button>
             </div>
             <button ng-click="EditorCtrl.confirmSave()" 
@@ -62,12 +70,8 @@
             </button>
             <button ng-click="EditorCtrl.previewMode()" title="Preview" 
             class="btnAction btnAction--primary btnAction--hasIcon" type="button">
-                <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                    viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
-                    <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M13.4,7.9L5.7,2.2C5.5,2,5,1.9,4.6,2.1C4.3,2.2,4,2.7,4,3v11.9
-                        c0,0.3,0.3,0.8,0.6,1c0.2,0.1,0.6,0.2,1.1-0.2l7.7-5.7C13.6,9.9,14,9.6,14,9C14,8.3,13.6,8,13.4,7.9z"/>
-                </svg>
-                <span class="btn__label">Preview</span>
+                
+                <span class="btn__label fab fa-bolt">&nbsp; Preview Modal</span>
             </button>
         </div>
     </header>
