@@ -253,9 +253,10 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
             };
         }])
 
-        .controller('PaginatorControlsController', ['$scope',
-        function                                   ( $scope ) {
+        .controller('PaginatorControlsController', ['$scope','c6Computed',
+        function                                   ( $scope , c6Computed ) {
             var self = this,
+                c = c6Computed($scope),
                 state = {
                     page: $scope.page
                 };
@@ -280,6 +281,13 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                     }
                 }
             });
+            c(this, 'limitsObject', function() {
+                return ($scope.limits || [])
+                    .reduce(function(object, limit) {
+                        object[limit + ' per page'] = limit;
+                        return object;
+                    }, {});
+            }, ['limits']);
 
             this.goTo = function(page) {
                 /* jshint boss:true */
@@ -298,11 +306,44 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MiniReel', ['c6State','SettingsService',
-            function                          ( c6State , SettingsService ) {
+            c6StateProvider.state('MiniReel', ['c6State','SettingsService','scopePromise',
+                                               'cinema6',
+            function                          ( c6State , SettingsService , scopePromise ,
+                                                cinema6 ) {
                 this.templateUrl = 'views/minireel/app.html';
                 this.controller = 'MiniReelController';
                 this.controllerAs = 'MiniReelCtrl';
+
+                this.getMiniReelList = function(filter, limit, page, previous) {
+                    var org = c6State.get('Portal').cModel.org,
+                        scopedPromise = scopePromise(cinema6.db.findAll('experience', {
+                            type: 'minireel',
+                            org: org.id,
+                            sort: 'lastUpdated,-1',
+                            status: (filter === 'all') ? null : filter,
+                            limit: limit,
+                            skip: (page - 1) * limit
+                        }), previous && previous.value);
+
+                    scopedPromise.selected = (previous || null) && previous.selected;
+                    scopedPromise.page = (previous || null) && previous.page;
+
+                    scopedPromise.ensureResolution()
+                        .then(function(scopedPromise) {
+                            var minireels = scopedPromise.value,
+                                items = minireels.meta.items;
+
+                            scopedPromise.selected = minireels.map(function() {
+                                return false;
+                            });
+                            scopedPromise.page = {
+                                current: ((items.start - 1) / limit) + 1,
+                                total: Math.ceil(items.total / limit)
+                            };
+                        });
+
+                    return scopedPromise;
+                };
 
                 this.model = function() {
                     return this.cParent.cModel[0];

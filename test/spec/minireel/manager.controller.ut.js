@@ -95,7 +95,7 @@
                         }
                     };
 
-                    spyOn(manager, 'modelWithFilter');
+                    spyOn(manager.cParent, 'getMiniReelList');
                     $scope.$apply(function() {
                         ManagerCtrl = $controller('ManagerController', { $scope: $scope, cState: manager });
                         ManagerCtrl.model = model;
@@ -131,7 +131,7 @@
 
                     beforeEach(function() {
                         scopedPromise = scopePromise($q.defer().promise);
-                        manager.modelWithFilter.and.returnValue(scopedPromise);
+                        manager.cParent.getMiniReelList.and.returnValue(scopedPromise);
 
                         $scope.$apply(function() {
                             ManagerCtrl.page = 3;
@@ -150,7 +150,7 @@
                                 });
 
                                 it('should get a new model', function() {
-                                    expect(manager.modelWithFilter).toHaveBeenCalledWith(status, ManagerCtrl.limit, 1, model);
+                                    expect(manager.cParent.getMiniReelList).toHaveBeenCalledWith(status, ManagerCtrl.limit, 1, model);
                                     expect(ManagerCtrl.model).toBe(scopedPromise);
                                 });
                             });
@@ -159,7 +159,7 @@
 
                     describe('this.limit', function() {
                         beforeEach(function() {
-                            manager.modelWithFilter.calls.reset();
+                            manager.cParent.getMiniReelList.calls.reset();
 
                             $scope.$apply(function() {
                                 ManagerCtrl.limit = 100;
@@ -167,18 +167,18 @@
                         });
 
                         it('should get a new model', function() {
-                            expect(manager.modelWithFilter).toHaveBeenCalledWith(ManagerCtrl.filter, 100, 1, model);
-                            expect(manager.modelWithFilter.calls.count()).toBe(1);
+                            expect(manager.cParent.getMiniReelList).toHaveBeenCalledWith(ManagerCtrl.filter, 100, 1, model);
+                            expect(manager.cParent.getMiniReelList.calls.count()).toBe(1);
                             expect(ManagerCtrl.model).toBe(scopedPromise);
                         });
 
                         it('should still make a request if the page is already 1', function() {
-                            manager.modelWithFilter.calls.reset();
+                            manager.cParent.getMiniReelList.calls.reset();
                             $scope.$apply(function() {
                                 ManagerCtrl.limit = 20;
                             });
 
-                            expect(manager.modelWithFilter).toHaveBeenCalledWith(ManagerCtrl.filter, 20, 1, jasmine.any(Object));
+                            expect(manager.cParent.getMiniReelList).toHaveBeenCalledWith(ManagerCtrl.filter, 20, 1, jasmine.any(Object));
                         });
 
                         it('should set the ManagerCtrl.page back to 1', function() {
@@ -196,7 +196,7 @@
                         });
 
                         it('should get a new model', function() {
-                            expect(manager.modelWithFilter).toHaveBeenCalledWith(ManagerCtrl.filter, ManagerCtrl.limit, page, model);
+                            expect(manager.cParent.getMiniReelList).toHaveBeenCalledWith(ManagerCtrl.filter, ManagerCtrl.limit, page, model);
                             expect(ManagerCtrl.model).toBe(scopedPromise);
                         });
                     });
@@ -466,7 +466,7 @@
                                 beforeEach(function() {
                                     ManagerCtrl.page = 3;
 
-                                    manager.modelWithFilter.and.returnValue(scopePromise($q.defer().promise));
+                                    manager.cParent.getMiniReelList.and.returnValue(scopePromise($q.defer().promise));
 
                                     $scope.$apply(function() {
                                         saveDeferred1.resolve(newMiniReel1);
@@ -477,7 +477,7 @@
                                 it('should fetch the MiniReels from the server again', function() {
                                     var ScopedPromise = model.constructor;
 
-                                    expect(manager.modelWithFilter).toHaveBeenCalledWith(ManagerCtrl.filter, ManagerCtrl.limit, ManagerCtrl.page, model);
+                                    expect(manager.cParent.getMiniReelList).toHaveBeenCalledWith(ManagerCtrl.filter, ManagerCtrl.limit, ManagerCtrl.page, model);
                                     expect(ManagerCtrl.model).not.toBe(model);
                                     expect(ManagerCtrl.model).toEqual(jasmine.any(ScopedPromise));
                                 });
@@ -684,7 +684,7 @@
                             beforeEach(function() {
                                 fetchPromise = $q.defer().promise;
 
-                                manager.modelWithFilter.and.returnValue(scopePromise(fetchPromise));
+                                manager.cParent.getMiniReelList.and.returnValue(scopePromise(fetchPromise));
 
                                 ManagerCtrl.page = 3;
 
@@ -698,7 +698,7 @@
                             it('should refetch the minireels', function() {
                                 var ScopedPromise = model.constructor;
 
-                                expect(manager.modelWithFilter).toHaveBeenCalledWith(ManagerCtrl.filter, ManagerCtrl.limit, ManagerCtrl.page, model);
+                                expect(manager.cParent.getMiniReelList).toHaveBeenCalledWith(ManagerCtrl.filter, ManagerCtrl.limit, ManagerCtrl.page, model);
 
                                 expect(ManagerCtrl.model.promise).toBe(fetchPromise);
                                 expect(ManagerCtrl.model).not.toBe(model);

@@ -94,144 +94,6 @@
                 });
             });
 
-            describe('modelWithFilter(filter, limit, page, previous)', function() {
-                var result,
-                    deferred, promise,
-                    ScopedPromise;
-
-                beforeEach(function() {
-                    ScopedPromise = scopePromise($q.defer().promise).constructor;
-                    deferred = $q.defer();
-                    promise = deferred.promise;
-
-                    spyOn(cinema6.db, 'findAll')
-                        .and.returnValue(promise);
-                });
-
-                ['active', 'pending', 'all'].forEach(function(status) {
-                    describe('when called with ' + status, function() {
-                        beforeEach(function() {
-                            $rootScope.$apply(function() {
-                                result = ManagerState.modelWithFilter(status, 7, 1);
-                            });
-                        });
-
-                        it('should return a scoped promise', function() {
-                            expect(result.promise).toBe(promise);
-                            expect(result).toEqual(jasmine.any(ScopedPromise));
-                        });
-
-                        it('should decorate the scoped promise with a null "selected" property', function() {
-                            expect(result.selected).toBeNull();
-                        });
-
-                        it('should decorate the scoped promise with a null "page" property', function() {
-                            expect(result.page).toBeNull();
-                        });
-
-                        describe('when the promise is resolved', function() {
-                            var value;
-
-                            beforeEach(function() {
-                                value = [{}, {}, {}, {}, {}, {}, {}];
-                                value.meta = {
-                                    items: {
-                                        start: 22,
-                                        end: 28,
-                                        total: 500
-                                    }
-                                };
-
-                                $rootScope.$apply(function() {
-                                    deferred.resolve(value);
-                                });
-                            });
-
-                            it('should set selected to an array equal to the result, but filled with false', function() {
-                                expect(result.selected).toEqual(value.map(function() { return false; }));
-                            });
-
-                            it('should set page as the page info', function() {
-                                expect(result.page).toEqual({
-                                    current: 4,
-                                    total: 72
-                                });
-                            });
-                        });
-
-                        describe('when called with an initial value', function() {
-                            var previous;
-
-                            beforeEach(function() {
-                                previous = ManagerState.modelWithFilter(status, 50, 1);
-                                previous.value = [{}, {}, {}];
-                                previous.selected = [false, false, true];
-                                previous.page = {
-                                    current: 1,
-                                    total: 10
-                                };
-
-                                $rootScope.$apply(function() {
-                                    result = ManagerState.modelWithFilter(status, 50, 1, previous);
-                                });
-                            });
-
-                            it('should set the initial value on the scoped promise', function() {
-                                expect(result.value).toBe(previous.value);
-                            });
-
-                            it('should set the selected property', function() {
-                                expect(result.selected).toBe(previous.selected);
-                            });
-
-                            it('should set the page value', function() {
-                                expect(result.page).toBe(previous.page);
-                            });
-                        });
-                    });
-                });
-
-                describe('when called with "all"', function() {
-                    beforeEach(function() {
-                        $rootScope.$apply(function() {
-                            result = ManagerState.modelWithFilter('all', 50, 1);
-                        });
-                    });
-
-                    it('should find experiences of all statuses', function() {
-                        expect(cinema6.db.findAll).toHaveBeenCalledWith('experience', {
-                            type: 'minireel',
-                            org: portal.cModel.org.id,
-                            sort: 'lastUpdated,-1',
-                            status: null,
-                            limit: 50,
-                            skip: 0
-                        });
-                    });
-                });
-
-                ['active', 'pending'].forEach(function(status) {
-                    describe('when called with ' + status, function() {
-                        beforeEach(function() {
-                            $rootScope.$apply(function() {
-                                result = ManagerState.modelWithFilter(status, 25, 3);
-                            });
-                        });
-
-                        it('should find experiences with the specified status', function() {
-                            expect(cinema6.db.findAll).toHaveBeenCalledWith('experience', {
-                                type: 'minireel',
-                                org: portal.cModel.org.id,
-                                sort: 'lastUpdated,-1',
-                                status: status,
-                                limit: 25,
-                                skip: 50
-                            });
-                        });
-                    });
-                });
-            });
-
             describe('model()', function() {
                 var result,
                     scopedPromise;
@@ -239,7 +101,7 @@
                 beforeEach(function() {
                     scopedPromise = scopePromise($q.defer().promise);
 
-                    spyOn(ManagerState, 'modelWithFilter')
+                    spyOn(ManagerState.cParent, 'getMiniReelList')
                         .and.returnValue(scopedPromise);
 
                     $rootScope.$apply(function() {
@@ -248,7 +110,7 @@
                 });
 
                 it('should call this.modelWithFilter() with the current filter property and return the resolved result', function() {
-                    expect(ManagerState.modelWithFilter).toHaveBeenCalledWith(ManagerState.filter, ManagerState.limit, ManagerState.page);
+                    expect(ManagerState.cParent.getMiniReelList).toHaveBeenCalledWith(ManagerState.filter, ManagerState.limit, ManagerState.page);
                     expect(result).toBe(scopedPromise.ensureResolution());
                 });
             });
