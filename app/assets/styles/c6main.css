@@ -656,6 +656,15 @@
             padding:1em;
             color:#fe8900;
         }
+    .pageTabs__group {
+        width:10.5em;
+        position: absolute;
+        margin:0;
+    }
+    .pageBody__group--sideTabs {
+        margin-left:13.5em;
+    }
+
 
 
 /*  ==========================================================================
@@ -737,6 +746,10 @@
 /*  ==========================================================================
     generic form styles
     ========================================================================== */
+    .forms__title {
+        font-size:1.5em;
+    }
+
     .checkbox--inline {
         padding:0; margin:0;
         position: relative;
@@ -828,11 +841,17 @@
         font-size:1em;
         display: block;
     }
+        .forms__pair--spacer {
+            margin-bottom:1.1875em;
+        }
     .forms__name {
         float:left; font-weight:700;
         width:8rem;
         margin:0.3125em 0 0 0;
     }
+        .forms__name--extended {
+            width:12rem;
+        }
         .forms__name--title {
             font-size:1.5em; font-weight:700;
             display: block;
@@ -841,6 +860,10 @@
     .forms__inputHolder {
         float:right; width:37.5em;
     }
+        .forms__inputHolder--short {
+            float:left;
+            width:20em;
+        }
     .forms__textField {
         border:1px solid #ddd;
         padding:0 0.5em;
@@ -848,6 +871,9 @@
         -webkit-transition: all 0.25s; transition: all 0.25s;
         font-size:0.875em; font-weight:300;
     }
+        .forms__textField--padded {
+            padding:0.5em;
+        }
         .forms__textField:hover {
             border-color:#2398db;
         }
@@ -1055,8 +1081,8 @@
             margin:0 auto 1em auto;
         }
         .login__title {
-            font-size:0.875em; font-weight:300; text-align: center;
-            color:#949494;
+            font-size:1em; font-weight:700; text-align: center;
+            color:#ddd;
             margin:0 0 0.5em 0;
         }
         .login__instructions {
@@ -1071,8 +1097,7 @@
                 margin:0 0 1.5em 0;
             }
         .login__form {
-            border:3px solid #ccc;
-            -webkit-border-radius: 5px; border-radius: 5px;
+            -webkit-border-radius: 3px; border-radius: 3px;
             width: 21em; display: block;
             padding: 1.5em; margin:0 auto;
             background:white;
@@ -1084,30 +1109,19 @@
             }
             .login__input {
                 width:14em;
-                padding:0.25em; border:2px solid #b0b0b0;
-                -webkit-border-radius: 0.25em; border-radius: 0.25em;
-                font-size:1em;
-                background:#f4f4f4;
                 margin:0 0 0.5em;
-                -webkit-transition:all 0.5s; transition:all 0.5s;
-                -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-                -moz-box-sizing: border-box;    /* Firefox, other Gecko */
-                box-sizing: border-box;         /* Opera/IE 8+ */
             }
-                .login__input:focus {
-                    border:2px solid #4a9cd1;
-                    background:#eff9ff;
-                }
         .login__error {
             text-align: left;
             font-size:0.875em; font-weight:700;
             margin:0 0 1rem 6.75rem;
-            color:#d61212;
         }
             .login__error p {
                 margin:0;
             }
-        .login__submitBtn {
+        .login__submitBtn,
+        .login__submitBtn:active,
+        .login__submitBtn:focus {
             margin:0 0 0 6.75rem;
         }
         .login__inlineLinks {
