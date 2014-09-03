@@ -279,7 +279,9 @@ function( angular , c6ui , c6State  , services  ) {
                 var config = getAdConfig(minireel),
                     noAds = config.video.firstPlacement === -1 && config.video.frequency === 0;
 
-                return !minireel.data.adConfig && !staticAdCount(minireel) ? 'Default' : (noAds ? 'No Ads' : 'Custom');
+                return !minireel.data.adConfig && !staticAdCount(minireel) ?
+                    'Default' :
+                    (noAds ? 'No Ads' : 'Custom');
             };
 
             this.adCountOf = function(minireel) {
