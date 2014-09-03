@@ -92,6 +92,10 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
+        .faa--end:after,
+        .fab--end:after {
+            float:right;
+        }
         .fa-caret-down:after {
             content:'\f0d7';
         }
@@ -159,6 +163,10 @@
     .container {
         max-width:70.5rem; margin:0 auto; padding:0 1.5rem;
         display: block;
+    }
+    .twoCol {
+        float:left;
+        width:50%;
     }
     youtube-player, vimeo-player, dailymotion-player, .vidFrame {
         display: block;
@@ -306,7 +314,7 @@
             display:inline-block;
             vertical-align: middle;
             position:relative;
-            width:26.125em; height:2.25em;
+            width:29em; height:2.25em;
             overflow: hidden;
         }
         .btnGroup {
@@ -486,7 +494,17 @@
             position:absolute; z-index: 1;
             background:#fff;
             border:2px solid #ddd;
+            max-height:15em;
+            overflow: auto;
         }
+            .twoCol .ui__clickDropMenu {
+                width:46%;
+            }
+
+            .twoCol .ui__clickDrop {
+                width:82%;
+                text-align: left;
+            }
             .ui__clickDropBtn {
                 display: block;
                 border:0; margin:0; padding:0.5rem 1rem;
@@ -495,6 +513,9 @@
                 width:10em;
                 text-align: left;
             }
+                .ui__clickDropBtn--full {
+                    width:100%;
+                }
                 .ui__clickDropBtn:hover {
                     background:#2398db;
                     color:#fff;
@@ -685,8 +706,8 @@
             .tableFooter__displayText strong {
                 color:#626262;
             }
-    @media screen and (max-width:55em) {
-        /* width: 880px */
+    @media screen and (max-width:58.125em) {
+        /* width: 930px */
         .tableHeader__group, .tableFooter__group {
             font-size:0.8125em;
         }
@@ -749,6 +770,9 @@
     .forms__title {
         font-size:1.5em;
     }
+    .forms__introText {
+        margin:-0.3125em 0 1.4375em 0;
+    }
 
     .checkbox--inline {
         padding:0; margin:0;
@@ -801,8 +825,8 @@
             position:absolute; left:-1000000em;
             margin:0; padding:0;
         }
-        .radiobox .btn__label:before,
-        .radiobox .btn__label:after {
+        .radiobox .btn__icon:before,
+        .radiobox .btn__icon:after {
             content:'\f10c';
             position:absolute; top:0.25rem;
             display:block;
@@ -810,29 +834,43 @@
             border:0; margin:0; padding:0;
             text-align: center;
             -webkit-transition: all 0.5s; transition: all 0.5s;
+            vertical-align: middle;
         }
-        .radiobox .btn__label:after {
+        .radiobox .btn__icon:after {
             content:'\f111';
             opacity:0;
             color:#3dc667;
         }
-            .radiobox .radiobox__input:checked + .btn__label:after {
+            .radiobox .radiobox__input:checked + .btn__icon:after {
                 opacity:1;
             }
-            .radiobox .radiobox__input:checked + .btn__label:before {
+            .radiobox .radiobox__input:checked + .btn__icon:before {
                 display:none;
             }
-            .radiobox .radiobox__input:focus + .btn__label:before {
+            .radiobox .radiobox__input:focus + .btn__icon:before {
                 border-color:#2398db;
             }
-            .radiobox:hover .btn__label:before {
+            .radiobox:hover .btn__icon:before {
                 color:#2398db;
             }
-    .radiobox--large .btn__label:before,
-    .radiobox--large .btn__label:after {
+    .radiobox--hasLabel {
+        width:auto; height:auto;
+        display: block;
+        margin:0.0625em 0 1.5em 0;
+    }
+        .radiobox--hasLabel .btn__icon {
+            position: absolute;
+        }
+        .radiobox--hasLabel .btn__label {
+            margin-left:1.5em;
+            display: block;
+            font-size:1em;
+        }
+    .radiobox--large .btn__icon:before,
+    .radiobox--large .btn__icon:after {
         font-size:2em;
     }
-        .radiobox--large .btn__label:after {
+        .radiobox--large .btn__icon:after {
             content:'\f192';
         }
 

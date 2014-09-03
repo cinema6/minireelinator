@@ -60,16 +60,18 @@
                     <button class="ui__clickDropBtn" type="button" title="Select None" ng-show="AdManagerCtrl.model.selected.indexOf(true) > -1" ng-click="AdManagerCtrl.selectNone()">Select None</button>
                 </div>
             </div>
-            <div class="btnGroup btnGroup--show clearfix" ng-show="AdManagerCtrl.getSelected().length > 0">
-                <button class="btn btn--primary" type="button" title="Use Default Settings" ng-click="AdManagerCtrl.useDefaultSettings(AdManagerCtrl.getSelected())">
-                    <span class="btn__label">Use Default Settings</span>
-                </button>
-                <button class="btn btn--primary" type="button" title="Remove Ads" ng-click="AdManagerCtrl.removeAds(AdManagerCtrl.getSelected())">
-                    <span class="btn__label">Remove Ads</span>
-                </button>
-                <button class="btn btn--primary" type="button" title="Edit Ad Settings" ng-click="AdManagerCtrl.editSettings(AdManagerCtrl.getSelected())">
-                    <span class="btn__label">Edit Ad Settings</span>
-                </button>
+            <div class="btnGroup__animator">
+                <div class="btnGroup clearfix" ng-show="AdManagerCtrl.getSelected().length > 0">
+                    <button class="btn btn--primary" type="button" title="Use Default Settings" ng-click="AdManagerCtrl.useDefaultSettings(AdManagerCtrl.getSelected())">
+                        <span class="btn__label">Use Default Settings</span>
+                    </button>
+                    <button class="btn btn--primary" type="button" title="Remove Ads" ng-click="AdManagerCtrl.removeAds(AdManagerCtrl.getSelected())">
+                        <span class="btn__label">Remove Ads</span>
+                    </button>
+                    <button class="btn btn--primary" type="button" title="Edit Ad Settings" ng-click="AdManagerCtrl.editSettings(AdManagerCtrl.getSelected())">
+                        <span class="btn__label">Edit Ad Settings</span>
+                    </button>
+                </div>
             </div>
         </nav>
     </header>

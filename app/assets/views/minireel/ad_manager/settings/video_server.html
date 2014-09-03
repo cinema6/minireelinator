@@ -1,57 +1,71 @@
 <div class="modalBody__group modalBody__group--sideTabs mrAdManager__videoServer">
     <form>
         <h1 class="forms__name--title">Choose Video Ad Server</h1>
-        <p>How do you want to load the <strong>video ads</strong> for this MiniReel?</p>
-        <div class="halfCol">
-            <label class="radiobox" for="videoServer_c6First">
+        <p class="forms__introText">How do you want to load the <strong>video ads</strong> for this MiniReel?</p>
+        <div class="twoCol">
+            <label class="radiobox radiobox--hasLabel clearfix" for="videoServer_c6First">
                 <input id="videoServer_c6First" type="radio" 
                     name="minireel-mode"
                     class="radiobox__input"
                     ng-model="AdSettingsCtrl.model.settings.video.waterfall"
                     value="cinema6-publisher"/>
-                <span class="btn__label faa fab"> 
+                <span class="btn__icon faa fab">
+                    &nbsp;
+                </span>
+                <span class="btn__label">
                     Use Cinema6 ad server <em>first</em>, <br> 
                     with your ad server as a backup.
                 </span>
             </label>
-            <label class="radiobox" for="videoServer_c6Only">
+            <label class="btn__label" for="videoServer_c6First">
+                
+            </label>
+            <label class="radiobox radiobox--hasLabel" for="videoServer_c6Only">
                 <input id="videoServer_c6Only" type="radio" 
                     name="minireel-mode"
                     class="radiobox__input"
                     ng-model="AdSettingsCtrl.model.settings.video.waterfall"
                     value="cinema6"/>
-                <span class="btn__label faa fab"> 
+                <span class="btn__icon faa fab"> 
+                    &nbsp;
+                </span>
+                <span class="btn__label"> 
                     Use Cinema6 ad server <em>only</em>, <br> 
                     <em>no backup ad server.</em>
                 </span>
             </label>
         </div>
-        <div class="halfCol">
-            <label class="radiobox" for="videoServer_pubFirst">
+        <div class="twoCol">
+            <label class="radiobox radiobox--hasLabel" for="videoServer_pubFirst">
                 <input id="videoServer_pubFirst" type="radio" 
                     name="minireel-mode"
                     class="radiobox__input"
                     ng-model="AdSettingsCtrl.model.settings.video.waterfall"
                     value="publisher-cinema6"/>
-                <span class="btn__label faa fab"> 
+                <span class="btn__icon faa fab"> 
+                    &nbsp;
+                </span>
+                <span class="btn__label"> 
                     Use your ad server <em>first</em>, <br> 
                     with Cinema6 ad server as a backup.
                 </span>
             </label>
-            <label class="radiobox" for="videoServer_pubOnly">
+            <label class="radiobox radiobox--hasLabel" for="videoServer_pubOnly">
                 <input id="videoServer_pubOnly" type="radio" 
                     name="minireel-mode"
                     class="radiobox__input"
                     ng-model="AdSettingsCtrl.model.settings.video.waterfall"
                     value="publisher"/>
-                <span class="btn__label faa fab"> 
+                <span class="btn__icon faa fab"> 
+                    &nbsp;
+                </span>
+                <span class="btn__label"> 
                     Use your ad server <em>only</em>, <br> 
                     <em>no backup ad server.</em>
                 </span>
             </label>
         </div>
     </form>
-    <p class="modalBody__fineprint typo--danger"><strong>*</strong> Indicates required field.</p>
 </div>
 <footer class="modalFooter__group">
     <button class="btnAction btnAction--first" c6-sref="{{AdSettingsCtrl.returnState}}" title="Cancel">Cancel</button>

@@ -802,6 +802,14 @@
         margin:1.5em 0 0 0;
     }
 
+    .mrAdManager__frequency,
+    .mrAdManager__videoServer {
+        margin-top:1.375em;
+    }
+        .skipAdsHeader {
+            margin-top:1.375em;
+        }
+
     /*  image settings / uploader
     ========================================================================== */
         .imgSettings__group {
@@ -909,8 +917,8 @@
             cursor:pointer;
             position:absolute; top:0; left:0; z-index: 2;
         }
-            .wizard__hitarea .btn__label:before,
-            .wizard__hitarea .btn__label:after {
+            .wizard__hitarea .btn__icon:before,
+            .wizard__hitarea .btn__icon:after {
                 top:2.75rem;
             }
             .wizard__choice--textOnly,
@@ -930,7 +938,7 @@
                  -webkit-transition:opacity 0.5s; transition:opacity 0.5s;
                 opacity:0;
             }
-                .radiobox__input:checked + .btn__label + .wizard__diagram:after {
+                .radiobox__input:checked + .btn__icon + .wizard__diagram:after {
                     opacity:1;
                 }
             .diagram__lightbox {
@@ -992,7 +1000,7 @@
             .wizard__choice:hover .wizard__title {
                 color:#2398db;
             }
-            .radiobox__input:checked + .btn__label + .wizard__diagram + .wizard__copy .wizard__title {
+            .radiobox__input:checked + .btn__icon + .wizard__diagram + .wizard__copy .wizard__title {
                 color:#3dc667;
             }
             .wizard__choice--disabled:hover .wizard__title,
