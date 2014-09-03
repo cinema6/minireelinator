@@ -142,7 +142,8 @@
     <footer class="tableFooter__group">
         <paginator-controls page="ManagerCtrl.page" limit="ManagerCtrl.limit" limits="ManagerCtrl.limits" total="ManagerCtrl.model.page.total"></paginator-controls>
         <p class="tableFooter__displayText" c6-alias="ManagerCtrl.model.value.meta.items as items">
-            Displaying <strong>{{items.start}}-{{items.end}}</strong> of {{items.total}} MiniReels
+            <span ng-show="minireels.length">Displaying <strong>{{items.start}}-{{items.end}}</strong> of {{items.total}} MiniReels</span>
+            <span ng-show="!minireels.length">0 MiniReels</span>
         </p>
     </footer>
 </section>
