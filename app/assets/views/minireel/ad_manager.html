@@ -113,7 +113,10 @@
                             Private
                         </strong> 
                         - <span class="miniReel__date">{{this.lastModified | date:'M/d/yyyy'}}</span>
-                        <p class="miniReel__count">{{AdManagerCtrl.adCountOf(this)}} ad | {{this.data.deck.length}} slides</p>
+                        <p class="miniReel__count">
+                            <ng-pluralize count="AdManagerCtrl.adCountOf(this)" when="{'0': 'No ads', '1': '1 ad', 'other': '{} ads'}"></ng-pluralize>
+                             | {{this.data.deck.length}} slides
+                        </p>
                     </div>
                     <!-- <div class="miniReel__stats">
                         <p class="miniReel__views">12123123 views</p>
