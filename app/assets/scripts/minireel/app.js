@@ -126,11 +126,15 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
 
         .directive('c6ClickOutside', ['$document','$timeout',
         function                     ( $document , $timeout ) {
+            function isInElement(child, container) {
+                return !!child && (child === container || isInElement(child.parentNode, container));
+            }
+
             return {
                 restrict: 'A',
                 link: function(scope, $element, attrs) {
                     function handleClick(event) {
-                        if (event.target === $element[0]) {
+                        if (isInElement(event.target, $element[0])) {
                             return;
                         }
 
