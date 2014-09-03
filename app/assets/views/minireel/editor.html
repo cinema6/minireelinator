@@ -57,14 +57,14 @@
                     <span class="btn__label">Preview Link</span>
                 </a>
             </div>
-            <button ng-click="EditorCtrl.confirmSave()" 
-            ng-class="{
-                'btn__publishChanges--alert': EditorCtrl.minireelState.dirty,
-                'btn__publishChanges--waiting': EditorCtrl.minireelState.inFlight,
-                'btn__publishChanges--disabled': !EditorCtrl.minireelState.dirty
-            }"
-            ng-disabled="!EditorCtrl.minireelState.dirty" title="Publish Changes" 
-            class="btnAction btnAction--success btn__publishChanges" type="button">
+            <button ng-click="EditorCtrl.confirmSave()" ng-show="EditorCtrl.model.status === 'active'"
+                ng-class="{
+                    'btn__publishChanges--alert': EditorCtrl.minireelState.dirty,
+                    'btn__publishChanges--waiting': EditorCtrl.minireelState.inFlight,
+                    'btn__publishChanges--disabled': !EditorCtrl.minireelState.dirty
+                }"
+                ng-disabled="!EditorCtrl.minireelState.dirty" title="Publish Changes" 
+                class="btnAction btnAction--success btn__publishChanges" type="button">
                 <span class="pubState c6studioSprite--alpha">&nbsp;</span>
                 <span class="btn__label">Publish Changes</span>
             </button>
