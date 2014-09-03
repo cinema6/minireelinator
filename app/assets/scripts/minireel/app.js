@@ -37,14 +37,36 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.map('MiniReel', function() {
-                this.route('/dashboard', 'MR:Manager', function() {
-                    this.route('/new', 'MR:New', function() {
-                        this.route('/', 'MR:New.General');
-                        this.route('/', 'MR:New.Category');
-                        this.route('/', 'MR:New.Mode');
-                        this.route('/', 'MR:New.Autoplay');
+                this.route('/studio', 'MR:Studio', function() {
+                    this.route('/dashboard', 'MR:Manager', function() {
+                        this.route('/new', 'MR:New', function() {
+                            this.route('/', 'MR:New.General');
+                            this.route('/', 'MR:New.Category');
+                            this.route('/', 'MR:New.Mode');
+                            this.route('/', 'MR:New.Autoplay');
+                        });
+                        this.route('/embed/:minireelId', 'MR:Manager.Embed');
                     });
-                    this.route('/embed/:minireelId', 'MR:Manager.Embed');
+
+                    this.route('/edit/:minireelId', 'MR:Editor', function() {
+                        this.route('/settings', 'MR:Editor.Settings', function() {
+                            this.route('/', 'MR:Settings.Category');
+                            this.route('/', 'MR:Settings.Mode');
+                            this.route('/', 'MR:Settings.Autoplay');
+                        });
+                        this.route('/splash', 'MR:Editor.Splash', function() {
+                            this.route('/', 'MR:Splash.Source');
+                            this.route('/', 'MR:Splash.Image');
+                        });
+                        this.route('/card/:cardId', 'MR:EditCard', function() {
+                            this.state('MR:EditCard.Copy');
+                            this.state('MR:EditCard.Video');
+                            this.state('MR:EditCard.Ballot');
+                        });
+                        this.route('/card/new', 'MR:Editor.NewCard');
+
+                        this.route('/search', 'MR:VideoSearch');
+                    });
                 });
 
                 this.route('/advertising', 'MR:AdManager', function() {
@@ -53,26 +75,6 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                         this.route('/', 'MR:AdManager.Settings.VideoServer');
                         this.route('/', 'MR:AdManager.Settings.DisplayServer');
                     });
-                });
-
-                this.route('/edit/:minireelId', 'MR:Editor', function() {
-                    this.route('/settings', 'MR:Editor.Settings', function() {
-                        this.route('/', 'MR:Settings.Category');
-                        this.route('/', 'MR:Settings.Mode');
-                        this.route('/', 'MR:Settings.Autoplay');
-                    });
-                    this.route('/splash', 'MR:Editor.Splash', function() {
-                        this.route('/', 'MR:Splash.Source');
-                        this.route('/', 'MR:Splash.Image');
-                    });
-                    this.route('/card/:cardId', 'MR:EditCard', function() {
-                        this.state('MR:EditCard.Copy');
-                        this.state('MR:EditCard.Video');
-                        this.state('MR:EditCard.Ballot');
-                    });
-                    this.route('/card/new', 'MR:Editor.NewCard');
-
-                    this.route('/search', 'MR:VideoSearch');
                 });
             });
         }])
@@ -357,6 +359,13 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                             }
                         });
                 };
+                this.enter = function() {
+                    c6State.goTo('MR:Manager', null, null, true);
+                };
+            }]);
+
+            c6StateProvider.state('MR:Studio', ['c6State',
+            function                           ( c6State ) {
                 this.enter = function() {
                     c6State.goTo('MR:Manager', null, null, true);
                 };
