@@ -40,7 +40,8 @@ function( angular , c6ui , c6State  , services          ) {
                 };
 
                 this.model = function() {
-                    return this.cParent.getMiniReelList(this.filter, this.limit, this.page)
+                    return c6State.get('MiniReel')
+                        .getMiniReelList(this.filter, this.limit, this.page)
                         .ensureResolution();
                 };
             }]);
@@ -51,7 +52,8 @@ function( angular , c6ui , c6State  , services          ) {
         function                         ( $scope , c6State , MiniReelService , cState ,
                                            ConfirmDialogService , EditorService , $q ) {
             var self = this,
-                MiniReelCtrl = $scope.MiniReelCtrl;
+                MiniReelCtrl = $scope.MiniReelCtrl,
+                MiniReelState = c6State.get('MiniReel');
 
             function isSame(prop, obj1, obj2) {
                 return obj1[prop] === obj2[prop];
@@ -85,7 +87,7 @@ function( angular , c6ui , c6State  , services          ) {
             }
 
             function refetchMiniReels(fromStart) {
-                self.model = cState.cParent.getMiniReelList(
+                self.model = MiniReelState.getMiniReelList(
                     self.filter,
                     self.limit,
                     fromStart ? 1 : self.page,

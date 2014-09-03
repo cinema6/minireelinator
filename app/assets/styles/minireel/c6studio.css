@@ -15,6 +15,89 @@
             background-size:40.5rem 12.5rem;
         }
 
+    .ui__plus {
+        background-position:-1.5625em 0; display:block;
+        width:0.5em; height:0.5em;
+    }
+    .ui__x {
+        background-position:-1.5625em -0.875em;
+        width:1.125em; height:1.125em; display: block;
+    }
+        .ui__x--red {
+            background-position:-2.6875em -0.875em;
+        }
+        .ui__x--white {
+            background-position:-3.8125em -0.875em;
+        }
+    .ui__xSmall {
+        background-position:-3.625em -2.3125em;
+        width:0.75em; height:0.75em; display: block;
+    }
+        .ui__xSmall--red {
+            background-position:-4.4375em -2.3125em;
+        }
+        .ui__xSmall--white {
+            background-position:-5.25em -2.3125em;
+        }
+    .ui__checkSmall {
+        width:0.875em; height:0.625em;
+        background-position:-3.0625em 0;
+        display:block;
+    }
+        .ui__checkSmall--white {
+            background-position:-2.125em 0;
+        }
+    .ui__textIconSmall {
+        width:0.75em; height:0.75em;
+        background-position:-0.8125em -3.8125em;
+        display:block;
+    }
+        .ui__textIconSmall--white {
+            background-position:0 -3.8125em;
+        }
+    .ui__playIconSmall {
+        width:0.75em; height:0.75em;
+        background-position:-2.4375em -3.8125em;
+        display:block;
+    }
+        .ui__playIconSmall--white {
+            background-position:-1.625em -3.8125em;
+        }
+    .ui__ballotIconSmall {
+        width:1.3125em; height:0.75em;
+        background-position:-4.625em -3.8125em;
+        display:block;
+    }
+        .ui__ballotIconSmall--white {
+            background-position:-3.25em -3.8125em;
+        }
+    .ui__adIconSmall {
+        width:0.75em; height:0.75em;
+        background-position:-6.8125em -3.8125em;
+        display:block;
+    }
+        .ui__adIconSmall--white {
+            background-position:-6em -3.8125em;
+        }
+    .ui__skipIconSmall {
+        width:0.9375em; height:0.75em;
+        background-position:-8.625em -3.8125em;
+        display:block;
+    }
+        .ui__skipIconSmall--white {
+            background-position:-7.625em -3.8125em;
+        }
+    .ui__add {
+        background-position:-5.3125em 0; display: block;
+        width:2.25em; height:2.25em;
+    }
+    .ui__alert {
+        width:1.5rem; height:1.5rem;
+        display:block;
+        background-position:-7.6875rem -2.3125rem;
+    }
+
+
 /*  ==========================================================================
     .miniReels__group
     ========================================================================== */
@@ -129,6 +212,7 @@
             .miniReel__title {
                 margin:0.1875rem 0 0 0; font-size:0.875em;
                 cursor:pointer;
+                color:#525252;
             }
                 .miniReel__title:hover {
                     color:#2398db;
@@ -204,12 +288,487 @@
                     fill:#2398db;
                 }
 
+/*  ==========================================================================
+    Editor custom styles
+    ========================================================================== */
+    .pageHeader--editor {
+        margin-top:1.125em;
+    }
+        .pageTitle--mrTitle {
+            position:relative; cursor:pointer;
+            border:1px solid #fff; padding:2px; margin:0;
+            float:none; 
+            color:#525252; font-weight:700; 
+        }
+            .pageTitle--mrTitle:hover {
+                background:#eaf7ff;
+            }
+            .pageTitle--mrTitle .btn__editTitle {
+                position:absolute; top:0.5em; right:0;
+                opacity:0;
+                font-size:0.5em;
+            }
+                .pageTitle--mrTitle:hover .btn__editTitle {
+                    opacity:1;
+                }
+        .mrTitle__textBox {
+            margin:0; padding:2px;
+            width:100%; box-sizing:border-box;
+            font-weight:700; font-size:1.5em; line-height: 1.5;
+            display: block;
+        }
+        .mrTitle__submit {
+            display: inline; position: absolute;
+            top: 0; left: 0;
+            height: 0; width: 0;
+            padding: 0; margin: 0;
+            border: none;
+        }
+
+        .metaData__group {
+            font-size:0.875em;
+            margin-top:2px;
+        }
+        .pageHeader__actionBar {
+            margin:0.75em 0 0 0;
+        }
+            .pageHeader__btnGroup {
+                float:left;
+            }
+            .btn__publishChanges {
+                padding:0.5625rem 1.5em 0.5rem 1.5em;
+            }
+            .btn__publishChanges .btn__label {
+                padding-left:2rem;
+            }
+            .btn__publishChanges .pubState {
+                width:1.5rem; height:1.5rem;
+                display:block; margin:-0.25rem 0 0 0;
+                position:absolute;
+            }
+                .btn__publishChanges--alert .pubState {
+                    background-position:-7.6875rem -2.3125rem;
+                }
+                .btn__publishChanges--disabled .pubState,
+                .btn__publishChanges--confirm .pubState {
+                    background-position:-9.25rem -2.3125rem;
+                }
+                .btn__publishChanges--waiting .pubState {
+                    background:url('../../img/minireel/ui__inProgress@2x.gif') 50% 50% / 1.5rem 1.5rem no-repeat;
+                }
+
+
+/*  ==========================================================================
+    miniReel editor styles
+    ========================================================================== */
+    c6-drag-space {
+        display: block;
+    }
+
+    .table__group {
+        position: relative; background:#eee;
+    }
+        .table__left-zone {
+            position: absolute;
+            width: 10px; height: 100%;
+            top: 0; left: 0;
+        }
+        .table__right-zone {
+            position: absolute;
+            width: 10px; height: 100%;
+            top: 0; right: 0;
+        }
+
+    .card__container {
+        display: inline-block;
+        width: 13.5em; margin:3em 0 0 0;
+        vertical-align: top;
+    }
+        .card__container--dragging {
+            width: 0; opacity:0.5;
+            z-index: 100; position:absolute;
+        }
+        .card__container--reordering {
+            width: 0 !important;
+        }
+        
+    .card__drop-zone {
+        display: inline-block;
+        width: 2px; height:21.25rem;
+        vertical-align: top;
+        margin: 3em 5px 0;
+        border:0;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+        .card__drop-zone.c6-drag-zone-active {
+            /*width: calc(10rem + 34px);*/
+            width:13.5em;
+            background:#fff;
+            border:3px solid rgba(19,162,255,0.5);
+        }
+        .card__drop-zone--reordering {
+            width: 2px !important;
+            border:0 !important;
+            background:none !important;
+        }
+    .card__list {
+        overflow-x: scroll; white-space: nowrap;
+        overflow-y: hidden;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        margin:0; padding:0 1.5em 1.6875em 1.5em;
+    }
+        .card__list-item {
+            display: inline-block;
+            position:relative;
+            vertical-align: top;
+        }
+            .card__type {
+                color:#646464; font-size:0.75em; font-weight:100; text-align: center;
+                margin:-1.5625rem 0 0.4375rem 0; position:relative;
+            }
+            .card__deleteBtn {
+                position:absolute; z-index: 4;
+                background:black; background:rgba(0,0,0,0.75);
+                border:2px solid #fff; border-radius:50%; 
+                padding:0.5em; margin:-14px 0 0 196px;
+                font-size:1rem;
+                width:2em; height:2em;
+                cursor:pointer;
+                -webkit-box-shadow: 0 3px 5px 0 rgba(0,0,0,0.5);
+                box-shadow: 0 3px 5px 0 rgba(0,0,0,0.5);
+                -webkit-transition: background 0.4s; transition: background 0.3s;
+            }
+                .card__deleteBtn:hover {
+                    background:#dc4141; background:rgba(220,65,65,0.75);
+                }
+                .card__deleteBtn:focus {
+                    border:2px solid #fff;
+                }
+            .card__item {
+                width: 13.5em; min-height:21.25em;
+                white-space: normal; vertical-align: top;
+                background: #fff; opacity: 0.4;
+                position:relative;
+            }
+                .card__item.c6-over-zone {
+                    opacity: 1;
+                }
+                .card__imgBox {
+                    background:#ccc url('../../img/minireel/default_square.jpg') 50% 50% / cover no-repeat;
+                    width:100%; height:0; padding-bottom:66.667%; display:block;
+                    position:relative;
+                    cursor:pointer;
+                }
+                    .card__img {
+                        width:100%; height:100%;
+                        position:absolute;
+                        background:50% 50% / 120% auto no-repeat;
+                    }
+                .card__body {
+                    padding:0 0.75em 1.1875em 0.625em;
+                    cursor:pointer;
+                    -webkit-transition: border 0.5s; transition: border 0.5s;
+                }
+                    .card__copy {
+                        height:10em; overflow: hidden;
+                    }
+                        .card__title {
+                            font-size:1em; line-height: 1.5; font-weight:700; color:#444;
+                            margin:0; padding:0.6875em 0 0 0;
+                        }
+                        .card__summary {
+                            font-size:0.8125em; line-height:1.4;
+                            margin:0.769em 0;
+                        }
+            .card__statusIndicator {
+                position:absolute; z-index:1; top:0; left:0;
+                width:100%; height:100%;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+                -webkit-transition: border 0.2s, background 0.5s; transition: border 0.2s, background 0.5s;
+                cursor:pointer;
+                border:1px solid #fff;
+            }
+                .card__statusIndicator:hover {
+                    border:1px solid #13a2ff;
+                    background:#4a9cd1; background:rgba(74,156,209,0.25);
+                }
+                    .card__statusIndicator .btn__edit {
+                        margin:-1em 0 0 -2.75em;
+                        position:absolute; top:44%; left:50%;
+                        opacity:0;
+                    }
+                        .card__statusIndicator .ui__edit {
+                            position:absolute; margin:0.25em 0.5em; left:0;
+                        }
+                        .card__statusIndicator:hover .btn__edit {
+                            opacity:1;
+                        }
+                    .card__statusMsg {
+                        display:none; color:#fff; text-align: center;
+                    }
+                .card__statusIndicator--error {
+                    border:3px solid #dc4141;
+                    background:rgba(220,65,65,0.25);
+                } 
+                    .card__statusIndicator--error:hover {
+                        border:3px solid #dc4141;
+                        background:#dc4141; background:rgba(220,65,65,0.75);
+                    }
+                    .card__statusIndicator--error .btn__edit {
+                        background:#dc4141;
+                    }
+                    .card__statusIndicator--error .card__statusMsg {
+                        display: block;
+                    }
+                    .card__statusIndicator--error .ui__alert {
+                        margin:1em auto 0;
+                    }
+                    .card__statusIndicator--error .statusText {
+                        font-size:0.8125em; line-height:1.25; font-style: italic;
+                        background:#dc4141;
+                        display: block;
+                        padding:0.5em 0; margin:0.5em 0 0 0;
+                    }
+            .card__contextBar {
+                text-align: center; font-size:0.75em;
+                margin:0.4166em 0 0 0;
+            }
+
+    /*  new card 
+    ========================================================================== */
+    .new__container {
+        display: inline-block;
+        margin: 0 0.75em 0 0;
+        width: 2.25em; height: 24rem;
+        position: relative;
+    }
+        .new__container--reordering {
+            display: none !important;
+        }
+        .new__button, .no__button {
+            margin: auto; border:0; padding:0;
+            font-size:1em;
+            position: absolute; top:0; bottom:0; left:0; right:0;
+            cursor:pointer;
+        }
+            .new__button:hover {
+                background-position:-7.625em 0;
+            }
+        .new__container--spacer .new__button {
+            display:none;
+        }
+        .no__button {
+            cursor:default; display:none;
+            width:2.25em; height:2.25em;
+            border-radius:50%; border:4px solid #dedede;
+            box-sizing:border-box;
+        }
+        .new__container--spacer .new__button {
+            display:none;
+        }
+        .new__container--spacer .no__button {
+            display:block;
+        }
+
+
+/*  recap card
+    ========================================================================== */
+    .card--recap .card__item {
+        box-sizing:border-box;
+        padding:0 0.75em;
+    }
+        .card--recap .card__img {
+            background-position:-23.75em -0.625em;
+            width:12em; height:10.5em;
+            position:static;
+            margin:0.6875em 0 0 0;
+        }
+        .card--recap .card__body {
+            padding:0 0 1.1875em 0;
+            cursor:default;
+        }
+
+    /*  create new slide 
+    ========================================================================== */
+    .card--createNew {
+        margin-right:0.75em;
+    }
+        .card--createNew .card__item {
+            height:21.1875em; opacity:1;
+            border:1px dashed #b0b0b0;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-transition: background 0.4s; transition: background 0.3s;
+        }
+            .card--createNew:hover .card__item {
+                border:1px dashed #13a2ff;
+                background:#D1E6F3;
+            }
+        .card--createNew .card__title {
+            text-align: center; font-weight:100; color:#b0b0b0;
+            padding:5em 0 0 0;
+        }
+            .card--createNew:hover .card__title {
+                color:#444;
+            }
+        .card--createNew .createNew__button {
+            width:100%; height:100%;
+            border:0; margin:0; padding:0; background:transparent;
+            position: absolute;
+            cursor: pointer;
+        }
+        .card--createNew .ui__add {
+            width:4.5rem; height:4.5rem;
+            background-size:25rem 12.5rem;
+            background-position:-15.25rem 0;
+            margin:0 auto; opacity:0.25;
+            -webkit-transition: opacity 0.4s; transition: opacity 0.3s;
+        }
+            .card--createNew:hover .ui__add {
+                opacity:1;
+            }
+
+
+    .c6-dragging {
+        cursor: move;
+        box-shadow: 0 0 6px 0 rgba(50, 50, 50, 0.5);
+        z-index:100;
+    }
+
+
+    /*  preview panel
+    ========================================================================== */
+        .preview__container {
+            height:auto;
+            padding:4em 1.5em 1.5em 1.5em;
+            position:fixed; z-index:100; top:50%; left:50%;
+            background:#fff;
+            -webkit-transition: all 0.5s; transition: all 0.5s;
+        }
+            .preview__container--mobile {
+                width:20em; height:auto; min-height:38.875em;
+                margin:-22.1875em 0 0 -11.5em;
+            }
+            .preview__container--desktop {
+                width: 43.75em; height:auto;
+                margin:-22.375em 0 0 -23.375em;
+            }
+            @media screen and (max-height:46em) {
+                /* height: 736px */
+                .preview__container {
+                    position:absolute; top:0.5em;
+                    margin-top:0;
+                }
+            }
+
+            .preview__header {
+                position: absolute; top:0; left:0; right:0;
+            }
+            .preview__iframeHolder {
+                width:100%;
+            }
+            .preview__iframe > iframe {
+                border: 0; display: block;
+            }
+                .preview__iframe--mobile > iframe {
+                    width:20em;
+                    height:35.5em;
+                }
+                .preview__iframe--desktop > iframe {
+                    width: 43.75em;
+                    height: 37.25em;
+                }
+                    .preview__iframe--desktop.preview__iframe--fullscreen>iframe {
+                        width: 100%; height: 100%;
+                        position:fixed; top:0; left:0;
+                        background:white;
+                    }
+                .preview__iframe--inactive>iframe {
+                    display:none;
+                }
+            .preview__splashHolder--inactive {
+                display: none;
+            }
+            .preview__form {
+                margin:0 0 0.5em 0;
+            }
+
+
+/*  ==========================================================================
+    <video-trimmer> styles
+    ========================================================================== */
+    video-trimmer {
+        display: block;
+    }
+    .video-trimmer__group {
+        width:100%; background:#282b2c; 
+        padding:1.5em 0;
+        position:relative;
+    }
+        .video-trimmer__start-marker,
+        .video-trimmer__end-marker {
+            position: absolute;
+            cursor: pointer;
+            height:1.25em; width:0.75em;
+            overflow-x: visible;
+            display: inline-block; padding:3px 0 0 0;
+        }
+        .video-trimmer__start-marker {
+            top:0;
+        }
+        .video-trimmer__end-marker {
+            bottom:0;
+            padding:0 0 3px 0;
+            direction: rtl;
+        }
+            .ui__startMarker,
+            .ui__endMarker {
+                background-position:-6.0625em -2.3125em;
+                width: 0.75em; height: 1.125em;
+                display: block;
+                position: absolute; bottom:0; left:0;
+            }
+            .ui__endMarker {
+                background-position:-6.875em -2.3125em;
+                left:auto; right:0; bottom:auto; top:0;
+            }
+            .video-trimmer__timestamp {
+                font-size:0.75em; color:#ccc; line-height:1;
+                display:block;
+                margin:0 0 0 1.5em;
+            }
+                .video-trimmer__end-marker .video-trimmer__timestamp {
+                    text-align:right; 
+                    margin: 0 1.5em 0.25em 0; padding:7px 0 0 0;
+                }
+        .video-trimmer__seek-bar {
+            height: 0.1875rem;
+            margin:0; padding-right:6px;
+            background: #4a9cd1;
+        }
+            .video-trimmer__playhead {
+                position: relative;
+                height:100%; width:6px; margin:0;
+                background:#ccc;
+            }
+
 
 /*  ==========================================================================
     custom modal styles
     ========================================================================== */
     .mrConfigure__general,
-    .mrConfigure__autoplay {
+    .mrConfigure__autoplay,
+    .mrEdit__copyTab, .mrEdit__videoTab {
         top:4.375em;
     }
     .mrConfigure__mode {
@@ -227,6 +786,96 @@
             margin:0 0 1.5em 0;
         }
 
+    .mrEdit__slideCopy {
+        margin:0.875em 0 0 0;
+        display: block;
+    }
+    .mrEdit__ballotTab {
+        top:4.9375em;
+    }
+        .mrEdit__slideQuestion {
+            margin:21px 0 14px;
+            display: block;
+        }
+    .mrSplash__sourceTab,
+    .mrSplash__imageTab {
+        margin:1.5em 0 0 0;
+    }
+
+    /*  image settings / uploader
+    ========================================================================== */
+        .imgSettings__group {
+            margin:0;
+        }
+            .imgSettings__imgHolder {
+                width:18.75em; position:absolute;
+            }
+            .imgSettings__imgBox {
+                width:100%; height:0;
+                position:absolute;
+                background:#ccc url('../../img/minireel/default_square.jpg') 50% 50% / cover no-repeat;
+            }
+                .imgSettings__imgBox--1-1 {
+                    padding-bottom:100%;
+                }
+                .imgSettings__imgBox--6-5 {
+                    padding-bottom:83.333%;
+                }
+                .imgSettings__imgBox--3-2 {
+                    padding-bottom:66.667%;
+                }
+                .imgSettings__imgBox--16-9 {
+                    padding-bottom:56.25%;
+                }
+            .imgSettings__copy {
+                margin-left:324px;
+            }
+                .imgSettings__group .modal__label {
+                    margin-bottom:0.1875em;
+                }
+                
+
+                .coverUploader__filePath {
+                    display: block;
+                    padding:0; margin:0;
+                    font-size:1rem;
+                }
+                    .coverUploader__filePath:focus {
+                        background:#eff9ff;
+                    }
+                .coverUploader__controls {
+                    height:6.1875em;
+                }
+                    .coverUploader__group .progressBar__statusText {
+                        font-size:0.75em;
+                        margin:0.25em 0 1em;
+                    }
+                    .coverUploader__controls .coverUploader__button {
+                        margin:0.75em 0 0 0;
+                    }
+                    .coverUploader__controls .typo--attention {
+                        margin:0.25em 0 0 0;
+                    }
+                .coverUploader__group .progressBar {
+                    border-radius:3px;
+                    height:0.5em; overflow: hidden;
+                    background:#ccc;
+                    margin:0.875em 0 0.25em 0;
+                }
+                    .coverUploader__group .progressBar__status {
+                        background:#72ad25;
+                    }
+                    .coverUploader__group .progressBar__statusText {
+                        margin:0;
+                    }
+                .coverUploader__helpTips {
+                    font-size:0.875em; line-height: 1.25;
+                    padding:0 0 0 2em; margin:0 0 1.25rem 0;
+                    list-style: disc;
+                }
+                    .coverUploader__helpTips li {
+                        margin:0.5em 0;
+                    }
 
 /*  ==========================================================================
     minireel wizard styles
@@ -322,7 +971,7 @@
             .wizard__choice--small .wizard__copy {
                 left:13.125em;
             }
-            .wizard__copy .wizard__title {
+            .wizard__title {
                 font-size:1.125em; color:#444; font-weight:700;
                 margin:5px 0;
                 display: block;
@@ -340,13 +989,6 @@
                 margin:5px 0;
                 display: block;
             }
-                .form__adSettings .wizard__copy .wizard__p {
-                    margin:0;
-                    font-size:0.875em;
-                }
-                .wizard__choice--small .wizard__copy .wizard__p {
-                    font-size:0.875em;
-                }
             .wizard__choice:hover .wizard__title {
                 color:#2398db;
             }
@@ -368,14 +1010,17 @@
                 margin-top:1.25em;
             }
         .videoPlayer {
-            width:100%; height:16.875em;
+            width:100%; height:20em;
             background:#ccc url('../../img/minireel/default_square.jpg') 50% 50% / cover no-repeat;
         }
+            .mrEdit__videoTab .videoPlayer {
+                margin:1em 0 0 0;
+            }
         .videoPlayer__messenger {
-            background:rgba(214,18,18,0.9);
+            background:rgba(220,65,65,0.9);
             text-align: center; color:#fff;
-            width:100%; height:14.0625em;
-            padding:6em 0 0 0;
+            width:100%; height:15.1875em;
+            padding:8em 0 0 0; margin:1em 0 0 0;
             position: absolute; z-index: 1;
         }
             .videoPlayer__messenger p {
@@ -461,7 +1106,18 @@
             .mr-splashBlocker {
                 position:absolute; z-index:5; 
                 top:0; left:0; bottom:0; right:0;
+                cursor: pointer;
+                opacity:0;
+                background:rgba(0,0,0,0.4);
+                -webkit-transition:opacity 0.25s; transition:opacity 0.25s;
             }
+                .mr-splashBlocker:hover {
+                    opacity:1;
+                }
+                .btn__editCover {
+                    position:absolute; top:50%; left:50%;
+                    margin:-1.0625em 0 0 -2.75em;    
+                }
         .embed__fineprint {
             font-size:0.8125em;
         }
@@ -520,6 +1176,16 @@
             margin:0.125rem 0 0 0; width:100%;
             font-size:0.8125rem;
         }
+
+
+/*  ==========================================================================
+    account settings pages
+    ========================================================================== */
+    .btnAccounts,
+    .btnAccounts:focus,
+    .btnAccounts:active {
+        margin:1.5em 0 0 12em;
+    }
 
 
 /*  ==========================================================================

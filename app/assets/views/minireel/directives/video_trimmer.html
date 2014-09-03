@@ -1,13 +1,13 @@
 <div c6-drag-space class="video-trimmer__group">
     <div ng-show="enabled" id="start-marker" c6-draggable class="video-trimmer__start-marker" ng-style="{ left: position.startMarker }">
-        <span class="ui__startMarker sprite--alpha"><span class="ir">Start</span></span>
+        <span class="ui__startMarker c6studioSprite--alpha"><span class="ir">Start</span></span>
         <span class="video-trimmer__timestamp">{{startStamp}}</span>
     </div>
     <div id="seek-bar" c6-drag-zone class="video-trimmer__seek-bar">
         <div class="video-trimmer__playhead" ng-style="{ left: position.playhead }">&nbsp;</div>
     </div>
     <div ng-show="enabled" id="end-marker" c6-draggable class="video-trimmer__end-marker" ng-style="{ left: position.endMarker }">
-        <span class="ui__endMarker sprite--alpha"><span class="ir">End</span></span>
+        <span class="ui__endMarker c6studioSprite--alpha"><span class="ir">End</span></span>
         <span class="video-trimmer__timestamp">{{endStamp}}</span>
     </div>
 </div>

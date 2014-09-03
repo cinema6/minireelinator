@@ -1,20 +1,34 @@
-<div class="modal__content modal__editor-slide" c6-alias="EditCardCtrl.model as card">
+<div class="modalBody__group modalBody__group--sideTabs mrEdit__copyTab" c6-alias="EditCardCtrl.model as card">
     <form>
-        <label class="field field--noBreak clearfix">
-            <span class="modal__label">
-                Slide Title <span class="typo--attention">*</span>
+        <label class="forms__pair clearfix">
+            <span class="forms__name">
+                Slide Title <strong class="typo--danger">*</strong>
             </span>
-            <span class="modal__textBoxHolder">
-                <input ng-model="card.title" type="text" class="modal__textBox" ng-model="card.title">
-                <span class="field__context typo--context">({{card.title.length || 0}} of 100 max characters recommended)</span>
+            <span class="forms__inputHolder">
+                <input ng-model="card.title" type="text" class="forms__textField forms__textField--block">
+                <span class="typo--guidance typo--warning">({{card.title.length || 0}} of 100 max characters recommended)</span>
             </span>
         </label>
-        <label class="field field--noBreak">
-            <span ng-show="EditorCtrl.cardLimits.copy < Infinity" class="modal__label">Slide Copy </span>
-            <span class="modal__textBoxHolder">
-                <textarea ng-model="card.note" class="modal__textarea modal__cardCopy"></textarea>
-                <span class="field__context typo--context">({{card.note.length || 0}} <span ng-hide="EditorCtrl.cardLimits.copy === Infinity">of {{EditorCtrl.cardLimits.copy}} max</span> characters)</span>
+        <label class="forms__pair clearfix mrEdit__slideCopy">
+            <span class="forms__name">Slide Copy </span>
+            <span class="forms__inputHolder">
+                <textarea ng-model="card.note" class="forms__textField forms__textarea"></textarea>
+                <span class="typo--guidance typo--warning">({{card.note.length || 0}} <span ng-hide="EditorCtrl.cardLimits.copy === Infinity">of {{EditorCtrl.cardLimits.copy}} max</span> characters)</span>
             </span>
         </label>
     </form>
+    <p class="modalBody__fineprint typo--danger"><strong>*</strong> Indicates required field.</p>
 </div>
+<footer class="modalFooter__group">
+    <button class="btnAction btnAction--first" 
+    ng-click="EditCardCtrl.negativeButton.action()"
+    type="button" title="{{EditCardCtrl.negativeButton.text}}">
+        {{EditCardCtrl.negativeButton.text}}
+    </button>
+    <button class="btnAction btnAction--primary btnAction--last" 
+    ng-click="EditCardCtrl.primaryButton.action()" ng-disabled="!EditCardCtrl.primaryButton.enabled"
+    type="button" title="{{EditCardCtrl.primaryButton.text}}">
+        {{EditCardCtrl.primaryButton.text}}
+    </button>
+    <p class="modalFooter__guideText">Step {{EditCardCtrl.tabs.indexOf(EditCardCtrl.currentTab) + 1}} of {{EditCardCtrl.tabs.length}} : <strong>Required</strong></p>
+</footer>

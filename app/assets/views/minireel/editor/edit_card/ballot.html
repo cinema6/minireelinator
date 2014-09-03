@@ -1,32 +1,48 @@
-<div class="modal__content modal__editor-slide-ballot">
-    <div class="modal__instructions">
-        <p>
-            Questionnaires are an optional way to present a poll along with the video. To include a Questionnaire, fill in the <label for="option1"><strong>Option 1</strong></label> and <label for="option2"><strong>Option 2</strong></label> fields below. The Question field is not mandatory.
-        </p>
-    </div>
+<div class="modalBody__group modalBody__group--sideTabs mrEdit__ballotTab">
+    <p class="modalBody__message">
+        Questionnaires are an optional way to present a poll along with the video. To include a Questionnaire, fill in the <label for="option1"><strong>Option 1</strong></label> and <label for="option2"><strong>Option 2</strong></label> fields below. The Question field is not mandatory.
+    </p>
     <form c6-alias="EditCardBallotCtrl.model as ballot">
-        <label class="field field--noBreak clearfix">
-            <span class="modal__label">Question</span>
-            <span class="modal__textBoxHolder">
-                <input ng-model="ballot.prompt" maxlength="100" class="modal__textBox">
-                <span class="field__context typo--context">({{ballot.prompt.length || 0}} of 100 max characters)</span>
+
+        <label class="forms__pair mrEdit__slideQuestion clearfix">
+            <span class="forms__name">Question</span>
+            <span class="forms__inputHolder">
+                <input ng-model="ballot.prompt" type="text" maxlength="100" 
+                class="forms__textField forms__textField--block">
+                <span class="typo--guidance typo--warning">({{ballot.prompt.length || 0}} of 100 max characters recommended)</span>
             </span>
         </label>
-        <label class="field field--noBreak clearfix" c6-alias="ballot.choices as choices">
-            <span class="modal__label">Option 1 <span class="typo--attention">*</span></span>
-            <span class="modal__textBoxHolder">
-                <input id="option1" class="modal__textBox modal__textBox--short" ng-model="choices[0]" maxlength="40">
-                <span class="field__context field__context--short typo--context">({{choices[0].length || 0}} of 40 max characters)</span> 
+        <label class="forms__pair mrEdit__slideQuestion clearfix" c6-alias="ballot.choices as choices">
+            <span class="forms__name">Option 1</span>
+            <span class="forms__inputHolder">
+                <input id="option1" ng-model="choices[0]" maxlength="40" type="text"
+                class="forms__textField forms__textField--block">
+                <span class="typo--guidance typo--warning">({{choices[0].length || 0}} of 40 max characters)</span>
             </span>
         </label>
-        <label class="field field--noBreak clearfix" c6-alias="ballot.choices as choices">
-            <span class="modal__label">Option 2 <span class="typo--attention">*</span></span>
-            <span class="modal__textBoxHolder">
-                <input id="option2" class="modal__textBox modal__textBox--short" ng-model="choices[1]" maxlength="40">
-                <span class="field__context field__context--short typo--context">({{choices[1].length || 0}} of 40 max characters)</span>
+        <label class="forms__pair mrEdit__slideQuestion clearfix" c6-alias="ballot.choices as choices">
+            <span class="forms__name">Option 2</span>
+            <span class="forms__inputHolder">
+                <input id="option2" ng-model="choices[1]" maxlength="40" type="text"
+                class="forms__textField forms__textField--block">
+                <span class="typo--guidance typo--warning">({{choices[1].length || 0}} of 40 max characters)</span>
             </span>
         </label>
     </form>
 
     <p>To remove a Questionnaire, leave the <label for="option1"><strong>Option 1</strong></label> and <label for="option2"><strong>Option 2</strong></label> fields empty.</p>
 </div>
+
+<footer class="modalFooter__group">
+    <button class="btnAction btnAction--first" 
+    ng-click="EditCardCtrl.negativeButton.action()"
+    type="button" title="{{EditCardCtrl.negativeButton.text}}">
+        {{EditCardCtrl.negativeButton.text}}
+    </button>
+    <button class="btnAction btnAction--primary btnAction--last" 
+    ng-click="EditCardCtrl.primaryButton.action()" ng-disabled="!EditCardCtrl.primaryButton.enabled"
+    type="button" title="{{EditCardCtrl.primaryButton.text}}">
+        {{EditCardCtrl.primaryButton.text}}
+    </button>
+    <p class="modalFooter__guideText">Step {{EditCardCtrl.tabs.indexOf(EditCardCtrl.currentTab) + 1}} of {{EditCardCtrl.tabs.length}} : <strong>Optional</strong></p>
+</footer>
