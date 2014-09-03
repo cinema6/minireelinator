@@ -28,13 +28,18 @@
             beforeEach(function() {
                 cModel = {
                     id: 'e-53ae461c63b015',
+                    status: 'pending',
+                    access: 'public',
                     data: {
+                        title: 'My Awesome MiniReel',
                         branding: 'urbantimes',
                         mode: 'lightbox',
                         collateral: {
                             splash: null
                         },
                         splash: {
+                            theme: 'img-only',
+                            ratio: '16-9',
                             source: 'generated'
                         },
                         deck: [
@@ -242,6 +247,12 @@
                         it('should be the splash without the cacheBuster', function() {
                             expect(EditorCtrl.splashSrc).toBe(cModel.data.collateral.splash);
                         });
+                    });
+                });
+
+                describe('previewUrl', function() {
+                    it('should be a preview URL for the MiniReel', function() {
+                        expect(EditorCtrl.previewUrl).toBe(MiniReelService.previewUrlOf(cModel, '/#/preview/minireel'));
                     });
                 });
 
