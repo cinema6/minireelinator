@@ -543,12 +543,30 @@
                 });
 
                 describe('settingsTypeOf(minireel)', function() {
-                    it('should be Default if there is no adConfig', function() {
+                    it('should be Default if there is no adConfig or static ad cards', function() {
                         expect(AdManagerCtrl.settingsTypeOf(minireel)).toBe('Default');
                     });
 
-                    it('should be Custom if there is an adConfig', function() {
-                        minireel.data.adConfig = {};
+                    it('should be Custom if there is an adConfig with ads, or static ad cards', function() {
+                        minireel.data.adConfig = {
+                            video: {
+                                firstPlacement: 3,
+                                frequency: 3,
+                                skip: 6,
+                                waterfall: 'cinema6'
+                            },
+                            display: {
+                                waterfall: 'cinema6'
+                            }
+                        };
+                        expect(AdManagerCtrl.settingsTypeOf(minireel)).toBe('Custom');
+
+                        delete minireel.data.adConfig;
+
+                        expect(AdManagerCtrl.settingsTypeOf(minireel)).toBe('Default');
+
+                        minireel.data.deck.push({ad:true});
+
                         expect(AdManagerCtrl.settingsTypeOf(minireel)).toBe('Custom');
                     });
 
@@ -565,6 +583,21 @@
                             }
                         };
                         expect(AdManagerCtrl.settingsTypeOf(minireel)).toBe('Custom');
+                    });
+
+                    it('should be No Ads if firstplacement is -1 and frequency is 0', function() {
+                        minireel.data.adConfig = {
+                            video: {
+                                frequency: 0,
+                                firstPlacement: -1,
+                                waterfall: 'cinema6',
+                                skip: 6
+                            },
+                            display: {
+                                waterfall: 'cinema6'
+                            }
+                        };
+                        expect(AdManagerCtrl.settingsTypeOf(minireel)).toBe('No Ads');
                     });
                 });
 
@@ -882,45 +915,55 @@
 
                 describe('useDefaultSettings()', function() {
                     it('should go through all selected minireels and delete static ad cards and adConfig blocks', function() {
-                        var minireels = [
-                            {
-                                id: 'e-1',
-                                data: {
-                                    adConfig: {},
-                                    deck: [
-                                        {
-                                            ad: true
-                                        }
-                                    ]
+                        var onAffirm, onCancel,
+                            minireels = [
+                                {
+                                    id: 'e-1',
+                                    data: {
+                                        adConfig: {},
+                                        deck: [
+                                            {
+                                                ad: true
+                                            }
+                                        ]
+                                    },
+                                    save: jasmine.createSpy('minireel.save()')
                                 },
-                                save: jasmine.createSpy('minireel.save()')
-                            },
-                            {
-                                id: 'e-2',
-                                data: {
-                                    adConfig: {},
-                                    deck: [
-                                        {
-                                            ad: true
-                                        },
-                                        {
-                                            ad: true
-                                        }
-                                    ]
+                                {
+                                    id: 'e-2',
+                                    data: {
+                                        adConfig: {},
+                                        deck: [
+                                            {
+                                                ad: true
+                                            },
+                                            {
+                                                ad: true
+                                            }
+                                        ]
+                                    },
+                                    save: jasmine.createSpy('minireel.save()')
                                 },
-                                save: jasmine.createSpy('minireel.save()')
-                            },
-                            {
-                                id: 'e-3',
-                                data: {
-                                    adConfig: {},
-                                    deck: []
-                                },
-                                save: jasmine.createSpy('minireel.save()')
-                            }
-                        ];
+                                {
+                                    id: 'e-3',
+                                    data: {
+                                        adConfig: {},
+                                        deck: []
+                                    },
+                                    save: jasmine.createSpy('minireel.save()')
+                                }
+                            ];
 
+
+                        spyOn(ConfirmDialogService, 'display');
                         AdManagerCtrl.useDefaultSettings(minireels);
+
+                        onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
+                        onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
+
+                        expect(ConfirmDialogService.display).toHaveBeenCalled();
+
+                        onAffirm();
 
                         minireels.forEach(function(minireel) {
                             expect(minireel.data.adConfig).toBe(null);
