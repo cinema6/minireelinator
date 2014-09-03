@@ -4,6 +4,7 @@
     define(['app'], function(appModule) {
         describe('ManagerState', function() {
             var ManagerState,
+                minireel,
                 $rootScope,
                 $q,
                 $location,
@@ -49,6 +50,7 @@
 
                 spyOn($location, 'search').and.returnValue({});
 
+                minireel = c6State.get('MiniReel');
                 ManagerState = c6State.get('MR:Manager');
                 portal = c6State.get('Portal');
                 portal.cModel = {
@@ -101,7 +103,7 @@
                 beforeEach(function() {
                     scopedPromise = scopePromise($q.defer().promise);
 
-                    spyOn(ManagerState.cParent, 'getMiniReelList')
+                    spyOn(minireel, 'getMiniReelList')
                         .and.returnValue(scopedPromise);
 
                     $rootScope.$apply(function() {
@@ -110,7 +112,7 @@
                 });
 
                 it('should call this.modelWithFilter() with the current filter property and return the resolved result', function() {
-                    expect(ManagerState.cParent.getMiniReelList).toHaveBeenCalledWith(ManagerState.filter, ManagerState.limit, ManagerState.page);
+                    expect(minireel.getMiniReelList).toHaveBeenCalledWith(ManagerState.filter, ManagerState.limit, ManagerState.page);
                     expect(result).toBe(scopedPromise.ensureResolution());
                 });
             });
