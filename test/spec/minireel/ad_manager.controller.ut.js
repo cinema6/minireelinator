@@ -100,7 +100,7 @@
                         }
                     };
 
-                    spyOn(cState, 'modelWithFilter');
+                    spyOn(cState.cParent, 'getMiniReelList');
 
                     $scope.$apply(function() {
                         AdManagerCtrl = $controller('AdManagerController', { $scope: $scope, cState: cState });
@@ -133,7 +133,7 @@
 
                     beforeEach(function() {
                         scopedPromise = scopePromise($q.defer().promise);
-                        cState.modelWithFilter.and.returnValue(scopedPromise);
+                        cState.cParent.getMiniReelList.and.returnValue(scopedPromise);
 
                         $scope.$apply(function() {
                             AdManagerCtrl.page = 3;
@@ -152,7 +152,7 @@
                                 });
 
                                 it('should get a new model', function() {
-                                    expect(cState.modelWithFilter).toHaveBeenCalledWith(status, AdManagerCtrl.limit, 1, model);
+                                    expect(cState.cParent.getMiniReelList).toHaveBeenCalledWith(status, AdManagerCtrl.limit, 1, model);
                                     expect(AdManagerCtrl.model).toBe(scopedPromise);
                                 });
                             });
@@ -161,7 +161,7 @@
 
                     describe('this.limit', function() {
                         beforeEach(function() {
-                            cState.modelWithFilter.calls.reset();
+                            cState.cParent.getMiniReelList.calls.reset();
 
                             $scope.$apply(function() {
                                 AdManagerCtrl.limit = 100;
@@ -169,18 +169,18 @@
                         });
 
                         it('should get a new model', function() {
-                            expect(cState.modelWithFilter).toHaveBeenCalledWith(AdManagerCtrl.filter, 100, 1, model);
-                            expect(cState.modelWithFilter.calls.count()).toBe(1);
+                            expect(cState.cParent.getMiniReelList).toHaveBeenCalledWith(AdManagerCtrl.filter, 100, 1, model);
+                            expect(cState.cParent.getMiniReelList.calls.count()).toBe(1);
                             expect(AdManagerCtrl.model).toBe(scopedPromise);
                         });
 
                         it('should still make a request if the page is already 1', function() {
-                            cState.modelWithFilter.calls.reset();
+                            cState.cParent.getMiniReelList.calls.reset();
                             $scope.$apply(function() {
                                 AdManagerCtrl.limit = 20;
                             });
 
-                            expect(cState.modelWithFilter).toHaveBeenCalledWith(AdManagerCtrl.filter, 20, 1, jasmine.any(Object));
+                            expect(cState.cParent.getMiniReelList).toHaveBeenCalledWith(AdManagerCtrl.filter, 20, 1, jasmine.any(Object));
                         });
 
                         it('should set the ManagerCtrl.page back to 1', function() {
@@ -198,7 +198,7 @@
                         });
 
                         it('should get a new model', function() {
-                            expect(cState.modelWithFilter).toHaveBeenCalledWith(AdManagerCtrl.filter, AdManagerCtrl.limit, page, model);
+                            expect(cState.cParent.getMiniReelList).toHaveBeenCalledWith(AdManagerCtrl.filter, AdManagerCtrl.limit, page, model);
                             expect(AdManagerCtrl.model).toBe(scopedPromise);
                         });
                     });

@@ -5,13 +5,17 @@ function( angular , c6State  , password         , email         ) {
     return angular.module('c6.app.account', [c6State.name, password.name, email.name])
         .config(['c6StateProvider',
         function(c6StateProvider ) {
-            c6StateProvider.state('Account', [function() {
+            c6StateProvider.state('Account', ['c6State',
+            function                         ( c6State ) {
                 this.templateUrl = 'views/account/app.html';
                 this.controller = 'AccountController';
                 this.controllerAs = 'AccountCtrl';
 
                 this.model = function() {
                     return this.cParent.cModel;
+                };
+                this.enter = function() {
+                    c6State.goTo('Account:Password', null, null, true);
                 };
                 this.title = function() {
                     return 'Cinema6: Account Settings';

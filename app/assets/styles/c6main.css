@@ -971,10 +971,10 @@
                         display: block;
                     }
                 /* active states */
-                .mainNav__link--active {
+                .mainNav__link.c6-active {
                     background:#fff;
                 }
-                    .mainNav__link--active:after {
+                    .mainNav__link.c6-active:after {
                         content:'';
                         position:absolute;
                         height:1px;

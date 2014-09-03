@@ -37,14 +37,36 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.map('MiniReel', function() {
-                this.route('/dashboard', 'MR:Manager', function() {
-                    this.route('/new', 'MR:New', function() {
-                        this.route('/', 'MR:New.General');
-                        this.route('/', 'MR:New.Category');
-                        this.route('/', 'MR:New.Mode');
-                        this.route('/', 'MR:New.Autoplay');
+                this.route('/studio', 'MR:Studio', function() {
+                    this.route('/dashboard', 'MR:Manager', function() {
+                        this.route('/new', 'MR:New', function() {
+                            this.route('/', 'MR:New.General');
+                            this.route('/', 'MR:New.Category');
+                            this.route('/', 'MR:New.Mode');
+                            this.route('/', 'MR:New.Autoplay');
+                        });
+                        this.route('/embed/:minireelId', 'MR:Manager.Embed');
                     });
-                    this.route('/embed/:minireelId', 'MR:Manager.Embed');
+
+                    this.route('/edit/:minireelId', 'MR:Editor', function() {
+                        this.route('/settings', 'MR:Editor.Settings', function() {
+                            this.route('/', 'MR:Settings.Category');
+                            this.route('/', 'MR:Settings.Mode');
+                            this.route('/', 'MR:Settings.Autoplay');
+                        });
+                        this.route('/splash', 'MR:Editor.Splash', function() {
+                            this.route('/', 'MR:Splash.Source');
+                            this.route('/', 'MR:Splash.Image');
+                        });
+                        this.route('/card/:cardId', 'MR:EditCard', function() {
+                            this.state('MR:EditCard.Copy');
+                            this.state('MR:EditCard.Video');
+                            this.state('MR:EditCard.Ballot');
+                        });
+                        this.route('/card/new', 'MR:Editor.NewCard');
+
+                        this.route('/search', 'MR:VideoSearch');
+                    });
                 });
 
                 this.route('/advertising', 'MR:AdManager', function() {
@@ -53,26 +75,6 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                         this.route('/', 'MR:AdManager.Settings.VideoServer');
                         this.route('/', 'MR:AdManager.Settings.DisplayServer');
                     });
-                });
-
-                this.route('/edit/:minireelId', 'MR:Editor', function() {
-                    this.route('/settings', 'MR:Editor.Settings', function() {
-                        this.route('/', 'MR:Settings.Category');
-                        this.route('/', 'MR:Settings.Mode');
-                        this.route('/', 'MR:Settings.Autoplay');
-                    });
-                    this.route('/splash', 'MR:Editor.Splash', function() {
-                        this.route('/', 'MR:Splash.Source');
-                        this.route('/', 'MR:Splash.Image');
-                    });
-                    this.route('/card/:cardId', 'MR:EditCard', function() {
-                        this.state('MR:EditCard.Copy');
-                        this.state('MR:EditCard.Video');
-                        this.state('MR:EditCard.Ballot');
-                    });
-                    this.route('/card/new', 'MR:Editor.NewCard');
-
-                    this.route('/search', 'MR:VideoSearch');
                 });
             });
         }])
@@ -253,9 +255,10 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
             };
         }])
 
-        .controller('PaginatorControlsController', ['$scope',
-        function                                   ( $scope ) {
+        .controller('PaginatorControlsController', ['$scope','c6Computed',
+        function                                   ( $scope , c6Computed ) {
             var self = this,
+                c = c6Computed($scope),
                 state = {
                     page: $scope.page
                 };
@@ -280,6 +283,13 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                     }
                 }
             });
+            c(this, 'limitsObject', function() {
+                return ($scope.limits || [])
+                    .reduce(function(object, limit) {
+                        object[limit + ' per page'] = limit;
+                        return object;
+                    }, {});
+            }, ['limits']);
 
             this.goTo = function(page) {
                 /* jshint boss:true */
@@ -298,11 +308,44 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MiniReel', ['c6State','SettingsService',
-            function                          ( c6State , SettingsService ) {
+            c6StateProvider.state('MiniReel', ['c6State','SettingsService','scopePromise',
+                                               'cinema6',
+            function                          ( c6State , SettingsService , scopePromise ,
+                                                cinema6 ) {
                 this.templateUrl = 'views/minireel/app.html';
                 this.controller = 'MiniReelController';
                 this.controllerAs = 'MiniReelCtrl';
+
+                this.getMiniReelList = function(filter, limit, page, previous) {
+                    var org = c6State.get('Portal').cModel.org,
+                        scopedPromise = scopePromise(cinema6.db.findAll('experience', {
+                            type: 'minireel',
+                            org: org.id,
+                            sort: 'lastUpdated,-1',
+                            status: (filter === 'all') ? null : filter,
+                            limit: limit,
+                            skip: (page - 1) * limit
+                        }), previous && previous.value);
+
+                    scopedPromise.selected = (previous || null) && previous.selected;
+                    scopedPromise.page = (previous || null) && previous.page;
+
+                    scopedPromise.ensureResolution()
+                        .then(function(scopedPromise) {
+                            var minireels = scopedPromise.value,
+                                items = minireels.meta.items;
+
+                            scopedPromise.selected = minireels.map(function() {
+                                return false;
+                            });
+                            scopedPromise.page = {
+                                current: ((items.start - 1) / limit) + 1,
+                                total: Math.ceil(items.total / limit)
+                            };
+                        });
+
+                    return scopedPromise;
+                };
 
                 this.model = function() {
                     return this.cParent.cModel[0];
@@ -357,6 +400,13 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                             }
                         });
                 };
+                this.enter = function() {
+                    c6State.goTo('MR:Manager', null, null, true);
+                };
+            }]);
+
+            c6StateProvider.state('MR:Studio', ['c6State',
+            function                           ( c6State ) {
                 this.enter = function() {
                     c6State.goTo('MR:Manager', null, null, true);
                 };

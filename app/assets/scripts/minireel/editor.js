@@ -451,6 +451,11 @@ function( angular , c6ui , c6State  , videoSearch           , services          
 
                         return splash && (splash + (isBlob ? '' : ('?cb=' + this.cacheBuster)));
                     }
+                },
+                previewUrl: {
+                    get: function() {
+                        return MiniReelService.previewUrlOf(this.model, '/#/preview/minireel');
+                    }
                 }
             });
 

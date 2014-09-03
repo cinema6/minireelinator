@@ -35,5 +35,17 @@ define(['app'], function(appModule) {
                 expect(result).toBe(portal.cModel);
             });
         });
+
+        describe('enter()', function() {
+            beforeEach(function() {
+                spyOn(c6State, 'goTo');
+
+                account.enter();
+            });
+
+            it('should redirect to the Account:Password state', function() {
+                expect(c6State.goTo).toHaveBeenCalledWith('Account:Password', null, null, true);
+            });
+        });
     });
 });
