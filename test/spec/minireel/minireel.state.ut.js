@@ -121,6 +121,30 @@ define (['app'], function(appModule) {
                         });
                     });
 
+                    describe('if there are no results', function() {
+                        beforeEach(function() {
+                            $rootScope.$apply(function() {
+                                var value = [];
+                                value.meta = {
+                                    items: {
+                                        start: 0,
+                                        end: 0,
+                                        total: 0
+                                    }
+                                };
+
+                                deferred.resolve(value);
+                            });
+                        });
+
+                        it('should be on the first page', function() {
+                            expect(result.page).toEqual({
+                                current: 1,
+                                total: 1
+                            });
+                        });
+                    });
+
                     describe('when called with an initial value', function() {
                         var previous;
 
