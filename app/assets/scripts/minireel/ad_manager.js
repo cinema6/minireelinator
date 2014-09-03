@@ -28,39 +28,8 @@ function( angular , c6ui , c6State  , services  ) {
                     page: '='
                 };
 
-                this.modelWithFilter = function(filter, limit, page, previous) {
-                    var org = c6State.get('Portal').cModel.org,
-                        scopedPromise = scopePromise(cinema6.db.findAll('experience', {
-                            type: 'minireel',
-                            org: org.id,
-                            sort: 'lastUpdated,-1',
-                            status: (filter === 'all') ? null : filter,
-                            limit: limit,
-                            skip: (page - 1) * limit
-                        }), previous && previous.value);
-
-                    scopedPromise.selected = (previous || null) && previous.selected;
-                    scopedPromise.page = (previous || null) && previous.page;
-
-                    scopedPromise.ensureResolution()
-                        .then(function(scopedPromise) {
-                            var minireels = scopedPromise.value,
-                                items = minireels.meta.items;
-
-                            scopedPromise.selected = minireels.map(function() {
-                                return false;
-                            });
-                            scopedPromise.page = {
-                                current: ((items.start - 1) / limit) + 1,
-                                total: Math.ceil(items.total / limit)
-                            };
-                        });
-
-                    return scopedPromise;
-                };
-
                 this.model = function() {
-                    return this.modelWithFilter(this.filter, this.limit, this.page)
+                    return this.cParent.getMiniReelList(this.filter, this.limit, this.page)
                         .ensureResolution();
                 };
             }])
@@ -213,7 +182,7 @@ function( angular , c6ui , c6State  , services  ) {
             }
 
             function refetchMiniReels(fromStart) {
-                self.model = cState.modelWithFilter(
+                self.model = cState.cParent.getMiniReelList(
                     self.filter,
                     self.limit,
                     fromStart ? 1 : self.page,

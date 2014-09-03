@@ -4,6 +4,11 @@ define (['app'], function(appModule) {
     describe('MiniReel state', function() {
         var c6State,
             SettingsService,
+            scopePromise,
+            $q,
+            cinema6,
+            $rootScope,
+            portal,
             minireel,
             apps;
 
@@ -15,6 +20,7 @@ define (['app'], function(appModule) {
                 id: 'u-5dd4066eb1c277',
                 name: 'team member',
                 org: {
+                    id: 'o-0e8ad18c6c1086',
                     config: {
                         minireelinator: {}
                     },
@@ -31,18 +37,161 @@ define (['app'], function(appModule) {
             module(appModule.name);
 
             inject(function($injector) {
+                $rootScope = $injector.get('$rootScope');
+                $q = $injector.get('$q');
+                cinema6 = $injector.get('cinema6');
+                scopePromise = $injector.get('scopePromise');
                 c6State = $injector.get('c6State');
                 SettingsService = $injector.get('SettingsService');
             });
 
+            portal = c6State.get('Portal');
             minireel = c6State.get('MiniReel');
             apps = c6State.get('Apps');
             apps.cModel = [minireelExp];
-            c6State.get('Portal').cModel = user;
+            portal.cModel = user;
         });
 
         it('should exist', function() {
             expect(minireel).toEqual(jasmine.any(Object));
+        });
+
+        describe('getMiniReelList(filter, limit, page, previous)', function() {
+            var result,
+                deferred, promise,
+                ScopedPromise;
+
+            beforeEach(function() {
+                ScopedPromise = scopePromise($q.defer().promise).constructor;
+                deferred = $q.defer();
+                promise = deferred.promise;
+
+                spyOn(cinema6.db, 'findAll')
+                    .and.returnValue(promise);
+            });
+
+            ['active', 'pending', 'all'].forEach(function(status) {
+                describe('when called with ' + status, function() {
+                    beforeEach(function() {
+                        $rootScope.$apply(function() {
+                            result = minireel.getMiniReelList(status, 7, 1);
+                        });
+                    });
+
+                    it('should return a scoped promise', function() {
+                        expect(result.promise).toBe(promise);
+                        expect(result).toEqual(jasmine.any(ScopedPromise));
+                    });
+
+                    it('should decorate the scoped promise with a null "selected" property', function() {
+                        expect(result.selected).toBeNull();
+                    });
+
+                    it('should decorate the scoped promise with a null "page" property', function() {
+                        expect(result.page).toBeNull();
+                    });
+
+                    describe('when the promise is resolved', function() {
+                        var value;
+
+                        beforeEach(function() {
+                            value = [{}, {}, {}, {}, {}, {}, {}];
+                            value.meta = {
+                                items: {
+                                    start: 22,
+                                    end: 28,
+                                    total: 500
+                                }
+                            };
+
+                            $rootScope.$apply(function() {
+                                deferred.resolve(value);
+                            });
+                        });
+
+                        it('should set selected to an array equal to the result, but filled with false', function() {
+                            expect(result.selected).toEqual(value.map(function() { return false; }));
+                        });
+
+                        it('should set page as the page info', function() {
+                            expect(result.page).toEqual({
+                                current: 4,
+                                total: 72
+                            });
+                        });
+                    });
+
+                    describe('when called with an initial value', function() {
+                        var previous;
+
+                        beforeEach(function() {
+                            previous = minireel.getMiniReelList(status, 50, 1);
+                            previous.value = [{}, {}, {}];
+                            previous.selected = [false, false, true];
+                            previous.page = {
+                                current: 1,
+                                total: 10
+                            };
+
+                            $rootScope.$apply(function() {
+                                result = minireel.getMiniReelList(status, 50, 1, previous);
+                            });
+                        });
+
+                        it('should set the initial value on the scoped promise', function() {
+                            expect(result.value).toBe(previous.value);
+                        });
+
+                        it('should set the selected property', function() {
+                            expect(result.selected).toBe(previous.selected);
+                        });
+
+                        it('should set the page value', function() {
+                            expect(result.page).toBe(previous.page);
+                        });
+                    });
+                });
+            });
+
+            describe('when called with "all"', function() {
+                beforeEach(function() {
+                    $rootScope.$apply(function() {
+                        result = minireel.getMiniReelList('all', 50, 1);
+                    });
+                });
+
+                it('should find experiences of all statuses', function() {
+                    expect(cinema6.db.findAll).toHaveBeenCalledWith('experience', {
+                        type: 'minireel',
+                        org: portal.cModel.org.id,
+                        sort: 'lastUpdated,-1',
+                        status: null,
+                        limit: 50,
+                        skip: 0
+                    });
+                });
+            });
+
+            ['active', 'pending'].forEach(function(status) {
+                describe('when called with ' + status, function() {
+                    beforeEach(function() {
+                        $rootScope.$apply(function() {
+                            result = minireel.getMiniReelList(status, 25, 3);
+                        });
+                    });
+
+                    it('should find experiences with the specified status', function() {
+                        expect(cinema6.db.findAll).toHaveBeenCalledWith('experience', {
+                            type: 'minireel',
+                            org: portal.cModel.org.id,
+                            sort: 'lastUpdated,-1',
+                            status: status,
+                            limit: 25,
+                            skip: 50
+                        });
+                    });
+                });
+            });
         });
 
         describe('model()', function() {

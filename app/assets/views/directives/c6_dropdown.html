@@ -1,0 +1,6 @@
+<button class="btn faa fa-caret-down ui__clickDrop" type="button" ng-click="showDropDown = !showDropDown" c6-click-outside="showDropDown = false">
+    <c6-transclude class="btn__label"></c6-transclude>
+</button>
+<div ng-show="showDropDown" class="pager__itemsPerPage ui__clickDropMenu">
+    <button ng-repeat="option in list track by option[1]" class="ui__clickDropBtn" ng-class="{'ui__clickDropBtn--current': (value === option[1])}" type="button" title="{{option[0]}}" ng-click="setValue(option[1])">{{option[0]}}</button>
+</div>
