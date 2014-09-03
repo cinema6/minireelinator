@@ -343,8 +343,8 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                                 return false;
                             });
                             scopedPromise.page = {
-                                current: ((items.start - 1) / limit) + 1,
-                                total: Math.ceil(items.total / limit)
+                                current: (Math.max(items.start - 1, 0) / limit) + 1,
+                                total: Math.max(Math.ceil(items.total / limit), 1)
                             };
                         });
 
