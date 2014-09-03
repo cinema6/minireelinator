@@ -37,7 +37,7 @@
                     });
 
                 $scope.$apply(function() {
-                    $clickOutside = $compile('<button c6-click-outside="spy()">Click Aything But Me</button>')($scope);
+                    $clickOutside = $compile('<button c6-click-outside="spy()"><p><span>Click Aything But Me</span><p></button>')($scope);
                 });
                 $testBox.append($clickOutside);
                 $testBox.append($test1);
@@ -64,6 +64,17 @@
 
                 $test3.click();
                 expect($scope.spy.calls.count()).toBe(3);
+            });
+
+            it('should not evaluate the expression when a child of the click-outside element is clicked', function() {
+                var $p = $clickOutside.find('p'),
+                    $span = $clickOutside.find('span');
+
+                $span.click();
+                expect($scope.spy).not.toHaveBeenCalled();
+
+                $p.click();
+                expect($scope.spy).not.toHaveBeenCalled();
             });
 
             it('should unbind the click handler when the element is removed', function() {
