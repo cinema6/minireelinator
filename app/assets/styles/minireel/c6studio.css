@@ -806,8 +806,8 @@
     .mrAdManager__videoServer {
         margin-top:1.375em;
     }
-        .skipAdsHeader {
-            margin-top:1.375em;
+        .mrAdManager__frequency .twoCol {
+            margin-bottom:1.375em;
         }
 
     /*  image settings / uploader
