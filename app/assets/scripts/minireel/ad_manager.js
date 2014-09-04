@@ -276,7 +276,12 @@ function( angular , c6ui , c6State  , services  ) {
             };
 
             this.settingsTypeOf = function(minireel) {
-                return !minireel.data.adConfig && !staticAdCount(minireel) ? 'Default' : 'Custom';
+                var config = getAdConfig(minireel),
+                    noAds = config.video.firstPlacement === -1 && config.video.frequency === 0;
+
+                return !minireel.data.adConfig && !staticAdCount(minireel) ?
+                    'Default' :
+                    (noAds ? 'No Ads' : 'Custom');
             };
 
             this.adCountOf = function(minireel) {
@@ -317,11 +322,24 @@ function( angular , c6ui , c6State  , services  ) {
             };
 
             self.useDefaultSettings = function(minireels) {
-                return $q.all(minireels.map(function(exp) {
-                    exp.data.deck = cleanDeck(exp.data.deck);
-                    exp.data.adConfig = null;
-                    return exp.save();
-                }));
+                ConfirmDialogService.display({
+                    prompt: 'Are you sure you want to overwrite existing ad ' +
+                        'settings with the default ad settings?',
+                    affirm: 'Yes, use default settings',
+                    cancel: 'No',
+                    onAffirm: function() {
+                        ConfirmDialogService.close();
+
+                        return $q.all(minireels.map(function(exp) {
+                            exp.data.deck = cleanDeck(exp.data.deck);
+                            exp.data.adConfig = null;
+                            return exp.save();
+                        }));
+                    },
+                    onCancel: function() {
+                        ConfirmDialogService.close();
+                    }
+                });
             };
 
             self.removeAds = function(minireels) {
