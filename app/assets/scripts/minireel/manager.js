@@ -225,7 +225,7 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
                 [] :
                 [
                     new Tab('MiniReel Type', this.baseState + 'Mode'),
-                    new Tab('Autoplay', this.baseState + 'Autoplay')
+                    new Tab('Continuous Play', this.baseState + 'Autoplay')
                 ];
             if (this.baseState === 'MR:New.') {
                 this.tabs.unshift(new Tab('Title Settings', 'MR:New.General', true));
