@@ -1,13 +1,13 @@
 <div class="modalBody__group modalBody__group--sideTabs mrConfigure__autoplay">
     <form c6-alias="NewCtrl.mode as config">
-        <h1 class="forms__name--title">Do you want to play videos automatically?</h1>
+        <h1 class="forms__name--title">Do you want to play videos continuously?</h1>
         <label class="checkbox--inline">
             <input id="hasAutoplay" type="checkbox" ng-model="NewCtrl.autoplay" ng-disabled="!config.autoplayable" class="checkbox__input">
             <span class="btn__label faa">&nbsp;</span>
         </label>
         <label for="hasAutoplay">
-            <span ng-show="config.autoplayable">Yes, <strong>all</strong> videos should play automatically.</span>
-            <span ng-show="!config.autoplayable">The <strong class="typo--attention">{{config.name}}</strong> MiniReel Type does not support autoplaying videos.</span>
+            <span ng-show="config.autoplayable">Yes, <strong>all</strong> videos should play continuously.</span>
+            <span ng-show="!config.autoplayable">The <strong class="typo--attention">{{config.name}}</strong> MiniReel Type does not support continuous playing videos.</span>
         </label>
     </form>
     <p class="modalBody__fineprint typo--warning">
