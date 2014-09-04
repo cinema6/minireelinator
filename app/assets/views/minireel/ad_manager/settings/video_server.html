@@ -18,22 +18,6 @@
                 </span>
             </label>
             <label class="btn__label" for="videoServer_c6First">
-                
-            </label>
-            <label class="radiobox radiobox--hasLabel" for="videoServer_c6Only">
-                <input id="videoServer_c6Only" type="radio" 
-                    name="minireel-mode"
-                    class="radiobox__input"
-                    ng-model="AdSettingsCtrl.model.settings.video.waterfall"
-                    value="cinema6"/>
-                <span class="btn__icon faa fab"> 
-                    &nbsp;
-                </span>
-                <span class="btn__label"> 
-                    Use Cinema6 ad server <em>only</em>, <br> 
-                    <em>no backup ad server.</em>
-                </span>
-            </label>
         </div>
         <div class="twoCol">
             <label class="radiobox radiobox--hasLabel" for="videoServer_pubFirst">
@@ -50,6 +34,25 @@
                     with Cinema6 ad server as a backup.
                 </span>
             </label>
+        </div>
+        <div class="twoCol">        
+            </label>
+            <label class="radiobox radiobox--hasLabel" for="videoServer_c6Only">
+                <input id="videoServer_c6Only" type="radio" 
+                    name="minireel-mode"
+                    class="radiobox__input"
+                    ng-model="AdSettingsCtrl.model.settings.video.waterfall"
+                    value="cinema6"/>
+                <span class="btn__icon faa fab"> 
+                    &nbsp;
+                </span>
+                <span class="btn__label"> 
+                    Use Cinema6 ad server <em>only</em>, <br> 
+                    <em>no backup ad server.</em>
+                </span>
+            </label>
+        </div>
+        <div class="twoCol">    
             <label class="radiobox radiobox--hasLabel" for="videoServer_pubOnly">
                 <input id="videoServer_pubOnly" type="radio" 
                     name="minireel-mode"

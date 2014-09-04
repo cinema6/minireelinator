@@ -751,7 +751,7 @@
 
 
 /*  ==========================================================================
-    generic page styles
+    branding styles
     ========================================================================== */
     .c6Brand {
         width:11.5em; height:2.75em; display: block;
@@ -762,6 +762,9 @@
         .c6Brand--dark {
             background-position: -11.5625em 0
         }
+        .c6Brand--logo {
+            width:3.375em;
+        }
 
 
 /*  ==========================================================================
@@ -771,7 +774,7 @@
         font-size:1.5em;
     }
     .forms__introText {
-        margin:-0.3125em 0 1.4375em 0;
+        margin:-0.3125em 0 1.5em 0;
     }
 
     .checkbox--inline {
@@ -856,7 +859,7 @@
     .radiobox--hasLabel {
         width:auto; height:auto;
         display: block;
-        margin:0.0625em 0 1.5em 0;
+        margin:0 0 1.5em 0;
     }
         .radiobox--hasLabel .btn__icon {
             position: absolute;
@@ -966,6 +969,12 @@
         background:#eee; color:#626262;
         border-bottom:1px solid #dddddd;
     }
+        .mast__title {
+            font-size:1em; 
+            margin:2px 0 0 1.5em;
+            text-align: center;
+            font-weight:300;
+        }
         .mast__group a:hover {
             border:0;
         }
@@ -1078,18 +1087,11 @@
                     }
         
 
-    .mast__group--previewMode .mainNav,
-    .mast__group--previewMode .mainNav__c6BrandItem {
-        float:none;
-    }
-    .mast__group--previewMode .mainNav__c6BrandItem {
-        padding:0.4375em 0 0 0;
-    }
-    .mast__group--previewMode .c6__brand {
-        margin:0 auto;
+    .mast__group--previewMode .c6Brand {
+        position:absolute; top:0.125em; left:0.125em;
     }
     .mast__group--previewMode .mast__title {
-        position:static; margin:0.75em 0;
+        margin:0.75em 4em;
     }
 
     @media screen and (max-width:55em) {
