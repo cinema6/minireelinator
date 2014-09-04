@@ -2,7 +2,7 @@
     <header class="modalHeader__group">
         <h1 class="modal__title">
             <span ng-show="AdSettingsCtrl.model.type === 'org'">Default Ad Settings</span>
-            <span ng-show="AdSettingsCtrl.model.data.length > 1">Ad Settings - {{AdSettingsCtrl.model.data.length}} Minireels</span>
+            <span ng-show="AdSettingsCtrl.model.data.length > 1">Ad Settings - {{AdSettingsCtrl.model.data.length}} MiniReels</span>
             <span ng-show="AdSettingsCtrl.model.data.length === 1">Ad Settings - {{AdSettingsCtrl.model.data[0].title}}</span>
         </h1>
         <button class="modal__closeBtn btnInvis" c6-sref="{{AdManagerCtrl.returnState}}"><span class="ir">Close</span>
