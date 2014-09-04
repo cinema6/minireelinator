@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## Beta19 (September 4, 2014)
+* *[Beta19.rc2]*
+  * [FIX]: Replaced instances of "Minireels" in the text with
+    "MiniReels"
+* *[/Beta19.rc2]*
+
 * *[Beta19.rc1]*
   * [FEATURE]: The MiniReel Studio now has a brand new design
   * [FEATURE]: Users can now customize the advertising logic of thier
