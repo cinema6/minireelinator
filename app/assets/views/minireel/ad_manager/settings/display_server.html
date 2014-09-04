@@ -2,71 +2,34 @@
     <form c6-alias="AdSettingsCtrl.adChoices.display as config">
         <h1 class="forms__name--title">Choose Companion Ad Server</h1>
         <p class="forms__introText">If companion ads are shown, how do you want to load the <strong>companion ads</strong> for this MiniReel?</p>
-        <div class="twoCol">
-            <label class="radiobox radiobox--hasLabel" for="videoServer_c6First">
-                <input id="videoServer_c6First" type="radio" 
+        <div class="twoCols" ng-repeat="choice in AdSettingsCtrl.adChoices.display">
+            <label class="radiobox radiobox--hasLabel clearfix" for="{{choice.value}}">
+                <input id="{{choice.value}}" type="radio"
                     name="minireel-mode"
                     class="radiobox__input"
                     ng-model="AdSettingsCtrl.model.settings.display.waterfall"
-                    value="cinema6-publisher"/>
+                    value="{{choice.value}}"/>
                 <span class="btn__icon faa fab">
                     &nbsp;
                 </span>
-                <span class="btn__label">
-                    Use Cinema6 ad server <em>first</em>, <br> 
+                <span class="btn__label" ng-if="choice.value === 'cinema6-publisher'">
+                    Use Cinema6 ad server <em>first</em>, <br>
                     with your ad server as a backup.
                 </span>
-            </label>
-        </div>
-        <div class="twoCol">
-            <label class="radiobox radiobox--hasLabel" for="videoServer_pubFirst">
-                <input id="videoServer_pubFirst" type="radio" 
-                    name="minireel-mode"
-                    class="radiobox__input"
-                    ng-model="AdSettingsCtrl.model.settings.display.waterfall"
-                    value="publisher-cinema6"/>
-                <span class="btn__icon faa fab">
-                    &nbsp;
-                </span>
-                <span class="btn__label">
-                    Use your ad server <em>first</em>, <br> 
+                <span class="btn__label" ng-if="choice.value === 'publisher-cinema6'">
+                    Use your ad server <em>first</em>, <br>
                     with Cinema6 ad server as a backup.
                 </span>
-            </label>
-        </div>
-        <div class="twoCol">
-            <label class="radiobox radiobox--hasLabel" for="videoServer_c6Only">
-                <input id="videoServer_c6Only" type="radio" 
-                    name="minireel-mode"
-                    class="radiobox__input"
-                    ng-model="AdSettingsCtrl.model.settings.display.waterfall"
-                    value="cinema6"/>
-                <span class="btn__icon faa fab">
-                    &nbsp;
+                <span class="btn__label" ng-if="choice.value === 'cinema6'">
+                    Use Cinema6 ad server <em>only</em>, <br>
+                    <em>no backup ad server.</em>
                 </span>
-                <span class="btn__label">
-                    Use Cinema6 ad server <em>only</em>, <br> 
+                <span class="btn__label" ng-if="choice.value === 'publisher'">
+                    Use your ad server <em>only</em>, <br>
                     <em>no backup ad server.</em>
                 </span>
             </label>
         </div>
-        <div class="twoCol">
-            <label class="radiobox radiobox--hasLabel" for="videoServer_pubOnly">
-                <input id="videoServer_pubOnly" type="radio" 
-                    name="minireel-mode"
-                    class="radiobox__input"
-                    ng-model="AdSettingsCtrl.model.settings.display.waterfall"
-                    value="publisher"/>
-                <span class="btn__icon faa fab">
-                    &nbsp;
-                </span>
-                <span class="btn__label">
-                    Use your ad server <em>only</em>, <br> 
-                    <em>no backup ad server.</em>
-                </span>
-            </label>
-        </div>
-
     </form>
 </div>
 <footer class="modalFooter__group">
