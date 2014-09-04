@@ -236,7 +236,7 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
 
             self.removeAds = function(minireels) {
                 ConfirmDialogService.display({
-                    prompt: 'Are you sure you want to remove ads from these Minireels?',
+                    prompt: 'Are you sure you want to remove ads from these MiniReels?',
                     affirm: 'Yes',
                     cancel: 'No',
                     onAffirm: function() {
