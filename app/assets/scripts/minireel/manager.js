@@ -1,8 +1,6 @@
-define( ['angular','c6ui','c6_state','minireel/services'],
-function( angular , c6ui , c6State  , services          ) {
+define( ['angular','c6ui','c6_state','minireel/services','minireel/mixins/MiniReelListController'],
+function( angular , c6ui , c6State  , services          , MiniReelListController                 ) {
     'use strict';
-
-    var equals = angular.equals;
 
     return angular.module('c6.app.minireel.manager', [c6ui.name, c6State.name, services.name])
         .config(['c6StateProvider',
@@ -48,35 +46,10 @@ function( angular , c6ui , c6State  , services          ) {
         }])
 
         .controller('ManagerController', ['$scope','c6State','MiniReelService','cState',
-                                          'ConfirmDialogService','EditorService','$q',
+                                          'ConfirmDialogService','EditorService','$q','$injector',
         function                         ( $scope , c6State , MiniReelService , cState ,
-                                           ConfirmDialogService , EditorService , $q ) {
-            var self = this,
-                MiniReelCtrl = $scope.MiniReelCtrl,
-                MiniReelState = c6State.get('MiniReel');
-
-            function isSame(prop, obj1, obj2) {
-                return obj1[prop] === obj2[prop];
-            }
-
-            function value(val) {
-                return function() {
-                    return val;
-                };
-            }
-
-            function juxtapose() {
-                var args = Array.prototype.slice.call(arguments),
-                    longestArray = args.reduce(function(result, array) {
-                        return array.length > result.length ? array : result;
-                    });
-
-                return longestArray.map(function(value, index) {
-                    return args.map(function(array) {
-                        return array[index];
-                    });
-                });
-            }
+                                           ConfirmDialogService , EditorService , $q , $injector ) {
+            var self = this;
 
             function limitArgs(max, fn) {
                 return function() {
@@ -86,47 +59,10 @@ function( angular , c6ui , c6State  , services          ) {
                 };
             }
 
-            function refetchMiniReels(fromStart) {
-                self.model = MiniReelState.getMiniReelList(
-                    self.filter,
-                    self.limit,
-                    fromStart ? 1 : self.page,
-                    self.model
-                );
-            }
-
-            function DropDownModel() {
-                this.shown = false;
-            }
-            DropDownModel.prototype = {
-                show: function() {
-                    this.shown = true;
-                },
-                hide: function() {
-                    this.shown = false;
-                },
-                toggle: function() {
-                    this.shown = !this.shown;
-                }
-            };
-
-            this.filter = cState.filter;
-            this.limit = cState.limit;
-            this.page = cState.page;
-            this.dropDowns = {
-                select: new DropDownModel()
-            };
-            this.limits = [20, 50, 100];
-
-            Object.defineProperties(this, {
-                allAreSelected: {
-                    get: function() {
-                        return this.areAllSelected();
-                    },
-                    set: function(bool) {
-                        return bool ? this.selectAll() : this.selectNone();
-                    }
-                }
+            // Inherit from MiniReelListController mixin.
+            $injector.invoke(MiniReelListController, this, {
+                $scope: $scope,
+                cState: cState
             });
 
             this.edit = function(minireel) {
@@ -146,7 +82,7 @@ function( angular , c6ui , c6State  , services          ) {
                                 .then(function save(minireel) {
                                     return minireel.save();
                                 });
-                        })).then(limitArgs(0, refetchMiniReels));
+                        })).then(limitArgs(0, self.refetchMiniReels));
                     },
                     onCancel: function() {
                         ConfirmDialogService.close();
@@ -205,86 +141,10 @@ function( angular , c6ui , c6State  , services          ) {
 
                         return $q.all(minireels.map(function(minireel) {
                             return MiniReelService.erase(minireel);
-                        })).then(limitArgs(0, refetchMiniReels));
+                        })).then(limitArgs(0, self.refetchMiniReels));
                     }
                 });
             };
-
-            this.selectAll = function() {
-                this.model.selected = this.model.value
-                    .map(value(true));
-            };
-
-            this.selectNone = function() {
-                this.model.selected = this.model.value
-                    .map(value(false));
-            };
-
-            this.selectAllWithStatus = function(status) {
-                this.model.selected = this.model.value
-                    .map(function(minireel) {
-                        return minireel.status === status;
-                    });
-            };
-
-            this.getSelected = function(status) {
-                return juxtapose(this.model.selected, this.model.value)
-                    .filter(function(pair) {
-                        return pair[0] && (status ? pair[1].status === status : true);
-                    })
-                    .map(function(pair) {
-                        return pair[1];
-                    });
-            };
-
-            this.areAllSelected = function(status) {
-                return juxtapose(this.model.selected, this.model.value)
-                    .filter(function(pair) {
-                        return status ? (pair[1].status === status) : true;
-                    })
-                    .map(function(pair) {
-                        return pair[0];
-                    })
-                    .indexOf(false) < 0;
-            };
-
-            this.modeNameFor = function(minireel) {
-                return MiniReelService.modeDataOf(
-                    minireel,
-                    MiniReelCtrl.model.data.modes
-                ).name;
-            };
-
-            this.previewUrlOf = function(minireel) {
-                return MiniReelService.previewUrlOf(minireel, '/#/preview/minireel');
-            };
-
-            $scope.$watchCollection(
-                function() {
-                    return [
-                        self.page,
-                        self.limit,
-                        self.filter
-                    ];
-                },
-                function(props, prevProps) {
-                    var samePage = isSame(0, props, prevProps);
-
-                    if (equals(props, prevProps)) { return; }
-
-                    if (self.page !== 1 && samePage) {
-                        /* jshint boss:true */
-                        return self.page = 1;
-                        /* jshint boss:false */
-                    }
-
-                    return refetchMiniReels(samePage);
-                }
-            );
-
-            $scope.$on('$destroy', function() {
-                cState.filter = self.filter;
-            });
         }])
 
         .config(['c6StateProvider',
