@@ -2,7 +2,7 @@
     <form>
         <h1 class="forms__name--title">Choose Video Ad Server</h1>
         <p class="forms__introText">How do you want to load the <strong>video ads</strong> for this MiniReel?</p>
-        <div class="twoCols" ng-repeat="choice in AdSettingsCtrl.adChoices.video">
+        <div class="twoCol" ng-repeat="choice in AdSettingsCtrl.adChoices.video">
             <label class="radiobox radiobox--hasLabel clearfix" for="{{choice.value}}">
                 <input id="{{choice.value}}" type="radio"
                     name="minireel-mode"
