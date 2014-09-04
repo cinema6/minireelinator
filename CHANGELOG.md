@@ -1,11 +1,15 @@
 # MiniReelinator
 
+## Beta19 (September 4, 2014)
 * *[Beta19.rc1]*
-  * [FEATURE]: New front end for studio and ad manager added
+  * [FEATURE]: The MiniReel Studio now has a brand new design
+  * [FEATURE]: Users can now customize the advertising logic of thier
+    MiniReels
   * All new MiniReels are now previewable with a public preview URL by
     default
   * [FIX]: Fix for an issue where re-publishing a MiniReel would cause
     its election data not to be updated
+* *[/Beta19.rc1]*
 
 ## Beta18 (August 25, 2014)
 * *[Beta18.rc1]*
