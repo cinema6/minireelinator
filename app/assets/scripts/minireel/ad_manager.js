@@ -28,6 +28,9 @@ function( angular , c6ui , c6State  , services  ) {
                     page: '='
                 };
 
+                this.title = function() {
+                    return 'Cinema6 Ad Manager';
+                };
                 this.model = function() {
                     return this.cParent.getMiniReelList(this.filter, this.limit, this.page)
                         .ensureResolution();
