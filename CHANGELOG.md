@@ -1,9 +1,10 @@
 # MiniReelinator
 
+## Beta19
 * *[Beta19.rc3]*
   * [FIX]: Getting embed code from Ad Manager no longer takes user to Studio
+  * [FIX]: Modal Editor styles fixed to clip long text titles.
 
-## Beta19 (September 4, 2014)
 * *[Beta19.rc2]*
   * [FIX]: Replaced instances of "Minireels" in the text with
     "MiniReels"
