@@ -9,6 +9,20 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
     return angular.module('c6.app.minireel.adManager', [c6ui.name, c6State.name, services.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
+            c6StateProvider.state('MR:AdManager.Embed', ['cinema6',
+            function                                    ( cinema6 ) {
+                this.controller = 'GenericController';
+                this.controllerAs = 'AdManagerEmbedCtrl';
+                this.templateUrl = 'views/minireel/ad_manager/embed.html';
+
+                this.model = function(params) {
+                    return cinema6.db.find('experience', params.minireelId);
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
             c6StateProvider.state('MR:AdManager', ['cinema6','c6State','scopePromise','$location',
             function                              ( cinema6 , c6State , scopePromise , $location ) {
                 var query = $location.search();
