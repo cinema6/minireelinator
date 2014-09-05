@@ -1,6 +1,6 @@
 # MiniReelinator
 
-## Beta19 (September 4, 2014)
+## Beta19
 * *[Beta19.rc3]*
   * [FIX]: Modal Editor styles fixed to clip long text titles.
 
