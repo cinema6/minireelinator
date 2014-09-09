@@ -8,6 +8,9 @@
     the user's permissions
   * [FIX]: Publish MiniReel button made more prominent
   * [FIX]: "Publish Modal" button label changed to "Publish Mode"
+  * [FIX]: Fix for an issue where no value would be shown for the ad
+    frequency option if the default ad frequency was less than the
+    number of cards in the MiniReel
 
 * *[Beta19.rc2]*
   * [FIX]: Replaced instances of "Minireels" in the text with
