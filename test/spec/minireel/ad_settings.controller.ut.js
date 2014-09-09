@@ -1,9 +1,7 @@
 (function() {
     'use strict';
 
-    define(['minireel/ad_manager','app','angular'], function(adModule, appModule, angular) {
-        var forEach = angular.forEach;
-
+    define(['minireel/ad_manager','app'], function(adModule, appModule) {
         describe('AdSettingsController', function() {
             var $rootScope,
                 $scope,
@@ -228,56 +226,6 @@
                     });
                 });
 
-                describe('dropDowns', function() {
-                    it('should have a drop down object for every drop down on the page', function() {
-                        expect(AdSettingsCtrl.dropDowns).toEqual({
-                            firstPlacement: {
-                                shown: false
-                            },
-                            frequency: {
-                                shown: false
-                            },
-                            skip: {
-                                shown: false
-                            }
-                        });
-                    });
-
-                    describe('DropDownModel() show() method', function() {
-                        it('should set "shown" to true', function() {
-                            forEach(AdSettingsCtrl.dropDowns, function(dropDown) {
-                                dropDown.show();
-
-                                expect(dropDown.shown).toBe(true);
-                            });
-                        });
-                    });
-
-                    describe('DropDownModel() hide() method', function() {
-                        it('should set "shown" to false', function() {
-                            forEach(AdSettingsCtrl.dropDowns, function(dropDown) {
-                                dropDown.shown = true;
-
-                                dropDown.hide();
-
-                                expect(dropDown.shown).toBe(false);
-                            });
-                        });
-                    });
-
-                    describe('DropDownModel() toggle() method', function() {
-                        it('should toggle the shown property', function() {
-                            forEach(AdSettingsCtrl.dropDowns, function(dropDown) {
-                                dropDown.toggle();
-                                expect(dropDown.shown).toBe(true);
-
-                                dropDown.toggle();
-                                expect(dropDown.shown).toBe(false);
-                            });
-                        });
-                    });
-                });
-
                 describe('frequency', function() {
                     it('should bind to UI value if set', function() {
                         var model = {
@@ -288,18 +236,12 @@
 
                         initCtrl(model);
 
-                        expect(AdSettingsCtrl.frequency).toEqual({
-                            label: 'No subsequent ads',
-                            value: 0
-                        });
+                        expect(AdSettingsCtrl.frequency).toBe(0);
 
                         settings.video.frequency = 3;
 
                         initCtrl(model);
-                        expect(AdSettingsCtrl.frequency).toEqual({
-                            label: 'After every 3rd video',
-                            value: 3
-                        });
+                        expect(AdSettingsCtrl.frequency).toBe(3);
 
                         settings.video.frequency = void 0;
 
@@ -317,23 +259,40 @@
                         };
 
                         initCtrl(model);
-                        expect(AdSettingsCtrl.firstPlacement).toEqual({
-                            label: 'After 2nd Video',
-                            value: 2
-                        });
+                        expect(AdSettingsCtrl.firstPlacement).toBe(2);
 
                         settings.video.firstPlacement = -1;
 
                         initCtrl(model);
-                        expect(AdSettingsCtrl.firstPlacement).toEqual({
-                            label: 'No ads',
-                            value: -1
-                        });
+                        expect(AdSettingsCtrl.firstPlacement).toBe(-1);
 
                         settings.video.firstPlacement = void 0;
 
                         initCtrl(model);
                         expect(AdSettingsCtrl.firstPlacement).not.toBeDefined();
+                    });
+                });
+
+                describe('skip', function() {
+                    it('should bind to UI value if set', function() {
+                        var model = {
+                            type: 'minireels',
+                            settings: settings,
+                            data: minireels
+                        };
+
+                        initCtrl(model);
+                        expect(AdSettingsCtrl.skip).toBe(6);
+
+                        settings.video.skip = false;
+
+                        initCtrl(model);
+                        expect(AdSettingsCtrl.skip).toBe(false);
+
+                        settings.video.skip = void 0;
+
+                        initCtrl(model);
+                        expect(AdSettingsCtrl.skip).not.toBeDefined();
                     });
                 });
 
@@ -346,9 +305,9 @@
                                 data: {id:'org1'}
                             });
 
-                            expect(AdSettingsCtrl.firstPlacementOptions.length).toBe(12);
-                            expect(AdSettingsCtrl.firstPlacementOptions[0].value).toBe(-1);
-                            expect(AdSettingsCtrl.firstPlacementOptions[11].value).toBe(10);
+                            expect(Object.keys(AdSettingsCtrl.firstPlacementOptions).length).toBe(12);
+                            expect(AdSettingsCtrl.firstPlacementOptions['No ads']).toBe(-1);
+                            expect(AdSettingsCtrl.firstPlacementOptions['After 10th Video']).toBe(10);
                         });
                     });
 
@@ -360,9 +319,9 @@
                                 data: minireels
                             });
 
-                            expect(AdSettingsCtrl.firstPlacementOptions.length).toBe(5);
-                            expect(AdSettingsCtrl.firstPlacementOptions[0].value).toBe(-1);
-                            expect(AdSettingsCtrl.firstPlacementOptions[4].value).toBe(3);
+                            expect(Object.keys(AdSettingsCtrl.firstPlacementOptions).length).toBe(5);
+                            expect(AdSettingsCtrl.firstPlacementOptions['No ads']).toBe(-1);
+                            expect(AdSettingsCtrl.firstPlacementOptions['After 3rd Video']).toBe(3);
                         });
                     });
                 });
@@ -375,13 +334,14 @@
                             data: minireels
                         });
 
-                        expect(AdSettingsCtrl.frequencyOptions.length).toBe(11);
-                        expect(AdSettingsCtrl.frequencyOptions[0].value).toBe(0);
-                        expect(AdSettingsCtrl.frequencyOptions[10].value).toBe(10);
+                        expect(Object.keys(AdSettingsCtrl.frequencyOptions).length).toBe(11);
+                        expect(AdSettingsCtrl.frequencyOptions['No subsequent ads']).toBe(0);
+                        expect(AdSettingsCtrl.frequencyOptions['After every video']).toBe(1);
+                        expect(AdSettingsCtrl.frequencyOptions['After every 10th video']).toBe(10);
                     });
                 });
 
-                describe('frequencyOptions', function() {
+                describe('skipOptions', function() {
                     it('should show 3 options', function() {
                         initCtrl({
                             type: 'minireels',
@@ -389,10 +349,11 @@
                             data: minireels
                         });
 
-                        expect(AdSettingsCtrl.skipOptions.length).toBe(3);
-                        expect(AdSettingsCtrl.skipOptions[0].value).toBe(false);
-                        expect(AdSettingsCtrl.skipOptions[1].value).toBe(6);
-                        expect(AdSettingsCtrl.skipOptions[2].value).toBe(true);
+                        expect(AdSettingsCtrl.skipOptions).toEqual({
+                            'No, users cannot skip ads': false,
+                            'Yes, after six seconds': 6,
+                            'Yes, skip ads at any time': true
+                        });
                     });
                 });
 
@@ -511,21 +472,21 @@
 
                         describe('if there is no frequency || skip || firstPlacement', function() {
                             it('should be false', function() {
-                                AdSettingsCtrl.frequency = '';
-                                AdSettingsCtrl.skip = {value:false};
-                                AdSettingsCtrl.firstPlacement = {value:3};
+                                AdSettingsCtrl.frequency = undefined;
+                                AdSettingsCtrl.skip = false;
+                                AdSettingsCtrl.firstPlacement = 3;
 
                                 expect(AdSettingsCtrl.tabIsValid(tab)).toBe(false);
 
-                                AdSettingsCtrl.frequency = {value:3};
-                                AdSettingsCtrl.skip = {value:false};
-                                AdSettingsCtrl.firstPlacement = '';
+                                AdSettingsCtrl.frequency = 0;
+                                AdSettingsCtrl.skip = true;
+                                AdSettingsCtrl.firstPlacement = undefined;
 
                                 expect(AdSettingsCtrl.tabIsValid(tab)).toBe(false);
 
-                                AdSettingsCtrl.frequency = {value:3};
-                                AdSettingsCtrl.skip = '';
-                                AdSettingsCtrl.firstPlacement = {value:3};
+                                AdSettingsCtrl.frequency = 3;
+                                AdSettingsCtrl.skip = undefined;
+                                AdSettingsCtrl.firstPlacement = 0;
 
                                 expect(AdSettingsCtrl.tabIsValid(tab)).toBe(false);
                             });
@@ -533,9 +494,9 @@
 
                         describe('if there is frequency && skip && firstPlacement', function() {
                             it('should be true', function() {
-                                AdSettingsCtrl.frequency = {value:3};
-                                AdSettingsCtrl.skip = {value:false};
-                                AdSettingsCtrl.firstPlacement = {value:3};
+                                AdSettingsCtrl.frequency = 0;
+                                AdSettingsCtrl.skip = false;
+                                AdSettingsCtrl.firstPlacement = 0;
 
                                 expect(AdSettingsCtrl.tabIsValid(tab)).toBe(true);
                             });
@@ -590,27 +551,27 @@
                 describe('formIsValid', function() {
                     describe('when any settings are missing', function() {
                         it('should return false', function() {
-                            AdSettingsCtrl.frequency = '';
-                            AdSettingsCtrl.skip = {value:false};
-                            AdSettingsCtrl.firstPlacement = {value:3};
+                            AdSettingsCtrl.frequency = undefined;
+                            AdSettingsCtrl.skip = false;
+                            AdSettingsCtrl.firstPlacement = 3;
                             AdSettingsCtrl.model.settings.video.waterfall = 'cinema6';
                             AdSettingsCtrl.model.settings.display.waterfall = 'cinema6';
 
                             expect(AdSettingsCtrl.formIsValid()).toBe(false);
 
-                            AdSettingsCtrl.frequency = {value:3};
-                            AdSettingsCtrl.skip = {value:false};
-                            AdSettingsCtrl.firstPlacement = {value:3};
-                            AdSettingsCtrl.model.settings.video.waterfall = '';
+                            AdSettingsCtrl.frequency = 3;
+                            AdSettingsCtrl.skip = false;
+                            AdSettingsCtrl.firstPlacement = 3;
+                            AdSettingsCtrl.model.settings.video.waterfall = undefined;
                             AdSettingsCtrl.model.settings.display.waterfall = 'cinema6';
 
                             expect(AdSettingsCtrl.formIsValid()).toBe(false);
 
-                            AdSettingsCtrl.frequency = {value:3};
-                            AdSettingsCtrl.skip = {value:false};
-                            AdSettingsCtrl.firstPlacement = {value:3};
+                            AdSettingsCtrl.frequency = 3;
+                            AdSettingsCtrl.skip = false;
+                            AdSettingsCtrl.firstPlacement = 3;
                             AdSettingsCtrl.model.settings.video.waterfall = 'cinema6';
-                            AdSettingsCtrl.model.settings.display.waterfall = '';
+                            AdSettingsCtrl.model.settings.display.waterfall = undefined;
 
                             expect(AdSettingsCtrl.formIsValid()).toBe(false);
                         });
@@ -618,9 +579,9 @@
 
                     describe('when all settings are defined', function() {
                         it('should return true', function() {
-                            AdSettingsCtrl.frequency = {value:3};
-                            AdSettingsCtrl.skip = {value:false};
-                            AdSettingsCtrl.firstPlacement = {value:3};
+                            AdSettingsCtrl.frequency = 3;
+                            AdSettingsCtrl.skip = false;
+                            AdSettingsCtrl.firstPlacement = 3;
                             AdSettingsCtrl.model.settings.video.waterfall = 'cinema6';
                             AdSettingsCtrl.model.settings.display.waterfall = 'cinema6';
 
@@ -693,7 +654,12 @@
                     });
                 });
 
-                describe('save', function() {
+                describe('save()', function() {
+                    beforeEach(function() {
+                        settings.video.frequency = 3;
+                        AdSettingsCtrl.frequency = 3;
+                    });
+
                     describe('when editing an Org', function() {
                         it('should put the settings on the org and save', function() {
                             var goToCallCount,
@@ -771,11 +737,13 @@
                                 data: minireels
                             });
 
+                            AdSettingsCtrl.frequency = 5;
+
                             $scope.$apply(function() {
-                                AdSettingsCtrl.firstPlacement.value = -1;
+                                AdSettingsCtrl.firstPlacement = -1;
                             });
 
-                            expect(AdSettingsCtrl.frequency.value).toBe(0);
+                            expect(AdSettingsCtrl.frequency).toBe(0);
                         });
                     });
 
@@ -787,13 +755,13 @@
                                 data: minireels
                             });
 
-                            AdSettingsCtrl.frequency.value = 5;
+                            AdSettingsCtrl.frequency = 5;
 
                             $scope.$apply(function() {
-                                AdSettingsCtrl.firstPlacement.value = 5;
+                                AdSettingsCtrl.firstPlacement = 5;
                             });
 
-                            expect(AdSettingsCtrl.frequency.value).toBe(5);
+                            expect(AdSettingsCtrl.frequency).toBe(5);
                         });
                     });
                 });

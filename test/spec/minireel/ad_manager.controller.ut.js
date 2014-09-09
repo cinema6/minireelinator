@@ -696,13 +696,24 @@
                     });
                 });
 
-                describe('editOrgSettings()', function() {
-                    it('should go to Settings state and pass default settings to be edited', function() {
+                describe('editOrgSettings(readOnly)', function() {
+                    beforeEach(function() {
                         spyOn(c6State, 'goTo');
+                    });
 
+                    it('should go to the settings state with the readOnly flag set to true if a true value is passed in', function() {
+                        AdManagerCtrl.editOrgSettings(true);
+
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [jasmine.objectContaining({
+                            readOnly: true
+                        })]);
+                    });
+
+                    it('should go to Settings state and pass default settings to be edited', function() {
                         AdManagerCtrl.editOrgSettings();
 
                         expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [{
+                            readOnly: false,
                             type: 'org',
                             settings: {
                                 video: {
@@ -722,8 +733,6 @@
                     });
 
                     it('should go to Settings state and pass the Org settings if defined', function() {
-                        spyOn(c6State, 'goTo');
-
                         PortalCtrl.model.org.adConfig = {
                             video: {
                                 frequency: 3,
@@ -739,6 +748,7 @@
                         AdManagerCtrl.editOrgSettings();
 
                         expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [{
+                            readOnly: false,
                             type: 'org',
                             settings: {
                                 video: {
@@ -769,9 +779,21 @@
                     });
                 });
 
-                describe('editSettings(minireels)', function() {
+                describe('editSettings(minireels, readOnly)', function() {
                     beforeEach(function() {
                         spyOn(c6State, 'goTo');
+                    });
+
+                    describe('if readOnly is truthy', function() {
+                        beforeEach(function() {
+                            AdManagerCtrl.editSettings([minireel], true);
+                        });
+
+                        it('should make readOnly true on the model', function() {
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [jasmine.objectContaining({
+                                readOnly: true
+                            })]);
+                        });
                     });
 
                     describe('when editing a single minireel', function() {
@@ -791,6 +813,7 @@
                             AdManagerCtrl.editSettings([minireel]);
 
                             expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [{
+                                readOnly: false,
                                 type: 'minireels',
                                 settings: {
                                     video: {
@@ -849,6 +872,7 @@
                             AdManagerCtrl.editSettings(minireels);
 
                             expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [{
+                                readOnly: false,
                                 type: 'minireels',
                                 settings: {
                                     video: {
@@ -903,6 +927,7 @@
                             AdManagerCtrl.editSettings(minireels);
 
                             expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [{
+                                readOnly: false,
                                 type: 'minireels',
                                 settings: {
                                     video: {
@@ -957,6 +982,7 @@
                             AdManagerCtrl.editSettings(minireels);
 
                             expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [{
+                                readOnly: false,
                                 type: 'minireels',
                                 settings: {
                                     video: {
