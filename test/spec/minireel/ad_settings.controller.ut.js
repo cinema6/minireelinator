@@ -740,6 +740,29 @@
 
                             expect(c6State.goTo.calls.count()).toEqual(goToCallCount + 1);
                         });
+
+                        it('should not save anything if settings have not changed', function() {
+                            var goToCallCount,
+                                org = {
+                                    id: 'org1',
+                                    save: jasmine.createSpy('org.save()')
+                                };
+
+                            settings.video.frequency = 0;
+
+                            initCtrl({
+                                type: 'org',
+                                settings: settings,
+                                data: {id: 'o-1'}
+                            }, org);
+
+                            goToCallCount = c6State.goTo.calls.count();
+
+                            AdSettingsCtrl.save();
+
+                            expect(org.save).not.toHaveBeenCalled();
+                            expect(c6State.goTo.calls.count()).toEqual(goToCallCount + 1);
+                        });
                     });
 
                     describe('when editing minireel(s)', function() {
@@ -770,6 +793,32 @@
 
                             $scope.$apply(function() {
                                 saveDeferred.resolve();
+                            });
+
+                            expect(c6State.goTo.calls.count()).toEqual(goToCallCount + 1);
+                        });
+
+                        it('should not save anything if settings have not changed', function() {
+                            var goToCallCount;
+
+                            minireels.forEach(function(minireel) {
+                                minireel.save = jasmine.createSpy('exp.save()');
+                            });
+
+                            settings.video.frequency = 0;
+
+                            initCtrl({
+                                type: 'minireels',
+                                settings: settings,
+                                data: minireels
+                            });
+
+                            goToCallCount = c6State.goTo.calls.count();
+
+                            AdSettingsCtrl.save();
+
+                            minireels.forEach(function(minireel) {
+                                expect(minireel.save).not.toHaveBeenCalled();
                             });
 
                             expect(c6State.goTo.calls.count()).toEqual(goToCallCount + 1);
