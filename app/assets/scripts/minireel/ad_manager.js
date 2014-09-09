@@ -74,7 +74,8 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
         function                           ( $scope , c6State , $q , ConfirmDialogService ,
                                              cState , $injector ) {
             var self = this,
-                org = $scope.PortalCtrl.model.org;
+                org = $scope.PortalCtrl.model.org,
+                permissions = $scope.PortalCtrl.model.permissions;
 
             function getAdConfig(object) {
                 var systemDefault = {
@@ -180,6 +181,8 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
             });
 
             this.returnState = 'MR:AdManager';
+            this.canEditDefaults = !!permissions.orgs.editAdConfig;
+            this.canEditMiniReel = !!permissions.experiences.editAdConfig;
 
             this.settingsTypeOf = function(minireel) {
                 var config = getAdConfig(minireel),
@@ -211,16 +214,18 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
                 return calculate(adConfig.video, totalCards);
             };
 
-            this.editOrgSettings = function() {
+            this.editOrgSettings = function(readOnly) {
                 c6State.goTo('MR:AdManager.Settings', [{
+                    readOnly: !!readOnly,
                     type: 'org',
                     settings: getAdConfig(org),
                     data: org
                 }]);
             };
 
-            this.editSettings = function(minireels) {
+            this.editSettings = function(minireels, readOnly) {
                 c6State.goTo('MR:AdManager.Settings', [{
+                    readOnly: !!readOnly,
                     type: 'minireels',
                     settings: useMatchingAdConfigs(minireels),
                     data: minireels
@@ -276,6 +281,16 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
                 PortalCtrl = $scope.PortalCtrl,
                 org = PortalCtrl.model.org,
                 data = MiniReelCtrl.model.data;
+
+            function makeArray(length) {
+                var array = [];
+
+                while (length--) {
+                    array[length] = undefined;
+                }
+
+                return array;
+            }
 
             function ordinalSuffixOf(i) {
                 var j = i % 10,
@@ -369,21 +384,6 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
                 tabBySref(state.cName).visits++;
             }
 
-            function DropDownModel() {
-                this.shown = false;
-            }
-            DropDownModel.prototype = {
-                show: function() {
-                    this.shown = true;
-                },
-                hide: function() {
-                    this.shown = false;
-                },
-                toggle: function() {
-                    this.shown = !this.shown;
-                }
-            };
-
             if (!cState.cModel) {
                 c6State.goTo(cState.cParent.cName);
                 return;
@@ -392,106 +392,62 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
             this.adChoices = MiniReelService.adChoicesOf(org, data);
             this.returnState = cState.cParent.cName;
             this.baseState = 'MR:AdManager.Settings.';
-            this.dropDowns = {
-                firstPlacement: new DropDownModel(),
-                frequency: new DropDownModel(),
-                skip: new DropDownModel()
-            };
             this.tabs = [
                 new Tab('Frequency', self.baseState + 'Frequency'),
                 new Tab('Video Server', self.baseState + 'VideoServer'),
                 new Tab('Display Server', self.baseState + 'DisplayServer')
             ];
 
+            this.frequency = cState.cModel.settings.video.frequency;
+            this.firstPlacement = cState.cModel.settings.video.firstPlacement;
+            this.skip = cState.cModel.settings.video.skip;
+
             this.firstPlacementOptions = (function() {
-                var num,
-                    options = [];
-
-                if (cState.cModel.type === 'org') {
-                    num = 10;
-                } else {
-                    num = cState.cModel.data.reduce(function(prev, curr) {
-                        var length = curr.data.deck.length;
-                        return prev < length ? prev : length;
-                    }, cState.cModel.data[0].data.deck.length);
-                }
-
-                for (num; num > 0; num--) {
-                    options.unshift({
-                        value: num,
-                        label: 'After ' + ordinalSuffixOf(num) + ' Video'
+                var decks = cState.cModel.type === 'org' ?
+                    [makeArray(10)] : cState.cModel.data.map(function(minireel) {
+                        return minireel.data.deck;
                     });
-                }
 
-                options.unshift({
-                    value: -1,
-                    label: 'No ads'
-                },
-                {
-                    value: 0,
-                    label: 'Before 1st Video'
-                });
-
-                return options;
-            }());
-
-            this.frequencyOptions = (function() {
-                var i = 2,
-                    options = [
-                        {
-                            label: 'No subsequent ads',
-                            value: 0
-                        },
-                        {
-                            label: 'After every video',
-                            value: 1
-                        }
-                    ];
-
-                for (i; i <= 10; i++) {
-                    options.push({
-                        value: i,
-                        label: 'After every ' + ordinalSuffixOf(i) + ' video'
-                    });
-                }
-
-                return options;
-            }());
-
-            this.skipOptions = (function() {
                 return [
-                    {
-                        label: 'No, users cannot skip ads',
-                        value: false
-                    },
-                    {
-                        label: 'Yes, after six seconds',
-                        value: 6
-                    },
-                    {
-                        label: 'Yes, skip ads at any time',
-                        value: true
-                    }
-                ];
+                    ['No ads', -1],
+                    ['Before 1st Video', 0]
+                ].concat(decks.reduce(function(smallestDeck, deck) {
+                    return (smallestDeck.length > deck.length) ? deck : smallestDeck;
+                }).map(function(card, index) {
+                    var num = index + 1;
+
+                    return ['After ' + ordinalSuffixOf(num) + ' Video', num];
+                })).concat((self.firstPlacement || 0) > 0 ? [
+                    // Make sure whatever the default is is an option
+                    [
+                        'After ' + ordinalSuffixOf(self.firstPlacement) + ' Video',
+                        self.firstPlacement
+                    ]
+                ] : []).reduce(function(options, data) {
+                    options[data[0]] = data[1];
+                    return options;
+                }, {});
             }());
 
-            this.frequency = (function() {
-                return self.frequencyOptions.filter(function(option) {
-                    return cState.cModel.settings.video.frequency === option.value;
-                })[0];
-            }());
+            this.frequencyOptions = makeArray(11).map(function(value, index) {
+                switch (index) {
+                case 0:
+                    return ['No subsequent ads', index];
+                case 1:
+                    return ['After every video', index];
+                default:
+                    return ['After every ' + ordinalSuffixOf(index) + ' video', index];
+                }
+            }).reduce(function(options, data) {
+                options[data[0]] = data[1];
+                return options;
+            }, {});
 
-            this.firstPlacement = (function() {
-                return self.firstPlacementOptions.filter(function(option) {
-                    return cState.cModel.settings.video.firstPlacement === option.value;
-                })[0];
-            }());
-
-            this.skip = (function() {
-                return self.skipOptions.filter(function(option) {
-                    return cState.cModel.settings.video.skip === option.value;
-                })[0];
-            }());
+            this.skipOptions = {
+                'No, users cannot skip ads': false,
+                'Yes, after six seconds': 6,
+                'Yes, skip ads at any time': true
+            };
 
             Object.defineProperties(this, {
                 currentTab: {
@@ -511,7 +467,10 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
 
                 switch (tab.sref) {
                 case 'MR:AdManager.Settings.Frequency':
-                    return !!this.frequency && !!this.skip && !!this.firstPlacement;
+                    return [this.frequency, this.firstPlacement, this.skip]
+                        .every(function(value) {
+                            return isDefined(value);
+                        });
                 case 'MR:AdManager.Settings.VideoServer':
                     return !!cState.cModel.settings.video.waterfall;
                 case 'MR:AdManager.Settings.DisplayServer':
@@ -547,10 +506,10 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
             this.save = function() {
                 var settings = {
                     video: {
-                        firstPlacement: self.firstPlacement && self.firstPlacement.value,
-                        frequency: self.frequency && self.frequency.value,
+                        firstPlacement: self.firstPlacement,
+                        frequency: self.frequency,
                         waterfall: cState.cModel.settings.video.waterfall,
-                        skip: self.skip && self.skip.value
+                        skip: self.skip
                     },
                     display: {
                         waterfall: cState.cModel.settings.display.waterfall
@@ -584,10 +543,8 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
             $scope.$watch(function() {
                 return self.firstPlacement;
             }, function(firstPlacement) {
-                if (firstPlacement && firstPlacement.value === -1) {
-                    self.frequency = self.frequencyOptions.filter(function(opt) {
-                        return opt.value === 0;
-                    })[0];
+                if (firstPlacement === -1) {
+                    self.frequency = 0;
                 }
             });
         }]);

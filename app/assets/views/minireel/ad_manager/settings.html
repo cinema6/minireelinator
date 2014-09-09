@@ -3,7 +3,7 @@
         <h1 class="modal__title">
             <span ng-show="AdSettingsCtrl.model.type === 'org'">Default Ad Settings</span>
             <span ng-show="AdSettingsCtrl.model.data.length > 1">Ad Settings - {{AdSettingsCtrl.model.data.length}} MiniReels</span>
-            <span ng-show="AdSettingsCtrl.model.data.length === 1">Ad Settings - &ldquo;<em>{{AdSettingsCtrl.model.data[0].title}}</em>&rdquo;</span>
+            <span ng-show="AdSettingsCtrl.model.data.length === 1">Ad Settings - &ldquo;<em>{{AdSettingsCtrl.model.data[0].data.title}}</em>&rdquo;</span>
         </h1>
         <button class="modal__closeBtn btnInvis" c6-sref="{{AdManagerCtrl.returnState}}"><span class="ir">Close</span>
             <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"

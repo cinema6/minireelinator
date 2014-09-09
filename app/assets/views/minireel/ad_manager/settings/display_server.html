@@ -3,11 +3,13 @@
         <h1 class="forms__name--title">Choose Companion Ad Server</h1>
         <p class="forms__introText">If companion ads are shown, how do you want to load the <strong>companion ads</strong> for this MiniReel?</p>
         <div class="twoCol" ng-repeat="choice in AdSettingsCtrl.adChoices.display">
-            <label class="radiobox radiobox--hasLabel clearfix" for="{{choice.value}}">
+            <label class="radiobox radiobox--hasLabel clearfix" for="{{choice.value}}"
+            ng-class="{'radiobox--disabled' : AdSettingsCtrl.model.readOnly}">
                 <input id="{{choice.value}}" type="radio"
                     name="minireel-mode"
                     class="radiobox__input"
                     ng-model="AdSettingsCtrl.model.settings.display.waterfall"
+                    ng-disabled="AdSettingsCtrl.model.readOnly"
                     value="{{choice.value}}"/>
                 <span class="btn__icon faa fab">
                     &nbsp;

@@ -19,13 +19,15 @@
             "read": "all",
             "create": "all",
             "edit": "all",
-            "delete": "all"
+            "delete": "all",
+            "editAdConfig": "org"
         },
         "orgs": {
             "read": "all",
             "create": "all",
             "edit": "all",
-            "delete": "all"
+            "delete": "all",
+            "editAdConfig": "org"
         },
         "users": {
             "read": "all",

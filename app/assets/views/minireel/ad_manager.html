@@ -2,7 +2,7 @@
 <header class="pageHeader container">
     <div class="pageHeader__titleBar clearfix">
         <h1 class="pageTitle">Ad Manager</h1>
-        <a ng-click="AdManagerCtrl.editOrgSettings()" href="" title="New MiniReel" class="btnAction btnAction--primary btnAction--hasIcon" >
+        <a ng-if="AdManagerCtrl.canEditDefaults" ng-click="AdManagerCtrl.editOrgSettings()" href="" title="New MiniReel" class="btnAction btnAction--primary btnAction--hasIcon" >
             <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                  viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
                 <path class="ui__icon" d="M3.1,13.9H1.8L0,17.1L0.9,18l3.1-1.8v-1.3l3-3l-1-1L3.1,13.9z M14.5,1.4l0.8,0.8l-4.1,4.1l0.6,0.6l4.1-4.1l0.8,0.8
@@ -13,6 +13,9 @@
                     C17.3,16.6,16.6,17.3,15.8,17.3z"/>
             </svg>
             <span class="btn__label">Edit Default Settings</span>
+        </a>
+        <a ng-if="!AdManagerCtrl.canEditDefaults" ng-click="AdManagerCtrl.editOrgSettings(true)" href="" title="New MiniReel" class="btnAction btnAction--primary btnAction--hasIcon" >
+            <span class="btn__label">View Default Settings</span>
         </a>
     </div>
     <ul class="tabFilters clearfix">
@@ -60,7 +63,7 @@
                     <button class="ui__clickDropBtn" type="button" title="Select None" ng-show="AdManagerCtrl.model.selected.indexOf(true) > -1" ng-click="AdManagerCtrl.selectNone()">Select None</button>
                 </div>
             </div>
-            <div class="btnGroup__animator">
+            <div class="btnGroup__animator" ng-if="AdManagerCtrl.canEditMiniReel">
                 <div class="btnGroup clearfix" ng-show="AdManagerCtrl.getSelected().length > 0">
                     <button class="btn btn--primary" type="button" title="Use Default Settings" ng-click="AdManagerCtrl.useDefaultSettings(AdManagerCtrl.getSelected())">
                         <span class="btn__label">Use Default Settings</span>
@@ -85,7 +88,7 @@
                 </article>
             </li>
 
-            <li class="miniReels__item grid__item" ng-repeat="this in minireels track by this.id">
+            <li class="miniReels__item grid__item" ng-repeat="$this in minireels track by $this.id">
                 <article class="miniReel__group clearfix">
                     <div class="miniReel__selector">
                         <label class="checkbox--inline">
@@ -94,40 +97,40 @@
                         </label>
                     </div>
                     <div class="miniReel__imgBox">
-                        <div class="miniReel__img" c6-bg-img="{{this.data.collateral.splash}}" ng-click="AdManagerCtrl.editSettings([this])">&nbsp;</div>
+                        <div class="miniReel__img" c6-bg-img="{{$this.data.collateral.splash}}" ng-click="AdManagerCtrl.editSettings([$this], !AdManagerCtrl.canEditMiniReel)">&nbsp;</div>
                     </div>
                     <div class="miniReel__titleBox miniReel__titleBox--adManager">
-                        <h1 class="miniReel__title" ng-click="AdManagerCtrl.editSettings([this])">
-                            {{this.data.title}}
+                        <h1 class="miniReel__title" ng-click="AdManagerCtrl.editSettings([$this], !AdManagerCtrl.canEditMiniReel)">
+                            {{$this.data.title}}
                         </h1>
                         <p class="miniReel__metaData">
-                            by <span class="miniReel__author">{{this.user.firstName}} {{this.user.lastName}}</span> | 
-                            <span class="miniReel__type">{{AdManagerCtrl.modeNameFor(this)}}</span>
+                            by <span class="miniReel__author">{{$this.user.firstName}} {{$this.user.lastName}}</span> | 
+                            <span class="miniReel__type">{{AdManagerCtrl.modeNameFor($this)}}</span>
                         </p>
                     </div>
                     <div class="miniReel__status">
-                        <strong ng-show="this.status === 'active'" class="miniReel__statusText--{{this.status}}">
+                        <strong ng-show="$this.status === 'active'" class="miniReel__statusText--{{$this.status}}">
                             Published
                         </strong>
-                        <strong ng-show="this.status === 'pending'" class="miniReel__statusText--{{this.status}}">
+                        <strong ng-show="$this.status === 'pending'" class="miniReel__statusText--{{$this.status}}">
                             Private
                         </strong> 
-                        - <span class="miniReel__date">{{this.lastModified | date:'M/d/yyyy'}}</span>
+                        - <span class="miniReel__date">{{$this.lastModified | date:'M/d/yyyy'}}</span>
                         <p class="miniReel__count">
-                            <ng-pluralize count="AdManagerCtrl.adCountOf(this)" when="{'0': 'No ads', '1': '1 ad', 'other': '{} ads'}"></ng-pluralize>
-                             | {{this.data.deck.length}} slides
+                            <ng-pluralize count="AdManagerCtrl.adCountOf($this)" when="{'0': 'No ads', '1': '1 ad', 'other': '{} ads'}"></ng-pluralize>
+                             | {{$this.data.deck.length}} slides
                         </p>
                     </div>
                     <!-- <div class="miniReel__stats">
                         <p class="miniReel__views">12123123 views</p>
                     </div> -->
                     <div class="miniReel__configStatus">
-                        <p class="miniReel__views">{{AdManagerCtrl.settingsTypeOf(this)}}</p>
+                        <p class="miniReel__views">{{AdManagerCtrl.settingsTypeOf($this)}}</p>
                     </div>
 
                     <form class="miniReel__quickActions">
                         <div class="quickActions__holder">
-                            <a class="quickActions__btn quickActions__btn--play" ng-href="{{AdManagerCtrl.previewUrlOf(this)}}" ng-show="AdManagerCtrl.previewUrlOf(this)" target="_blank">
+                            <a class="quickActions__btn quickActions__btn--play" ng-href="{{AdManagerCtrl.previewUrlOf($this)}}" ng-show="AdManagerCtrl.previewUrlOf($this)" target="_blank">
                                 <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                     viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
                                     <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M13.4,7.9L5.7,2.2C5.5,2,5,1.9,4.6,2.1C4.3,2.2,4,2.7,4,3v11.9
@@ -137,7 +140,7 @@
                             </a>
                         </div>
                         <div class="quickActions__holder">
-                            <button ng-show="this.status === 'active' && PortalCtrl.model.type !== 'ContentProvider'" c6-sref="MR:AdManager.Embed" c6-models="[this]" class="quickActions__btn" type="button">
+                            <button ng-show="$this.status === 'active' && PortalCtrl.model.type !== 'ContentProvider'" c6-sref="MR:AdManager.Embed" c6-models="[$this]" class="quickActions__btn" type="button">
                                 <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                     viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
                                     <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M0,9.6l6,3.9v-2L2,9v0l4-2.5V4.5L0,8.4V9.6z M6.8,15.5h1.6l2.8-13H9.7L6.8,15.5z M12,4.5v1.9L16,9v0l-4,2.5v2l6-3.9V8.4
@@ -146,8 +149,8 @@
                                 <span class="ir">Get Embed Code</span>
                             </button>
                         </div>
-                        <div class="quickActions__holder">
-                            <button c6-models="[this]" class="quickActions__btn" type="button" ng-click="AdManagerCtrl.editSettings([this])">
+                        <div class="quickActions__holder" ng-if="AdManagerCtrl.canEditMiniReel">
+                            <button c6-models="[$this]" class="quickActions__btn" type="button" ng-click="AdManagerCtrl.editSettings([$this])">
                                 <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                     viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
                                     <path class="ui__icon" d="M3.1,13.9H1.8L0,17.1L0.9,18l3.1-1.8v-1.3l3-3l-1-1L3.1,13.9z M14.5,1.4l0.8,0.8l-4.1,4.1l0.6,0.6l4.1-4.1l0.8,0.8

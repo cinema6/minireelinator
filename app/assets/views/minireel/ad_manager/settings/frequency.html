@@ -2,30 +2,15 @@
     <form class="AMFrequency__form clearfix">
         <div class="twoCol">
             <h1 class="forms__name--title">First Ad Placement <strong class="typo--danger">*</strong></h1>
-            <button class="btn faa faa--end fa-caret-down ui__clickDrop" type="button" title="First Ad Placement" ng-click="AdSettingsCtrl.dropDowns.firstPlacement.toggle()" c6-click-outside="AdSettingsCtrl.dropDowns.firstPlacement.hide()">
-                <span class="btn__label">{{AdSettingsCtrl.firstPlacement.label}}</span>
-            </button>
-            <div class="pager__itemsPerPage ui__clickDropMenu" ng-show="AdSettingsCtrl.dropDowns.firstPlacement.shown">
-                <button class="ui__clickDropBtn ui__clickDropBtn--full" type="button" title="{{option.label}}" ng-repeat="option in AdSettingsCtrl.firstPlacementOptions" ng-click="AdSettingsCtrl.firstPlacement = option">{{option.label}}</button>
-            </div>
+            <c6-dropdown options="AdSettingsCtrl.firstPlacementOptions" value="AdSettingsCtrl.firstPlacement" ng-disabled="AdSettingsCtrl.model.readOnly"></c6-dropdown>
         </div>
         <div class="twoCol">
             <h1 class="forms__name--title">Subsequent Ad Placement <strong class="typo--danger">*</strong></h1>
-            <button class="btn faa faa--end fa-caret-down ui__clickDrop" type="button" title="Subsequent Ad Placement" ng-click="AdSettingsCtrl.dropDowns.frequency.toggle()" c6-click-outside="AdSettingsCtrl.dropDowns.frequency.hide()">
-                <span class="btn__label">{{AdSettingsCtrl.frequency.label}}</span>
-            </button>
-            <div class="pager__itemsPerPage ui__clickDropMenu" ng-show="AdSettingsCtrl.dropDowns.frequency.shown">
-                <button class="ui__clickDropBtn ui__clickDropBtn--full" type="button" title="{{option.label}}" ng-repeat="option in AdSettingsCtrl.frequencyOptions" ng-click="AdSettingsCtrl.frequency = option">{{option.label}}</button>
-            </div>
+            <c6-dropdown options="AdSettingsCtrl.frequencyOptions" value="AdSettingsCtrl.frequency" ng-disabled="AdSettingsCtrl.model.readOnly"></c6-dropdown>
         </div>
         <div class="twoCol">
             <h1 class="forms__name--title skipAdsHeader">Allow Users to Skip Ads? <strong class="typo--danger">*</strong></h1>
-            <button class="btn faa faa--end fa-caret-down ui__clickDrop" type="button" title="First Ad Placement" ng-click="AdSettingsCtrl.dropDowns.skip.toggle()" c6-click-outside="AdSettingsCtrl.dropDowns.skip.hide()">
-                <span class="btn__label">{{AdSettingsCtrl.skip.label}}</span>
-            </button>
-            <div class="pager__itemsPerPage ui__clickDropMenu" ng-show="AdSettingsCtrl.dropDowns.skip.shown">
-                <button class="ui__clickDropBtn ui__clickDropBtn--full" type="button" title="{{option.label}}" ng-repeat="option in AdSettingsCtrl.skipOptions" ng-click="AdSettingsCtrl.skip = option">{{option.label}}</button>
-            </div>
+            <c6-dropdown options="AdSettingsCtrl.skipOptions" value="AdSettingsCtrl.skip" ng-disabled="AdSettingsCtrl.model.readOnly"></c6-dropdown>
         </div>
     </form>
     <p class="modalBody__fineprint typo--danger"><strong>*</strong> Indicates required field.</p>

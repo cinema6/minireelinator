@@ -10,16 +10,19 @@
                 c6State,
                 $window,
                 SettingsService,
+                PortalCtrl,
                 MiniReelCtrl,
                 tracker;
 
-            var gsap,
-                appData,
-                cinema6Session;
+            var user;
 
             function instantiate() {
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
+                    $scope.PortalCtrl = PortalCtrl = $controller('PortalController', {
+                        $scope: $scope
+                    });
+                    PortalCtrl.model = user;
                     MiniReelCtrl = $controller('MiniReelController', {
                         tracker        : tracker,
                         c6Defines      : c6Defines,
@@ -31,14 +34,14 @@
             }
 
             beforeEach(function() {
-                gsap = {
-                    TweenLite: {
-                        ticker: {
-                            useRAF: jasmine.createSpy('gsap.TweenLite.ticker.useRAF()')
-                        }
+                user = {
+                    id: 'u-22edfa1071d94b',
+                    permissions: {
+                        experiences: {},
+                        orgs: {}
                     }
                 };
-                
+
                 tracker = {
                     create   :  jasmine.createSpy('tracker.create'),
                     send     :  jasmine.createSpy('tracker.send'),
@@ -46,22 +49,9 @@
                     pageview :  jasmine.createSpy('tracker.pageview')
                 };
 
-                appData = {
-                    experience: {
-                        img: {}
-                    },
-                    profile: {
-                        raf: {}
-                    },
-                    user: {}
-                };
-
                 module(appModule.name);
-                module(minireelModule.name, function($provide) {
-                    $provide.value('gsap', gsap);
-                });
 
-                inject(function($injector, c6EventEmitter) {
+                inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
                     $q = $injector.get('$q');
                     c6State = $injector.get('c6State');
@@ -72,12 +62,6 @@
                     spyOn(SettingsService, 'register').and.returnValue(SettingsService);
 
                     MiniReelCtrl = instantiate();
-
-                    cinema6Session = c6EventEmitter({
-                        ping: jasmine.createSpy('session.ping()'),
-                        request: jasmine.createSpy('session.request()')
-                            .and.returnValue($q.defer().promise)
-                    });
                 });
             });
 
@@ -86,12 +70,6 @@
             });
 
             describe('properties', function() {
-                var appDataDeferred;
-
-                beforeEach(function() {
-                    appDataDeferred = $q.defer();
-                });
-
                 describe('branding', function() {
                     it('should be null', function() {
                         expect(MiniReelCtrl.branding).toBeNull();
