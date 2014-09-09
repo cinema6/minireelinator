@@ -21,16 +21,25 @@ function( angular , c6ui , templates ) {
                             return [label, this[label]];
                         }, scope.options))) : [];
                 }, ['options']);
-                Object.defineProperty(scope, 'label', {
-                    get: function() {
-                        var value = this.value;
+                Object.defineProperties(scope, {
+                    label: {
+                        get: function() {
+                            var value = this.value;
 
-                        return this.list.reduce(function(label, option) {
-                            return option[1] === value ? option[0] : label;
-                        }, null);
+                            return this.list.reduce(function(label, option) {
+                                return option[1] === value ? option[0] : label;
+                            }, null);
+                        }
                     }
                 });
 
+                scope.toggle = function() {
+                    if (scope.disabled) {
+                        return;
+                    }
+
+                    scope.showDropDown = !scope.showDropDown;
+                };
                 scope.setValue = function(value) {
                     scope.value = value;
                 };
@@ -46,7 +55,8 @@ function( angular , c6ui , templates ) {
             return {
                 scope: {
                     value: '=',
-                    options: '='
+                    options: '=',
+                    disabled: '@'
                 },
                 restrict: 'E',
                 templateUrl: 'views/directives/c6_dropdown.html',

@@ -19,8 +19,9 @@ define(['ui', 'jquery'], function(uiModule, $) {
 
             $scope.options = null;
             $scope.dropdownValue = null;
+            $scope.disabled = false;
             $scope.$apply(function() {
-                $dropdown = $compile('<c6-dropdown options="options" value="dropdownValue">This many: {{value}}.</c6-dropdown>')($scope);
+                $dropdown = $compile('<c6-dropdown options="options" value="dropdownValue" ng-disabled="disabled">This many: {{value}}.</c6-dropdown>')($scope);
             });
         });
 
@@ -104,6 +105,35 @@ define(['ui', 'jquery'], function(uiModule, $) {
                         });
 
                         it('should be hidden', function() {
+                            expect($list.hasClass('ng-hide')).toBe(true);
+                        });
+                    });
+                });
+
+                describe('if the dropdown is disabled, when clicked', function() {
+                    var $button;
+
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            $scope.disabled = true;
+                        });
+
+                        $button = $dropdown.find('button');
+                        $button.click();
+                    });
+
+                    it('should never show the list of options', function() {
+                        expect($list.hasClass('ng-hide')).toBe(true);
+                    });
+
+                    describe('if reenabled', function() {
+                        beforeEach(function() {
+                            $scope.$apply(function() {
+                                $scope.disabled = false;
+                            });
+                        });
+
+                        it('should not show the list', function() {
                             expect($list.hasClass('ng-hide')).toBe(true);
                         });
                     });
