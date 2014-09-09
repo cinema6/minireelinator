@@ -374,6 +374,7 @@
         .btnAction--hasIcon,
         .btnAction--hasIcon:focus {
             padding:0.5625em 1.5em 0.4375em 1.5em;
+            height:1.125em;
         }
             .btnAction--hasIcon .ui__iconHolder18 {
                 margin:0 0.25em 0 0;
@@ -381,6 +382,11 @@
             .btnAction--hasIcon .ui__icon {
                 fill:#fff;
             }
+        .btnAction--hasFaIcon,
+        .btnAction--hasFaIcon:focus {
+            padding:0.5em 1.5em;
+            height:1.125em;
+        }
             
         .btnAction--primary,
         .btnAction--primary:hover,

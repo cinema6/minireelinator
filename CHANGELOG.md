@@ -6,7 +6,8 @@
   * [FIX]: Modal Editor styles fixed to clip long text titles.
   * [FEATURE]: Ad Manager can now be fully/partially disabled based on
     the user's permissions
-  * [FEATURE]: Disabled ad manager modal styles added
+  * [FIX]: Publish MiniReel button made more prominent
+  * [FIX]: "Publish Modal" button label changed to "Publish Mode"
 
 * *[Beta19.rc2]*
   * [FIX]: Replaced instances of "Minireels" in the text with
