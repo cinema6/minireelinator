@@ -4,6 +4,8 @@
 * *[Beta19.rc3]*
   * [FIX]: Getting embed code from Ad Manager no longer takes user to Studio
   * [FIX]: Modal Editor styles fixed to clip long text titles.
+  * [FEATURE]: Ad Manager can now be fully/partially disabled based on
+    the user's permissions
 
 * *[Beta19.rc2]*
   * [FIX]: Replaced instances of "Minireels" in the text with
