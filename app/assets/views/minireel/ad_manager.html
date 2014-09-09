@@ -2,7 +2,7 @@
 <header class="pageHeader container">
     <div class="pageHeader__titleBar clearfix">
         <h1 class="pageTitle">Ad Manager</h1>
-        <a ng-click="AdManagerCtrl.editOrgSettings()" href="" title="New MiniReel" class="btnAction btnAction--primary btnAction--hasIcon" >
+        <a ng-if="AdManagerCtrl.canEditDefaults" ng-click="AdManagerCtrl.editOrgSettings()" href="" title="New MiniReel" class="btnAction btnAction--primary btnAction--hasIcon" >
             <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                  viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
                 <path class="ui__icon" d="M3.1,13.9H1.8L0,17.1L0.9,18l3.1-1.8v-1.3l3-3l-1-1L3.1,13.9z M14.5,1.4l0.8,0.8l-4.1,4.1l0.6,0.6l4.1-4.1l0.8,0.8
@@ -13,6 +13,9 @@
                     C17.3,16.6,16.6,17.3,15.8,17.3z"/>
             </svg>
             <span class="btn__label">Edit Default Settings</span>
+        </a>
+        <a ng-if="!AdManagerCtrl.canEditDefaults" ng-click="AdManagerCtrl.editOrgSettings()" href="" title="New MiniReel" class="btnAction btnAction--primary btnAction--hasIcon" >
+            <span class="btn__label">View Default Settings</span>
         </a>
     </div>
     <ul class="tabFilters clearfix">
@@ -60,7 +63,7 @@
                     <button class="ui__clickDropBtn" type="button" title="Select None" ng-show="AdManagerCtrl.model.selected.indexOf(true) > -1" ng-click="AdManagerCtrl.selectNone()">Select None</button>
                 </div>
             </div>
-            <div class="btnGroup__animator">
+            <div class="btnGroup__animator" ng-if="AdManagerCtrl.canEditMiniReel">
                 <div class="btnGroup clearfix" ng-show="AdManagerCtrl.getSelected().length > 0">
                     <button class="btn btn--primary" type="button" title="Use Default Settings" ng-click="AdManagerCtrl.useDefaultSettings(AdManagerCtrl.getSelected())">
                         <span class="btn__label">Use Default Settings</span>
@@ -146,7 +149,7 @@
                                 <span class="ir">Get Embed Code</span>
                             </button>
                         </div>
-                        <div class="quickActions__holder">
+                        <div class="quickActions__holder" ng-if="AdManagerCtrl.canEditMiniReel">
                             <button c6-models="[this]" class="quickActions__btn" type="button" ng-click="AdManagerCtrl.editSettings([this])">
                                 <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                     viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">

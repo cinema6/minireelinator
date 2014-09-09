@@ -74,7 +74,8 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
         function                           ( $scope , c6State , $q , ConfirmDialogService ,
                                              cState , $injector ) {
             var self = this,
-                org = $scope.PortalCtrl.model.org;
+                org = $scope.PortalCtrl.model.org,
+                permissions = $scope.PortalCtrl.model.permissions;
 
             function getAdConfig(object) {
                 var systemDefault = {
@@ -180,6 +181,8 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
             });
 
             this.returnState = 'MR:AdManager';
+            this.canEditDefaults = !!permissions.orgs.editAdConfig;
+            this.canEditMiniReel = !!permissions.experiences.editAdConfig;
 
             this.settingsTypeOf = function(minireel) {
                 var config = getAdConfig(minireel),

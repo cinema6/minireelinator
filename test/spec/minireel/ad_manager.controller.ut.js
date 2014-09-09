@@ -19,6 +19,33 @@
                 scopePromise,
                 model;
 
+            var user,
+                config;
+
+            function instantiate() {
+                $scope = $rootScope.$new();
+
+                $scope.$apply(function() {
+                    PortalCtrl = $scope.PortalCtrl = $controller('PortalController', {
+                        $scope: $scope
+                    });
+                    PortalCtrl.model = user;
+
+                    MiniReelCtrl = $scope.MiniReelCtrl = $controller('MiniReelController', {
+                        $scope: $scope
+                    });
+                    MiniReelCtrl.model = config;
+
+                    AdManagerCtrl = $controller('AdManagerController', {
+                        $scope: $scope,
+                        cState: cState
+                    });
+                    AdManagerCtrl.model = model;
+                });
+
+                return AdManagerCtrl;
+            }
+
             beforeEach(function() {
                 module(adModule.name);
                 module(appModule.name);
@@ -57,55 +84,52 @@
 
                     $scope = $rootScope.$new();
 
-                    PortalCtrl = $scope.PortalCtrl = {
-                        model: {
-                            org: {
-                                id: 'org1'
-                            }
+                    user = {
+                        org: {
+                            id: 'org1'
+                        },
+                        permissions: {
+                            orgs: {},
+                            experiences: {}
                         }
                     };
 
-                    MiniReelCtrl = $scope.MiniReelCtrl = {
-                        model: {
-                            data: {
-                                /* jshint quotmark:false */
-                                "modes": [
-                                    {
-                                        "modes": [
-                                            {
-                                                "name": "No Companion Ad",
-                                                "value": "lightbox"
-                                            },
-                                            {
-                                                "name": "With Companion Ad",
-                                                "value": "lightbox-ads"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "modes": [
-                                            {
-                                                "name": "Light Text",
-                                                "value": "light"
-                                            },
-                                            {
-                                                "name": "Heavy Text",
-                                                "value": "full"
-                                            }
-                                        ]
-                                    }
-                                ]
-                                /* jshint quotmark:single */
-                            }
+                    config = {
+                        data: {
+                            /* jshint quotmark:false */
+                            "modes": [
+                                {
+                                    "modes": [
+                                        {
+                                            "name": "No Companion Ad",
+                                            "value": "lightbox"
+                                        },
+                                        {
+                                            "name": "With Companion Ad",
+                                            "value": "lightbox-ads"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "modes": [
+                                        {
+                                            "name": "Light Text",
+                                            "value": "light"
+                                        },
+                                        {
+                                            "name": "Heavy Text",
+                                            "value": "full"
+                                        }
+                                    ]
+                                }
+                            ]
+                            /* jshint quotmark:single */
                         }
                     };
 
                     spyOn(cState.cParent, 'getMiniReelList');
 
-                    $scope.$apply(function() {
-                        AdManagerCtrl = $controller('AdManagerController', { $scope: $scope, cState: cState });
-                        AdManagerCtrl.model = model;
-                    });
+                    AdManagerCtrl = instantiate();
                 });
             });
 
@@ -206,6 +230,44 @@
             });
 
             describe('properties', function() {
+                describe('canEditDefaults', function() {
+                    describe('if the user can\'t edit org ad settings', function() {
+                        it('should be false', function() {
+                            expect(AdManagerCtrl.canEditDefaults).toBe(false);
+                        });
+                    });
+
+                    describe('if the user can edit org ad settings', function() {
+                        beforeEach(function() {
+                            user.permissions.orgs.editAdConfig = 'org';
+                            AdManagerCtrl = instantiate();
+                        });
+
+                        it('should be true', function() {
+                            expect(AdManagerCtrl.canEditDefaults).toBe(true);
+                        });
+                    });
+                });
+
+                describe('canEditMiniReel', function() {
+                    describe('if the user can\'t edit experience ad settings', function() {
+                        it('should be false', function() {
+                            expect(AdManagerCtrl.canEditMiniReel).toBe(false);
+                        });
+                    });
+
+                    describe('if the user can edit experience ad settings', function() {
+                        beforeEach(function() {
+                            user.permissions.experiences.editAdConfig = 'org';
+                            AdManagerCtrl = instantiate();
+                        });
+
+                        it('should be true', function() {
+                            expect(AdManagerCtrl.canEditMiniReel).toBe(true);
+                        });
+                    });
+                });
+
                 describe('filter', function() {
                     it('should be initialized as the state\'s filter', function() {
                         expect(AdManagerCtrl.filter).toBe(cState.filter);
