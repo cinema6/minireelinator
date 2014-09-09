@@ -398,6 +398,10 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
                 new Tab('Display Server', self.baseState + 'DisplayServer')
             ];
 
+            this.frequency = cState.cModel.settings.video.frequency;
+            this.firstPlacement = cState.cModel.settings.video.firstPlacement;
+            this.skip = cState.cModel.settings.video.skip;
+
             this.firstPlacementOptions = (function() {
                 var decks = cState.cModel.type === 'org' ?
                     [makeArray(10)] : cState.cModel.data.map(function(minireel) {
@@ -413,7 +417,13 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
                     var num = index + 1;
 
                     return ['After ' + ordinalSuffixOf(num) + ' Video', num];
-                })).reduce(function(options, data) {
+                })).concat(self.firstPlacement ? [
+                    // Make sure whatever the default is is an option
+                    [
+                        'After ' + ordinalSuffixOf(self.firstPlacement) + ' Video',
+                        self.firstPlacement
+                    ]
+                ] : []).reduce(function(options, data) {
                     options[data[0]] = data[1];
                     return options;
                 }, {});
@@ -438,10 +448,6 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
                 'Yes, after six seconds': 6,
                 'Yes, skip ads at any time': true
             };
-
-            this.frequency = cState.cModel.settings.video.frequency;
-            this.firstPlacement = cState.cModel.settings.video.firstPlacement;
-            this.skip = cState.cModel.settings.video.skip;
 
             Object.defineProperties(this, {
                 currentTab: {

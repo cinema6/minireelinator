@@ -323,6 +323,42 @@
                             expect(AdSettingsCtrl.firstPlacementOptions['No ads']).toBe(-1);
                             expect(AdSettingsCtrl.firstPlacementOptions['After 3rd Video']).toBe(3);
                         });
+
+                        describe('if the default is not present based on the number of slides in the MiniReel', function() {
+                            beforeEach(function() {
+                                settings.video.firstPlacement = 2;
+
+                                initCtrl({
+                                    type: 'minireels',
+                                    settings: settings,
+                                    data: [{
+                                        data: {
+                                            deck: [{}]
+                                        }
+                                    }]
+                                });
+                            });
+
+                            it('should still include the default setting', function() {
+                                expect(AdSettingsCtrl.firstPlacementOptions['After 2nd Video']).toBe(2);
+                            });
+                        });
+
+                        describe('if the firstPlacement is undefined', function() {
+                            beforeEach(function() {
+                                settings.video.firstPlacement = undefined;
+                                initCtrl({
+                                    type: 'minireels',
+                                    settings: settings,
+                                    data: minireels
+                                });
+                            });
+
+                            it('should not create a dropdown item for undefined', function() {
+                                expect('After undefinedth Video' in AdSettingsCtrl.firstPlacementOptions).toBe(false);
+                                expect('undefined' in AdSettingsCtrl.firstPlacementOptions).toBe(false);
+                            });
+                        });
                     });
                 });
 
