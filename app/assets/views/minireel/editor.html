@@ -39,13 +39,10 @@
         </div>
         <div class="pageHeader__actionBar clearfix">
             <div class="btnGroup pageHeader__btnGroup">
-                <button ng-click="EditorCtrl.publish()" ng-show="minireel.status === 'pending'" class="btn btn--primary" type="button" title="Publish">
-                    <span class="btn__label fab fa-cloud-upload">&nbsp; Publish</span>
-                </button>
-                <button ng-click="EditorCtrl.makePrivate()" ng-show="minireel.status === 'active'" class="btn btn--primary btn--first" type="button" title="Make Private">
+                <button ng-click="EditorCtrl.makePrivate()" ng-show="minireel.status === 'active'" class="btn btn--primary" type="button" title="Make Private">
                     <span class="btn__label fab fa-lock">&nbsp; Make Private</span>
                 </button>
-                <button ng-click="EditorCtrl.deleteMinireel()" class="btn btn--primary" type="button" title="Delete">
+                <button ng-click="EditorCtrl.deleteMinireel()" class="btn btn--primary btn--first" type="button" title="Delete">
                     <span class="btn__label fab fa-trash">&nbsp; Delete</span>
                 </button>
                 <a class="btn btn--primary" type="button" title="Preview Link" ng-href="{{EditorCtrl.previewUrl}}" ng-show="EditorCtrl.previewUrl" target="_blank">
@@ -57,6 +54,9 @@
                     <span class="btn__label">Preview Link</span>
                 </a>
             </div>
+            <button ng-click="EditorCtrl.publish()" ng-show="minireel.status === 'pending'" class="btnAction btnAction--success btnAction--hasFaIcon" type="button" title="Publish">
+                <span class="btn__label fab fa-cloud-upload">&nbsp; Publish MiniReel</span>
+            </button>
             <button ng-click="EditorCtrl.confirmSave()" ng-show="EditorCtrl.model.status === 'active'"
                 ng-class="{
                     'btn__publishChanges--alert': EditorCtrl.minireelState.dirty,
@@ -69,9 +69,9 @@
                 <span class="btn__label">Publish Changes</span>
             </button>
             <button ng-click="EditorCtrl.previewMode()" title="Preview" 
-            class="btnAction btnAction--primary btnAction--hasIcon" type="button">
+            class="btnAction btnAction--primary btnAction--hasFaIcon" type="button">
                 
-                <span class="btn__label fab fa-bolt">&nbsp; Preview Modal</span>
+                <span class="btn__label fab fa-bolt">&nbsp; Preview Mode</span>
             </button>
         </div>
     </header>
@@ -83,7 +83,7 @@
         class="preview__container"
         ng-style="{height: (PreviewCtrl.fullscreen && PreviewCtrl.device === 'desktop') ? '0px' : ''}">
             <header class="modalHeader__group preview__header">
-                <h1 class="modal__title">Preview Modal</h1>
+                <h1 class="modal__title">Preview Mode</h1>
                 <button class="modal__closeBtn btnInvis" ng-click="EditorCtrl.closePreview()"><span class="ir">Close</span>
                     <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                          viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
