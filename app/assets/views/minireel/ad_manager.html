@@ -14,7 +14,7 @@
             </svg>
             <span class="btn__label">Edit Default Settings</span>
         </a>
-        <a ng-if="!AdManagerCtrl.canEditDefaults" ng-click="AdManagerCtrl.editOrgSettings()" href="" title="New MiniReel" class="btnAction btnAction--primary btnAction--hasIcon" >
+        <a ng-if="!AdManagerCtrl.canEditDefaults" ng-click="AdManagerCtrl.editOrgSettings(true)" href="" title="New MiniReel" class="btnAction btnAction--primary btnAction--hasIcon" >
             <span class="btn__label">View Default Settings</span>
         </a>
     </div>
@@ -97,10 +97,10 @@
                         </label>
                     </div>
                     <div class="miniReel__imgBox">
-                        <div class="miniReel__img" c6-bg-img="{{this.data.collateral.splash}}" ng-click="AdManagerCtrl.editSettings([this])">&nbsp;</div>
+                        <div class="miniReel__img" c6-bg-img="{{this.data.collateral.splash}}" ng-click="AdManagerCtrl.editSettings([this], !AdManagerCtrl.canEditMiniReel)">&nbsp;</div>
                     </div>
                     <div class="miniReel__titleBox miniReel__titleBox--adManager">
-                        <h1 class="miniReel__title" ng-click="AdManagerCtrl.editSettings([this])">
+                        <h1 class="miniReel__title" ng-click="AdManagerCtrl.editSettings([this], !AdManagerCtrl.canEditMiniReel)">
                             {{this.data.title}}
                         </h1>
                         <p class="miniReel__metaData">
