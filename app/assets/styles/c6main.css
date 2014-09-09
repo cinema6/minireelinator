@@ -92,10 +92,6 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-        .faa--end:after,
-        .fab--end:after {
-            float:right;
-        }
         .fa-caret-down:after {
             content:'\f0d7';
         }
@@ -505,6 +501,9 @@
                 width:82%;
                 text-align: left;
             }
+            .twoCol .ui__clickDrop:after {
+                float:right;
+            }
             .ui__clickDropBtn {
                 display: block;
                 border:0; margin:0; padding:0.5rem 1rem;
@@ -513,6 +512,7 @@
                 width:10em;
                 text-align: left;
             }
+                .twoCol .ui__clickDropBtn,
                 .ui__clickDropBtn--full {
                     width:100%;
                 }
@@ -826,6 +826,9 @@
         width:1.25em; height:1em;
         display: inline-block;
     }
+        .radiobox--disabled {
+            opacity:0.5;
+        }
         .radiobox__input {
             position:absolute; left:-1000000em;
             margin:0; padding:0;
@@ -954,7 +957,8 @@
     }
 
     
-    input[disabled="disabled"] {
+    input[disabled="disabled"],
+    c6-dropdown[disabled="disabled"] {
         opacity: 0.5; cursor:default;
     }
         input[disabled="disabled"]:hover {

@@ -6,6 +6,7 @@
   * [FIX]: Modal Editor styles fixed to clip long text titles.
   * [FEATURE]: Ad Manager can now be fully/partially disabled based on
     the user's permissions
+  * [FEATURE]: Disabled ad manager modal styles added
 
 * *[Beta19.rc2]*
   * [FIX]: Replaced instances of "Minireels" in the text with
