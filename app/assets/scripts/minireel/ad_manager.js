@@ -417,7 +417,7 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
                     var num = index + 1;
 
                     return ['After ' + ordinalSuffixOf(num) + ' Video', num];
-                })).concat(self.firstPlacement ? [
+                })).concat((self.firstPlacement || 0) > 0 ? [
                     // Make sure whatever the default is is an option
                     [
                         'After ' + ordinalSuffixOf(self.firstPlacement) + ' Video',

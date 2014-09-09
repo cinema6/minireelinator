@@ -359,6 +359,21 @@
                                 expect('undefined' in AdSettingsCtrl.firstPlacementOptions).toBe(false);
                             });
                         });
+
+                        describe('if the firstPlacement is -1', function() {
+                            beforeEach(function() {
+                                settings.video.firstPlacement = -1;
+                                initCtrl({
+                                    type: 'minireels',
+                                    settings: settings,
+                                    data: minireels
+                                });
+                            });
+
+                            it('should not create some strange option', function() {
+                                expect('After -1th Video' in AdSettingsCtrl.firstPlacementOptions).toBe(false);
+                            });
+                        });
                     });
                 });
 
