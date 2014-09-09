@@ -26,6 +26,15 @@ function( angular , c6State  , c6ui ) {
 
         .controller('PortalController', ['AuthService','c6State',
         function                        ( AuthService , c6State ) {
+            this.initWithModel = function(model) {
+                var permissions = model.permissions;
+
+                this.model = model;
+
+                this.enableAdManager = !!permissions.orgs.editAdConfig ||
+                    !!permissions.experiences.editAdConfig;
+            };
+
             this.logout = function() {
                 return AuthService.logout()
                     .then(function transition() {

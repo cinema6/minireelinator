@@ -422,11 +422,10 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
         function                          ( $scope , $log , c6State , tracker ) {
             var self = this;
 
-            $log.info('AppCtlr loaded.');
+            $log.info('MiniReelController loaded.');
 
             this.branding = null;
             this.config = null;
-            this.user = null;
 
             this.trackStateChange = function(state){
                 $log.info('trackChange:',state.cName);
