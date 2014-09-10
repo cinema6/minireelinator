@@ -4,7 +4,8 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
 
     var forEach = angular.forEach,
         copy = angular.copy,
-        isDefined = angular.isDefined;
+        isDefined = angular.isDefined,
+        equals = angular.equals;
 
     return angular.module('c6.app.minireel.adManager', [c6ui.name, c6State.name, services.name])
         .config(['c6StateProvider',
@@ -515,6 +516,10 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
                         waterfall: cState.cModel.settings.display.waterfall
                     }
                 };
+
+                if (equals(settings, getAdConfig(org))) {
+                    return c6State.goTo('MR:AdManager');
+                }
 
                 if (cState.cModel.type === 'org') {
                     org.adConfig = settings;
