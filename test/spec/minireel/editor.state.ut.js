@@ -69,7 +69,6 @@
 
                 beforeEach(function() {
                     spyOn(cinema6.db, 'find').and.returnValue($q.when(minireel));
-                    spyOn(EditorService, 'open').and.returnValue(editorMinireel);
 
                     success = jasmine.createSpy('model() success');
 
@@ -87,9 +86,20 @@
                     expect(result.then).toEqual(jasmine.any(Function));
                 });
 
-                it('should resolve to the transpiled minireel', function() {
+                it('should resolve to the minireel', function() {
+                    expect(success).toHaveBeenCalledWith(minireel);
+                });
+            });
+
+            describe('afterModel()', function() {
+                beforeEach(function() {
+                    spyOn(EditorService, 'open').and.returnValue(editorMinireel);
+
+                    EditorState.afterModel(minireel);
+                });
+
+                it('should open the minireel for editing', function() {
                     expect(EditorService.open).toHaveBeenCalledWith(minireel);
-                    expect(success).toHaveBeenCalledWith(editorMinireel);
                 });
             });
         });

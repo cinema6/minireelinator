@@ -5,7 +5,7 @@
         describe('EditorSplashState', function() {
             var $injector,
                 c6State,
-                EditorState,
+                EditorService,
                 EditorSplashState;
 
             beforeEach(function() {
@@ -15,8 +15,8 @@
                     $injector = _$injector_;
 
                     c6State = $injector.get('c6State');
+                    EditorService = $injector.get('EditorService');
 
-                    EditorState = c6State.get('MR:Editor');
                     EditorSplashState = c6State.get('MR:Editor.Splash');
                 });
             });
@@ -26,23 +26,27 @@
             });
 
             describe('model()', function() {
+                var model;
+
                 beforeEach(function() {
-                    EditorState.cModel = {
-                        data: {
-                            deck: [
-                                {},
-                                {}
-                            ]
-                        },
-                        name: 'foo'
+                    EditorService.state = {
+                        minireel: {
+                            data: {
+                                deck: [
+                                    {},
+                                    {}
+                                ]
+                            },
+                            name: 'foo'
+                        }
                     };
+
+                    model = EditorSplashState.model();
                 });
 
-                it('should return a copy of its parent\'s model', function() {
-                    var model = $injector.invoke(EditorSplashState.model, EditorSplashState);
-
-                    expect(model).toEqual(EditorState.cModel);
-                    expect(model).not.toBe(EditorState.cModel);
+                it('should return a copy of the open minireel', function() {
+                    expect(model).toEqual(EditorService.state.minireel);
+                    expect(model).not.toBe(EditorService.state.minireel);
                 });
             });
         });

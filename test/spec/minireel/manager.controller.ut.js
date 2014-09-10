@@ -371,12 +371,8 @@
                         ManagerCtrl.edit(minireel);
                     });
 
-                    it('should open the MiniReel for editing', function() {
-                        expect(EditorService.open).toHaveBeenCalledWith(minireel);
-                    });
-
                     it('should go to the editor state', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [editorMinireel], {});
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [minireel], {});
                     });
                 });
 
