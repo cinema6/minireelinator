@@ -135,8 +135,8 @@
                 describe('on an anchor tag', function() {
                     beforeEach(function() {
                         $scope.$apply(function() {
-                            $scope.state = 'Team';
                             delete $scope.context;
+                            $scope.state = 'Team';
                         });
                     });
 
@@ -182,6 +182,20 @@
 
                             it('should use the models', function() {
                                 expect($sref.attr('href')).toBe('/#/posts/p-1/comments/c-c/likes/l-0');
+                            });
+                        });
+
+                        describe('if an array literal is used in the c6-models expression', function() {
+                            beforeEach(function() {
+                                $scope.model = { id: 'p-1' };
+                            });
+
+                            it('should not throw errors', function() {
+                                expect(function() {
+                                    $scope.$apply(function() {
+                                        $compile('<a c6-sref="Post" c6-models="[model]">Hello</a>')($scope);
+                                    });
+                                }).not.toThrow();
                             });
                         });
                     });

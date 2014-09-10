@@ -48,6 +48,10 @@ function( angular , c6ui ) {
                 return modelIndex > -1 ? models[modelIndex] : state.cModel;
             });
 
+        if (!family.length) {
+            return '';
+        }
+
         params = params || family.reduce(function(params, state, index) {
             var model = allModels[index];
 
@@ -154,6 +158,17 @@ function( angular , c6ui ) {
                         }
                     }
 
+                    function setHref(models) {
+                        c6State.in(attrs.c6Context || 'main', function() {
+                            var stateName = attrs.c6Sref,
+                                state = c6State.get(stateName),
+                                family = stateFamilyOf(state),
+                                url = urlOfStateFamily(family, models);
+
+                            $element.attr('href', (url || '') && ('/#' + url));
+                        });
+                    }
+
                     $element.on('click', function(event) {
                             var state = attrs.c6Sref,
                                 params = scope.$eval(attrs.c6Params),
@@ -180,19 +195,14 @@ function( angular , c6ui ) {
                     });
 
                     if ($element.prop('tagName') === 'A') {
-                        scope.$watchCollection(function() {
-                            return [attrs.c6Sref, scope.$eval(attrs.c6Models)];
-                        }, function(values) {
-                            c6State.in(attrs.c6Context || 'main', function() {
-                                var stateName = values[0],
-                                    models = values[1],
-                                    state = c6State.get(stateName),
-                                    family = stateFamilyOf(state),
-                                    url = urlOfStateFamily(family, models);
-
-                                $element.attr('href', (url || '') && ('/#' + url));
-                            });
+                        attrs.$observe('c6Sref', function() {
+                            setHref(scope.$eval(attrs.c6Models));
                         });
+                        attrs.$observe('c6Context', function() {
+                            setHref(scope.$eval(attrs.c6Models));
+                        });
+
+                        scope.$watchCollection(attrs.c6Models, setHref);
                     }
                 }
             };
