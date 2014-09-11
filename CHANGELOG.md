@@ -4,6 +4,7 @@
 * *[Beta19.rc5]*
   * [FIX]: Fix for an issue that would cause custom ad configs to be
     deleted after changing the editorial content of a MiniReel
+* *[/Beta19.rc5]*
 
 * *[Beta19.rc4]*
   * [FIX]: Don't add custom ad config to a MiniReel with default settings
