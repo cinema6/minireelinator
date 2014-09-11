@@ -1,5 +1,10 @@
 # MiniReelinator
 
+* *[Beta20.rc1]*
+* [FIX]: Updated dropdown box heights so that items are cut off to hint scrollable behavior. Thanks safari!
+* [FIX]: Editor button order changed to avoid rounded corner stacking
+* [FEATURE]: Added slide title to the slide editor 
+
 ## Beta19 (September 11, 2014)
 * *[Beta19.rc4]*
   * [FIX]: Don't add custom ad config to a MiniReel with default settings
