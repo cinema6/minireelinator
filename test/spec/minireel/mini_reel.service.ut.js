@@ -103,12 +103,20 @@
                     data: {
                         title: 'My MiniReel',
                         mode: 'lightbox',
-                        displayAdSource: 'cinema6',
-                        videoAdSource: 'cinema6-publisher',
-                        videoAdSkip: true,
                         autoplay: true,
                         election: 'el-76506623bf22d9',
                         branding: 'elitedaily',
+                        adConfig: {
+                            video: {
+                                firstPlacement: 3,
+                                frequency: 3,
+                                waterfall: 'cinema6',
+                                skip: 6
+                            },
+                            display: {
+                                waterfall: 'cinema6'
+                            }
+                        },
                         splash: {
                             source: 'specified',
                             ratio: '3-2',

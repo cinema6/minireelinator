@@ -1429,9 +1429,7 @@ function( angular , c6ui , cryptojs ) {
                     branding: minireel.data.branding,
                     autoplay: minireel.data.autoplay,
                     election: minireel.data.election,
-                    displayAdSource: minireel.data.displayAdSource || 'cinema6',
-                    videoAdSource: minireel.data.videoAdSource || 'cinema6',
-                    videoAdSkip: minireel.data.videoAdSkip || 6,
+                    adConfig: minireel.data.adConfig,
                     collateral: minireel.data.collateral ||
                         { splash: null },
                     splash: minireel.data.splash ||
