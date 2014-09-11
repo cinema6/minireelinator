@@ -4,6 +4,7 @@
 * *[Beta19.rc6]*
   * [FIX]: missing img for recap card fixed
   * [FIX]: reset password screen fixed
+* *[/Beta19.rc6]*
 
 * *[Beta19.rc5]*
   * [FIX]: Fix for an issue that would cause custom ad configs to be
