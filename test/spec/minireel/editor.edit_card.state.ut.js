@@ -109,6 +109,25 @@
                     expect(fail).toHaveBeenCalled();
                     expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor');
                 });
+
+                describe('if the model is falsy', function() {
+                    var failure;
+
+                    beforeEach(function() {
+                        failure = jasmine.createSpy('failure()');
+                        $rootScope.$apply(function() {
+                            EditCardState.afterModel(null).catch(failure);
+                        });
+                    });
+
+                    it('should reject the promise', function() {
+                        expect(failure).toHaveBeenCalledWith(jasmine.any(String));
+                    });
+
+                    it('should redirect back to the editor', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', null, {});
+                    });
+                });
             });
         });
     });

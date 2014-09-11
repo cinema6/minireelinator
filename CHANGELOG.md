@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[Beta20.rc1]*
+  * [FIX]: Fix for an issue that caused a white screen to display if you
+    refresh the page when editing a new card
+
 ## Beta19 (September 11, 2014)
 * *[Beta19.rc4]*
   * [FIX]: Don't add custom ad config to a MiniReel with default settings
