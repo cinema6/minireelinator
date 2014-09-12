@@ -154,6 +154,8 @@ function( angular , c6ui ) {
             return {
                 restrict: 'A',
                 link: function(scope, $element, attrs) {
+                    var isAnchor = $element.prop('tagName') === 'A';
+
                     function setActive() {
                         $animate.addClass($element, 'c6-active');
                     }
@@ -168,9 +170,33 @@ function( angular , c6ui ) {
                         }
                     }
 
-                    $element.on('$destroy', function() {
-                        c6State.removeListener('stateChange', stateChange);
-                    });
+                    $element
+                        .on('click', function(event) {
+                            c6State.in(attrs.c6Context || 'main', function() {
+                                var state = attrs.c6Sref,
+                                    sameState = c6State.current === state,
+                                    sameUrl = sameState ||
+                                        (c6State.get(c6State.current).cUrl ===
+                                            c6State.get(state).cUrl);
+
+                                if ((isAnchor && !sameUrl) || sameState) {
+                                    return;
+                                }
+
+                                event.preventDefault();
+
+                                scope.$apply(function() {
+                                    c6State.goTo(
+                                        state,
+                                        scope.$eval(attrs.c6Models),
+                                        scope.$eval(attrs.c6Params)
+                                    );
+                                });
+                            });
+                        })
+                        .on('$destroy', function() {
+                            c6State.removeListener('stateChange', stateChange);
+                        });
 
                     c6State.on('stateChange', stateChange);
 
@@ -180,7 +206,7 @@ function( angular , c6ui ) {
                         }
                     });
 
-                    if ($element.prop('tagName') === 'A') {
+                    if (isAnchor) {
                         scope.$watch(function() {
                             return c6State.in(attrs.c6Context || 'main', function() {
                                 var stateName = attrs.c6Sref,
@@ -196,20 +222,6 @@ function( angular , c6ui ) {
                             });
                         }, function(href) {
                             $element.attr('href', href && ('/#' + href));
-                        });
-                    } else {
-                        $element.on('click', function(event) {
-                            var state = attrs.c6Sref,
-                                params = scope.$eval(attrs.c6Params),
-                                models = scope.$eval(attrs.c6Models);
-
-                            event.preventDefault();
-
-                            scope.$apply(function() {
-                                c6State.in(attrs.c6Context || 'main', function() {
-                                    c6State.goTo(state, models, params);
-                                });
-                            });
                         });
                     }
                 }
