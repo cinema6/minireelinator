@@ -7,7 +7,9 @@
     refresh the page when editing a new card
   * [FIX]: Updated dropdown box heights so that items are cut off to hint scrollable behavior. Thanks safari!
   * [FIX]: Editor button order changed to avoid rounded corner stacking
-  * [FEATURE]: Added slide title to the slide editor 
+  * [FEATURE]: Added slide title to the slide editor
+  * [FIX]: Fixed an issue that caused cmd-clicking a link not to open
+    the link in a new tab as expected
 
 ## Beta19 (September 11, 2014)
 * *[Beta19.rc6]*
