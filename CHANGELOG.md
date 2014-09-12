@@ -1,9 +1,11 @@
 # MiniReelinator
 
 * *[Beta20.rc1]*
-* [FIX]: Updated dropdown box heights so that items are cut off to hint scrollable behavior. Thanks safari!
-* [FIX]: Editor button order changed to avoid rounded corner stacking
-* [FEATURE]: Added slide title to the slide editor 
+  * [FIX]: Fix for an issue that caused a white screen to display if you
+    refresh the page when editing a new card
+  * [FIX]: Updated dropdown box heights so that items are cut off to hint scrollable behavior. Thanks safari!
+  * [FIX]: Editor button order changed to avoid rounded corner stacking
+  * [FEATURE]: Added slide title to the slide editor 
 
 ## Beta19 (September 11, 2014)
 * *[Beta19.rc6]*
