@@ -139,8 +139,18 @@ function( angular , c6ui ) {
             };
         }])
 
-        .directive('c6Sref', ['c6State','$animate',
-        function             ( c6State , $animate ) {
+        .directive('c6Sref', ['c6State','$animate','$location',
+        function             ( c6State , $animate , $location ) {
+            function toSearch(params) {
+                return Object.keys(params)
+                    .map(function(key) {
+                        return [key, params[key]]
+                            .map(encodeURIComponent)
+                            .join('=');
+                    })
+                    .join('&');
+            }
+
             return {
                 restrict: 'A',
                 link: function(scope, $element, attrs) {
@@ -158,18 +168,37 @@ function( angular , c6ui ) {
                         }
                     }
 
-                    function setHref(models) {
-                        c6State.in(attrs.c6Context || 'main', function() {
-                            var stateName = attrs.c6Sref,
-                                state = c6State.get(stateName),
-                                family = stateFamilyOf(state),
-                                url = urlOfStateFamily(family, models);
+                    $element.on('$destroy', function() {
+                        c6State.removeListener('stateChange', stateChange);
+                    });
 
-                            $element.attr('href', (url || '') && ('/#' + url));
+                    c6State.on('stateChange', stateChange);
+
+                    c6State.in(attrs.c6Context || 'main', function() {
+                        if (c6State.isActive(c6State.get(attrs.c6Sref))) {
+                            setActive();
+                        }
+                    });
+
+                    if ($element.prop('tagName') === 'A') {
+                        scope.$watch(function() {
+                            return c6State.in(attrs.c6Context || 'main', function() {
+                                var stateName = attrs.c6Sref,
+                                    state = c6State.get(stateName),
+                                    family = stateFamilyOf(state),
+                                    models = scope.$eval(attrs.c6Models),
+                                    search = toSearch(
+                                        scope.$eval(attrs.c6Params) || $location.search()
+                                    );
+
+                                return (urlOfStateFamily(family, models) || '') +
+                                    (search ? ('?' + search) : '');
+                            });
+                        }, function(href) {
+                            $element.attr('href', href && ('/#' + href));
                         });
-                    }
-
-                    $element.on('click', function(event) {
+                    } else {
+                        $element.on('click', function(event) {
                             var state = attrs.c6Sref,
                                 params = scope.$eval(attrs.c6Params),
                                 models = scope.$eval(attrs.c6Models);
@@ -181,28 +210,7 @@ function( angular , c6ui ) {
                                     c6State.goTo(state, models, params);
                                 });
                             });
-                        })
-                        .on('$destroy', function() {
-                            c6State.removeListener('stateChange', stateChange);
                         });
-
-                    c6State.on('stateChange', stateChange);
-
-                    c6State.in(attrs.c6Context || 'main', function() {
-                        if (c6State.isActive(c6State.get(attrs.c6Sref))) {
-                            setActive();
-                        }
-                    });
-
-                    if ($element.prop('tagName') === 'A') {
-                        attrs.$observe('c6Sref', function() {
-                            setHref(scope.$eval(attrs.c6Models));
-                        });
-                        attrs.$observe('c6Context', function() {
-                            setHref(scope.$eval(attrs.c6Models));
-                        });
-
-                        scope.$watchCollection(attrs.c6Models, setHref);
                     }
                 }
             };

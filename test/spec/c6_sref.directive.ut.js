@@ -6,7 +6,8 @@
             var $rootScope,
                 $scope,
                 $compile,
-                c6State;
+                c6State,
+                $location;
 
             var current;
 
@@ -59,6 +60,7 @@
                     $rootScope = $injector.get('$rootScope');
                     $compile = $injector.get('$compile');
                     c6State = $injector.get('c6State');
+                    $location = $injector.get('$location');
 
                     $scope = $rootScope.$new();
                 });
@@ -81,30 +83,50 @@
                 });
             });
 
-            it('should call goTo with the given state and params and models when clicked', function() {
-                $sref.click();
-                expect(c6State.goTo).toHaveBeenCalledWith('Bar', undefined, undefined);
-
-                $scope.$apply(function() {
-                    $scope.state = 'Users';
-                    delete $scope.context;
+            describe('on a non-anchor tag', function() {
+                beforeEach(function() {
+                    $scope.$apply(function() {
+                        $sref = $compile('<button c6-sref="{{state}}" c6-params="params" c6-models="models" c6-context="{{context}}">Click Me</button>')($scope);
+                    });
                 });
-                $sref.click();
-                expect(c6State.goTo).toHaveBeenCalledWith('Users', undefined, undefined);
 
-                $scope.$apply(function() {
-                    $scope.params = { id: 'foo' };
+                it('should call goTo with the given state and params and models when clicked', function() {
+                    $sref.click();
+                    expect(c6State.goTo).toHaveBeenCalledWith('Bar', undefined, undefined);
+
+                    $scope.$apply(function() {
+                        $scope.state = 'Users';
+                        delete $scope.context;
+                    });
+                    $sref.click();
+                    expect(c6State.goTo).toHaveBeenCalledWith('Users', undefined, undefined);
+
+                    $scope.$apply(function() {
+                        $scope.params = { id: 'foo' };
+                    });
+                    $sref.click();
+                    expect(c6State.goTo).toHaveBeenCalledWith('Users', undefined, $scope.params);
+
+                    $scope.$apply(function() {
+                        $scope.models = [];
+                    });
+                    $sref.click();
+                    expect(c6State.goTo).toHaveBeenCalledWith('Users', $scope.models, $scope.params);
+
+                    expect(c6State.in).toHaveBeenCalledWith('main', jasmine.any(Function));
                 });
-                $sref.click();
-                expect(c6State.goTo).toHaveBeenCalledWith('Users', undefined, $scope.params);
+            });
 
-                $scope.$apply(function() {
-                    $scope.models = [];
+            describe('on an anchor tag', function() {
+                beforeEach(function() {
+                    c6State.goTo.calls.reset();
                 });
-                $sref.click();
-                expect(c6State.goTo).toHaveBeenCalledWith('Users', $scope.models, $scope.params);
 
-                expect(c6State.in).toHaveBeenCalledWith('main', jasmine.any(Function));
+                it('should not call c6State.goTo() when clicked', function() {
+                    $sref.click();
+
+                    expect(c6State.goTo).not.toHaveBeenCalled();
+                });
             });
 
             it('should support specifying a context', function() {
@@ -144,14 +166,6 @@
                         expect($sref.attr('href')).toBe('/#/about/team');
                     });
 
-                    it('should not actually set the href when clicked', function() {
-                        $sref.on('click', function(event) {
-                            expect(event.isDefaultPrevented()).toBe(true);
-                        });
-
-                        $sref.click();
-                    });
-
                     describe('if the route has dynamic segments', function() {
                         beforeEach(function() {
                             var post = c6State.get('Post'),
@@ -182,6 +196,37 @@
 
                             it('should use the models', function() {
                                 expect($sref.attr('href')).toBe('/#/posts/p-1/comments/c-c/likes/l-0');
+                            });
+
+                            describe('if query params are provided', function() {
+                                beforeEach(function() {
+                                    $scope.$apply(function() {
+                                        $scope.params = {
+                                            name: 'Josh',
+                                            age: 23
+                                        };
+                                    });
+                                });
+
+                                it('should include the params', function() {
+                                    expect($sref.attr('href')).toBe('/#/posts/p-1/comments/c-c/likes/l-0?name=Josh&age=23');
+                                });
+                            });
+
+                            describe('if query params are not provided', function() {
+                                beforeEach(function() {
+                                    spyOn($location, 'search').and.returnValue({
+                                        name: 'Evan',
+                                        age: 23
+                                    });
+                                    $scope.$apply(function() {
+                                        delete $scope.params;
+                                    });
+                                });
+
+                                it('should include the current params', function() {
+                                    expect($sref.attr('href')).toBe('/#/posts/p-1/comments/c-c/likes/l-0?name=Evan&age=23');
+                                });
                             });
                         });
 
