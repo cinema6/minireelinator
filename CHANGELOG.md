@@ -1,6 +1,8 @@
 # MiniReelinator
 
 * *[Beta20.rc1]*
+  * [FEATURE]: You can now open MiniReels for editing in a new tab from
+    the Studio manager
   * [FIX]: Fix for an issue that caused a white screen to display if you
     refresh the page when editing a new card
   * [FIX]: Updated dropdown box heights so that items are cut off to hint scrollable behavior. Thanks safari!

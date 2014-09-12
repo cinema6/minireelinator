@@ -46,9 +46,9 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
         }])
 
         .controller('ManagerController', ['$scope','c6State','MiniReelService','cState',
-                                          'ConfirmDialogService','EditorService','$q','$injector',
+                                          'ConfirmDialogService','$q','$injector',
         function                         ( $scope , c6State , MiniReelService , cState ,
-                                           ConfirmDialogService , EditorService , $q , $injector ) {
+                                           ConfirmDialogService , $q , $injector ) {
             var self = this;
 
             function limitArgs(max, fn) {
@@ -66,7 +66,7 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
             });
 
             this.edit = function(minireel) {
-                return c6State.goTo('MR:Editor', [EditorService.open(minireel)], {});
+                return c6State.goTo('MR:Editor', [minireel], {});
             };
 
             this.copy = function(minireels) {
@@ -179,9 +179,7 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
         }])
 
         .controller('NewController', ['$scope','MiniReelService','c6State','$q','cState',
-                                      'EditorService',
-        function                     ( $scope , MiniReelService , c6State , $q , cState,
-                                       EditorService ) {
+        function                     ( $scope , MiniReelService , c6State , $q , cState ) {
             var self = this,
                 PortalCtrl = $scope.PortalCtrl,
                 MiniReelCtrl = $scope.MiniReelCtrl,
@@ -285,7 +283,7 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
                         c6State.goTo(
                             'MR:Editor',
                             (self.returnState === 'MR:Editor') ?
-                                null : [EditorService.open(minireel)]
+                                null : [minireel]
                         );
                     });
             };

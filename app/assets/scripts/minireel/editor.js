@@ -332,10 +332,10 @@ function( angular , c6ui , c6State  , videoSearch           , services          
                     return playerMeta.ensureFulfillment();
                 };
                 this.model = function(params) {
-                    return cinema6.db.find('experience', params.minireelId)
-                        .then(function open(minireel) {
-                            return EditorService.open(minireel);
-                        });
+                    return cinema6.db.find('experience', params.minireelId);
+                };
+                this.afterModel = function(model) {
+                    return EditorService.open(model);
                 };
                 this.title = function(model) {
                     return 'Cinema6: Editing "' + model.data.title + '"';
@@ -459,8 +459,8 @@ function( angular , c6ui , c6State  , videoSearch           , services          
                 }
             });
 
-            this.initWithModel = function(model) {
-                this.model = model;
+            this.initWithModel = function() {
+                this.model = EditorService.state.minireel;
 
                 MiniReelCtrl.branding = this.model.data.branding;
             };
@@ -744,13 +744,14 @@ function( angular , c6ui , c6State  , videoSearch           , services          
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Editor.Splash', [function() {
+            c6StateProvider.state('MR:Editor.Splash', ['EditorService',
+            function                                  ( EditorService ) {
                 this.controller = 'EditorSplashController';
                 this.controllerAs = 'EditorSplashCtrl';
                 this.templateUrl = 'views/minireel/editor/splash.html';
 
                 this.model = function() {
-                    return copy(this.cParent.cModel);
+                    return copy(EditorService.state.minireel);
                 };
             }]);
         }])

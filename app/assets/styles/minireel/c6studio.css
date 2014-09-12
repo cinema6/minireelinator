@@ -212,9 +212,14 @@
             .miniReel__title {
                 margin:0.1875rem 0 0 0; font-size:0.875em;
                 cursor:pointer;
-                color:#525252;
             }
                 .miniReel__title:hover {
+                    color:#2398db;
+                }
+                .miniReel__titleLink {
+                    color:#525252;
+                }
+                .miniReel__titleLink:hover {
                     color:#2398db;
                 }
             .miniReel__metaData {

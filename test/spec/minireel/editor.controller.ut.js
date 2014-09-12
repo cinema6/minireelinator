@@ -98,7 +98,7 @@
                     EditorService.state = {
                         dirty: false,
                         inFlight: false,
-                        minireel: null
+                        minireel: cModel
                     };
                     MiniReelService = $injector.get('MiniReelService');
                     ConfirmDialogService = $injector.get('ConfirmDialogService');
@@ -161,7 +161,7 @@
                     $childScope = $scope.$new();
                     $scope.$apply(function() {
                         EditorCtrl = $controller('EditorController', { $scope: $scope });
-                        EditorCtrl.initWithModel(cModel);
+                        EditorCtrl.initWithModel({});
                     });
                 });
 
@@ -189,6 +189,12 @@
             });
 */
             describe('properties', function() {
+                describe('model', function() {
+                    it('should be the EditorService\'s MiniReel', function() {
+                        expect(EditorCtrl.model).toBe(cModel);
+                    });
+                });
+
                 describe('videoErrors', function() {
                     var VideoError,
                         result;

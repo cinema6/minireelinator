@@ -450,8 +450,7 @@
                         });
 
                         it('should go to the editor', function() {
-                            expect(EditorService.open).toHaveBeenCalledWith(minireel);
-                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [compiledMinireel]);
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [minireel]);
                         });
                     });
 
@@ -465,8 +464,7 @@
                         });
 
                         it('should go right to the editor', function() {
-                            expect(EditorService.open).toHaveBeenCalledWith(minireel);
-                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [compiledMinireel]);
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [minireel]);
                         });
                     });
 
