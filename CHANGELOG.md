@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## Beta20 (September 12, 2014)
 * *[Beta20.rc1]*
   * [FEATURE]: You can now open MiniReels for editing in a new tab from
     the Studio manager
@@ -10,6 +11,7 @@
   * [FEATURE]: Added slide title to the slide editor
   * [FIX]: Fixed an issue that caused cmd-clicking a link not to open
     the link in a new tab as expected
+* *[/Beta20.rc1]*
 
 ## Beta19 (September 11, 2014)
 * *[Beta19.rc6]*
