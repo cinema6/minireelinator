@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## Beta20 (September 12, 2014)
+* *[Beta20.rc2]*
+  * [FIX]: Fix for an issue that caused the tabs of the modals not to
+    work
+
 * *[Beta20.rc1]*
   * [FEATURE]: You can now open MiniReels for editing in a new tab from
     the Studio manager

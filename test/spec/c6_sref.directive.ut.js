@@ -27,6 +27,8 @@
                         .state('Posts', function() {})
                         .state('Post', function() {})
                         .state('Comment', function() {})
+                        .state('Comment.New', function() {})
+                        .state('Comment.Edit', function() {})
                         .state('Like', function() {})
                         .state('Auth', function() {});
 
@@ -43,6 +45,8 @@
                             this.route('/posts', 'Posts', function() {
                                 this.route('/:postId', 'Post', function() {
                                     this.route('/comments/:commentId', 'Comment', function() {
+                                        this.state('Comment.New');
+                                        this.state('Comment.Edit');
                                         this.route('/likes/:likeId', 'Like');
                                     });
                                 });
@@ -85,6 +89,9 @@
 
             describe('on a non-anchor tag', function() {
                 beforeEach(function() {
+                    Object.defineProperty(c6State, 'current', {
+                        value: 'Foo'
+                    });
                     $scope.$apply(function() {
                         $sref = $compile('<button c6-sref="{{state}}" c6-params="params" c6-models="models" c6-context="{{context}}">Click Me</button>')($scope);
                     });
@@ -119,13 +126,53 @@
 
             describe('on an anchor tag', function() {
                 beforeEach(function() {
+                    Object.defineProperty(c6State, 'current', {
+                        value: 'Home'
+                    });
+
                     c6State.goTo.calls.reset();
+                    $scope.$apply(function() {
+                        $scope.state = 'About';
+                        delete $scope.context;
+                    });
                 });
 
                 it('should not call c6State.goTo() when clicked', function() {
                     $sref.click();
 
                     expect(c6State.goTo).not.toHaveBeenCalled();
+                });
+
+                describe('if the current state is the one being referenced', function() {
+                    beforeEach(function() {
+                        Object.defineProperty(c6State, 'current', {
+                            value: 'Comment.New'
+                        });
+                        $scope.$apply(function() {
+                            $scope.state = 'Comment.New';
+                        });
+                        $sref.click();
+                    });
+
+                    it('should not call c6State.goTo()', function() {
+                        expect(c6State.goTo).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe('if the current state has the same URL as the one being referenced', function() {
+                    beforeEach(function() {
+                        Object.defineProperty(c6State, 'current', {
+                            value: 'Comment.New'
+                        });
+                        $scope.$apply(function() {
+                            $scope.state = 'Comment';
+                        });
+                        $sref.click();
+                    });
+
+                    it('should trigger a call to c6State.goTo()', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith($scope.state, $scope.models, $scope.params);
+                    });
                 });
             });
 
