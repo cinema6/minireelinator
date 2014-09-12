@@ -1044,7 +1044,12 @@ function( angular , c6ui , c6State  , videoSearch           , services          
                     this.afterModel = function(model) {
                         var types = ['video', 'videoBallot', 'text'];
 
-                        if(types.indexOf(model.type) < 0) {
+                        if (!model) {
+                            c6State.goTo('MR:Editor', null, {});
+                            return $q.reject('Card not found.');
+                        }
+
+                        if (types.indexOf(model.type) < 0) {
                             c6State.goTo('MR:Editor');
 
                             return $q.reject('Cannot edit this card');
