@@ -496,7 +496,7 @@
             position:absolute; z-index: 1;
             background:#fff;
             border:2px solid #ddd;
-            max-height:15em;
+            max-height:14.625em;
             overflow: auto;
         }
             .twoCol .ui__clickDropMenu {
