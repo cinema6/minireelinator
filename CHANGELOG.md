@@ -3,11 +3,25 @@
 * *[Beta20.rc1]*
   * [FEATURE]: You can now open MiniReels for editing in a new tab from
     the Studio manager
+* [FIX]: Updated dropdown box heights so that items are cut off to hint scrollable behavior. Thanks safari!
+* [FIX]: Editor button order changed to avoid rounded corner stacking
+* [FEATURE]: Added slide title to the slide editor 
 
-## Beta19 (September 9, 2014)
+## Beta19 (September 11, 2014)
+* *[Beta19.rc6]*
+  * [FIX]: missing img for recap card fixed
+  * [FIX]: reset password screen fixed
+* *[/Beta19.rc6]*
+
+* *[Beta19.rc5]*
+  * [FIX]: Fix for an issue that would cause custom ad configs to be
+    deleted after changing the editorial content of a MiniReel
+* *[/Beta19.rc5]*
+
 * *[Beta19.rc4]*
   * [FIX]: Don't add custom ad config to a MiniReel with default settings
   if no settings were changed
+* *[/Beta19.rc4]*
 
 * *[Beta19.rc3]*
   * [FIX]: Getting embed code from Ad Manager no longer takes user to Studio
