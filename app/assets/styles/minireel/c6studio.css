@@ -1118,11 +1118,11 @@
                         background:#000;
                     }
 
-                    .vidSearchPlayer__createBtn {
-                        margin:0.75em 0 0 0.75em;
+                    .vidSearchPlayer__createBtn,
+                    .vidSearchPlayer__createBtn:focus {
+                        margin:0.75rem 0 0 0.75rem;
+                        font-size:0.875em;
                     }
-
-
 
 
 
