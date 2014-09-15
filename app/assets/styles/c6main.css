@@ -129,6 +129,9 @@
         .fa-cog:before {
             content:'\f013';
         }
+        .fa-check:before {
+            content:'\f00c';
+        }
 
 /*  ======================================================
     Helper classes
@@ -201,7 +204,8 @@
     }
     .ui__iconHolder14,
     .ui__iconHolder16,
-    .ui__iconHolder18 {
+    .ui__iconHolder18,
+    .ui__iconHolder26 {
         width:1.125rem; height:1.125rem;
         display:inline-block; 
         vertical-align: middle;
@@ -219,6 +223,9 @@
     .ui__iconHolder16 {
         width:1rem; height:1rem;
         font-size:1rem;
+    }
+    .ui__iconHolder26 {
+        width:1.625rem; height:1.625rem;
     }
 
     .btnInvis {

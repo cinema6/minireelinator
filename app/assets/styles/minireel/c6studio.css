@@ -898,33 +898,41 @@
 /*  ======================================================
     video search panel styles
     ====================================================== */
-    .vidSearch__group {
+    .vidSearchTrigger__group,
+    .vidSearchPanel__group {
         display: block;
         position:fixed;
         z-index:150; right:0; top:5.125em;
-    }
-    .vidSearchPanel__triggerBtnHolder,
-    .vidSearchPanel__group {
-        -webkit-box-shadow: 0 0 4px 1px rgba(0,0,0,0.8);
-        box-shadow: 0 0 10px 1px rgba(0,0,0,0.8);
+        -webkit-box-shadow: 0 0 4px 1px rgba(0,0,0,0.6);
+        box-shadow: 0 0 10px 1px rgba(0,0,0,0.6);
         border-radius:5px;
         border-top-right-radius:0;
         border-bottom-right-radius:0;
     }
-    .vidSearchPanel__triggerBtnHolder {
-        float:right;
+
+        .vidSearch__icon .ui__icon {
+            fill:#fff;
+        }
+
+
+    .vidSearchTrigger__group {
+        width:4.75em;
         display: none;
     }
-        .vidSearchPanel__triggerBtn,
-        .vidSearchPanel__triggerBtn:focus {
+        .vidSearchTrigger__btn,
+        .vidSearchTrigger__btn:focus {
             border-radius:5px;
             border-top-right-radius:0;
             border-bottom-right-radius:0;
             border:2px solid #4c4c4c; border-right:0;
         }
+
+
     .vidSearchPanel__group {
         border:2px solid #4c4c4c; border-right:0;
+        width:26.375em; bottom:1.375em;
     }
+
         .vidSearchHeader__group {
             background:#2398db;
             -webkit-box-shadow:inset 0 1px 0 0 rgba(255,255,255,0.28);
@@ -934,57 +942,189 @@
             padding:0 0 0 0.75em;
             position:relative;
         }
-        .vidSearch__textField {
-            border:1px solid #1f7fb6; border-right:0;
-            padding:0.5rem 0.75rem 0.5625rem;
-            margin:0.75rem 7.0625rem 0.6875rem 0;
-            background:#fff;
-            width:15rem;
-            box-sizing:content-box;
-        }
-            .vidSearch__textField:focus,
-            .vidSearch__textField:hover {
-                border:1px solid #1f7fb6; border-right:0;
-            }
-        .vidSearchOptions__btn {
-            border-radius:0; border-color:#1f7fb6;
-            padding:0.625rem 0.75rem 0.5rem;
-            position:absolute; top:0.75rem; right:3.75rem;
-            background:#fff;
-        }
-            .vidSearchOptions__btn:hover {
-                border-color:#1f7fb6;
-                background:#eaf7ff;
-                color:#2398db;
-            }
-            .vidSearchOptions__btn:focus {
-                border-radius:0; border-color:#1f7fb6;
-                padding:0.625rem 0.75rem 0.5rem;
-                background:#2398db;
-                color:#fff;
-            }
-        .vidSearch__closeBtn {
-            margin:0; padding:0; border:0; 
-            border-left:1px solid #1f7fb6;
-            background:none;
-            position:absolute; 
-            top:0; bottom:0; right:0;
-            width:3em;
-            box-sizing:border-box;
-        }
-            .vidSearch__closeBtn:focus {
-                border-left:1px solid #1f7fb6;
+
+            .vidSearchHeader__icon {
+                position:absolute; top:50%;
+                margin:-0.8125em 0 0 0;
             }
 
-            .vidSearch__closeBtn .ui__icon {
-                fill:#fff;
+            .vidSearchHeader__textField {
+                border:1px solid #1f7fb6; border-right:0;
+                padding:0.5rem 0.75rem 0.5625rem;
+                margin:0.75rem 0 0.6875rem 2.25rem;
+                background:#fff;
+                width:14.9375rem; height:1.0625rem;
+                box-sizing:content-box;
             }
+                .vidSearchHeader__textField:focus,
+                .vidSearchHeader__textField:hover {
+                    border:1px solid #1f7fb6; border-right:0;
+                }
+
+            .vidSearchHeader__optionsBtn {
+                border-radius:0; border-color:#1f7fb6;
+                padding:0.625rem 0.75rem 0.5rem;
+                position:absolute; top:0.75rem; right:3.75rem;
+                background:#fff;
+            }
+                .vidSearchHeader__optionsBtn:hover {
+                    border-color:#1f7fb6;
+                    background:#eaf7ff;
+                    color:#2398db;
+                }
+                .vidSearchHeader__optionsBtn:focus {
+                    border-radius:0; border-color:#1f7fb6;
+                    padding:0.625rem 0.75rem 0.5rem;
+                    background:#2398db;
+                    color:#fff;
+                }
+
+            .vidSearchHeader__optionsMenu {
+                top:3em; right:3.75em;
+            }
+                .vidSearchHeader__optionsMenu .fab:before {
+                    color:#ddd;
+                }
+                .ui__clickDropBtn--checked .fab:before {
+                    color:#2398db;
+                }
+                    .ui__clickDropBtn--checked:hover .fab:before {
+                        color:#fff;
+                    }
+
+
+            
+            .vidSearchHeader__closeBtn {
+                margin:0; padding:0; border:0; 
+                border-left:1px solid #1f7fb6;
+                background:none;
+                position:absolute; 
+                top:0; bottom:0; right:0;
+                width:3em;
+                box-sizing:border-box;
+            }
+                .vidSearchHeader__closeBtn:focus {
+                    border-left:1px solid #1f7fb6;
+                }
+                .vidSearchHeader__closeBtn .ui__icon {
+                    fill:#fff;
+                }
 
 
         .vidSearchPaginatorBar__group {
             border-bottom:2px solid #626262;
             background:#fff;
+            padding:0.75em 0.75em 0.625em;
         }
+
+            .vidSearchPaginatorBar__indicatorText,
+            .vidSearchPaginator__pageNumText {
+                font-size:0.875em;
+                margin:0.5rem 0 0 0;
+                float:left;
+            }
+
+            .vidSearchPaginator__group {
+                float:right;
+            }
+
+                .vidSearchPaginator__btn {
+                    float:left;
+                }
+
+                .vidSearchPaginator__pageNumText {
+                    float:left; 
+                    text-align: center;
+                    margin-left:1em; margin-right:1em;
+                }
+
+
+        .vidSearchResults__container {
+            position:absolute;
+            top:7.5em; bottom:0; left:0; right:0;
+            border-bottom-left-radius: 3px;
+            overflow: auto;
+            background:#eee;
+        }
+
+
+        .vidSearchResults__group {
+            background:#eee;
+            margin:0.75em;
+        }
+
+            .vidSearchResult__group {
+                margin:0 0 0.125em;
+            }
+
+                .vidSearchResult__set {
+                    background:#fff;
+                    padding:0.75em;
+                    cursor: pointer;
+                }
+
+                    .vidSearchResult__img {
+                        width:30%; height:6em;
+                        background:50% 50% / cover no-repeat;
+                        float:left;
+                        margin:0 0.75em 0 0;
+                        position: relative;
+                    }
+
+                        .vidSearchResult__hdTag {
+                            background:#dc4141;
+                            color:#fff;
+                            font-size:0.625em; line-height: 1;
+                            position: absolute; left:0; top:0;
+                            padding:0.25em 0.5em;
+                        }
+
+                    .vidSearchResult__copyBox {
+                        width:66%; line-height: 1.125rem;
+                        height:6em;
+                        overflow: hidden;
+                        float:left;
+                    }
+
+                        .vidSearchResult__title {
+                            font-size:0.875em;
+                            margin:-1px 0 0 0;
+                        }
+
+                        .vidSearchResult__metaData {
+                            font-size:0.75em;
+                            color:#929292;
+                            margin:0;
+                        }
+
+                            .vidSearcResult__duration {
+                                color:#626262;
+                            }
+
+                        .vidSearchResult__desc {
+                            font-size:0.75em;
+                            margin:0.5em 0 0 0;
+                        }
+
+
+                .vidSearchPlayer__group {
+                    background:#fff;
+                    padding:0 0 0.75em;
+                }
+
+                    .vidSearchPlayer__playerBox {
+                        width:100%; height:0;
+                        padding:0 0 18em;
+                        background:#000;
+                    }
+
+                    .vidSearchPlayer__createBtn {
+                        margin:0.75em 0 0 0.75em;
+                    }
+
+
+
+
 
 
 
