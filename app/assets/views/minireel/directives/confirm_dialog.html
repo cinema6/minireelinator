@@ -1,5 +1,5 @@
 <div ng-if="model.dialog">
-    <div c6-alias="model.dialog as dialog" class="modalDialog__group">
+    <div c6-alias="model.dialog as dialog" class="modalDialog__group modalDialog__group--confirm">
         <header class="modalHeader__group">
             <h1 class="modal__title">Please Confirm</h1>
             <button class="modal__closeBtn btnInvis" ng-click="dialog.onCancel()"><span class="ir">Close</span>
@@ -23,5 +23,5 @@
             <button ng-click="dialog.onAffirm()" title="{{dialog.affirm}}" class="btnAction btnAction--success btnAction--last" type="button">{{dialog.affirm}}</button>
         </footer>
     </div>
-    <div class="modal__overlay">&nbsp;</div>
+    <div class="modal__overlay modal__overlay--confirm">&nbsp;</div>
 </div>

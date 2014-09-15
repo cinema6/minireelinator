@@ -1,4 +1,31 @@
 <c6-alias model="EditorCtrl.model" as="minireel" >
+    <div class="vidSearch__group">
+        <div class="vidSearchPanel__triggerBtnHolder">
+            <button class="btnAction btnAction--primary vidSearchPanel__triggerBtn">
+                <span class="btn__label">&nbsp;</span>
+            </button>
+        </div>
+        <div class="vidSearchPanel__group clearfix">
+            <div class="vidSearchHeader__group">
+                <input class="vidSearch__textField forms__textField">
+                <button class="btn fab fa- faa fa-caret-down fa-cog 
+                ui__clickDrop vidSearchOptions__btn">&nbsp;</button>
+                <button class="vidSearch__closeBtn">
+                    <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                     viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                    <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M16.5,0L9,7.5L1.5,0L0,1.5L7.5,9L0,16.5L1.5,18L9,10.5l7.5,7.5l1.5-1.5L10.5,9
+                    L18,1.5L16.5,0z"/>
+                </svg>
+                </button>
+            </div>
+            <div class="vidSearchPaginatorBar__group">
+                test
+            </div>
+            <div class="vidSearchResults__group">
+
+            </div>
+        </div>
+    </div>
     <div ng-if="minireel.status === 'active'" ng-show="EditorCtrl.minireelState.dirty && !EditorCtrl.dismissDirtyWarning" class="pageAlert__group btn--warning">
         <span class="ui__iconHolder18 fab fa-bell"><span class="ir">Warning!</span></span>
         <p class="pageAlert__msg">
