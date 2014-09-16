@@ -700,6 +700,20 @@ function( angular , c6ui ) {
                         });
                 }, this);
 
+                this.$emitThroughStates = function() {
+                    var viewDelegates = contexts[currentContext].viewDelegates,
+                        scope = viewDelegates
+                            .map(function(viewDelegate) {
+                                return viewDelegate.scope;
+                            })
+                            .reverse()
+                            .reduce(function(scope, nextScope) {
+                                return scope || nextScope;
+                            });
+
+                    return scope.$emit.apply(scope, arguments);
+                };
+
                 this.in = function(context, fn) {
                     var result;
 
