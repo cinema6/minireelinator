@@ -389,6 +389,7 @@ function( angular , c6ui , c6State  , videoSearch           , services          
 
 //            this.pageObject = { page : 'editor', title : 'Editor' };
             this.preview = false;
+            this.showSearch = false;
             this.editTitle = false;
             this.dismissDirtyWarning = false;
             this.minireelState = EditorService.state;
@@ -467,6 +468,10 @@ function( angular , c6ui , c6State  , videoSearch           , services          
 
             this.bustCache = function() {
                 this.cacheBuster++;
+            };
+
+            this.toggleSearch = function() {
+                this.showSearch = !this.showSearch;
             };
 
             this.errorForCard = function(card) {
@@ -693,6 +698,10 @@ function( angular , c6ui , c6State  , videoSearch           , services          
             });
 
             $scope.$on('mrPreview:closePreview', self.closePreview);
+
+            $scope.$on('VideoSearchCtrl:addVideo', function($event, card) {
+                return self.editCard(self.pushCard(card));
+            });
 
             $scope.$on('$destroy', function() {
                 function save() {
@@ -1098,9 +1107,9 @@ function( angular , c6ui , c6State  , videoSearch           , services          
         }])
 
         .controller('EditCardController', ['$scope','c6Computed','c6State','VideoService',
-                                           'MiniReelService',
+                                           'MiniReelService','ConfirmDialogService',
         function                          ( $scope , c6Computed , c6State , VideoService ,
-                                            MiniReelService ) {
+                                            MiniReelService , ConfirmDialogService ) {
             var self = this,
                 c = c6Computed($scope),
                 EditorCtrl = $scope.EditorCtrl,
@@ -1312,6 +1321,34 @@ function( angular , c6ui , c6State  , videoSearch           , services          
 
             $scope.$on('<video-preview>:error', function(event, error) {
                 self.error = error;
+            });
+
+            $scope.$on('VideoSearchCtrl:addVideo', function($event, card) {
+                function takeVideo(card) {
+                    self.model.data.service = card.data.service;
+                    self.model.data.videoid = card.data.videoid;
+                }
+
+                $event.stopPropagation();
+
+                if (self.model.data.videoid) {
+                    return ConfirmDialogService.display({
+                        prompt: 'This will overwrite the existing video.' +
+                            ' Are you sure you want to add this video to the card?',
+                        affirm: 'Yes, I\'m Sure',
+                        cancel: 'Cancel',
+                        onAffirm: function() {
+                            takeVideo(card);
+
+                            ConfirmDialogService.close();
+                        },
+                        onCancel: function() {
+                            ConfirmDialogService.close();
+                        }
+                    });
+                }
+
+                return takeVideo(card);
             });
         }])
 

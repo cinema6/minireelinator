@@ -195,6 +195,12 @@
                     });
                 });
 
+                describe('showSearch', function() {
+                    it('should be false', function() {
+                        expect(EditorCtrl.showSearch).toBe(false);
+                    });
+                });
+
                 describe('videoErrors', function() {
                     var VideoError,
                         result;
@@ -354,6 +360,16 @@
                 function dialog() {
                     return ConfirmDialogService.display.calls.mostRecent().args[0];
                 }
+
+                describe('toggleSearch()', function() {
+                    it('should toggle the showSearch property', function() {
+                        EditorCtrl.toggleSearch();
+                        expect(EditorCtrl.showSearch).toBe(true);
+
+                        EditorCtrl.toggleSearch();
+                        expect(EditorCtrl.showSearch).toBe(false);
+                    });
+                });
 
                 describe('bustCache()', function() {
                     it('should increment this.cacheBuster', function() {
@@ -883,6 +899,31 @@
             });
 
             describe('events', function() {
+                describe('VideoSearchCtrl:addVideo', function() {
+                    var card;
+
+                    beforeEach(function() {
+                        card = {
+                            id: 'rc-2612c38e214f1f'
+                        };
+
+                        spyOn(EditorCtrl, 'pushCard').and.callThrough();
+                        spyOn(EditorCtrl, 'editCard');
+
+                        $scope.$apply(function() {
+                            $scope.$emit('VideoSearchCtrl:addVideo', card);
+                        });
+                    });
+
+                    it('should push the card into the deck', function() {
+                        expect(EditorCtrl.pushCard).toHaveBeenCalledWith(card);
+                    });
+
+                    it('should begin editing the card', function() {
+                        expect(EditorCtrl.editCard).toHaveBeenCalledWith(card);
+                    });
+                });
+
                 describe('$destroy', function() {
                     var saveDeferred;
 

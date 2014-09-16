@@ -10,6 +10,7 @@
                 cinema6,
                 $q,
                 MiniReelService,
+                ConfirmDialogService,
                 EditorCtrl,
                 EditCardCtrl;
 
@@ -91,6 +92,7 @@
                         .and.returnValue(appDataDeferred.promise);
 
                     MiniReelService = $injector.get('MiniReelService');
+                    ConfirmDialogService = $injector.get('ConfirmDialogService');
 
                     $scope = $rootScope.$new();
                     $scope.$apply(function() {
@@ -905,6 +907,111 @@
             });
 
             describe('$events', function() {
+                describe('VideoSearchCtrl:addVideo', function() {
+                    var parentSpy;
+
+                    beforeEach(function() {
+                        parentSpy = jasmine.createSpy('parent handler');
+                        $rootScope.$on('VideoSearchCtrl:addVideo', parentSpy);
+
+                        spyOn(ConfirmDialogService, 'display').and.callThrough();
+                    });
+
+                    afterEach(function() {
+                        expect(parentSpy).not.toHaveBeenCalled();
+                    });
+
+                    describe('if the current card has a video', function() {
+                        beforeEach(function() {
+                            model.data.service = 'youtube';
+                            model.data.videoid = 'abc';
+
+                            $scope.$apply(function() {
+                                $scope.$emit('VideoSearchCtrl:addVideo', {
+                                    data: {
+                                        service: 'vimeo',
+                                        videoid: '123'
+                                    }
+                                });
+                            });
+                        });
+
+                        it('should display a confirmation', function() {
+                            expect(ConfirmDialogService.display).toHaveBeenCalledWith({
+                                prompt: jasmine.any(String),
+                                affirm: jasmine.any(String),
+                                cancel: jasmine.any(String),
+                                onAffirm: jasmine.any(Function),
+                                onCancel: jasmine.any(Function),
+                                onDismiss: jasmine.any(Function)
+                            });
+                        });
+
+                        describe('when the user interacts with the dialog:', function() {
+                            var config;
+
+                            beforeEach(function() {
+                                config = ConfirmDialogService.display.calls.mostRecent().args[0];
+                                spyOn(ConfirmDialogService, 'close').and.callThrough();
+                            });
+
+                            describe('when the action is canceled', function() {
+                                beforeEach(function() {
+                                    $scope.$apply(function() {
+                                        config.onCancel();
+                                    });
+                                });
+
+                                it('should close the dialog', function() {
+                                    expect(ConfirmDialogService.close).toHaveBeenCalled();
+                                });
+                            });
+
+                            describe('when the action is affirmed', function() {
+                                beforeEach(function() {
+                                    $scope.$apply(function() {
+                                        config.onAffirm();
+                                    });
+                                });
+
+                                it('should set the current card\'s service and videoid', function() {
+                                    expect(model.data.service).toBe('vimeo');
+                                    expect(model.data.videoid).toBe('123');
+                                });
+
+                                it('should close the dialog', function() {
+                                    expect(ConfirmDialogService.close).toHaveBeenCalled();
+                                });
+                            });
+                        });
+                    });
+
+                    describe('if the current card has no video', function() {
+                        beforeEach(function() {
+                            model.data.service = null;
+                            model.data.videoid = null;
+
+                            $scope.$apply(function() {
+                                $scope.$emit('VideoSearchCtrl:addVideo', {
+                                    data: {
+                                        service: 'dailymotion',
+                                        videoid: 'abc123'
+                                    }
+                                });
+                            });
+                        });
+
+                        it('should not show a dialog', function() {
+                            expect(ConfirmDialogService.display).not.toHaveBeenCalled();
+                        });
+
+                        it('should set the current card\'s service and videoid', function() {
+                            expect(model.data.service).toBe('dailymotion');
+                            expect(model.data.videoid).toBe('abc123');
+                        });
+                    });
+                });
+
                 describe('<video-preview>:error', function() {
                     var error;
 
