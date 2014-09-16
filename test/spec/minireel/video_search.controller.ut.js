@@ -1,4 +1,4 @@
-define(['app', 'minireel/services'], function(appModule, servicesModule) {
+define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModule, $) {
     'use strict';
 
     describe('VideoSearchController', function() {
@@ -338,6 +338,66 @@ define(['app', 'minireel/services'], function(appModule, servicesModule) {
                     expect(ids).toEqual(videos.map(function(video) {
                         return VideoSearchCtrl.idFor(video);
                     }));
+                });
+            });
+
+            describe('setupDraggables(DragCtrl)', function() {
+                var DragCtrl;
+
+                beforeEach(function() {
+                    $scope.$apply(function() {
+                        DragCtrl = $controller('C6DragSpaceController', {
+                            $scope: $scope
+                        });
+                    });
+
+                    $scope.$apply(function() {
+                        VideoSearchCtrl.setupDraggables(DragCtrl);
+                    });
+                });
+
+                describe('when a draggables are added', function() {
+                    var Draggable,
+                        $element, draggable;
+
+                    beforeEach(inject(function($injector) {
+                        Draggable = $injector.get('_Draggable');
+
+                        $element = $('<div class="foo">Hello</div>');
+                        $('body').append($element);
+                        draggable = new Draggable('123', $element);
+                        DragCtrl.addDraggable(draggable);
+                    }));
+
+                    afterEach(function() {
+                        $element.remove();
+                    });
+
+                    describe('when a draggable is dragged', function() {
+                        beforeEach(function() {
+                            draggable.$element.addClass('c6-dragging');
+                            draggable.emit('begin', draggable);
+                        });
+
+                        it('should put a clone of the element in the DOM', function() {
+                            expect($element.html()).toBe($element.next().html());
+                            expect($element.next().hasClass('c6-dragging')).toBe(false);
+                        });
+
+                        describe('when a draggable is dropped', function() {
+                            var $clone;
+
+                            beforeEach(function() {
+                                $clone = $element.next();
+
+                                draggable.emit('end', draggable);
+                            });
+
+                            it('should remove the clone from the DOM', function() {
+                                expect($clone.parent().length).toBe(0);
+                            });
+                        });
+                    });
                 });
             });
         });

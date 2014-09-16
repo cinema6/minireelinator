@@ -93,5 +93,22 @@ function( angular , c6State  , services          ) {
                 EditorCtrl.toggleSearch();
                 return this.preview(null);
             };
+
+            this.setupDraggables = function(DragCtrl) {
+                DragCtrl.on('draggableAdded', function(draggable) {
+                    var $clone = null;
+
+                    draggable
+                        .on('begin', function() {
+                            $clone = draggable.$element.clone();
+
+                            $clone.removeClass('c6-dragging');
+                            draggable.$element.after($clone);
+                        })
+                        .on('end', function() {
+                            $clone.remove();
+                        });
+                });
+            };
         }]);
 });
