@@ -51,6 +51,22 @@
                         expect(scope.undefined).not.toBeDefined();
                     });
                 });
+
+                describe('on-init', function() {
+                    var $dragSpace;
+
+                    beforeEach(function() {
+                        $scope.init = jasmine.createSpy('init()');
+
+                        $scope.$apply(function() {
+                            $dragSpace = $compile('<c6-drag-space on-init="init(controller)"></c6-drag-space>')($scope);
+                        });
+                    });
+
+                    it('should execute the expression with the controller', function() {
+                        expect($scope.init).toHaveBeenCalledWith($dragSpace.data('cDragCtrl'));
+                    });
+                });
             });
 
             describe('controller', function() {

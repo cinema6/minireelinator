@@ -466,6 +466,12 @@ function( angular , c6ui , hammer ) {
                     if ($attrs.controllerAs) {
                         scope[$attrs.controllerAs] = Controller;
                     }
+
+                    if ($attrs.onInit) {
+                        scope.$eval($attrs.onInit, {
+                            controller: Controller
+                        });
+                    }
                 }
             };
         }])
