@@ -297,6 +297,23 @@ define(['app', 'minireel/services'], function(appModule, servicesModule) {
                     expect(c6State.$emitThroughStates).toHaveBeenCalledWith('VideoSearchCtrl:addVideo', videoCard);
                 });
             });
+
+            describe('close()', function() {
+                beforeEach(function() {
+                    VideoSearchCtrl.currentPreview = {};
+                    spyOn(EditorCtrl, 'toggleSearch').and.callThrough();
+
+                    VideoSearchCtrl.close();
+                });
+
+                it('should nullify the currentPreview', function() {
+                    expect(VideoSearchCtrl.currentPreview).toBeNull();
+                });
+
+                it('should toggle the search panel', function() {
+                    expect(EditorCtrl.toggleSearch).toHaveBeenCalled();
+                });
+            });
         });
     });
 });

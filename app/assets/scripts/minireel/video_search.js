@@ -3,9 +3,12 @@ function( angular , c6State  , services          ) {
     'use strict';
 
     return angular.module('c6.app.minireel.editor.videoSearch', [c6State.name, services.name])
-        .controller('VideoSearchController', ['VideoSearchService','MiniReelService','c6State',
-        function                             ( VideoSearchService , MiniReelService , c6State ) {
-            var self = this;
+        .controller('VideoSearchController', ['$scope','VideoSearchService','MiniReelService',
+                                              'c6State',
+        function                             ( $scope , VideoSearchService , MiniReelService ,
+                                               c6State ) {
+            var self = this,
+                EditorCtrl = $scope.EditorCtrl;
 
             this.query = {
                 query: '',
@@ -67,6 +70,11 @@ function( angular , c6State  , services          ) {
                 card.data.videoid = video.videoid;
 
                 return c6State.$emitThroughStates('VideoSearchCtrl:addVideo', card);
+            };
+
+            this.close = function() {
+                EditorCtrl.toggleSearch();
+                return this.preview(null);
             };
         }]);
 });
