@@ -3,6 +3,7 @@
 ## Beta20 (September 15, 2014)
 * *[Beta20.rc3]*
   * [FIX]: Added tooltips where missing; fixed instances of wrong tooltips.
+* *[/Beta20.rc3]*
 
 * *[Beta20.rc2]*
   * [FIX]: Fix for an issue that caused the tabs of the modals not to
