@@ -76,7 +76,7 @@
         <div class="vidSearchResults__container">
             <ul class="vidSearchResults__group">
                 <li ng-repeat="video in result.videos" class="vidSearchResult__group">
-                    <div class="vidSearchResult__set clearfix"
+                    <div id="{{VideoSearchCtrl.idFor(video)}}" c6-draggable class="vidSearchResult__set clearfix"
                         ng-click="VideoSearchCtrl.preview(video)">
                         <div class="vidSearchResult__img" 
                             c6-bg-img="{{video.thumbnail.src}}">

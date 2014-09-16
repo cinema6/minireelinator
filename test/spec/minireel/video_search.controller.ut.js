@@ -314,6 +314,32 @@ define(['app', 'minireel/services'], function(appModule, servicesModule) {
                     expect(EditorCtrl.toggleSearch).toHaveBeenCalled();
                 });
             });
+
+            describe('idFor(video)', function() {
+                var video1, video2, video3;
+
+                beforeEach(function() {
+                    video1 = {}; video2 = {}; video3 = {};
+                });
+
+                it('should give objects unique IDs', function() {
+                    var videos = [video1, video2, video3],
+                        ids = videos.map(function(video) {
+                            return VideoSearchCtrl.idFor(video);
+                        });
+
+                    ids.forEach(function(id) {
+                        expect(id).toMatch(/\b[a-z0-9]{5,}\b/);
+                    });
+                    expect(ids).toEqual(ids.filter(function(id, index) {
+                        return ids.indexOf(id) === index;
+                    }));
+
+                    expect(ids).toEqual(videos.map(function(video) {
+                        return VideoSearchCtrl.idFor(video);
+                    }));
+                });
+            });
         });
     });
 });

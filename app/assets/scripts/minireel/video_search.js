@@ -72,6 +72,23 @@ function( angular , c6State  , services          ) {
                 return c6State.$emitThroughStates('VideoSearchCtrl:addVideo', card);
             };
 
+            this.idFor = (function() {
+                var cache = [];
+
+                function generateId(video) {
+                    return cache[cache.push({
+                        video: video,
+                        id: (Math.random() + 1).toString(36).substring(5)
+                    }) - 1].id;
+                }
+
+                return function(video) {
+                    return cache.reduce(function(id, item) {
+                        return item.video === video ? item.id : id;
+                    }, null) || generateId(video);
+                };
+            }());
+
             this.close = function() {
                 EditorCtrl.toggleSearch();
                 return this.preview(null);
