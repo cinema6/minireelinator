@@ -1,44 +1,56 @@
-define( ['angular','c6_state','minireel/services','c6_defines'],
-function( angular , c6State  , services          , c6Defines  ) {
+define( ['angular','c6_state','minireel/services'],
+function( angular , c6State  , services          ) {
     'use strict';
 
     return angular.module('c6.app.minireel.editor.videoSearch', [c6State.name, services.name])
-        .config(['c6StateProvider',
-        function( c6StateProvider ) {
-            c6StateProvider.state('MR:VideoSearch', [function() {
-                this.templateUrl = 'views/minireel/editor/video_search.html';
-                this.controller = 'VideoSearchController';
-                this.controllerAs = 'VideoSearchCtrl';
-
-                // TODO: REMOVE THIS BEFORE GOING TO PRODUCTION
-                this.beforeModel = function() {
-                    if (!c6Defines.kDebug) {
-                        c6State.goTo('MR:Editor');
-                    }
-                };
-            }]);
-        }])
-
-        .controller('VideoSearchController', ['$scope','VideoSearchService','MiniReelService',
-        function                             ( $scope , VideoSearchService , MiniReelService ) {
-            var self = this,
-                EditorCtrl = $scope.EditorCtrl;
+        .controller('VideoSearchController', ['VideoSearchService','MiniReelService','c6State',
+        function                             ( VideoSearchService , MiniReelService , c6State ) {
+            var self = this;
 
             this.query = {
                 query: '',
-                sites: undefined,
-                hd: undefined
+                sites: {
+                    youtube: true,
+                    vimeo: true,
+                    dailymotion: true
+                },
+                hd: false
             };
             this.result = null;
-
             this.currentPreview = null;
+            this.sites = {
+                youtube: 'YouTube',
+                vimeo: 'Vimeo',
+                dailymotion: 'Dailymotion'
+            };
+            this.showQueryDropdown = false;
+
+            this.toggleProp = function(object, prop) {
+                if (arguments.length < 2) {
+                    prop = object;
+                    object = this;
+                }
+
+                object[prop] = !object[prop];
+            };
+
+            this.toggleQueryDropdown = function() {
+                return this.toggleProp('showQueryDropdown');
+            };
 
             this.search = function() {
-                return VideoSearchService.find(this.query)
-                    .then(function assign(result) {
-                        /* jshint boss:true */
-                        return (self.result = result);
-                    });
+                return VideoSearchService.find({
+                    query: this.query.query,
+                    hd: this.query.hd || undefined,
+                    sites: ['youtube', 'vimeo', 'dailymotion']
+                        .filter(function(site) {
+                            return !!this.query.sites[site];
+                        }, this)
+                        .join(',')
+                }).then(function assign(result) {
+                    /* jshint boss:true */
+                    return (self.result = result);
+                });
             };
 
             this.preview = function(video) {
@@ -54,7 +66,7 @@ function( angular , c6State  , services          , c6Defines  ) {
                 card.data.service = video.site;
                 card.data.videoid = video.videoid;
 
-                return EditorCtrl.pushCard(card);
+                return c6State.$emitThroughStates('VideoSearchCtrl:addVideo', card);
             };
         }]);
 });

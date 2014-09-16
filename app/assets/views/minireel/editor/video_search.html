@@ -1,35 +1,122 @@
-<h2>Search for Videos</h2>
-<form ng-submit="VideoSearchCtrl.search()">
-    <label>Query: <input type="text" ng-model="VideoSearchCtrl.query.query" /></label>
-    <label>
-        Site: 
-        <select ng-options="(site ? site.toLowerCase() : site) as (site || 'All') for site in [undefined, 'YouTube', 'Vimeo', 'Dailymotion']" ng-model="VideoSearchCtrl.query.sites"></select>
-    </label>
-    <label>
-        HD: 
-        <select ng-options="label for (label, value) in { 'Both': undefined, 'Only HD': true, 'Only SD': false }" ng-model="VideoSearchCtrl.query.hd"></select>
-    </label>
-    <button>Search!</button>
-</form>
-<section ng-if="VideoSearchCtrl.result" c6-alias="VideoSearchCtrl.result as result">
-    <ul>
-        <li ng-repeat="video in result.videos">
-            <h4>{{video.title}}<span ng-if="video.hd"> (HD)</span></h4>
-            <p>Via: <a ng-href="{{video.link}}">{{video.site}}</a> | {{video.views}} Views</p>
-            <a href="" ng-show="VideoSearchCtrl.currentPreview !== video" ng-click="VideoSearchCtrl.preview(video)">
-                <img ng-src="{{video.thumbnail.src}}" />
-            </a>
-            <ng-switch on="video.site" ng-if="VideoSearchCtrl.currentPreview === video">
-                <youtube-player ng-switch-when="youtube" videoid="{{video.videoid}}" autoplay style="width: 300px;"></youtube-player>
-                <vimeo-player id="vimeo__{{video.videoid}}" ng-switch-when="vimeo" videoid="{{video.videoid}}" autoplay style="width: 300px;"></vimeo-player>
-                <dailymotion-player id="dailymotion__{{video.videoid}}" ng-switch-when="dailymotion" videoid="{{video.videoid}}" autoplay style="width: 300px;"></dailymotion-player>
-            </ng-switch>
-            <p>{{video.description}}</p>
-            <form><button ng-click="VideoSearchCtrl.addVideo(video)">Add Video</button></form>
-        </li>
-    </ul>
-    <nav>
-        <p>{{result.position}} of {{result.pages}}</p>
-        <button ng-click="result.prev()">Prev</button> <button ng-click="result.next()">Next</button>
-    </nav>
-</section>
+<div class="vidSearchPanel__group clearfix">
+    <div class="vidSearchHeader__group">
+        <div class="vidSearch__icon vidSearchHeader__icon">
+            <svg class="ui__iconHolder26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+            viewBox="0 0 26 26" enable-background="new 0 0 26 26" xml:space="preserve">
+                <path class="ui__icon" d="M22,11c0,6.1-4.9,11-11,11S0,17.1,0,11S4.9,0,11,0S22,4.9,22,11z M11,3c-4.4,0-8,3.6-8,8s3.6,8,8,8s8-3.6,8-8S15.4,3,11,3z"/>
+                <path class="ui__icon" d="M24.5,24.5L24.5,24.5c-0.6,0.6-1.5,0.6-2.1,0l-4.9-4.9c-0.6-0.6-0.6-1.5,0-2.1l0,0c0.6-0.6,1.5-0.6,2.1,0l4.9,4.9 C25.1,23,25.1,23.9,24.5,24.5z"/>
+                <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M14.7,10.2l-5.5-4C9,6,8.7,6,8.4,6C8.2,6.1,8,6.5,8,6.7v8.5c0,0.2,0.2,0.6,0.4,0.7 c0.2,0.1,0.4,0.1,0.8-0.1l5.5-4c0.1-0.1,0.4-0.3,0.4-0.8C15.1,10.5,14.9,10.3,14.7,10.2z"/>
+            </svg>
+        </div>
+        
+        <form ng-submit="VideoSearchCtrl.search()">
+            <input class="vidSearchHeader__textField forms__textField" ng-model="VideoSearchCtrl.query.query">
+        </form>
+
+        <div c6-click-outside="VideoSearchCtrl.showQueryDropdown = false">
+            <button class="btn fab fa- faa fa-caret-down fa-cog 
+            ui__clickDrop vidSearchHeader__optionsBtn" ng-click="VideoSearchCtrl.toggleQueryDropdown()">&nbsp;</button>
+            <div class="vidSearchHeader__optionsMenu ui__clickDropMenu" ng-show="VideoSearchCtrl.showQueryDropdown">
+                <button ng-click="VideoSearchCtrl.toggleProp(VideoSearchCtrl.query.sites, 'youtube')" ng-class="{
+                    'ui__clickDropBtn--checked': VideoSearchCtrl.query.sites.youtube
+                }" class="ui__clickDropBtn" type="button" title="YouTube">
+                    <span class="btn__label fab fa-check"> YouTube</span>
+                </button>
+                <button ng-click="VideoSearchCtrl.toggleProp(VideoSearchCtrl.query.sites, 'vimeo')" ng-class="{
+                    'ui__clickDropBtn--checked': VideoSearchCtrl.query.sites.vimeo
+                }" class="ui__clickDropBtn" type="button" title="Vimeo">
+                    <span class="btn__label fab fa-check"> Vimeo</span>
+                </button>
+                <button ng-click="VideoSearchCtrl.toggleProp(VideoSearchCtrl.query.sites, 'dailymotion')" ng-class="{
+                    'ui__clickDropBtn--checked': VideoSearchCtrl.query.sites.dailymotion
+                }" class="ui__clickDropBtn" type="button" title="DailyMotion">
+                    <span class="btn__label fab fa-check"> DailyMotion</span>
+                </button>
+                <button ng-click="VideoSearchCtrl.toggleProp(VideoSearchCtrl.query, 'hd')" ng-class="{
+                    'ui__clickDropBtn--checked': VideoSearchCtrl.query.hd
+                }" class="ui__clickDropBtn" type="button" title="HD Videos Only">
+                    <span class="btn__label fab fa-check"> HD Videos Only</span>
+                </button>
+            </div>
+        </div>
+
+        <button class="vidSearchHeader__closeBtn"
+            ng-click="EditorCtrl.toggleSearch()">
+            <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+             viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M16.5,0L9,7.5L1.5,0L0,1.5L7.5,9L0,16.5L1.5,18L9,10.5l7.5,7.5l1.5-1.5L10.5,9
+            L18,1.5L16.5,0z"/>
+            </svg>
+        </button>
+    </div>
+    <div ng-if="!!VideoSearchCtrl.result" c6-alias="VideoSearchCtrl.result as result">
+        <div class="vidSearchPaginatorBar__group clearfix">
+            <p class="vidSearchPaginatorBar__indicatorText">
+            <strong>{{result.before + 1}}-{{result.before +
+                result.length}}</strong> of {{result.total}} results
+            </p>
+            <div class="vidSearchPaginator__group clearfix">
+                <button class="btn faa fa-chevron-left
+                    vidSearchPaginator__btn"
+                    ng-disabled="result.position < 2"
+                    ng-click="result.prev()">
+                    <span class="ir">Previous Page</span>
+                </button>
+                <p
+                class="vidSearchPaginator__pageNumText">{{result.position}} of
+                {{result.pages}}</p>
+                <button class="btn faa fa-chevron-right
+                    vidSearchPaginator__btn"
+                    ng-disabled="result.position >= result.pages"
+                    ng-click="result.next()">
+                    <span class="ir">Next Page</span>
+                </button>
+            </div>
+        </div>
+        <div class="vidSearchResults__container">
+            <ul class="vidSearchResults__group">
+                <li ng-repeat="video in result.videos" class="vidSearchResult__group">
+                    <div class="vidSearchResult__set clearfix"
+                        ng-click="VideoSearchCtrl.preview(video)">
+                        <div class="vidSearchResult__img" 
+                            c6-bg-img="{{video.thumbnail.src}}">
+                            <strong ng-show="video.hd" class="vidSearchResult__hdTag">HD</strong>
+                            &nbsp;
+                        </div>
+                        <div class="vidSearchResult__copyBox">
+                            <h2 class="vidSearchResult__title">
+                                {{video.title}}
+                            </h2>
+                            <p class="vidSearchResult__metaData">
+                            via <a href="{{video.link}}" class="vidSearcResult__sourceLink" 
+                                    title="{{VideoSearchCtrl.sites[video.site]}}" target="_blank">{{VideoSearchCtrl.sites[video.site]}}</a>  
+                                &nbsp;|&nbsp;  
+                                <span
+                                    class="vidSearcResult__duration">{{video.duration | timestamp}}</span>
+                            </p>
+                            <p class="vidSearchResult__desc">
+                                {{video.description}}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="vidSearchPlayer__group"
+                        ng-if="VideoSearchCtrl.currentPreview === video">
+                        <div class="vidSearchPlayer__playerBox"
+                            ng-switch="video.site">
+                            <youtube-player ng-switch-when="youtube"
+                            videoid="{{video.videoid}}" autoplay></youtube-player>
+                            <vimeo-player id="vimeo__{{video.videoid}}"
+                            ng-switch-when="vimeo"
+                            videoid="{{video.videoid}}" autoplay></vimeo-player>
+                            <dailymotion-player
+                            id="dailymotion__{{video.videoid}}"
+                            ng-switch-when="dailymotion"
+                            videoid="{{video.videoid}}" autoplay></dailymotion-player>
+                        </div>
+                        <button class="btn btn--primary vidSearchPlayer__createBtn" ng-click="VideoSearchCtrl.addVideo(video)">Create Slide</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

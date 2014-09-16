@@ -917,7 +917,6 @@
 
     .vidSearchTrigger__group {
         width:4.75em;
-        display: none;
     }
         .vidSearchTrigger__btn,
         .vidSearchTrigger__btn:focus {

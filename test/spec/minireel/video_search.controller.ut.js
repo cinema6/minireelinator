@@ -8,6 +8,7 @@ define(['app', 'minireel/services'], function(appModule, servicesModule) {
             $q,
             $scope,
             MiniReelService,
+            c6State,
             VideoSearchCtrl,
             EditorCtrl;
 
@@ -45,6 +46,7 @@ define(['app', 'minireel/services'], function(appModule, servicesModule) {
                 $q = $injector.get('$q');
                 MiniReelService = $injector.get('MiniReelService');
                 VideoSearchService = $injector.get('VideoSearchService');
+                c6State = $injector.get('c6State');
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
@@ -76,8 +78,12 @@ define(['app', 'minireel/services'], function(appModule, servicesModule) {
                 it('should be an object', function() {
                     expect(VideoSearchCtrl.query).toEqual({
                         query: '',
-                        sites: undefined,
-                        hd: undefined
+                        sites: {
+                            youtube: true,
+                            vimeo: true,
+                            dailymotion: true
+                        },
+                        hd: false
                     });
                 });
             });
@@ -87,9 +93,57 @@ define(['app', 'minireel/services'], function(appModule, servicesModule) {
                     expect(VideoSearchCtrl.currentPreview).toBeNull();
                 });
             });
+
+            describe('sites', function() {
+                it('should be a map of site values to labels', function() {
+                    expect(VideoSearchCtrl.sites).toEqual({
+                        youtube: 'YouTube',
+                        vimeo: 'Vimeo',
+                        dailymotion: 'Dailymotion'
+                    });
+                });
+            });
+
+            describe('showQueryDropdown', function() {
+                it('should be false', function() {
+                    expect(VideoSearchCtrl.showQueryDropdown).toBe(false);
+                });
+            });
         });
 
         describe('methods', function() {
+            describe('toggleQueryDropdown()', function() {
+                it('should toggle the showQueryDropdown property', function() {
+                    VideoSearchCtrl.toggleQueryDropdown();
+                    expect(VideoSearchCtrl.showQueryDropdown).toBe(true);
+
+                    VideoSearchCtrl.toggleQueryDropdown();
+                    expect(VideoSearchCtrl.showQueryDropdown).toBe(false);
+                });
+            });
+
+            describe('toggleProp(object, prop)', function() {
+                describe('if no object is passed in', function() {
+                    it('should toggle props on itself', function() {
+                        VideoSearchCtrl.toggleProp('foo');
+                        expect(VideoSearchCtrl.foo).toBe(true);
+
+                        VideoSearchCtrl.toggleProp('foo');
+                        expect(VideoSearchCtrl.foo).toBe(false);
+                    });
+                });
+
+                describe('if an object is passed in', function() {
+                    it('should toggle the prop on the object', function() {
+                        VideoSearchCtrl.toggleProp(VideoSearchCtrl.query, 'hd');
+                        expect(VideoSearchCtrl.query.hd).toBe(true);
+
+                        VideoSearchCtrl.toggleProp(VideoSearchCtrl.query, 'hd');
+                        expect(VideoSearchCtrl.query.hd).toBe(false);
+                    });
+                });
+            });
+
             describe('search()', function() {
                 var result,
                     success, failure;
@@ -133,7 +187,53 @@ define(['app', 'minireel/services'], function(appModule, servicesModule) {
                 });
 
                 it('should search for the video', function() {
-                    expect(VideoSearchService.find).toHaveBeenCalledWith(VideoSearchCtrl.query);
+                    expect(VideoSearchService.find).toHaveBeenCalledWith({
+                        query: VideoSearchCtrl.query.query,
+                        sites: 'youtube,vimeo,dailymotion',
+                        hd: undefined
+                    });
+                });
+
+                describe('if hd is true on the query', function() {
+                    beforeEach(function() {
+                        VideoSearchService.find.calls.reset();
+                        VideoSearchCtrl.query.hd = true;
+
+                        $scope.$apply(function() {
+                            VideoSearchCtrl.search().then(success, failure);
+                        });
+                    });
+
+                    it('should search with hd: true', function() {
+                        expect(VideoSearchService.find).toHaveBeenCalledWith({
+                            query: VideoSearchCtrl.query.query,
+                            sites: 'youtube,vimeo,dailymotion',
+                            hd: true
+                        });
+                    });
+                });
+
+                describe('if certain sites are not included', function() {
+                    beforeEach(function() {
+                        VideoSearchService.find.calls.reset();
+                        VideoSearchCtrl.query.sites = {
+                            youtube: false,
+                            dailymotion: true,
+                            vimeo: true
+                        };
+
+                        $scope.$apply(function() {
+                            VideoSearchCtrl.search().then(success, failure);
+                        });
+                    });
+
+                    it('should not be included in the query', function() {
+                        expect(VideoSearchService.find).toHaveBeenCalledWith({
+                            query: VideoSearchCtrl.query.query,
+                            sites: 'vimeo,dailymotion',
+                            hd: undefined
+                        });
+                    });
                 });
 
                 it('should resolve to the result', function() {
@@ -170,8 +270,7 @@ define(['app', 'minireel/services'], function(appModule, servicesModule) {
                 var video;
 
                 beforeEach(function() {
-                    spyOn(EditorCtrl, 'pushCard').and.callThrough();
-                    spyOn(EditorCtrl, 'editCard');
+                    spyOn(c6State, '$emitThroughStates');
 
                     $scope.$apply(function() {
                         VideoSearchCtrl.addVideo((video = {
@@ -194,8 +293,8 @@ define(['app', 'minireel/services'], function(appModule, servicesModule) {
                     expect(videoCard.note).toBe(video.description);
                 });
 
-                it('should push the new card into the deck', function() {
-                    expect(EditorCtrl.pushCard).toHaveBeenCalledWith(videoCard);
+                it('should $emit the "VideoSearchCtrl:addVideo" event through the states', function() {
+                    expect(c6State.$emitThroughStates).toHaveBeenCalledWith('VideoSearchCtrl:addVideo', videoCard);
                 });
             });
         });
