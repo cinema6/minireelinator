@@ -1,4 +1,197 @@
 <c6-alias model="EditorCtrl.model" as="minireel" >
+    <div class="vidSearchTrigger__group ng-hide">
+        <button class="btnAction btnAction--primary vidSearchTrigger__btn">
+            <span class="btn__label">
+                <div class="vidSearch__icon">
+                    <svg class="ui__iconHolder26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                    viewBox="0 0 26 26" enable-background="new 0 0 26 26" xml:space="preserve">
+                        <path class="ui__icon" d="M22,11c0,6.1-4.9,11-11,11S0,17.1,0,11S4.9,0,11,0S22,4.9,22,11z M11,3c-4.4,0-8,3.6-8,8s3.6,8,8,8s8-3.6,8-8S15.4,3,11,3z"/>
+                        <path class="ui__icon" d="M24.5,24.5L24.5,24.5c-0.6,0.6-1.5,0.6-2.1,0l-4.9-4.9c-0.6-0.6-0.6-1.5,0-2.1l0,0c0.6-0.6,1.5-0.6,2.1,0l4.9,4.9 C25.1,23,25.1,23.9,24.5,24.5z"/>
+                        <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M14.7,10.2l-5.5-4C9,6,8.7,6,8.4,6C8.2,6.1,8,6.5,8,6.7v8.5c0,0.2,0.2,0.6,0.4,0.7 c0.2,0.1,0.4,0.1,0.8-0.1l5.5-4c0.1-0.1,0.4-0.3,0.4-0.8C15.1,10.5,14.9,10.3,14.7,10.2z"/>
+                    </svg>
+                </div>
+            </span>
+        </button>
+    </div>
+
+    <div class="vidSearchPanel__group clearfix ng-hide">
+        <div class="vidSearchHeader__group">
+            <div class="vidSearch__icon vidSearchHeader__icon">
+                <svg class="ui__iconHolder26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                viewBox="0 0 26 26" enable-background="new 0 0 26 26" xml:space="preserve">
+                    <path class="ui__icon" d="M22,11c0,6.1-4.9,11-11,11S0,17.1,0,11S4.9,0,11,0S22,4.9,22,11z M11,3c-4.4,0-8,3.6-8,8s3.6,8,8,8s8-3.6,8-8S15.4,3,11,3z"/>
+                    <path class="ui__icon" d="M24.5,24.5L24.5,24.5c-0.6,0.6-1.5,0.6-2.1,0l-4.9-4.9c-0.6-0.6-0.6-1.5,0-2.1l0,0c0.6-0.6,1.5-0.6,2.1,0l4.9,4.9 C25.1,23,25.1,23.9,24.5,24.5z"/>
+                    <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M14.7,10.2l-5.5-4C9,6,8.7,6,8.4,6C8.2,6.1,8,6.5,8,6.7v8.5c0,0.2,0.2,0.6,0.4,0.7 c0.2,0.1,0.4,0.1,0.8-0.1l5.5-4c0.1-0.1,0.4-0.3,0.4-0.8C15.1,10.5,14.9,10.3,14.7,10.2z"/>
+                </svg>
+            </div>
+            
+            <input class="vidSearchHeader__textField forms__textField">
+            
+            <button class="btn fab fa- faa fa-caret-down fa-cog 
+            ui__clickDrop vidSearchHeader__optionsBtn">&nbsp;</button>
+            <div class="vidSearchHeader__optionsMenu ui__clickDropMenu">
+                <button class="ui__clickDropBtn ui__clickDropBtn--checked" type="button" title="YouTube">
+                    <span class="btn__label fab fa-check"> YouTube</span>
+                </button>
+                <button class="ui__clickDropBtn" type="button" title="Vimeo">
+                    <span class="btn__label fab fa-check"> Vimeo</span>
+                </button>
+                <button class="ui__clickDropBtn" type="button" title="DailyMotion">
+                    <span class="btn__label fab fa-check"> DailyMotion</span>
+                </button>
+                <button class="ui__clickDropBtn" type="button" title="HD Videos Only">
+                    <span class="btn__label fab fa-check"> HD Videos Only</span>
+                </button>
+            </div>
+
+            <button class="vidSearchHeader__closeBtn">
+                <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                    <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M16.5,0L9,7.5L1.5,0L0,1.5L7.5,9L0,16.5L1.5,18L9,10.5l7.5,7.5l1.5-1.5L10.5,9
+                L18,1.5L16.5,0z"/>
+                </svg>
+            </button>
+        </div>
+        <div class="vidSearchPaginatorBar__group clearfix">
+            <p class="vidSearchPaginatorBar__indicatorText">
+                <strong>1-10</strong> of 120 results
+            </p>
+            <div class="vidSearchPaginator__group clearfix">
+                <button class="btn faa fa-chevron-left vidSearchPaginator__btn">
+                    <span class="ir">Previous Page</span>
+                </button>
+                <p class="vidSearchPaginator__pageNumText">1 of 12</p>
+                <button class="btn faa fa-chevron-right vidSearchPaginator__btn">
+                    <span class="ir">Next Page</span>
+                </button>
+            </div>
+        </div>
+        <div class="vidSearchResults__container">
+            <ul class="vidSearchResults__group">
+                <li class="vidSearchResult__group">
+                    <div class="vidSearchResult__set clearfix">
+                        <div class="vidSearchResult__img" 
+                        style="background-image:url('https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQXy8iQgv8EWJzl4aFYJ_euuzqXzb1e2i8ian044dADMf81-HqccB53bkwf');">
+                            <strong class="vidSearchResult__hdTag">HD</strong>
+                            &nbsp;
+                        </div>
+                        <div class="vidSearchResult__copyBox">
+                            <h2 class="vidSearchResult__title">
+                                Title of Video Goes Here
+                            </h2>
+                            <p class="vidSearchResult__metaData">
+                                via <a href="#" class="vidSearcResult__sourceLink" 
+                                title="YouTube" target="_blank">YouTube</a>  
+                                &nbsp;|&nbsp;  
+                                <span class="vidSearcResult__duration">10:09</span>
+                            </p>
+                            <p class="vidSearchResult__desc">
+                                Funny &amp; Cute Animals Compilation 2014 New , Hilarious Animals Compilation 2014, Fun,funny, hilarious dogs,horses,goat, cats, monkeys , elephant ,laugh,laughi...
+                            </p>
+                        </div>
+                    </div>
+                    <div class="vidSearchPlayer__group">
+                        <div class="vidSearchPlayer__playerBox"></div>
+                        <button class="btn btn--primary vidSearchPlayer__createBtn">Create Slide</button>
+                    </div>
+                </li>
+
+                <li class="vidSearchResult__group">
+                    <div class="vidSearchResult__set clearfix">
+                        <div class="vidSearchResult__img" 
+                        style="background-image:url('https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQXy8iQgv8EWJzl4aFYJ_euuzqXzb1e2i8ian044dADMf81-HqccB53bkwf');">
+                            <strong class="vidSearchResult__hdTag">HD</strong>
+                            &nbsp;
+                        </div>
+                        <div class="vidSearchResult__copyBox">
+                            <h2 class="vidSearchResult__title">
+                                Title of Video Goes Here and this one is a long title
+                            </h2>
+                            <p class="vidSearchResult__metaData">
+                                via <a href="#" class="vidSearcResult__sourceLink" 
+                                title="YouTube" target="_blank">YouTube</a>  
+                                &nbsp;|&nbsp;  
+                                <span class="vidSearcResult__duration">10:09</span>
+                            </p>
+                            <p class="vidSearchResult__desc">
+                                Funny &amp; Cute Animals Compilation 2014 New , Hilarious Animals Compilation 2014, Fun,funny, hilarious dogs,horses,goat, cats, monkeys , elephant ,laugh,laughi...
+                            </p>
+                        </div>
+                    </div>
+                </li>
+                <li class="vidSearchResult__group">
+                    <div class="vidSearchResult__set clearfix">
+                        <div class="vidSearchResult__img" 
+                        style="background-image:url('https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQXy8iQgv8EWJzl4aFYJ_euuzqXzb1e2i8ian044dADMf81-HqccB53bkwf');">
+                            <strong class="vidSearchResult__hdTag">HD</strong>
+                            &nbsp;
+                        </div>
+                        <div class="vidSearchResult__copyBox">
+                            <h2 class="vidSearchResult__title">
+                                Title of Video Goes Here
+                            </h2>
+                            <p class="vidSearchResult__metaData">
+                                via <a href="#" class="vidSearcResult__sourceLink" 
+                                title="YouTube" target="_blank">YouTube</a>  
+                                &nbsp;|&nbsp;  
+                                <span class="vidSearcResult__duration">10:09</span>
+                            </p>
+                            <p class="vidSearchResult__desc">
+                                Funny &amp; Cute Animals Compilation 2014 New , Hilarious Animals Compilation 2014, Fun,funny, hilarious dogs,horses,goat, cats, monkeys , elephant ,laugh,laughi...
+                            </p>
+                        </div>
+                    </div>
+                </li>
+                <li class="vidSearchResult__group">
+                    <div class="vidSearchResult__set clearfix">
+                        <div class="vidSearchResult__img" 
+                        style="background-image:url('https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQXy8iQgv8EWJzl4aFYJ_euuzqXzb1e2i8ian044dADMf81-HqccB53bkwf');">
+                            <strong class="vidSearchResult__hdTag">HD</strong>
+                            &nbsp;
+                        </div>
+                        <div class="vidSearchResult__copyBox">
+                            <h2 class="vidSearchResult__title">
+                                Title of Video Goes Here
+                            </h2>
+                            <p class="vidSearchResult__metaData">
+                                via <a href="#" class="vidSearcResult__sourceLink" 
+                                title="YouTube" target="_blank">YouTube</a>  
+                                &nbsp;|&nbsp;  
+                                <span class="vidSearcResult__duration">10:09</span>
+                            </p>
+                            <p class="vidSearchResult__desc">
+                                Funny &amp; Cute Animals Compilation 2014 New , Hilarious Animals Compilation 2014, Fun,funny, hilarious dogs,horses,goat, cats, monkeys , elephant ,laugh,laughi...
+                            </p>
+                        </div>
+                    </div>
+                </li>
+                <li class="vidSearchResult__group">
+                    <div class="vidSearchResult__set clearfix">
+                        <div class="vidSearchResult__img" 
+                        style="background-image:url('https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQXy8iQgv8EWJzl4aFYJ_euuzqXzb1e2i8ian044dADMf81-HqccB53bkwf');">
+                            <strong class="vidSearchResult__hdTag">HD</strong>
+                            &nbsp;
+                        </div>
+                        <div class="vidSearchResult__copyBox">
+                            <h2 class="vidSearchResult__title">
+                                Title of Video Goes Here
+                            </h2>
+                            <p class="vidSearchResult__metaData">
+                                via <a href="#" class="vidSearcResult__sourceLink" 
+                                title="YouTube" target="_blank">YouTube</a>  
+                                &nbsp;|&nbsp;  
+                                <span class="vidSearcResult__duration">10:09</span>
+                            </p>
+                            <p class="vidSearchResult__desc">
+                                Funny &amp; Cute Animals Compilation 2014 New , Hilarious Animals Compilation 2014, Fun,funny, hilarious dogs,horses,goat, cats, monkeys , elephant ,laugh,laughi...
+                            </p>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
     <div ng-if="minireel.status === 'active'" ng-show="EditorCtrl.minireelState.dirty && !EditorCtrl.dismissDirtyWarning" class="pageAlert__group btn--warning">
         <span class="ui__iconHolder18 fab fa-bell"><span class="ir">Warning!</span></span>
         <p class="pageAlert__msg">
