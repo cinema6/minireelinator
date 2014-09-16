@@ -2,7 +2,7 @@
     <c6-dropdown options="Ctrl.limitsObject" value="limit">{{value}}</c6-dropdown>
 
     <div class="btnGroup btnGroup--show clearfix">
-        <button class="btn" type="button" title="Publish" ng-click="Ctrl.goTo(page - 1)" ng-disabled="page < 2">
+        <button class="btn" type="button" title="Previous Page" ng-click="Ctrl.goTo(page - 1)" ng-disabled="page < 2">
             <span class="btn__label faa fa-chevron-left">
                 <span class="ir">Previous</span>
             </span>
@@ -11,7 +11,7 @@
             <input type="text" ng-model="Ctrl.page" class="forms__textField" c6-autoselect ng-blur="Ctrl.page = page">
             <span class="btn__label">of {{total}}</span>
         </form>
-        <button class="btn" type="button" title="Copy" ng-click="Ctrl.goTo(page + 1)" ng-disabled="page >= total">
+        <button class="btn" type="button" title="Next Page" ng-click="Ctrl.goTo(page + 1)" ng-disabled="page >= total">
             <span class="btn__label faa fa-chevron-right">
                 <span class="ir">Next</span>
             </span>
