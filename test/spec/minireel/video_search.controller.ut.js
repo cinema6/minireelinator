@@ -266,7 +266,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                 });
             });
 
-            describe('addVideo(video)', function() {
+            describe('addVideo(video, id)', function() {
                 var video;
 
                 beforeEach(function() {
@@ -278,7 +278,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                             videoid: 'abc',
                             title: 'This Video Rules!',
                             description: 'This video is the best video I\'ve ever seen'
-                        }));
+                        }), 'rc-f26330eac44726');
                     });
                 });
 
@@ -294,7 +294,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                 });
 
                 it('should $emit the "VideoSearchCtrl:addVideo" event through the states', function() {
-                    expect(c6State.$emitThroughStates).toHaveBeenCalledWith('VideoSearchCtrl:addVideo', videoCard);
+                    expect(c6State.$emitThroughStates).toHaveBeenCalledWith('VideoSearchCtrl:addVideo', videoCard, 'rc-f26330eac44726');
                 });
             });
 
@@ -358,14 +358,22 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
 
                 describe('when a draggables are added', function() {
                     var Draggable,
+                        video,
                         $element, draggable;
 
                     beforeEach(inject(function($injector) {
+                        video = {
+                            title: 'Awesome Video',
+                            description: 'Lorem ipsum',
+                            site: 'vimeo',
+                            videoid: '12345'
+                        };
+
                         Draggable = $injector.get('_Draggable');
 
                         $element = $('<div class="foo">Hello</div>');
                         $('body').append($element);
-                        draggable = new Draggable('123', $element);
+                        draggable = new Draggable(VideoSearchCtrl.idFor(video), $element);
                         DragCtrl.addDraggable(draggable);
                     }));
 
@@ -384,7 +392,156 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                             expect($element.next().hasClass('c6-dragging')).toBe(false);
                         });
 
-                        describe('when a draggable is dropped', function() {
+                        describe('when a draggable starts being dropped', function() {
+                            var Rect;
+
+                            beforeEach(inject(function($injector) {
+                                Rect = $injector.get('_Rect');
+
+                                spyOn(VideoSearchCtrl, 'addVideo');
+                            }));
+
+                            describe('if not dropped on a card', function() {
+                                var $foo;
+
+                                beforeEach(function() {
+                                    $foo = $([
+                                        '<div id="fkjsjfg">',
+                                        '    <span>Hello</span>',
+                                        '    <ul>',
+                                        '        <li>Sup?</li>',
+                                        '    </ul>',
+                                        '</div>'
+                                    ].join('\n'));
+                                    $('body').append($foo);
+
+                                    draggable.display = new Rect($foo.find('li')[0].getBoundingClientRect());
+                                    draggable.$element.css({
+                                        position: 'fixed',
+                                        top: draggable.display.top + 'px',
+                                        left: draggable.display.left + 'px',
+                                        width: draggable.display.width + 'px',
+                                        height: draggable.display.height + 'px'
+                                    });
+
+                                    draggable.emit('dropStart', draggable);
+                                });
+
+                                afterEach(function() {
+                                    $foo.remove();
+                                });
+
+                                it('should not add any videos', function() {
+                                    expect(VideoSearchCtrl.addVideo).not.toHaveBeenCalled();
+                                });
+                            });
+
+                            describe('if dropped on a card', function() {
+                                var $card;
+
+                                beforeEach(function() {
+                                    $card = $([
+                                        '<div id="rc-8d2d292232059b">',
+                                        '    <div class="card__body">',
+                                        '        <div class="card__copy">',
+                                        '            <p class="card__summary">Foo bar whatever</p>',
+                                        '        </div>',
+                                        '    </div>',
+                                        '</div>'
+                                    ].join('\n'));
+                                    $('body').append($card);
+
+                                    draggable.display = new Rect($card.find('p')[0].getBoundingClientRect());
+                                    draggable.$element.css({
+                                        position: 'fixed',
+                                        top: draggable.display.top + 'px',
+                                        left: draggable.display.left + 'px',
+                                        width: draggable.display.width + 'px',
+                                        height: draggable.display.height + 'px'
+                                    });
+
+                                    draggable.emit('dropStart', draggable);
+                                });
+
+                                afterEach(function() {
+                                    $card.remove();
+                                });
+
+                                it('should add the video', function() {
+                                    expect(VideoSearchCtrl.addVideo).toHaveBeenCalledWith(video, 'rc-8d2d292232059b');
+                                });
+                            });
+
+                            describe('if dropped on the "new slide" card', function() {
+                                var $newSlide;
+
+                                beforeEach(function() {
+                                    $newSlide = $([
+                                        '<div id="new-slide" class="card__container">',
+                                        '    <div class="card__item">',
+                                        '        <button class="createNew__button">New</button>',
+                                        '    </div>',
+                                        '</div>'
+                                    ].join('\n'));
+                                    $('body').append($newSlide);
+
+                                    draggable.display = new Rect($newSlide.find('button')[0].getBoundingClientRect());
+                                    draggable.$element.css({
+                                        position: 'fixed',
+                                        top: draggable.display.top + 'px',
+                                        left: draggable.display.left + 'px',
+                                        width: draggable.display.width + 'px',
+                                        height: draggable.display.height + 'px'
+                                    });
+
+                                    draggable.emit('dropStart', draggable);
+                                });
+
+                                afterEach(function() {
+                                    $newSlide.remove();
+                                });
+
+                                it('should add the video', function() {
+                                    expect(VideoSearchCtrl.addVideo).toHaveBeenCalledWith(video);
+                                });
+                            });
+
+                            describe('if dropped on a card-editing modal', function() {
+                                var $modal;
+
+                                beforeEach(function() {
+                                    $modal = $([
+                                        '<div id="edit-card-modal" class="modal__group">',
+                                        '    <header class="modalHeader__group">',
+                                        '        <h1 class="modal__title">Editing Card</h1>',
+                                        '    </header>',
+                                        '</div>'
+                                    ].join('\n'));
+                                    $('body').append($modal);
+
+                                    draggable.display = new Rect($modal.find('h1')[0].getBoundingClientRect());
+                                    draggable.$element.css({
+                                        position: 'fixed',
+                                        top: draggable.display.top + 'px',
+                                        left: draggable.display.left + 'px',
+                                        width: draggable.display.width + 'px',
+                                        height: draggable.display.height + 'px'
+                                    });
+
+                                    draggable.emit('dropStart', draggable);
+                                });
+
+                                afterEach(function() {
+                                    $modal.remove();
+                                });
+
+                                it('should add the video', function() {
+                                    expect(VideoSearchCtrl.addVideo).toHaveBeenCalledWith(video);
+                                });
+                            });
+                        });
+
+                        describe('after a draggable is dropped', function() {
                             var $clone;
 
                             beforeEach(function() {

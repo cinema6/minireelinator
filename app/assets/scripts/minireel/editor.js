@@ -699,7 +699,38 @@ function( angular , c6ui , c6State  , videoSearch           , services          
 
             $scope.$on('mrPreview:closePreview', self.closePreview);
 
-            $scope.$on('VideoSearchCtrl:addVideo', function($event, card) {
+            $scope.$on('VideoSearchCtrl:addVideo', function($event, card, id) {
+                var existingCard = MiniReelService.findCard(self.model.data.deck, id);
+
+                if (existingCard && existingCard.type === 'recap') {
+                    return;
+                }
+
+                if (existingCard) {
+                    return ConfirmDialogService.display({
+                        prompt: 'This will overwrite the existing video.' +
+                            ' Are you sure you want to add this video to the card?',
+                        affirm: 'Yes, I\'m Sure',
+                        cancel: 'Cancel',
+                        onAffirm: function() {
+                            if (!(/^video/).test(existingCard.type)) {
+                                MiniReelService.setCardType(existingCard, 'video');
+                            }
+
+                            ['service', 'videoid'].forEach(function(prop) {
+                                existingCard.data[prop] = card.data[prop];
+                            });
+
+                            ConfirmDialogService.close();
+
+                            self.editCard(existingCard);
+                        },
+                        onCancel: function() {
+                            ConfirmDialogService.close();
+                        }
+                    });
+                }
+
                 return self.editCard(self.pushCard(card));
             });
 

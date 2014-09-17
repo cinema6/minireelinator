@@ -2,11 +2,13 @@ define( ['angular','c6_state','minireel/services'],
 function( angular , c6State  , services          ) {
     'use strict';
 
+    var jqLite = angular.element;
+
     return angular.module('c6.app.minireel.editor.videoSearch', [c6State.name, services.name])
         .controller('VideoSearchController', ['$scope','VideoSearchService','MiniReelService',
-                                              'c6State',
+                                              'c6State','$document',
         function                             ( $scope , VideoSearchService , MiniReelService ,
-                                               c6State ) {
+                                               c6State , $document ) {
             var self = this,
                 EditorCtrl = $scope.EditorCtrl;
 
@@ -61,7 +63,7 @@ function( angular , c6State  , services          ) {
                 return this.currentPreview = video;
             };
 
-            this.addVideo = function(video) {
+            this.addVideo = function(video, id) {
                 var card = MiniReelService.createCard('video');
 
                 card.title = video.title;
@@ -69,10 +71,10 @@ function( angular , c6State  , services          ) {
                 card.data.service = video.site;
                 card.data.videoid = video.videoid;
 
-                return c6State.$emitThroughStates('VideoSearchCtrl:addVideo', card);
+                return c6State.$emitThroughStates('VideoSearchCtrl:addVideo', card, id);
             };
 
-            this.idFor = (function() {
+            (function() {
                 var cache = [];
 
                 function generateId(video) {
@@ -82,12 +84,18 @@ function( angular , c6State  , services          ) {
                     }) - 1].id;
                 }
 
-                return function(video) {
+                this.idFor = function(video) {
                     return cache.reduce(function(id, item) {
                         return item.video === video ? item.id : id;
                     }, null) || generateId(video);
                 };
-            }());
+
+                this.videoWithID = function(id) {
+                    return cache.reduce(function(video, item) {
+                        return item.id === id ? item.video : video;
+                    }, null);
+                };
+            }.call(this));
 
             this.close = function() {
                 EditorCtrl.toggleSearch();
@@ -95,6 +103,32 @@ function( angular , c6State  , services          ) {
             };
 
             this.setupDraggables = function(DragCtrl) {
+                var document = $document[0];
+
+                function findDropZoneId($element) {
+                    var matcher = (/^((rc-[a-z0-9]{14})|(new-slide)|(edit-card-modal))$/),
+                        id = $element.attr('id');
+
+                    if (matcher.test(id) || $element.length < 1) {
+                        return id || null;
+                    } else {
+                        return findDropZoneId($element.parent());
+                    }
+                }
+
+                function handleDraggableDropStart(draggable) {
+                    var position = draggable.display,
+                        id = findDropZoneId(jqLite(document.elementFromPoint(
+                            position.center.x, position.center.y
+                        )));
+
+                    if ((/^((new-slide)|(edit-card-modal))$/).test(id)) {
+                        self.addVideo(self.videoWithID(draggable.id));
+                    } else if (id) {
+                        self.addVideo(self.videoWithID(draggable.id), id);
+                    }
+                }
+
                 DragCtrl.on('draggableAdded', function(draggable) {
                     var $clone = null;
 
@@ -104,6 +138,13 @@ function( angular , c6State  , services          ) {
 
                             $clone.removeClass('c6-dragging');
                             draggable.$element.after($clone);
+                        })
+                        .on('dropStart', function(draggable) {
+                            var display = draggable.$element.css('display');
+
+                            draggable.$element.css('display', 'none');
+                            handleDraggableDropStart(draggable);
+                            draggable.$element.css('display', display);
                         })
                         .on('end', function() {
                             $clone.remove();
