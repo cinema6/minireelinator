@@ -708,7 +708,7 @@ function( angular , c6ui , c6State  , videoSearch           , services          
 
                 if (existingCard) {
                     return ConfirmDialogService.display({
-                        prompt: 'This will overwrite the existing video.' +
+                        prompt: 'This will overwrite "' + existingCard.title + '".' +
                             ' Are you sure you want to add this video to the card?',
                         affirm: 'Yes, I\'m Sure',
                         cancel: 'Cancel',
