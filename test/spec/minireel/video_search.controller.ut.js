@@ -245,7 +245,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                 });
             });
 
-            describe('preview(video)', function() {
+            describe('togglePreview(video)', function() {
                 var video,
                     result;
 
@@ -253,7 +253,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                     video = {};
 
                     $scope.$apply(function() {
-                        result = VideoSearchCtrl.preview(video);
+                        result = VideoSearchCtrl.togglePreview(video);
                     });
                 });
 
@@ -263,6 +263,22 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
 
                 it('should return the video', function() {
                     expect(result).toBe(video);
+                });
+
+                describe('if called with the current video', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            result = VideoSearchCtrl.togglePreview(video);
+                        });
+                    });
+
+                    it('should set the currentPreview property to null', function() {
+                        expect(VideoSearchCtrl.currentPreview).toBeNull();
+                    });
+
+                    it('should return null', function() {
+                        expect(result).toBeNull();
+                    });
                 });
             });
 
@@ -289,8 +305,6 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                 it('should set properties on the card to match the video', function() {
                     expect(videoCard.data.service).toBe('youtube');
                     expect(videoCard.data.videoid).toBe('abc');
-                    expect(videoCard.title).toBe(video.title);
-                    expect(videoCard.note).toBe(video.description);
                 });
 
                 it('should $emit the "VideoSearchCtrl:addVideo" event through the states', function() {

@@ -77,7 +77,7 @@
             <ul class="vidSearchResults__group">
                 <li ng-repeat="video in result.videos" class="vidSearchResult__group">
                     <div id="{{VideoSearchCtrl.idFor(video)}}" c6-draggable class="vidSearchResult__set clearfix"
-                        ng-click="VideoSearchCtrl.preview(video)">
+                        ng-click="VideoSearchCtrl.togglePreview(video)">
                         <div class="vidSearchResult__img" 
                             c6-bg-img="{{video.thumbnail.src}}">
                             <strong ng-show="video.hd" class="vidSearchResult__hdTag">HD</strong>

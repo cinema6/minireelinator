@@ -58,16 +58,15 @@ function( angular , c6State  , services          ) {
                 });
             };
 
-            this.preview = function(video) {
+            this.togglePreview = function(video) {
                 /* jshint boss:true */
-                return this.currentPreview = video;
+                return this.currentPreview = (this.currentPreview === video ?
+                    null : video);
             };
 
             this.addVideo = function(video, id) {
                 var card = MiniReelService.createCard('video');
 
-                card.title = video.title;
-                card.note = video.description;
                 card.data.service = video.site;
                 card.data.videoid = video.videoid;
 
@@ -99,7 +98,7 @@ function( angular , c6State  , services          ) {
 
             this.close = function() {
                 EditorCtrl.toggleSearch();
-                return this.preview(null);
+                return this.togglePreview(null);
             };
 
             this.setupDraggables = function(DragCtrl) {
