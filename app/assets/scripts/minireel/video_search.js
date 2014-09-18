@@ -29,6 +29,14 @@ function( angular , c6State  , services          ) {
                 dailymotion: 'Dailymotion'
             };
             this.showQueryDropdown = false;
+            Object.defineProperties(this, {
+                addButtonText: {
+                    get: function() {
+                        return c6State.isActive(c6State.get('MR:EditCard')) ?
+                            'Add to Slide' : 'Create Slide';
+                    }
+                }
+            });
 
             this.toggleProp = function(object, prop) {
                 if (arguments.length < 2) {

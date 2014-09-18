@@ -109,6 +109,38 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                     expect(VideoSearchCtrl.showQueryDropdown).toBe(false);
                 });
             });
+
+            describe('addButtonText', function() {
+                ['MR:EditCard.Copy', 'MR:EditCard.Video', 'MR:EditCard.Ballot', 'MR:EditCard']
+                    .forEach(function(state) {
+                        describe('if the state is "' + state + '"', function() {
+                            beforeEach(function() {
+                                Object.defineProperty(c6State, 'current', {
+                                    value: state
+                                });
+                            });
+
+                            it('should be "Add to Slide"', function() {
+                                expect(VideoSearchCtrl.addButtonText).toBe('Add to Slide');
+                            });
+                        });
+                    });
+
+                ['MR:Editor', 'MR:Settings.Autoplay', 'MR:Editor.Settings', 'MR:Editor.Splash']
+                    .forEach(function(state) {
+                        describe('if the state is "' + state + '"', function() {
+                            beforeEach(function() {
+                                Object.defineProperty(c6State, 'current', {
+                                    value: state
+                                });
+                            });
+
+                            it('should be "Create Slide"', function() {
+                                expect(VideoSearchCtrl.addButtonText).toBe('Create Slide');
+                            });
+                        });
+                    });
+            });
         });
 
         describe('methods', function() {
