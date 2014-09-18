@@ -438,7 +438,10 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                                         height: draggable.display.height + 'px'
                                     });
 
-                                    draggable.emit('dropStart', draggable);
+                                    draggable.emit('dropStart', draggable, {
+                                        x: draggable.display.left + 1,
+                                        y: draggable.display.top + 1
+                                    });
                                 });
 
                                 afterEach(function() {
@@ -474,7 +477,10 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                                         height: draggable.display.height + 'px'
                                     });
 
-                                    draggable.emit('dropStart', draggable);
+                                    draggable.emit('dropStart', draggable, {
+                                        x: draggable.display.left + 1,
+                                        y: draggable.display.top + 1
+                                    });
                                 });
 
                                 afterEach(function() {
@@ -508,7 +514,10 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                                         height: draggable.display.height + 'px'
                                     });
 
-                                    draggable.emit('dropStart', draggable);
+                                    draggable.emit('dropStart', draggable, {
+                                        x: draggable.display.left + 1,
+                                        y: draggable.display.top + 1
+                                    });
                                 });
 
                                 afterEach(function() {
@@ -542,7 +551,10 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                                         height: draggable.display.height + 'px'
                                     });
 
-                                    draggable.emit('dropStart', draggable);
+                                    draggable.emit('dropStart', draggable, {
+                                        x: draggable.display.left + 1,
+                                        y: draggable.display.top + 1
+                                    });
                                 });
 
                                 afterEach(function() {

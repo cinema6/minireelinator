@@ -115,11 +115,10 @@ function( angular , c6State  , services          ) {
                     }
                 }
 
-                function handleDraggableDropStart(draggable) {
-                    var position = draggable.display,
-                        id = findDropZoneId(jqLite(document.elementFromPoint(
-                            position.center.x, position.center.y
-                        )));
+                function handleDraggableDropStart(draggable, origin) {
+                    var id = findDropZoneId(jqLite(document.elementFromPoint(
+                        origin.x, origin.y
+                    )));
 
                     if ((/^((new-slide)|(edit-card-modal))$/).test(id)) {
                         self.addVideo(self.videoWithID(draggable.id));
@@ -138,11 +137,11 @@ function( angular , c6State  , services          ) {
                             $clone.removeClass('c6-dragging');
                             draggable.$element.after($clone);
                         })
-                        .on('dropStart', function(draggable) {
+                        .on('dropStart', function(draggable, origin) {
                             var display = draggable.$element.css('display');
 
                             draggable.$element.css('display', 'none');
-                            handleDraggableDropStart(draggable);
+                            handleDraggableDropStart(draggable, origin);
                             draggable.$element.css('display', display);
                         })
                         .on('end', function() {
