@@ -615,6 +615,32 @@
                             expect(dataSentToPlayer.appData.experience).not.toEqual(session.experience);
                             expect(dataSentToPlayer.appData.experience).toEqual(updatedExperience);
                         });
+
+                        describe('if set to phone', function() {
+                            beforeEach(function() {
+                                session.emit('handshake', {}, responseCallback);
+                                dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
+                            });
+
+                            it('should set profile.flash to false', function() {
+                                expect(dataSentToPlayer.appData.profile.flash).toBe(false);
+                            });
+                        });
+
+                        describe('if set to something else', function() {
+                            beforeEach(function() {
+                                c6BrowserInfo.profile.flash = false;
+                                $scope.$apply(function() {
+                                    PreviewController.device = 'foo';
+                                });
+                                session.emit('handshake', {}, responseCallback);
+                                dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
+                            });
+
+                            it('should set profile.flash to true', function() {
+                                expect(dataSentToPlayer.appData.profile.flash).toBe(true);
+                            });
+                        });
                     });
                 });
             });

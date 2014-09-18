@@ -1502,6 +1502,7 @@ function( angular , c6ui , c6State  , videoSearch           , services          
                     // the iframe src will update and trigger a refresh automatically
                     // we just prepare the profile for the refresh handshake call
                     profile.device = newDevice;
+                    profile.flash = (newDevice !== 'phone');
                     self.fullscreen = false;
                     self.active = false;
                 }));
