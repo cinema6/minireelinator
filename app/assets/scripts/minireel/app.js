@@ -64,8 +64,6 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                             this.state('MR:EditCard.Ballot');
                         });
                         this.route('/card/new', 'MR:Editor.NewCard');
-
-                        this.route('/search', 'MR:VideoSearch');
                     });
                 });
 
@@ -242,6 +240,48 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
             return function(email) {
                 return '//www.gravatar.com/avatar/' +
                     cryptojs.MD5(email.trim().toLowerCase()).toString(cryptojs.enc.Hex);
+            };
+        }])
+
+        .filter('timestamp', [function() {
+            var divisors = [3600, 60, 1];
+
+            return function(duration) {
+                return divisors
+                    .map(function(divisor) {
+                        return Math.floor(duration / divisor) % 60;
+                    })
+                    .filter(function(time, index) {
+                        return time > 0 || index > 0;
+                    })
+                    .map(function(time, index) {
+                        var string = time.toString();
+
+                        switch (time) {
+                        case 0:
+                            return (index > 0) ? '00' : '0';
+                        default:
+                            return (string.length < 2 && index > 0) ? ('0' + string) : string;
+                        }
+                    })
+                    .join(':');
+            };
+        }])
+
+        .filter('hugeNumber', [function() {
+            return function(number) {
+                var thousands = number / 1000,
+                    millions = number / 1000000;
+
+                if (millions >= 1) {
+                    return '1m+';
+                }
+
+                if (thousands >= 1) {
+                    return (Math.round(thousands * 10) / 10) + 'k';
+                }
+
+                return number.toString();
             };
         }])
 

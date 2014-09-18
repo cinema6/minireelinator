@@ -39,6 +39,18 @@ function( angular , c6ui , hammer ) {
         }
     };
 
+    function Point() {
+        this.update.apply(this, arguments);
+    }
+    Point.prototype = {
+        update: function(x, y) {
+            this.x = x;
+            this.y = y;
+
+            return this;
+        }
+    };
+
     return angular.module('c6.drag', [c6ui.name])
         .value('hammer', hammer)
 
@@ -56,9 +68,12 @@ function( angular , c6ui , hammer ) {
                     this.width = data.width || this.right - this.left;
                     this.height = data.height || this.bottom - this.top;
 
-                    this.center = this.center || {};
-                    this.center.x = this.left + (this.width / 2);
-                    this.center.y = this.top + (this.height / 2);
+                    this.center = (this.center || new Point()).update(
+                        this.left + (this.width / 2),
+                        this.top + (this.height / 2)
+                    );
+
+                    return this;
                 }
             };
 
@@ -466,6 +481,12 @@ function( angular , c6ui , hammer ) {
                     if ($attrs.controllerAs) {
                         scope[$attrs.controllerAs] = Controller;
                     }
+
+                    if ($attrs.onInit) {
+                        scope.$eval($attrs.onInit, {
+                            controller: Controller
+                        });
+                    }
                 }
             };
         }])
@@ -566,8 +587,14 @@ function( angular , c6ui , hammer ) {
                                             left: px(this.start.left)
                                         });
                                     },
-                                    notify: function() {
-                                        draggable.emit('begin', draggable);
+                                    notify: function(event) {
+                                        var origin = event.gesture.center;
+
+                                        draggable.emit(
+                                            'begin',
+                                            draggable,
+                                            new Point(origin.clientX, origin.clientY)
+                                        );
                                     }
                                 },
                                 drag: {
@@ -577,8 +604,9 @@ function( angular , c6ui , hammer ) {
                                         event.gesture.preventDefault();
                                     },
                                     modify: function(event) {
-                                        var top = this.start.top + event.gesture.deltaY,
-                                            left = this.start.left + event.gesture.deltaX,
+                                        var gesture = event.gesture,
+                                            top = this.start.top + gesture.deltaY,
+                                            left = this.start.left + gesture.deltaX,
                                             dragEvent;
 
                                         // Emitting the "beforeMove" event requires creating a
@@ -592,7 +620,11 @@ function( angular , c6ui , hammer ) {
                                                     left: left,
                                                     bottom: top + draggable.display.height,
                                                     right: left + draggable.display.width
-                                                })
+                                                }),
+                                                origin: new Point(
+                                                    gesture.center.clientX,
+                                                    gesture.center.clientY
+                                                )
                                             });
 
                                             draggable.emit('beforeMove', draggable, dragEvent);
@@ -607,27 +639,52 @@ function( angular , c6ui , hammer ) {
                                             left: px(left)
                                         });
                                     },
-                                    notify: function() {
+                                    notify: function(event) {
                                         draggable.refresh();
-                                        draggable.emit('move', draggable, draggable.display);
+                                        draggable.emit(
+                                            'move',
+                                            draggable,
+                                            draggable.display,
+                                            new Point(
+                                                event.gesture.center.clientX,
+                                                event.gesture.center.clientY
+                                            )
+                                        );
                                     }
                                 },
                                 dragend: {
-                                    setup: function() {
+                                    setup: function(event) {
                                         // The public $scope event for the drop must be
                                         // $emitted in the setup phase so that listeners will
                                         // notified before the element is further modified
                                         // (and it potentially snaps to another position.)
-                                        draggable.emit('dropStart', draggable);
+                                        draggable.emit(
+                                            'dropStart',
+                                            draggable,
+                                            new Point(
+                                                event.gesture.center.clientX,
+                                                event.gesture.center.clientY
+                                            )
+                                        );
                                         scope.$emit('c6-draggable:drop', draggable);
                                     },
                                     modify: function() {
                                         draggable.removeClass('c6-dragging');
                                     },
-                                    notify: function() {
+                                    notify: function(event) {
+                                        var origin = new Point(
+                                            event.gesture.center.clientX,
+                                            event.gesture.center.clientY
+                                        );
+
                                         draggable.refresh();
-                                        draggable.emit('move', draggable, draggable.display);
-                                        draggable.emit('end', draggable);
+                                        draggable.emit(
+                                            'move',
+                                            draggable,
+                                            draggable.display,
+                                            origin
+                                        );
+                                        draggable.emit('end', draggable, origin);
                                     }
                                 }
                             };

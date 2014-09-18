@@ -195,6 +195,12 @@
                     });
                 });
 
+                describe('showSearch', function() {
+                    it('should be false', function() {
+                        expect(EditorCtrl.showSearch).toBe(false);
+                    });
+                });
+
                 describe('videoErrors', function() {
                     var VideoError,
                         result;
@@ -354,6 +360,35 @@
                 function dialog() {
                     return ConfirmDialogService.display.calls.mostRecent().args[0];
                 }
+
+                describe('queueSearch(query)', function() {
+                    beforeEach(function() {
+                        expect(EditorCtrl.showSearch).toBeDefined();
+                        spyOn($scope, '$broadcast').and.callThrough();
+
+                        $scope.$apply(function() {
+                            EditorCtrl.queueSearch('This is a Search!');
+                        });
+                    });
+
+                    it('should set "showSearch" to true', function() {
+                        expect(EditorCtrl.showSearch).toBe(true);
+                    });
+
+                    it('should $broadcast the "EditorCtrl:searchQueued" event', function() {
+                        expect($scope.$broadcast).toHaveBeenCalledWith('EditorCtrl:searchQueued', 'This is a Search!');
+                    });
+                });
+
+                describe('toggleSearch()', function() {
+                    it('should toggle the showSearch property', function() {
+                        EditorCtrl.toggleSearch();
+                        expect(EditorCtrl.showSearch).toBe(true);
+
+                        EditorCtrl.toggleSearch();
+                        expect(EditorCtrl.showSearch).toBe(false);
+                    });
+                });
 
                 describe('bustCache()', function() {
                     it('should increment this.cacheBuster', function() {
@@ -883,6 +918,153 @@
             });
 
             describe('events', function() {
+                describe('VideoSearchCtrl:addVideo', function() {
+                    var card;
+
+                    beforeEach(function() {
+                        card = {
+                            id: 'rc-2612c38e214f1f',
+                            data: {
+                                service: 'youtube',
+                                videoid: 'abc'
+                            }
+                        };
+
+                        spyOn(EditorCtrl, 'pushCard').and.callThrough();
+                        spyOn(EditorCtrl, 'editCard');
+
+                        $scope.$apply(function() {
+                            $scope.$emit('VideoSearchCtrl:addVideo', card);
+                        });
+                    });
+
+                    it('should push the card into the deck', function() {
+                        expect(EditorCtrl.pushCard).toHaveBeenCalledWith(card);
+                    });
+
+                    it('should begin editing the card', function() {
+                        expect(EditorCtrl.editCard).toHaveBeenCalledWith(card);
+                    });
+
+                    describe('if called with an id', function() {
+                        beforeEach(function() {
+                            EditorCtrl.pushCard.calls.reset();
+                            EditorCtrl.editCard.calls.reset();
+
+                            cModel.data.deck = [
+                                { id: 'rc-0216d451b9192d', type: 'videoBallot', data: {} },
+                                { id: 'rc-2e45c33f20a0b3', type: 'video', data: {} },
+                                { id: 'rc-d23f42a657bf65', type: 'text', data: {} },
+                                { id: 'rc-2fd06b3f072585', type: 'video', data: {} },
+                                { id: 'rc-bdd38284f4c62c', type: 'recap', data: {} }
+                            ];
+
+                            $scope.$apply(function() {
+                                $scope.$emit('VideoSearchCtrl:addVideo', card, cModel.data.deck[1].id);
+                            });
+                        });
+
+                        describe('if called with a recap card', function() {
+                            beforeEach(function() {
+                                ConfirmDialogService.display.calls.reset();
+
+                                $scope.$apply(function() {
+                                    $scope.$emit('VideoSearchCtrl:addVideo', card, cModel.data.deck[4].id);
+                                });
+                            });
+
+                            it('should not show a dialog', function() {
+                                expect(ConfirmDialogService.display).not.toHaveBeenCalled();
+                            });
+
+                            it('should not add a card to the deck', function() {
+                                expect(EditorCtrl.pushCard).not.toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('if called with a text card', function() {
+                            beforeEach(function() {
+                                ConfirmDialogService.display.calls.reset();
+
+                                $scope.$apply(function() {
+                                    $scope.$emit('VideoSearchCtrl:addVideo', card, cModel.data.deck[2].id);
+                                });
+                            });
+
+                            describe('when the dialog is affirmed', function() {
+                                beforeEach(function() {
+                                    spyOn(MiniReelService, 'setCardType').and.callThrough();
+
+                                    $scope.$apply(function() {
+                                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
+                                    });
+                                });
+
+                                it('should convert the card to a video card', function() {
+                                    expect(MiniReelService.setCardType).toHaveBeenCalledWith(cModel.data.deck[2], 'video');
+                                });
+                            });
+                        });
+
+                        it('should not add a card to the deck', function() {
+                            expect(EditorCtrl.pushCard).not.toHaveBeenCalled();
+                        });
+
+                        it('should display a confirmation dialog', function() {
+                            expect(ConfirmDialogService.display).toHaveBeenCalledWith({
+                                prompt: jasmine.any(String),
+                                affirm: jasmine.any(String),
+                                cancel: jasmine.any(String),
+                                onAffirm: jasmine.any(Function),
+                                onCancel: jasmine.any(Function)
+                            });
+                        });
+
+                        describe('when the user interacts with the dialog', function() {
+                            var config;
+
+                            beforeEach(function() {
+                                config = ConfirmDialogService.display.calls.mostRecent().args[0];
+                            });
+
+                            describe('when the dialog is canceled', function() {
+                                beforeEach(function() {
+                                    $scope.$apply(function() {
+                                        config.onCancel();
+                                    });
+                                });
+
+                                it('should close the dialog', function() {
+                                    expect(ConfirmDialogService.close).toHaveBeenCalled();
+                                });
+                            });
+
+                            describe('when the dialog is affirmed', function() {
+                                beforeEach(function() {
+                                    $scope.$apply(function() {
+                                        config.onAffirm();
+                                    });
+                                });
+
+                                it('should change the card\'s videoid and service', function() {
+                                    var existingCard = cModel.data.deck[1];
+
+                                    expect(existingCard.data.service).toBe(card.data.service);
+                                    expect(existingCard.data.videoid).toBe(card.data.videoid);
+                                });
+
+                                it('should close the dialog', function() {
+                                    expect(ConfirmDialogService.close).toHaveBeenCalled();
+                                });
+
+                                it('should edit the card', function() {
+                                    expect(EditorCtrl.editCard).toHaveBeenCalledWith(cModel.data.deck[1]);
+                                });
+                            });
+                        });
+                    });
+                });
+
                 describe('$destroy', function() {
                     var saveDeferred;
 

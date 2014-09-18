@@ -917,7 +917,6 @@
 
     .vidSearchTrigger__group {
         width:4.75em;
-        display: none;
     }
         .vidSearchTrigger__btn,
         .vidSearchTrigger__btn:focus {
@@ -1062,6 +1061,9 @@
                     padding:0.75em;
                     cursor: pointer;
                 }
+                    .vidSearchResult__set.c6-dragging {
+                        opacity: 0.5;
+                    }
 
                     .vidSearchResult__img {
                         width:30%; height:6em;

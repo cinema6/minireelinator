@@ -9,7 +9,7 @@
                 </div>
             </li>
             <li class="card__list-item" render-deck="deck">
-                <div class="card__container card--createNew" ng-if="$this.type === 'recap'">
+                <div id="new-slide" class="card__container card--createNew" ng-if="$this.type === 'recap'">
                     <h4 class="card__type">&nbsp;</h4>
                     <div class="card__item">
                         <button ng-click="EditorCtrl.newCard($index, $event)" class="createNew__button">

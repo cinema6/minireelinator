@@ -292,7 +292,7 @@
                     $draggable = $compile('<span c6-draggable></span>')($scope);
                 });
                 draggable = $draggable.data('cDrag');
-                spyOn(draggable, 'refresh');
+                spyOn(draggable, 'refresh').and.callThrough();
 
                 draggable.addClass('foo');
                 expect(draggable.refresh).not.toHaveBeenCalled();
@@ -305,6 +305,114 @@
 
                 $animate.triggerCallbacks();
                 expect(draggable.refresh.calls.count()).toBe(2);
+
+                expect(draggable.refresh()).toBe(draggable.display);
+            });
+
+            describe('events', function() {
+                var $draggable, draggable,
+                    finger, spy;
+
+                beforeEach(function() {
+                    finger = new Finger();
+                    spy = jasmine.createSpy('spy()');
+
+                    $draggable = $('<div c6-draggable style="width: 100px; height: 100px;">Hello</div>');
+
+                    testFrame.$body.append($draggable);
+                    $scope.$apply(function() {
+                        $compile($draggable)($scope);
+                    });
+                    draggable = $draggable.data('cDrag');
+                });
+
+                describe('begin', function() {
+                    beforeEach(function() {
+                        draggable.on('begin', spy);
+                        finger.placeOn($draggable);
+                    });
+
+                    it('should be emitted when dragging starts', function() {
+                        finger.drag(0, 0);
+
+                        expect(spy).toHaveBeenCalledWith(draggable, { x: 50, y: 50 });
+                    });
+                });
+
+                describe('beforeMove', function() {
+                    var Rect;
+
+                    beforeEach(inject(function($injector) {
+                        Rect = $injector.get('_Rect');
+
+                        draggable.on('beforeMove', spy);
+                        finger.placeOn($draggable);
+                    }));
+
+                    it('should be emitted before the draggable moves', function() {
+                        finger.drag(10, 5);
+
+                        expect(spy).toHaveBeenCalledWith(draggable, jasmine.objectContaining({
+                            desired: new Rect({
+                                top: 5,
+                                left: 10,
+                                bottom: 105,
+                                right: 110
+                            }),
+                            origin: {
+                                x: 60,
+                                y: 55
+                            }
+                        }));
+                    });
+                });
+
+                describe('move', function() {
+                    beforeEach(function() {
+                        draggable.on('move', spy);
+                        finger.placeOn($draggable);
+                    });
+
+                    it('should be emitted after the draggable moves', function() {
+                        finger.drag(0, 0);
+                        expect(spy).toHaveBeenCalledWith(draggable, draggable.display, { x: 50, y: 50 });
+
+                        finger.drag(3, 5);
+                        expect(spy).toHaveBeenCalledWith(draggable, draggable.display, { x: 53, y: 55 });
+
+                        spy.calls.reset();
+                        finger.lift();
+                        expect(spy).toHaveBeenCalledWith(draggable, draggable.display, { x: 53, y: 55 });
+                    });
+                });
+
+                describe('dropStart', function() {
+                    beforeEach(function() {
+                        draggable.on('dropStart', spy);
+                        finger.placeOn($draggable);
+                    });
+
+                    it('should be emitted when the draggable is dropped', function() {
+                        finger.drag(25, 10);
+                        finger.lift();
+
+                        expect(spy).toHaveBeenCalledWith(draggable, { x: 75, y: 60 });
+                    });
+                });
+
+                describe('end', function() {
+                    beforeEach(function() {
+                        draggable.on('end', spy);
+                        finger.placeOn($draggable);
+                    });
+
+                    it('should be emitted when the draggable is dropped', function() {
+                        finger.drag(1, 2);
+                        finger.lift();
+
+                        expect(spy).toHaveBeenCalledWith(draggable, { x: 51, y: 52 });
+                    });
+                });
             });
 
             describe('zone interaction', function() {

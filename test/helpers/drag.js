@@ -32,7 +32,11 @@ define(['hammer'], function(hammer) {
             this.touching.trigger('touch', eventify({
                 target: this.touching.element,
                 deltaX: 0,
-                delatY: 0
+                delatY: 0,
+                center: {
+                    clientX: this.x,
+                    clientY: this.y
+                }
             }));
             this.$touching.trigger('mousedown');
         },
@@ -41,7 +45,11 @@ define(['hammer'], function(hammer) {
                 this.touching.trigger('dragend', eventify({
                     target: this.touching.element,
                     deltaX: this.x - this.dragStart.x,
-                    deltaY: this.y - this.dragStart.y
+                    deltaY: this.y - this.dragStart.y,
+                    center: {
+                        clientX: this.x,
+                        clientY: this.y
+                    }
                 }));
 
                 this.dragStart.x = NaN;
@@ -67,7 +75,11 @@ define(['hammer'], function(hammer) {
                 this.touching.trigger('dragstart', eventify({
                     target: this.touching.element,
                     deltaX: 0,
-                    deltaY: 0
+                    deltaY: 0,
+                    center: {
+                        clientX: this.x,
+                        clientY: this.y
+                    }
                 }));
             }
 
@@ -77,7 +89,11 @@ define(['hammer'], function(hammer) {
             this.touching.trigger('drag', eventify({
                 target: this.touching.element,
                 deltaX: this.x - this.dragStart.x,
-                deltaY: this.y - this.dragStart.y
+                deltaY: this.y - this.dragStart.y,
+                center: {
+                    clientX: this.x,
+                    clientY: this.y
+                }
             }));
         }
     };

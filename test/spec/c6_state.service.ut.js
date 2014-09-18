@@ -1386,6 +1386,39 @@
                             });
                         });
 
+                        describe('$emitThroughStates()', function() {
+                            var scope1, scope2, scope3;
+
+                            beforeEach(function() {
+                                scope1 = $rootScope.$new();
+                                scope2 = scope1.$new();
+                                scope3 = scope2.$new();
+
+                                [scope1, scope2, scope3].forEach(function(scope) {
+                                    c6State._registerView({
+                                        scope: scope,
+                                        id: null
+                                    });
+                                });
+                                c6State._registerView({
+                                    scope: null,
+                                    id: null
+                                });
+
+                                spyOn(scope3, '$emit').and.callThrough();
+                                spyOn(c6State, '$emitThroughStates').and.callThrough();
+
+                                $rootScope.$apply(function() {
+                                    c6State.$emitThroughStates('foo', {}, { name: 'Josh' });
+                                });
+                            });
+
+                            it('should call $emit on the child-most state\'s scope', function() {
+                                expect(scope3.$emit).toHaveBeenCalled();
+                                expect(scope3.$emit.calls.mostRecent().args).toEqual(c6State.$emitThroughStates.calls.mostRecent().args);
+                            });
+                        });
+
                         describe('get(state)', function() {
                             var Home, Sidebar, Contacts,
                                 home, sidebar, contacts, post;
