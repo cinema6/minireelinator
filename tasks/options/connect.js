@@ -41,7 +41,7 @@
                                             '<script>',
                                             '(' + function(window) {
                                                 window.DEBUG = true;
-                                                window.YouTubeApiKey = 'AIzaSyBDBaBHNS3RIyB0iDzr-SC-I1G9LtRUjkM';
+                                                window.YouTubeApiKey = 'AIzaSyAoR0-kvy_fIjYOKk0vMU6F2JIb1aCMd1g';
                                             }.toString() + '(window))',
                                             '</script>'
                                         ].join('\n');
