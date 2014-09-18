@@ -52,8 +52,8 @@
     <div ng-if="!!VideoSearchCtrl.result" c6-alias="VideoSearchCtrl.result as result">
         <div class="vidSearchPaginatorBar__group clearfix">
             <p class="vidSearchPaginatorBar__indicatorText">
-            <strong>{{result.before + 1}}-{{result.before +
-                result.length}}</strong> of {{result.total}} results
+            <strong>{{(result.before + 1) | hugeNumber}}-{{(result.before +
+                result.length) | hugeNumber}}</strong> of {{result.total | hugeNumber}} results
             </p>
             <div class="vidSearchPaginator__group clearfix">
                 <button class="btn faa fa-chevron-left
@@ -63,8 +63,8 @@
                     <span class="ir">Previous Page</span>
                 </button>
                 <p
-                class="vidSearchPaginator__pageNumText">{{result.position}} of
-                {{result.pages}}</p>
+                class="vidSearchPaginator__pageNumText">{{result.position | hugeNumber}} of
+                {{result.pages | hugeNumber}}</p>
                 <button class="btn faa fa-chevron-right
                     vidSearchPaginator__btn"
                     ng-disabled="result.position >= result.pages"

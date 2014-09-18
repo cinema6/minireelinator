@@ -268,6 +268,23 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
             };
         }])
 
+        .filter('hugeNumber', [function() {
+            return function(number) {
+                var thousands = number / 1000,
+                    millions = number / 1000000;
+
+                if (millions >= 1) {
+                    return '1m+';
+                }
+
+                if (thousands >= 1) {
+                    return (Math.round(thousands * 10) / 10) + 'k';
+                }
+
+                return number.toString();
+            };
+        }])
+
         .directive('paginatorControls', [function() {
             return {
                 scope: {
