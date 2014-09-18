@@ -361,6 +361,25 @@
                     return ConfirmDialogService.display.calls.mostRecent().args[0];
                 }
 
+                describe('queueSearch(query)', function() {
+                    beforeEach(function() {
+                        expect(EditorCtrl.showSearch).toBeDefined();
+                        spyOn($scope, '$broadcast').and.callThrough();
+
+                        $scope.$apply(function() {
+                            EditorCtrl.queueSearch('This is a Search!');
+                        });
+                    });
+
+                    it('should set "showSearch" to true', function() {
+                        expect(EditorCtrl.showSearch).toBe(true);
+                    });
+
+                    it('should $broadcast the "EditorCtrl:searchQueued" event', function() {
+                        expect($scope.$broadcast).toHaveBeenCalledWith('EditorCtrl:searchQueued', 'This is a Search!');
+                    });
+                });
+
                 describe('toggleSearch()', function() {
                     it('should toggle the showSearch property', function() {
                         EditorCtrl.toggleSearch();

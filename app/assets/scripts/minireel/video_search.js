@@ -149,5 +149,10 @@ function( angular , c6State  , services          ) {
                         });
                 });
             };
+
+            $scope.$on('EditorCtrl:searchQueued', function($event, query) {
+                self.query.query = query;
+                self.search();
+            });
         }]);
 });

@@ -474,6 +474,11 @@ function( angular , c6ui , c6State  , videoSearch           , services          
                 this.showSearch = !this.showSearch;
             };
 
+            this.queueSearch = function(query) {
+                this.showSearch = true;
+                $scope.$broadcast('EditorCtrl:searchQueued', query);
+            };
+
             this.errorForCard = function(card) {
                 var limit = this.cardLimits.copy,
                     text = card.note || '',
@@ -1105,7 +1110,7 @@ function( angular , c6ui , c6State  , videoSearch           , services          
 
                 .state('MR:EditCard.Video', ['MiniReelService',
                 function                    ( MiniReelService ) {
-                    this.controller = 'GenericController';
+                    this.controller = 'EditCardVideoController';
                     this.controllerAs = 'EditCardVideoCtrl';
                     this.templateUrl = 'views/minireel/editor/edit_card/video.html';
 
@@ -1381,6 +1386,20 @@ function( angular , c6ui , c6State  , videoSearch           , services          
 
                 return takeVideo(card);
             });
+        }])
+
+        .controller('EditCardVideoController', ['$scope',
+        function                               ( $scope ) {
+            var EditorCtrl = $scope.EditorCtrl,
+                EditCardCtrl = $scope.EditCardCtrl;
+
+            this.search = function() {
+                if (!EditCardCtrl.videoUrl || this.model.data.videoid) {
+                    return;
+                }
+
+                return EditorCtrl.queueSearch(EditCardCtrl.videoUrl);
+            };
         }])
 
         .controller('NewCardController', ['c6State','MiniReelService',

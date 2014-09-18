@@ -584,5 +584,22 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                 });
             });
         });
+
+        describe('$events', function() {
+            describe('EditorCtrl:searchQueued', function() {
+                beforeEach(function() {
+                    spyOn(VideoSearchCtrl, 'search');
+                    $scope.$broadcast('EditorCtrl:searchQueued', 'LOLCATS');
+                });
+
+                it('should set the query', function() {
+                    expect(VideoSearchCtrl.query.query).toBe('LOLCATS');
+                });
+
+                it('should trigger a search', function() {
+                    expect(VideoSearchCtrl.search).toHaveBeenCalled();
+                });
+            });
+        });
     });
 });
