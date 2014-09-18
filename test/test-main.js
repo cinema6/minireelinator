@@ -45,7 +45,7 @@
                 async: 'lib/async',
                 youtube: 'lib/youtube',
                 jquery: libUrl('jquery/2.0.3-0-gf576d00/jquery.min'),
-                hammer: libUrl('hammer.js/1.0.9-0-g308cb9a/hammer.min'),
+                hammer: libUrl('hammer.js/1.1.3-0-gc6a0b6f/hammer.min'),
                 modernizr: libUrl('modernizr/modernizr.custom.71747'),
                 cryptojs: libUrl('cryptojs/v3.1.2/sha1'),
                 angular: libUrl('angular/v1.2.22-0-g93b0c2d/angular'),
