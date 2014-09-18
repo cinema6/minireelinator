@@ -40,19 +40,19 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                 this.route('/studio', 'MR:Studio', function() {
                     this.route('/dashboard', 'MR:Manager', function() {
                         this.route('/new', 'MR:New', function() {
-                            this.route('/', 'MR:New.General');
-                            this.route('/', 'MR:New.Category');
-                            this.route('/', 'MR:New.Mode');
-                            this.route('/', 'MR:New.Autoplay');
+                            this.state('MR:New.General');
+                            this.state('MR:New.Category');
+                            this.state('MR:New.Mode');
+                            this.state('MR:New.Autoplay');
                         });
                         this.route('/embed/:minireelId', 'MR:Manager.Embed');
                     });
 
                     this.route('/edit/:minireelId', 'MR:Editor', function() {
                         this.route('/settings', 'MR:Editor.Settings', function() {
-                            this.route('/', 'MR:Settings.Category');
-                            this.route('/', 'MR:Settings.Mode');
-                            this.route('/', 'MR:Settings.Autoplay');
+                            this.state('MR:Settings.Category');
+                            this.state('MR:Settings.Mode');
+                            this.state('MR:Settings.Autoplay');
                         });
                         this.route('/splash', 'MR:Editor.Splash', function() {
                             this.route('/', 'MR:Splash.Source');
