@@ -1,5 +1,11 @@
 # MiniReelinator
 
+## Beta20.1 (September 18, 2014)
+* *[Beta20.1.rc1]*
+  * [FIX]: Fixed an issue where editing the settings of an existing MiniReel
+    rendered a broken view
+* *[/Beta20.1.rc1]*
+
 ## Beta20 (September 15, 2014)
 * *[Beta20.rc3]*
   * [FIX]: Added tooltips where missing; fixed instances of wrong tooltips.

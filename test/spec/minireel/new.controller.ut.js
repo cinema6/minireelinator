@@ -51,6 +51,12 @@
                         })
                 };
 
+                module('ng', function($provide) {
+                    $provide.value('$location', {
+                        search: jasmine.createSpy('$location.search()')
+                            .and.returnValue({})
+                    });
+                });
                 module(appModule.name);
                 module(minireelModule.name);
                 module(managerModule.name);
@@ -59,6 +65,7 @@
                     $rootScope = $injector.get('$rootScope');
                     $controller = $injector.get('$controller');
                     c6State = $injector.get('c6State');
+                    spyOn(c6State, 'goTo');
                     $q = $injector.get('$q');
                     EditorService = $injector.get('EditorService');
 
@@ -243,6 +250,10 @@
                 });
 
                 describe('tabs', function() {
+                    it('should redirect to the state of the first tab', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith(NewCtrl.tabs[0].sref, null, null, true);
+                    });
+
                     describe('on the "MR:New" state', function() {
                         beforeEach(function() {
                             NewCtrl = $controller('NewController', {
@@ -333,7 +344,6 @@
                             beforeEach(function() {
                                 state = c6State.get('MR:Editor.Settings');
 
-                                spyOn(c6State, 'goTo');
                                 PortalCtrl.model.type = 'ContentProvider';
                                 NewCtrl = $controller('NewController', {
                                     $scope: $scope,
@@ -346,7 +356,7 @@
                             });
 
                             it('should also go back to the baseState', function() {
-                                expect(c6State.goTo).toHaveBeenCalledWith(state.cParent.cName);
+                                expect(c6State.goTo).toHaveBeenCalledWith(state.cParent.cName, null, null, true);
                             });
                         });
                     });
@@ -420,7 +430,6 @@
                         NewCtrl.title = 'Sweet!';
 
                         minireel.save.and.returnValue(saveDeferred.promise);
-                        spyOn(c6State, 'goTo');
 
                         NewCtrl.save();
                     });
@@ -485,10 +494,12 @@
                 });
 
                 describe('nextTab()', function() {
+                    beforeEach(function() {
+                        c6State.goTo.calls.reset();
+                    });
+
                     describe('when there is a next tab', function() {
                         it('should go to the next tab state', function() {
-                            spyOn(c6State, 'goTo');
-
                             setCurrentState('MR:New.General');
 
                             NewCtrl.nextTab();
@@ -499,8 +510,6 @@
 
                     describe('when there is not a next tab', function() {
                         it('should do nothing', function() {
-                            spyOn(c6State, 'goTo');
-
                             setCurrentState('MR:New.Autoplay');
 
                             NewCtrl.nextTab();
@@ -511,10 +520,12 @@
                 });
 
                 describe('prevTab()', function() {
+                    beforeEach(function() {
+                        c6State.goTo.calls.reset();
+                    });
+
                     describe('when there is a previous tab', function() {
                         it('should go to the next tab state', function() {
-                            spyOn(c6State, 'goTo');
-
                             setCurrentState('MR:New.Mode');
 
                             NewCtrl.prevTab();
@@ -525,8 +536,6 @@
 
                     describe('when there is not a next tab', function() {
                         it('should do nothing', function() {
-                            spyOn(c6State, 'goTo');
-
                             setCurrentState('MR:New.General');
 
                             NewCtrl.prevTab();
