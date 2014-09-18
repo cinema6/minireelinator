@@ -1,6 +1,12 @@
 # MiniReelinator
 
 ## Beta20.1 (September 18, 2014)
+* *[Beta20.2.rc1]*
+  * [FIX]: Mobile Preview: Fixed an issue where the places where ad
+    cards could appear were empty pages
+* *[/Beta20.2.rc1]*
+
+## Beta20.1 (September 18, 2014)
 * *[Beta20.1.rc1]*
   * [FIX]: Fixed an issue where editing the settings of an existing MiniReel
     rendered a broken view
