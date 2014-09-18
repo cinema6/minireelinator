@@ -305,7 +305,9 @@ function( angular , c6ui , c6State  , services          , MiniReelListController
             };
 
             if (this.tabs.length === 0) {
-                c6State.goTo(cState.cParent.cName);
+                c6State.goTo(cState.cParent.cName, null, null, true);
+            } else {
+                c6State.goTo(this.tabs[0].sref, null, null, true);
             }
 
             c6State.on('stateChange', incrementTabVisits);
