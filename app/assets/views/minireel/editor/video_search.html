@@ -15,7 +15,11 @@
 
         <div c6-click-outside="VideoSearchCtrl.showQueryDropdown = false">
             <button class="btn fab fa- faa fa-caret-down fa-cog 
-            ui__clickDrop vidSearchHeader__optionsBtn" ng-click="VideoSearchCtrl.toggleQueryDropdown()">&nbsp;</button>
+                ui__clickDrop vidSearchHeader__optionsBtn"
+                ng-click="VideoSearchCtrl.toggleQueryDropdown()"
+                ng-class="{
+                    'vidSearchHeader__optionsBtn--focus': VideoSearchCtrl.showQueryDropdown
+                }">&nbsp;</button>
             <div class="vidSearchHeader__optionsMenu ui__clickDropMenu" ng-show="VideoSearchCtrl.showQueryDropdown">
                 <button ng-click="VideoSearchCtrl.toggleProp(VideoSearchCtrl.query.sites, 'youtube')" ng-class="{
                     'ui__clickDropBtn--checked': VideoSearchCtrl.query.sites.youtube
@@ -49,17 +53,16 @@
             </svg>
         </button>
     </div>
-    
-    <div class="vidSearchDialog__group" ng-if="!VideoSearchCtrl.result">
+
+    <div class="vidSearchDialog__group" ng-show="!VideoSearchCtrl.result">
         <p>Enter a keyword into the search bar to start.</p>
     </div>
-            
-    <p class="vidSearchResult__set vidSearchResult__set--empty btn--warning">
-        Your search returned 0 results. Please try again.
-    </p>
-
 
     <div ng-if="!!VideoSearchCtrl.result" c6-alias="VideoSearchCtrl.result as result">
+        <p ng-show="result.videos.length < 1" class="vidSearchResult__set vidSearchResult__set--empty btn--warning">
+            Your search returned 0 results. Please try again.
+        </p>
+
         <div class="vidSearchPaginatorBar__group clearfix">
             <p class="vidSearchPaginatorBar__indicatorText">
             <strong>{{(result.before + 1) | hugeNumber}}-{{(result.before +
