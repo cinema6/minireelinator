@@ -1071,6 +1071,12 @@
                     .vidSearchResult__set.c6-dragging {
                         opacity: 0.5;
                     }
+                    .vidSearchResult__set--empty {
+                        text-align: center;
+                        margin:0.75em;
+                        cursor:default;
+                        background:#fff2e2;
+                    }
 
                     .vidSearchResult__img {
                         width:30%; height:6em;

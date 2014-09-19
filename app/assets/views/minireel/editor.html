@@ -1,5 +1,5 @@
 <c6-alias model="EditorCtrl.model" as="minireel" >
-    <div class="vidSearchTrigger__group" ng-show="!EditorCtrl.showSearch">
+    <!--<div class="vidSearchTrigger__group" ng-show="!EditorCtrl.showSearch">
         <button class="btnAction btnAction--primary
             vidSearchTrigger__btn" ng-click="EditorCtrl.toggleSearch()">
             <span class="btn__label">
@@ -17,7 +17,7 @@
 
     <ng-include src="'views/minireel/editor/video_search.html'"
     ng-show="EditorCtrl.showSearch"
-    ng-controller="VideoSearchController as VideoSearchCtrl"></ng-include>
+    ng-controller="VideoSearchController as VideoSearchCtrl"></ng-include>-->
 
     <div ng-if="minireel.status === 'active'" ng-show="EditorCtrl.minireelState.dirty && !EditorCtrl.dismissDirtyWarning" class="pageAlert__group btn--warning">
         <span class="ui__iconHolder18 fab fa-bell"><span class="ir">Warning!</span></span>
