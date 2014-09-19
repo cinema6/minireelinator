@@ -49,6 +49,16 @@
             </svg>
         </button>
     </div>
+    
+    <div class="vidSearchDialog__group" ng-if="!VideoSearchCtrl.result">
+        <p>Enter a keyword into the search bar to start.</p>
+    </div>
+            
+    <p class="vidSearchResult__set vidSearchResult__set--empty btn--warning">
+        Your search returned 0 results. Please try again.
+    </p>
+
+
     <div ng-if="!!VideoSearchCtrl.result" c6-alias="VideoSearchCtrl.result as result">
         <div class="vidSearchPaginatorBar__group clearfix">
             <p class="vidSearchPaginatorBar__indicatorText">
