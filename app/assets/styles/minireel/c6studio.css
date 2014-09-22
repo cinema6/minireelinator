@@ -1074,6 +1074,7 @@
                 }
                     .vidSearchResult__set.c6-dragging {
                         opacity: 0.5;
+                        width:22.3125em;
                     }
                     .vidSearchResult__set--warning,
                     .vidSearchResult__set--danger {
