@@ -67,10 +67,6 @@
             Your search returned 0 results. Please try again.
         </p>
 
-        <p ng-if="!!VideoSearchCtrl.error" class="vidSearchResult__set vidSearchResult__set--danger btn--danger">
-            {{VideoSearchCtrl.error}}
-        </p>
-
         <div class="vidSearchPaginatorBar__group clearfix">
             <p class="vidSearchPaginatorBar__indicatorText">
             <strong>{{(result.before + 1) | hugeNumber}}-{{(result.before +
@@ -95,6 +91,9 @@
             </div>
         </div>
         <div class="vidSearchResults__container">
+            <p ng-if="!!VideoSearchCtrl.error" class="vidSearchResult__set vidSearchResult__set--danger btn--danger">
+                {{VideoSearchCtrl.error}}
+            </p>
             <ul class="vidSearchResults__group">
                 <li ng-repeat="video in result.videos" class="vidSearchResult__group">
                     <div id="{{VideoSearchCtrl.idFor(video)}}" c6-draggable class="vidSearchResult__set clearfix"
