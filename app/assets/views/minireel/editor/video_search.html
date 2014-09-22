@@ -58,16 +58,16 @@
         <p>Enter a keyword into the search bar to start.</p>
     </div>
 
-    <p ng-if="!!VideoSearchCtrl.error && !VideoSearchCtrl.result" class="vidSearchResult__set vidSearchResult__set--empty btn--error">
+    <p ng-if="!!VideoSearchCtrl.error && !VideoSearchCtrl.result" class="vidSearchResult__set vidSearchResult__set--danger btn--danger">
         {{VideoSearchCtrl.error}}
     </p>
 
     <div ng-if="!!VideoSearchCtrl.result" c6-alias="VideoSearchCtrl.result as result">
-        <p ng-show="result.videos.length < 1" class="vidSearchResult__set vidSearchResult__set--empty btn--warning">
+        <p ng-show="result.videos.length < 1" class="vidSearchResult__set vidSearchResult__set--warning btn--warning">
             Your search returned 0 results. Please try again.
         </p>
 
-        <p ng-if="!!VideoSearchCtrl.error" class="vidSearchResult__set vidSearchResult__set--empty btn--error">
+        <p ng-if="!!VideoSearchCtrl.error" class="vidSearchResult__set vidSearchResult__set--danger btn--danger">
             {{VideoSearchCtrl.error}}
         </p>
 
