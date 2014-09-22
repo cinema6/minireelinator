@@ -6,11 +6,17 @@ function( angular , c6State  , services          ) {
 
     return angular.module('c6.app.minireel.editor.videoSearch', [c6State.name, services.name])
         .controller('VideoSearchController', ['$scope','VideoSearchService','MiniReelService',
-                                              'c6State','$document',
+                                              'c6State','$document','$q',
         function                             ( $scope , VideoSearchService , MiniReelService ,
-                                               c6State , $document ) {
+                                               c6State , $document , $q ) {
             var self = this,
                 EditorCtrl = $scope.EditorCtrl;
+
+            function setError(error) {
+                self.error = error;
+
+                return $q.reject(error);
+            }
 
             this.query = {
                 query: '',
@@ -22,6 +28,7 @@ function( angular , c6State  , services          ) {
                 hd: false
             };
             this.result = null;
+            this.error = null;
             this.currentPreview = null;
             this.sites = {
                 youtube: 'YouTube',
@@ -52,6 +59,8 @@ function( angular , c6State  , services          ) {
             };
 
             this.search = function() {
+                this.error = null;
+
                 return VideoSearchService.find({
                     query: this.query.query,
                     hd: this.query.hd || undefined,
@@ -63,8 +72,18 @@ function( angular , c6State  , services          ) {
                 }).then(function assign(result) {
                     /* jshint boss:true */
                     return (self.result = result);
-                });
+                }, setError);
             };
+
+            ['next', 'prev'].forEach(function(method) {
+                this[method + 'Page'] = function() {
+                    this.error = null;
+                    this.togglePreview(null);
+
+                    return this.result[method]()
+                        .catch(setError);
+                };
+            }, this);
 
             this.togglePreview = function(video) {
                 /* jshint boss:true */

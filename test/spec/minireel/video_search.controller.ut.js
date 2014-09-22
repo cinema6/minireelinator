@@ -14,6 +14,10 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
 
         var videoCard;
 
+        function VideoSearchResult(items) {
+            this.videos = items;
+        }
+
         beforeEach(function() {
             module('ng', function($provide) {
                 $provide.decorator('$log', function($delegate) {
@@ -61,6 +65,15 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                     VideoSearchCtrl = $controller('VideoSearchController', { $scope: $scope });
                 });
             });
+
+            VideoSearchResult.prototype = {
+                next: jasmine.createSpy('result.next()')
+                    .and.returnValue($q.defer().promise),
+                prev: jasmine.createSpy('result.prev()')
+                    .and.returnValue($q.defer().promise),
+                page: jasmine.createSpy('result.page()')
+                    .and.returnValue($q.defer().promise)
+            };
         });
 
         it('should exist', function() {
@@ -71,6 +84,12 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
             describe('result', function() {
                 it('should be null', function() {
                     expect(VideoSearchCtrl.result).toBeNull();
+                });
+            });
+
+            describe('error', function() {
+                it('should be null', function() {
+                    expect(VideoSearchCtrl.error).toBeNull();
                 });
             });
 
@@ -180,22 +199,9 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                 var result,
                     success, failure;
 
-                function VideoSearchResult(items) {
-                    this.videos = items;
-                }
-
                 beforeEach(function() {
                     success = jasmine.createSpy('success()');
                     failure = jasmine.createSpy('failure()');
-
-                    VideoSearchResult.prototype = {
-                        next: jasmine.createSpy('result.next()')
-                            .and.returnValue($q.defer().promise),
-                        prev: jasmine.createSpy('result.prev()')
-                            .and.returnValue($q.defer().promise),
-                        page: jasmine.createSpy('result.page()')
-                            .and.returnValue($q.defer().promise)
-                    };
 
                     result = new VideoSearchResult([
                         {
@@ -209,6 +215,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                         }
                     ]);
 
+                    VideoSearchCtrl.error = 'BLEGH';
                     VideoSearchCtrl.query.query = 'Find Me Something Awesome!';
 
                     spyOn(VideoSearchService, 'find').and.returnValue($q.when(result));
@@ -216,6 +223,28 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                     $scope.$apply(function() {
                         VideoSearchCtrl.search().then(success, failure);
                     });
+                });
+
+                describe('if there is a failure', function() {
+                    beforeEach(function() {
+                        VideoSearchService.find.and.returnValue($q.reject('There was a problem.'));
+
+                        $scope.$apply(function() {
+                            VideoSearchCtrl.search().then(success, failure);
+                        });
+                    });
+
+                    it('should set the error', function() {
+                        expect(VideoSearchCtrl.error).toBe(failure.calls.mostRecent().args[0]);
+                    });
+
+                    it('should reject the promise', function() {
+                        expect(failure).toHaveBeenCalledWith('There was a problem.');
+                    });
+                });
+
+                it('should set the error back to null', function() {
+                    expect(VideoSearchCtrl.error).toBeNull();
                 });
 
                 it('should search for the video', function() {
@@ -274,6 +303,59 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
 
                 it('should assign the result to its "result" property', function() {
                     expect(VideoSearchCtrl.result).toBe(result);
+                });
+            });
+
+            describe('pagination methods:', function() {
+                beforeEach(function() {
+                    spyOn(VideoSearchCtrl, 'togglePreview').and.callThrough();
+                    VideoSearchCtrl.error = 'UH OH!';
+                    VideoSearchCtrl.result = new VideoSearchResult([]);
+                });
+
+                ['next', 'prev'].forEach(function(method) {
+                    describe(method + 'Page()', function() {
+                        var success, failure,
+                            pageDeferred;
+
+                        beforeEach(function() {
+                            success = jasmine.createSpy('success()');
+                            failure = jasmine.createSpy('failure()');
+
+                            pageDeferred = $q.defer();
+
+                            VideoSearchCtrl.result[method]
+                                .and.returnValue(pageDeferred.promise);
+
+                            $scope.$apply(function() {
+                                VideoSearchCtrl[method + 'Page']().then(success, failure);
+                            });
+                        });
+
+                        it('should null-out the error', function() {
+                            expect(VideoSearchCtrl.error).toBeNull();
+                        });
+
+                        it('should clear the currentPreview', function() {
+                            expect(VideoSearchCtrl.togglePreview).toHaveBeenCalledWith(null);
+                        });
+
+                        describe('if the request fails', function() {
+                            beforeEach(function() {
+                                $scope.$apply(function() {
+                                    pageDeferred.reject('THIS IS LAME');
+                                });
+                            });
+
+                            it('should reject the promise', function() {
+                                expect(failure).toHaveBeenCalledWith('THIS IS LAME');
+                            });
+
+                            it('should set the error', function() {
+                                expect(VideoSearchCtrl.error).toBe(failure.calls.mostRecent().args[0]);
+                            });
+                        });
+                    });
                 });
             });
 
