@@ -1,5 +1,6 @@
-<div id="edit-card-modal" class="modal__group">
-
+<div id="edit-card-modal" class="modal__group" ng-class="{
+    'modal__group--focus': EditorCtrl.focus === 'modal'
+}" ng-click="EditorCtrl.focusOn('modal')">
     <header class="modalHeader__group">
         <h1 class="modal__title">Slide Editor 
             <span ng-show="!!EditCardCtrl.model.title">- &ldquo;<em>{{EditCardCtrl.model.title}}</em>&rdquo;</span></h1>

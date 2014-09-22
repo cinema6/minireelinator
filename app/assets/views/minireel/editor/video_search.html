@@ -1,4 +1,6 @@
-<div class="vidSearchPanel__group clearfix" c6-drag-space on-init="VideoSearchCtrl.setupDraggables(controller)">
+<div class="vidSearchPanel__group clearfix" c6-drag-space on-init="VideoSearchCtrl.setupDraggables(controller)" ng-class="{
+    'vidSearchPanel__group--focus': EditorCtrl.focus === 'video-search'
+}" ng-click="EditorCtrl.focusOn('video-search')">
     <div class="vidSearchHeader__group">
         <div class="vidSearch__icon vidSearchHeader__icon">
             <svg class="ui__iconHolder26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -40,6 +42,9 @@
                     'ui__clickDropBtn--checked': VideoSearchCtrl.query.hd
                 }" class="ui__clickDropBtn" type="button" title="HD Videos Only">
                     <span class="btn__label fab fa-check"> HD Videos Only</span>
+                </button>
+                <button ng-click="VideoSearchCtrl.search(); VideoSearchCtrl.toggleQueryDropdown();" class="ui__clickDropBtnAction btnAction btnAction--primary" type="button" title="Apply Settings">
+                    <span class="btn__label fab fa-refresh"> Apply</span>
                 </button>
             </div>
         </div>

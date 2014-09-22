@@ -1,6 +1,13 @@
 # MiniReelinator
 
 ## v1.0.0 (September 22, 2014)
+* *[v1.0.0.rc2]*
+  * [FEATURE]: Added "Apply" button to video search options
+  * [FEATURE]: Updated slide editor text to hint at video search
+  * [FEATURE]: added --focus styles to swap z-index hierarchy between 
+    video search panel and slide modals
+  * [FEATURE]: added styles for video search results while dragging
+
 * *[v1.0.0.rc1]*
   * [FEATURE]: Added a integrated video search panel for
     finding videos and adding them to a MiniReel
