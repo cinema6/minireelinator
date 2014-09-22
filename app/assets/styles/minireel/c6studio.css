@@ -961,7 +961,8 @@
                     border:1px solid #1f7fb6; border-right:0;
                 }
 
-            .vidSearchHeader__optionsBtn {
+            .vidSearchHeader__optionsBtn,
+            .vidSearchHeader__optionsBtn:focus {
                 border-radius:0; border-color:#1f7fb6;
                 padding:0.625rem 0.75rem 0.5rem;
                 position:absolute; top:0.75rem; right:3.75rem;
@@ -972,7 +973,7 @@
                     background:#eaf7ff;
                     color:#2398db;
                 }
-                .vidSearchHeader__optionsBtn:focus,
+                .vidSearchHeader__optionsBtn--focus:focus,
                 .vidSearchHeader__optionsBtn--focus {
                     border-radius:0; border-color:#1f7fb6;
                     padding:0.625rem 0.75rem 0.5rem;
