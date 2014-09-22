@@ -902,13 +902,16 @@
     .vidSearchPanel__group {
         display: block;
         position:fixed;
-        z-index:150; right:0; top:5.125em;
+        z-index:100; right:0; top:5.125em;
         -webkit-box-shadow: 0 0 4px 1px rgba(0,0,0,0.6);
         box-shadow: 0 0 10px 1px rgba(0,0,0,0.6);
         border-radius:5px;
         border-top-right-radius:0;
         border-bottom-right-radius:0;
     }
+        .vidSearchPanel__group--focus {
+            z-index: 150;
+        }
 
         .vidSearch__icon .ui__icon {
             fill:#fff;
@@ -984,7 +987,7 @@
             .vidSearchHeader__optionsMenu {
                 top:3em; right:3.75em;
             }
-                .vidSearchHeader__optionsMenu .fab:before {
+                .vidSearchHeader__optionsMenu .fa-check:before {
                     color:#ddd;
                 }
                 .ui__clickDropBtn--checked .fab:before {

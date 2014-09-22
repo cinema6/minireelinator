@@ -132,6 +132,9 @@
         .fa-check:before {
             content:'\f00c';
         }
+        .fa-refresh:before {
+            content: '\f021';
+        }
 
 /*  ======================================================
     Helper classes
@@ -382,6 +385,10 @@
             .btnAction:disabled {
                 opacity:0.5;
             }
+            .btnAction .fab:before,
+            .btnAction .faa:after {
+                color:#fff;
+            }
         .btnAction--hasIcon,
         .btnAction--hasIcon:focus {
             padding:0.5625em 1.5em 0.4375em 1.5em;
@@ -540,7 +547,12 @@
                 .ui__clickDropBtn--current {
                     background:#ddd;
                 }
-    
+
+                .ui__clickDropBtnAction,
+                .ui__clickDropBtnAction:focus {
+                    width:4em;
+                    margin:0.5em;
+                }
 
         
 
@@ -561,7 +573,16 @@
         background:#fff;
         border-radius:0.25em;
         overflow: hidden;
+        box-sizing:border-box;
+
+        -webkit-box-shadow: 0 0 4px 1px rgba(0,0,0,0.6);
+        box-shadow: 0 0 10px 1px rgba(0,0,0,0.6);
+        border-radius:5px;
+        border:2px solid #4c4c4c;
     }
+        .modal__group--focus {
+            z-index: 150;
+        }
     .modalDialog__group {
         position:fixed; z-index: 100; top:50%; left:50%;
         width:37.5em; height:18em;
@@ -652,7 +673,7 @@
            h: 630px */
         .modal__group {
             position:fixed;
-            top:0.75em; left:0.75em; right:0.75em; bottom:0.75em;
+            top:0.75em; left:1.5em; right:1.5em; bottom:0.75em;
             background:#fff;
             width:auto; height:auto;
             border-radius:0.25em; margin:0;
