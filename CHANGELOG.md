@@ -1,10 +1,12 @@
 # MiniReelinator
 
+## v1.0.0 (September 22, 2014)
 * *[v1.0.0.rc1]*
   * [FEATURE]: Added a integrated video search panel for
     finding videos and adding them to a MiniReel
+* *[/v1.0.0.rc1]*
 
-## Beta20.1 (September 18, 2014)
+## Beta20.2 (September 18, 2014)
 * *[Beta20.2.rc1]*
   * [FIX]: Mobile Preview: Fixed an issue where the places where ad
     cards could appear were empty pages
