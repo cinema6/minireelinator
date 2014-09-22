@@ -201,6 +201,12 @@
                     });
                 });
 
+                describe('focus', function() {
+                    it('should be "video-search"', function() {
+                        expect(EditorCtrl.focus).toBe('video-search');
+                    });
+                });
+
                 describe('videoErrors', function() {
                     var VideoError,
                         result;
@@ -365,6 +371,7 @@
                     beforeEach(function() {
                         expect(EditorCtrl.showSearch).toBeDefined();
                         spyOn($scope, '$broadcast').and.callThrough();
+                        spyOn(EditorCtrl, 'focusOn').and.callThrough();
 
                         $scope.$apply(function() {
                             EditorCtrl.queueSearch('This is a Search!');
@@ -373,6 +380,10 @@
 
                     it('should set "showSearch" to true', function() {
                         expect(EditorCtrl.showSearch).toBe(true);
+                    });
+
+                    it('should focus on the video search', function() {
+                        expect(EditorCtrl.focusOn).toHaveBeenCalledWith('video-search');
                     });
 
                     it('should $broadcast the "EditorCtrl:searchQueued" event', function() {
@@ -387,6 +398,16 @@
 
                         EditorCtrl.toggleSearch();
                         expect(EditorCtrl.showSearch).toBe(false);
+                    });
+                });
+
+                describe('focusOn(value)', function() {
+                    it('should set the focus property', function() {
+                        expect(EditorCtrl.focusOn('modal')).toBe('modal');
+                        expect(EditorCtrl.focus).toBe('modal');
+
+                        expect(EditorCtrl.focusOn('video-search')).toBe('video-search');
+                        expect(EditorCtrl.focus).toBe('video-search');
                     });
                 });
 
