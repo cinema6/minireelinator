@@ -736,7 +736,9 @@ function( angular , c6ui , c6State  , videoSearch           , services          
                     });
                 }
 
-                return self.editCard(self.pushCard(card));
+                return c6State.goTo('MR:EditCard', [card], {
+                    insertAt: self.model.data.deck.length - 1
+                });
             });
 
             $scope.$on('$destroy', function() {
