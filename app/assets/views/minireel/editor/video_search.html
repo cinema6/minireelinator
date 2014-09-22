@@ -54,12 +54,16 @@
         </button>
     </div>
 
-    <div class="vidSearchDialog__group" ng-show="!VideoSearchCtrl.result">
+    <div class="vidSearchDialog__group" ng-show="!VideoSearchCtrl.result && !VideoSearchCtrl.error">
         <p>Enter a keyword into the search bar to start.</p>
     </div>
 
+    <p ng-if="!!VideoSearchCtrl.error && !VideoSearchCtrl.result" class="vidSearchResult__set vidSearchResult__set--danger btn--danger">
+        {{VideoSearchCtrl.error}}
+    </p>
+
     <div ng-if="!!VideoSearchCtrl.result" c6-alias="VideoSearchCtrl.result as result">
-        <p ng-show="result.videos.length < 1" class="vidSearchResult__set vidSearchResult__set--empty btn--warning">
+        <p ng-show="result.videos.length < 1" class="vidSearchResult__set vidSearchResult__set--warning btn--warning">
             Your search returned 0 results. Please try again.
         </p>
 
@@ -72,7 +76,7 @@
                 <button class="btn faa fa-chevron-left
                     vidSearchPaginator__btn"
                     ng-disabled="result.position < 2"
-                    ng-click="result.prev()">
+                    ng-click="VideoSearchCtrl.prevPage()">
                     <span class="ir">Previous Page</span>
                 </button>
                 <p
@@ -81,12 +85,15 @@
                 <button class="btn faa fa-chevron-right
                     vidSearchPaginator__btn"
                     ng-disabled="result.position >= result.pages"
-                    ng-click="result.next()">
+                    ng-click="VideoSearchCtrl.nextPage()">
                     <span class="ir">Next Page</span>
                 </button>
             </div>
         </div>
         <div class="vidSearchResults__container">
+            <p ng-if="!!VideoSearchCtrl.error" class="vidSearchResult__set vidSearchResult__set--danger btn--danger">
+                {{VideoSearchCtrl.error}}
+            </p>
             <ul class="vidSearchResults__group">
                 <li ng-repeat="video in result.videos" class="vidSearchResult__group">
                     <div id="{{VideoSearchCtrl.idFor(video)}}" c6-draggable class="vidSearchResult__set clearfix"

@@ -116,6 +116,25 @@ define(['minireel/services'], function(servicesModule) {
                     }));
                 });
 
+                describe('if there is an error', function() {
+                    beforeEach(function() {
+                        query = 'Doctor Who';
+
+                        $httpBackend.expectGET('/api/search/videos?query=' + query.split(' ').join('+') + '&skip=0')
+                            .respond(500, 'Error querying Google.');
+
+                        $rootScope.$apply(function() {
+                            VideoSearchService.find({ query: query }).then(success, failure);
+                        });
+
+                        $httpBackend.flush();
+                    });
+
+                    it('should fail with the error', function() {
+                        expect(failure).toHaveBeenCalledWith('Error querying Google.');
+                    });
+                });
+
                 describe('when the video data has been fetched', function() {
                     beforeEach(function() {
                         $rootScope.$apply(function() {
