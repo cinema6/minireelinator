@@ -1,7 +1,7 @@
 <c6-alias model="EditorCtrl.model" as="minireel" >
     <div class="vidSearchTrigger__group" ng-show="!EditorCtrl.showSearch">
         <button class="btnAction btnAction--primary
-            vidSearchTrigger__btn" ng-click="EditorCtrl.toggleSearch()">
+            vidSearchTrigger__btn" ng-click="EditorCtrl.toggleSearch(); EditorCtrl.focusOn('video-search');">
             <span class="btn__label">
                 <div class="vidSearch__icon">
                     <svg class="ui__iconHolder26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"

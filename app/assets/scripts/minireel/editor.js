@@ -390,6 +390,7 @@ function( angular , c6ui , c6State  , videoSearch           , services          
 //            this.pageObject = { page : 'editor', title : 'Editor' };
             this.preview = false;
             this.showSearch = false;
+            this.focus = 'video-search';
             this.editTitle = false;
             this.dismissDirtyWarning = false;
             this.minireelState = EditorService.state;
@@ -474,8 +475,14 @@ function( angular , c6ui , c6State  , videoSearch           , services          
                 this.showSearch = !this.showSearch;
             };
 
+            this.focusOn = function(value) {
+                /* jshint boss:true */
+                return this.focus = value;
+            };
+
             this.queueSearch = function(query) {
                 this.showSearch = true;
+                this.focusOn('video-search');
                 $scope.$broadcast('EditorCtrl:searchQueued', query);
             };
 
@@ -736,7 +743,9 @@ function( angular , c6ui , c6State  , videoSearch           , services          
                     });
                 }
 
-                return self.editCard(self.pushCard(card));
+                return c6State.goTo('MR:EditCard', [card], {
+                    insertAt: self.model.data.deck.length - 1
+                });
             });
 
             $scope.$on('$destroy', function() {

@@ -201,6 +201,12 @@
                     });
                 });
 
+                describe('focus', function() {
+                    it('should be "video-search"', function() {
+                        expect(EditorCtrl.focus).toBe('video-search');
+                    });
+                });
+
                 describe('videoErrors', function() {
                     var VideoError,
                         result;
@@ -365,6 +371,7 @@
                     beforeEach(function() {
                         expect(EditorCtrl.showSearch).toBeDefined();
                         spyOn($scope, '$broadcast').and.callThrough();
+                        spyOn(EditorCtrl, 'focusOn').and.callThrough();
 
                         $scope.$apply(function() {
                             EditorCtrl.queueSearch('This is a Search!');
@@ -373,6 +380,10 @@
 
                     it('should set "showSearch" to true', function() {
                         expect(EditorCtrl.showSearch).toBe(true);
+                    });
+
+                    it('should focus on the video search', function() {
+                        expect(EditorCtrl.focusOn).toHaveBeenCalledWith('video-search');
                     });
 
                     it('should $broadcast the "EditorCtrl:searchQueued" event', function() {
@@ -387,6 +398,16 @@
 
                         EditorCtrl.toggleSearch();
                         expect(EditorCtrl.showSearch).toBe(false);
+                    });
+                });
+
+                describe('focusOn(value)', function() {
+                    it('should set the focus property', function() {
+                        expect(EditorCtrl.focusOn('modal')).toBe('modal');
+                        expect(EditorCtrl.focus).toBe('modal');
+
+                        expect(EditorCtrl.focusOn('video-search')).toBe('video-search');
+                        expect(EditorCtrl.focus).toBe('video-search');
                     });
                 });
 
@@ -930,26 +951,22 @@
                             }
                         };
 
-                        spyOn(EditorCtrl, 'pushCard').and.callThrough();
-                        spyOn(EditorCtrl, 'editCard');
+                        spyOn(c6State, 'goTo');
 
                         $scope.$apply(function() {
                             $scope.$emit('VideoSearchCtrl:addVideo', card);
                         });
                     });
 
-                    it('should push the card into the deck', function() {
-                        expect(EditorCtrl.pushCard).toHaveBeenCalledWith(card);
-                    });
-
                     it('should begin editing the card', function() {
-                        expect(EditorCtrl.editCard).toHaveBeenCalledWith(card);
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:EditCard', [card], {
+                            insertAt: cModel.data.deck.length - 1
+                        });
                     });
 
                     describe('if called with an id', function() {
                         beforeEach(function() {
-                            EditorCtrl.pushCard.calls.reset();
-                            EditorCtrl.editCard.calls.reset();
+                            c6State.goTo.calls.reset();
 
                             cModel.data.deck = [
                                 { id: 'rc-0216d451b9192d', type: 'videoBallot', data: {} },
@@ -977,8 +994,8 @@
                                 expect(ConfirmDialogService.display).not.toHaveBeenCalled();
                             });
 
-                            it('should not add a card to the deck', function() {
-                                expect(EditorCtrl.pushCard).not.toHaveBeenCalled();
+                            it('should not edit a card', function() {
+                                expect(c6State.goTo).not.toHaveBeenCalled();
                             });
                         });
 
@@ -1006,8 +1023,8 @@
                             });
                         });
 
-                        it('should not add a card to the deck', function() {
-                            expect(EditorCtrl.pushCard).not.toHaveBeenCalled();
+                        it('should not edit a card', function() {
+                            expect(c6State.goTo).not.toHaveBeenCalled();
                         });
 
                         it('should display a confirmation dialog', function() {
@@ -1041,6 +1058,8 @@
 
                             describe('when the dialog is affirmed', function() {
                                 beforeEach(function() {
+                                    spyOn(EditorCtrl, 'editCard');
+
                                     $scope.$apply(function() {
                                         config.onAffirm();
                                     });
