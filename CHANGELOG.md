@@ -7,6 +7,7 @@
   * [FEATURE]: added --focus styles to swap z-index hierarchy between 
     video search panel and slide modals
   * [FEATURE]: added styles for video search results while dragging
+* *[/v1.0.0.rc2]*
 
 * *[v1.0.0.rc1]*
   * [FEATURE]: Added a integrated video search panel for
