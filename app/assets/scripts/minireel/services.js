@@ -1053,6 +1053,8 @@ function( angular , c6ui , cryptojs ) {
                         }),
                         items: data.items
                     };
+                }, function(response) {
+                    return $q.reject(response.data);
                 });
             }
 
