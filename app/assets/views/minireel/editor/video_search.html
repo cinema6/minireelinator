@@ -41,7 +41,7 @@
                 }" class="ui__clickDropBtn" type="button" title="HD Videos Only">
                     <span class="btn__label fab fa-check"> HD Videos Only</span>
                 </button>
-                <button class="ui__clickDropBtnAction btnAction btnAction--primary" type="button" title="Apply Settings">
+                <button ng-click="VideoSearchCtrl.search(); VideoSearchCtrl.toggleQueryDropdown();" class="ui__clickDropBtnAction btnAction btnAction--primary" type="button" title="Apply Settings">
                     <span class="btn__label fab fa-refresh"> Apply</span>
                 </button>
             </div>
