@@ -6,6 +6,7 @@
     yield zero results
   * [FIX]: The search results list is scrolled to the top with
     every new search/page
+* *[/v1.0.0.rc3]*
 
 * *[v1.0.0.rc2]*
   * [FEATURE]: Added "Apply" button to video search options
