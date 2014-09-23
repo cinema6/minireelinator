@@ -138,7 +138,7 @@
                             ng-switch-when="dailymotion"
                             videoid="{{video.videoid}}" autoplay></dailymotion-player>
                         </div>
-                        <button class="btn btn--primary vidSearchPlayer__createBtn" ng-click="VideoSearchCtrl.addVideo(video)">{{VideoSearchCtrl.addButtonText}}</button>
+                        <button class="btn btn--primary vidSearchPlayer__createBtn" ng-click="$event.stopPropagation(); VideoSearchCtrl.addVideo(video); EditorCtrl.focusOn('modal');">{{VideoSearchCtrl.addButtonText}}</button>
                     </div>
                 </li>
             </ul>
