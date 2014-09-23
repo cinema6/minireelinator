@@ -1,6 +1,12 @@
 # MiniReelinator
 
-## v1.0.0 (September 22, 2014)
+## v1.0.0 (September 23, 2014)
+* *[v1.0.0.rc4]*
+  * [FIX]: The card-editing modal now places itself on top of the
+    video search panel whenever it is opened, or whenever a card
+    is added from the video search
+* *[/v1.0.0.rc4]*
+
 * *[v1.0.0.rc3]*
   * [FIX]: Unchecking all sites in the search settings menu will
     yield zero results

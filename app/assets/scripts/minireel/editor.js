@@ -385,6 +385,12 @@ function( angular , c6ui , c6State  , videoSearch           , services          
                 return self.model.status !== 'active';
             }
 
+            function setFocus(state) {
+                if (state.cName === 'MR:EditCard') {
+                    self.focusOn('modal');
+                }
+            }
+
             $log = $log.context('EditorController');
 
 //            this.pageObject = { page : 'editor', title : 'Editor' };
@@ -709,6 +715,8 @@ function( angular , c6ui , c6State  , videoSearch           , services          
                 saveAfterTenSeconds();
             });
 
+            c6State.on('stateChange', setFocus);
+
             $scope.$on('mrPreview:closePreview', self.closePreview);
 
             $scope.$on('VideoSearchCtrl:addVideo', function($event, card, id) {
@@ -758,6 +766,7 @@ function( angular , c6ui , c6State  , videoSearch           , services          
                 }
 
                 MiniReelCtrl.branding = null;
+                c6State.removeListener('stateChange', setFocus);
 
                 save()
                     .then(function close() {

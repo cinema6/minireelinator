@@ -939,6 +939,41 @@
             });
 
             describe('events', function() {
+                describe('c6State:stateChange', function() {
+                    function callWith(stateName) {
+                        c6State.emit('stateChange', {
+                            cName: stateName
+                        }, null);
+                    }
+
+                    beforeEach(function() {
+                        spyOn(EditorCtrl, 'focusOn').and.callThrough();
+                    });
+
+                    describe('if called with any state other than "MR:EditCard"', function() {
+                        beforeEach(function() {
+                            ['MR:Manager', 'MR:Editor.Settings', 'MR:Settings.Mode']
+                                .forEach(function(name) {
+                                    callWith(name);
+                                });
+                        });
+
+                        it('should not change the focus', function() {
+                            expect(EditorCtrl.focusOn).not.toHaveBeenCalled();
+                        });
+                    });
+
+                    describe('if called with the "MR:EditCard" state', function() {
+                        beforeEach(function() {
+                            callWith('MR:EditCard');
+                        });
+
+                        it('should change the focus to the modal', function() {
+                            expect(EditorCtrl.focusOn).toHaveBeenCalledWith('modal');
+                        });
+                    });
+                });
+
                 describe('VideoSearchCtrl:addVideo', function() {
                     var card;
 
@@ -1092,10 +1127,19 @@
 
                         spyOn(EditorService, 'close').and.callThrough();
                         spyOn(EditorCtrl, 'save').and.returnValue(saveDeferred.promise);
+                        spyOn(EditorCtrl, 'focusOn').and.callThrough();
 
                         $scope.$apply(function() {
                             $scope.$emit('$destroy');
                         });
+                    });
+
+                    it('should remove listeners for c6State:stateChange', function() {
+                        c6State.emit('stateChange', {
+                            cName: 'MR:EditCard'
+                        }, null);
+
+                        expect(EditorCtrl.focusOn).not.toHaveBeenCalled();
                     });
 
                     it('should save the minireel', function() {
