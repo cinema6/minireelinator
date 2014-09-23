@@ -255,6 +255,26 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                     });
                 });
 
+                describe('if there is no query', function() {
+                    beforeEach(function() {
+                        VideoSearchService.find.calls.reset();
+
+                        VideoSearchCtrl.query.query = '';
+
+                        $scope.$apply(function() {
+                            VideoSearchCtrl.search().then(success, failure);
+                        });
+                    });
+
+                    it('should not trigger a search', function() {
+                        expect(VideoSearchService.find).not.toHaveBeenCalled();
+                    });
+
+                    it('should resolve to null', function() {
+                        expect(success).toHaveBeenCalledWith(null);
+                    });
+                });
+
                 describe('if hd is true on the query', function() {
                     beforeEach(function() {
                         VideoSearchService.find.calls.reset();

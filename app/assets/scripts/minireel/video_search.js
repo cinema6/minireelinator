@@ -59,6 +59,10 @@ function( angular , c6State  , services          ) {
             };
 
             this.search = function() {
+                if (!this.query.query) {
+                    return $q.when(null);
+                }
+
                 this.error = null;
 
                 return VideoSearchService.find({
