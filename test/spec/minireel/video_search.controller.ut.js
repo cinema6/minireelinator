@@ -81,6 +81,12 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
         });
 
         describe('properties', function() {
+            describe('scrollPosition', function() {
+                it('should be { y: 0 }', function() {
+                    expect(VideoSearchCtrl.scrollPosition).toEqual({ y: 0 });
+                });
+            });
+
             describe('result', function() {
                 it('should be null', function() {
                     expect(VideoSearchCtrl.result).toBeNull();
@@ -215,6 +221,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                         }
                     ]);
 
+                    VideoSearchCtrl.scrollPosition.y = 20;
                     VideoSearchCtrl.error = 'BLEGH';
                     VideoSearchCtrl.query.query = 'Find Me Something Awesome!';
 
@@ -247,12 +254,20 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                     expect(VideoSearchCtrl.error).toBeNull();
                 });
 
+                it('should scroll back to the top', function() {
+                    expect(VideoSearchCtrl.scrollPosition.y).toBe(0);
+                });
+
                 it('should search for the video', function() {
                     expect(VideoSearchService.find).toHaveBeenCalledWith({
                         query: VideoSearchCtrl.query.query,
                         sites: 'youtube,vimeo,dailymotion',
                         hd: undefined
                     });
+                });
+
+                it('should resolve to the results', function() {
+                    expect(success).toHaveBeenCalledWith(result);
                 });
 
                 describe('if there is no query', function() {
@@ -329,6 +344,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
             describe('pagination methods:', function() {
                 beforeEach(function() {
                     spyOn(VideoSearchCtrl, 'togglePreview').and.callThrough();
+                    VideoSearchCtrl.scrollPosition.y = 55;
                     VideoSearchCtrl.error = 'UH OH!';
                     VideoSearchCtrl.result = new VideoSearchResult([]);
                 });
@@ -373,6 +389,22 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
 
                             it('should set the error', function() {
                                 expect(VideoSearchCtrl.error).toBe(failure.calls.mostRecent().args[0]);
+                            });
+                        });
+
+                        describe('if the request succeeds', function() {
+                            beforeEach(function() {
+                                $scope.$apply(function() {
+                                    pageDeferred.resolve(VideoSearchCtrl.result);
+                                });
+                            });
+
+                            it('should resolve to the result', function() {
+                                expect(success).toHaveBeenCalledWith(VideoSearchCtrl.result);
+                            });
+
+                            it('should scroll to the top', function() {
+                                expect(VideoSearchCtrl.scrollPosition.y).toBe(0);
                             });
                         });
                     });
