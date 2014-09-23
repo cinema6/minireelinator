@@ -94,11 +94,11 @@ define(['minireel/services'], function(servicesModule) {
 
                     spyOn(VideoDataService, 'getVideos').and.returnValue(videoDataDeferred.promise);
 
-                    $httpBackend.expectGET('/api/search/videos?limit=15&query=' + query.split(' ').join('+') + '&skip=30')
+                    $httpBackend.expectGET('/api/search/videos?limit=15&query=' + query.split(' ').join('+') + '&sites=youtube,vimeo,dailymotion&skip=30')
                         .respond(200, response);
 
                     $rootScope.$apply(function() {
-                        VideoSearchService.find({ query: query }, 15, 30).then(success, failure);
+                        VideoSearchService.find({ query: query, sites: 'youtube,vimeo,dailymotion' }, 15, 30).then(success, failure);
                     });
 
                     $httpBackend.flush();
@@ -120,11 +120,11 @@ define(['minireel/services'], function(servicesModule) {
                     beforeEach(function() {
                         query = 'Doctor Who';
 
-                        $httpBackend.expectGET('/api/search/videos?query=' + query.split(' ').join('+') + '&skip=0')
+                        $httpBackend.expectGET('/api/search/videos?query=' + query.split(' ').join('+') + '&sites=youtube&skip=0')
                             .respond(500, 'Error querying Google.');
 
                         $rootScope.$apply(function() {
-                            VideoSearchService.find({ query: query }).then(success, failure);
+                            VideoSearchService.find({ query: query, sites: 'youtube' }).then(success, failure);
                         });
 
                         $httpBackend.flush();
@@ -159,11 +159,11 @@ define(['minireel/services'], function(servicesModule) {
                             spy.calls.reset();
                         });
 
-                        $httpBackend.expectGET('/api/search/videos?query=' + query.split(' ').join('+') + '&skip=0')
+                        $httpBackend.expectGET('/api/search/videos?query=' + query.split(' ').join('+') + '&sites=vimeo,dailymotion&skip=0')
                             .respond(200, response);
 
                         $rootScope.$apply(function() {
-                            VideoSearchService.find({ query: query }).then(success, failure);
+                            VideoSearchService.find({ query: query, sites: 'vimeo,dailymotion' }).then(success, failure);
                         });
 
                         $httpBackend.flush();
@@ -173,6 +173,34 @@ define(['minireel/services'], function(servicesModule) {
                     it('should still have all of its properties', function() {
                         expect(result.limit).toBe(response.meta.numResults);
                         expect(result.position).toBe(3);
+                    });
+                });
+
+                describe('if no sites are specified', function() {
+                    var result;
+
+                    beforeEach(function() {
+                        [success, failure].forEach(function(spy) {
+                            spy.calls.reset();
+                        });
+
+                        $httpBackend.expectGET('/api/search/videos?query=' + query.split(' ').join('+') + '&skip=0')
+                            .respond(200, response);
+
+                        $rootScope.$apply(function() {
+                            VideoSearchService.find({ query: query }).then(success, failure);
+                        });
+
+                        result = success.calls.mostRecent().args[0];
+                    });
+
+                    it('should return an empty result set', function() {
+                        expect(result.videos).toEqual([]);
+                        expect(result.before).toBe(0);
+                        expect(result.length).toBe(0);
+                        expect(result.total).toBe(0);
+                        expect(result.after).toBe(0);
+                        expect(result.position).toBe(1);
                     });
                 });
 
@@ -223,7 +251,7 @@ define(['minireel/services'], function(servicesModule) {
                                     items: generateResults(15)
                                 };
 
-                                $httpBackend.expectGET('/api/search/videos?limit=15&query=' + query.split(' ').join('+') + '&skip=45')
+                                $httpBackend.expectGET('/api/search/videos?limit=15&query=' + query.split(' ').join('+') + '&sites=youtube,vimeo,dailymotion&skip=45')
                                     .respond(200, response);
 
                                 $rootScope.$apply(function() {
@@ -260,7 +288,7 @@ define(['minireel/services'], function(servicesModule) {
                                     items: generateResults(15)
                                 };
 
-                                $httpBackend.expectGET('/api/search/videos?limit=15&query=' + query.split(' ').join('+') + '&skip=15')
+                                $httpBackend.expectGET('/api/search/videos?limit=15&query=' + query.split(' ').join('+') + '&sites=youtube,vimeo,dailymotion&skip=15')
                                     .respond(200, response);
 
                                 $rootScope.$apply(function() {
@@ -309,7 +337,7 @@ define(['minireel/services'], function(servicesModule) {
                                 VideoDataService.getVideos.and.returnValue(videoDataDeferred.promise);
 
 
-                                $httpBackend.expectGET('/api/search/videos?limit=15&query=' + query.split(' ').join('+') + '&skip=165')
+                                $httpBackend.expectGET('/api/search/videos?limit=15&query=' + query.split(' ').join('+') + '&sites=youtube,vimeo,dailymotion&skip=165')
                                     .respond(200, response);
 
                                 $rootScope.$apply(function() {

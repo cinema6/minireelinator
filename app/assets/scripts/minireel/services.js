@@ -989,7 +989,7 @@ function( angular , c6ui , cryptojs ) {
                 this.after = this.total - (this.before + this.length);
 
                 this.pages = Math.ceil(this.total / this.length);
-                this.position = (this.before / this.limit) + 1;
+                this.position = (this.before / (this.limit || 1)) + 1;
 
                 this.videos = this.visited[visitedKey(this.before, this.length)] = videos;
 
@@ -1071,6 +1071,15 @@ function( angular , c6ui , cryptojs ) {
             }
 
             this.find = function(query, limit, skip) {
+                if (!query.sites) {
+                    return $q.when(new VideoSearchResult([], {
+                        query: query,
+                        skipped: 0,
+                        numResults: 0,
+                        totalResults: 0
+                    }));
+                }
+
                 return find(query, limit, skip)
                     .then(function wrap(data) {
                         return new VideoSearchResult(data.items, data.meta);

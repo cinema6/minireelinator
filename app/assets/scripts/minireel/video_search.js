@@ -27,6 +27,9 @@ function( angular , c6State  , services          ) {
                 },
                 hd: false
             };
+            this.scrollPosition = {
+                y: 0
+            };
             this.result = null;
             this.error = null;
             this.currentPreview = null;
@@ -59,6 +62,10 @@ function( angular , c6State  , services          ) {
             };
 
             this.search = function() {
+                if (!this.query.query) {
+                    return $q.when(null);
+                }
+
                 this.error = null;
 
                 return VideoSearchService.find({
@@ -70,6 +77,8 @@ function( angular , c6State  , services          ) {
                         }, this)
                         .join(',')
                 }).then(function assign(result) {
+                    self.scrollPosition.y = 0;
+
                     /* jshint boss:true */
                     return (self.result = result);
                 }, setError);
@@ -81,7 +90,11 @@ function( angular , c6State  , services          ) {
                     this.togglePreview(null);
 
                     return this.result[method]()
-                        .catch(setError);
+                        .then(function scroll(result) {
+                            self.scrollPosition.y = 0;
+
+                            return result;
+                        }, setError);
                 };
             }, this);
 

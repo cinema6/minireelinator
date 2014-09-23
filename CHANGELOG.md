@@ -1,6 +1,12 @@
 # MiniReelinator
 
 ## v1.0.0 (September 22, 2014)
+* *[v1.0.0.rc3]*
+  * [FIX]: Unchecking all sites in the search settings menu will
+    yield zero results
+  * [FIX]: The search results list is scrolled to the top with
+    every new search/page
+
 * *[v1.0.0.rc2]*
   * [FEATURE]: Added "Apply" button to video search options
   * [FEATURE]: Updated slide editor text to hint at video search

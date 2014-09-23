@@ -95,7 +95,7 @@
                 </button>
             </div>
         </div>
-        <div class="vidSearchResults__container">
+        <div class="vidSearchResults__container" c6-bind-scroll="VideoSearchCtrl.scrollPosition">
             <p ng-if="!!VideoSearchCtrl.error" class="vidSearchResult__set vidSearchResult__set--danger btn--danger">
                 {{VideoSearchCtrl.error}}
             </p>
