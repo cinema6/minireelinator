@@ -26,7 +26,8 @@
                     $provide.value('$location', {
                         path: jasmine.createSpy('$location.path()')
                             .and.returnValue(''),
-                        search: jasmine.createSpy('$location.search()'),
+                        search: jasmine.createSpy('$location.search()')
+                            .and.returnValue({}),
                         replace: jasmine.createSpy('$location.replace()')
                     });
                 });
@@ -391,6 +392,13 @@
                             c6State.goTo.calls.all().forEach(function(call) {
                                 expect(call.args[2]).not.toBe($location.search());
                             });
+                        });
+
+                        it('should call goTo() with null params if there are no search params', function() {
+                            $location.search.and.returnValue({});
+                            broadcast('/about');
+
+                            expect(c6State.goTo).toHaveBeenCalledWith('About', null, null, true);
                         });
 
                         it('should match the error state if the route is not found', function() {
@@ -1123,7 +1131,7 @@
                                 expect(c6State.goTo).not.toHaveBeenCalled();
 
                                 c6State._registerView(parentView);
-                                expect(c6State.goTo).toHaveBeenCalledWith('Child', null, {}, true);
+                                expect(c6State.goTo).toHaveBeenCalledWith('Child', null, null, true);
 
                                 c6State.goTo.calls.reset();
 
