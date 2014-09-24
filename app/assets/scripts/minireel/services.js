@@ -1379,8 +1379,7 @@ function( angular , c6ui , cryptojs ) {
                             ['preload'],
                             ['exp', minireel.id],
                             ['title', minireel.data.title],
-                            ['splash', splash.theme + ':' + splash.ratio.replace('-', '/')],
-                            ['branding', minireel.data.branding]
+                            ['splash', splash.theme + ':' + splash.ratio.replace('-', '/')]
                         ].map(function(pair) {
                             return pair.map(encodeURIComponent)
                                 .join('=');
@@ -1490,10 +1489,6 @@ function( angular , c6ui , cryptojs ) {
                                 title: null,
                                 mode: orgSettings.minireelDefaults.mode,
                                 autoplay: orgSettings.minireelDefaults.autoplay,
-                                displayAdSource: org.waterfalls.display[0],
-                                videoAdSource: org.waterfalls.video[0],
-                                videoAdSkip: org.videoAdSkip || 6,
-                                branding: user.branding,
                                 splash: {
                                     source: 'generated',
                                     ratio: userSettings.minireelDefaults.splash.ratio,

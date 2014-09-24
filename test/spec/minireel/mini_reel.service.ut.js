@@ -676,8 +676,7 @@
                                     '/#/preview/minireel?' +
                                     'preload&exp=' + encodeURIComponent(minireel.id) +
                                     '&title=' + encodeURIComponent(minireel.data.title) +
-                                    '&splash=' + encodeURIComponent('vertical-stack:3/2') +
-                                    '&branding=' + encodeURIComponent(minireel.data.branding)
+                                    '&splash=' + encodeURIComponent('vertical-stack:3/2')
                                 ).href);
                             });
                         });
@@ -1083,10 +1082,6 @@
                                         title: null,
                                         mode: 'lightbox-ads',
                                         autoplay: true,
-                                        displayAdSource: portal.cModel.org.waterfalls.display[0],
-                                        videoAdSource: portal.cModel.org.waterfalls.video[0],
-                                        videoAdSkip: portal.cModel.org.videoAdSkip,
-                                        branding: portal.cModel.branding,
                                         splash: {
                                             source: 'generated',
                                             ratio: '3-2',
