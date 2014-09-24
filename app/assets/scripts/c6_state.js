@@ -637,7 +637,13 @@ function( angular , c6ui ) {
                         }
                     });
 
-                    self.goTo(route.name, null, copy($location.search()), true);
+                    self.goTo(
+                        route.name,
+                        null,
+                        (Object.keys($location.search()).length > 0) ?
+                            copy($location.search()) : null,
+                        true
+                    );
 
                     return true;
                 }
