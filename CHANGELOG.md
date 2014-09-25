@@ -1,10 +1,12 @@
 # MiniReelinator
 
+## v1.1.0 (September 25, 2014)
 * *[v1.1.0.rc1]*
   * [FIX]: Fix for an issue that could cause pagination to break in
     the Ad Manager
   * Made the required changes so that the new dynamic branding
     feature will work
+* *[/v1.1.0.rc1]*
 
 ## v1.0.0 (September 23, 2014)
 * *[v1.0.0.rc4]*
