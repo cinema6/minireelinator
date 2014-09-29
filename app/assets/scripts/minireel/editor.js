@@ -5,7 +5,6 @@ function( angular , c6ui , c6State  , videoSearch           , services          
     var isNumber = angular.isNumber,
         equals = angular.equals,
         copy = angular.copy,
-        extend = angular.extend,
         forEach = angular.forEach,
         isDefined = angular.isDefined,
         noop = angular.noop;
@@ -322,15 +321,12 @@ function( angular , c6ui , c6State  , videoSearch           , services          
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Editor', ['cinema6','EditorService','playerMeta',
-            function                           ( cinema6 , EditorService , playerMeta ) {
+            c6StateProvider.state('MR:Editor', ['cinema6','EditorService',
+            function                           ( cinema6 , EditorService ) {
                 this.controller = 'EditorController';
                 this.controllerAs = 'EditorCtrl';
                 this.templateUrl = 'views/minireel/editor.html';
 
-                this.beforeModel = function() {
-                    return playerMeta.ensureFulfillment();
-                };
                 this.model = function(params) {
                     return cinema6.db.find('experience', params.minireelId);
                 };
@@ -1431,29 +1427,8 @@ function( angular , c6ui , c6State  , videoSearch           , services          
             };
         }])
 
-        .factory('playerMeta', ['$http',
-        function               ( $http ) {
-            var promise = $http.get('/apps/rumble/meta.json')
-                    .then(function copyResult(response) {
-                        extend(service, response.data);
-                        return response.data;
-                    })
-                    .catch(function provideDefault() {
-                        return {};
-                    }),
-                service = {
-                    ensureFulfillment: function() {
-                        return promise;
-                    }
-                };
-
-            return service;
-        }])
-
         .controller('PreviewController',['$scope','MiniReelService','postMessage','c6BrowserInfo',
-                                         'playerMeta',
-        function                        ( $scope , MiniReelService , postMessage , c6BrowserInfo ,
-                                          playerMeta ) {
+        function                        ( $scope , MiniReelService , postMessage , c6BrowserInfo ) {
             var self = this,
                 profile,
                 card,
@@ -1478,11 +1453,8 @@ function( angular , c6ui , c6State  , videoSearch           , services          
                         ('/app/index.html?kCollateralUrl=' +
                             encodeURIComponent('/collateral') +
                             '&kDebug=true&kDevMode=true') :
-                        ('/' +
-                            (playerMeta.version ?
-                                (mode + '.html') : ''
-                            ) +
-                        '?kCollateralUrl=' + encodeURIComponent('/collateral'))) +
+                        ('/' + mode + '.html' +
+                    '?kCollateralUrl=' + encodeURIComponent('/collateral'))) +
                     '&autoplay=' + encodeURIComponent(experience.data.autoplay) +
                     '&kDevice=' + encodeURIComponent(this.device) +
                     '&kMode=' + encodeURIComponent(mode) +
