@@ -117,47 +117,40 @@
                 });
 
                 describe('playerSrc', function() {
-                    describe('if the player has a version', function() {
+                    describe('when developing locally', function() {
                         beforeEach(function() {
-                            playerMeta.version = 'beta17-0-fie93';
+                            c6Defines.kDebug = true;
+                            c6Defines.kEnv = 'dev';
+                            c6Defines.kLocal = true;
                         });
 
+                        it('should be "/apps/rumble/app/index.html?kCollateralUrl=/collateral&kDebug=true&kDevMode=true"', function() {
+                            expect(PreviewController.playerSrc).toBe('/apps/rumble/app/index.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&kDebug=true&kDevMode=true&autoplay=false&kDevice=desktop&kMode=full&kEnvUrlRoot=');
+                        });
+                    });
 
-                        describe('when developing locally', function() {
+                    ['staging', 'production'].forEach(function(env) {
+                        describe('when in ' + env, function() {
                             beforeEach(function() {
-                                c6Defines.kDebug = true;
-                                c6Defines.kEnv = 'dev';
-                                c6Defines.kLocal = true;
+                                c6Defines.kEnv = env;
+                                c6Defines.kLocal = false;
+                                c6Defines.kCollateralUrl = '/collateral';
+
+                                spyOn(MiniReelService, 'convertForPlayer').and.returnValue(experience);
+                                $scope.$emit('mrPreview:initExperience', experience, session);
                             });
 
-                            it('should be "/apps/rumble/app/index.html?kCollateralUrl=/collateral&kDebug=true&kDevMode=true"', function() {
-                                expect(PreviewController.playerSrc).toBe('/apps/rumble/app/index.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&kDebug=true&kDevMode=true&autoplay=false&kDevice=desktop&kMode=full&kEnvUrlRoot=');
-                            });
-                        });
+                            it('should load in the correct page based on the mode', function() {
+                                experience.data.mode = 'full';
+                                expect(PreviewController.playerSrc).toBe('/apps/rumble/full.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=full&kEnvUrlRoot=');
 
-                        ['staging', 'production'].forEach(function(env) {
-                            describe('when in ' + env, function() {
-                                beforeEach(function() {
-                                    c6Defines.kEnv = env;
-                                    c6Defines.kLocal = false;
-                                    c6Defines.kCollateralUrl = '/collateral';
+                                experience.data.mode = 'lightbox';
+                                $scope.$emit('mrPreview:updateExperience', experience);
+                                expect(PreviewController.playerSrc).toBe('/apps/rumble/lightbox.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=lightbox&kEnvUrlRoot=');
 
-                                    spyOn(MiniReelService, 'convertForPlayer').and.returnValue(experience);
-                                    $scope.$emit('mrPreview:initExperience', experience, session);
-                                });
-
-                                it('should load in the correct page based on the mode', function() {
-                                    experience.data.mode = 'full';
-                                    expect(PreviewController.playerSrc).toBe('/apps/rumble/full.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=full&kEnvUrlRoot=');
-
-                                    experience.data.mode = 'lightbox';
-                                    $scope.$emit('mrPreview:updateExperience', experience);
-                                    expect(PreviewController.playerSrc).toBe('/apps/rumble/lightbox.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=lightbox&kEnvUrlRoot=');
-
-                                    PreviewController.device = 'phone';
-                                    $scope.$emit('mrPreview:updateExperience', experience);
-                                    expect(PreviewController.playerSrc).toBe('/apps/rumble/mobile.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=phone&kMode=mobile&kEnvUrlRoot=');
-                                });
+                                PreviewController.device = 'phone';
+                                $scope.$emit('mrPreview:updateExperience', experience);
+                                expect(PreviewController.playerSrc).toBe('/apps/rumble/mobile.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=phone&kMode=mobile&kEnvUrlRoot=');
                             });
                         });
                     });
@@ -179,14 +172,14 @@
                         });
 
                         it('should be "/apps/rumble?kCollateralUrl=/collateral"', function() {
-                            expect(controller().playerSrc).toBe('/apps/rumble/?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=full&kEnvUrlRoot=');
+                            expect(controller().playerSrc).toBe('/apps/rumble/full.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=full&kEnvUrlRoot=');
                         });
 
                         it('should pass the current mode and device', function() {
                             spyOn(MiniReelService, 'convertForPlayer').and.returnValue(experience);
                             $scope.$emit('mrPreview:initExperience', experience, session);
 
-                            expect(PreviewController.playerSrc).toBe('/apps/rumble/?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=light&kEnvUrlRoot=');
+                            expect(PreviewController.playerSrc).toBe('/apps/rumble/light.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=light&kEnvUrlRoot=');
 
                             experience.data.mode = 'lightbox';
                             $scope.$apply(function() {
@@ -194,7 +187,7 @@
                             });
                             $scope.$emit('mrPreview:updateExperience', experience);
 
-                            expect(PreviewController.playerSrc).toBe('/apps/rumble/?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=phone&kMode=mobile&kEnvUrlRoot=');
+                            expect(PreviewController.playerSrc).toBe('/apps/rumble/mobile.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=phone&kMode=mobile&kEnvUrlRoot=');
                         });
                     });
 
@@ -215,14 +208,14 @@
                         });
 
                         it('should be "/apps/rumble?kCollateralUrl=/collateral"', function() {
-                            expect(controller().playerSrc).toBe('/apps/rumble/?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=full&kEnvUrlRoot=');
+                            expect(controller().playerSrc).toBe('/apps/rumble/full.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=full&kEnvUrlRoot=');
                         });
 
                         it('should pass the current mode and device', function() {
                             spyOn(MiniReelService, 'convertForPlayer').and.returnValue(experience);
                             $scope.$emit('mrPreview:initExperience', experience, session);
 
-                            expect(PreviewController.playerSrc).toBe('/apps/rumble/?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=light&kEnvUrlRoot=');
+                            expect(PreviewController.playerSrc).toBe('/apps/rumble/light.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=light&kEnvUrlRoot=');
 
                             experience.data.mode = 'lightbox';
                             $scope.$apply(function() {
@@ -230,7 +223,7 @@
                             });
                             $scope.$emit('mrPreview:updateExperience', experience);
 
-                            expect(PreviewController.playerSrc).toBe('/apps/rumble/?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=phone&kMode=mobile&kEnvUrlRoot=');
+                            expect(PreviewController.playerSrc).toBe('/apps/rumble/mobile.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=phone&kMode=mobile&kEnvUrlRoot=');
                         });
                     });
                 });

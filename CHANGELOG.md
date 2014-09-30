@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.2.0.rc1]*
+  * [PERFORMANCE]: Remove some unnecessary code that was mildly slowing
+    the amount of time it takes to open a MiniReel
+
 ## v1.1.0 (September 25, 2014)
 * *[v1.1.0.rc1]*
   * [FIX]: Fix for an issue that could cause pagination to break in

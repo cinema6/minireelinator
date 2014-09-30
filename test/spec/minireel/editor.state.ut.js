@@ -48,20 +48,6 @@
                 expect(EditorState).toEqual(jasmine.any(Object));
             });
 
-            describe('beforeModel()', function() {
-                var ensured;
-
-                beforeEach(function() {
-                    ensured = {};
-
-                    playerMeta.ensureFulfillment.and.returnValue(ensured);
-                });
-
-                it('should ensure fulfillment of the player meta data', function() {
-                    expect(EditorState.beforeModel()).toBe(ensured);
-                });
-            });
-
             describe('model()', function() {
                 var result,
                     success,
