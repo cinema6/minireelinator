@@ -1,8 +1,12 @@
 # MiniReelinator
 
+## v1.2.0 (October 8, 2014)
 * *[v1.2.0.rc1]*
   * [PERFORMANCE]: Remove some unnecessary code that was mildly slowing
     the amount of time it takes to open a MiniReel
+  * [FIX]: Fix for an issue that could cause users with unusual, but
+    valid email address not to change their email to that address
+* *[/v1.2.0.rc1]*
 
 ## v1.1.0 (September 25, 2014)
 * *[v1.1.0.rc1]*
