@@ -20,8 +20,7 @@ function( angular , c6State  ) {
             this.email = null;
             this.password = '';
             this.lastMessage = null;
-            this.pattern = /^\w+.*\.\w\w\w?$/;
-
+            this.pattern = /^\w+.*\w@\w.*\.\w{2,}$/;
             this.submit = function() {
                 this.lastMessage = null;
 
