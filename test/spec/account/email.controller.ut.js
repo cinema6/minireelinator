@@ -64,6 +64,7 @@ define(['account/app'], function(accountModule) {
 
                 it('should match valid emails', function() {
                     expect('josh@cinema6.com').toMatch(pattern);
+                    expect('josh.o\'minzner@minzner.exposed').toMatch(pattern);
                     expect('123@blah.co').toMatch(pattern);
                 });
 
