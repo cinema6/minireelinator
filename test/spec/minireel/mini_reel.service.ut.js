@@ -111,6 +111,11 @@
                             'Website': 'minzner.org'
                         },
                         placementId: '7435638',
+                        tracking: {
+                            campaignId: '83dj3493',
+                            advertiserId: '984udn3d',
+                            minViewTime: 30
+                        },
                         adConfig: {
                             video: {
                                 firstPlacement: 3,
@@ -1088,6 +1093,7 @@
                                         mode: 'lightbox-ads',
                                         autoplay: true,
                                         sponsored: false,
+                                        tracking: {},
                                         splash: {
                                             source: 'generated',
                                             ratio: '3-2',
