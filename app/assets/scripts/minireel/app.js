@@ -82,6 +82,7 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                             this.state('MR:SponsorMiniReel.Branding');
                             this.state('MR:SponsorMiniReel.Links');
                             this.state('MR:SponsorMiniReel.Ads');
+                            this.state('MR:SponsorMiniReel.Tracking');
 
                             this.state('MR:SponsorMiniReel.Cards');
                         });

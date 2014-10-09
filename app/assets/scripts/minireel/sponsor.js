@@ -95,6 +95,11 @@ function( angular , c6State  , editor   , MiniReelListController          ) {
                             name: 'Advertising',
                             sref: 'MR:SponsorMiniReel.Ads',
                             required: true
+                        },
+                        {
+                            name: 'Tracking',
+                            sref: 'MR:SponsorMiniReel.Tracking',
+                            required: true
                         }
                     ] :
                     [
@@ -241,6 +246,13 @@ function( angular , c6State  , editor   , MiniReelListController          ) {
         function( c6StateProvider ) {
             c6StateProvider.state('MR:SponsorMiniReel.Ads', [function() {
                 this.templateUrl = 'views/minireel/sponsor/manager/sponsor_mini_reel/ads.html';
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:SponsorMiniReel.Tracking', [function() {
+                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_mini_reel/tracking.html';
             }]);
         }])
 
