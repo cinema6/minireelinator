@@ -97,6 +97,11 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                                 name: 'Branding',
                                 sref: 'MR:SponsorMiniReel.Branding',
                                 required: true
+                            },
+                            {
+                                name: 'Links',
+                                sref: 'MR:SponsorMiniReel.Links',
+                                required: true
                             }
                         ]);
                     });
@@ -150,12 +155,24 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
 
         describe('methods', function() {
             describe('save()', function() {
+                var beforeSave;
+
                 beforeEach(function() {
+                    beforeSave = jasmine.createSpy('beforeSave()')
+                        .and.callFake(function() {
+                            expect(EditorService.sync).not.toHaveBeenCalled();
+                        });
+
                     spyOn(EditorService, 'sync').and.returnValue($q.when(proxy));
+                    $scope.$new().$on('SponsorMiniReelCtrl:beforeSave', beforeSave);
 
                     $scope.$apply(function() {
                         SponsorMiniReelCtrl.save();
                     });
+                });
+
+                it('should $emit an event', function() {
+                    expect(beforeSave).toHaveBeenCalled();
                 });
 
                 it('should sync the MiniReel', function() {
@@ -259,6 +276,20 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
 
                 it('should go to the first tab', function() {
                     expect(c6State.goTo).toHaveBeenCalledWith(SponsorMiniReelCtrl.tabs[0].sref, null, null, true);
+                });
+            });
+        });
+
+        describe('$events', function() {
+            describe('$destroy', function() {
+                beforeEach(function() {
+                    spyOn(EditorService, 'close').and.callThrough();
+
+                    $scope.$broadcast('$destroy');
+                });
+
+                it('should close the MiniReel', function() {
+                    expect(EditorService.close).toHaveBeenCalled();
                 });
             });
         });

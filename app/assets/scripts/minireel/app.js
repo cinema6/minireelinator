@@ -80,6 +80,7 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                     this.route('/manager', 'MR:Sponsor.Manager', function() {
                         this.route('/minireel/:minireelId', 'MR:SponsorMiniReel', function() {
                             this.state('MR:SponsorMiniReel.Branding');
+                            this.state('MR:SponsorMiniReel.Links');
 
                             this.state('MR:SponsorMiniReel.Cards');
                         });

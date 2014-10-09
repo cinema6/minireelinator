@@ -85,6 +85,11 @@ function( angular , c6State  , editor   , MiniReelListController          ) {
                             name: 'Branding',
                             sref: 'MR:SponsorMiniReel.Branding',
                             required: true
+                        },
+                        {
+                            name: 'Links',
+                            sref: 'MR:SponsorMiniReel.Links',
+                            required: true
                         }
                     ] :
                     [
@@ -132,11 +137,17 @@ function( angular , c6State  , editor   , MiniReelListController          ) {
             };
 
             this.save = function() {
+                $scope.$broadcast('SponsorMiniReelCtrl:beforeSave');
+
                 return EditorService.sync()
                     .then(function transition() {
                         return c6State.goTo(cState.cParent.cName);
                     });
             };
+
+            $scope.$on('$destroy', function() {
+                EditorService.close();
+            });
         }])
 
         .config(['c6StateProvider',
@@ -144,6 +155,81 @@ function( angular , c6State  , editor   , MiniReelListController          ) {
             c6StateProvider.state('MR:SponsorMiniReel.Branding', [function() {
                 this.templateUrl = 'views/minireel/sponsor/manager/sponsor_mini_reel/branding.html';
             }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:SponsorMiniReel.Links', ['EditorService',
+            function                                          ( EditorService ) {
+                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_mini_reel/links.html';
+                this.controller = 'SponsorMiniReelLinksController';
+                this.controllerAs = 'SponsorMiniReelLinksCtrl';
+
+                this.model = function() {
+                    var links = EditorService.state.minireel.data.links || {};
+
+                    return ['Action', 'Website', 'Facebook', 'Twitter', 'Pinterest']
+                        .concat(Object.keys(links))
+                        .filter(function(name, index, names) {
+                            return names.indexOf(name) === index;
+                        })
+                        .map(function(name) {
+                            var href = links[name] || null;
+
+                            return {
+                                name: name,
+                                href: href
+                            };
+                        });
+                };
+            }]);
+        }])
+
+        .controller('SponsorMiniReelLinksController', ['$scope',
+        function                                      ( $scope ) {
+            var self = this,
+                SponsorMiniReelCtrl = $scope.SponsorMiniReelCtrl;
+
+            function Link() {
+                this.name = 'Untitled';
+                this.href = null;
+            }
+
+            function save() {
+                return self.save();
+            }
+
+            this.newLink = new Link();
+
+            this.save = function() {
+                /* jshint boss:true */
+                return (SponsorMiniReelCtrl.model.data.links =
+                    this.model.reduce(function(links, link) {
+                        if (link.href) {
+                            links[link.name] = link.href;
+                        }
+
+                        return links;
+                    }, {}));
+            };
+
+            this.push = function() {
+                this.model = this.model.concat([this.newLink]);
+
+                /* jshint boss:true */
+                return (this.newLink = new Link());
+            };
+
+            this.remove = function(link) {
+                /* jshint boss:true */
+                return (this.model = this.model.filter(function(item) {
+                    return item !== link;
+                }));
+            };
+
+            ['$destroy', 'SponsorMiniReelCtrl:beforeSave'].forEach(function($event) {
+                $scope.$on($event, save);
+            });
         }])
 
         .config(['c6StateProvider',

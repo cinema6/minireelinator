@@ -27,13 +27,13 @@
     <c6-view></c6-view>
     <footer class="modalFooter__group">
         <button class="btnAction btnAction--first"
-            ng-click="SponsorMiniReelCtrl.prevTab()"
+            c6-sref="{{SponsorMiniReelCtrl.tabs[SponsorMiniReelCtrl.tabs.indexOf(SponsorMiniReelCtrl.currentTab) - 1].sref}}"
             ng-show="SponsorMiniReelCtrl.tabs.indexOf(SponsorMiniReelCtrl.currentTab) > 0"
             title="Previous">
             Previous Step
         </button>
-        <button ng-click="SponsorMiniReelCtrl.nextTab()"
-            class="btnAction btnAction--primary btnAction--last"
+        <button class="btnAction btnAction--primary btnAction--last"
+            c6-sref="{{SponsorMiniReelCtrl.tabs[SponsorMiniReelCtrl.tabs.indexOf(SponsorMiniReelCtrl.currentTab) + 1].sref}}"
             type="button"
             ng-show="((SponsorMiniReelCtrl.tabs.indexOf(SponsorMiniReelCtrl.currentTab) + 1) || 1) < SponsorMiniReelCtrl.tabs.length"
             title="Next Step">
