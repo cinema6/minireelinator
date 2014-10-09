@@ -2,6 +2,8 @@ define (['angular','c6_state','./editor','./mixins/MiniReelListController'],
 function( angular , c6State  , editor   , MiniReelListController          ) {
     'use strict';
 
+    var noop = angular.noop;
+
     return angular.module('c6.app.minireel.sponsor', [c6State.name, editor.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
@@ -63,10 +65,91 @@ function( angular , c6State  , editor   , MiniReelListController          ) {
             }]);
         }])
 
-        .controller('SponsorMiniReelController', ['EditorService',
-        function                                 ( EditorService ) {
+        .controller('SponsorMiniReelController', ['$scope','EditorService','c6State','c6Computed',
+                                                  '$timeout','cState',
+        function                                 ( $scope , EditorService , c6State , c6Computed ,
+                                                   $timeout , cState ) {
+            var self = this,
+                c = c6Computed($scope);
+
+            function redirectToFirstTab() {
+                return $timeout(noop).then(function() {
+                    return c6State.goTo(self.tabs[0].sref, null, null, true);
+                });
+            }
+
+            c(this, 'tabs', function() {
+                return this.model.data.sponsored ?
+                    [
+                        {
+                            name: 'Branding',
+                            sref: 'MR:SponsorMiniReel.Branding',
+                            required: true
+                        }
+                    ] :
+                    [
+                        {
+                            name: 'Sponsored Cards',
+                            sref: 'MR:SponsorMiniReel.Cards',
+                            required: false
+                        }
+                    ];
+            }, ['SponsorMiniReelCtrl.model.data.sponsored']);
+            Object.defineProperties(this, {
+                currentTab: {
+                    get: function() {
+                        return this.tabs[this.tabs.map(function(tab) {
+                            return tab.sref;
+                        }).indexOf(c6State.current)] || null;
+                    }
+                }
+            });
+
             this.initWithModel = function() {
                 this.model = EditorService.state.minireel;
+
+                redirectToFirstTab();
             };
+
+            this.enableSponsorship = function() {
+                this.model.data.sponsored = true;
+
+                this.model.data.deck.forEach(function(card) {
+                    card.disabled = !!card.sponsored;
+                });
+
+                return redirectToFirstTab();
+            };
+
+            this.disableSponsorship = function() {
+                this.model.data.sponsored = false;
+
+                this.model.data.deck.forEach(function(card) {
+                    card.disabled = card.sponsored ? false : card.disabled;
+                });
+
+                return redirectToFirstTab();
+            };
+
+            this.save = function() {
+                return EditorService.sync()
+                    .then(function transition() {
+                        return c6State.goTo(cState.cParent.cName);
+                    });
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:SponsorMiniReel.Branding', [function() {
+                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_mini_reel/branding.html';
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:SponsorMiniReel.Cards', [function() {
+                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_mini_reel/cards.html';
+            }]);
         }]);
 });

@@ -11,8 +11,11 @@
     </header>
 
     <nav class="modalTabs__group clearfix">
+        <button class="btnAction btnAction--success" ng-click="SponsorMiniReelCtrl.enableSponsorship()" ng-show="!minireel.data.sponsored">Sponsor MiniReel</button>
+        <button class="btnAction btnAction--warning" ng-click="SponsorMiniReelCtrl.disableSponsorship()" ng-show="minireel.data.sponsored">Remove Sponsorship</button>
+
         <ul class="sideTabs__list">
-            <li ng-repeat="tab in AdSettingsCtrl.tabs" class="sideTabs__item">
+            <li ng-repeat="tab in SponsorMiniReelCtrl.tabs" class="sideTabs__item">
                 <a c6-sref="{{tab.sref}}" class="sideTabs__tab" title="{{tab.title}}">
                     {{tab.name}}
                     <strong ng-show="tab.required">*</strong>
@@ -22,5 +25,28 @@
     </nav>
 
     <c6-view></c6-view>
+    <footer class="modalFooter__group">
+        <button class="btnAction btnAction--first"
+            ng-click="SponsorMiniReelCtrl.prevTab()"
+            ng-show="SponsorMiniReelCtrl.tabs.indexOf(SponsorMiniReelCtrl.currentTab) > 0"
+            title="Previous">
+            Previous Step
+        </button>
+        <button ng-click="SponsorMiniReelCtrl.nextTab()"
+            class="btnAction btnAction--primary btnAction--last"
+            type="button"
+            ng-show="((SponsorMiniReelCtrl.tabs.indexOf(SponsorMiniReelCtrl.currentTab) + 1) || 1) < SponsorMiniReelCtrl.tabs.length"
+            title="Next Step">
+            Next Step
+        </button>
+        <button ng-click="SponsorMiniReelCtrl.save()"
+            class="btnAction btnAction--success btnAction--last"
+            type="button"
+            ng-show="(SponsorMiniReelCtrl.tabs.indexOf(SponsorMiniReelCtrl.currentTab) + 1) === SponsorMiniReelCtrl.tabs.length"
+            title="Save">
+            Save
+        </button>
+        <p class="modalFooter__guideText">Step {{(SponsorMiniReelCtrl.tabs.indexOf(SponsorMiniReelCtrl.currentTab) + 1) || 1}} of {{SponsorMiniReelCtrl.tabs.length}}</p>
+    </footer>
 </div>
 <div class="modal__overlay">&nbsp;</div>
