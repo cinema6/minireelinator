@@ -90,6 +90,11 @@ function( angular , c6State  , editor   , MiniReelListController          ) {
                             name: 'Links',
                             sref: 'MR:SponsorMiniReel.Links',
                             required: true
+                        },
+                        {
+                            name: 'Advertising',
+                            sref: 'MR:SponsorMiniReel.Ads',
+                            required: true
                         }
                     ] :
                     [
@@ -230,6 +235,13 @@ function( angular , c6State  , editor   , MiniReelListController          ) {
             ['$destroy', 'SponsorMiniReelCtrl:beforeSave'].forEach(function($event) {
                 $scope.$on($event, save);
             });
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:SponsorMiniReel.Ads', [function() {
+                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_mini_reel/ads.html';
+            }]);
         }])
 
         .config(['c6StateProvider',

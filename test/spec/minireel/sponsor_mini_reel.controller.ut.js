@@ -102,6 +102,11 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                                 name: 'Links',
                                 sref: 'MR:SponsorMiniReel.Links',
                                 required: true
+                            },
+                            {
+                                name: 'Advertising',
+                                sref: 'MR:SponsorMiniReel.Ads',
+                                required: true
                             }
                         ]);
                     });
