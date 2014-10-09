@@ -1441,6 +1441,7 @@ function( angular , c6ui , cryptojs ) {
                     election: minireel.data.election,
                     adConfig: minireel.data.adConfig,
                     sponsored: minireel.data.sponsored || false,
+                    links: minireel.data.links || {},
                     collateral: minireel.data.collateral ||
                         { splash: null },
                     splash: minireel.data.splash ||

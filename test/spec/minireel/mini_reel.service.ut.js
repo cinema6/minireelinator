@@ -107,6 +107,9 @@
                         election: 'el-76506623bf22d9',
                         branding: 'elitedaily',
                         sponsored: true,
+                        links: {
+                            'Website': 'minzner.org'
+                        },
                         adConfig: {
                             video: {
                                 firstPlacement: 3,
