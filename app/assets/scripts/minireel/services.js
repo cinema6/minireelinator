@@ -1440,6 +1440,7 @@ function( angular , c6ui , cryptojs ) {
                     autoplay: minireel.data.autoplay,
                     election: minireel.data.election,
                     adConfig: minireel.data.adConfig,
+                    sponsored: minireel.data.sponsored || false,
                     collateral: minireel.data.collateral ||
                         { splash: null },
                     splash: minireel.data.splash ||
@@ -1489,6 +1490,7 @@ function( angular , c6ui , cryptojs ) {
                                 title: null,
                                 mode: orgSettings.minireelDefaults.mode,
                                 autoplay: orgSettings.minireelDefaults.autoplay,
+                                sponsored: false,
                                 splash: {
                                     source: 'generated',
                                     ratio: userSettings.minireelDefaults.splash.ratio,

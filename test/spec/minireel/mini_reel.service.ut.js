@@ -106,6 +106,7 @@
                         autoplay: true,
                         election: 'el-76506623bf22d9',
                         branding: 'elitedaily',
+                        sponsored: true,
                         adConfig: {
                             video: {
                                 firstPlacement: 3,
@@ -1082,6 +1083,7 @@
                                         title: null,
                                         mode: 'lightbox-ads',
                                         autoplay: true,
+                                        sponsored: false,
                                         splash: {
                                             source: 'generated',
                                             ratio: '3-2',
