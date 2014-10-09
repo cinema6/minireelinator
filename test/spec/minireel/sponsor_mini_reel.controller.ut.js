@@ -112,6 +112,11 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                                 name: 'Tracking',
                                 sref: 'MR:SponsorMiniReel.Tracking',
                                 required: true
+                            },
+                            {
+                                name: 'End-Cap',
+                                sref: 'MR:SponsorMiniReel.Endcap',
+                                required: true
                             }
                         ]);
                     });

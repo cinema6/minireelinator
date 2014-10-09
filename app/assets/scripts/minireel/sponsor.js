@@ -100,6 +100,11 @@ function( angular , c6State  , editor   , MiniReelListController          ) {
                             name: 'Tracking',
                             sref: 'MR:SponsorMiniReel.Tracking',
                             required: true
+                        },
+                        {
+                            name: 'End-Cap',
+                            sref: 'MR:SponsorMiniReel.Endcap',
+                            required: true
                         }
                     ] :
                     [
@@ -253,6 +258,13 @@ function( angular , c6State  , editor   , MiniReelListController          ) {
         function( c6StateProvider ) {
             c6StateProvider.state('MR:SponsorMiniReel.Tracking', [function() {
                 this.templateUrl = 'views/minireel/sponsor/manager/sponsor_mini_reel/tracking.html';
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:SponsorMiniReel.Endcap', [function() {
+                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_mini_reel/endcap.html';
             }]);
         }])
 
