@@ -110,6 +110,7 @@
                         links: {
                             'Website': 'minzner.org'
                         },
+                        placementId: '7435638',
                         adConfig: {
                             video: {
                                 firstPlacement: 3,
