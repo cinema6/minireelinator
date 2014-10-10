@@ -1198,6 +1198,8 @@ function( angular , c6ui , cryptojs ) {
                             return 'Recap';
                         case 'text':
                             return 'Text';
+                        case 'displayAd':
+                            return 'Display Ad';
 
                         default:
                             return null;
@@ -1208,13 +1210,15 @@ function( angular , c6ui , cryptojs ) {
                         case 'video':
                         case 'videoBallot':
                             return 'video';
+                        case 'displayAd':
+                            return 'display_ad';
 
                         default:
                             return this.type;
                         }
                     },
                     ad: function(card) {
-                        return card.ad || card.type === 'ad';
+                        return card.ad || (/^(ad|displayAd)$/).test(card.type);
                     },
                     displayAdSource: copy(null)
                 };
@@ -1265,7 +1269,10 @@ function( angular , c6ui , cryptojs ) {
                     links: {
                         links: copy([])
                     },
-                    text: {}
+                    text: {},
+                    displayAd: {
+                        size: value('300x250')
+                    }
                 };
 
                 /******************************************************\
@@ -1544,25 +1551,22 @@ function( angular , c6ui , cryptojs ) {
                 }
 
                 function getCardType(card) {
-                    if(card.ad) {
-                        return 'ad';
-                    }
-                    if(card.type.indexOf('video') > -1) {
+                    switch (card.type) {
+                    case 'video':
+                    case 'videoBallot':
                         return 'video';
-                    } else {
-                        // currently this will only be 'miniReel' or 'intro'
-                        // but the intro slide is already being skipped
-                        // and is never passed to convertCard()
+                    default:
                         return card.type;
                     }
                 }
 
                 function getDataType(card) {
-                    if(card.type === 'links' || card.type === 'ad') {
-                        return card.type;
-                    }
-                    if(card.type.indexOf('video') > -1) {
+                    switch (card.type) {
+                    case 'video':
+                    case 'videoBallot':
                         return card.data.service;
+                    default:
+                        return card.type;
                     }
                 }
 
@@ -1601,6 +1605,9 @@ function( angular , c6ui , cryptojs ) {
                     },
                     links: {
                         links: copy([])
+                    },
+                    displayAd: {
+                        size: copy('300x250')
                     }
                 };
 
@@ -1660,6 +1667,14 @@ function( angular , c6ui , cryptojs ) {
                             return mode === 'lightbox-ads' ? ['displayAd'] : [];
                         },
                         displayAdSource: copy('cinema6')
+                    },
+                    displayAd: {
+                        id: copy(),
+                        type: value('displayAd'),
+                        title: value(null),
+                        note: value(null),
+                        modules: value([]),
+                        displayAdSource: value(null)
                     }
                 };
 

@@ -284,6 +284,17 @@
                                 displayAdSource: 'cinema6',
                                 modules: [],
                                 data: {}
+                            },
+                            {
+                                id: 'rc-82a19a12065636',
+                                type: 'displayAd',
+                                title: null,
+                                note: null,
+                                displayAdSource: null,
+                                modules: [],
+                                data: {
+                                    size: '300x250'
+                                }
                             }
                         ]
                     }
@@ -473,13 +484,31 @@
                                 data: {}
                             });
                         });
+
+                        it('should support creating a displayAd card', function() {
+                            var card = MiniReelService.createCard('displayAd');
+
+                            expect(card).toEqual({
+                                id: jasmine.any(String),
+                                type: 'displayAd',
+                                title: null,
+                                note: null,
+                                label: 'Display Ad',
+                                ad: true,
+                                view: 'display_ad',
+                                displayAdSource: null,
+                                data: {
+                                    size: '300x250'
+                                }
+                            });
+                        });
                     });
 
                     describe('setCardType(card, type)', function() {
                         it('should change the type of a card to the specified type', function() {
                             var card = MiniReelService.createCard(),
                                 id = card.id,
-                                videoCard, videoBallotCard, adCard, linksCard;
+                                videoCard, videoBallotCard, adCard, linksCard, displayAdCard;
 
                             videoCard = MiniReelService.setCardType(card, 'video');
                             expect(videoCard).toBe(card);
@@ -545,13 +574,14 @@
                                     skip: 'anytime'
                                 }
                             });
+                            adCard.title = null;
 
                             linksCard = MiniReelService.setCardType(card, 'links');
                             expect(linksCard).toBe(card);
                             expect(linksCard).toEqual({
                                 id: id,
                                 type: 'links',
-                                title: 'Advertisement', // this is a result of the default ad title being set
+                                title: null,
                                 note: null,
                                 label: 'Suggested Links',
                                 view: 'links',
@@ -559,6 +589,22 @@
                                 displayAdSource: null,
                                 data: {
                                     links: []
+                                }
+                            });
+
+                            displayAdCard = MiniReelService.setCardType(card, 'displayAd');
+                            expect(displayAdCard).toBe(card);
+                            expect(displayAdCard).toEqual({
+                                id: id,
+                                type: 'displayAd',
+                                title: null,
+                                note: null,
+                                label: 'Display Ad',
+                                view: 'display_ad',
+                                ad: true,
+                                displayAdSource: null,
+                                data: {
+                                    size: '300x250'
                                 }
                             });
                         });
@@ -1013,6 +1059,22 @@
                                 view: 'recap',
                                 displayAdSource: 'cinema6',
                                 data: {}
+                            });
+                        });
+
+                        it('should transpile the displayAd cards', function() {
+                            expect(deck[9]).toEqual({
+                                id: 'rc-82a19a12065636',
+                                type: 'displayAd',
+                                title: null,
+                                note: null,
+                                label: 'Display Ad',
+                                ad: true,
+                                view: 'display_ad',
+                                displayAdSource: null,
+                                data: {
+                                    size: '300x250'
+                                }
                             });
                         });
                     });
