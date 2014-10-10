@@ -357,5 +357,12 @@ WizardController          ) {
             c6StateProvider.state('MR:SponsorCard.Copy', [function() {
                 this.templateUrl = 'views/minireel/sponsor/manager/sponsor_card/copy.html';
             }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:SponsorCard.Video', [function() {
+                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_card/video.html';
+            }]);
         }]);
 });

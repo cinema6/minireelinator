@@ -1,0 +1,75 @@
+<div class="modalBody__group modalBody__group--sideTabs mrEdit__videoTab">
+    <form>
+        <ng-switch on="card.data.service">
+            <div ng-switch-when="adUnit" class="clearfix">
+                <div class="twoCol">
+                    <label class="forms__pair clearfix">
+                        <span class="forms__name">
+                            VPAID
+                        </span>
+                        <span class="forms__inputHolder forms__inputHolder--short">
+                            <input type="text" c6-autoselect class="forms__textField forms__textField--block" ng-model="newLink.name">
+                        </span>
+                    </label>
+                </div>
+                <div class="twoCol">
+                    <label class="forms__pair clearfix">
+                        <span class="forms__name">
+                            VAST
+                        </span>
+                        <span class="forms__inputHolder forms__inputHolder--short">
+                            <input type="text" c6-autoselect class="forms__textField forms__textField--block" ng-model="newLink.name">
+                        </span>
+                    </label>
+                </div>
+            </div>
+            <label ng-switch-default class="forms__pair clearfix">
+                <span class="forms__name">
+                    Video URL
+                </span>
+                <span class="forms__inputHolder">
+                    <input type="text" class="forms__textField forms__textField--block">
+                    <span class="typo--guidance typo--warning">Type in a <strong>URL</strong>.</span>
+                    <span class="typo--guidance">Supported sources : 
+                        <a href="http://www.youtube.com" title="YouTube" target="_blank">YouTube</a>, 
+                        <a href="http://www.vimeo.com" title="Vimeo" target="_blank">Vimeo</a>,
+                        <a href="http://www.dailymotion.com" title="Daily Motion" target="_blank">Daily Motion</a>
+                    </span>
+                </span>
+            </label>
+        </ng-switch>
+        <div class="clearfix">
+            <div class="twoCol">
+                <label class="radiobox radiobox--hasLabel clearfix">
+                    <input type="radio"
+                        ng-value="null"
+                        ng-model="card.data.service"
+                        name="minireel-endcap"
+                        class="radiobox__input"/>
+                    <span class="btn__icon faa fab">
+                        &nbsp;
+                    </span>
+                    <span class="btn__label">
+                        3rd-Party Video
+                    </span>
+                </label>
+            </div>
+            <div class="twoCol">
+                <label class="radiobox radiobox--hasLabel clearfix">
+                    <input type="radio"
+                        value="adUnit"
+                        ng-model="card.data.service"
+                        name="minireel-endcap"
+                        class="radiobox__input"/>
+                    <span class="btn__icon faa fab">
+                        &nbsp;
+                    </span>
+                    <span class="btn__label">
+                        Ad Unit
+                    </span>
+                </label>
+            </div>
+        </div>
+    </form>
+    <video-preview service="{{card.data.service}}" videoid="{{card.data.videoid}}" start="card.data.start" end="card.data.end"></video-preview>
+</div>
