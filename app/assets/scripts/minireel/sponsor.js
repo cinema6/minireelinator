@@ -104,7 +104,7 @@ function( angular , c6State  , editor   , MiniReelListController          ) {
                         {
                             name: 'End-Cap',
                             sref: 'MR:SponsorMiniReel.Endcap',
-                            required: true
+                            required: false
                         }
                     ] :
                     [
@@ -263,9 +263,32 @@ function( angular , c6State  , editor   , MiniReelListController          ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:SponsorMiniReel.Endcap', [function() {
+            c6StateProvider.state('MR:SponsorMiniReel.Endcap', ['EditorService',
+            function                                           ( EditorService ) {
                 this.templateUrl = 'views/minireel/sponsor/manager/sponsor_mini_reel/endcap.html';
+                this.controller = 'SponsorMiniReelEndcapController';
+                this.controllerAs = 'SponsorMiniReelEndcapCtrl';
+
+                this.model = function() {
+                    var deck = EditorService.state.minireel.data.deck;
+
+                    return deck[deck.length - 1];
+                };
             }]);
+        }])
+
+        .controller('SponsorMiniReelEndcapController', ['MiniReelService',
+        function                                       ( MiniReelService ) {
+            Object.defineProperties(this, {
+                cardType: {
+                    get: function() {
+                        return this.model.type;
+                    },
+                    set: function(type) {
+                        return MiniReelService.setCardType(this.model, type);
+                    }
+                }
+            });
         }])
 
         .config(['c6StateProvider',
