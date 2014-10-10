@@ -1272,7 +1272,8 @@ function( angular , c6ui , cryptojs ) {
                     text: {},
                     displayAd: {
                         size: value('300x250')
-                    }
+                    },
+                    recap: {}
                 };
 
                 /******************************************************\

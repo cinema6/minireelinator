@@ -367,7 +367,8 @@
                                 videoBallotCard = MiniReelService.createCard('videoBallot'),
                                 adCard = MiniReelService.createCard('ad'),
                                 linksCard = MiniReelService.createCard('links'),
-                                textCard = MiniReelService.createCard('text');
+                                textCard = MiniReelService.createCard('text'),
+                                recapCard = MiniReelService.createCard('recap');
 
                             expect(videoCard).toEqual({
                                 id: jasmine.any(String),
@@ -433,6 +434,18 @@
                                     source: null,
                                     skip: 'anytime'
                                 }
+                            });
+
+                            expect(recapCard).toEqual({
+                                id: jasmine.any(String),
+                                type: 'recap',
+                                title: null,
+                                note: null,
+                                label: 'Recap',
+                                ad: false,
+                                view: 'recap',
+                                displayAdSource: null,
+                                data: {}
                             });
 
                             expect(linksCard).toEqual({
@@ -508,7 +521,7 @@
                         it('should change the type of a card to the specified type', function() {
                             var card = MiniReelService.createCard(),
                                 id = card.id,
-                                videoCard, videoBallotCard, adCard, linksCard, displayAdCard;
+                                videoCard, videoBallotCard, adCard, linksCard, displayAdCard, recapCard;
 
                             videoCard = MiniReelService.setCardType(card, 'video');
                             expect(videoCard).toBe(card);
@@ -606,6 +619,20 @@
                                 data: {
                                     size: '300x250'
                                 }
+                            });
+
+                            recapCard = MiniReelService.setCardType(card, 'recap');
+                            expect(recapCard).toBe(card);
+                            expect(recapCard).toEqual({
+                                id: id,
+                                type: 'recap',
+                                title: null,
+                                note: null,
+                                label: 'Recap',
+                                view: 'recap',
+                                ad: false,
+                                displayAdSource: null,
+                                data: {}
                             });
                         });
                     });
