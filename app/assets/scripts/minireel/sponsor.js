@@ -1,5 +1,7 @@
-define (['angular','c6_state','./editor','./mixins/MiniReelListController'],
-function( angular , c6State  , editor   , MiniReelListController          ) {
+define (['angular','c6_state','./editor','./mixins/MiniReelListController',
+'./mixins/WizardController'],
+function( angular , c6State  , editor   , MiniReelListController          ,
+WizardController          ) {
     'use strict';
 
     var noop = angular.noop;
@@ -66,9 +68,9 @@ function( angular , c6State  , editor   , MiniReelListController          ) {
         }])
 
         .controller('SponsorMiniReelController', ['$scope','EditorService','c6State','c6Computed',
-                                                  '$timeout','cState',
+                                                  '$timeout','cState','$injector',
         function                                 ( $scope , EditorService , c6State , c6Computed ,
-                                                   $timeout , cState ) {
+                                                   $timeout , cState , $injector ) {
             var self = this,
                 c = c6Computed($scope);
 
@@ -77,6 +79,8 @@ function( angular , c6State  , editor   , MiniReelListController          ) {
                     return c6State.goTo(self.tabs[0].sref, null, null, true);
                 });
             }
+
+            $injector.invoke(WizardController, this);
 
             c(this, 'tabs', function() {
                 return this.model.data.sponsored ?
@@ -115,20 +119,9 @@ function( angular , c6State  , editor   , MiniReelListController          ) {
                         }
                     ];
             }, ['SponsorMiniReelCtrl.model.data.sponsored']);
-            Object.defineProperties(this, {
-                currentTab: {
-                    get: function() {
-                        return this.tabs[this.tabs.map(function(tab) {
-                            return tab.sref;
-                        }).indexOf(c6State.current)] || null;
-                    }
-                }
-            });
 
             this.initWithModel = function() {
                 this.model = EditorService.state.minireel;
-
-                redirectToFirstTab();
             };
 
             this.enableSponsorship = function() {
@@ -295,6 +288,74 @@ function( angular , c6State  , editor   , MiniReelListController          ) {
         function( c6StateProvider ) {
             c6StateProvider.state('MR:SponsorMiniReel.Cards', [function() {
                 this.templateUrl = 'views/minireel/sponsor/manager/sponsor_mini_reel/cards.html';
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:SponsorCard', ['MiniReelService',
+            function                                ( MiniReelService ) {
+                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_card.html';
+                this.controller = 'SponsorCardController';
+                this.controllerAs = 'SponsorCardCtrl';
+
+                this.model = function() {
+                    var card = MiniReelService.createCard('video');
+
+                    card.sponsored = true;
+
+                    return card;
+                };
+            }]);
+        }])
+
+        .controller('SponsorCardController', ['$injector',
+        function                             ( $injector ) {
+            $injector.invoke(WizardController, this);
+
+            this.tabs = [
+                {
+                    name: 'Editorial Content',
+                    sref: 'MR:SponsorCard.Copy',
+                    required: true
+                },
+                {
+                    name: 'Video Content',
+                    sref: 'MR:SponsorCard.Video',
+                    required: true
+                },
+                {
+                    name: 'Branding',
+                    sref: 'MR:SponsorCard.Branding',
+                    required: true
+                },
+                {
+                    name: 'Links',
+                    sref: 'MR:SponsorCard.Links',
+                    required: false
+                },
+                {
+                    name: 'Advertising',
+                    sref: 'MR:SponsorCard.Ads',
+                    required: true
+                },
+                {
+                    name: 'Tracking',
+                    sref: 'MR:SponsorCard.Tracking',
+                    required: true
+                },
+                {
+                    name: 'Placement',
+                    sref: 'MR:SponsorCard.Placement',
+                    required: true
+                }
+            ];
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:SponsorCard.Copy', [function() {
+                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_card/copy.html';
             }]);
         }]);
 });

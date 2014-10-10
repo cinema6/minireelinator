@@ -87,6 +87,10 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
 
                             this.state('MR:SponsorMiniReel.Cards');
                         });
+
+                        this.route('/card/:cardId', 'MR:SponsorCard', function() {
+                            this.state('MR:SponsorCard.Copy');
+                        });
                     });
                 });
             });
