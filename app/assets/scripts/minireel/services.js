@@ -1220,12 +1220,22 @@ function( angular , c6ui , cryptojs ) {
                     ad: function(card) {
                         return card.ad || (/^(ad|displayAd)$/).test(card.type);
                     },
-                    displayAdSource: copy(null)
+                    placementId: copy(null),
+                    templateUrl: copy(null),
+                    sponsored: copy(false),
+                    tracking: copy({
+                        campaignId: null,
+                        advertiserId: null,
+                        minViewTime: null
+                    }),
+                    collateral: copy({}),
+                    links: copy({})
                 };
 
                 // videoDataTemplate: this is the base template for all
                 // video cards.
                 videoDataTemplate = {
+                    autoplay: copy(null),
                     service: function(data, key, card) {
                         var type = card.type;
 
@@ -1255,7 +1265,7 @@ function( angular , c6ui , cryptojs ) {
                         }
                     }),
                     ad: {
-                        autoplay: copy(true),
+                        autoplay: value(true),
                         source: copy(null),
                         skip: function(data) {
                             if (isUndefined(data.skip)) {
@@ -1573,6 +1583,7 @@ function( angular , c6ui , cryptojs ) {
 
                 dataTemplates = {
                     youtube: {
+                        autoplay: copy(null),
                         modestbranding: value(0),
                         rel: value(0),
                         start: trimmer(),
@@ -1580,18 +1591,20 @@ function( angular , c6ui , cryptojs ) {
                         videoid: copy(null)
                     },
                     vimeo: {
+                        autoplay: copy(null),
                         start: trimmer(),
                         end: trimmer(),
                         videoid: copy(null)
                     },
                     dailymotion: {
+                        autoplay: copy(null),
                         start: trimmer(),
                         end: trimmer(),
                         related: value(0),
                         videoid: copy(null)
                     },
                     ad: {
-                        autoplay: copy(false),
+                        autoplay: copy(true),
                         source: copy('cinema6'),
                         skip: function(data) {
                             switch (data.skip) {
@@ -1619,7 +1632,12 @@ function( angular , c6ui , cryptojs ) {
                         title: copy(null),
                         note: copy(null),
                         modules: value([]),
-                        displayAdSource: copy('cinema6')
+                        placementId: copy(null),
+                        templateUrl: copy(null),
+                        sponsored: copy(false),
+                        tracking: copy(),
+                        collateral: copy(),
+                        links: copy()
                     },
                     video: {
                         id: copy(),
@@ -1641,21 +1659,31 @@ function( angular , c6ui , cryptojs ) {
                         ballot: function(card) {
                             return card.data.ballot;
                         },
-                        displayAdSource: copy('cinema6')
+                        placementId: copy(null),
+                        templateUrl: copy(null),
+                        sponsored: copy(false),
+                        tracking: copy(),
+                        collateral: copy(),
+                        links: copy()
                     },
                     ad: {
                         id: copy(),
                         type: value('ad'),
                         ad: value(true),
                         modules: value(['displayAd']),
-                        displayAdSource: copy('cinema6')
+                        placementId: copy(null)
                     },
                     links: {
                         id: copy(),
                         type: value('links'),
                         title: copy(null),
                         note: copy(null),
-                        displayAdSource: copy('cinema6')
+                        placementId: copy(null),
+                        templateUrl: copy(null),
+                        sponsored: copy(false),
+                        tracking: copy(),
+                        collateral: copy(),
+                        links: copy()
                     },
                     recap: {
                         id: copy(),
@@ -1667,7 +1695,12 @@ function( angular , c6ui , cryptojs ) {
                         modules: function() {
                             return mode === 'lightbox-ads' ? ['displayAd'] : [];
                         },
-                        displayAdSource: copy('cinema6')
+                        placementId: copy(null),
+                        templateUrl: copy(null),
+                        sponsored: copy(false),
+                        tracking: copy(),
+                        collateral: copy(),
+                        links: copy()
                     },
                     displayAd: {
                         id: copy(),
@@ -1675,7 +1708,12 @@ function( angular , c6ui , cryptojs ) {
                         title: value(null),
                         note: value(null),
                         modules: value([]),
-                        displayAdSource: value(null)
+                        placementId: copy(null),
+                        templateUrl: copy(null),
+                        sponsored: copy(false),
+                        tracking: copy(),
+                        collateral: copy(),
+                        links: copy()
                     }
                 };
 
