@@ -91,6 +91,7 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                         this.route('/card/:cardId', 'MR:SponsorCard', function() {
                             this.state('MR:SponsorCard.Copy');
                             this.state('MR:SponsorCard.Video');
+                            this.state('MR:SponsorCard.Branding');
                         });
                     });
                 });

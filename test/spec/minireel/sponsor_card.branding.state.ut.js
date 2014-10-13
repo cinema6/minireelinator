@@ -1,0 +1,22 @@
+define(['app'], function(appModule) {
+    'use strict';
+
+    describe('MR:SponsorCard.Branding state', function() {
+        var c6State,
+            sponsorCardBranding;
+
+        beforeEach(function() {
+            module(appModule.name);
+
+            inject(function($injector) {
+                c6State = $injector.get('c6State');
+            });
+
+            sponsorCardBranding = c6State.get('MR:SponsorCard.Branding');
+        });
+
+        it('should exist', function() {
+            expect(sponsorCardBranding).toEqual(jasmine.any(Object));
+        });
+    });
+});
