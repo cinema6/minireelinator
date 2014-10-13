@@ -179,7 +179,7 @@ function( angular , c6ui ) {
                                         (c6State.get(c6State.current).cUrl ===
                                             c6State.get(state).cUrl);
 
-                                if ((isAnchor && !sameUrl) || sameState) {
+                                if (isAnchor && !sameUrl) {
                                     return;
                                 }
 

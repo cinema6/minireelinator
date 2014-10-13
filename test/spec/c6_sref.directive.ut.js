@@ -143,22 +143,6 @@
                     expect(c6State.goTo).not.toHaveBeenCalled();
                 });
 
-                describe('if the current state is the one being referenced', function() {
-                    beforeEach(function() {
-                        Object.defineProperty(c6State, 'current', {
-                            value: 'Comment.New'
-                        });
-                        $scope.$apply(function() {
-                            $scope.state = 'Comment.New';
-                        });
-                        $sref.click();
-                    });
-
-                    it('should not call c6State.goTo()', function() {
-                        expect(c6State.goTo).not.toHaveBeenCalled();
-                    });
-                });
-
                 describe('if the current state has the same URL as the one being referenced', function() {
                     beforeEach(function() {
                         Object.defineProperty(c6State, 'current', {
