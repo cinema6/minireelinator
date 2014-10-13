@@ -63,37 +63,8 @@ define(['app'], function(appModule) {
                 model = sponsorMiniReelLinks.model();
             });
 
-            it('should be an array of links', function() {
-                expect(model).toEqual([
-                    {
-                        name: 'Action',
-                        href: 'action.html'
-                    },
-                    {
-                        name: 'Website',
-                        href: 'website.html'
-                    },
-                    {
-                        name: 'Facebook',
-                        href: 'fb.html'
-                    },
-                    {
-                        name: 'Twitter',
-                        href: null
-                    },
-                    {
-                        name: 'Pinterest',
-                        href: '/share/pinterest.htm'
-                    },
-                    {
-                        name: 'My Custom Thang',
-                        href: 'blegh.html'
-                    },
-                    {
-                        name: 'Instagram',
-                        href: 'intergrem.html'
-                    }
-                ]);
+            it('should be the minireel\'s links', function() {
+                expect(model).toBe(EditorService.state.minireel.data.links);
             });
 
             describe('if there are no links', function() {
@@ -103,13 +74,9 @@ define(['app'], function(appModule) {
                     model = sponsorMiniReelLinks.model();
                 });
 
-                it('should be the defaults', function() {
-                    expect(model).toEqual(['Action', 'Website', 'Facebook', 'Twitter', 'Pinterest'].map(function(name) {
-                        return {
-                            name: name,
-                            href: null
-                        };
-                    }));
+                it('should be a created links object', function() {
+                    expect(model).toEqual({});
+                    expect(model).toBe(EditorService.state.minireel.data.links);
                 });
             });
         });

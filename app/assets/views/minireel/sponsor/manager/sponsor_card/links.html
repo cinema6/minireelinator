@@ -1,11 +1,11 @@
 <div class="modalBody__group modalBody__group--sideTabs mrAdManager__videoServer">
-    <form c6-alias="SponsorMiniReelLinksCtrl.links as links">
+    <form c6-alias="SponsorCardLinksCtrl.links as links">
         <h1 class="forms__name--title">Links</h1>
-        <p class="forms__introText">What links should be included in the MiniReel?</p>
+        <p class="forms__introText">What links should be included in the card?</p>
 
         <label class="forms__pair clearfix" ng-repeat="link in links">
             <span class="forms__name">
-                <button class="btnInvis" ng-click="SponsorMiniReelLinksCtrl.remove(link)">
+                <button class="btnInvis" ng-click="SponsorCardLinksCtrl.remove(link)">
                     <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
                         <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M16.5,0L9,7.5L1.5,0L0,1.5L7.5,9L0,16.5L1.5,18L9,10.5l7.5,7.5l1.5-1.5L10.5,9
                         L18,1.5L16.5,0z"></path>
@@ -17,7 +17,7 @@
                 <input type="text" class="forms__textField forms__textField--block" ng-model="link.href">
             </span>
         </label>
-        <c6-alias model="SponsorMiniReelLinksCtrl.newLink" as="newLink">
+        <c6-alias model="SponsorCardLinksCtrl.newLink" as="newLink">
             <div class="twoCol">
                 <label class="forms__pair clearfix">
                     <span class="forms__name">
@@ -38,7 +38,7 @@
                     </span>
                 </label>
             </div>
-            <button class="btnAction btnAction--success" ng-click="SponsorMiniReelLinksCtrl.push();">Add</button>
+            <button class="btnAction btnAction--success" ng-click="SponsorCardLinksCtrl.push();">Add</button>
         </c6-alias>
     </form>
 </div>

@@ -1,7 +1,7 @@
 define (['angular','c6_state','./editor','./mixins/MiniReelListController',
-'./mixins/WizardController','./mixins/VideoCardController'],
+'./mixins/WizardController','./mixins/VideoCardController','./mixins/LinksController'],
 function( angular , c6State  , editor   , MiniReelListController          ,
-WizardController           , VideoCardController          ) {
+WizardController           , VideoCardController          , LinksController          ) {
     'use strict';
 
     var noop = angular.noop;
@@ -174,70 +174,26 @@ WizardController           , VideoCardController          ) {
                 this.controllerAs = 'SponsorMiniReelLinksCtrl';
 
                 this.model = function() {
-                    var links = EditorService.state.minireel.data.links || {};
+                    var minireel = EditorService.state.minireel;
 
-                    return ['Action', 'Website', 'Facebook', 'Twitter', 'Pinterest']
-                        .concat(Object.keys(links))
-                        .filter(function(name, index, names) {
-                            return names.indexOf(name) === index;
-                        })
-                        .map(function(name) {
-                            var href = links[name] || null;
-
-                            return {
-                                name: name,
-                                href: href
-                            };
-                        });
+                    return minireel.data.links || (minireel.data.links = {});
                 };
             }]);
         }])
 
-        .controller('SponsorMiniReelLinksController', ['$scope',
-        function                                      ( $scope ) {
-            var self = this,
-                SponsorMiniReelCtrl = $scope.SponsorMiniReelCtrl;
-
-            function Link() {
-                this.name = 'Untitled';
-                this.href = null;
-            }
+        .controller('SponsorMiniReelLinksController', ['$scope','$injector',
+        function                                      ( $scope , $injector ) {
+            var self = this;
 
             function save() {
                 return self.save();
             }
 
-            this.newLink = new Link();
-
-            this.save = function() {
-                /* jshint boss:true */
-                return (SponsorMiniReelCtrl.model.data.links =
-                    this.model.reduce(function(links, link) {
-                        if (link.href) {
-                            links[link.name] = link.href;
-                        }
-
-                        return links;
-                    }, {}));
-            };
-
-            this.push = function() {
-                this.model = this.model.concat([this.newLink]);
-
-                /* jshint boss:true */
-                return (this.newLink = new Link());
-            };
-
-            this.remove = function(link) {
-                /* jshint boss:true */
-                return (this.model = this.model.filter(function(item) {
-                    return item !== link;
-                }));
-            };
-
-            ['$destroy', 'SponsorMiniReelCtrl:beforeSave'].forEach(function($event) {
-                $scope.$on($event, save);
+            $injector.invoke(LinksController, this, {
+                $scope: $scope
             });
+
+            $scope.$on('SponsorMiniReelCtrl:beforeSave', save);
         }])
 
         .config(['c6StateProvider',
@@ -398,5 +354,25 @@ WizardController           , VideoCardController          ) {
             c6StateProvider.state('MR:SponsorCard.Branding', [function() {
                 this.templateUrl = 'views/minireel/sponsor/manager/sponsor_card/branding.html';
             }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:SponsorCard.Links', [function() {
+                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_card/links.html';
+                this.controller = 'SponsorCardLinksController';
+                this.controllerAs = 'SponsorCardLinksCtrl';
+
+                this.model = function() {
+                    return this.cParent.cModel.links;
+                };
+            }]);
+        }])
+
+        .controller('SponsorCardLinksController', ['$scope','$injector',
+        function                                  ( $scope , $injector ) {
+            $injector.invoke(LinksController, this, {
+                $scope: $scope
+            });
         }]);
 });
