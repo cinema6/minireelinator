@@ -337,6 +337,11 @@ WizardController           , VideoCardController          , LinksController     
                 'Yes, after six seconds': 'delay',
                 'Yes, skip at any time': 'anytime'
             };
+            this.autoplayOptions = {
+                'Use MiniReel defaults': null,
+                'Yes': true,
+                'No': false
+            };
             Object.defineProperties(this, {
                 isAdUnit: {
                     get: function() {
@@ -380,6 +385,13 @@ WizardController           , VideoCardController          , LinksController     
         function( c6StateProvider ) {
             c6StateProvider.state('MR:SponsorCard.Ads', [function() {
                 this.templateUrl = 'views/minireel/sponsor/manager/sponsor_card/ads.html';
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:SponsorCard.Tracking', [function() {
+                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_card/tracking.html';
             }]);
         }]);
 });

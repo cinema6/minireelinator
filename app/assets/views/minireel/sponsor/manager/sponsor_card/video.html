@@ -80,8 +80,11 @@
             </video-preview>
         </div>
         <div class="twoCol">
-            <h1 class="forms__name--title skipAdsHeader">Allow Users to Skip This Video? <strong class="typo--danger">*</strong></h1>
+            <h1 class="forms__name--title">Allow Users to Skip This Video? <strong class="typo--danger">*</strong></h1>
             <c6-dropdown options="SponsorCardVideoCtrl.skipOptions" value="card.data.skip"></c6-dropdown>
+
+            <h1 class="forms__name--title">Do you want to play videos continuously?</h1>
+            <c6-dropdown options="SponsorCardVideoCtrl.autoplayOptions" value="card.data.autoplay"></c6-dropdown>
         </div>
     </form>
 </div>

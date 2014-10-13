@@ -98,6 +98,16 @@ define(['minireel/sponsor','minireel/mixins/VideoCardController'], function(spon
                     });
                 });
             });
+
+            describe('autoplayOptions', function() {
+                it('should be a hash of autoplay options', function() {
+                    expect(SponsorCardVideoCtrl.autoplayOptions).toEqual({
+                        'Use MiniReel defaults': null,
+                        'Yes': true,
+                        'No': false
+                    });
+                });
+            });
         });
     });
 });
