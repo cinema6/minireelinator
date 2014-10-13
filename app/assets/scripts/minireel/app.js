@@ -93,6 +93,7 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                             this.state('MR:SponsorCard.Video');
                             this.state('MR:SponsorCard.Branding');
                             this.state('MR:SponsorCard.Links');
+                            this.state('MR:SponsorCard.Ads');
                         });
                     });
                 });

@@ -374,5 +374,12 @@ WizardController           , VideoCardController          , LinksController     
             $injector.invoke(LinksController, this, {
                 $scope: $scope
             });
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:SponsorCard.Ads', [function() {
+                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_card/ads.html';
+            }]);
         }]);
 });
