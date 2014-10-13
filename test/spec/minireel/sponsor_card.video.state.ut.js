@@ -3,6 +3,7 @@ define(['app'], function(appModule) {
 
     describe('MR:SponsorCard.Video state', function() {
         var c6State,
+            sponsorCard,
             sponsorCardVideo;
 
         beforeEach(function() {
@@ -12,11 +13,25 @@ define(['app'], function(appModule) {
                 c6State = $injector.get('c6State');
             });
 
+            sponsorCard = c6State.get('MR:SponsorCard');
+            sponsorCard.cModel = {};
             sponsorCardVideo = c6State.get('MR:SponsorCard.Video');
         });
 
         it('should exist', function() {
             expect(sponsorCardVideo).toEqual(jasmine.any(Object));
+        });
+
+        describe('model()', function() {
+            var result;
+
+            beforeEach(function() {
+                result = sponsorCardVideo.model();
+            });
+
+            it('should return the parent\'s model', function() {
+                expect(result).toBe(sponsorCard.cModel);
+            });
         });
     });
 });

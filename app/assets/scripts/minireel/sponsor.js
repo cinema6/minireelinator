@@ -1,7 +1,7 @@
 define (['angular','c6_state','./editor','./mixins/MiniReelListController',
-'./mixins/WizardController'],
+'./mixins/WizardController','./mixins/VideoCardController'],
 function( angular , c6State  , editor   , MiniReelListController          ,
-WizardController          ) {
+WizardController           , VideoCardController          ) {
     'use strict';
 
     var noop = angular.noop;
@@ -363,6 +363,33 @@ WizardController          ) {
         function( c6StateProvider ) {
             c6StateProvider.state('MR:SponsorCard.Video', [function() {
                 this.templateUrl = 'views/minireel/sponsor/manager/sponsor_card/video.html';
+                this.controller = 'SponsorCardVideoController';
+                this.controllerAs = 'SponsorCardVideoCtrl';
+
+                this.model = function() {
+                    return this.cParent.cModel;
+                };
             }]);
+        }])
+
+        .controller('SponsorCardVideoController', ['$injector',
+        function                                  ( $injector ) {
+            $injector.invoke(VideoCardController, this);
+
+            this.skipOptions = {
+                'No, users cannot skip': 'never',
+                'Yes, after six seconds': 'delay',
+                'Yes, skip at any time': 'anytime'
+            };
+            Object.defineProperties(this, {
+                isAdUnit: {
+                    get: function() {
+                        return this.model.data.service === 'adUnit';
+                    },
+                    set: function(bool) {
+                        this.model.data.service = bool ? 'adUnit' : null;
+                    }
+                }
+            });
         }]);
 });

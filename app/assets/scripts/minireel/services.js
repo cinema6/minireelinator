@@ -863,47 +863,6 @@ function( angular , c6ui , cryptojs ) {
 
         .service('VideoService', ['c6UrlParser',
         function                 ( c6UrlParser ) {
-            var VideoService = this;
-
-            this.createVideoUrl = function(computed, ctrl, ctrlName) {
-                ctrl.videoUrlBuffer = '';
-
-                computed(ctrl, 'videoUrl', function(url) {
-                    var data = this.model.data,
-                        service = data.service,
-                        id = data.videoid,
-                        self = this;
-
-                    function setVideoData(url) {
-                        var info = VideoService.dataFromUrl(url) || {
-                            service: null,
-                            id: null
-                        };
-
-                        data.service = info.service;
-                        data.videoid = info.id;
-
-                        self.videoUrlBuffer = url;
-
-                        return url;
-                    }
-
-                    if (arguments.length) {
-                        return setVideoData(url);
-                    }
-
-                    if (!service || !id) {
-                        return this.videoUrlBuffer;
-                    }
-
-                    return VideoService.urlFromData(service, id);
-                }, [
-                    ctrlName + '.model.data.service',
-                    ctrlName + '.model.data.videoid',
-                    ctrlName + '.videoUrlBuffer'
-                ]);
-            };
-
             this.urlFromData = function(service, id) {
                 switch (service) {
 
@@ -1235,6 +1194,24 @@ function( angular , c6ui , cryptojs ) {
                 // videoDataTemplate: this is the base template for all
                 // video cards.
                 videoDataTemplate = {
+                    skip: function(data) {
+                        if (!isDefined(data.skip)) {
+                            return 'anytime';
+                        }
+
+                        if ((/^(anytime|never|delay)$/).test(data.skip)) {
+                            return data.skip;
+                        }
+
+                        switch (data.skip) {
+                        case true:
+                            return 'anytime';
+                        case false:
+                            return 'never';
+                        default:
+                            return 'delay';
+                        }
+                    },
                     autoplay: copy(null),
                     service: function(data, key, card) {
                         var type = card.type;
@@ -1581,9 +1558,23 @@ function( angular , c6ui , cryptojs ) {
                     }
                 }
 
+                function skipValue() {
+                    return function(data) {
+                        switch (data.skip) {
+                        case 'anytime':
+                            return true;
+                        case 'never':
+                            return false;
+                        case 'delay':
+                            return 6;
+                        }
+                    };
+                }
+
                 dataTemplates = {
                     youtube: {
                         autoplay: copy(null),
+                        skip: skipValue(),
                         modestbranding: value(0),
                         rel: value(0),
                         start: trimmer(),
@@ -1592,12 +1583,14 @@ function( angular , c6ui , cryptojs ) {
                     },
                     vimeo: {
                         autoplay: copy(null),
+                        skip: skipValue(),
                         start: trimmer(),
                         end: trimmer(),
                         videoid: copy(null)
                     },
                     dailymotion: {
                         autoplay: copy(null),
+                        skip: skipValue(),
                         start: trimmer(),
                         end: trimmer(),
                         related: value(0),
@@ -1606,16 +1599,7 @@ function( angular , c6ui , cryptojs ) {
                     ad: {
                         autoplay: copy(true),
                         source: copy('cinema6'),
-                        skip: function(data) {
-                            switch (data.skip) {
-                            case 'anytime':
-                                return true;
-                            case 'never':
-                                return false;
-                            case 'delay':
-                                return 6;
-                            }
-                        }
+                        skip: skipValue()
                     },
                     links: {
                         links: copy([])

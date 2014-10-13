@@ -37,7 +37,6 @@
                     c6State = $injector.get('c6State');
                     MiniReelService = $injector.get('MiniReelService');
 
-                    spyOn(VideoService, 'createVideoUrl').and.callThrough();
                     c6State.get('MR:Editor').cModel = { id: 'e-fcfb709c23e0fd' };
 
                     $scope = $rootScope.$new();

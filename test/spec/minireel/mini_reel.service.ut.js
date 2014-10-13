@@ -172,6 +172,7 @@
                                 links: {},
                                 modules: [],
                                 data: {
+                                    skip: true,
                                     videoid: '47tfg8734',
                                     start: 10,
                                     end: 40,
@@ -204,6 +205,7 @@
                                     ]
                                 },
                                 data: {
+                                    skip: true,
                                     videoid: '48hfrei49'
                                 }
                             },
@@ -244,6 +246,7 @@
                                     ]
                                 },
                                 data: {
+                                    skip: false,
                                     videoid: 'vfu85f5',
                                     related: 0
                                 }
@@ -271,6 +274,7 @@
                                     'Website': 'awesome.com'
                                 },
                                 data: {
+                                    skip: 6,
                                     autoplay: false,
                                     videoid: 'fn4378r4d',
                                     start: 0,
@@ -485,6 +489,7 @@
                                 collateral: {},
                                 links: {},
                                 data: {
+                                    skip: 'anytime',
                                     autoplay: null,
                                     service: null,
                                     videoid: null,
@@ -533,6 +538,7 @@
                                 collateral: {},
                                 links: {},
                                 data: {
+                                    skip: 'anytime',
                                     autoplay: null,
                                     service: null,
                                     videoid: null,
@@ -1107,6 +1113,7 @@
                                 collateral: {},
                                 links: {},
                                 data: {
+                                    skip: 'anytime',
                                     autoplay: null,
                                     service: 'youtube',
                                     videoid: '47tfg8734',
@@ -1134,6 +1141,7 @@
                                 collateral: {},
                                 links: {},
                                 data: {
+                                    skip: 'anytime',
                                     autoplay: null,
                                     service: 'vimeo',
                                     videoid: '48hfrei49',
@@ -1168,6 +1176,7 @@
                                 collateral: {},
                                 links: {},
                                 data: {
+                                    skip: 'never',
                                     autoplay: null,
                                     service: 'dailymotion',
                                     videoid: 'vfu85f5',
@@ -1207,6 +1216,7 @@
                                     'Website': 'awesome.com'
                                 },
                                 data: {
+                                    skip: 'delay',
                                     autoplay: false,
                                     service: 'youtube',
                                     videoid: 'fn4378r4d',

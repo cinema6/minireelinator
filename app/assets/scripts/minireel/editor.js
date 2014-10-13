@@ -1,5 +1,7 @@
-define( ['angular','c6ui','c6_state','minireel/video_search','minireel/services','c6_defines'],
-function( angular , c6ui , c6State  , videoSearch           , services          , c6Defines  ) {
+define( ['angular','c6ui','c6_state','minireel/video_search','minireel/services','c6_defines',
+'./mixins/VideoCardController'],
+function( angular , c6ui , c6State  , videoSearch           , services          , c6Defines  ,
+VideoCardController           ) {
     'use strict';
 
     var isNumber = angular.isNumber,
@@ -1156,15 +1158,16 @@ function( angular , c6ui , c6State  , videoSearch           , services          
                 }]);
         }])
 
-        .controller('EditCardController', ['$scope','c6Computed','c6State','VideoService',
+        .controller('EditCardController', ['$scope','$injector','c6State','VideoService',
                                            'MiniReelService','ConfirmDialogService',
-        function                          ( $scope , c6Computed , c6State , VideoService ,
+        function                          ( $scope , $injector , c6State , VideoService ,
                                             MiniReelService , ConfirmDialogService ) {
             var self = this,
-                c = c6Computed($scope),
                 EditorCtrl = $scope.EditorCtrl,
                 primaryButton = {},
                 negativeButton = {};
+
+            $injector.invoke(VideoCardController, this);
 
             Object.defineProperties(this, {
                 currentTab: {
@@ -1264,7 +1267,6 @@ function( angular , c6ui , c6State  , videoSearch           , services          
             });
 
             this.error = null;
-            VideoService.createVideoUrl(c, this, 'EditCardCtrl');
 
             this.initWithModel = function(model) {
                 var minireelData = EditorCtrl.model.data,
