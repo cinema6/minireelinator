@@ -99,6 +99,7 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                                 this.state('MR:Placement.MiniReel');
                                 this.state('MR:Placement.Placements');
                             });
+                            this.state('MR:SponsorCard.Position');
                         });
                     });
                 });

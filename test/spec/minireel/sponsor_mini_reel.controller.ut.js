@@ -306,6 +306,19 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                 it('should close the MiniReel', function() {
                     expect(EditorService.close).toHaveBeenCalled();
                 });
+
+                describe('if somebody else has opened a MiniReel', function() {
+                    beforeEach(function() {
+                        EditorService.close.calls.reset();
+                        EditorService.open(minireel);
+
+                        $scope.$broadcast('$destroy');
+                    });
+
+                    it('should not close the MiniReel', function() {
+                        expect(EditorService.close).not.toHaveBeenCalled();
+                    });
+                });
             });
         });
     });

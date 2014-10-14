@@ -46,7 +46,7 @@
             class="btnAction btnAction--success btnAction--last"
             type="button"
             ng-show="(SponsorCardCtrl.tabs.indexOf(SponsorCardCtrl.currentTab) + 1) === SponsorCardCtrl.tabs.length"
-            ng-disabled="SponsorCardCtrl.placements.length < 1"
+            ng-disabled="SponsorCardCtrl.placements.length < 1 && !SponsorCardCtrl.minireel"
             title="Save">
             Save
         </button>

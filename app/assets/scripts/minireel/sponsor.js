@@ -6,6 +6,14 @@ WizardController           , VideoCardController          , LinksController     
 
     var noop = angular.noop;
 
+    function wrap(text, character) {
+        return [character, text, character].join('');
+    }
+
+    function positionLabel(card) {
+        return 'Before ' + wrap(card.title || card.label, card.title ? '"' : '');
+    }
+
     return angular.module('c6.app.minireel.sponsor', [c6State.name, editor.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
@@ -154,7 +162,9 @@ WizardController           , VideoCardController          , LinksController     
             };
 
             $scope.$on('$destroy', function() {
-                EditorService.close();
+                if (EditorService.state.minireel === self.model) {
+                    EditorService.close();
+                }
             });
         }])
 
@@ -249,66 +259,95 @@ WizardController           , VideoCardController          , LinksController     
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:SponsorCard', ['MiniReelService',
-            function                                ( MiniReelService ) {
-                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_card.html';
-                this.controller = 'SponsorCardController';
-                this.controllerAs = 'SponsorCardCtrl';
-
-                this.model = function() {
+            c6StateProvider.state('MR:SponsorCard', ['MiniReelService','$location','$q','cinema6',
+                                                     'EditorService',
+            function                                ( MiniReelService , $location , $q , cinema6 ,
+                                                      EditorService ) {
+                function createCard() {
                     var card = MiniReelService.createCard('video');
 
                     card.sponsored = true;
 
-                    return card;
+                    return $q.when(card);
+                }
+
+                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_card.html';
+                this.controller = 'SponsorCardController';
+                this.controllerAs = 'SponsorCardCtrl';
+
+                this.model = function(params) {
+                    var minireelId = $location.search().minireel;
+
+                    EditorService.close();
+
+                    return minireelId ?
+                        cinema6.db.find('experience', minireelId)
+                            .then(function(minireel) {
+                                return EditorService.open(minireel)
+                                    .data.deck.reduce(function(result, card) {
+                                        return card.id === params.cardId ? card : result;
+                                    }, null);
+                            })
+                        : createCard();
                 };
             }]);
         }])
 
-        .controller('SponsorCardController', ['$injector','$q','cinema6','EditorService',
-                                              'c6State','cState',
-        function                             ( $injector , $q , cinema6 , EditorService ,
-                                               c6State , cState ) {
+        .controller('SponsorCardController', ['$scope','$injector','$q','cinema6','EditorService',
+                                              'c6State','cState','$location',
+        function                             ( $scope , $injector , $q , cinema6 , EditorService ,
+                                               c6State , cState , $location ) {
+            var self = this;
+
             $injector.invoke(WizardController, this);
 
-            this.tabs = [
-                {
-                    name: 'Editorial Content',
-                    sref: 'MR:SponsorCard.Copy',
-                    required: true
-                },
-                {
-                    name: 'Video Content',
-                    sref: 'MR:SponsorCard.Video',
-                    required: true
-                },
-                {
-                    name: 'Branding',
-                    sref: 'MR:SponsorCard.Branding',
-                    required: true
-                },
-                {
-                    name: 'Links',
-                    sref: 'MR:SponsorCard.Links',
-                    required: false
-                },
-                {
-                    name: 'Advertising',
-                    sref: 'MR:SponsorCard.Ads',
-                    required: true
-                },
-                {
-                    name: 'Tracking',
-                    sref: 'MR:SponsorCard.Tracking',
-                    required: true
-                },
-                {
-                    name: 'Placement',
-                    sref: 'MR:SponsorCard.Placement',
-                    required: true
-                }
-            ];
             this.placements = [];
+
+            this.initWithModel = function(model) {
+                this.model = model;
+                this.minireel = EditorService.state.minireel;
+                this.tabs = [
+                    {
+                        name: 'Editorial Content',
+                        sref: 'MR:SponsorCard.Copy',
+                        required: true
+                    },
+                    {
+                        name: 'Video Content',
+                        sref: 'MR:SponsorCard.Video',
+                        required: true
+                    },
+                    {
+                        name: 'Branding',
+                        sref: 'MR:SponsorCard.Branding',
+                        required: true
+                    },
+                    {
+                        name: 'Links',
+                        sref: 'MR:SponsorCard.Links',
+                        required: false
+                    },
+                    {
+                        name: 'Advertising',
+                        sref: 'MR:SponsorCard.Ads',
+                        required: true
+                    },
+                    {
+                        name: 'Tracking',
+                        sref: 'MR:SponsorCard.Tracking',
+                        required: true
+                    },
+                    this.minireel ? {
+                        name: 'Placement',
+                        sref: 'MR:SponsorCard.Position',
+                        required: false
+                    } : {
+                        name: 'Placement',
+                        sref: 'MR:SponsorCard.Placement',
+                        required: true
+                    }
+                ];
+            };
 
             this.place = function(minireel, index) {
                 return (this.placements = this.placements.concat([{
@@ -324,34 +363,43 @@ WizardController           , VideoCardController          , LinksController     
             };
 
             this.save = function() {
-                var card = this.model;
+                function place() {
+                    var card = self.model;
 
-                return $q.all(this.placements.map(function(placement) {
-                    return $q.all({
-                        minireel: cinema6.db.find('experience', placement.minireel.id),
-                        index: placement.index
-                    });
-                })).then(function(placements) {
-                    var promise = $q.when(null);
-
-                    placements.forEach(function(placement) {
-                        promise = promise.then(function() {
-                            var proxy = EditorService.open(placement.minireel);
-
-                            proxy.data.deck.splice(placement.index, 0, card);
-
-                            return EditorService.sync()
-                                .then(function close() {
-                                    return EditorService.close();
-                                });
+                    return $q.all(self.placements.map(function(placement) {
+                        return $q.all({
+                            minireel: cinema6.db.find('experience', placement.minireel.id),
+                            index: placement.index
                         });
-                    });
+                    })).then(function(placements) {
+                        var promise = $q.when(null);
 
-                    return promise;
-                }).then(function() {
+                        placements.forEach(function(placement) {
+                            promise = promise.then(function() {
+                                var proxy = EditorService.open(placement.minireel);
+
+                                proxy.data.deck.splice(placement.index, 0, card);
+
+                                return EditorService.sync()
+                                    .then(function close() {
+                                        return EditorService.close();
+                                    });
+                            });
+                        });
+
+                        return promise;
+                    });
+                }
+
+                return (this.minireel ? EditorService.sync() : place()).then(function() {
                     return c6State.goTo(cState.cParent.cName);
                 });
             };
+
+            $scope.$on('$destroy', function() {
+                $location.search('minireel', null);
+                EditorService.close();
+            });
         }])
 
         .config(['c6StateProvider',
@@ -485,18 +533,12 @@ WizardController           , VideoCardController          , LinksController     
         }])
 
         .controller('PlacementMiniReelController', [function() {
-            function wrap(text, character) {
-                return [character, text, character].join('');
-            }
-
             this.initWithModel = function(model) {
                 this.model = model;
 
                 this.placement = 0;
                 this.placementOptions = model.data.deck.reduce(function(options, card, index) {
-                    var label = 'Before ' + wrap(card.title || card.label, card.title ? '"' : '');
-
-                    options[label] = index;
+                    options[positionLabel(card)] = index;
 
                     return options;
                 }, {});
@@ -509,5 +551,49 @@ WizardController           , VideoCardController          , LinksController     
                 this.templateUrl =
                     'views/minireel/sponsor/manager/sponsor_card/placement/placements.html';
             }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:SponsorCard.Position', [function() {
+                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_card/position.html';
+                this.controller = 'SponsorCardPositionController';
+                this.controllerAs = 'SponsorCardPositionCtrl';
+            }]);
+        }])
+
+        .controller('SponsorCardPositionController', ['$scope',
+        function                                     ( $scope ) {
+            var SponsorCardCtrl = $scope.SponsorCardCtrl;
+
+            this.positionOptions = SponsorCardCtrl.minireel.data.deck
+                .filter(function(card) {
+                    return card !== SponsorCardCtrl.model;
+                })
+                .reduce(function(options, card, index) {
+                    options[positionLabel(card)] = index;
+                    return options;
+                }, { 'Removed': -1 });
+
+            Object.defineProperties(this, {
+                position: {
+                    get: function() {
+                        return SponsorCardCtrl.minireel.data.deck.indexOf(SponsorCardCtrl.model);
+                    },
+                    set: function(index) {
+                        var deck = SponsorCardCtrl.minireel.data.deck,
+                            card = SponsorCardCtrl.model,
+                            removalIndex = deck.indexOf(card);
+
+                        if (removalIndex > -1) {
+                            deck.splice(removalIndex, 1);
+                        }
+
+                        if (index > -1) {
+                            deck.splice(index, 0, card);
+                        }
+                    }
+                }
+            });
         }]);
 });
