@@ -46,6 +46,7 @@
             class="btnAction btnAction--success btnAction--last"
             type="button"
             ng-show="(SponsorCardCtrl.tabs.indexOf(SponsorCardCtrl.currentTab) + 1) === SponsorCardCtrl.tabs.length"
+            ng-disabled="SponsorCardCtrl.placements.length < 1"
             title="Save">
             Save
         </button>

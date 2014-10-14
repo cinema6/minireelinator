@@ -47,13 +47,20 @@ define(['app','minireel/mixins/WizardController'], function(appModule, WizardCon
             });
 
             describe('currentTab', function() {
-                function setState(state) {
-                    Object.defineProperty(c6State, 'current', {
-                        value: state
+                function setState(stateName) {
+                    c6State.isActive.and.callFake(function(state) {
+                        return state.cName === stateName;
                     });
                 }
 
                 beforeEach(function() {
+                    spyOn(c6State, 'isActive').and.returnValue(false);
+                    spyOn(c6State, 'get').and.callFake(function(name) {
+                        return {
+                            cName: name
+                        };
+                    });
+
                     WizardCtrl.tabs = [
                         {
                             name: 'Tab 1',

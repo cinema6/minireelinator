@@ -13,8 +13,8 @@ function() {
                 configurable: true,
                 get: function() {
                     return this.tabs[this.tabs.map(function(tab) {
-                        return tab.sref;
-                    }).indexOf(c6State.current)] || null;
+                        return c6State.isActive(c6State.get(tab.sref));
+                    }).indexOf(true)] || null;
                 }
             }
         });
