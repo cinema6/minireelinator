@@ -350,6 +350,7 @@ WizardController           , VideoCardController          , LinksController     
             };
 
             this.place = function(minireel, index) {
+                /* jshint boss:true */
                 return (this.placements = this.placements.concat([{
                     minireel: minireel,
                     index: index
@@ -357,6 +358,7 @@ WizardController           , VideoCardController          , LinksController     
             };
 
             this.unplace = function(minireel, index) {
+                /* jshint boss:true */
                 return (this.placements = this.placements.filter(function(placement) {
                     return !(placement.minireel === minireel && placement.index === index);
                 }));
