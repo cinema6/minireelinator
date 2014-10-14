@@ -32,7 +32,7 @@
                         <span class="mainNav__label">Ad Manager</span>
                     </a>
                 </li>
-                <li class="mainNav__item">
+                <li class="mainNav__item" ng-if="!!PortalCtrl.model.permissions.experiences.editSponsorships">
                     <a c6-sref="MR:Sponsor.Manager" title="Sponsorship Manager" class="mainNav__link">
                         <span class="mainNav__label">Sponsorship Manager</span>
                     </a>
