@@ -28,6 +28,7 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
 
             card = {
                 id: 'rc-779983f6e2e231',
+                sponsored: true,
                 data: {}
             };
 
@@ -83,6 +84,29 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
             });
 
             describe('tabs', function() {
+                describe('if the card is not sponsored', function() {
+                    beforeEach(function() {
+                        card.sponsored = false;
+
+                        SponsorCardCtrl.initWithModel(card);
+                    });
+
+                    it('should be an array of fewer tabs', function() {
+                        expect(SponsorCardCtrl.tabs).toEqual([
+                            {
+                                name: 'Video Content',
+                                sref: 'MR:SponsorCard.Video',
+                                required: true
+                            },
+                            {
+                                name: 'Branding',
+                                sref: 'MR:SponsorCard.Branding',
+                                required: true
+                            }
+                        ]);
+                    });
+                });
+
                 describe('if there is no MiniReel', function() {
                     beforeEach(function() {
                         Object.defineProperty(EditorService.state, 'minireel', {
@@ -400,6 +424,20 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
 
                 it('should close the editor service', function() {
                     expect(EditorService.close).toHaveBeenCalled();
+                });
+
+                describe('if something else has been opened in the EditorService', function() {
+                    beforeEach(function() {
+                        Object.defineProperty(EditorService.state, 'minireel', {
+                            value: {}
+                        });
+                        EditorService.close.calls.reset();
+                        $scope.$broadcast('$destroy');
+                    });
+
+                    it('should not close the editor service', function() {
+                        expect(EditorService.close).not.toHaveBeenCalled();
+                    });
                 });
             });
         });

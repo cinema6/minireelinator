@@ -114,6 +114,11 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                                 required: true
                             },
                             {
+                                name: 'Cards',
+                                sref: 'MR:SponsorMiniReel.Cards',
+                                required: false
+                            },
+                            {
                                 name: 'End-Cap',
                                 sref: 'MR:SponsorMiniReel.Endcap',
                                 required: false
@@ -132,7 +137,7 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                     it('should be a single tab for sponsored cards', function() {
                         expect(SponsorMiniReelCtrl.tabs).toEqual([
                             {
-                                name: 'Sponsored Cards',
+                                name: 'Cards',
                                 sref: 'MR:SponsorMiniReel.Cards',
                                 required: false
                             }

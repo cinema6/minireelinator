@@ -114,6 +114,11 @@ WizardController           , VideoCardController          , LinksController     
                             required: true
                         },
                         {
+                            name: 'Cards',
+                            sref: 'MR:SponsorMiniReel.Cards',
+                            required: false
+                        },
+                        {
                             name: 'End-Cap',
                             sref: 'MR:SponsorMiniReel.Endcap',
                             required: false
@@ -121,7 +126,7 @@ WizardController           , VideoCardController          , LinksController     
                     ] :
                     [
                         {
-                            name: 'Sponsored Cards',
+                            name: 'Cards',
                             sref: 'MR:SponsorMiniReel.Cards',
                             required: false
                         }
@@ -304,6 +309,17 @@ WizardController           , VideoCardController          , LinksController     
             this.placements = [];
 
             this.initWithModel = function(model) {
+                var exclude = model.sponsored ?
+                    [] :
+                    [
+                        'MR:SponsorCard.Copy',
+                        'MR:SponsorCard.Links',
+                        'MR:SponsorCard.Ads',
+                        'MR:SponsorCard.Tracking',
+                        'MR:SponsorCard.Position',
+                        'MR:SponsorCard.Placement'
+                    ];
+
                 this.model = model;
                 this.minireel = EditorService.state.minireel;
                 this.tabs = [
@@ -346,7 +362,9 @@ WizardController           , VideoCardController          , LinksController     
                         sref: 'MR:SponsorCard.Placement',
                         required: true
                     }
-                ];
+                ].filter(function(tab) {
+                    return exclude.indexOf(tab.sref) < 0;
+                });
             };
 
             this.place = function(minireel, index) {
