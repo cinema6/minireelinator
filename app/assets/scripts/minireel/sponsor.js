@@ -400,7 +400,10 @@ WizardController           , VideoCardController          , LinksController     
 
             $scope.$on('$destroy', function() {
                 $location.search('minireel', null);
-                EditorService.close();
+
+                if (self.minireel === EditorService.state.minireel) {
+                    EditorService.close();
+                }
             });
         }])
 
