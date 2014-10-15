@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.2.1.rc1]*
+  * [FIX]: Preview Mode in the Studio Editor properly handles MiniReels
+  that are set to use the Org's default ad settings
+
 ## v1.2.0 (October 8, 2014)
 * *[v1.2.0.rc1]*
   * [PERFORMANCE]: Remove some unnecessary code that was mildly slowing
