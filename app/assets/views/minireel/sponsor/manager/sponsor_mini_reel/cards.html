@@ -1,9 +1,9 @@
 <div class="modalBody__group modalBody__group--sideTabs mrAdManager__videoServer">
-    <h1 class="forms__name--title">Cards</h1>
+    <h1 class="forms__name--title"><span ng-show="!minireel.data.sponsored">Sponsored </span>Cards</h1>
 
     <ul>
         <li ng-repeat="card in minireel.data.deck">
-            <a ng-if="!card.disabled" c6-sref="MR:SponsorCard" c6-models="[card]" c6-params="{ minireel: minireel.id, limit: SponsorManagerCtrl.limit, page: SponsorManagerCtrl.page }">
+            <a ng-if="!card.disabled && (card.sponsored || minireel.data.sponsored)" c6-sref="MR:SponsorCard" c6-models="[card]" c6-params="{ minireel: minireel.id, limit: SponsorManagerCtrl.limit, page: SponsorManagerCtrl.page }">
                 <strong ng-show="card.sponsored">*</strong>
                 <strong>{{card.title}}</strong>
             </a>
