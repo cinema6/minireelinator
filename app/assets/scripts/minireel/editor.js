@@ -613,8 +613,10 @@ VideoCardController           ) {
 //                if (evtSrc){
 //                    MiniReelCtrl.sendPageEvent('Editor','Click','Preview Card',self.pageObject);
 //                }
+                var experience = copy(self.model);
+                experience.data.adConfig = experience.data.adConfig || self.model.user.org.adConfig;
                 self.preview = true;
-                $scope.$broadcast('mrPreview:updateExperience', self.model, card);
+                $scope.$broadcast('mrPreview:updateExperience', experience, card);
             };
 
             this.closePreview = function() {
