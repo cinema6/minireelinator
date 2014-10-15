@@ -30,7 +30,7 @@ module.exports = function(http) {
     });
 
     http.whenGET('/api/content/experiences', function(request) {
-        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip']),
+        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text']),
             page = withDefaults(mapObject(pluck(request.query, ['limit', 'skip']), parseFloat), {
                 limit: Infinity,
                 skip: 0
@@ -47,6 +47,11 @@ module.exports = function(http) {
                         .every(function(key) {
                             return filters[key] === experience[key];
                         });
+                })
+                .filter(function(experience) {
+                    var text = request.query.text || experience.data.title;
+
+                    return experience.data.title.toLowerCase().indexOf(text.toLowerCase()) > -1;
                 }),
             experiences = allExperiences
                 .filter(function(experience, index) {
@@ -56,15 +61,17 @@ module.exports = function(http) {
                     return index >= startIndex && index <= endIndex;
                 })
                 .sort(function(a, b) {
-                    var prop = sort[0],
-                        directionInt = parseInt(sort[1]),
-                        isDate = ['lastUpdated', 'created', 'lastPublished'].indexOf(sort[0]) > -1,
-                        aProp = isDate ? new Date(a[prop]) : a[prop],
-                        bProp = isDate ? new Date(b[prop]) : b[prop];
+                    var prop = sort && sort[0],
+                        directionInt = parseInt(sort && sort[1]),
+                        isDate = ['lastUpdated', 'created', 'lastPublished'].indexOf(prop) > -1,
+                        aProp, bProp;
 
                     if (!sort) {
                         return 0;
                     }
+
+                    aProp = isDate ? new Date(a[prop]) : a[prop];
+                    bProp = isDate ? new Date(b[prop]) : b[prop];
 
                     if (aProp < bProp) {
                         return directionInt * -1;

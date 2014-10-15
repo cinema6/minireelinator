@@ -1,0 +1,19 @@
+<div class="modalBody__group modalBody__group--sideTabs mrEdit__videoTab">
+    <div class="clearfix">
+        <form class="twoCol" ng-submit="SponsorCardPlacementCtrl.search()">
+            <strong><a c6-sref="MR:Placement.Placements">Placements ({{SponsorCardCtrl.placements.length}})</a></strong>
+            <label class="clearfix">
+                <span class="forms__inputHolder forms__inputHolder--short">
+                    <input type="text" class="forms__textField forms__textField--block" placeholder="Search by Title" ng-model="SponsorCardPlacementCtrl.query">
+                </span>
+            </label>
+            <div ng-if="SponsorCardPlacementCtrl.result" c6-alias="SponsorCardPlacementCtrl.result.value as minireels">
+                <span ng-show="(minireels | filter:SponsorCardPlacementCtrl.isUnsponsored).length < 1">Your search yielded no results. Try again!</span>
+                <ul>
+                    <li ng-repeat="minireel in minireels | filter:SponsorCardPlacementCtrl.isUnsponsored"><a c6-sref="MR:Placement.MiniReel" c6-models="[minireel]">{{minireel.data.title}}</a></li>
+                </ul>
+            </div>
+        </form>
+        <c6-view class="twoCol"></c6-view>
+    </div>
+</div>

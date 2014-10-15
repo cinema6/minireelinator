@@ -1,0 +1,157 @@
+<main c6-alias="SponsorManagerCtrl.model.value as minireels">
+    <header class="pageHeader container">
+        <div class="pageHeader__titleBar clearfix">
+            <h1 class="pageTitle">Sponsorship Manager</h1>
+            <button c6-sref="MR:SponsorCard" title="Create Sponsored Card" class="btnAction btnAction--primary">
+                <span class="btn__label">Create Sponsored Card</span>
+            </button>
+        </div>
+    </header>
+
+    <section class="container miniReels__group">
+        <header class="tableHeader__group clearfix">
+            <paginator-controls page="SponsorManagerCtrl.page" limit="SponsorManagerCtrl.limit" limits="SponsorManagerCtrl.limits" total="SponsorManagerCtrl.model.page.total"></paginator-controls>
+            <nav class="selectorActions__group">
+                <div class="selectorActions__selector">
+                    <label class="checkbox--inline selectorActions__selectorCheckBox">
+                        <input type="checkbox" ng-model="SponsorManagerCtrl.allAreSelected" class="checkbox__input">
+                        <span class="btn__label faa">&nbsp;</span>
+                    </label>
+                    <button ng-click="SponsorManagerCtrl.dropDowns.select.toggle()" c6-click-outside="SponsorManagerCtrl.dropDowns.select.hide()" class="btn faa fa-caret-down ui__clickDrop">&nbsp;</button>
+                    <div ng-show="SponsorManagerCtrl.dropDowns.select.shown" class="pager__itemsPerPage ui__clickDropMenu">
+                        <button class="ui__clickDropBtn" type="button" title="Select All" ng-show="!SponsorManagerCtrl.allAreSelected" ng-click="SponsorManagerCtrl.selectAll()">Select All</button>
+                        <button class="ui__clickDropBtn" type="button" title="Select Public" ng-click="SponsorManagerCtrl.selectAllWithStatus('active')">Select Public</button>
+                        <button class="ui__clickDropBtn" type="button" title="Select Private" ng-click="SponsorManagerCtrl.selectAllWithStatus('pending')">Select Private</button>
+                        <button class="ui__clickDropBtn" type="button" title="Select None" ng-show="SponsorManagerCtrl.model.selected.indexOf(true) > -1" ng-click="SponsorManagerCtrl.selectNone()">Select None</button>
+                    </div>
+                </div>
+                <div class="btnGroup__animator" ng-if="SponsorManagerCtrl.canEditMiniReel">
+                    <div class="btnGroup clearfix" ng-show="SponsorManagerCtrl.getSelected().length > 0">
+                        <button class="btn btn--primary" type="button" title="Use Default Settings" ng-click="SponsorManagerCtrl.useDefaultSettings(SponsorManagerCtrl.getSelected())">
+                            <span class="btn__label">Use Default Settings</span>
+                        </button>
+                        <button class="btn btn--primary" type="button" title="Remove Ads" ng-click="SponsorManagerCtrl.removeAds(SponsorManagerCtrl.getSelected())">
+                            <span class="btn__label">Remove Ads</span>
+                        </button>
+                        <button class="btn btn--primary" type="button" title="Edit Ad Settings" ng-click="SponsorManagerCtrl.editSettings(SponsorManagerCtrl.getSelected())">
+                            <span class="btn__label">Edit Ad Settings</span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <div class="tableBody__group">
+            <ul class="miniReels__list grid">
+                <li class="miniReels__item grid__item" ng-show="!minireels.length">
+                    <article class="miniReels__welcomeMsg">
+                        <p>You have no Mini Reels. Would you like to <a c6-sref="MR:New.General" title="Create A MiniReel">create one?</a></p>
+                        <p> <a c6-sref="MR:New.General" class="btnAction btnAction--primary">Create a MiniReel</a></p>
+                    </article>
+                </li>
+
+                <li class="miniReels__item grid__item" ng-repeat="$this in minireels track by $this.id">
+                    <article class="miniReel__group clearfix">
+                        <div class="miniReel__selector">
+                            <label class="checkbox--inline">
+                                <input type="checkbox" ng-model="SponsorManagerCtrl.model.selected[$index]" class="checkbox__input">
+                                <span class="btn__label faa">&nbsp;</span>
+                            </label>
+                        </div>
+                        <div class="miniReel__imgBox">
+                            <a c6-sref="MR:SponsorMiniReel" c6-models="[$this]">
+                                <div class="miniReel__img" c6-bg-img="{{$this.data.collateral.splash}}">&nbsp;</div>
+                            </a>
+                        </div>
+                        <div class="miniReel__titleBox miniReel__titleBox--adManager">
+                            <a c6-sref="MR:SponsorMiniReel" c6-models="[$this]" class="miniReel__title">
+                                {{$this.data.title}}
+                            </a>
+                            <p class="miniReel__metaData">
+                                by <span class="miniReel__author">{{$this.user.firstName}} {{$this.user.lastName}}</span> | 
+                                <span class="miniReel__type">{{SponsorManagerCtrl.modeNameFor($this)}}</span>
+                            </p>
+                        </div>
+                        <div class="miniReel__status">
+                            <strong ng-show="$this.status === 'active'" class="miniReel__statusText--{{$this.status}}">
+                                Published
+                            </strong>
+                            <strong ng-show="$this.status === 'pending'" class="miniReel__statusText--{{$this.status}}">
+                                Private
+                            </strong> 
+                            - <span class="miniReel__date">{{$this.lastModified | date:'M/d/yyyy'}}</span>
+                            <p class="miniReel__count">
+                                <ng-pluralize count="SponsorManagerCtrl.adCountOf($this)" when="{'0': 'No ads', '1': '1 ad', 'other': '{} ads'}"></ng-pluralize>
+                                 | {{$this.data.deck.length}} slides
+                            </p>
+                        </div>
+                        <!-- <div class="miniReel__stats">
+                            <p class="miniReel__views">12123123 views</p>
+                        </div> -->
+                        <div class="miniReel__configStatus">
+                            <p class="miniReel__views">{{SponsorManagerCtrl.settingsTypeOf($this)}}</p>
+                        </div>
+
+                        <form class="miniReel__quickActions">
+                            <div class="quickActions__holder">
+                                <a class="quickActions__btn quickActions__btn--play" 
+                                ng-href="{{SponsorManagerCtrl.previewUrlOf($this)}}" n
+                                g-show="SponsorManagerCtrl.previewUrlOf($this)" 
+                                title="Preview This MiniReel"
+                                target="_blank">
+                                    <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                        viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                                        <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M13.4,7.9L5.7,2.2C5.5,2,5,1.9,4.6,2.1C4.3,2.2,4,2.7,4,3v11.9
+                                            c0,0.3,0.3,0.8,0.6,1c0.2,0.1,0.6,0.2,1.1-0.2l7.7-5.7C13.6,9.9,14,9.6,14,9C14,8.3,13.6,8,13.4,7.9z"/>
+                                    </svg>
+                                    <span class="ir">Preview</span>
+                                </a>
+                            </div>
+                            <div class="quickActions__holder">
+                                <button ng-show="$this.status === 'active' 
+                                && PortalCtrl.model.type !== 'ContentProvider'" 
+                                c6-sref="MR:AdManager.Embed" c6-models="[$this]" 
+                                class="quickActions__btn" 
+                                title="Get Embed Code"
+                                type="button">
+                                    <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                        viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                                        <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M0,9.6l6,3.9v-2L2,9v0l4-2.5V4.5L0,8.4V9.6z M6.8,15.5h1.6l2.8-13H9.7L6.8,15.5z M12,4.5v1.9L16,9v0l-4,2.5v2l6-3.9V8.4
+                                        L12,4.5z"/>
+                                    </svg>
+                                    <span class="ir">Get Embed Code</span>
+                                </button>
+                            </div>
+                            <div class="quickActions__holder" ng-if="SponsorManagerCtrl.canEditMiniReel">
+                                <button c6-models="[$this]" 
+                                class="quickActions__btn" type="button" 
+                                ng-click="SponsorManagerCtrl.editSettings([$this])"
+                                title="Edit Ad Settings">
+                                    <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                        viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                                        <path class="ui__icon" d="M3.1,13.9H1.8L0,17.1L0.9,18l3.1-1.8v-1.3l3-3l-1-1L3.1,13.9z M14.5,1.4l0.8,0.8l-4.1,4.1l0.6,0.6l4.1-4.1l0.8,0.8
+                                            l-4.1,4.1L13,8.2l4.4-4.4c0.4-0.4,0.7-1,0.7-1.6C18,1,17,0,15.8,0c-0.6,0-1.2,0.3-1.6,0.7L9.8,5l0.5,0.5L14.5,1.4z M8,4.8
+                                            c0.1-0.3,0.1-0.5,0.1-0.8C8.1,1.8,6.3,0,4.1,0C3.8,0,3.5,0,3.3,0.1l2.3,2.3c0.4,0.4,0.4,0.9,0,1.3L3.7,5.6c-0.4,0.4-0.9,0.4-1.3,0
+                                            L0.1,3.3C0,3.5,0,3.8,0,4.1c0,2.2,1.8,4.1,4.1,4.1c0.3,0,0.5,0,0.8-0.1l9.3,9.3c0.4,0.4,1,0.7,1.6,0.7c1.2,0,2.3-1,2.3-2.3
+                                            c0-0.6-0.3-1.2-0.7-1.6L8,4.8z M15.8,17.3c-0.9,0-1.6-0.7-1.6-1.6c0-0.9,0.7-1.6,1.6-1.6c0.9,0,1.6,0.7,1.6,1.6
+                                            C17.3,16.6,16.6,17.3,15.8,17.3z"/>
+                                    </svg>
+                                    <span class="ir">Edit Ad Settings</span>
+                                </button>
+                            </div>
+                        </form>
+                    </article>
+                </li>
+            </ul>
+        </div>
+        <footer class="tableFooter__group">
+            <paginator-controls page="SponsorManagerCtrl.page" limit="SponsorManagerCtrl.limit" limits="SponsorManagerCtrl.limits" total="SponsorManagerCtrl.model.page.total"></paginator-controls>
+            <p class="tableFooter__displayText" c6-alias="SponsorManagerCtrl.model.value.meta.items as items">
+                <span ng-show="minireels.length">Displaying <strong>{{items.start}}-{{items.end}}</strong> of {{items.total}} MiniReels</span>
+                <span ng-show="!minireels.length">0 MiniReels</span>
+            </p>
+        </footer>
+    </section>
+</main>
+
+<c6-view></c6-view>

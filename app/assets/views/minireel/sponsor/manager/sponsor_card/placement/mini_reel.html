@@ -1,0 +1,6 @@
+<c6-alias model="PlacementMiniReelCtrl.model" as="minireel">
+    <h1 class="forms__name--title">{{minireel.data.title}}</h1>
+    <c6-dropdown options="PlacementMiniReelCtrl.placementOptions" value="PlacementMiniReelCtrl.placement"></c6-dropdown>
+
+    <button class="btnAction btnAction--success" ng-click="SponsorCardCtrl.place(minireel, PlacementMiniReelCtrl.placement)" c6-sref="MR:Placement.Placements">Add Placement</button>
+</c6-alias>

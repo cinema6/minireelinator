@@ -1,9 +1,9 @@
 define( ['angular','c6ui','c6log','c6_state','minireel/services','minireel/tracker',
          'minireel/c6_drag','minireel/card_table','minireel/editor','minireel/manager',
-         'minireel/ad_manager','minireel/players','c6_defines','cryptojs'],
+         'minireel/ad_manager','minireel/sponsor','minireel/players','c6_defines','cryptojs'],
 function( angular , c6ui , c6log , c6State  , services          , tracker          ,
           c6Drag           , cardTable           , editor          , manager          ,
-          adManager           , players          , c6Defines  , cryptojs ) {
+          adManager           , sponsor          , players          , c6Defines  , cryptojs ) {
     /* jshint -W106 */
     'use strict';
 
@@ -14,7 +14,7 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
     return angular.module('c6.app.minireel', [
         c6ui.name, c6log.name, c6State.name, c6Drag.name,
         services.name, tracker.name, cardTable.name, editor.name,
-        manager.name, adManager.name, players.name
+        manager.name, adManager.name, players.name, sponsor.name
     ])
         .config(['$sceDelegateProvider','$compileProvider',
         function( $sceDelegateProvider , $compileProvider ) {
@@ -74,6 +74,34 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
                         this.route('/', 'MR:AdManager.Settings.DisplayServer');
                     });
                     this.route('/embed/:minireelId', 'MR:AdManager.Embed');
+                });
+
+                this.route('/sponsorship', 'MR:Sponsor', function() {
+                    this.route('/manager', 'MR:Sponsor.Manager', function() {
+                        this.route('/minireel/:minireelId', 'MR:SponsorMiniReel', function() {
+                            this.state('MR:SponsorMiniReel.Branding');
+                            this.state('MR:SponsorMiniReel.Links');
+                            this.state('MR:SponsorMiniReel.Ads');
+                            this.state('MR:SponsorMiniReel.Tracking');
+                            this.state('MR:SponsorMiniReel.Endcap');
+
+                            this.state('MR:SponsorMiniReel.Cards');
+                        });
+
+                        this.route('/card/:cardId', 'MR:SponsorCard', function() {
+                            this.state('MR:SponsorCard.Copy');
+                            this.state('MR:SponsorCard.Video');
+                            this.state('MR:SponsorCard.Branding');
+                            this.state('MR:SponsorCard.Links');
+                            this.state('MR:SponsorCard.Ads');
+                            this.state('MR:SponsorCard.Tracking');
+                            this.state('MR:SponsorCard.Placement', function() {
+                                this.state('MR:Placement.MiniReel');
+                                this.state('MR:Placement.Placements');
+                            });
+                            this.state('MR:SponsorCard.Position');
+                        });
+                    });
                 });
             });
         }])

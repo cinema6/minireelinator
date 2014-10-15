@@ -106,6 +106,16 @@
                         autoplay: true,
                         election: 'el-76506623bf22d9',
                         branding: 'elitedaily',
+                        sponsored: true,
+                        links: {
+                            'Website': 'minzner.org'
+                        },
+                        placementId: '7435638',
+                        tracking: {
+                            campaignId: '83dj3493',
+                            advertiserId: '984udn3d',
+                            minViewTime: 30
+                        },
                         adConfig: {
                             video: {
                                 firstPlacement: 3,
@@ -131,7 +141,16 @@
                                 type: 'text',
                                 title: 'This is my MiniReel',
                                 note: 'Hello. This is an intro.',
-                                displayAdSource: 'cinema6',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 modules: [],
                                 data: {},
                             },
@@ -141,9 +160,19 @@
                                 title: 'The Slowest Turtle',
                                 note: 'Blah blah blah',
                                 source: 'YouTube',
-                                displayAdSource: 'cinema6',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 modules: [],
                                 data: {
+                                    skip: true,
                                     videoid: '47tfg8734',
                                     start: 10,
                                     end: 40,
@@ -158,7 +187,16 @@
                                 note: 'Blah blah blah',
                                 source: 'Vimeo',
                                 modules: ['ballot'],
-                                displayAdSource: 'cinema6',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 ballot: {
                                     prompt: 'Was it ugly?',
                                     choices: [
@@ -167,6 +205,7 @@
                                     ]
                                 },
                                 data: {
+                                    skip: true,
                                     videoid: '48hfrei49'
                                 }
                             },
@@ -175,7 +214,7 @@
                                 type: 'ad',
                                 ad: true,
                                 modules: ['displayAd'],
-                                displayAdSource: 'cinema6',
+                                placementId: null,
                                 data: {
                                     autoplay: true,
                                     source: 'cinema6-publisher',
@@ -189,7 +228,16 @@
                                 note: 'Blah blah blah',
                                 source: 'DailyMotion',
                                 modules: ['ballot'],
-                                displayAdSource: 'cinema6',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 ballot: {
                                     prompt: 'How smart was it?',
                                     choices: [
@@ -198,6 +246,7 @@
                                     ]
                                 },
                                 data: {
+                                    skip: false,
                                     videoid: 'vfu85f5',
                                     related: 0
                                 }
@@ -209,8 +258,24 @@
                                 note: 'Blah blah blah',
                                 source: 'YouTube',
                                 modules: [],
-                                displayAdSource: 'cinema6',
+                                placementId: '12345',
+                                templateUrl: '//portal.cinema6.com/collateral/minireel/templates/huffpost.html',
+                                sponsored: true,
+                                tracking: {
+                                    campaignId: 'abc123',
+                                    advertiserId: '123abc',
+                                    minViewTime: 15
+                                },
+                                collateral: {
+                                    logo: 'my-awesome-logo.png'
+                                },
+                                links: {
+                                    'Facebook': 'my-fb.html',
+                                    'Website': 'awesome.com'
+                                },
                                 data: {
+                                    skip: 6,
+                                    autoplay: false,
                                     videoid: 'fn4378r4d',
                                     start: 0,
                                     end: 40,
@@ -224,7 +289,16 @@
                                 title: 'No video yet..',
                                 note: 'Lame...',
                                 modules: [],
-                                displayAdSource: 'cinema6',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 data: {}
                             },
                             {
@@ -233,7 +307,16 @@
                                 title: 'Vote on nothing!',
                                 note: 'Pretty meta, right?',
                                 modules: ['ballot'],
-                                displayAdSource: 'cinema6',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 ballot: {
                                     prompt: null,
                                     choices: []
@@ -245,7 +328,16 @@
                                 type: 'links',
                                 title: 'If You Love Turtles',
                                 note: 'Blah blah blah',
-                                displayAdSource: 'cinema6',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 data: {
                                     links: [
                                         {
@@ -271,9 +363,38 @@
                                 type: 'recap',
                                 title: 'Recap of My MiniReel',
                                 note: null,
-                                displayAdSource: 'cinema6',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 modules: [],
                                 data: {}
+                            },
+                            {
+                                id: 'rc-82a19a12065636',
+                                type: 'displayAd',
+                                title: null,
+                                note: null,
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
+                                modules: [],
+                                data: {
+                                    size: '300x250'
+                                }
                             }
                         ]
                     }
@@ -346,7 +467,8 @@
                                 videoBallotCard = MiniReelService.createCard('videoBallot'),
                                 adCard = MiniReelService.createCard('ad'),
                                 linksCard = MiniReelService.createCard('links'),
-                                textCard = MiniReelService.createCard('text');
+                                textCard = MiniReelService.createCard('text'),
+                                recapCard = MiniReelService.createCard('recap');
 
                             expect(videoCard).toEqual({
                                 id: jasmine.any(String),
@@ -356,8 +478,19 @@
                                 label: 'Video',
                                 ad: false,
                                 view: 'video',
-                                displayAdSource: null,
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 data: {
+                                    skip: 'anytime',
+                                    autoplay: null,
                                     service: null,
                                     videoid: null,
                                     start: null,
@@ -373,7 +506,16 @@
                                 label: 'Text',
                                 ad: false,
                                 view: 'text',
-                                displayAdSource: null,
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 data: {}
                             });
 
@@ -385,8 +527,19 @@
                                 label: 'Video + Questionnaire',
                                 ad: false,
                                 view: 'video',
-                                displayAdSource: null,
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 data: {
+                                    skip: 'anytime',
+                                    autoplay: null,
                                     service: null,
                                     videoid: null,
                                     start: null,
@@ -406,12 +559,42 @@
                                 label: 'Advertisement',
                                 ad: true,
                                 view: 'ad',
-                                displayAdSource: null,
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 data: {
                                     autoplay: true,
                                     source: null,
                                     skip: 'anytime'
                                 }
+                            });
+
+                            expect(recapCard).toEqual({
+                                id: jasmine.any(String),
+                                type: 'recap',
+                                title: null,
+                                note: null,
+                                label: 'Recap',
+                                ad: false,
+                                view: 'recap',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
+                                data: {}
                             });
 
                             expect(linksCard).toEqual({
@@ -422,7 +605,16 @@
                                 label: 'Suggested Links',
                                 ad: false,
                                 view: 'links',
-                                displayAdSource: null,
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 data: {
                                     links: []
                                 }
@@ -459,8 +651,44 @@
                                 label: null,
                                 ad: false,
                                 view: null,
-                                displayAdSource: null,
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 data: {}
+                            });
+                        });
+
+                        it('should support creating a displayAd card', function() {
+                            var card = MiniReelService.createCard('displayAd');
+
+                            expect(card).toEqual({
+                                id: jasmine.any(String),
+                                type: 'displayAd',
+                                title: null,
+                                note: null,
+                                label: 'Display Ad',
+                                ad: true,
+                                view: 'display_ad',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
+                                data: {
+                                    size: '300x250'
+                                }
                             });
                         });
                     });
@@ -469,26 +697,17 @@
                         it('should change the type of a card to the specified type', function() {
                             var card = MiniReelService.createCard(),
                                 id = card.id,
-                                videoCard, videoBallotCard, adCard, linksCard;
+                                videoCard, videoBallotCard, adCard, linksCard, displayAdCard, recapCard;
+
+                            function sameId(card) {
+                                card.id = id;
+
+                                return card;
+                            }
 
                             videoCard = MiniReelService.setCardType(card, 'video');
                             expect(videoCard).toBe(card);
-                            expect(videoCard).toEqual({
-                                id: id,
-                                type: 'video',
-                                title: null,
-                                note: null,
-                                label: 'Video',
-                                view: 'video',
-                                ad: false,
-                                displayAdSource: null,
-                                data: {
-                                    service: null,
-                                    videoid: null,
-                                    start: null,
-                                    end: null
-                                }
-                            });
+                            expect(videoCard).toEqual(sameId(MiniReelService.createCard('video')));
 
                             videoCard.data.service = 'youtube';
                             videoCard.data.videoid = '12345';
@@ -497,60 +716,33 @@
 
                             videoBallotCard = MiniReelService.setCardType(card, 'videoBallot');
                             expect(videoBallotCard).toBe(card);
-                            expect(videoBallotCard).toEqual({
-                                id: id,
-                                type: 'videoBallot',
-                                title: null,
-                                note: null,
-                                label: 'Video + Questionnaire',
-                                view: 'video',
-                                ad: false,
-                                displayAdSource: null,
-                                data: {
-                                    service: 'youtube',
-                                    videoid: '12345',
-                                    start: 10,
-                                    end: 45,
-                                    ballot: {
-                                        prompt: null,
-                                        choices: []
-                                    }
-                                }
-                            });
+                            expect(videoBallotCard).toEqual((function() {
+                                var card = sameId(MiniReelService.createCard('videoBallot'));
+
+                                card.data.service = 'youtube';
+                                card.data.videoid = '12345';
+                                card.data.start = 10;
+                                card.data.end = 45;
+
+                                return card;
+                            }()));
 
                             adCard = MiniReelService.setCardType(card, 'ad');
                             expect(adCard).toBe(card);
-                            expect(adCard).toEqual({
-                                id: id,
-                                type: 'ad',
-                                title: 'Advertisement',
-                                note: null,
-                                label: 'Advertisement',
-                                view: 'ad',
-                                ad: true,
-                                displayAdSource: null,
-                                data: {
-                                    autoplay: true,
-                                    source: null,
-                                    skip: 'anytime'
-                                }
-                            });
+                            expect(adCard).toEqual(sameId(MiniReelService.createCard('ad')));
+                            adCard.title = null;
 
                             linksCard = MiniReelService.setCardType(card, 'links');
                             expect(linksCard).toBe(card);
-                            expect(linksCard).toEqual({
-                                id: id,
-                                type: 'links',
-                                title: 'Advertisement', // this is a result of the default ad title being set
-                                note: null,
-                                label: 'Suggested Links',
-                                view: 'links',
-                                ad: false,
-                                displayAdSource: null,
-                                data: {
-                                    links: []
-                                }
-                            });
+                            expect(linksCard).toEqual(sameId(MiniReelService.createCard('links')));
+
+                            displayAdCard = MiniReelService.setCardType(card, 'displayAd');
+                            expect(displayAdCard).toBe(card);
+                            expect(displayAdCard).toEqual(sameId(MiniReelService.createCard('displayAd')));
+
+                            recapCard = MiniReelService.setCardType(card, 'recap');
+                            expect(recapCard).toBe(card);
+                            expect(recapCard).toEqual(sameId(MiniReelService.createCard('recap')));
                         });
                     });
 
@@ -887,7 +1079,16 @@
                                 label: 'Text',
                                 ad: false,
                                 view: 'text',
-                                displayAdSource: 'cinema6',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 data: {}
                             });
                         });
@@ -901,8 +1102,19 @@
                                 label: 'Video',
                                 ad: false,
                                 view: 'video',
-                                displayAdSource: 'cinema6',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 data: {
+                                    skip: 'anytime',
+                                    autoplay: null,
                                     service: 'youtube',
                                     videoid: '47tfg8734',
                                     start: 10,
@@ -918,8 +1130,19 @@
                                 label: 'Video + Questionnaire',
                                 ad: false,
                                 view: 'video',
-                                displayAdSource: 'cinema6',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 data: {
+                                    skip: 'anytime',
+                                    autoplay: null,
                                     service: 'vimeo',
                                     videoid: '48hfrei49',
                                     start: null,
@@ -942,8 +1165,19 @@
                                 label: 'Video + Questionnaire',
                                 ad: false,
                                 view: 'video',
-                                displayAdSource: 'cinema6',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 data: {
+                                    skip: 'never',
+                                    autoplay: null,
                                     service: 'dailymotion',
                                     videoid: 'vfu85f5',
                                     start: undefined,
@@ -966,8 +1200,24 @@
                                 label: 'Video',
                                 ad: false,
                                 view: 'video',
-                                displayAdSource: 'cinema6',
+                                placementId: '12345',
+                                templateUrl: '//portal.cinema6.com/collateral/minireel/templates/huffpost.html',
+                                sponsored: true,
+                                tracking: {
+                                    campaignId: 'abc123',
+                                    advertiserId: '123abc',
+                                    minViewTime: 15
+                                },
+                                collateral: {
+                                    logo: 'my-awesome-logo.png'
+                                },
+                                links: {
+                                    'Facebook': 'my-fb.html',
+                                    'Website': 'awesome.com'
+                                },
                                 data: {
+                                    skip: 'delay',
+                                    autoplay: false,
                                     service: 'youtube',
                                     videoid: 'fn4378r4d',
                                     start: 0,
@@ -985,7 +1235,16 @@
                                 label: 'Suggested Links',
                                 ad: false,
                                 view: 'links',
-                                displayAdSource: 'cinema6',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 data: minireel.data.deck[8].data
                             });
 
@@ -1001,8 +1260,42 @@
                                 label: 'Recap',
                                 ad: false,
                                 view: 'recap',
-                                displayAdSource: 'cinema6',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
                                 data: {}
+                            });
+                        });
+
+                        it('should transpile the displayAd cards', function() {
+                            expect(deck[9]).toEqual({
+                                id: 'rc-82a19a12065636',
+                                type: 'displayAd',
+                                title: null,
+                                note: null,
+                                label: 'Display Ad',
+                                ad: true,
+                                view: 'display_ad',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                tracking: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
+                                data: {
+                                    size: '300x250'
+                                }
                             });
                         });
                     });
@@ -1082,6 +1375,8 @@
                                         title: null,
                                         mode: 'lightbox-ads',
                                         autoplay: true,
+                                        sponsored: false,
+                                        tracking: {},
                                         splash: {
                                             source: 'generated',
                                             ratio: '3-2',
@@ -1091,17 +1386,13 @@
                                             splash: null
                                         },
                                         deck: [
-                                            {
-                                                id: jasmine.any(String),
-                                                title: null,
-                                                note: null,
-                                                type: 'recap',
-                                                label: 'Recap',
-                                                view: 'recap',
-                                                ad: false,
-                                                displayAdSource: null,
-                                                data: {}
-                                            }
+                                            (function() {
+                                                var recap = MiniReelService.createCard('recap');
+
+                                                recap.id = jasmine.any(String);
+
+                                                return recap;
+                                            }())
                                         ]
                                     }
                                 });

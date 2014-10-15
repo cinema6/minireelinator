@@ -1,0 +1,10 @@
+<div class="modalBody__group modalBody__group--sideTabs mrAdManager__videoServer">
+    <h1 class="forms__name--title">Sponsored Cards</h1>
+
+    <ul>
+        <li ng-repeat="card in minireel.data.deck">
+            <span ng-if="!card.sponsored">{{card.title}}</span>
+            <a ng-if="card.sponsored" c6-sref="MR:SponsorCard" c6-models="[card]" c6-params="{ minireel: minireel.id, limit: SponsorManagerCtrl.limit, page: SponsorManagerCtrl.page }"><strong>{{card.title}}</strong></a>
+        </li>
+    </ul>
+</div>

@@ -863,47 +863,6 @@ function( angular , c6ui , cryptojs ) {
 
         .service('VideoService', ['c6UrlParser',
         function                 ( c6UrlParser ) {
-            var VideoService = this;
-
-            this.createVideoUrl = function(computed, ctrl, ctrlName) {
-                ctrl.videoUrlBuffer = '';
-
-                computed(ctrl, 'videoUrl', function(url) {
-                    var data = this.model.data,
-                        service = data.service,
-                        id = data.videoid,
-                        self = this;
-
-                    function setVideoData(url) {
-                        var info = VideoService.dataFromUrl(url) || {
-                            service: null,
-                            id: null
-                        };
-
-                        data.service = info.service;
-                        data.videoid = info.id;
-
-                        self.videoUrlBuffer = url;
-
-                        return url;
-                    }
-
-                    if (arguments.length) {
-                        return setVideoData(url);
-                    }
-
-                    if (!service || !id) {
-                        return this.videoUrlBuffer;
-                    }
-
-                    return VideoService.urlFromData(service, id);
-                }, [
-                    ctrlName + '.model.data.service',
-                    ctrlName + '.model.data.videoid',
-                    ctrlName + '.videoUrlBuffer'
-                ]);
-            };
-
             this.urlFromData = function(service, id) {
                 switch (service) {
 
@@ -1198,6 +1157,8 @@ function( angular , c6ui , cryptojs ) {
                             return 'Recap';
                         case 'text':
                             return 'Text';
+                        case 'displayAd':
+                            return 'Display Ad';
 
                         default:
                             return null;
@@ -1208,20 +1169,50 @@ function( angular , c6ui , cryptojs ) {
                         case 'video':
                         case 'videoBallot':
                             return 'video';
+                        case 'displayAd':
+                            return 'display_ad';
 
                         default:
                             return this.type;
                         }
                     },
                     ad: function(card) {
-                        return card.ad || card.type === 'ad';
+                        return card.ad || (/^(ad|displayAd)$/).test(card.type);
                     },
-                    displayAdSource: copy(null)
+                    placementId: copy(null),
+                    templateUrl: copy(null),
+                    sponsored: copy(false),
+                    tracking: copy({
+                        campaignId: null,
+                        advertiserId: null,
+                        minViewTime: null
+                    }),
+                    collateral: copy({}),
+                    links: copy({})
                 };
 
                 // videoDataTemplate: this is the base template for all
                 // video cards.
                 videoDataTemplate = {
+                    skip: function(data) {
+                        if (!isDefined(data.skip)) {
+                            return 'anytime';
+                        }
+
+                        if ((/^(anytime|never|delay)$/).test(data.skip)) {
+                            return data.skip;
+                        }
+
+                        switch (data.skip) {
+                        case true:
+                            return 'anytime';
+                        case false:
+                            return 'never';
+                        default:
+                            return 'delay';
+                        }
+                    },
+                    autoplay: copy(null),
                     service: function(data, key, card) {
                         var type = card.type;
 
@@ -1251,7 +1242,7 @@ function( angular , c6ui , cryptojs ) {
                         }
                     }),
                     ad: {
-                        autoplay: copy(true),
+                        autoplay: value(true),
                         source: copy(null),
                         skip: function(data) {
                             if (isUndefined(data.skip)) {
@@ -1265,7 +1256,11 @@ function( angular , c6ui , cryptojs ) {
                     links: {
                         links: copy([])
                     },
-                    text: {}
+                    text: {},
+                    displayAd: {
+                        size: value('300x250')
+                    },
+                    recap: {}
                 };
 
                 /******************************************************\
@@ -1440,6 +1435,10 @@ function( angular , c6ui , cryptojs ) {
                     autoplay: minireel.data.autoplay,
                     election: minireel.data.election,
                     adConfig: minireel.data.adConfig,
+                    sponsored: minireel.data.sponsored || false,
+                    links: minireel.data.links || {},
+                    placementId: minireel.data.placementId,
+                    tracking: minireel.data.tracking || {},
                     collateral: minireel.data.collateral ||
                         { splash: null },
                     splash: minireel.data.splash ||
@@ -1489,6 +1488,8 @@ function( angular , c6ui , cryptojs ) {
                                 title: null,
                                 mode: orgSettings.minireelDefaults.mode,
                                 autoplay: orgSettings.minireelDefaults.autoplay,
+                                sponsored: false,
+                                tracking: {},
                                 splash: {
                                     source: 'generated',
                                     ratio: userSettings.minireelDefaults.splash.ratio,
@@ -1538,30 +1539,42 @@ function( angular , c6ui , cryptojs ) {
                 }
 
                 function getCardType(card) {
-                    if(card.ad) {
-                        return 'ad';
-                    }
-                    if(card.type.indexOf('video') > -1) {
+                    switch (card.type) {
+                    case 'video':
+                    case 'videoBallot':
                         return 'video';
-                    } else {
-                        // currently this will only be 'miniReel' or 'intro'
-                        // but the intro slide is already being skipped
-                        // and is never passed to convertCard()
+                    default:
                         return card.type;
                     }
                 }
 
                 function getDataType(card) {
-                    if(card.type === 'links' || card.type === 'ad') {
+                    switch (card.type) {
+                    case 'video':
+                    case 'videoBallot':
+                        return card.data.service;
+                    default:
                         return card.type;
                     }
-                    if(card.type.indexOf('video') > -1) {
-                        return card.data.service;
-                    }
+                }
+
+                function skipValue() {
+                    return function(data) {
+                        switch (data.skip) {
+                        case 'anytime':
+                            return true;
+                        case 'never':
+                            return false;
+                        case 'delay':
+                            return 6;
+                        }
+                    };
                 }
 
                 dataTemplates = {
                     youtube: {
+                        autoplay: copy(null),
+                        skip: skipValue(),
                         modestbranding: value(0),
                         rel: value(0),
                         start: trimmer(),
@@ -1569,32 +1582,30 @@ function( angular , c6ui , cryptojs ) {
                         videoid: copy(null)
                     },
                     vimeo: {
+                        autoplay: copy(null),
+                        skip: skipValue(),
                         start: trimmer(),
                         end: trimmer(),
                         videoid: copy(null)
                     },
                     dailymotion: {
+                        autoplay: copy(null),
+                        skip: skipValue(),
                         start: trimmer(),
                         end: trimmer(),
                         related: value(0),
                         videoid: copy(null)
                     },
                     ad: {
-                        autoplay: copy(false),
+                        autoplay: copy(true),
                         source: copy('cinema6'),
-                        skip: function(data) {
-                            switch (data.skip) {
-                            case 'anytime':
-                                return true;
-                            case 'never':
-                                return false;
-                            case 'delay':
-                                return 6;
-                            }
-                        }
+                        skip: skipValue()
                     },
                     links: {
                         links: copy([])
+                    },
+                    displayAd: {
+                        size: copy('300x250')
                     }
                 };
 
@@ -1605,7 +1616,12 @@ function( angular , c6ui , cryptojs ) {
                         title: copy(null),
                         note: copy(null),
                         modules: value([]),
-                        displayAdSource: copy('cinema6')
+                        placementId: copy(null),
+                        templateUrl: copy(null),
+                        sponsored: copy(false),
+                        tracking: copy(),
+                        collateral: copy(),
+                        links: copy()
                     },
                     video: {
                         id: copy(),
@@ -1627,21 +1643,31 @@ function( angular , c6ui , cryptojs ) {
                         ballot: function(card) {
                             return card.data.ballot;
                         },
-                        displayAdSource: copy('cinema6')
+                        placementId: copy(null),
+                        templateUrl: copy(null),
+                        sponsored: copy(false),
+                        tracking: copy(),
+                        collateral: copy(),
+                        links: copy()
                     },
                     ad: {
                         id: copy(),
                         type: value('ad'),
                         ad: value(true),
                         modules: value(['displayAd']),
-                        displayAdSource: copy('cinema6')
+                        placementId: copy(null)
                     },
                     links: {
                         id: copy(),
                         type: value('links'),
                         title: copy(null),
                         note: copy(null),
-                        displayAdSource: copy('cinema6')
+                        placementId: copy(null),
+                        templateUrl: copy(null),
+                        sponsored: copy(false),
+                        tracking: copy(),
+                        collateral: copy(),
+                        links: copy()
                     },
                     recap: {
                         id: copy(),
@@ -1653,7 +1679,25 @@ function( angular , c6ui , cryptojs ) {
                         modules: function() {
                             return mode === 'lightbox-ads' ? ['displayAd'] : [];
                         },
-                        displayAdSource: copy('cinema6')
+                        placementId: copy(null),
+                        templateUrl: copy(null),
+                        sponsored: copy(false),
+                        tracking: copy(),
+                        collateral: copy(),
+                        links: copy()
+                    },
+                    displayAd: {
+                        id: copy(),
+                        type: value('displayAd'),
+                        title: value(null),
+                        note: value(null),
+                        modules: value([]),
+                        placementId: copy(null),
+                        templateUrl: copy(null),
+                        sponsored: copy(false),
+                        tracking: copy(),
+                        collateral: copy(),
+                        links: copy()
                     }
                 };
 

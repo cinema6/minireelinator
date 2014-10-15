@@ -1,0 +1,32 @@
+<div class="modalBody__group modalBody__group--sideTabs mrAdManager__videoServer">
+    <form c6-alias="card.tracking as tracking">
+        <h1 class="forms__name--title">Tracking</h1>
+
+        <label class="forms__pair forms__pair--spacer clearfix">
+            <span class="forms__name">
+                Campaign Id <strong class="typo--danger">*</strong>
+            </span>
+            <span class="forms__inputHolder">
+                <input type="text" class="forms__textField forms__textField--block" ng-model="tracking.campaignId">
+            </span>
+        </label>
+
+        <label class="forms__pair forms__pair--spacer clearfix">
+            <span class="forms__name">
+                Advertiser Id <strong class="typo--danger">*</strong>
+            </span>
+            <span class="forms__inputHolder">
+                <input type="text" class="forms__textField forms__textField--block" ng-model="tracking.advertiserId">
+            </span>
+        </label>
+
+        <label class="forms__pair forms__pair--spacer clearfix">
+            <span class="forms__name">
+                Min. View Time <strong class="typo--danger">*</strong>
+            </span>
+            <span class="forms__inputHolder">
+                <input type="number" class="forms__textField forms__textField--block" ng-model="tracking.minViewTime">
+            </span>
+        </label>
+    </form>
+</div>
