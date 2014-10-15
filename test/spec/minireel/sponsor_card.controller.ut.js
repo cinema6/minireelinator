@@ -389,8 +389,19 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
                 });
 
                 describe('if there is a minireel', function() {
+                    var minireel;
+
                     beforeEach(function() {
-                        SponsorCardCtrl.minireel = {};
+                        SponsorCardCtrl.minireel = {
+                            id: 'e-d9166c305524e3'
+                        };
+                        minireel = {
+                            id: 'e-d9166c305524e3',
+                            data: {
+                                deck: []
+                            }
+                        };
+                        spyOn(cinema6.db, 'find').and.returnValue($q.when(minireel));
                         EditorService.sync.and.returnValue($q.when(SponsorCardCtrl.minireel));
 
                         $scope.$apply(function() {
@@ -402,8 +413,12 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
                         expect(EditorService.sync).toHaveBeenCalled();
                     });
 
-                    it('should close the modal', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith(sponsorCard.cParent.cName);
+                    it('should get the minireel', function() {
+                        expect(cinema6.db.find).toHaveBeenCalledWith('experience', SponsorCardCtrl.minireel.id);
+                    });
+
+                    it('should close the modal and go back to the modal for the MiniReel', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:SponsorMiniReel', [minireel]);
                     });
                 });
             });

@@ -408,12 +408,22 @@ WizardController           , VideoCardController          , LinksController     
                         });
 
                         return promise;
+                    }).then(function() {
+                        return c6State.goTo(cState.cParent.cName);
                     });
                 }
 
-                return (this.minireel ? EditorService.sync() : place()).then(function() {
-                    return c6State.goTo(cState.cParent.cName);
-                });
+                function save() {
+                    return EditorService.sync()
+                        .then(function findMiniReel(proxy) {
+                            return cinema6.db.find('experience', proxy.id);
+                        })
+                        .then(function close(minireel) {
+                            return c6State.goTo('MR:SponsorMiniReel', [minireel]);
+                        });
+                }
+
+                return (this.minireel ? save() : place());
             };
 
             $scope.$on('$destroy', function() {
