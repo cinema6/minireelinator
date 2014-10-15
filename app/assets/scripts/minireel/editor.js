@@ -1899,7 +1899,8 @@ VideoCardController           ) {
                     service: '@',
                     videoid: '@',
                     start: '=',
-                    end: '='
+                    end: '=',
+                    disableTrimmer: '&'
                 },
                 link: function(scope, $element) {
                     function controlVideo($video) {
