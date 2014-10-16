@@ -468,6 +468,10 @@ WizardController           , VideoCardController          , LinksController     
                 'Yes': true,
                 'No': false
             };
+            this.autoadvanceOptions = {
+                'Yes': true,
+                'No': false
+            };
             Object.defineProperties(this, {
                 isAdUnit: {
                     get: function() {

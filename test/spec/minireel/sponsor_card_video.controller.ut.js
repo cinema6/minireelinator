@@ -108,6 +108,15 @@ define(['minireel/sponsor','minireel/mixins/VideoCardController'], function(spon
                     });
                 });
             });
+
+            describe('autoadvanceOptions', function() {
+                it('should be a hash of autoadvance options', function() {
+                    expect(SponsorCardVideoCtrl.autoadvanceOptions).toEqual({
+                        'Yes': true,
+                        'No': false
+                    });
+                });
+            });
         });
     });
 });
