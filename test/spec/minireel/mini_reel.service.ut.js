@@ -111,7 +111,7 @@
                             'Website': 'minzner.org'
                         },
                         placementId: '7435638',
-                        tracking: {
+                        campaign: {
                             campaignId: '83dj3493',
                             advertiserId: '984udn3d',
                             minViewTime: 30
@@ -144,7 +144,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -163,7 +163,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -190,7 +190,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -231,7 +231,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -261,7 +261,7 @@
                                 placementId: '12345',
                                 templateUrl: '//portal.cinema6.com/collateral/minireel/templates/huffpost.html',
                                 sponsored: true,
-                                tracking: {
+                                campaign: {
                                     campaignId: 'abc123',
                                     advertiserId: '123abc',
                                     minViewTime: 15
@@ -292,7 +292,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -310,7 +310,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -331,7 +331,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -366,7 +366,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -384,7 +384,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -481,7 +481,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -509,7 +509,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -530,7 +530,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -562,7 +562,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -587,7 +587,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -608,7 +608,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -654,7 +654,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -679,7 +679,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -1082,7 +1082,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -1105,7 +1105,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -1133,7 +1133,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -1168,7 +1168,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -1203,7 +1203,7 @@
                                 placementId: '12345',
                                 templateUrl: '//portal.cinema6.com/collateral/minireel/templates/huffpost.html',
                                 sponsored: true,
-                                tracking: {
+                                campaign: {
                                     campaignId: 'abc123',
                                     advertiserId: '123abc',
                                     minViewTime: 15
@@ -1238,7 +1238,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -1263,7 +1263,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -1286,7 +1286,7 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
@@ -1376,7 +1376,7 @@
                                         mode: 'lightbox-ads',
                                         autoplay: true,
                                         sponsored: false,
-                                        tracking: {},
+                                        campaign: {},
                                         splash: {
                                             source: 'generated',
                                             ratio: '3-2',

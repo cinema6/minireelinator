@@ -1182,7 +1182,7 @@ function( angular , c6ui , cryptojs ) {
                     placementId: copy(null),
                     templateUrl: copy(null),
                     sponsored: copy(false),
-                    tracking: copy({
+                    campaign: copy({
                         campaignId: null,
                         advertiserId: null,
                         minViewTime: null
@@ -1438,7 +1438,7 @@ function( angular , c6ui , cryptojs ) {
                     sponsored: minireel.data.sponsored || false,
                     links: minireel.data.links || {},
                     placementId: minireel.data.placementId,
-                    tracking: minireel.data.tracking || {},
+                    campaign: minireel.data.campaign || {},
                     collateral: minireel.data.collateral ||
                         { splash: null },
                     splash: minireel.data.splash ||
@@ -1489,7 +1489,7 @@ function( angular , c6ui , cryptojs ) {
                                 mode: orgSettings.minireelDefaults.mode,
                                 autoplay: orgSettings.minireelDefaults.autoplay,
                                 sponsored: false,
-                                tracking: {},
+                                campaign: {},
                                 splash: {
                                     source: 'generated',
                                     ratio: userSettings.minireelDefaults.splash.ratio,
@@ -1619,7 +1619,7 @@ function( angular , c6ui , cryptojs ) {
                         placementId: copy(null),
                         templateUrl: copy(null),
                         sponsored: copy(false),
-                        tracking: copy(),
+                        campaign: copy(),
                         collateral: copy(),
                         links: copy()
                     },
@@ -1646,7 +1646,7 @@ function( angular , c6ui , cryptojs ) {
                         placementId: copy(null),
                         templateUrl: copy(null),
                         sponsored: copy(false),
-                        tracking: copy(),
+                        campaign: copy(),
                         collateral: copy(),
                         links: copy()
                     },
@@ -1665,7 +1665,7 @@ function( angular , c6ui , cryptojs ) {
                         placementId: copy(null),
                         templateUrl: copy(null),
                         sponsored: copy(false),
-                        tracking: copy(),
+                        campaign: copy(),
                         collateral: copy(),
                         links: copy()
                     },
@@ -1682,7 +1682,7 @@ function( angular , c6ui , cryptojs ) {
                         placementId: copy(null),
                         templateUrl: copy(null),
                         sponsored: copy(false),
-                        tracking: copy(),
+                        campaign: copy(),
                         collateral: copy(),
                         links: copy()
                     },
@@ -1695,7 +1695,7 @@ function( angular , c6ui , cryptojs ) {
                         placementId: copy(null),
                         templateUrl: copy(null),
                         sponsored: copy(false),
-                        tracking: copy(),
+                        campaign: copy(),
                         collateral: copy(),
                         links: copy()
                     }
