@@ -266,6 +266,7 @@ WizardController           , VideoCardController          , LinksController     
                     var card = MiniReelService.createCard('video');
 
                     card.sponsored = true;
+                    card.data.autoadvance = false;
 
                     return $q.when(card);
                 }

@@ -65,6 +65,7 @@ define(['app','minireel/services'], function(appModule, servicesModule) {
                 expect(MiniReelService.createCard).toHaveBeenCalledWith('video');
                 expect(success).toHaveBeenCalledWith(card);
                 expect(card.sponsored).toBe(true);
+                expect(card.data.autoadvance).toBe(false);
             });
 
             describe('if there is a minireel parameter', function() {
