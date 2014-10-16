@@ -111,10 +111,13 @@
                             'Website': 'minzner.org'
                         },
                         placementId: '7435638',
-                        tracking: {
+                        campaign: {
                             campaignId: '83dj3493',
                             advertiserId: '984udn3d',
                             minViewTime: 30
+                        },
+                        params: {
+                            sponsor: 'Ubisoft'
                         },
                         adConfig: {
                             video: {
@@ -144,13 +147,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 modules: [],
                                 data: {},
                             },
@@ -163,13 +167,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 modules: [],
                                 data: {
                                     skip: true,
@@ -190,13 +195,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 ballot: {
                                     prompt: 'Was it ugly?',
                                     choices: [
@@ -231,13 +237,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 ballot: {
                                     prompt: 'How smart was it?',
                                     choices: [
@@ -261,7 +268,7 @@
                                 placementId: '12345',
                                 templateUrl: '//portal.cinema6.com/collateral/minireel/templates/huffpost.html',
                                 sponsored: true,
-                                tracking: {
+                                campaign: {
                                     campaignId: 'abc123',
                                     advertiserId: '123abc',
                                     minViewTime: 15
@@ -272,6 +279,9 @@
                                 links: {
                                     'Facebook': 'my-fb.html',
                                     'Website': 'awesome.com'
+                                },
+                                params: {
+                                    sponsor: 'GameStop'
                                 },
                                 data: {
                                     skip: 6,
@@ -292,13 +302,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {}
                             },
                             {
@@ -310,13 +321,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 ballot: {
                                     prompt: null,
                                     choices: []
@@ -331,13 +343,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     links: [
                                         {
@@ -366,13 +379,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 modules: [],
                                 data: {}
                             },
@@ -384,13 +398,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 modules: [],
                                 data: {
                                     size: '300x250'
@@ -481,13 +496,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     skip: 'anytime',
                                     autoplay: null,
@@ -509,13 +525,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {}
                             });
 
@@ -530,13 +547,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     skip: 'anytime',
                                     autoplay: null,
@@ -562,13 +580,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     autoplay: true,
                                     source: null,
@@ -587,13 +606,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {}
                             });
 
@@ -608,13 +628,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     links: []
                                 }
@@ -654,13 +675,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {}
                             });
                         });
@@ -679,13 +701,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     size: '300x250'
                                 }
@@ -1082,13 +1105,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {}
                             });
                         });
@@ -1105,13 +1129,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     skip: 'anytime',
                                     autoplay: null,
@@ -1133,13 +1158,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     skip: 'anytime',
                                     autoplay: null,
@@ -1168,13 +1194,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     skip: 'never',
                                     autoplay: null,
@@ -1203,7 +1230,7 @@
                                 placementId: '12345',
                                 templateUrl: '//portal.cinema6.com/collateral/minireel/templates/huffpost.html',
                                 sponsored: true,
-                                tracking: {
+                                campaign: {
                                     campaignId: 'abc123',
                                     advertiserId: '123abc',
                                     minViewTime: 15
@@ -1214,6 +1241,9 @@
                                 links: {
                                     'Facebook': 'my-fb.html',
                                     'Website': 'awesome.com'
+                                },
+                                params: {
+                                    sponsor: 'GameStop'
                                 },
                                 data: {
                                     skip: 'delay',
@@ -1238,13 +1268,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: minireel.data.deck[8].data
                             });
 
@@ -1263,13 +1294,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {}
                             });
                         });
@@ -1286,13 +1318,14 @@
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
-                                tracking: {
+                                campaign: {
                                     campaignId: null,
                                     advertiserId: null,
                                     minViewTime: null
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     size: '300x250'
                                 }
@@ -1376,7 +1409,7 @@
                                         mode: 'lightbox-ads',
                                         autoplay: true,
                                         sponsored: false,
-                                        tracking: {},
+                                        campaign: {},
                                         splash: {
                                             source: 'generated',
                                             ratio: '3-2',
@@ -1385,6 +1418,7 @@
                                         collateral: {
                                             splash: null
                                         },
+                                        params: {},
                                         deck: [
                                             (function() {
                                                 var recap = MiniReelService.createCard('recap');

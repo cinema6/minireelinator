@@ -1182,13 +1182,14 @@ function( angular , c6ui , cryptojs ) {
                     placementId: copy(null),
                     templateUrl: copy(null),
                     sponsored: copy(false),
-                    tracking: copy({
+                    campaign: copy({
                         campaignId: null,
                         advertiserId: null,
                         minViewTime: null
                     }),
                     collateral: copy({}),
-                    links: copy({})
+                    links: copy({}),
+                    params: copy({})
                 };
 
                 // videoDataTemplate: this is the base template for all
@@ -1437,8 +1438,9 @@ function( angular , c6ui , cryptojs ) {
                     adConfig: minireel.data.adConfig,
                     sponsored: minireel.data.sponsored || false,
                     links: minireel.data.links || {},
+                    params: minireel.data.params || {},
                     placementId: minireel.data.placementId,
-                    tracking: minireel.data.tracking || {},
+                    campaign: minireel.data.campaign || {},
                     collateral: minireel.data.collateral ||
                         { splash: null },
                     splash: minireel.data.splash ||
@@ -1489,7 +1491,7 @@ function( angular , c6ui , cryptojs ) {
                                 mode: orgSettings.minireelDefaults.mode,
                                 autoplay: orgSettings.minireelDefaults.autoplay,
                                 sponsored: false,
-                                tracking: {},
+                                campaign: {},
                                 splash: {
                                     source: 'generated',
                                     ratio: userSettings.minireelDefaults.splash.ratio,
@@ -1498,6 +1500,7 @@ function( angular , c6ui , cryptojs ) {
                                 collateral: {
                                     splash: null
                                 },
+                                params: {},
                                 deck: [self.createCard('recap')]
                             }
                         });
@@ -1619,9 +1622,10 @@ function( angular , c6ui , cryptojs ) {
                         placementId: copy(null),
                         templateUrl: copy(null),
                         sponsored: copy(false),
-                        tracking: copy(),
+                        campaign: copy(),
                         collateral: copy(),
-                        links: copy()
+                        links: copy(),
+                        params: copy()
                     },
                     video: {
                         id: copy(),
@@ -1646,9 +1650,10 @@ function( angular , c6ui , cryptojs ) {
                         placementId: copy(null),
                         templateUrl: copy(null),
                         sponsored: copy(false),
-                        tracking: copy(),
+                        campaign: copy(),
                         collateral: copy(),
-                        links: copy()
+                        links: copy(),
+                        params: copy()
                     },
                     ad: {
                         id: copy(),
@@ -1665,9 +1670,10 @@ function( angular , c6ui , cryptojs ) {
                         placementId: copy(null),
                         templateUrl: copy(null),
                         sponsored: copy(false),
-                        tracking: copy(),
+                        campaign: copy(),
                         collateral: copy(),
-                        links: copy()
+                        links: copy(),
+                        params: copy()
                     },
                     recap: {
                         id: copy(),
@@ -1682,9 +1688,10 @@ function( angular , c6ui , cryptojs ) {
                         placementId: copy(null),
                         templateUrl: copy(null),
                         sponsored: copy(false),
-                        tracking: copy(),
+                        campaign: copy(),
                         collateral: copy(),
-                        links: copy()
+                        links: copy(),
+                        params: copy()
                     },
                     displayAd: {
                         id: copy(),
@@ -1695,9 +1702,10 @@ function( angular , c6ui , cryptojs ) {
                         placementId: copy(null),
                         templateUrl: copy(null),
                         sponsored: copy(false),
-                        tracking: copy(),
+                        campaign: copy(),
                         collateral: copy(),
-                        links: copy()
+                        links: copy(),
+                        params: copy()
                     }
                 };
 
