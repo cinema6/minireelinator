@@ -114,6 +114,11 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                                 required: true
                             },
                             {
+                                name: 'Cards',
+                                sref: 'MR:SponsorMiniReel.Cards',
+                                required: false
+                            },
+                            {
                                 name: 'End-Cap',
                                 sref: 'MR:SponsorMiniReel.Endcap',
                                 required: false
@@ -132,7 +137,7 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                     it('should be a single tab for sponsored cards', function() {
                         expect(SponsorMiniReelCtrl.tabs).toEqual([
                             {
-                                name: 'Sponsored Cards',
+                                name: 'Cards',
                                 sref: 'MR:SponsorMiniReel.Cards',
                                 required: false
                             }
@@ -233,12 +238,6 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                     expect(proxy.data.sponsored).toBe(true);
                 });
 
-                it('should disable all sponsored cards', function() {
-                    proxy.data.deck.forEach(function(card) {
-                        expect(card.disabled).toBe(!!card.sponsored, card);
-                    });
-                });
-
                 it('should go to the first tab', function() {
                     expect(c6State.goTo).toHaveBeenCalledWith(SponsorMiniReelCtrl.tabs[0].sref, null, null, true);
                 });
@@ -282,13 +281,6 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                     expect(proxy.data.sponsored).toBe(false);
                 });
 
-                it('should enable all sponsored cards', function() {
-                    proxy.data.deck.slice(0, proxy.data.deck.length - 1).forEach(function(card) {
-                        expect(card.disabled).toBe(false);
-                    });
-                    expect(proxy.data.deck[4].disabled).toBe(true);
-                });
-
                 it('should go to the first tab', function() {
                     expect(c6State.goTo).toHaveBeenCalledWith(SponsorMiniReelCtrl.tabs[0].sref, null, null, true);
                 });
@@ -298,26 +290,7 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
         describe('$events', function() {
             describe('$destroy', function() {
                 beforeEach(function() {
-                    spyOn(EditorService, 'close').and.callThrough();
-
                     $scope.$broadcast('$destroy');
-                });
-
-                it('should close the MiniReel', function() {
-                    expect(EditorService.close).toHaveBeenCalled();
-                });
-
-                describe('if somebody else has opened a MiniReel', function() {
-                    beforeEach(function() {
-                        EditorService.close.calls.reset();
-                        EditorService.open(minireel);
-
-                        $scope.$broadcast('$destroy');
-                    });
-
-                    it('should not close the MiniReel', function() {
-                        expect(EditorService.close).not.toHaveBeenCalled();
-                    });
                 });
             });
         });

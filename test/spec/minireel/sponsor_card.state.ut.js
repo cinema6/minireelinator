@@ -61,10 +61,6 @@ define(['app','minireel/services'], function(appModule, servicesModule) {
                 });
             });
 
-            it('should close the EditorService', function() {
-                expect(EditorService.close).toHaveBeenCalled();
-            });
-
             it('should return a sponsored card', function() {
                 expect(MiniReelService.createCard).toHaveBeenCalledWith('video');
                 expect(success).toHaveBeenCalledWith(card);
@@ -90,7 +86,7 @@ define(['app','minireel/services'], function(appModule, servicesModule) {
                             },
                             deck: [
                                 MiniReelService.createCard('text'),
-                                card,
+                                MiniReelService.createCard('video'),
                                 MiniReelService.createCard('video'),
                                 MiniReelService.createCard('recap')
                             ]
@@ -99,6 +95,7 @@ define(['app','minireel/services'], function(appModule, servicesModule) {
                     minireel.data.deck = minireel.data.deck.map(function(card) {
                         return MiniReelService.convertCard(card, minireel);
                     });
+                    card = minireel.data.deck[1];
 
                     SettingsService.register('MR::user', {
                         minireelDefaults: {
@@ -123,6 +120,10 @@ define(['app','minireel/services'], function(appModule, servicesModule) {
                     });
                 });
 
+                it('should close the EditorService', function() {
+                    expect(EditorService.close).toHaveBeenCalled();
+                });
+
                 it('should find the minireel', function() {
                     expect(cinema6.db.find).toHaveBeenCalledWith('experience', 'e-c79d5512fb7739');
                 });
@@ -133,6 +134,70 @@ define(['app','minireel/services'], function(appModule, servicesModule) {
 
                 it('should return the card', function() {
                     expect(success).toHaveBeenCalledWith(EditorService.state.minireel.data.deck[1]);
+                });
+
+                describe('if there is a MiniReel open', function() {
+                    beforeEach(function() {
+                        EditorService.open(minireel);
+                        card = EditorService.state.minireel.data.deck[1];
+
+                        success.calls.reset();
+                        EditorService.open.calls.reset();
+                        EditorService.close.calls.reset();
+                        cinema6.db.find.calls.reset();
+                    });
+
+                    describe('with the same ID', function() {
+                        beforeEach(function() {
+                            $location.search.and.returnValue({
+                                minireel: minireel.id
+                            });
+
+                            $rootScope.$apply(function() {
+                                sponsorCard.model({ cardId: card.id }).then(success);
+                            });
+                        });
+
+                        it('should not close the EditorService', function() {
+                            expect(EditorService.close).not.toHaveBeenCalled();
+                        });
+
+                        it('should not open a new MiniReel', function() {
+                            expect(EditorService.open).not.toHaveBeenCalled();
+                        });
+
+                        it('should resolve to the card', function() {
+                            expect(success.calls.mostRecent().args[0]).toBe(card);
+                        });
+                    });
+
+                    describe('with a different ID', function() {
+                        beforeEach(function() {
+                            $location.search.and.returnValue({
+                                minireel: 'e-83c1ff30c7a113'
+                            });
+
+                            $rootScope.$apply(function() {
+                                sponsorCard.model({ cardId: card.id }).then(success);
+                            });
+                        });
+
+                        it('should close the EditorService', function() {
+                            expect(EditorService.close).toHaveBeenCalled();
+                        });
+
+                        it('should find the minireel', function() {
+                            expect(cinema6.db.find).toHaveBeenCalledWith('experience', 'e-83c1ff30c7a113');
+                        });
+
+                        it('should open the minireel', function() {
+                            expect(EditorService.open).toHaveBeenCalledWith(minireel);
+                        });
+
+                        it('should return the card', function() {
+                            expect(success).toHaveBeenCalledWith(EditorService.state.minireel.data.deck[1]);
+                        });
+                    });
                 });
             });
         });

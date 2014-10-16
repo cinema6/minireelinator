@@ -87,6 +87,36 @@ define(['app'], function(appModule) {
             it('should open the minireel', function() {
                 expect(EditorService.open).toHaveBeenCalledWith(minireel);
             });
+
+            describe('if a minireel is already open', function() {
+                beforeEach(function() {
+                    EditorService.open(minireel);
+
+                    EditorService.open.calls.reset();
+                });
+
+                describe('if the model has the same id', function() {
+                    beforeEach(function() {
+                        sponsorMiniReel.afterModel(minireel);
+                    });
+
+                    it('should not open the MiniReel again', function() {
+                        expect(EditorService.open).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe('if the model has a different id', function() {
+                    beforeEach(function() {
+                        minireel.id = 'e-35858fc1c9fa64';
+
+                        sponsorMiniReel.afterModel(minireel);
+                    });
+
+                    it('should open the MiniReel', function() {
+                        expect(EditorService.open).toHaveBeenCalledWith(minireel);
+                    });
+                });
+            });
         });
     });
 });

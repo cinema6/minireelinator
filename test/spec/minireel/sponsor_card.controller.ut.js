@@ -28,6 +28,7 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
 
             card = {
                 id: 'rc-779983f6e2e231',
+                sponsored: true,
                 data: {}
             };
 
@@ -83,6 +84,29 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
             });
 
             describe('tabs', function() {
+                describe('if the card is not sponsored', function() {
+                    beforeEach(function() {
+                        card.sponsored = false;
+
+                        SponsorCardCtrl.initWithModel(card);
+                    });
+
+                    it('should be an array of fewer tabs', function() {
+                        expect(SponsorCardCtrl.tabs).toEqual([
+                            {
+                                name: 'Video Content',
+                                sref: 'MR:SponsorCard.Video',
+                                required: true
+                            },
+                            {
+                                name: 'Branding',
+                                sref: 'MR:SponsorCard.Branding',
+                                required: true
+                            }
+                        ]);
+                    });
+                });
+
                 describe('if there is no MiniReel', function() {
                     beforeEach(function() {
                         Object.defineProperty(EditorService.state, 'minireel', {
@@ -365,8 +389,19 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
                 });
 
                 describe('if there is a minireel', function() {
+                    var minireel;
+
                     beforeEach(function() {
-                        SponsorCardCtrl.minireel = {};
+                        SponsorCardCtrl.minireel = {
+                            id: 'e-d9166c305524e3'
+                        };
+                        minireel = {
+                            id: 'e-d9166c305524e3',
+                            data: {
+                                deck: []
+                            }
+                        };
+                        spyOn(cinema6.db, 'find').and.returnValue($q.when(minireel));
                         EditorService.sync.and.returnValue($q.when(SponsorCardCtrl.minireel));
 
                         $scope.$apply(function() {
@@ -374,12 +409,12 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
                         });
                     });
 
-                    it('should sync the EditorService', function() {
-                        expect(EditorService.sync).toHaveBeenCalled();
+                    it('should get the minireel', function() {
+                        expect(cinema6.db.find).toHaveBeenCalledWith('experience', SponsorCardCtrl.minireel.id);
                     });
 
-                    it('should close the modal', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith(sponsorCard.cParent.cName);
+                    it('should close the modal and go back to the modal for the MiniReel', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:SponsorMiniReel', [minireel]);
                     });
                 });
             });
@@ -396,10 +431,6 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
 
                 it('should clear out the minrieel param', function() {
                     expect($location.search).toHaveBeenCalledWith('minireel', null);
-                });
-
-                it('should close the editor service', function() {
-                    expect(EditorService.close).toHaveBeenCalled();
                 });
             });
         });
