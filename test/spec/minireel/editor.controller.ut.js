@@ -464,7 +464,7 @@
                     });
                 });
 
-                describe('canDeleteCard(card)', function() {
+                describe('canEditCard(card)', function() {
                     var card;
 
                     ['video', 'videoBallot'].forEach(function(type) {
@@ -474,45 +474,31 @@
                             });
 
                             it('should be true', function() {
-                                expect(EditorCtrl.canDeleteCard(card)).toBe(true);
+                                expect(EditorCtrl.canEditCard(card)).toBe(true);
                             });
                         });
                     });
 
-                    ['recap'].forEach(function(type) {
+                    ['recap', 'displayAd'].forEach(function(type) {
                         describe(' for a ' + type + ' card', function() {
                             beforeEach(function() {
                                 card = MiniReelService.createCard(type);
                             });
 
                             it('should be false', function() {
-                                expect(EditorCtrl.canDeleteCard(card)).toBe(false);
+                                expect(EditorCtrl.canEditCard(card)).toBe(false);
                             });
                         });
                     });
 
-                    describe('for an ad card', function() {
+                    describe('for a sponsored card', function() {
                         beforeEach(function() {
-                            card = MiniReelService.createCard('ad');
-
-                            EditorCtrl.model.data.deck.unshift(card);
+                            card = MiniReelService.createCard('video');
+                            card.sponsored = true;
                         });
 
-                        it('should be true if the minAdCount is undefined', function() {
-                            PortalCtrl.model.org = {};
-
-                            expect(EditorCtrl.canDeleteCard(card)).toBe(true);
-                        });
-
-                        it('should be true if the number of ad cards in the deck is greater than the org\'s min ad count', function() {
-                            PortalCtrl.model.org = {
-                                minAdCount: 2
-                            };
-
-                            expect(EditorCtrl.canDeleteCard(card)).toBe(false);
-
-                            EditorCtrl.model.data.deck.unshift(MiniReelService.createCard('ad'));
-                            expect(EditorCtrl.canDeleteCard(card)).toBe(true);
+                        it('should be false', function() {
+                            expect(EditorCtrl.canEditCard(card)).toBe(false);
                         });
                     });
                 });

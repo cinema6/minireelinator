@@ -1224,7 +1224,7 @@
                                 type: 'video',
                                 title: 'The Dumbest Turtle',
                                 note: 'Blah blah blah',
-                                label: 'Video',
+                                label: 'Sponsored Video',
                                 ad: false,
                                 view: 'video',
                                 placementId: '12345',
