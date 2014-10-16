@@ -351,7 +351,6 @@ VideoCardController           ) {
                                           VideoErrorService ) {
             var self = this,
                 MiniReelCtrl = $scope.MiniReelCtrl,
-                PortalCtrl = $scope.PortalCtrl,
                 cardLimits = {
                     copy: Infinity
                 },
@@ -511,22 +510,12 @@ VideoCardController           ) {
                     null;
             };
 
-            this.canDeleteCard = function(card) {
+            this.canEditCard = function(card) {
                 switch (card.type) {
-                case 'ad':
-                    return (function() {
-                        var deck = this.model.data.deck,
-                            totalAdCards = deck.filter(function(card) {
-                                return card.type === 'ad';
-                            }).length,
-                            minAdCount = (PortalCtrl.model.org.minAdCount || 0);
-
-                        return totalAdCards > minAdCount;
-                    }.call(this));
                 case 'recap':
                     return false;
                 default:
-                    return true;
+                    return !card.sponsored;
                 }
             };
 
@@ -1107,15 +1096,9 @@ VideoCardController           ) {
                     this.afterModel = function(model) {
                         var types = ['video', 'videoBallot', 'text'];
 
-                        if (!model) {
+                        if (!model || types.indexOf(model.type) < 0 || model.sponsored) {
                             c6State.goTo('MR:Editor', null, {});
-                            return $q.reject('Card not found.');
-                        }
-
-                        if (types.indexOf(model.type) < 0) {
-                            c6State.goTo('MR:Editor');
-
-                            return $q.reject('Cannot edit this card');
+                            return $q.reject('Cannot edit this card.');
                         }
                     };
                 }])

@@ -6,6 +6,7 @@
             var EditCardState,
                 $rootScope,
                 $injector,
+                MiniReelService,
                 EditorService,
                 c6State,
                 $q;
@@ -44,6 +45,7 @@
                     $injector = _$injector_;
                     $rootScope = $injector.get('$rootScope');
                     $q = $injector.get('$q');
+                    MiniReelService = $injector.get('MiniReelService');
                     EditorService = $injector.get('EditorService');
                     Object.defineProperty(EditorService.state, 'minireel', {
                         value: minireel
@@ -107,7 +109,7 @@
                         EditCardState.afterModel(badModel).catch(fail);
                     });
                     expect(fail).toHaveBeenCalled();
-                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor');
+                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', null, {});
                 });
 
                 describe('if the model is falsy', function() {
@@ -122,6 +124,28 @@
 
                     it('should reject the promise', function() {
                         expect(failure).toHaveBeenCalledWith(jasmine.any(String));
+                    });
+
+                    it('should redirect back to the editor', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', null, {});
+                    });
+                });
+
+                describe('if the card is sponsored', function() {
+                    var failure;
+
+                    beforeEach(function() {
+                        failure = jasmine.createSpy('failure()');
+                        badModel = MiniReelService.createCard('video');
+                        badModel.sponsored = true;
+
+                        $rootScope.$apply(function() {
+                            EditCardState.afterModel(badModel).catch(failure);
+                        });
+                    });
+
+                    it('should reject the promise', function() {
+                        expect(failure).toHaveBeenCalled();
                     });
 
                     it('should redirect back to the editor', function() {

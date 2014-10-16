@@ -1,4 +1,6 @@
-<div class="card__statusIndicator" ng-class="{'card__statusIndicator--error': !!EditorCtrl.errorForCard($this)}">
+<div class="card__statusIndicator"
+    ng-class="{'card__statusIndicator--error': !!EditorCtrl.errorForCard($this)}"
+    ng-if="EditorCtrl.canEditCard($this)">
     <span class="btnFill btnFill--primary btn__edit">
         <span class="btn__label fab fa-pencil-square-o"> Edit</span>
     </span>
