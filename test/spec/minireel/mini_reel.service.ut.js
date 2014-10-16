@@ -103,7 +103,8 @@
                     data: {
                         title: 'My MiniReel',
                         mode: 'lightbox',
-                        autoplay: true,
+                        autoplay: false,
+                        autoadvance: false,
                         election: 'el-76506623bf22d9',
                         branding: 'elitedaily',
                         sponsored: true,
@@ -286,6 +287,7 @@
                                 data: {
                                     skip: 6,
                                     autoplay: false,
+                                    autoadvance: true,
                                     videoid: 'fn4378r4d',
                                     start: 0,
                                     end: 40,
@@ -507,6 +509,7 @@
                                 data: {
                                     skip: 'anytime',
                                     autoplay: null,
+                                    autoadvance: null,
                                     service: null,
                                     videoid: null,
                                     start: null,
@@ -558,6 +561,7 @@
                                 data: {
                                     skip: 'anytime',
                                     autoplay: null,
+                                    autoadvance: null,
                                     service: null,
                                     videoid: null,
                                     start: null,
@@ -1082,7 +1086,7 @@
                         });
 
                         it('should copy the autoplay settings of the minireel', function() {
-                            expect(result.data.autoplay).toBe(true);
+                            expect(result.data.autoplay).toBe(false);
                         });
 
                         it('should copy the title of the minireel', function() {
@@ -1140,6 +1144,7 @@
                                 data: {
                                     skip: 'anytime',
                                     autoplay: null,
+                                    autoadvance: null,
                                     service: 'youtube',
                                     videoid: '47tfg8734',
                                     start: 10,
@@ -1169,6 +1174,7 @@
                                 data: {
                                     skip: 'anytime',
                                     autoplay: null,
+                                    autoadvance: null,
                                     service: 'vimeo',
                                     videoid: '48hfrei49',
                                     start: null,
@@ -1205,6 +1211,7 @@
                                 data: {
                                     skip: 'never',
                                     autoplay: null,
+                                    autoadvance: null,
                                     service: 'dailymotion',
                                     videoid: 'vfu85f5',
                                     start: undefined,
@@ -1248,6 +1255,7 @@
                                 data: {
                                     skip: 'delay',
                                     autoplay: false,
+                                    autoadvance: true,
                                     service: 'youtube',
                                     videoid: 'fn4378r4d',
                                     start: 0,
@@ -1408,6 +1416,7 @@
                                         title: null,
                                         mode: 'lightbox-ads',
                                         autoplay: true,
+                                        autoadvance: true,
                                         sponsored: false,
                                         campaign: {},
                                         splash: {
