@@ -763,7 +763,23 @@
                 });
 
                 describe('previewMode(card)', function() {
-                    var session;
+                    var session, broadcastedExperience;
+
+                    function testBroadcastExperience(experience, adConfig) {
+                        angular.forEach(cModel, function(val, key) {
+                            if (key !== 'data') {
+                                expect(experience[key]).toEqual(val);
+                            } else {
+                                angular.forEach(experience[key], function(v, k) {
+                                    if (k !== 'adConfig') {
+                                        expect(experience[key][k]).toEqual(v);
+                                    } else {
+                                        expect(experience[key].adConfig).toEqual(adConfig);
+                                    }
+                                });
+                            }
+                        });
+                    }
 
                     beforeEach(function() {
                         session = {
@@ -772,6 +788,17 @@
 
                         spyOn($scope, '$broadcast');
                         spyOn(cinema6, 'getSession').and.returnValue($q.when(session));
+
+                        cModel.user = {
+                            org: {
+                                adConfig: {
+                                    firstPlacement: 2,
+                                    frequency: 0,
+                                    skip: true,
+                                    waterfall: 'cinema6'
+                                }
+                            }
+                        };
                     });
                     it('should set preview mode to true', function() {
                         EditorCtrl.previewMode();
@@ -781,8 +808,28 @@
                     describe('without a card', function() {
                         it('should $broadcast the experience without a card', function() {
                             EditorCtrl.previewMode();
+
+                            broadcastedExperience = $scope.$broadcast.calls.argsFor(0)[1];
+                            testBroadcastExperience(broadcastedExperience, cModel.user.org.adConfig);
+
                             expect($scope.$broadcast.calls.argsFor(0)[0]).toBe('mrPreview:updateExperience');
-                            expect($scope.$broadcast.calls.argsFor(0)[1]).toBe(cModel);
+                            expect($scope.$broadcast.calls.argsFor(0)[2]).toBe(undefined);
+                        });
+
+                        it('should send the minireel\'s adConfig if defined', function() {
+                            cModel.data.adConfig = {
+                                firstPlacement: 5,
+                                frequency: 2,
+                                skip: false,
+                                waterfall: 'cinema6'
+                            };
+
+                            EditorCtrl.previewMode();
+
+                            broadcastedExperience = $scope.$broadcast.calls.argsFor(0)[1];
+                            testBroadcastExperience(broadcastedExperience, cModel.data.adConfig);
+
+                            expect($scope.$broadcast.calls.argsFor(0)[0]).toBe('mrPreview:updateExperience');
                             expect($scope.$broadcast.calls.argsFor(0)[2]).toBe(undefined);
                         });
                     });
@@ -791,8 +838,30 @@
                         it('should $broadcast the experience with a card', function() {
                             var card = {};
                             EditorCtrl.previewMode(card);
+
+                            broadcastedExperience = $scope.$broadcast.calls.argsFor(0)[1];
+                            testBroadcastExperience(broadcastedExperience, cModel.user.org.adConfig);
+
                             expect($scope.$broadcast.calls.argsFor(0)[0]).toBe('mrPreview:updateExperience');
-                            expect($scope.$broadcast.calls.argsFor(0)[1]).toBe(cModel);
+                            expect($scope.$broadcast.calls.argsFor(0)[2]).toBe(card);
+                        });
+
+                        it('should send the minireel\'s adConfig if defined', function() {
+                            var card = {};
+
+                            cModel.data.adConfig = {
+                                firstPlacement: 5,
+                                frequency: 2,
+                                skip: false,
+                                waterfall: 'cinema6'
+                            };
+
+                            EditorCtrl.previewMode(card);
+
+                            broadcastedExperience = $scope.$broadcast.calls.argsFor(0)[1];
+                            testBroadcastExperience(broadcastedExperience, cModel.data.adConfig);
+
+                            expect($scope.$broadcast.calls.argsFor(0)[0]).toBe('mrPreview:updateExperience');
                             expect($scope.$broadcast.calls.argsFor(0)[2]).toBe(card);
                         });
                     });
