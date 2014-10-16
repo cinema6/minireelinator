@@ -116,6 +116,9 @@
                             advertiserId: '984udn3d',
                             minViewTime: 30
                         },
+                        params: {
+                            sponsor: 'Ubisoft'
+                        },
                         adConfig: {
                             video: {
                                 firstPlacement: 3,
@@ -151,6 +154,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 modules: [],
                                 data: {},
                             },
@@ -170,6 +174,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 modules: [],
                                 data: {
                                     skip: true,
@@ -197,6 +202,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 ballot: {
                                     prompt: 'Was it ugly?',
                                     choices: [
@@ -238,6 +244,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 ballot: {
                                     prompt: 'How smart was it?',
                                     choices: [
@@ -273,6 +280,9 @@
                                     'Facebook': 'my-fb.html',
                                     'Website': 'awesome.com'
                                 },
+                                params: {
+                                    sponsor: 'GameStop'
+                                },
                                 data: {
                                     skip: 6,
                                     autoplay: false,
@@ -299,6 +309,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {}
                             },
                             {
@@ -317,6 +328,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 ballot: {
                                     prompt: null,
                                     choices: []
@@ -338,6 +350,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     links: [
                                         {
@@ -373,6 +386,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 modules: [],
                                 data: {}
                             },
@@ -391,6 +405,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 modules: [],
                                 data: {
                                     size: '300x250'
@@ -488,6 +503,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     skip: 'anytime',
                                     autoplay: null,
@@ -516,6 +532,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {}
                             });
 
@@ -537,6 +554,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     skip: 'anytime',
                                     autoplay: null,
@@ -569,6 +587,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     autoplay: true,
                                     source: null,
@@ -594,6 +613,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {}
                             });
 
@@ -615,6 +635,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     links: []
                                 }
@@ -661,6 +682,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {}
                             });
                         });
@@ -686,6 +708,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     size: '300x250'
                                 }
@@ -1089,6 +1112,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {}
                             });
                         });
@@ -1112,6 +1136,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     skip: 'anytime',
                                     autoplay: null,
@@ -1140,6 +1165,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     skip: 'anytime',
                                     autoplay: null,
@@ -1175,6 +1201,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     skip: 'never',
                                     autoplay: null,
@@ -1215,6 +1242,9 @@
                                     'Facebook': 'my-fb.html',
                                     'Website': 'awesome.com'
                                 },
+                                params: {
+                                    sponsor: 'GameStop'
+                                },
                                 data: {
                                     skip: 'delay',
                                     autoplay: false,
@@ -1245,6 +1275,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: minireel.data.deck[8].data
                             });
 
@@ -1270,6 +1301,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {}
                             });
                         });
@@ -1293,6 +1325,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                params: {},
                                 data: {
                                     size: '300x250'
                                 }
@@ -1385,6 +1418,7 @@
                                         collateral: {
                                             splash: null
                                         },
+                                        params: {},
                                         deck: [
                                             (function() {
                                                 var recap = MiniReelService.createCard('recap');
