@@ -1141,28 +1141,35 @@ function( angular , c6ui , cryptojs ) {
                         }
                     },
                     note: copy(null),
-                    label: function() {
-                        switch (this.type) {
-                        case 'video':
-                            return 'Video';
-                        case 'videoBallot':
-                            return 'Video + Questionnaire';
-                        case 'ad':
-                            return 'Advertisement';
-                        case 'links':
-                            return 'Suggested Links';
-                        case 'intro':
-                            return 'Intro';
-                        case 'recap':
-                            return 'Recap';
-                        case 'text':
-                            return 'Text';
-                        case 'displayAd':
-                            return 'Display Ad';
+                    label: function(card) {
+                        return [
+                            card.sponsored ? 'Sponsored' : null,
+                            (function() {
+                                switch (this.type) {
+                                case 'video':
+                                    return 'Video';
+                                case 'videoBallot':
+                                    return 'Video + Questionnaire';
+                                case 'ad':
+                                    return 'Advertisement';
+                                case 'links':
+                                    return 'Suggested Links';
+                                case 'intro':
+                                    return 'Intro';
+                                case 'recap':
+                                    return 'Recap';
+                                case 'text':
+                                    return 'Text';
+                                case 'displayAd':
+                                    return 'Display Ad';
 
-                        default:
-                            return null;
-                        }
+                                default:
+                                    return null;
+                                }
+                            }.call(this))
+                        ].filter(function(word) {
+                            return !!word;
+                        }).join(' ') || null;
                     },
                     view: function() {
                         switch (this.type) {
