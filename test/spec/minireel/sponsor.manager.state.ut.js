@@ -7,6 +7,7 @@ define(['app'], function(appModule) {
             $location,
             $q,
             scopePromise,
+            EditorService,
             miniReel,
             sponsorManager;
 
@@ -20,6 +21,7 @@ define(['app'], function(appModule) {
                 $location = $injector.get('$location');
                 $q = $injector.get('$q');
                 scopePromise = $injector.get('scopePromise');
+                EditorService = $injector.get('EditorService');
             });
 
             spyOn($location, 'search').and.returnValue({});
@@ -90,6 +92,18 @@ define(['app'], function(appModule) {
 
             it('should return the fulfillment promise for a list of minireels', function() {
                 expect(result).toBe(scopedPromise.ensureResolution());
+            });
+        });
+
+        describe('enter()', function() {
+            beforeEach(function() {
+                spyOn(EditorService, 'close').and.callThrough();
+
+                sponsorManager.enter();
+            });
+
+            it('should close the MiniReel', function() {
+                expect(EditorService.close).toHaveBeenCalled();
             });
         });
     });

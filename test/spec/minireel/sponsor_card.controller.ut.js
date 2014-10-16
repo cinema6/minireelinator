@@ -409,10 +409,6 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
                         });
                     });
 
-                    it('should sync the EditorService', function() {
-                        expect(EditorService.sync).toHaveBeenCalled();
-                    });
-
                     it('should get the minireel', function() {
                         expect(cinema6.db.find).toHaveBeenCalledWith('experience', SponsorCardCtrl.minireel.id);
                     });
@@ -435,24 +431,6 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
 
                 it('should clear out the minrieel param', function() {
                     expect($location.search).toHaveBeenCalledWith('minireel', null);
-                });
-
-                it('should close the editor service', function() {
-                    expect(EditorService.close).toHaveBeenCalled();
-                });
-
-                describe('if something else has been opened in the EditorService', function() {
-                    beforeEach(function() {
-                        Object.defineProperty(EditorService.state, 'minireel', {
-                            value: {}
-                        });
-                        EditorService.close.calls.reset();
-                        $scope.$broadcast('$destroy');
-                    });
-
-                    it('should not close the editor service', function() {
-                        expect(EditorService.close).not.toHaveBeenCalled();
-                    });
                 });
             });
         });
