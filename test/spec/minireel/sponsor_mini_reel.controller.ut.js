@@ -238,12 +238,6 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                     expect(proxy.data.sponsored).toBe(true);
                 });
 
-                it('should disable all sponsored cards', function() {
-                    proxy.data.deck.forEach(function(card) {
-                        expect(card.disabled).toBe(!!card.sponsored, card);
-                    });
-                });
-
                 it('should go to the first tab', function() {
                     expect(c6State.goTo).toHaveBeenCalledWith(SponsorMiniReelCtrl.tabs[0].sref, null, null, true);
                 });
@@ -285,13 +279,6 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
 
                 it('should set the sponsored flag to false', function() {
                     expect(proxy.data.sponsored).toBe(false);
-                });
-
-                it('should enable all sponsored cards', function() {
-                    proxy.data.deck.slice(0, proxy.data.deck.length - 1).forEach(function(card) {
-                        expect(card.disabled).toBe(false);
-                    });
-                    expect(proxy.data.deck[4].disabled).toBe(true);
                 });
 
                 it('should go to the first tab', function() {

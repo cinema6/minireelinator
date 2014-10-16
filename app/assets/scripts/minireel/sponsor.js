@@ -140,19 +140,11 @@ WizardController           , VideoCardController          , LinksController     
             this.enableSponsorship = function() {
                 this.model.data.sponsored = true;
 
-                this.model.data.deck.forEach(function(card) {
-                    card.disabled = !!card.sponsored;
-                });
-
                 return redirectToFirstTab();
             };
 
             this.disableSponsorship = function() {
                 this.model.data.sponsored = false;
-
-                this.model.data.deck.forEach(function(card) {
-                    card.disabled = card.sponsored ? false : card.disabled;
-                });
 
                 return redirectToFirstTab();
             };
