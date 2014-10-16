@@ -479,7 +479,7 @@
                         });
                     });
 
-                    ['recap'].forEach(function(type) {
+                    ['recap', 'displayAd'].forEach(function(type) {
                         describe(' for a ' + type + ' card', function() {
                             beforeEach(function() {
                                 card = MiniReelService.createCard(type);

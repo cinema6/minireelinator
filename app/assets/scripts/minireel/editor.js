@@ -513,6 +513,7 @@ VideoCardController           ) {
             this.canEditCard = function(card) {
                 switch (card.type) {
                 case 'recap':
+                case 'displayAd':
                     return false;
                 default:
                     return !card.sponsored;
