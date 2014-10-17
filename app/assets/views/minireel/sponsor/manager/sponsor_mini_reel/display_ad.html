@@ -1,0 +1,32 @@
+<div class="modalBody__group modalBody__group--sideTabs mrAdManager__videoServer" c6-alias="SponsorMiniReelDisplayAdCtrl.model[SponsorMiniReelDisplayAdCtrl.model.length - 2] as penultimate">
+    <form>
+        <h1 class="forms__name--title">Display Ad Card</h1>
+        <p class="forms__introText">Would you like a Display Ad Card to be inserted immediately prior to the end-cap position?</p>
+
+        <label class="checkbox--inline">
+            <input id="includeDisplayAd" type="checkbox" ng-model="SponsorMiniReelDisplayAdCtrl.adInserted" class="checkbox__input">
+            <span class="btn__label faa">&nbsp;</span>
+        </label>
+        <label for="includeDisplayAd"><strong>Yes</strong>, include a Display Ad Card</label>
+
+        <div ng-if="SponsorMiniReelDisplayAdCtrl.adInserted">
+            <label class="forms__pair forms__pair--spacer clearfix">
+                <span class="forms__name">
+                    Title <strong class="typo--danger">*</strong>
+                </span>
+                <span class="forms__inputHolder">
+                    <input type="text" class="forms__textField forms__textField--block" ng-model="penultimate.title">
+                </span>
+            </label>
+
+            <label class="forms__pair forms__pair--spacer clearfix">
+                <span class="forms__name">
+                    Display ID <strong class="typo--danger">*</strong>
+                </span>
+                <span class="forms__inputHolder">
+                    <input type="text" class="forms__textField forms__textField--block" ng-model="penultimate.placementId">
+                </span>
+            </label>
+        </div>
+    </form>
+</div>

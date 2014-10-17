@@ -1,12 +1,12 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    describe('MR:SponsorMiniReel.Endcap state', function() {
+    describe('MR:SponsorMiniReel.DisplayAd state', function() {
         var c6State,
             SettingsService,
             EditorService,
             sponsorMiniReel,
-            sponsorMiniReelEndcap;
+            sponsorMiniReelDisplayAd;
 
         var minireel;
 
@@ -54,22 +54,22 @@ define(['app'], function(appModule) {
             };
             minireel = EditorService.open(sponsorMiniReel.cModel);
 
-            sponsorMiniReelEndcap = c6State.get('MR:SponsorMiniReel.Endcap');
+            sponsorMiniReelDisplayAd = c6State.get('MR:SponsorMiniReel.DisplayAd');
         });
 
         it('should exist', function() {
-            expect(sponsorMiniReelEndcap).toEqual(jasmine.any(Object));
+            expect(sponsorMiniReelDisplayAd).toEqual(jasmine.any(Object));
         });
 
         describe('model()', function() {
             var result;
 
             beforeEach(function() {
-                result = sponsorMiniReelEndcap.model();
+                result = sponsorMiniReelDisplayAd.model();
             });
 
-            it('should be the last card in the minireel', function() {
-                expect(result).toBe(minireel.data.deck[minireel.data.deck.length - 1]);
+            it('should be the deck', function() {
+                expect(result).toBe(minireel.data.deck);
             });
         });
     });

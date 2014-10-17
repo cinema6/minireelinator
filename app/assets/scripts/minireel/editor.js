@@ -461,6 +461,12 @@ VideoCardController           ) {
                     get: function() {
                         return MiniReelService.previewUrlOf(this.model, '/#/preview/minireel');
                     }
+                },
+                lastEditableIndex: {
+                    get: function() {
+                        return this.model.data.deck.map(this.canEditCard)
+                            .lastIndexOf(true);
+                    }
                 }
             });
 

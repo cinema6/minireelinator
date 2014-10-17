@@ -127,8 +127,8 @@ WizardController           , VideoCardController          , LinksController     
                             required: false
                         },
                         {
-                            name: 'End-Cap',
-                            sref: 'MR:SponsorMiniReel.Endcap',
+                            name: 'Display Ad Card',
+                            sref: 'MR:SponsorMiniReel.DisplayAd',
                             required: false
                         }
                     ] :
@@ -221,29 +221,34 @@ WizardController           , VideoCardController          , LinksController     
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:SponsorMiniReel.Endcap', ['EditorService',
-            function                                           ( EditorService ) {
-                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_mini_reel/endcap.html';
-                this.controller = 'SponsorMiniReelEndcapController';
-                this.controllerAs = 'SponsorMiniReelEndcapCtrl';
+            c6StateProvider.state('MR:SponsorMiniReel.DisplayAd', ['EditorService',
+            function                                              ( EditorService ) {
+                this.templateUrl =
+                    'views/minireel/sponsor/manager/sponsor_mini_reel/display_ad.html';
+                this.controller = 'SponsorMiniReelDisplayAdController';
+                this.controllerAs = 'SponsorMiniReelDisplayAdCtrl';
 
                 this.model = function() {
-                    var deck = EditorService.state.minireel.data.deck;
-
-                    return deck[deck.length - 1];
+                    return EditorService.state.minireel.data.deck;
                 };
             }]);
         }])
 
-        .controller('SponsorMiniReelEndcapController', ['MiniReelService',
-        function                                       ( MiniReelService ) {
+        .controller('SponsorMiniReelDisplayAdController', ['MiniReelService',
+        function                                          ( MiniReelService ) {
             Object.defineProperties(this, {
-                cardType: {
+                adInserted: {
                     get: function() {
-                        return this.model.type;
+                        return this.model[this.model.length - 2].type === 'displayAd';
                     },
-                    set: function(type) {
-                        return MiniReelService.setCardType(this.model, type);
+                    set: function(bool) {
+                        if (this.adInserted === bool) { return; }
+
+                        if (bool) {
+                            this.model.splice(-1, 0, MiniReelService.createCard('displayAd'));
+                        } else {
+                            this.model.splice(-1, 1);
+                        }
                     }
                 }
             });
