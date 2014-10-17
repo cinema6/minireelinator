@@ -68,8 +68,8 @@ define(['app'], function(appModule) {
                 result = sponsorMiniReelDisplayAd.model();
             });
 
-            it('should be the last card in the minireel', function() {
-                expect(result).toBe(minireel.data.deck[minireel.data.deck.length - 1]);
+            it('should be the deck', function() {
+                expect(result).toBe(minireel.data.deck);
             });
         });
     });

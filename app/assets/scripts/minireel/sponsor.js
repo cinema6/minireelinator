@@ -229,9 +229,7 @@ WizardController           , VideoCardController          , LinksController     
                 this.controllerAs = 'SponsorMiniReelDisplayAdCtrl';
 
                 this.model = function() {
-                    var deck = EditorService.state.minireel.data.deck;
-
-                    return deck[deck.length - 1];
+                    return EditorService.state.minireel.data.deck;
                 };
             }]);
         }])
@@ -239,12 +237,18 @@ WizardController           , VideoCardController          , LinksController     
         .controller('SponsorMiniReelDisplayAdController', ['MiniReelService',
         function                                          ( MiniReelService ) {
             Object.defineProperties(this, {
-                cardType: {
+                adInserted: {
                     get: function() {
-                        return this.model.type;
+                        return this.model[this.model.length - 2].type === 'displayAd';
                     },
-                    set: function(type) {
-                        return MiniReelService.setCardType(this.model, type);
+                    set: function(bool) {
+                        if (this.adInserted === bool) { return; }
+
+                        if (bool) {
+                            this.model.splice(-1, 0, MiniReelService.createCard('displayAd'));
+                        } else {
+                            this.model.splice(-1, 1);
+                        }
                     }
                 }
             });

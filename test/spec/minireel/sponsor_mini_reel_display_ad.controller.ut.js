@@ -8,7 +8,7 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
             $scope,
             SponsorMiniReelDisplayAdCtrl;
 
-        var endcapCard;
+        var deck;
 
         beforeEach(function() {
             module(appModule.name);
@@ -19,14 +19,23 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                 $controller = $injector.get('$controller');
                 MiniReelService = $injector.get('MiniReelService');
 
-                endcapCard = MiniReelService.createCard();
+                deck = [
+                    'text',
+                    'video',
+                    'video',
+                    'videoBallot',
+                    'video',
+                    'recap'
+                ].map(function(type) {
+                    return MiniReelService.createCard(type);
+                });
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
                     SponsorMiniReelDisplayAdCtrl = $controller('SponsorMiniReelDisplayAdController', {
                         $scope: $scope
                     });
-                    SponsorMiniReelDisplayAdCtrl.model = endcapCard;
+                    SponsorMiniReelDisplayAdCtrl.model = deck;
                 });
             });
         });
@@ -36,28 +45,69 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
         });
 
         describe('properties', function() {
-            describe('cardType', function() {
+            describe('adInserted', function() {
                 describe('getting', function() {
-                    it('should return the type of the card', function() {
-                        expect(SponsorMiniReelDisplayAdCtrl.cardType).toBe(endcapCard.type);
+                    describe('if the penultimate card is not a displayAd', function() {
+                        beforeEach(function() {
+                            MiniReelService.setCardType(deck[deck.length - 2], 'video');
+                        });
 
-                        MiniReelService.setCardType(endcapCard, 'displayAd');
-                        expect(SponsorMiniReelDisplayAdCtrl.cardType).toBe(endcapCard.type);
+                        it('should be false', function() {
+                            expect(SponsorMiniReelDisplayAdCtrl.adInserted).toBe(false);
+                        });
+                    });
 
-                        MiniReelService.setCardType(endcapCard, 'recap');
-                        expect(SponsorMiniReelDisplayAdCtrl.cardType).toBe(endcapCard.type);
+                    describe('if the penultimate card is a displayAd', function() {
+                        beforeEach(function() {
+                            MiniReelService.setCardType(deck[deck.length - 2], 'displayAd');
+                        });
+
+                        it('should be true', function() {
+                            expect(SponsorMiniReelDisplayAdCtrl.adInserted).toBe(true);
+                        });
                     });
                 });
 
                 describe('setting', function() {
+                    var length;
+
                     beforeEach(function() {
-                        spyOn(MiniReelService, 'setCardType').and.callThrough();
+                        length = deck.length;
                     });
 
-                    it('should set the card to the given type', function() {
-                        ['displayAd', 'recap'].forEach(function(type) {
-                            expect(SponsorMiniReelDisplayAdCtrl.cardType = type).toBe(type);
-                            expect(MiniReelService.setCardType).toHaveBeenCalledWith(endcapCard, type);
+                    describe('to true', function() {
+                        beforeEach(function() {
+                            MiniReelService.setCardType(deck[deck.length - 2], 'video');
+
+                            SponsorMiniReelDisplayAdCtrl.adInserted = true;
+                            SponsorMiniReelDisplayAdCtrl.adInserted = true;
+                        });
+
+                        it('should insert a new displayAd card as the penultimate card', function() {
+                            expect(deck[deck.length - 2]).toEqual(jasmine.objectContaining((function() {
+                                var card = MiniReelService.createCard('displayAd');
+
+                                delete card.id;
+
+                                return card;
+                            }())));
+                            expect(deck.length).toBe(length + 1);
+                        });
+                    });
+
+                    describe('to false', function() {
+                        var displayAdCard;
+
+                        beforeEach(function() {
+                            displayAdCard = MiniReelService.setCardType(deck[deck.length - 2], 'displayAd');
+
+                            SponsorMiniReelDisplayAdCtrl.adInserted = false;
+                            SponsorMiniReelDisplayAdCtrl.adInserted = false;
+                        });
+
+                        it('should remove the penultimate card', function() {
+                            expect(deck[deck.length - 2]).not.toBe(displayAdCard);
+                            expect(deck.length).toBe(length - 1);
                         });
                     });
                 });
