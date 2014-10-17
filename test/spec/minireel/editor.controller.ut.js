@@ -350,6 +350,37 @@
                         expect(EditorCtrl.prettyMode).toBe('Heavy Text');
                     });
                 });
+
+                describe('lastEditableIndex', function() {
+                    it('should be the last index of an editable card', function() {
+                        EditorCtrl.model.data.deck = [
+                            'text',
+                            'video',
+                            'videoBallot',
+                            'video',
+                            'displayAd',
+                            'video',
+                            'video',
+                            'recap'
+                        ].map(function(type) {
+                            return MiniReelService.createCard(type);
+                        });
+                        expect(EditorCtrl.lastEditableIndex).toBe(6);
+
+                        EditorCtrl.model.data.deck = [
+                            'video',
+                            'videoBallot',
+                            'video',
+                            'displayAd',
+                            'video',
+                            'displayAd',
+                            'recap'
+                        ].map(function(type) {
+                            return MiniReelService.createCard(type);
+                        });
+                        expect(EditorCtrl.lastEditableIndex).toBe(4);
+                    });
+                });
             });
 
             describe('methods', function() {

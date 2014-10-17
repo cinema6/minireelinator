@@ -9,7 +9,7 @@
                 </div>
             </li>
             <li class="card__list-item" render-deck="deck">
-                <div id="new-slide" class="card__container card--createNew" ng-if="$index === (deck.length - 1)">
+                <div id="new-slide" class="card__container card--createNew" ng-if="$index === (EditorCtrl.lastEditableIndex + 1)">
                     <h4 class="card__type">&nbsp;</h4>
                     <div class="card__item">
                         <button ng-click="EditorCtrl.newCard($index, $event)" class="createNew__button">
@@ -19,7 +19,7 @@
                     </div>
                 </div><!--
              --><div class="new__container new__container--spacer"
-                    ng-if="$index === (deck.length - 1)"
+                    ng-if="$index === (EditorCtrl.lastEditableIndex + 1)"
                     ng-hide="DragCtrl.currentDrags.length">
                     <div class="no__button">&nbsp;</div>
                     <button ng-click="EditorCtrl.newCard($index + 1, $event)" class="new__button ui__add c6studioSprite--alpha" id="zone-{{$this.id}}" data-index={{$index}}><span class="ir">Add Here</span></button>
@@ -43,9 +43,10 @@
                         <a href="" title="Preview This Slide" ng-click="EditorCtrl.previewMode($this, $event)">Preview This Slide</a>
                     </div>
                 </div><!--
-             --><div id="drop-zone-{{$this.id}}" data-title="{{$this.title}}" ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id] && $index !== (deck.length - 1)" c6-drag-zone="CardTableCtrl.enableDrop" class="card__drop-zone">&nbsp;</div><!--
+             --><div id="drop-zone-{{$this.id}}" data-title="{{$this.title}}" ng-show="DragCtrl.currentDrags[0] !== DragCtrl.draggables[$this.id] && $index <= EditorCtrl.lastEditableIndex" c6-drag-zone="CardTableCtrl.enableDrop" class="card__drop-zone">&nbsp;</div><!--
+             --><div data-title="{{$this.title}}" ng-show="$index > EditorCtrl.lastEditableIndex" class="card__drop-zone">&nbsp;</div><!--
              --><div class="new__container"
-                    ng-class="{'new__container--spacer': ($index + 1) === (deck.length - 1)}"
+                    ng-class="{'new__container--spacer': $index >= EditorCtrl.lastEditableIndex}"
                     ng-hide="DragCtrl.currentDrags.length"
                     ng-style="{ visibility: $index === (deck.length - 1) ? 'hidden' : '' }">
                     <div class="no__button">&nbsp;</div>
