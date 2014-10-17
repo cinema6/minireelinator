@@ -1195,7 +1195,14 @@ function( angular , c6ui , cryptojs ) {
                         minViewTime: null
                     }),
                     collateral: copy({}),
-                    links: copy({}),
+                    links: function(card) {
+                        switch (card.type) {
+                        case 'displayAd':
+                            return {};
+                        default:
+                            return card.links || {};
+                        }
+                    },
                     params: copy({})
                 };
 
@@ -1703,15 +1710,25 @@ function( angular , c6ui , cryptojs ) {
                     displayAd: {
                         id: copy(),
                         type: value('displayAd'),
-                        title: value(null),
-                        note: value(null),
+                        title: copy(null),
+                        note: copy(null),
                         modules: value([]),
                         placementId: copy(null),
                         templateUrl: copy(null),
                         sponsored: copy(false),
                         campaign: copy(),
                         collateral: copy(),
-                        links: copy(),
+                        links: function() {
+                            return minireel.data.links;
+                        },
+                        thumbs: function() {
+                            var logo = minireel.data.collateral.logo;
+
+                            return {
+                                small: logo,
+                                large: logo
+                            };
+                        },
                         params: copy()
                     }
                 };

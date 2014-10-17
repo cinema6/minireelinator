@@ -136,7 +136,8 @@
                             theme: 'vertical-stack'
                         },
                         collateral: {
-                            splash: 'splash.jpg'
+                            splash: 'splash.jpg',
+                            logo: 'logo.jpg'
                         },
                         deck: [
                             {
@@ -393,9 +394,9 @@
                             {
                                 id: 'rc-82a19a12065636',
                                 type: 'displayAd',
-                                title: null,
-                                note: null,
-                                placementId: null,
+                                title: 'By Ubisoft',
+                                note: 'Games are great!',
+                                placementId: '398thfu954',
                                 templateUrl: null,
                                 sponsored: false,
                                 campaign: {
@@ -404,7 +405,13 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
-                                links: {},
+                                links: {
+                                    'Website': 'minzner.org'
+                                },
+                                thumbs: {
+                                    small: 'logo.jpg',
+                                    large: 'logo.jpg'
+                                },
                                 params: {},
                                 modules: [],
                                 data: {
@@ -1310,12 +1317,12 @@
                             expect(deck[9]).toEqual({
                                 id: 'rc-82a19a12065636',
                                 type: 'displayAd',
-                                title: null,
-                                note: null,
+                                title: 'By Ubisoft',
+                                note: 'Games are great!',
                                 label: 'Display Ad',
                                 ad: true,
                                 view: 'display_ad',
-                                placementId: null,
+                                placementId: '398thfu954',
                                 templateUrl: null,
                                 sponsored: false,
                                 campaign: {
