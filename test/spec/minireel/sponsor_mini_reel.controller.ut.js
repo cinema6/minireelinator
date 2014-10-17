@@ -119,8 +119,8 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                                 required: false
                             },
                             {
-                                name: 'End-Cap',
-                                sref: 'MR:SponsorMiniReel.Endcap',
+                                name: 'Display Ad Card',
+                                sref: 'MR:SponsorMiniReel.DisplayAd',
                                 required: false
                             }
                         ]);

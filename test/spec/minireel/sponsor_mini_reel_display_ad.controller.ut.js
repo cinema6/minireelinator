@@ -1,12 +1,12 @@
 define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
     'use strict';
 
-    describe('SponsorMiniReelEndcapController', function() {
+    describe('SponsorMiniReelDisplayAdController', function() {
         var $rootScope,
             $controller,
             MiniReelService,
             $scope,
-            SponsorMiniReelEndcapCtrl;
+            SponsorMiniReelDisplayAdCtrl;
 
         var endcapCard;
 
@@ -23,29 +23,29 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
-                    SponsorMiniReelEndcapCtrl = $controller('SponsorMiniReelEndcapController', {
+                    SponsorMiniReelDisplayAdCtrl = $controller('SponsorMiniReelDisplayAdController', {
                         $scope: $scope
                     });
-                    SponsorMiniReelEndcapCtrl.model = endcapCard;
+                    SponsorMiniReelDisplayAdCtrl.model = endcapCard;
                 });
             });
         });
 
         it('should exist', function() {
-            expect(SponsorMiniReelEndcapCtrl).toEqual(jasmine.any(Object));
+            expect(SponsorMiniReelDisplayAdCtrl).toEqual(jasmine.any(Object));
         });
 
         describe('properties', function() {
             describe('cardType', function() {
                 describe('getting', function() {
                     it('should return the type of the card', function() {
-                        expect(SponsorMiniReelEndcapCtrl.cardType).toBe(endcapCard.type);
+                        expect(SponsorMiniReelDisplayAdCtrl.cardType).toBe(endcapCard.type);
 
                         MiniReelService.setCardType(endcapCard, 'displayAd');
-                        expect(SponsorMiniReelEndcapCtrl.cardType).toBe(endcapCard.type);
+                        expect(SponsorMiniReelDisplayAdCtrl.cardType).toBe(endcapCard.type);
 
                         MiniReelService.setCardType(endcapCard, 'recap');
-                        expect(SponsorMiniReelEndcapCtrl.cardType).toBe(endcapCard.type);
+                        expect(SponsorMiniReelDisplayAdCtrl.cardType).toBe(endcapCard.type);
                     });
                 });
 
@@ -56,7 +56,7 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
 
                     it('should set the card to the given type', function() {
                         ['displayAd', 'recap'].forEach(function(type) {
-                            expect(SponsorMiniReelEndcapCtrl.cardType = type).toBe(type);
+                            expect(SponsorMiniReelDisplayAdCtrl.cardType = type).toBe(type);
                             expect(MiniReelService.setCardType).toHaveBeenCalledWith(endcapCard, type);
                         });
                     });
