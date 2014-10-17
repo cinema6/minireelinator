@@ -1184,7 +1184,7 @@ function( angular , c6ui , cryptojs ) {
                         }
                     },
                     ad: function(card) {
-                        return card.ad || (/^(ad|displayAd)$/).test(card.type);
+                        return card.ad || (/^(ad)$/).test(card.type);
                     },
                     placementId: copy(null),
                     templateUrl: copy(null),
