@@ -1,4 +1,4 @@
-define(['account/app','c6ui'], function(accountModule, c6uiModule) {
+define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
     'use strict';
 
     describe('account', function() {

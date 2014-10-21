@@ -1,7 +1,7 @@
 (function(){
     'use strict';
 
-    define(['app', 'c6ui', 'angular'], function(appModule, c6uiModule, angular) {
+    define(['app', 'c6uilib', 'angular'], function(appModule, c6uiModule, angular) {
         var extend = angular.extend;
 
         describe('AuthService', function() {

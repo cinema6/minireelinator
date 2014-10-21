@@ -1,7 +1,7 @@
 (function(){
     'use strict';
 
-    define(['app', 'minireel/app', 'c6ui', 'c6_defines'], function(appModule, minireelModule, c6uiModule, c6Defines) {
+    define(['app', 'minireel/app', 'c6uilib', 'c6_defines'], function(appModule, minireelModule, c6uiModule, c6Defines) {
         describe('MiniReelController', function() {
             var $rootScope,
                 $scope,

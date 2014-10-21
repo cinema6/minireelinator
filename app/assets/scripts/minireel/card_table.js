@@ -1,5 +1,5 @@
-define( ['angular','c6ui','minireel/services','minireel/c6_drag'],
-function( angular , c6ui , services          , c6Drag           ) {
+define( ['angular','c6uilib','minireel/services','minireel/c6_drag'],
+function( angular , c6uilib , services          , c6Drag           ) {
     'use strict';
 
     var forEach = angular.forEach;
@@ -8,7 +8,7 @@ function( angular , c6ui , services          , c6Drag           ) {
         $element.inheritedData('cDragCtrl').refresh();
     }
 
-    return angular.module('c6.app.minireel.cardTable', [c6ui.name, c6Drag.name, services.name])
+    return angular.module('c6.app.minireel.cardTable', [c6uilib.name, c6Drag.name, services.name])
         .animation('.card__drop-zone', function() {
             return {
                 beforeRemoveClass: function($element, className, done) {

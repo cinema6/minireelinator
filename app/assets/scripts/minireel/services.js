@@ -1,5 +1,5 @@
-define( ['angular','c6ui','cryptojs'],
-function( angular , c6ui , cryptojs ) {
+define( ['angular','c6uilib','cryptojs'],
+function( angular , c6uilib , cryptojs ) {
     'use strict';
 
     var forEach = angular.forEach,
@@ -53,7 +53,7 @@ function( angular , c6ui , cryptojs ) {
         });
     }
 
-    return angular.module('c6.app.minireel.services', [c6ui.name])
+    return angular.module('c6.app.minireel.services', [c6uilib.name])
         .factory('requireCJS', ['$http','$cacheFactory','$q',
         function               ( $http , $cacheFactory , $q ) {
             var cache = $cacheFactory('requireCJS');
@@ -415,157 +415,6 @@ function( angular , c6ui , cryptojs ) {
                         }
                     });
             };
-        }])
-
-        .provider('YouTubeDataService', [function() {
-            var apiKey = null;
-
-            function identity(arg) {
-                return arg;
-            }
-
-            function first(array) {
-                return array[0];
-            }
-
-            // Example duration: "PT4H6M33S"
-            // Further comments show the return value of each step in
-            // the chain if this string was passed to this function.
-            function durationToSeconds(duration) {
-                // Get all numerical parts of duration as an array
-                return duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/).slice(1) // ["4", "6", "33"]
-                    // If any durations are not specified, default them to 0
-                    .map(function(num) {
-                        return num || 0;
-                    })
-                    // Convert strings to numbers
-                    .map(parseFloat) // [4, 6, 33]
-                    // Reverse the numbers
-                    .reverse() // [33, 6, 4]
-                    // Now, first item is seconds, second item is
-                    // minutes, third item is hours. Convert to seconds:
-                    .reduce(function(total, next, index) {
-                        var multiplyer = Math.pow(60, index);
-
-                        return total + (next * multiplyer);
-                    }, 0); // 14793
-            }
-
-            function returnData(response) {
-                return response.data;
-            }
-
-            function returnItems(data) {
-                return data.items;
-            }
-
-            function processItem(item) {
-                var properties = {
-                    'contentDetails.duration': durationToSeconds
-                };
-
-                forEach(properties, function(fn, prop) {
-                    var parts = prop.split('.'),
-                        finalProp = parts.pop(),
-                        object = parts.reduce(function(object, part) {
-                            return object && object[part];
-                        }, item);
-
-                    if (object && object.hasOwnProperty(finalProp)) {
-                        object[finalProp] = fn(object[finalProp]);
-                    }
-                });
-
-                return item;
-            }
-
-            function processAllItems(items) {
-                return items.map(processItem);
-            }
-
-            // Returns a new object with all the props/values of
-            // "object" and the props/values of "defs" if "object" does
-            // not have that property
-            function defaults(defs, object) {
-                // Get an array of the properties of the defaults and of
-                // the provided object
-                return Object.keys(defs).concat(Object.keys(object))
-                    // Remove duplicate properties
-                    .filter(function(prop, index, self) {
-                        return self.indexOf(prop) === index;
-                    })
-                    .reduce(function(built, prop) {
-                        // Create an object that has the default values
-                        // if necessary
-                        if (object.hasOwnProperty(prop)) {
-                            built[prop] = object[prop];
-                        } else {
-                            built[prop] = defs[prop];
-                        }
-
-                        return built;
-                    }, {});
-            }
-
-            Videos.$inject = ['get','expectResult'];
-            function Videos  ( get , expectResult ) {
-                this.list = function(config) {
-                    var manyVideos = isArray(config.id),
-                        // If "part" is not provided, set default to
-                        // "snippet"
-                        params = defaults({
-                            part: 'snippet'
-                        }, Object.keys(config).reduce(function(params, prop) {
-                            var value = config[prop];
-
-                            // Convert any arrays in the config to a CSV
-                            // string
-                            params[prop] = isArray(value) ? value.join(',') : value;
-                            return params;
-                        }, {}));
-
-                    return get('videos', { params: params })
-                        .then(returnData)
-                        .then(returnItems)
-                        .then(processAllItems)
-                        .then(manyVideos ? identity : first)
-                        .then(manyVideos ? identity : expectResult({
-                            code: 404,
-                            message: 'No video was found.'
-                        }));
-                };
-            }
-
-            this.apiKey = function(key) {
-                /* jshint boss:true */
-                return (apiKey = key);
-            };
-
-            this.$get = ['$injector','$http','$q',
-            function    ( $injector , $http , $q ) {
-                var locals = {
-                    get: get,
-                    expectResult: expectResult
-                };
-
-                function expectResult(message) {
-                    return function(value) {
-                        return isDefined(value) ? value : $q.reject(message);
-                    };
-                }
-
-                function get(_url, config) {
-                    var url = 'https://www.googleapis.com/youtube/v3/' + _url;
-
-                    config.params.key = apiKey;
-
-                    return $http.get(url, config);
-                }
-
-                return {
-                    videos: $injector.instantiate(Videos, locals)
-                };
-            }];
         }])
 
         .service('VimeoDataService', ['$http',

@@ -1,9 +1,9 @@
-define( ['angular','c6ui','c6log','c6_state','minireel/services','minireel/tracker',
+define( ['angular','c6uilib','c6_state','minireel/services','minireel/tracker',
          'minireel/c6_drag','minireel/card_table','minireel/editor','minireel/manager',
-         'minireel/ad_manager','minireel/sponsor','minireel/players','c6_defines','cryptojs'],
-function( angular , c6ui , c6log , c6State  , services          , tracker          ,
+         'minireel/ad_manager','minireel/sponsor','c6_defines','cryptojs'],
+function( angular , c6uilib , c6State  , services          , tracker          ,
           c6Drag           , cardTable           , editor          , manager          ,
-          adManager           , sponsor          , players          , c6Defines  , cryptojs ) {
+          adManager           , sponsor          , c6Defines  , cryptojs ) {
     /* jshint -W106 */
     'use strict';
 
@@ -12,9 +12,9 @@ function( angular , c6ui , c6log , c6State  , services          , tracker       
         jqLite = angular.element;
 
     return angular.module('c6.app.minireel', [
-        c6ui.name, c6log.name, c6State.name, c6Drag.name,
+        c6uilib.name, c6State.name, c6Drag.name,
         services.name, tracker.name, cardTable.name, editor.name,
-        manager.name, adManager.name, players.name, sponsor.name
+        manager.name, adManager.name, sponsor.name
     ])
         .config(['$sceDelegateProvider','$compileProvider',
         function( $sceDelegateProvider , $compileProvider ) {

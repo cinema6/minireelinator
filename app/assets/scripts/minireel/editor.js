@@ -1,6 +1,6 @@
-define( ['angular','c6ui','c6_state','minireel/video_search','minireel/services','c6_defines',
+define( ['angular','c6uilib','c6_state','minireel/video_search','minireel/services','c6_defines',
 './mixins/VideoCardController'],
-function( angular , c6ui , c6State  , videoSearch           , services          , c6Defines  ,
+function( angular , c6uilib , c6State  , videoSearch           , services          , c6Defines  ,
 VideoCardController           ) {
     'use strict';
 
@@ -13,7 +13,7 @@ VideoCardController           ) {
 
     return angular.module('c6.app.minireel.editor', [
         videoSearch.name,
-        c6ui.name,
+        c6uilib.name,
         c6State.name,
         services.name
     ])

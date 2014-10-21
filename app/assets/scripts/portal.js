@@ -1,8 +1,8 @@
-define( ['angular','c6_state','c6ui'],
-function( angular , c6State  , c6ui ) {
+define( ['angular','c6_state','c6uilib'],
+function( angular , c6State  , c6uilib ) {
     'use strict';
 
-    return angular.module('c6.app.portal', [c6State.name, c6ui.name])
+    return angular.module('c6.app.portal', [c6State.name, c6uilib.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Portal', ['$q','cinema6','c6State','AuthService',

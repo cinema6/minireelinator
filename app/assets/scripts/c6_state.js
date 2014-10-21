@@ -1,5 +1,5 @@
-define( ['angular','c6ui'],
-function( angular , c6ui ) {
+define( ['angular','c6uilib'],
+function( angular , c6uilib ) {
     'use strict';
 
     var noop = angular.noop,
@@ -64,7 +64,7 @@ function( angular , c6ui ) {
         }, family[family.length - 1].cUrl);
     }
 
-    return angular.module('c6.state', [c6ui.name])
+    return angular.module('c6.state', [c6uilib.name])
         .factory('c6AsyncQueue', ['$q',
         function                 ( $q ) {
             function allSettled(promises) {
