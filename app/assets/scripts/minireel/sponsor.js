@@ -271,6 +271,7 @@ WizardController           , VideoCardController          , LinksController     
                     var card = MiniReelService.createCard('video');
 
                     card.sponsored = true;
+                    card.data.autoadvance = false;
 
                     return $q.when(card);
                 }
@@ -469,6 +470,10 @@ WizardController           , VideoCardController          , LinksController     
             };
             this.autoplayOptions = {
                 'Use MiniReel defaults': null,
+                'Yes': true,
+                'No': false
+            };
+            this.autoadvanceOptions = {
                 'Yes': true,
                 'No': false
             };

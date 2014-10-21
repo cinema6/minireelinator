@@ -1228,6 +1228,7 @@ function( angular , c6ui , cryptojs ) {
                         }
                     },
                     autoplay: copy(null),
+                    autoadvance: copy(null),
                     service: function(data, key, card) {
                         var type = card.type;
 
@@ -1448,6 +1449,7 @@ function( angular , c6ui , cryptojs ) {
                     mode: minireel.data.mode,
                     branding: minireel.data.branding,
                     autoplay: minireel.data.autoplay,
+                    autoadvance: minireel.data.autoadvance,
                     election: minireel.data.election,
                     adConfig: minireel.data.adConfig,
                     sponsored: minireel.data.sponsored || false,
@@ -1504,6 +1506,7 @@ function( angular , c6ui , cryptojs ) {
                                 title: null,
                                 mode: orgSettings.minireelDefaults.mode,
                                 autoplay: orgSettings.minireelDefaults.autoplay,
+                                autoadvance: true,
                                 sponsored: false,
                                 campaign: {},
                                 splash: {
@@ -1591,6 +1594,7 @@ function( angular , c6ui , cryptojs ) {
                 dataTemplates = {
                     youtube: {
                         autoplay: copy(null),
+                        autoadvance: copy(null),
                         skip: skipValue(),
                         modestbranding: value(0),
                         rel: value(0),
@@ -1600,6 +1604,7 @@ function( angular , c6ui , cryptojs ) {
                     },
                     vimeo: {
                         autoplay: copy(null),
+                        autoadvance: copy(null),
                         skip: skipValue(),
                         start: trimmer(),
                         end: trimmer(),
@@ -1607,6 +1612,7 @@ function( angular , c6ui , cryptojs ) {
                     },
                     dailymotion: {
                         autoplay: copy(null),
+                        autoadvance: copy(null),
                         skip: skipValue(),
                         start: trimmer(),
                         end: trimmer(),
