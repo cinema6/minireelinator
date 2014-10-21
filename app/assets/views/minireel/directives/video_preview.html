@@ -5,7 +5,7 @@
         <dailymotion-player ng-switch-when="dailymotion" id="preview" videoid="{{videoid}}"></dailymotion-player>
     </div>
 </div>
-<video-trimmer ng-if="!disableTrimmer()"
+<video-trimmer ng-show="!disableTrimmer()"
     start="start"
     end="end"
     duration="{{video.duration}}"
