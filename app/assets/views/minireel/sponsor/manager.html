@@ -80,8 +80,10 @@
                                 Private
                             </strong> 
                             - <span class="miniReel__date">{{$this.lastModified | date:'M/d/yyyy'}}</span>
-                            <p class="miniReel__count">
-                                <ng-pluralize count="SponsorManagerCtrl.adCountOf($this)" when="{'0': 'No ads', '1': '1 ad', 'other': '{} ads'}"></ng-pluralize>
+                            <p class="miniReel__count" ng-switch="!$this.data.sponsored && SponsorManagerCtrl.brandedCardCountOf($this) === 0">
+                                <span ng-switch-when="true">No Sponsorships</span>
+                                <span ng-show="$this.data.sponsored">Sponsored MiniReel,</span>
+                                <ng-pluralize ng-switch-when="false" count="SponsorManagerCtrl.brandedCardCountOf($this)" when="{'0': 'No sponsored cards', '1': '1 sponsored card', 'other': '{} sponsored cards'}"></ng-pluralize>
                                  | {{$this.data.deck.length}} slides
                             </p>
                         </div>
