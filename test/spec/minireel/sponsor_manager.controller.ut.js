@@ -42,7 +42,47 @@ define(['minireel/sponsor','app','minireel/mixins/MiniReelListController'], func
                 cState: sponsorManager
             });
 
-            expect(Object.keys(SponsorManagerCtrl)).toEqual(Object.keys(MiniReelListCtrl));
+            Object.keys(MiniReelListCtrl).forEach(function(key, index) {
+                expect(key).toEqual(Object.keys(SponsorManagerCtrl)[index]);
+            });
+        });
+
+        describe('methods', function() {
+            describe('brandedCardCountOf', function() {
+                it('should return the number of sponsored cards in a deck', function() {
+                    var minireel = {
+                        data: {
+                            deck: [
+                                {
+                                    id: 'rc-1',
+                                },
+                                {
+                                    id: 'rc-2',
+                                },
+                                {
+                                    id: 'rc-3',
+                                },
+                                {
+                                    id: 'rc-4',
+                                },
+                                {
+                                    id: 'rc-5',
+                                },
+                                {
+                                    id: 'rc-6',
+                                }
+                            ]
+                        }
+                    };
+                    expect(SponsorManagerCtrl.brandedCardCountOf(minireel)).toBe(0);
+
+                    minireel.data.deck[2].sponsored = true;
+                    expect(SponsorManagerCtrl.brandedCardCountOf(minireel)).toBe(1);
+
+                    minireel.data.deck[4].sponsored = true;
+                    expect(SponsorManagerCtrl.brandedCardCountOf(minireel)).toBe(2);
+                });
+            });
         });
     });
 });

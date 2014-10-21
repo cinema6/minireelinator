@@ -61,7 +61,6 @@ WizardController           , VideoCardController          , LinksController     
             });
 
             this.brandedCardCountOf = function(minireel) {
-                console.log(minireel);
                 return minireel.data.deck.filter(function(card) {
                     return card.sponsored;
                 }).length;
