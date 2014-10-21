@@ -28,7 +28,8 @@
                             .and.returnValue(''),
                         search: jasmine.createSpy('$location.search()')
                             .and.returnValue({}),
-                        replace: jasmine.createSpy('$location.replace()')
+                        replace: jasmine.createSpy('$location.replace()'),
+                        absUrl: function() {}
                     });
                 });
 

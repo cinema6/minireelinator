@@ -1,4 +1,4 @@
-define(['ui', 'jquery'], function(uiModule, $) {
+define(['app', 'jquery'], function(appModule, $) {
     'use strict';
 
     describe('<c6-dropdown>', function() {
@@ -8,7 +8,7 @@ define(['ui', 'jquery'], function(uiModule, $) {
             $dropdown;
 
         beforeEach(function() {
-            module(uiModule.name);
+            module(appModule.name);
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');

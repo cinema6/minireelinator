@@ -19,7 +19,9 @@ define(['login', 'app'], function(loginModule, appModule) {
             };
 
             module('ng', function($provide) {
-                $provide.value('$location', {});
+                $provide.value('$location', {
+                    absUrl: function() {}
+                });
             });
             module(appModule.name);
             module(loginModule.name);

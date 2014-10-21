@@ -1,8 +1,10 @@
-define( ['angular','c6ui','c6_state','minireel/services','minireel/mixins/MiniReelListController'],
-function( angular , c6ui , c6State  , services          , MiniReelListController                 ) {
+define( ['angular','c6uilib','c6_state','minireel/services',
+'minireel/mixins/MiniReelListController'],
+function( angular , c6uilib , c6State  , services          ,
+ MiniReelListController                 ) {
     'use strict';
 
-    return angular.module('c6.app.minireel.manager', [c6ui.name, c6State.name, services.name])
+    return angular.module('c6.app.minireel.manager', [c6uilib.name, c6State.name, services.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('MR:Manager.Embed', ['cinema6',

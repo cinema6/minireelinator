@@ -1,7 +1,7 @@
-define( ['angular','ngAnimate','minireel/app','account/app','login','portal','c6ui','c6_defines',
-         'templates','forgot_password','preview_minireel','ui'],
-function( angular , ngAnimate , minireel     , account     , login , portal , c6ui , c6Defines  ,
-          templates , forgotPassword  , previewMiniReel  , ui ) {
+define( ['angular','ngAnimate','minireel/app','account/app','login','portal','c6uilib','c6log',
+         'c6_defines','templates','forgot_password','preview_minireel','ui'],
+function( angular , ngAnimate , minireel     , account     , login , portal , c6uilib , c6log ,
+          c6Defines  , templates , forgotPassword  , previewMiniReel  , ui ) {
     'use strict';
 
     var forEach = angular.forEach,
@@ -16,7 +16,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         account.name,
         minireel.name,
         login.name,
-        c6ui.name,
+        c6uilib.name,
+        c6log.name,
         portal.name,
         forgotPassword.name,
         previewMiniReel.name

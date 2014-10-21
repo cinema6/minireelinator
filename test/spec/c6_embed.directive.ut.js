@@ -13,7 +13,9 @@ define(['preview_minireel'], function(previewMiniReelModule) {
         beforeEach(function() {
             module('ng', function($provide) {
                 $provide.value('$window', {
-                    c6: {}
+                    c6: {},
+                    navigator: window.navigator,
+                    document: window.document
                 });
             });
             module(previewMiniReelModule.name);

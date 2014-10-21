@@ -51,8 +51,8 @@
                 angular: libUrl('angular/v1.2.22-0-g93b0c2d/angular'),
                 ngMock: libUrl('angular/v1.2.22-0-g93b0c2d/angular-mocks'),
                 ngAnimate: libUrl('angular/v1.2.22-0-g93b0c2d/angular-animate'),
-                c6ui: libUrl('c6ui/v2.7.0-0-g63f769f/c6uilib.min'),
-                c6log: libUrl('c6ui/v2.7.0-0-g63f769f/c6log.min'),
+                c6uilib: libUrl('c6ui/v3.1.0-0-g58b71cd/c6uilib'),
+                c6log: libUrl('c6ui/v3.1.0-0-g58b71cd/c6log'),
                 templates: '/base/.tmp/templates',
                 'helpers/drag': '/base/test/helpers/drag'
             },
@@ -78,18 +78,6 @@
                     deps: ['angular'],
                     init: function(angular) {
                         return angular.module('ngMock');
-                    }
-                },
-                c6ui: {
-                    deps: ['angular'],
-                    init: function(angular) {
-                        return angular.module('c6.ui');
-                    }
-                },
-                c6log: {
-                    deps: ['angular'],
-                    init: function(angular) {
-                        return angular.module('c6.log');
                     }
                 }
             }

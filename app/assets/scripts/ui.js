@@ -1,10 +1,10 @@
-define (['angular','c6ui','templates'],
-function( angular , c6ui , templates ) {
+define (['angular','c6uilib','templates'],
+function( angular , c6uilib , templates ) {
     'use strict';
 
     var isArray = angular.isArray;
 
-    return angular.module('c6.app.ui', [templates.name, c6ui.name])
+    return angular.module('c6.app.ui', [templates.name, c6uilib.name])
         .directive('c6Dropdown', ['c6Computed','$compile',
         function                 ( c6Computed , $compile ) {
             function link(scope, $element, attrs, Controller, transclude) {

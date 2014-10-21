@@ -54,7 +54,8 @@
                 module('ng', function($provide) {
                     $provide.value('$location', {
                         search: jasmine.createSpy('$location.search()')
-                            .and.returnValue({})
+                            .and.returnValue({}),
+                        absUrl: function() {}
                     });
                 });
                 module(appModule.name);

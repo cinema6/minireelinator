@@ -1,5 +1,5 @@
-define( ['angular','c6ui','hammer'],
-function( angular , c6ui , hammer ) {
+define( ['angular','c6uilib','hammer'],
+function( angular , c6uilib , hammer ) {
     'use strict';
     /* global define:true */
 
@@ -51,7 +51,7 @@ function( angular , c6ui , hammer ) {
         }
     };
 
-    return angular.module('c6.drag', [c6ui.name])
+    return angular.module('c6.drag', [c6uilib.name])
         .value('hammer', hammer)
 
         .factory('_Rect', [function() {

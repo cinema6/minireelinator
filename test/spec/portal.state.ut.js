@@ -11,7 +11,9 @@ define (['app'], function(appModule) {
 
         beforeEach(function() {
             module('ng', function($provide) {
-                $provide.value('$location', {});
+                $provide.value('$location', {
+                    absUrl: function() {}
+                });
             });
             module(appModule.name);
 
