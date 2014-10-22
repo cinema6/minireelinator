@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.3.0.rc1]*
+  * [FEATURE]: Show sponsorship details for each MiniReel in the
+  Sponsorship Manager UI
+
 ## v1.2.1 (October 16, 2014)
 * *[v1.2.1.rc1]*
   * [FIX]: Preview Mode in the Studio Editor properly handles MiniReels
