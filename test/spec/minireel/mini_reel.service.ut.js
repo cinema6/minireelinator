@@ -419,6 +419,33 @@
                                 data: {
                                     size: '300x250'
                                 }
+                            },
+                            {
+                                id: 'rc-82a19a12065636',
+                                type: 'adUnit',
+                                title: 'AdUnit Card',
+                                note: 'It\'s Ad Tech!',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
+                                thumbs: {
+                                    small: 'logo.jpg',
+                                    large: 'logo.jpg'
+                                },
+                                params: {},
+                                modules: [],
+                                data: {
+                                    skip: true,
+                                    vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
+                                    vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
+                                }
                             }
                         ]
                     }
@@ -511,6 +538,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
+                                thumbs: null,
                                 links: {},
                                 params: {},
                                 data: {
@@ -541,6 +569,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
+                                thumbs: null,
                                 links: {},
                                 params: {},
                                 data: {}
@@ -563,6 +592,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
+                                thumbs: null,
                                 links: {},
                                 params: {},
                                 data: {
@@ -597,6 +627,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
+                                thumbs: null,
                                 links: {},
                                 params: {},
                                 data: {
@@ -623,6 +654,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
+                                thumbs: null,
                                 links: {},
                                 params: {},
                                 data: {}
@@ -645,6 +677,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
+                                thumbs: null,
                                 links: {},
                                 params: {},
                                 data: {
@@ -692,6 +725,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
+                                thumbs: null,
                                 links: {},
                                 params: {},
                                 data: {}
@@ -718,6 +752,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
+                                thumbs: null,
                                 links: {},
                                 params: {},
                                 data: {
@@ -1122,6 +1157,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
+                                thumbs: null,
                                 links: {},
                                 params: {},
                                 data: {}
@@ -1146,6 +1182,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
+                                thumbs: null,
                                 links: {},
                                 params: {},
                                 data: {
@@ -1176,6 +1213,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
+                                thumbs: null,
                                 links: {},
                                 params: {},
                                 data: {
@@ -1213,6 +1251,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
+                                thumbs: null,
                                 links: {},
                                 params: {},
                                 data: {
@@ -1252,6 +1291,7 @@
                                 collateral: {
                                     logo: 'my-awesome-logo.png'
                                 },
+                                thumbs: null,
                                 links: {
                                     'Facebook': 'my-fb.html',
                                     'Website': 'awesome.com'
@@ -1267,6 +1307,43 @@
                                     videoid: 'fn4378r4d',
                                     start: 0,
                                     end: 40
+                                }
+                            });
+
+                            expect(deck[10]).toEqual({
+                                id: 'rc-82a19a12065636',
+                                type: 'video',
+                                title: 'AdUnit Card',
+                                note: 'It\'s Ad Tech!',
+                                label: 'Video',
+                                ad: false,
+                                view: 'video',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
+                                params: {},
+                                thumbs: {
+                                    small: 'logo.jpg',
+                                    large: 'logo.jpg'
+                                },
+                                data: {
+                                    skip: 'anytime',
+                                    autoplay: null,
+                                    autoadvance: null,
+                                    service: 'adUnit',
+                                    videoid: JSON.stringify({
+                                        vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
+                                        vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
+                                    }),
+                                    start: null,
+                                    end: null
                                 }
                             });
                         });
@@ -1289,6 +1366,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
+                                thumbs: null,
                                 links: {},
                                 params: {},
                                 data: minireel.data.deck[8].data
@@ -1315,6 +1393,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
+                                thumbs: null,
                                 links: {},
                                 params: {},
                                 data: {}
@@ -1339,6 +1418,10 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
+                                thumbs: {
+                                    small: 'logo.jpg',
+                                    large: 'logo.jpg'
+                                },
                                 links: {},
                                 params: {},
                                 data: {
@@ -1519,6 +1602,20 @@
                             expect(result).toBe(minireel);
                             expect(result.data).not.toBe(converted.data);
                             expect(minireel.data.deck[1].title).toBe('New Title');
+                        });
+
+                        it('should transpile a adUnit card with no ad tags', function() {
+                            var converted;
+
+                            $rootScope.$apply(function() {
+                                converted = MiniReelService.convertForEditor(minireel);
+                            });
+
+                            converted.data.deck[10].data.videoid = null;
+
+                            expect(function() {
+                                MiniReelService.convertForPlayer(converted);
+                            }).not.toThrow();
                         });
                     });
 

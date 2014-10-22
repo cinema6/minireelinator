@@ -10,6 +10,7 @@ function( angular , c6uilib , cryptojs ) {
         extend = angular.extend,
         isFunction = angular.isFunction,
         fromJson = angular.fromJson,
+        toJson = angular.toJson,
         isArray = angular.isArray;
 
     function mapObject(object, fn) {
@@ -972,6 +973,7 @@ function( angular , c6uilib , cryptojs ) {
                         case 'youtube':
                         case 'vimeo':
                         case 'dailymotion':
+                        case 'adUnit':
                             return 'video' + ((card.modules.indexOf('ballot') > -1) ?
                                 'Ballot' : '');
                         default:
@@ -1044,6 +1046,7 @@ function( angular , c6uilib , cryptojs ) {
                         minViewTime: null
                     }),
                     collateral: copy({}),
+                    thumbs: copy(null),
                     links: function(card) {
                         switch (card.type) {
                         case 'displayAd':
@@ -1082,10 +1085,20 @@ function( angular , c6uilib , cryptojs ) {
                         var type = card.type;
 
                         return data.service ||
-                            (type.search(/^(youtube|dailymotion|vimeo)$/) > -1 ?
+                            (type.search(/^(youtube|dailymotion|vimeo|adUnit)$/) > -1 ?
                                 type : null);
                     },
-                    videoid: copy(null),
+                    videoid: function(data, key, card) {
+                        switch (card.type) {
+                        case 'adUnit':
+                            return toJson({
+                                vast: data.vast,
+                                vpaid: data.vpaid
+                            });
+                        default:
+                            return data.videoid || null;
+                        }
+                    },
                     start: trimmer(),
                     end: trimmer()
                 };
@@ -1468,6 +1481,17 @@ function( angular , c6uilib , cryptojs ) {
                         related: value(0),
                         videoid: copy(null)
                     },
+                    adUnit: {
+                        autoplay: copy(null),
+                        autoadvance: copy(null),
+                        skip: skipValue(),
+                        vast: function(data) {
+                            return (fromJson(data.videoid) || {}).vast;
+                        },
+                        vpaid: function(data) {
+                            return (fromJson(data.videoid) || {}).vpaid;
+                        }
+                    },
                     ad: {
                         autoplay: copy(true),
                         source: copy('cinema6'),
@@ -1515,6 +1539,9 @@ function( angular , c6uilib , cryptojs ) {
                         },
                         ballot: function(card) {
                             return card.data.ballot;
+                        },
+                        thumbs: function(card) {
+                            return card.thumbs || undefined;
                         },
                         placementId: copy(null),
                         templateUrl: copy(null),
