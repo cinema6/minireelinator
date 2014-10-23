@@ -4,7 +4,10 @@ function( angular , c6State  , editor   , MiniReelListController          ,
 WizardController           , VideoCardController          , LinksController          ) {
     'use strict';
 
-    var noop = angular.noop;
+    var noop = angular.noop,
+        fromJson = angular.fromJson,
+        toJson = angular.toJson,
+        extend = angular.extend;
 
     function wrap(text, character) {
         return [character, text, character].join('');
@@ -467,6 +470,18 @@ WizardController           , VideoCardController          , LinksController     
 
         .controller('SponsorCardVideoController', ['$injector',
         function                                  ( $injector ) {
+            function getJSONProp(json, prop) {
+                return (fromJson(json) || {})[prop];
+            }
+
+            function setJSONProp(json, prop, value) {
+                var proto = {};
+
+                proto[prop] = value;
+
+                return toJson(extend(fromJson(json) || {}, proto));
+            }
+
             $injector.invoke(VideoCardController, this);
 
             this.skipOptions = {
@@ -483,6 +498,8 @@ WizardController           , VideoCardController          , LinksController     
                 'Yes': true,
                 'No': false
             };
+            this.adPreviewType = 'vpaid';
+            this.adPreviewPageUrl = '';
             Object.defineProperties(this, {
                 isAdUnit: {
                     get: function() {
@@ -491,7 +508,65 @@ WizardController           , VideoCardController          , LinksController     
                     set: function(bool) {
                         this.model.data.service = bool ? 'adUnit' : null;
                     }
+                },
+                vastTag: {
+                    get: function() {
+                        return getJSONProp(this.model.data.videoid, 'vast') || null;
+                    },
+                    set: function(value) {
+                        this.model.data.videoid = setJSONProp(
+                            this.model.data.videoid,
+                            'vast',
+                            value
+                        );
+                    }
+                },
+                vpaidTag: {
+                    get: function() {
+                        return getJSONProp(this.model.data.videoid, 'vpaid') || null;
+                    },
+                    set: function(value) {
+                        this.model.data.videoid = setJSONProp(
+                            this.model.data.videoid,
+                            'vpaid',
+                            value
+                        );
+                    }
+                },
+                adTag: {
+                    get: function() {
+                        var tag = (function() {
+                            switch (this.adPreviewType) {
+                            case 'vast':
+                                return this.vastTag;
+                            case 'vpaid':
+                                return this.vpaidTag;
+                            }
+                        }.call(this));
+
+                        return tag && tag.replace(
+                            '{pageUrl}',
+                            encodeURIComponent(this.adPreviewPageUrl)
+                        );
+                    }
                 }
+            });
+        }])
+
+        .controller('AdPlayerController', ['$scope',
+        function                          ( $scope ) {
+            var self = this;
+
+            function handlePlayerInit($event, player) {
+                player.once('ready', function() {
+                    self.player = player;
+                });
+            }
+
+            this.player = null;
+
+            ['<vast-player>:init', '<vpaid-player>:init'].forEach(function($event) {
+                $scope.$on($event, handlePlayerInit);
             });
         }])
 
