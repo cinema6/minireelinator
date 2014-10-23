@@ -43,6 +43,171 @@ define(['minireel/sponsor','minireel/mixins/VideoCardController'], function(spon
         });
 
         describe('properties', function() {
+            describe('vastTag', function() {
+                describe('getting', function() {
+                    describe('if there is no videoid', function() {
+                        beforeEach(function() {
+                            card.data.videoid = null;
+                        });
+
+                        it('should be null', function() {
+                            expect(SponsorCardVideoCtrl.vastTag).toBeNull();
+                        });
+                    });
+
+                    describe('if there is a videoid', function() {
+                        beforeEach(function() {
+                            card.data.videoid = JSON.stringify({
+                                vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
+                            });
+                        });
+
+                        it('should be the vast tag', function() {
+                            expect(SponsorCardVideoCtrl.vastTag).toBe('http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov');
+                        });
+                    });
+                });
+
+                describe('setting', function() {
+                    describe('if there is no videoid', function() {
+                        beforeEach(function() {
+                            card.data.videoid = null;
+
+                            SponsorCardVideoCtrl.vastTag = 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov';
+                        });
+
+                        it('should create the property as a json string', function() {
+                            expect(card.data.videoid).toBe(JSON.stringify({
+                                vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
+                            }));
+                        });
+                    });
+
+                    describe('if there is a videoid', function() {
+                        beforeEach(function() {
+                            card.data.videoid = JSON.stringify({
+                                vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=voe',
+                                vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
+                            });
+
+                            SponsorCardVideoCtrl.vastTag = 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov';
+                        });
+
+                        it('should just change the property that changed', function() {
+                            expect(card.data.videoid).toEqual(JSON.stringify({
+                                vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
+                                vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
+                            }));
+                        });
+                    });
+                });
+            });
+
+            describe('vpaidTag', function() {
+                describe('getting', function() {
+                    describe('if there is no videoid', function() {
+                        beforeEach(function() {
+                            card.data.videoid = null;
+                        });
+
+                        it('should be null', function() {
+                            expect(SponsorCardVideoCtrl.vpaidTag).toBeNull();
+                        });
+                    });
+
+                    describe('if there is a videoid', function() {
+                        beforeEach(function() {
+                            card.data.videoid = JSON.stringify({
+                                vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
+                            });
+                        });
+
+                        it('should be the vast tag', function() {
+                            expect(SponsorCardVideoCtrl.vpaidTag).toBe('http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov');
+                        });
+                    });
+                });
+
+                describe('setting', function() {
+                    describe('if there is no videoid', function() {
+                        beforeEach(function() {
+                            card.data.videoid = null;
+
+                            SponsorCardVideoCtrl.vpaidTag = 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov';
+                        });
+
+                        it('should create the property as a json string', function() {
+                            expect(card.data.videoid).toBe(JSON.stringify({
+                                vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
+                            }));
+                        });
+                    });
+
+                    describe('if there is a videoid', function() {
+                        beforeEach(function() {
+                            card.data.videoid = JSON.stringify({
+                                vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
+                                vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=voe'
+                            });
+
+                            SponsorCardVideoCtrl.vpaidTag = 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov';
+                        });
+
+                        it('should just change the property that changed', function() {
+                            expect(card.data.videoid).toEqual(JSON.stringify({
+                                vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
+                                vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
+                            }));
+                        });
+                    });
+                });
+            });
+
+            describe('adPreviewType', function() {
+                it('should be vpaid', function() {
+                    expect(SponsorCardVideoCtrl.adPreviewType).toBe('vpaid');
+                });
+            });
+
+            describe('adPreviewPageUrl', function() {
+                it('should be an empty string', function() {
+                    expect(SponsorCardVideoCtrl.adPreviewPageUrl).toBe('');
+                });
+            });
+
+            describe('adTag', function() {
+                beforeEach(function() {
+                    card.data.videoid = JSON.stringify({
+                        vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
+                        vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
+                    });
+                });
+
+                ['vast', 'vpaid'].forEach(function(type) {
+                    describe('if the adPreviewType is "' + type + '"', function() {
+                        beforeEach(function() {
+                            SponsorCardVideoCtrl.adPreviewPageUrl = 'http://www.mutantplayground.com';
+
+                            SponsorCardVideoCtrl.adPreviewType = type;
+                        });
+
+                        it('should compile the ad tag with the pageUrl macro', function() {
+                            expect(SponsorCardVideoCtrl.adTag).toBe(SponsorCardVideoCtrl[type + 'Tag'].replace('{pageUrl}', encodeURIComponent('http://www.mutantplayground.com')));
+                        });
+
+                        describe('if there is no ad tag', function() {
+                            beforeEach(function() {
+                                card.data.videoid = null;
+                            });
+
+                            it('should be null', function() {
+                                expect(SponsorCardVideoCtrl.adTag).toBeNull();
+                            });
+                        });
+                    });
+                });
+            });
+
             describe('isAdUnit', function() {
                 describe('getting', function() {
                     describe('if the service is "adUnit"', function() {

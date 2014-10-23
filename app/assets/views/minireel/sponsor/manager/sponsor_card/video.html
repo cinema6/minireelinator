@@ -9,20 +9,28 @@
                                 VPAID
                             </span>
                             <span class="forms__inputHolder forms__inputHolder--short">
-                                <input type="text" c6-autoselect class="forms__textField forms__textField--block">
+                                <input type="text" ng-model="SponsorCardVideoCtrl.vpaidTag" c6-autoselect ng-focus="SponsorCardVideoCtrl.adPreviewType = 'vpaid'" class="forms__textField forms__textField--block">
                             </span>
                         </label>
                     </div>
                     <div class="twoCol">
-                        <label class="forms__pair clearfix">
+                        <label class="forms__pair forms__pair--spacer clearfix">
                             <span class="forms__name">
                                 VAST
                             </span>
                             <span class="forms__inputHolder forms__inputHolder--short">
-                                <input type="text" c6-autoselect class="forms__textField forms__textField--block">
+                                <input type="text" ng-model="SponsorCardVideoCtrl.vastTag" c6-autoselect ng-focus="SponsorCardVideoCtrl.adPreviewType = 'vast'" class="forms__textField forms__textField--block">
                             </span>
                         </label>
                     </div>
+                    <label class="forms__pair">
+                        <span class="forms__name">
+                            Page URL
+                        </span>
+                        <span class="forms__inputHolder">
+                            <input type="text" class="forms__textField forms__textField--block" ng-model="SponsorCardVideoCtrl.adPreviewPageUrl">
+                        </span>
+                    </label>
                 </div>
                 <label ng-switch-default class="forms__pair clearfix">
                     <span class="forms__name">
@@ -73,8 +81,26 @@
                 </div>
             </div>
         </div>
-        <div class="twoCol">
-            <video-preview service="{{card.data.service}}"
+        <div class="twoCol" ng-switch="card.data.service">
+            <div ng-switch-when="adUnit" ng-controller="AdPlayerController as AdPlayerCtrl">
+                <div ng-switch="SponsorCardVideoCtrl.adPreviewType">
+                    <vpaid-player ng-switch-when="vpaid"
+                        videoid="preview"
+                        ad-tag="{{SponsorCardVideoCtrl.adTag}}"
+                        style="height: 250px;">
+                    </vpaid-player>
+                    <vast-player ng-switch-when="vast"
+                        videoid="preview"
+                        ad-tag="{{SponsorCardVideoCtrl.adTag}}">
+                    </vast-player>
+                </div>
+                <div ng-if="!!AdPlayerCtrl.player">
+                    <button ng-click="AdPlayerCtrl.player.play()">Play</button>
+                    <button ng-click="AdPlayerCtrl.player.pause()">Pause</button>
+                    <button ng-click="AdPlayerCtrl.player.reload()">Reload</button>
+                </div>
+            </div>
+            <video-preview ng-switch-default service="{{card.data.service}}"
                 videoid="{{card.data.videoid}}"
                 start="card.data.start"
                 end="card.data.end"

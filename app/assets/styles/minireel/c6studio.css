@@ -1,6 +1,15 @@
 /*  ======================================================
     general styles
     ====================================================== */
+    vpaid-player {
+        position: relative;
+        display: block;
+    }
+
+    vast-player video {
+        width: 100%;
+    }
+
     .c6studioSprite--alpha {
         background:url('../../img/minireel/sprite--alpha@2x.png') 0 0 / 12.5rem 6.25rem no-repeat;
         border:0; margin:0; padding:0; overflow: hidden;

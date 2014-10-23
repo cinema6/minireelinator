@@ -34,6 +34,12 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
             YouTubeDataServiceProvider.apiKey(c6Defines.kYouTubeDataApiKey);
         }])
 
+        .config(['VPAIDServiceProvider', function(VPAIDServiceProvider) {
+            VPAIDServiceProvider.swfUrl(
+                'http://lib.cinema6.com/c6ui/v3.1.0-0-g58b71cd/videos/swf/player.swf'
+            );
+        }])
+
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.map('MiniReel', function() {
