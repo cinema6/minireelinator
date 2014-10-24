@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    define(['app'], function(appModule) {
+    define(['app' , 'c6_defines'], function(appModule, c6Defines) {
         /* global angular:true */
         var copy = angular.copy;
 
@@ -929,17 +929,24 @@
                         describe('if the minireel is public', function() {
                             beforeEach(function() {
                                 minireel.access = 'public';
-                                result = MiniReelService.previewUrlOf(minireel, '/#/preview/minireel');
                             });
 
-                            it('should be the MR embed properties as query parameters', function() {
-                                expect(result).toBe(c6UrlParser(
-                                    '/#/preview/minireel?' +
-                                    'preload&exp=' + encodeURIComponent(minireel.id) +
-                                    '&title=' + encodeURIComponent(minireel.data.title) +
-                                    '&splash=' + encodeURIComponent('vertical-stack:3/2')
-                                ).href);
+                            it('should be the correct short url in staging', function() {
+                                c6Defines.kDebug = true;
+                                result = MiniReelService.previewUrlOf(minireel);
+                                expect(result).toBe('https://c-6.co/preview?' +
+                                   'id=' + encodeURIComponent(minireel.id)
+                                );
                             });
+
+                            it('should be the correct short url in production', function() {
+                                c6Defines.kDebug = false;
+                                result = MiniReelService.previewUrlOf(minireel);
+                                expect(result).toBe('https://ci6.co/preview?' +
+                                   'id=' + encodeURIComponent(minireel.id)
+                                );
+                            });
+
                         });
 
                         describe('if the minireel is private', function() {
