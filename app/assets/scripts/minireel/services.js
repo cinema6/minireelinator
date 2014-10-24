@@ -898,9 +898,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
         }])
 
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
-                                     'SettingsService','c6UrlParser',
+                                     'SettingsService',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
-                                      SettingsService , c6UrlParser ) {
+                                      SettingsService ) {
             var self = this,
                 portal = c6State.get('Portal');
 

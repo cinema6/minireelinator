@@ -946,7 +946,6 @@
                                    'id=' + encodeURIComponent(minireel.id)
                                 );
                             });
-
                         });
 
                         describe('if the minireel is private', function() {
