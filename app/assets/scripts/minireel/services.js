@@ -177,7 +177,9 @@ function( angular , c6uilib , cryptojs ) {
 
                         function fetchThumbs(minireel) {
                             return $q.all(minireel.data.deck.map(function(card) {
-                                return VideoThumbnailService.getThumbsFor(
+                                return card.thumb ? {
+                                    large: card.thumb
+                                } : VideoThumbnailService.getThumbsFor(
                                     card.data.service,
                                     card.data.videoid
                                 ).ensureFulfillment();
