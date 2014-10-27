@@ -74,6 +74,7 @@
                                         }
                                     },
                                     {
+                                        thumb: 'foo/bar.jpg',
                                         data: {}
                                     },
                                     {
@@ -108,9 +109,12 @@
                                     ratio: '16-9'
                                 }
                             ],
-                            thumbs: Object.keys(thumbs).map(function(key) {
-                                return thumbs[key].large;
-                            })
+                            thumbs: [
+                                '123--large.jpg',
+                                'abc--large.jpg',
+                                'foo/bar.jpg',
+                                'abc123--large.jpg'
+                            ]
                         }).respond(201, [
                             {
                                 path: 'collateral/' + minireel.id + '/splash',
@@ -154,9 +158,12 @@
                                     ratio: '16-9',
                                 }
                             ],
-                            thumbs: Object.keys(thumbs).map(function(key) {
-                                return thumbs[key].large;
-                            })
+                            thumbs: [
+                                '123--large.jpg',
+                                'abc--large.jpg',
+                                'foo/bar.jpg',
+                                'abc123--large.jpg'
+                            ]
                         }).respond(201, [
                             {
                                 name: 'foo',
@@ -186,9 +193,12 @@
                                     ratio: '16-9'
                                 }
                             ],
-                            thumbs: Object.keys(thumbs).map(function(key) {
-                                return thumbs[key].large;
-                            })
+                            thumbs: [
+                                '123--large.jpg',
+                                'abc--large.jpg',
+                                'foo/bar.jpg',
+                                'abc123--large.jpg'
+                            ]
                         }).respond(201, [
                             {
                                 name: 'splash',
@@ -224,9 +234,12 @@
                                     ratio: ratio.join('-')
                                 };
                             }),
-                            thumbs: Object.keys(thumbs).map(function(key) {
-                                return thumbs[key].large;
-                            })
+                            thumbs: [
+                                '123--large.jpg',
+                                'abc--large.jpg',
+                                'foo/bar.jpg',
+                                'abc123--large.jpg'
+                            ]
                         }).respond(201, ratios.map(function(ratio) {
                             return {
                                 name: 'splash--' + ratio,
