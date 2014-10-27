@@ -1046,7 +1046,9 @@ function( angular , c6uilib , cryptojs ) {
                         minViewTime: null
                     }),
                     collateral: copy({}),
-                    thumbs: copy(null),
+                    thumb: function(card) {
+                        return (card.thumbs && card.thumbs.large) || null;
+                    },
                     links: function(card) {
                         switch (card.type) {
                         case 'displayAd':
@@ -1541,7 +1543,10 @@ function( angular , c6uilib , cryptojs ) {
                             return card.data.ballot;
                         },
                         thumbs: function(card) {
-                            return card.thumbs || undefined;
+                            return (card.thumb || undefined) && {
+                                small: card.thumb,
+                                large: card.thumb
+                            };
                         },
                         placementId: copy(null),
                         templateUrl: copy(null),

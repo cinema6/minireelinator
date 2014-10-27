@@ -538,7 +538,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
-                                thumbs: null,
+                                thumb: null,
                                 links: {},
                                 params: {},
                                 data: {
@@ -569,7 +569,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
-                                thumbs: null,
+                                thumb: null,
                                 links: {},
                                 params: {},
                                 data: {}
@@ -592,7 +592,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
-                                thumbs: null,
+                                thumb: null,
                                 links: {},
                                 params: {},
                                 data: {
@@ -627,7 +627,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
-                                thumbs: null,
+                                thumb: null,
                                 links: {},
                                 params: {},
                                 data: {
@@ -654,7 +654,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
-                                thumbs: null,
+                                thumb: null,
                                 links: {},
                                 params: {},
                                 data: {}
@@ -677,7 +677,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
-                                thumbs: null,
+                                thumb: null,
                                 links: {},
                                 params: {},
                                 data: {
@@ -725,7 +725,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
-                                thumbs: null,
+                                thumb: null,
                                 links: {},
                                 params: {},
                                 data: {}
@@ -752,7 +752,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
-                                thumbs: null,
+                                thumb: null,
                                 links: {},
                                 params: {},
                                 data: {
@@ -1157,7 +1157,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
-                                thumbs: null,
+                                thumb: null,
                                 links: {},
                                 params: {},
                                 data: {}
@@ -1182,7 +1182,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
-                                thumbs: null,
+                                thumb: null,
                                 links: {},
                                 params: {},
                                 data: {
@@ -1213,7 +1213,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
-                                thumbs: null,
+                                thumb: null,
                                 links: {},
                                 params: {},
                                 data: {
@@ -1251,7 +1251,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
-                                thumbs: null,
+                                thumb: null,
                                 links: {},
                                 params: {},
                                 data: {
@@ -1291,7 +1291,7 @@
                                 collateral: {
                                     logo: 'my-awesome-logo.png'
                                 },
-                                thumbs: null,
+                                thumb: null,
                                 links: {
                                     'Facebook': 'my-fb.html',
                                     'Website': 'awesome.com'
@@ -1329,10 +1329,7 @@
                                 collateral: {},
                                 links: {},
                                 params: {},
-                                thumbs: {
-                                    small: 'logo.jpg',
-                                    large: 'logo.jpg'
-                                },
+                                thumb: 'logo.jpg',
                                 data: {
                                     skip: 'anytime',
                                     autoplay: null,
@@ -1366,7 +1363,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
-                                thumbs: null,
+                                thumb: null,
                                 links: {},
                                 params: {},
                                 data: minireel.data.deck[8].data
@@ -1393,7 +1390,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
-                                thumbs: null,
+                                thumb: null,
                                 links: {},
                                 params: {},
                                 data: {}
@@ -1418,10 +1415,7 @@
                                     minViewTime: null
                                 },
                                 collateral: {},
-                                thumbs: {
-                                    small: 'logo.jpg',
-                                    large: 'logo.jpg'
-                                },
+                                thumb: 'logo.jpg',
                                 links: {},
                                 params: {},
                                 data: {
