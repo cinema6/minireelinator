@@ -322,26 +322,29 @@ WizardController           , VideoCardController          , LinksController     
                                               'c6State','cState','$location',
         function                             ( $scope , $injector , $q , cinema6 , EditorService ,
                                                c6State , cState , $location ) {
-            var self = this;
+            var SponsorManagerCtrl = $scope.SponsorManagerCtrl,
+                self = this;
 
             $injector.invoke(WizardController, this);
 
             this.placements = [];
 
             this.initWithModel = function(model) {
-                var exclude = model.sponsored ?
-                    [] :
-                    [
+                var minireel = EditorService.state.minireel,
+                    cardCount = minireel && minireel.data.deck.length,
+                    exclude = (model.sponsored ? [] : [
                         'MR:SponsorCard.Copy',
                         'MR:SponsorCard.Links',
                         'MR:SponsorCard.Ads',
                         'MR:SponsorCard.Tracking',
                         'MR:SponsorCard.Position',
                         'MR:SponsorCard.Placement'
-                    ];
+                    ]).concat(cardCount === 1 ? [
+                        'MR:SponsorCard.Position'
+                    ] : []);
 
                 this.model = model;
-                this.minireel = EditorService.state.minireel;
+                this.minireel = minireel;
                 this.tabs = [
                     {
                         name: 'Editorial Content',
@@ -407,8 +410,11 @@ WizardController           , VideoCardController          , LinksController     
                     var card = self.model;
 
                     return $q.all(self.placements.map(function(placement) {
+                        var minireel = placement.minireel;
+
                         return $q.all({
-                            minireel: cinema6.db.find('experience', placement.minireel.id),
+                            minireel: minireel.id ?
+                                cinema6.db.find('experience', minireel.id) : minireel,
                             index: placement.index
                         });
                     })).then(function(placements) {
@@ -428,6 +434,8 @@ WizardController           , VideoCardController          , LinksController     
                         });
 
                         return promise;
+                    }).then(function() {
+                        return SponsorManagerCtrl.refetchMiniReels();
                     }).then(function() {
                         return c6State.goTo(cState.cParent.cName);
                     });
@@ -673,6 +681,55 @@ WizardController           , VideoCardController          , LinksController     
                 this.templateUrl =
                     'views/minireel/sponsor/manager/sponsor_card/placement/placements.html';
             }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Placement.Standalone', [function() {
+                this.templateUrl =
+                    'views/minireel/sponsor/manager/sponsor_card/placement/standalone.html';
+                this.controller = 'PlacementStandaloneController';
+                this.controllerAs = 'PlacementStandaloneCtrl';
+            }]);
+        }])
+
+        .controller('PlacementStandaloneController', ['$scope','MiniReelService','c6State',
+        function                                     ( $scope , MiniReelService , c6State ) {
+            var SponsorCardCtrl = $scope.SponsorCardCtrl,
+                card = SponsorCardCtrl.model;
+
+            this.data = {
+                title: card.title,
+                mode: 'lightbox'
+            };
+            Object.defineProperties(this, {
+                enableCompanionAd: {
+                    get: function() {
+                        return this.data.mode === 'lightbox-ads';
+                    },
+                    set: function(bool) {
+                        this.data.mode = 'lightbox' + (bool ? '-ads' : '');
+                    }
+                }
+            });
+
+            this.place = function() {
+                var data = this.data;
+
+                return MiniReelService.create()
+                    .then(function(minireel) {
+                        extend(minireel.data, data);
+                        minireel.data.deck = [];
+
+                        return minireel;
+                    })
+                    .then(function(minireel) {
+                        return SponsorCardCtrl.place(minireel, 0);
+                    })
+                    .then(function() {
+                        return c6State.goTo('MR:Placement.Placements');
+                    });
+            };
         }])
 
         .config(['c6StateProvider',
