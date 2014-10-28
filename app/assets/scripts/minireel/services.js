@@ -724,13 +724,19 @@ function( angular , c6uilib , cryptojs ) {
                     return 'http://vimeo.com/' + id;
                 case 'dailymotion':
                     return 'http://www.dailymotion.com/video/' + id;
+                case 'aol':
+                    return 'http://on.aol.com/video/' + id;
+                case 'yahoo':
+                    return 'https://screen.yahoo.com/' + id + '.html';
 
                 }
             };
 
             this.dataFromUrl = function(url) {
                 var parsed = c6UrlParser(url),
-                    service = (parsed.hostname.match(/youtube|dailymotion|vimeo/) || [])[0],
+                    service = (parsed.hostname.match(
+                        /youtube|dailymotion|vimeo|aol|yahoo/
+                    ) || [])[0],
                     id,
                     idFetchers = {
                         youtube: function(url) {
@@ -749,6 +755,14 @@ function( angular , c6uilib , cryptojs ) {
                             return (pathname
                                 .replace(/\/video\//, '')
                                 .match(/[a-zA-Z0-9]+/) || [])[0];
+                        },
+                        aol: function(url) {
+                            return (url.pathname
+                                .match(/\d+$/) || [null])[0];
+                        },
+                        yahoo: function(url) {
+                            return (url.pathname
+                                .match(/[^/]+(?=(\.html))/) || [null])[0];
                         }
                     };
 
@@ -775,6 +789,41 @@ function( angular , c6uilib , cryptojs ) {
                     service: service,
                     id: id
                 };
+            };
+
+            this.embedCodeFromData = function(service, id) {
+                function aolSrc(id) {
+                    return 'http://pshared.5min.com/Scripts/PlayerSeed.js?' +
+                        'sid=281&width=560&height=450&playList=' + id;
+                }
+
+                function yahooSrc(id) {
+                    return 'https://screen.yahoo.com/' + id + '.html?' +
+                        'format=embed';
+                }
+
+                switch (service) {
+                case 'aol':
+                    return [
+                        '<div style="text-align:center">',
+                        '    <script src="' + aolSrc(id) + '"></script>',
+                        '    <br/>',
+                        '</div>'
+                    ].join('\n');
+                case 'yahoo':
+                    return [
+                        '<iframe width="100%"',
+                        '    height="100%"',
+                        '    scrolling="no"',
+                        '    frameborder="0"',
+                        '    src="' + yahooSrc(id) + '"',
+                        '    allowfullscreen="true"',
+                        '    mozallowfullscreen="true"',
+                        '    webkitallowfullscreen="true"',
+                        '    allowtransparency="true">',
+                        '</iframe>'
+                    ].join('\n');
+                }
             };
         }])
 
