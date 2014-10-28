@@ -177,7 +177,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                         function fetchThumbs(minireel) {
                             return $q.all(minireel.data.deck.map(function(card) {
-                                return VideoThumbnailService.getThumbsFor(
+                                return card.thumb ? {
+                                    large: card.thumb
+                                } : VideoThumbnailService.getThumbsFor(
                                     card.data.service,
                                     card.data.videoid
                                 ).ensureFulfillment();
@@ -1046,7 +1048,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         minViewTime: null
                     }),
                     collateral: copy({}),
-                    thumbs: copy(null),
+                    thumb: function(card) {
+                        return (card.thumbs && card.thumbs.large) || null;
+                    },
                     links: function(card) {
                         switch (card.type) {
                         case 'displayAd':
@@ -1536,7 +1540,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return card.data.ballot;
                         },
                         thumbs: function(card) {
-                            return card.thumbs || undefined;
+                            return (card.thumb || undefined) && {
+                                small: card.thumb,
+                                large: card.thumb
+                            };
                         },
                         placementId: copy(null),
                         templateUrl: copy(null),

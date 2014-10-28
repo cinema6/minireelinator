@@ -104,6 +104,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                             this.state('MR:SponsorCard.Placement', function() {
                                 this.state('MR:Placement.MiniReel');
                                 this.state('MR:Placement.Placements');
+                                this.state('MR:Placement.Standalone');
                             });
                             this.state('MR:SponsorCard.Position');
                         });
