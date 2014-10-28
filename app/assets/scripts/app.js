@@ -42,10 +42,11 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             };
 
             this.find = function(type, id) {
-                return $http.get(config.apiBase + '/election/' + id)
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
+                return $http.get(config.apiBase + '/election/' + id, {
+                    cache: true
+                }).then(function arrayify(response) {
+                    return [response.data];
+                });
             };
 
             this.findQuery = function(type, query) {
@@ -115,8 +116,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             };*/
 
             this.find = function(type, id) {
-                return $http.get(config.apiBase + '/account/user/' + id)
-                    .then(returnData)
+                return $http.get(config.apiBase + '/account/user/' + id, {
+                    cache: true
+                }).then(returnData)
                     .then(this.decorateWithOrg)
                     .then(arrayify);
             };
@@ -184,10 +186,11 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             };
 
             this.find = function(type, id) {
-                return $http.get(config.apiBase + '/account/org/' + id)
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
+                return $http.get(config.apiBase + '/account/org/' + id, {
+                    cache: true
+                }).then(function arrayify(response) {
+                    return [response.data];
+                });
             };
 
             this.findQuery = function(type, query) {
@@ -274,8 +277,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             };
 
             this.find = function(type, id) {
-                return $http.get(config.apiBase + '/content/experience/' + id)
-                    .then(returnData)
+                return $http.get(config.apiBase + '/content/experience/' + id, {
+                    cache: true
+                }).then(returnData)
                     .then(this.decorateWithUser)
                     .then(arrayify);
             };
