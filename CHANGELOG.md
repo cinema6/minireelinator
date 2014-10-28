@@ -1,8 +1,10 @@
 # MiniReelinator
 
+## v1.3.0 (October 28, 2014)
 * *[v1.3.0.rc1]*
   * [FIX]: Fix for an issue that caused requests for minireels to take
     longer than necessary
+* *[/v1.3.0.rc1]*
 
 ## v1.2.1 (October 16, 2014)
 * *[v1.2.1.rc1]*
