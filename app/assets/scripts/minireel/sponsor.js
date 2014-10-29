@@ -476,8 +476,8 @@ WizardController           , VideoCardController          , LinksController     
             }]);
         }])
 
-        .controller('SponsorCardVideoController', ['$injector',
-        function                                  ( $injector ) {
+        .controller('SponsorCardVideoController', ['$injector','MiniReelService',
+        function                                  ( $injector , MiniReelService ) {
             function getJSONProp(json, prop) {
                 return (fromJson(json) || {})[prop];
             }
@@ -492,11 +492,6 @@ WizardController           , VideoCardController          , LinksController     
 
             $injector.invoke(VideoCardController, this);
 
-            this.skipOptions = {
-                'No, users cannot skip': 'never',
-                'Yes, after six seconds': 'delay',
-                'Yes, skip at any time': 'anytime'
-            };
             this.autoplayOptions = {
                 'Use MiniReel defaults': null,
                 'Yes': true,
@@ -556,6 +551,22 @@ WizardController           , VideoCardController          , LinksController     
                             '{pageUrl}',
                             encodeURIComponent(this.adPreviewPageUrl)
                         );
+                    }
+                },
+                canSkip: {
+                    get: function() {
+                        return this.model.data.skip === 'anytime';
+                    },
+                    set: function(bool) {
+                        this.model.data.skip = bool ? 'anytime' : 'delay';
+                    }
+                },
+                skip: {
+                    get: function() {
+                        return MiniReelService.convertCard(this.model).data.skip;
+                    },
+                    set: function(value) {
+                        this.model.data.skip = value;
                     }
                 }
             });

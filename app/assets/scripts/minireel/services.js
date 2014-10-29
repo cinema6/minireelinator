@@ -1079,8 +1079,11 @@ function( angular , c6uilib , cryptojs ) {
                             return 'anytime';
                         case false:
                             return 'never';
-                        default:
+                        case 6:
                             return 'delay';
+
+                        default:
+                            return data.skip;
                         }
                     },
                     autoplay: copy(null),
@@ -1407,7 +1410,7 @@ function( angular , c6uilib , cryptojs ) {
 
             this.convertCard = function(card, minireel) {
                 var dataTemplates, cardBases, cardType, dataType,
-                    mode = minireel.data.mode,
+                    mode = minireel && minireel.data.mode,
                     newCard = {
                         data: {}
                     };
@@ -1453,6 +1456,8 @@ function( angular , c6uilib , cryptojs ) {
                             return false;
                         case 'delay':
                             return 6;
+                        default:
+                            return data.skip;
                         }
                     };
                 }
