@@ -1410,7 +1410,7 @@ function( angular , c6uilib , cryptojs ) {
 
             this.convertCard = function(card, minireel) {
                 var dataTemplates, cardBases, cardType, dataType,
-                    mode = minireel.data.mode,
+                    mode = minireel && minireel.data.mode,
                     newCard = {
                         data: {}
                     };
