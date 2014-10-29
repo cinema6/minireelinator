@@ -1,35 +1,33 @@
-define(['minireel/sponsor','minireel/mixins/VideoCardController'], function(sponsorModule, VideoCardController) {
+define(['app','minireel/mixins/VideoCardController'], function(appModule, VideoCardController) {
     'use strict';
 
     describe('SponsorCardVideoController', function() {
         var $injector,
             $rootScope,
             $controller,
+            MiniReelService,
             $scope,
             SponsorCardVideoCtrl;
 
         var card;
 
         beforeEach(function() {
-            module(sponsorModule.name);
+            module(appModule.name);
 
             inject(function(_$injector_) {
                 $injector = _$injector_;
 
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
+                MiniReelService = $injector.get('MiniReelService');
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
                     SponsorCardVideoCtrl = $controller('SponsorCardVideoController', {
                         $scope: $scope
                     });
-                    card = SponsorCardVideoCtrl.model = {
-                        data: {
-                            service: null,
-                            videoid: null
-                        }
-                    };
+                    card = SponsorCardVideoCtrl.model = MiniReelService.createCard('video');
+                    card.data.service = 'youtube';
                 });
             });
         });
@@ -254,12 +252,92 @@ define(['minireel/sponsor','minireel/mixins/VideoCardController'], function(spon
                 });
             });
 
-            describe('skipOptions', function() {
-                it('should be a hash of skip options', function() {
-                    expect(SponsorCardVideoCtrl.skipOptions).toEqual({
-                        'No, users cannot skip': 'never',
-                        'Yes, after six seconds': 'delay',
-                        'Yes, skip at any time': 'anytime'
+            describe('canSkip', function() {
+                describe('getting', function() {
+                    describe('when card.data.skip === "anytime"', function() {
+                        beforeEach(function() {
+                            card.data.skip = 'anytime';
+                        });
+
+                        it('should be true', function() {
+                            expect(SponsorCardVideoCtrl.canSkip).toBe(true);
+                        });
+                    });
+
+                    describe('when card.data.skip is anything else', function() {
+                        it('should be false', function() {
+                            card.data.skip = 'delay';
+                            expect(SponsorCardVideoCtrl.canSkip).toBe(false);
+
+                            card.data.skip = 'never';
+                            expect(SponsorCardVideoCtrl.canSkip).toBe(false);
+
+                            card.data.skip = 'delay';
+                            expect(SponsorCardVideoCtrl.canSkip).toBe(false);
+
+                            card.data.skip = 30;
+                            expect(SponsorCardVideoCtrl.canSkip).toBe(false);
+                        });
+                    });
+                });
+
+                describe('setting', function() {
+                    describe('to true', function() {
+                        beforeEach(function() {
+                            card.data.skip = 6;
+
+                            SponsorCardVideoCtrl.canSkip = true;
+                        });
+
+                        it('should set card.data.skip to "anytime"', function() {
+                            expect(card.data.skip).toBe('anytime');
+                        });
+                    });
+
+                    describe('to false', function() {
+                        beforeEach(function() {
+                            card.data.skip = 'anytime';
+
+                            SponsorCardVideoCtrl.canSkip = false;
+                        });
+
+                        it('should set card.data.skip to "delay"', function() {
+                            expect(card.data.skip).toBe('delay');
+                        });
+                    });
+                });
+            });
+
+            describe('skip', function() {
+                describe('getting', function() {
+                    describe('if card.data.skip === "delay"', function() {
+                        beforeEach(function() {
+                            card.data.skip = 'delay';
+                        });
+
+                        it('should be the numerical delayed skip value', function() {
+                            expect(SponsorCardVideoCtrl.skip).toBe(MiniReelService.convertCard(card).data.skip);
+                        });
+                    });
+
+                    describe('if card.data.skip is numerical', function() {
+                        it('should be that number', function() {
+                            [1, 5, 7, 6, 4].forEach(function(number) {
+                                card.data.skip = number;
+
+                                expect(SponsorCardVideoCtrl.skip).toBe(number);
+                            });
+                        });
+                    });
+                });
+
+                describe('setting', function() {
+                    it('should proxy to card.data.skip', function() {
+                        [1, 3, 2, 6, 10].forEach(function(number) {
+                            SponsorCardVideoCtrl.skip = number;
+
+                            expect(card.data.skip).toBe(number);
+                        });
                     });
                 });
             });
