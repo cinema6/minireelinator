@@ -283,9 +283,15 @@
                                     'Website': 'awesome.com'
                                 },
                                 params: {
-                                    sponsor: 'GameStop'
+                                    ad: true,
+                                    sponsor: 'GameStop',
+                                    action: {
+                                        type: 'text',
+                                        label: 'OH HAI!'
+                                    }
                                 },
                                 data: {
+                                    hideSource: true,
                                     skip: 6,
                                     autoplay: false,
                                     autoadvance: true,
@@ -1303,7 +1309,12 @@
                                     'Website': 'awesome.com'
                                 },
                                 params: {
-                                    sponsor: 'GameStop'
+                                    ad: true,
+                                    sponsor: 'GameStop',
+                                    action: {
+                                        type: 'text',
+                                        label: 'OH HAI!'
+                                    }
                                 },
                                 data: {
                                     skip: 'delay',
@@ -1616,6 +1627,21 @@
                             expect(function() {
                                 MiniReelService.convertForPlayer(converted);
                             }).not.toThrow();
+                        });
+
+                        it('should give a sponosred card the "ad" param', function() {
+                            var converted,
+                                card = MiniReelService.createCard('video');
+
+                            card.sponsored = true;
+
+                            $rootScope.$apply(function() {
+                                converted = MiniReelService.convertForEditor(minireel);
+                            });
+
+                            converted.data.deck = [card];
+
+                            expect(MiniReelService.convertForPlayer(converted).data.deck[0].params.ad).toBe(true);
                         });
                     });
 
