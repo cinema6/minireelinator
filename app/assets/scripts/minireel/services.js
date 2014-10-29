@@ -1079,8 +1079,11 @@ function( angular , c6uilib , cryptojs ) {
                             return 'anytime';
                         case false:
                             return 'never';
-                        default:
+                        case 6:
                             return 'delay';
+
+                        default:
+                            return data.skip;
                         }
                     },
                     autoplay: copy(null),
@@ -1453,6 +1456,8 @@ function( angular , c6uilib , cryptojs ) {
                             return false;
                         case 'delay':
                             return 6;
+                        default:
+                            return data.skip;
                         }
                     };
                 }

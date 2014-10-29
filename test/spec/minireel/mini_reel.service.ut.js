@@ -213,7 +213,7 @@
                                     ]
                                 },
                                 data: {
-                                    skip: true,
+                                    skip: 25,
                                     videoid: '48hfrei49'
                                 }
                             },
@@ -1223,7 +1223,7 @@
                                 links: {},
                                 params: {},
                                 data: {
-                                    skip: 'anytime',
+                                    skip: 25,
                                     autoplay: null,
                                     autoadvance: null,
                                     service: 'vimeo',
