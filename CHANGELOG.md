@@ -3,6 +3,7 @@
 ## v1.3.0 (October 28, 2014)
 * *[v1.3.0.rc3]*
   * [FEATURE]: Allow custom skip times to be entered for sponsored cards
+* *[/v1.3.0.rc3]*
 
 * *[v1.3.0.rc2]*
   * [FIX]: Make it possible to edit some addition fields necessary for
