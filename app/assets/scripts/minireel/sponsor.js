@@ -476,8 +476,8 @@ WizardController           , VideoCardController          , LinksController     
             }]);
         }])
 
-        .controller('SponsorCardVideoController', ['$injector',
-        function                                  ( $injector ) {
+        .controller('SponsorCardVideoController', ['$injector','MiniReelService',
+        function                                  ( $injector , MiniReelService ) {
             function getJSONProp(json, prop) {
                 return (fromJson(json) || {})[prop];
             }
@@ -492,11 +492,6 @@ WizardController           , VideoCardController          , LinksController     
 
             $injector.invoke(VideoCardController, this);
 
-            this.skipOptions = {
-                'No, users cannot skip': 'never',
-                'Yes, after six seconds': 'delay',
-                'Yes, skip at any time': 'anytime'
-            };
             this.autoplayOptions = {
                 'Use MiniReel defaults': null,
                 'Yes': true,
@@ -557,6 +552,22 @@ WizardController           , VideoCardController          , LinksController     
                             encodeURIComponent(this.adPreviewPageUrl)
                         );
                     }
+                },
+                canSkip: {
+                    get: function() {
+                        return this.model.data.skip === 'anytime';
+                    },
+                    set: function(bool) {
+                        this.model.data.skip = bool ? 'anytime' : 'delay';
+                    }
+                },
+                skip: {
+                    get: function() {
+                        return MiniReelService.convertCard(this.model).data.skip;
+                    },
+                    set: function(value) {
+                        this.model.data.skip = value;
+                    }
                 }
             });
         }])
@@ -582,7 +593,32 @@ WizardController           , VideoCardController          , LinksController     
         function( c6StateProvider ) {
             c6StateProvider.state('MR:SponsorCard.Branding', [function() {
                 this.templateUrl = 'views/minireel/sponsor/manager/sponsor_card/branding.html';
+                this.controller = 'SponsorCardBrandingController';
+                this.controllerAs = 'SponsorCardBrandingCtrl';
             }]);
+        }])
+
+        .controller('SponsorCardBrandingController', ['$scope',
+        function                                     ( $scope ) {
+            var SponsorCardCtrl = $scope.SponsorCardCtrl,
+                card = SponsorCardCtrl.model;
+
+            this.actionTypeOptions = ['Button', 'Text']
+                .reduce(function(options, label) {
+                    options[label] = label.toLowerCase();
+                    return options;
+                }, {});
+
+            card.params.action = card.params.action || {
+                type: 'button',
+                label: ''
+            };
+
+            $scope.$on('$destroy', function() {
+                if (!card.params.action.label) {
+                    card.params.action = null;
+                }
+            });
         }])
 
         .config(['c6StateProvider',

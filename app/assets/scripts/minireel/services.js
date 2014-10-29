@@ -1128,8 +1128,11 @@ function( angular , c6uilib , cryptojs ) {
                             return 'anytime';
                         case false:
                             return 'never';
-                        default:
+                        case 6:
                             return 'delay';
+
+                        default:
+                            return data.skip;
                         }
                     },
                     autoplay: copy(null),
@@ -1456,7 +1459,7 @@ function( angular , c6uilib , cryptojs ) {
 
             this.convertCard = function(card, minireel) {
                 var dataTemplates, cardBases, cardType, dataType,
-                    mode = minireel.data.mode,
+                    mode = minireel && minireel.data.mode,
                     newCard = {
                         data: {}
                     };
@@ -1502,12 +1505,21 @@ function( angular , c6uilib , cryptojs ) {
                             return false;
                         case 'delay':
                             return 6;
+                        default:
+                            return data.skip;
                         }
+                    };
+                }
+
+                function hideSourceValue() {
+                    return function(data, prop, card) {
+                        return card.sponsored || undefined;
                     };
                 }
 
                 dataTemplates = {
                     youtube: {
+                        hideSource: hideSourceValue(),
                         autoplay: copy(null),
                         autoadvance: copy(null),
                         skip: skipValue(),
@@ -1518,6 +1530,7 @@ function( angular , c6uilib , cryptojs ) {
                         videoid: copy(null)
                     },
                     vimeo: {
+                        hideSource: hideSourceValue(),
                         autoplay: copy(null),
                         autoadvance: copy(null),
                         skip: skipValue(),
@@ -1526,6 +1539,7 @@ function( angular , c6uilib , cryptojs ) {
                         videoid: copy(null)
                     },
                     dailymotion: {
+                        hideSource: hideSourceValue(),
                         autoplay: copy(null),
                         autoadvance: copy(null),
                         skip: skipValue(),
@@ -1535,6 +1549,7 @@ function( angular , c6uilib , cryptojs ) {
                         videoid: copy(null)
                     },
                     adUnit: {
+                        hideSource: hideSourceValue(),
                         autoplay: copy(null),
                         autoadvance: copy(null),
                         skip: skipValue(),
@@ -1605,7 +1620,15 @@ function( angular , c6uilib , cryptojs ) {
                         campaign: copy(),
                         collateral: copy(),
                         links: copy(),
-                        params: copy()
+                        params: function(card) {
+                            var params = copy({}).apply(this, arguments);
+
+                            if (card.sponsored) {
+                                params.ad = true;
+                            }
+
+                            return params;
+                        }
                     },
                     ad: {
                         id: copy(),

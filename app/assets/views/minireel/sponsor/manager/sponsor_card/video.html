@@ -109,8 +109,15 @@
             </video-preview>
         </div>
         <div class="twoCol">
-            <strong>Allow Users to Skip This Video? <span class="typo--danger">*</span></strong>
-            <c6-dropdown options="SponsorCardVideoCtrl.skipOptions" value="card.data.skip"></c6-dropdown>
+            <strong>Allow Users to Skip This Video? <span class="typo--danger">*</span></strong><br />
+            <label class="checkbox--inline">
+                <input id="includeDisplayAd" type="checkbox" ng-model="SponsorCardVideoCtrl.canSkip" ng-disabled="!card.data.service" class="checkbox__input">
+                <span class="btn__label faa">&nbsp;</span>
+            </label>
+            <label ng-if="!SponsorCardVideoCtrl.canSkip">
+                After <input type="number" ng-model="SponsorCardVideoCtrl.skip" /> Seconds
+            </label>
+            <br />
 
             <strong>Do you want this video to start playing automatically?</strong>
             <c6-dropdown options="SponsorCardVideoCtrl.autoplayOptions" value="card.data.autoplay"></c6-dropdown>

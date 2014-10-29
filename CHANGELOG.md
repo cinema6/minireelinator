@@ -1,6 +1,17 @@
 # MiniReelinator
 
 ## v1.3.0 (October 28, 2014)
+* *[v1.3.0.rc3]*
+  * [FEATURE]: Allow custom skip times to be entered for sponsored cards
+* *[/v1.3.0.rc3]*
+
+* *[v1.3.0.rc2]*
+  * [FIX]: Make it possible to edit some addition fields necessary for
+    sponsored cards
+  * [FIX]: Make sure the "Ad" label appears on sponsored cards, and the
+    video source ("via YouTube", etc.) does not
+* *[/v1.3.0.rc2]*
+
 * *[v1.3.0.rc1]*
   * [FIX]: Fix for an issue that caused requests for minireels to take
     longer than necessary
