@@ -270,7 +270,7 @@
 
                 describe('previewUrl', function() {
                     it('should be a preview URL for the MiniReel', function() {
-                        expect(EditorCtrl.previewUrl).toBe(MiniReelService.previewUrlOf(cModel, '/#/preview/minireel'));
+                        expect(EditorCtrl.previewUrl).toBe(MiniReelService.previewUrlOf(cModel));
                     });
                 });
 

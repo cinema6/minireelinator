@@ -929,7 +929,7 @@
                         });
                     });
 
-                    describe('previewUrlOf(minireel, path)', function() {
+                    describe('previewUrlOf(minireel)', function() {
                         var result;
 
                         describe('if the minireel is public', function() {
@@ -957,7 +957,7 @@
                         describe('if the minireel is private', function() {
                             beforeEach(function() {
                                 minireel.access = 'private';
-                                result = MiniReelService.previewUrlOf(minireel, '/#/preview/minireel');
+                                result = MiniReelService.previewUrlOf(minireel);
                             });
 
                             it('should return null', function() {
