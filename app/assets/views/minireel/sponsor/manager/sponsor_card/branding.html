@@ -23,7 +23,7 @@
 
         <label class="forms__pair forms__pair--spacer clearfix">
             <span class="forms__name">
-                Template <strong class="typo--danger">*</strong>
+                Template
             </span>
             <span class="forms__inputHolder">
                 <input type="text" class="forms__textField forms__textField--block" ng-model="card.templateUrl">
@@ -38,5 +38,16 @@
                 <input type="text" class="forms__textField forms__textField--block" ng-model="card.thumb">
             </span>
         </label>
+
+        <h3 class="forms__name--title">Action</h3>
+        <label class="forms__pair forms__pair--spacer clearfix">
+            <span class="forms__name">
+                Label
+            </span>
+            <span class="forms__inputHolder">
+                <input type="text" class="forms__textField forms__textField--block" ng-model="card.params.action.label">
+            </span>
+        </label>
+        <c6-dropdown options="SponsorCardBrandingCtrl.actionTypeOptions" value="card.params.action.type"></c6-dropdown>
     </form>
 </div>

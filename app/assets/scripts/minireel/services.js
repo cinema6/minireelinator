@@ -1457,8 +1457,15 @@ function( angular , c6uilib , cryptojs ) {
                     };
                 }
 
+                function hideSourceValue() {
+                    return function(data, prop, card) {
+                        return card.sponsored || undefined;
+                    };
+                }
+
                 dataTemplates = {
                     youtube: {
+                        hideSource: hideSourceValue(),
                         autoplay: copy(null),
                         autoadvance: copy(null),
                         skip: skipValue(),
@@ -1469,6 +1476,7 @@ function( angular , c6uilib , cryptojs ) {
                         videoid: copy(null)
                     },
                     vimeo: {
+                        hideSource: hideSourceValue(),
                         autoplay: copy(null),
                         autoadvance: copy(null),
                         skip: skipValue(),
@@ -1477,6 +1485,7 @@ function( angular , c6uilib , cryptojs ) {
                         videoid: copy(null)
                     },
                     dailymotion: {
+                        hideSource: hideSourceValue(),
                         autoplay: copy(null),
                         autoadvance: copy(null),
                         skip: skipValue(),
@@ -1486,6 +1495,7 @@ function( angular , c6uilib , cryptojs ) {
                         videoid: copy(null)
                     },
                     adUnit: {
+                        hideSource: hideSourceValue(),
                         autoplay: copy(null),
                         autoadvance: copy(null),
                         skip: skipValue(),
@@ -1556,7 +1566,15 @@ function( angular , c6uilib , cryptojs ) {
                         campaign: copy(),
                         collateral: copy(),
                         links: copy(),
-                        params: copy()
+                        params: function(card) {
+                            var params = copy({}).apply(this, arguments);
+
+                            if (card.sponsored) {
+                                params.ad = true;
+                            }
+
+                            return params;
+                        }
                     },
                     ad: {
                         id: copy(),
