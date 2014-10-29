@@ -12,7 +12,10 @@
                 $q,
                 $preview,
                 $httpBackend,
-                YouTubeDataService;
+                YouTubeDataService,
+                VideoService;
+
+            var scope;
 
             beforeEach(function() {
                 module(appModule.name);
@@ -31,6 +34,7 @@
                     $q = $injector.get('$q');
                     YouTubeDataService = $injector.get('YouTubeDataService');
                     $httpBackend = $injector.get('$httpBackend');
+                    VideoService = $injector.get('VideoService');
 
                     $scope = $rootScope.$new();
                 });
@@ -44,7 +48,25 @@
                     $preview = $compile('<video-preview service="{{service}}" videoid="{{videoid}}" start="start" end="end"></video-preview>')($scope);
                 });
 
+                scope = $preview.isolateScope();
+
                 expect($preview.find('iframe').length).toBe(0);
+            });
+
+            describe('scope.embedCode', function() {
+                it('should be the embedCode given the service and video id', function() {
+                    $scope.$apply(function() {
+                        $scope.service = 'yahoo';
+                        $scope.videoid = '98fh3489r';
+                    });
+                    expect(scope.embedCode).toBe(VideoService.embedCodeFromData($scope.service, $scope.videoid));
+
+                    $scope.$apply(function() {
+                        $scope.service = 'aol';
+                        $scope.videoid = '9834hfn34ior';
+                    });
+                    expect(scope.embedCode).toBe(VideoService.embedCodeFromData($scope.service, $scope.videoid));
+                });
             });
 
             describe('when the chosen player has an interface', function() {

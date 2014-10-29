@@ -1882,8 +1882,8 @@ VideoCardController           ) {
             };
         }])
 
-        .directive('videoPreview', ['c6UrlMaker','$timeout',
-        function                   ( c6UrlMaker , $timeout ) {
+        .directive('videoPreview', ['c6UrlMaker','$timeout','VideoService',
+        function                   ( c6UrlMaker , $timeout , VideoService ) {
             return {
                 restrict: 'E',
                 templateUrl: 'views/minireel/directives/video_preview.html',
@@ -1983,6 +1983,13 @@ VideoCardController           ) {
                             .on('error', $emitError);
                     }
 
+                    Object.defineProperties(scope, {
+                        embedCode: {
+                            get: function() {
+                                return VideoService.embedCodeFromData(scope.service, scope.videoid);
+                            }
+                        }
+                    });
 
                     scope.$watch('videoid', function(id) {
                         if (!id) { return; }
