@@ -43,9 +43,9 @@
                         });
 
                         it('should create an aol url', function() {
-                            expect(fromData('aol', '518483595')).toBe('http://on.aol.com/video/518483595');
-                            expect(fromData('aol', '518484938')).toBe('http://on.aol.com/video/518484938');
-                            expect(fromData('aol', '518484285')).toBe('http://on.aol.com/video/518484285');
+                            expect(fromData('aol', 'nurses-ebola-quarantine-leads-to-lawsuit-for-christie-518484285')).toBe('http://on.aol.com/video/nurses-ebola-quarantine-leads-to-lawsuit-for-christie-518484285');
+                            expect(fromData('aol', 'iraq-s-peshmerga-en-route-to-fight-isis-518487060')).toBe('http://on.aol.com/video/iraq-s-peshmerga-en-route-to-fight-isis-518487060');
+                            expect(fromData('aol', 'former-cia-agent-valerie-plame-calls-dick-cheney-a-traitor-518488944')).toBe('http://on.aol.com/video/former-cia-agent-valerie-plame-calls-dick-cheney-a-traitor-518488944');
                         });
 
                         it('should create a yahoo url', function() {
@@ -84,7 +84,7 @@
                         it('should parse an aol url', function() {
                             expect(fromUrl('http://on.aol.com/video/nurses-ebola-quarantine-leads-to-lawsuit-for-christie-518484285?icid=OnNewsC2Wide_Img')).toEqual({
                                 service: 'aol',
-                                id: '518484285'
+                                id: 'nurses-ebola-quarantine-leads-to-lawsuit-for-christie-518484285'
                             });
                         });
 
@@ -107,9 +107,9 @@
 
                     describe('embedCodeFromData(service, id)', function() {
                         it('should create an aol embed code', function() {
-                            expect(VideoService.embedCodeFromData('aol', '518484285')).toEqual([
+                            expect(VideoService.embedCodeFromData('aol', 'former-cia-agent-valerie-plame-calls-dick-cheney-a-traitor-518488944')).toEqual([
                                 '<div style="text-align:center">',
-                                '    <script src="http://pshared.5min.com/Scripts/PlayerSeed.js?sid=281&width=560&height=450&playList=518484285"></script>',
+                                '    <script src="http://pshared.5min.com/Scripts/PlayerSeed.js?sid=281&width=560&height=450&playList=518488944"></script>',
                                 '    <br/>',
                                 '</div>'
                             ].join('\n'));

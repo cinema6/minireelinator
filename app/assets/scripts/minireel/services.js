@@ -915,8 +915,7 @@ function( angular , c6uilib , cryptojs ) {
                                 .match(/[a-zA-Z0-9]+/) || [])[0];
                         },
                         aol: function(url) {
-                            return (url.pathname
-                                .match(/\d+$/) || [null])[0];
+                            return (url.pathname.match(/[^\/]+$/) || [null])[0];
                         },
                         yahoo: function(url) {
                             return (url.pathname
@@ -952,7 +951,7 @@ function( angular , c6uilib , cryptojs ) {
             this.embedCodeFromData = function(service, id) {
                 function aolSrc(id) {
                     return 'http://pshared.5min.com/Scripts/PlayerSeed.js?' +
-                        'sid=281&width=560&height=450&playList=' + id;
+                        'sid=281&width=560&height=450&playList=' + (id.match(/\d+$/) || [])[0];
                 }
 
                 function yahooSrc(id) {
