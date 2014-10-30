@@ -113,7 +113,7 @@
                     $scope.$apply(function() {
                         $scope.videoid = '85377978';
                     });
-                    $preview.find('div').append($player);
+                    $preview.find('div#videoEmbedPlayer').empty().append($player);
                     $timeout.flush();
 
                     expect(scope.video).not.toBeDefined();
@@ -129,7 +129,7 @@
                         $scope.$apply(function() {
                             $scope.videoid = '85377979';
                         });
-                        $preview.find('div').append($player);
+                        $preview.find('div#videoEmbedPlayer').append($player);
                         $timeout.flush();
                     });
 
