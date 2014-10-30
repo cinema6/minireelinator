@@ -718,8 +718,10 @@ function( angular , c6uilib , cryptojs ) {
             };
         }])
 
-        .service('VideoThumbnailService', ['$q','$cacheFactory','$http',
-        function                          ( $q , $cacheFactory , $http ) {
+        .service('VideoThumbnailService', ['$q','$cacheFactory','$http','VideoService',
+                                           'OpenGraphService',
+        function                          ( $q , $cacheFactory , $http , VideoService ,
+                                            OpenGraphService ) {
             var _private = {},
                 cache = $cacheFactory('VideoThumbnailService:models');
 
@@ -779,6 +781,18 @@ function( angular , c6uilib , cryptojs ) {
                 });
             };
 
+            _private.fetchOpenGraphThumbs = function(service, videoid) {
+                return OpenGraphService.getData(VideoService.urlFromData(service, videoid))
+                    .then(function(data) {
+                        var image = data.images[0].value;
+
+                        return {
+                            small: image,
+                            large: image
+                        };
+                    });
+            };
+
             this.getThumbsFor = function(service, videoid) {
                 var key = service + ':' + videoid;
 
@@ -791,6 +805,9 @@ function( angular , c6uilib , cryptojs ) {
                             return new ThumbModel(_private.fetchVimeoThumbs(videoid));
                         case 'dailymotion':
                             return new ThumbModel(_private.fetchDailyMotionThumbs(videoid));
+                        case 'yahoo':
+                        case 'aol':
+                            return new ThumbModel(_private.fetchOpenGraphThumbs(service, videoid));
                         default:
                             return new ThumbModel($q.when({
                                 small: null,

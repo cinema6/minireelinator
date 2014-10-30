@@ -5,6 +5,8 @@
         describe('VideoThumbnailService', function() {
             var $rootScope,
                 $q,
+                OpenGraphService,
+                VideoService,
                 VideoThumbnailService;
 
             var $httpBackend;
@@ -17,6 +19,8 @@
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
                     $q = $injector.get('$q');
+                    OpenGraphService = $injector.get('OpenGraphService');
+                    VideoService = $injector.get('VideoService');
 
                     $httpBackend = $injector.get('$httpBackend');
 
@@ -128,6 +132,40 @@
                             expect(success).toHaveBeenCalledWith({
                                 small: 'http://s2.dmcdn.net/EZ-Ut/x120-3BS.jpg',
                                 large: 'http://s2.dmcdn.net/EZ-Ut.jpg'
+                            });
+                        });
+                    });
+
+                    describe('fetchOpenGraphThumbs(service, videoid)', function() {
+                        var success,
+                            data;
+
+                        beforeEach(function() {
+                            success = jasmine.createSpy('success()');
+
+                            data = {
+                                images: [
+                                    {
+                                        value: 'https://s1.yimg.com/lo/api/res/1.2/_Jo44FiEC_QjAhRtNb0AHw--/YXBwaWQ9eXZpZGVvZmVlZHM7Zmk9ZmlsbDtoPTM2MDt3PTY0MA--/http://media.zenfs.com/en-US/video/video.associatedpressfree.com/e96c6d366033f659588444a884da7058'
+                                    }
+                                ]
+                            };
+
+                            spyOn(OpenGraphService, 'getData').and.returnValue($q.when(data));
+
+                            $rootScope.$apply(function() {
+                                _private.fetchOpenGraphThumbs('yahoo', '9034fj8394485hn').then(success);
+                            });
+                        });
+
+                        it('should get the open graph data for the video', function() {
+                            expect(OpenGraphService.getData).toHaveBeenCalledWith(VideoService.urlFromData('yahoo', '9034fj8394485hn'));
+                        });
+
+                        it('should resolve to an object with small and large thumbnails', function() {
+                            expect(success).toHaveBeenCalledWith({
+                                small: data.images[0].value,
+                                large: data.images[0].value
                             });
                         });
                     });
@@ -249,6 +287,41 @@
                                 expect(VideoThumbnailService.getThumbsFor('dailymotion', 'abc123')).toBe(result);
 
                                 expect(VideoThumbnailService.getThumbsFor('dailymotion', '12345')).not.toBe(result);
+                            });
+                        });
+
+                        ['yahoo', 'aol'].forEach(function(service) {
+                            describe(service, function() {
+                                var result;
+
+                                beforeEach(function() {
+                                    spyOn(_private, 'fetchOpenGraphThumbs')
+                                        .and.returnValue($q.when({
+                                            small: 'og--small.jpg',
+                                            large: 'og--large.jpg'
+                                        }));
+
+                                    result = VideoThumbnailService.getThumbsFor(service, '2038fh349');
+                                });
+
+                                it('should immediately return an object with null properties', function() {
+                                    expect(result.small).toBeNull();
+                                    expect(result.large).toBeNull();
+                                });
+
+                                it('should set the small and large properties when the promise resolves', function() {
+                                    expect(_private.fetchOpenGraphThumbs).toHaveBeenCalledWith(service, '2038fh349');
+                                    $rootScope.$digest();
+
+                                    expect(result.small).toBe('og--small.jpg');
+                                    expect(result.large).toBe('og--large.jpg');
+                                });
+
+                                it('should cache the model', function() {
+                                    expect(VideoThumbnailService.getThumbsFor(service, '2038fh349')).toBe(result);
+
+                                    expect(VideoThumbnailService.getThumbsFor(service, 'wiuryu9b')).not.toBe(result);
+                                });
                             });
                         });
 
