@@ -55,6 +55,22 @@ function( angular , c6uilib , cryptojs ) {
     }
 
     return angular.module('c6.app.minireel.services', [c6uilib.name])
+        .service('YQLService', ['$http','$q',
+        function               ( $http , $q ) {
+            this.query = function(query) {
+                return $http.get('https://query.yahooapis.com/v1/public/yql', {
+                    params: {
+                        format: 'json',
+                        q: query
+                    }
+                }).then(function(response) {
+                    return response.data.query.results;
+                }, function(response) {
+                    return $q.reject(response.data.error.description);
+                });
+            };
+        }])
+
         .factory('requireCJS', ['$http','$cacheFactory','$q',
         function               ( $http , $cacheFactory , $q ) {
             var cache = $cacheFactory('requireCJS');
