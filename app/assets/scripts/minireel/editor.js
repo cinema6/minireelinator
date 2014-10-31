@@ -459,7 +459,7 @@ VideoCardController           ) {
                 },
                 previewUrl: {
                     get: function() {
-                        return MiniReelService.previewUrlOf(this.model, '/#/preview/minireel');
+                        return MiniReelService.previewUrlOf(this.model);
                     }
                 },
                 lastEditableIndex: {

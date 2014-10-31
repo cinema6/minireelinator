@@ -1,5 +1,5 @@
-define( ['angular','c6uilib','cryptojs'],
-function( angular , c6uilib , cryptojs ) {
+define( ['angular','c6uilib','cryptojs','c6_defines'],
+function( angular , c6uilib , cryptojs , c6Defines  ) {
     'use strict';
 
     var forEach = angular.forEach,
@@ -900,9 +900,9 @@ function( angular , c6uilib , cryptojs ) {
         }])
 
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
-                                     'SettingsService','c6UrlParser',
+                                     'SettingsService',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
-                                      SettingsService , c6UrlParser ) {
+                                      SettingsService ) {
             var self = this,
                 portal = c6State.get('Portal');
 
@@ -1249,24 +1249,19 @@ function( angular , c6uilib , cryptojs ) {
                 return minireel.save();
             };
 
-            this.previewUrlOf = function(minireel, path) {
-                var splash = minireel.data.splash;
-
-                return minireel.access === 'public' ?
-                    c6UrlParser([
-                        path + '?',
-                        [
-                            ['preload'],
-                            ['exp', minireel.id],
-                            ['title', minireel.data.title],
-                            ['splash', splash.theme + ':' + splash.ratio.replace('-', '/')]
-                        ].map(function(pair) {
-                            return pair.map(encodeURIComponent)
-                                .join('=');
-                        })
-                        .join('&')
-                    ].join('')).href :
-                    null;
+            this.previewUrlOf = function(minireel) {
+                if (minireel.access === 'public') {
+                    var path;
+                    if (c6Defines.kDebug) {
+                        path = 'https://c-6.co';
+                    } else {
+                        path = 'https://ci6.co';
+                    }
+                    path = path + '/preview?id=' + encodeURIComponent(minireel.id);
+                    return path;
+                } else {
+                    return null;
+                }
             };
 
             this.publish = function(minireel) {
