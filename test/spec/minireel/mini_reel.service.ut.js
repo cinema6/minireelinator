@@ -420,7 +420,9 @@
                                     small: 'logo.jpg',
                                     large: 'logo.jpg'
                                 },
-                                params: {},
+                                params: {
+                                    sponsor: 'Ubisoft'
+                                },
                                 modules: [],
                                 data: {
                                     size: '300x250'
@@ -1434,7 +1436,9 @@
                                 collateral: {},
                                 thumb: 'logo.jpg',
                                 links: {},
-                                params: {},
+                                params: {
+                                    sponsor: 'Ubisoft'
+                                },
                                 data: {
                                     size: '300x250'
                                 }

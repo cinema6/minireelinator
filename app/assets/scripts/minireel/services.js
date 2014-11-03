@@ -1636,7 +1636,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 large: logo
                             };
                         },
-                        params: copy()
+                        params: function() {
+                            return {
+                                sponsor: minireel.data.params.sponsor
+                            };
+                        }
                     }
                 };
 
