@@ -11,6 +11,7 @@
                 CollateralService,
                 VideoThumbnailService,
                 SettingsService,
+                VideoService,
                 $rootScope,
                 c6UrlParser,
                 cinema6,
@@ -51,6 +52,7 @@
                     CollateralService = $injector.get('CollateralService');
                     VideoThumbnailService = $injector.get('VideoThumbnailService');
                     SettingsService = $injector.get('SettingsService');
+                    VideoService = $injector.get('VideoService');
                     c6State = $injector.get('c6State');
                     c6UrlParser = $injector.get('c6UrlParser');
                 });
@@ -454,7 +456,65 @@
                                     vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
                                     vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
                                 }
-                            }
+                            },
+                            (function() {
+                                var card = {
+                                    id: 'rc-fc6cfb661b7a86',
+                                    type: 'embedded',
+                                    title: 'Yahoo! Card',
+                                    note: 'This is a Yahoo! card.',
+                                    placementId: null,
+                                    templateUrl: null,
+                                    sponsored: false,
+                                    campaign: {
+                                        campaignId: null,
+                                        advertiserId: null,
+                                        minViewTime: null
+                                    },
+                                    collateral: {},
+                                    links: {},
+                                    params: {},
+                                    modules: [],
+                                    data: {
+                                        skip: true,
+                                        service: 'yahoo',
+                                        videoid: 'teen-tries-drain-pond-lost-221030513',
+                                    }
+                                };
+
+                                card.data.code = VideoService.embedCodeFromData(card.data.service, card.data.videoid);
+
+                                return card;
+                            }()),
+                            (function() {
+                                var card = {
+                                    id: 'rc-f51c0386a90a02',
+                                    type: 'embedded',
+                                    title: 'AOL Card',
+                                    note: 'This is an AOL card.',
+                                    placementId: null,
+                                    templateUrl: null,
+                                    sponsored: false,
+                                    campaign: {
+                                        campaignId: null,
+                                        advertiserId: null,
+                                        minViewTime: null
+                                    },
+                                    collateral: {},
+                                    links: {},
+                                    params: {},
+                                    modules: [],
+                                    data: {
+                                        skip: true,
+                                        service: 'aol',
+                                        videoid: 'arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876',
+                                    }
+                                };
+
+                                card.data.code = VideoService.embedCodeFromData(card.data.service, card.data.videoid);
+
+                                return card;
+                            }())
                         ]
                     }
                 });
@@ -1358,6 +1418,68 @@
                                         vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
                                         vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
                                     }),
+                                    start: null,
+                                    end: null
+                                }
+                            });
+
+                            expect(deck[11]).toEqual({
+                                id: 'rc-fc6cfb661b7a86',
+                                type: 'video',
+                                title: 'Yahoo! Card',
+                                note: 'This is a Yahoo! card.',
+                                label: 'Video',
+                                ad: false,
+                                view: 'video',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
+                                params: {},
+                                thumb: null,
+                                data: {
+                                    skip: 'anytime',
+                                    autoplay: null,
+                                    autoadvance: null,
+                                    service: 'yahoo',
+                                    videoid: 'teen-tries-drain-pond-lost-221030513',
+                                    start: null,
+                                    end: null
+                                }
+                            });
+
+                            expect(deck[12]).toEqual({
+                                id: 'rc-f51c0386a90a02',
+                                type: 'video',
+                                title: 'AOL Card',
+                                note: 'This is an AOL card.',
+                                label: 'Video',
+                                ad: false,
+                                view: 'video',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
+                                params: {},
+                                thumb: null,
+                                data: {
+                                    skip: 'anytime',
+                                    autoplay: null,
+                                    autoadvance: null,
+                                    service: 'aol',
+                                    videoid: 'arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876',
                                     start: null,
                                     end: null
                                 }

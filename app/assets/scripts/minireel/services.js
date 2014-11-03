@@ -1106,9 +1106,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
         }])
 
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
-                                     'SettingsService',
+                                     'SettingsService','VideoService',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
-                                      SettingsService ) {
+                                      SettingsService , VideoService ) {
             var self = this,
                 portal = c6State.get('Portal');
 
@@ -1182,6 +1182,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'vimeo':
                         case 'dailymotion':
                         case 'adUnit':
+                        case 'embedded':
                             return 'video' + ((card.modules.indexOf('ballot') > -1) ?
                                 'Ballot' : '');
                         default:
@@ -1642,7 +1643,14 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     switch (card.type) {
                     case 'video':
                     case 'videoBallot':
-                        return card.data.service;
+                        switch (card.data.service) {
+                            case 'yahoo':
+                            case 'aol':
+                                return 'embedded';
+                            default:
+                            return card.data.service;
+                        }
+                        break;
                     default:
                         return card.type;
                     }
@@ -1712,6 +1720,19 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return (fromJson(data.videoid) || {}).vpaid;
                         }
                     },
+                    embedded: {
+                        hideSource: hideSourceValue(),
+                        autoplay: copy(null),
+                        autoadvance: copy(null),
+                        skip: skipValue(),
+                        start: trimmer(),
+                        end: trimmer(),
+                        service: copy(),
+                        videoid: copy(null),
+                        code: function(data) {
+                            return VideoService.embedCodeFromData(data.service, data.videoid);
+                        }
+                    },
                     ad: {
                         autoplay: copy(true),
                         source: copy('cinema6'),
@@ -1743,7 +1764,15 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     video: {
                         id: copy(),
                         type: function(card) {
-                            return card.data.service || card.type;
+                            var service = card.data.service;
+
+                            switch (service) {
+                            case 'yahoo':
+                            case 'aol':
+                                return 'embedded';
+                            default:
+                            return service || card.type;
+                            }
                         },
                         title: copy(null),
                         note: copy(null),
