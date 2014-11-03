@@ -114,7 +114,7 @@ function( angular ) {
         };
 
         this.previewUrlOf = function(minireel) {
-            return MiniReelService.previewUrlOf(minireel, '/#/preview/minireel');
+            return MiniReelService.previewUrlOf(minireel);
         };
 
         this.modeNameFor = function(minireel) {
