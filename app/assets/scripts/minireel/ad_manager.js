@@ -125,7 +125,8 @@ function( angular , c6uilib , c6State  , services          ,
                         skip: equalOrUndefine()
                     },
                     displayTemplate = {
-                        waterfall: equalOrUndefine()
+                        waterfall: equalOrUndefine(),
+                        enabled: equalOrUndefine()
                     },
                     sharedConfig;
 

@@ -1428,9 +1428,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             this.convertCard = function(card, minireel) {
                 var dataTemplates, cardBases, cardType, dataType,
                     org = portal.cModel.org,
-                    displayAdsEnabled = (minireel.data.adConfig &&
+                    displayAdsEnabled = (minireel &&
+                        minireel.data.adConfig &&
                         minireel.data.adConfig.display.enabled) ||
-                        org.adConfig.display.enabled,
+                        (org &&
+                        org.adConfig &&
+                        org.adConfig.display.enabled),
                     newCard = {
                         data: {}
                     };

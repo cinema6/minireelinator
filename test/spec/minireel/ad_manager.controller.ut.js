@@ -723,7 +723,8 @@
                                     skip: 6
                                 },
                                 display: {
-                                    waterfall: 'cinema6'
+                                    waterfall: 'cinema6',
+                                    enabled: false
                                 }
                             },
                             data: {
@@ -741,7 +742,8 @@
                                 skip: false
                             },
                             display: {
-                                waterfall: 'cinema6'
+                                waterfall: 'cinema6',
+                                enabled: true
                             }
                         };
 
@@ -758,7 +760,8 @@
                                     skip: false
                                 },
                                 display: {
-                                    waterfall: 'cinema6'
+                                    waterfall: 'cinema6',
+                                    enabled: true
                                 }
                             },
                             data: {
@@ -771,7 +774,8 @@
                                         skip: false
                                     },
                                     display: {
-                                        waterfall: 'cinema6'
+                                        waterfall: 'cinema6',
+                                        enabled: true
                                     }
                                 }
                             }
@@ -806,7 +810,8 @@
                                     skip: 6
                                 },
                                 display: {
-                                    waterfall: 'cinema6'
+                                    waterfall: 'cinema6',
+                                    enabled: true
                                 }
                             };
 
@@ -823,7 +828,8 @@
                                         skip: 6
                                     },
                                     display: {
-                                        waterfall: 'cinema6'
+                                        waterfall: 'cinema6',
+                                        enabled: true
                                     }
                                 },
                                 data: [minireel]
@@ -846,7 +852,8 @@
                                                 skip: 6
                                             },
                                             display: {
-                                                waterfall: 'cinema6'
+                                                waterfall: 'cinema6',
+                                                enabled: true
                                             }
                                         }
                                     }
@@ -862,7 +869,8 @@
                                                 skip: 6
                                             },
                                             display: {
-                                                waterfall: 'cinema6'
+                                                waterfall: 'cinema6',
+                                                enabled: true
                                             }
                                         }
                                     }
@@ -882,7 +890,8 @@
                                         skip: 6
                                     },
                                     display: {
-                                        waterfall: 'cinema6'
+                                        waterfall: 'cinema6',
+                                        enabled: true
                                     }
                                 },
                                 data: minireels
@@ -901,7 +910,8 @@
                                                 skip: true
                                             },
                                             display: {
-                                                waterfall: 'cinema6'
+                                                waterfall: 'cinema6',
+                                                enabled: true
                                             }
                                         }
                                     }
@@ -917,7 +927,8 @@
                                                 skip: 6
                                             },
                                             display: {
-                                                waterfall: 'publisher'
+                                                waterfall: 'publisher',
+                                                enabled: false
                                             }
                                         }
                                     }
@@ -937,7 +948,8 @@
                                         skip: undefined
                                     },
                                     display: {
-                                        waterfall: undefined
+                                        waterfall: undefined,
+                                        enabled: undefined
                                     }
                                 },
                                 data: minireels
@@ -956,7 +968,8 @@
                                                 skip: 6
                                             },
                                             display: {
-                                                waterfall: 'cinema6'
+                                                waterfall: 'cinema6',
+                                                enabled: false
                                             }
                                         }
                                     }
@@ -972,7 +985,8 @@
                                                 skip: 6
                                             },
                                             display: {
-                                                waterfall: 'publisher'
+                                                waterfall: 'publisher',
+                                                enabled: false
                                             }
                                         }
                                     }
@@ -992,7 +1006,8 @@
                                         skip: 6
                                     },
                                     display: {
-                                        waterfall: undefined
+                                        waterfall: undefined,
+                                        enabled: false
                                     }
                                 },
                                 data: minireels

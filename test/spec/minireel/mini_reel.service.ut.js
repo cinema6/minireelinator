@@ -128,7 +128,8 @@
                                 skip: 6
                             },
                             display: {
-                                waterfall: 'cinema6'
+                                waterfall: 'cinema6',
+                                enabled: false
                             }
                         },
                         splash: {
@@ -1582,7 +1583,7 @@
                         });
                     });
 
-                    describe('convertForPlayer(minireel)', function() {
+                    ddescribe('convertForPlayer(minireel)', function() {
                         it('should convert back to the player format', function() {
                             var converted,
                                 result;
@@ -1601,6 +1602,36 @@
                             });
                             expect(result.data).toEqual(minireel.data);
                             expect(result).not.toBe(minireel);
+                        });
+
+                        it('should add/remove displayAd modules on each card based on adConfig', function() {
+                            var converted,
+                                result;
+
+                            minireel.data.adConfig.display.enabled = true;
+
+                            $rootScope.$apply(function() {
+                                converted = MiniReelService.convertForEditor(minireel);
+                            });
+
+                            // portal.cModel.org.data = {
+                            //     adConfig: {
+                            //         display: {
+                            //             enabled: true
+                            //         }
+                            //     }
+                            // };
+
+                            result = MiniReelService.convertForPlayer(converted);
+
+                            result.data.deck.forEach(function(card) {
+                                if (card.type !== 'adUnit') {
+                                    console.log(card.modules, card.type);
+                                    // Do all card types get displayAd module expect adUnit? Text? Links?
+                                    // TODO: delete minireel.data.adConfig and then set cModel.org.data.adConfig
+                                    expect(card.modules.indexOf('displayAd')).not.toBe(-1);
+                                }
+                            });
                         });
 
                         it('should support performing the conversion on a specified object', function() {

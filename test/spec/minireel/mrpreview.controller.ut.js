@@ -11,6 +11,7 @@
                 MiniReelService,
                 c6EventEmitter,
                 c6BrowserInfo,
+                c6State, portal,
                 postMessage;
 
             var responseCallback,
@@ -48,6 +49,9 @@
                     c6EventEmitter = $injector.get('c6EventEmitter');
                     c6UrlMaker = $injector.get('c6UrlMaker');
                     playerMeta = $injector.get('playerMeta');
+                    c6State = $injector.get('c6State');
+                    portal = c6State.get('Portal');
+                    portal.cModel = {};
 
                     $scope = $rootScope.$new();
 
