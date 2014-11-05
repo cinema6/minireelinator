@@ -1237,6 +1237,28 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 });
             };
 
+            this.enableDisplayAds = function(minireel) {
+                minireel.data.deck.forEach(function(card) {
+                    if (card.type !== 'adUnit' && card.modules.indexOf('displayAd') < 0) {
+                        card.modules.push('displayAd');
+                    }
+                });
+
+                return minireel;
+            };
+
+            this.disableDisplayAds = function(minireel) {
+                minireel.data.deck.forEach(function(card) {
+                    if (card.type !== 'adUnit') {
+                        card.modules = card.modules.filter(function(mod) {
+                            return mod !== 'displayAd';
+                        });
+                    }
+                });
+
+                return minireel;
+            };
+
             this.enablePreview = function(minireel) {
                 minireel.access = 'public';
 
