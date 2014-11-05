@@ -9,7 +9,7 @@ module.exports = function(http) {
         idFromPath = db.idFromPath,
         extend = fn.extend;
 
-    function experiencePath(id) {
+    function orgPath(id) {
         return path.resolve(__dirname, './orgs/' + id + '.json');
     }
 
@@ -27,14 +27,15 @@ module.exports = function(http) {
     });
 
     http.whenPUT('/api/account/org/**', function(request) {
-        var filePath = experiencePath(idFromPath(request.pathname)),
+        var id = idFromPath(request.pathname)
+            filePath = orgPath(id),
             current = grunt.file.readJSON(filePath),
-            newExperience = extend(current, request.body, {
+            updatedOrg = extend(current, request.body, {
                 lastUpdated: (new Date()).toISOString()
             });
 
-        grunt.file.write(filePath, JSON.stringify(newExperience, null, '    '));
+        grunt.file.write(filePath, JSON.stringify(updatedOrg, null, '    '));
 
-        this.respond(200, newExperience);
+        this.respond(200, extend(updatedOrg, {id: id}));
     });
 };
