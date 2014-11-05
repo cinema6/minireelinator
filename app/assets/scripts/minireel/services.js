@@ -1427,7 +1427,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             this.convertCard = function(card, minireel) {
                 var dataTemplates, cardBases, cardType, dataType,
-                    mode = minireel && minireel.data.mode,
+                    org = portal.cModel.org,
+                    displayAdsEnabled = (minireel.data.adConfig &&
+                        minireel.data.adConfig.display.enabled) ||
+                        org.adConfig.display.enabled,
                     newCard = {
                         data: {}
                     };
@@ -1568,7 +1571,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         },
                         modules: function(card) {
                             var modules = card.type === 'videoBallot' ? ['ballot'] : [];
-                            if(mode === 'lightbox-ads') {
+                            if (displayAdsEnabled) {
                                 modules.push('displayAd');
                             }
                             return modules;
@@ -1626,7 +1629,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         },
                         note: copy(),
                         modules: function() {
-                            return mode === 'lightbox-ads' ? ['displayAd'] : [];
+                            return displayAdsEnabled ? ['displayAd'] : [];
                         },
                         placementId: copy(null),
                         templateUrl: copy(null),

@@ -6,8 +6,7 @@ function( angular , c6uilib , c6State  , services          ,
 
     var forEach = angular.forEach,
         copy = angular.copy,
-        isDefined = angular.isDefined,
-        equals = angular.equals;
+        isDefined = angular.isDefined;
 
     return angular.module('c6.app.minireel.adManager', [c6uilib.name, c6State.name, services.name])
         .config(['c6StateProvider',
@@ -521,10 +520,6 @@ function( angular , c6uilib , c6State  , services          ,
                         enabled: cState.cModel.settings.display.enabled
                     }
                 };
-
-                // if (equals(settings, cState.cModel.settings)) {
-                //     return c6State.goTo('MR:AdManager');
-                // }
 
                 if (cState.cModel.type === 'org') {
                     org.adConfig = settings;
