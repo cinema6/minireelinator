@@ -27,7 +27,7 @@ module.exports = function(http) {
     });
 
     http.whenPUT('/api/account/org/**', function(request) {
-        var id = idFromPath(request.pathname)
+        var id = idFromPath(request.pathname),
             filePath = orgPath(id),
             current = grunt.file.readJSON(filePath),
             updatedOrg = extend(current, request.body, {
