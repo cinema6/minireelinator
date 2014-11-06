@@ -3,7 +3,7 @@
         <youtube-player ng-switch-when="youtube" videoid="{{videoid}}"></youtube-player>
         <vimeo-player ng-switch-when="vimeo" id="preview" videoid="{{videoid}}"></vimeo-player>
         <dailymotion-player ng-switch-when="dailymotion" id="preview" videoid="{{videoid}}"></dailymotion-player>
-        <embedded-player ng-switch-default code="{{embedCode}}"></embedded-player>
+        <embedded-player class="embeddedPlayer--{{service}}" ng-switch-default code="{{embedCode}}"></embedded-player>
     </div>
 </div>
 <video-trimmer ng-show="!disableTrimmer()"

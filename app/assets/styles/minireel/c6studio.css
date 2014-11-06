@@ -302,8 +302,7 @@
                     fill:#2398db;
                 }
 
-<script type="text/javascript" src="jquery-2.1.0.min.js"></script>
-        <script type="text/javascript" src="wireframes.js"></script>
+/*  ======================================================
     Editor custom styles
     ====================================================== */
     .pageHeader--editor {
@@ -1300,9 +1299,21 @@
         .videoPlayer {
             width:100%; height:20em;
             background:#ccc url('../../img/minireel/default_square.jpg') 50% 50% / cover no-repeat;
+            text-align: center;
+            position: relative;
         }
             .mrEdit__videoTab .videoPlayer {
                 margin:1em 0 0 0;
+            }
+            .embeddedPlayer--yahoo {
+                width:75%; height:100%;
+                padding:0 12.5%;
+                background:#000;
+            }
+            .embeddedPlayer--aol object {
+                position:absolute;
+                width:100%; height:100%;
+                top:0; left:0;
             }
         .videoPlayer__messenger {
             background:rgba(220,65,65,0.9);
