@@ -1309,6 +1309,8 @@
                 width:75%; height:100%;
                 padding:0 12.5%;
                 background:#000;
+                position:absolute;
+                top:0; left:0;
             }
             .embeddedPlayer--aol object {
                 position:absolute;
