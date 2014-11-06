@@ -531,11 +531,9 @@ function( angular , c6uilib , c6State  , services          ,
                     $q.all(cState.cModel.data.map(function(exp) {
                         exp.data.adConfig = convertNewSettings(exp, settings);
                         exp.data.deck = cleanDeck(exp.data.deck);
-                        if (settings.display.enabled) {
-                            exp = MiniReelService.enableDisplayAds(exp);
-                        } else {
-                            exp = MiniReelService.disableDisplayAds(exp);
-                        }
+                        exp = settings.display.enabled ?
+                            MiniReelService.enableDisplayAds(exp) :
+                            MiniReelService.disableDisplayAds(exp);
                         return exp.save();
                     })).then(function() {
                         c6State.goTo('MR:AdManager');
