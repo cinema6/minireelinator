@@ -99,56 +99,6 @@ define(['app', 'minireel/services'], function(appModule, servicesModule) {
                     });
                 });
             });
-
-            describe('enableCompanionAd', function() {
-                describe('getting', function() {
-                    describe('if the mode is "lightbox"', function() {
-                        beforeEach(function() {
-                            PlacementStandaloneCtrl.data.mode = 'lightbox';
-                        });
-
-                        it('should be false', function() {
-                            expect(PlacementStandaloneCtrl.enableCompanionAd).toBe(false);
-                        });
-                    });
-
-                    describe('if the mode is "lightbox-ads"', function() {
-                        beforeEach(function() {
-                            PlacementStandaloneCtrl.data.mode = 'lightbox-ads';
-                        });
-
-                        it('should be true', function() {
-                            expect(PlacementStandaloneCtrl.enableCompanionAd).toBe(true);
-                        });
-                    });
-                });
-
-                describe('setting', function() {
-                    describe('to false', function() {
-                        beforeEach(function() {
-                            PlacementStandaloneCtrl.data.mode = 'lightbox-ads';
-
-                            PlacementStandaloneCtrl.enableCompanionAd = false;
-                        });
-
-                        it('should set the mode to lightbox', function() {
-                            expect(PlacementStandaloneCtrl.data.mode).toBe('lightbox');
-                        });
-                    });
-
-                    describe(' to true', function() {
-                        beforeEach(function() {
-                            PlacementStandaloneCtrl.data.mode = 'lightbox';
-
-                            PlacementStandaloneCtrl.enableCompanionAd = true;
-                        });
-
-                        it('should set the mode to lightbox-ads', function() {
-                            expect(PlacementStandaloneCtrl.data.mode).toBe('lightbox-ads');
-                        });
-                    });
-                });
-            });
         });
 
         describe('methods', function() {

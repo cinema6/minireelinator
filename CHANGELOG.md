@@ -1,5 +1,11 @@
 # MiniReelinator
 
+* *[v1.4.0.rc1]*
+  * Enable the post-video (watch-again) module in the single-video
+    player
+  * Removed display ad settings from the single-video placement screen
+    (this will be managed from the Ad Settings Manager now.)
+
 ## v1.3.0 (October 28, 2014)
 * *[v1.3.0.rc3]*
   * [FEATURE]: Allow custom skip times to be entered for sponsored cards
