@@ -1017,53 +1017,55 @@
                 });
 
                 describe('useDefaultSettings()', function() {
-                    it('should go through all selected minireels and delete static ad cards and adConfig blocks', function() {
-                        var onAffirm, onCancel,
-                            minireels = [
-                                {
-                                    id: 'e-1',
-                                    data: {
-                                        adConfig: {},
-                                        deck: [
-                                            {
-                                                ad: true
-                                            }
-                                        ]
-                                    },
-                                    save: jasmine.createSpy('minireel.save()')
-                                },
-                                {
-                                    id: 'e-2',
-                                    data: {
-                                        adConfig: {},
-                                        deck: [
-                                            {
-                                                ad: true
-                                            },
-                                            {
-                                                ad: true
-                                            }
-                                        ]
-                                    },
-                                    save: jasmine.createSpy('minireel.save()')
-                                },
-                                {
-                                    id: 'e-3',
-                                    data: {
-                                        adConfig: {},
-                                        deck: []
-                                    },
-                                    save: jasmine.createSpy('minireel.save()')
-                                }
-                            ];
+                    var onAffirm, onCancel, minireels;
 
+                    beforeEach(function() {
+                        minireels = [
+                            {
+                                id: 'e-1',
+                                data: {
+                                    adConfig: {},
+                                    deck: [
+                                        {
+                                            ad: true
+                                        }
+                                    ]
+                                },
+                                save: jasmine.createSpy('minireel.save()')
+                            },
+                            {
+                                id: 'e-2',
+                                data: {
+                                    adConfig: {},
+                                    deck: [
+                                        {
+                                            ad: true
+                                        },
+                                        {
+                                            ad: true
+                                        }
+                                    ]
+                                },
+                                save: jasmine.createSpy('minireel.save()')
+                            },
+                            {
+                                id: 'e-3',
+                                data: {
+                                    adConfig: {},
+                                    deck: []
+                                },
+                                save: jasmine.createSpy('minireel.save()')
+                            }
+                        ];
 
                         spyOn(ConfirmDialogService, 'display');
                         AdManagerCtrl.useDefaultSettings(minireels);
 
                         onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
                         onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
+                    });
 
+                    it('should go through all selected minireels and delete static ad cards and adConfig blocks', function() {
                         expect(ConfirmDialogService.display).toHaveBeenCalled();
 
                         onAffirm();
@@ -1073,6 +1075,40 @@
                             expect(minireel.data.deck.length).toBe(0);
                             expect(minireel.save).toHaveBeenCalled();
                         });
+                    });
+
+                    it('should remove displayAd modules if no Org adConfig is defined', function() {
+                        spyOn(MiniReelService, 'enableDisplayAds').and.callThrough();
+                        spyOn(MiniReelService, 'disableDisplayAds').and.callThrough();
+
+                        onAffirm();
+
+                        expect(MiniReelService.enableDisplayAds).not.toHaveBeenCalled();
+                        expect(MiniReelService.disableDisplayAds).toHaveBeenCalled();
+                    });
+
+                    it('should add displayAd modules based on Org adConfig', function() {
+                        PortalCtrl.model.org.adConfig = { display: { enabled: true }};
+
+                        spyOn(MiniReelService, 'enableDisplayAds').and.callThrough();
+                        spyOn(MiniReelService, 'disableDisplayAds').and.callThrough();
+
+                        onAffirm();
+
+                        expect(MiniReelService.enableDisplayAds).toHaveBeenCalled();
+                        expect(MiniReelService.disableDisplayAds).not.toHaveBeenCalled();
+                    });
+
+                    it('should remove displayAd modules based on Org adConfig', function() {
+                        PortalCtrl.model.org.adConfig = { display: { enabled: false }};
+
+                        spyOn(MiniReelService, 'enableDisplayAds').and.callThrough();
+                        spyOn(MiniReelService, 'disableDisplayAds').and.callThrough();
+
+                        onAffirm();
+
+                        expect(MiniReelService.enableDisplayAds).not.toHaveBeenCalled();
+                        expect(MiniReelService.disableDisplayAds).toHaveBeenCalled();
                     });
                 });
 

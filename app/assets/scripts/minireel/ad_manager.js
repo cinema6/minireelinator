@@ -72,9 +72,9 @@ function( angular , c6uilib , c6State  , services          ,
         }])
 
         .controller('AdManagerController', ['$scope','c6State','$q','ConfirmDialogService',
-                                            'cState','$injector',
+                                            'cState','$injector','MiniReelService',
         function                           ( $scope , c6State , $q , ConfirmDialogService ,
-                                             cState , $injector ) {
+                                             cState , $injector , MiniReelService ) {
             var self = this,
                 org = $scope.PortalCtrl.model.org,
                 permissions = $scope.PortalCtrl.model.permissions;
@@ -248,6 +248,9 @@ function( angular , c6uilib , c6State  , services          ,
                         return $q.all(minireels.map(function(exp) {
                             exp.data.deck = cleanDeck(exp.data.deck);
                             exp.data.adConfig = null;
+                            exp = getAdConfig(org).display.enabled ?
+                                MiniReelService.enableDisplayAds(exp) :
+                                MiniReelService.disableDisplayAds(exp);
                             return exp.save();
                         }));
                     },

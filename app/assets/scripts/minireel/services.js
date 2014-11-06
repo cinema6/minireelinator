@@ -1242,7 +1242,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     var hasDisplayModule = card.modules.indexOf('displayAd') > -1,
                         shouldAlwaysBeDisabled = (/text|links|displayAd/).test(card.type),
                         shouldAlwaysBeEnabled = !shouldAlwaysBeDisabled && card.placementId,
-                        canBeEnabled = !shouldAlwaysBeDisabled && !card.sponsored && card.type !== 'adUnit';
+                        canBeEnabled = !shouldAlwaysBeDisabled &&
+                            !card.sponsored && card.type !== 'adUnit';
 
                     if (shouldAlwaysBeEnabled || canBeEnabled) {
                         if (!hasDisplayModule) {
@@ -1459,7 +1460,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         (org &&
                         org.adConfig &&
                         org.adConfig.display.enabled),
-                    mode = minireel.data.mode,
                     newCard = {
                         data: {}
                     };
