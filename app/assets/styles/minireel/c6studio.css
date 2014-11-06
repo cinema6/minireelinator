@@ -302,8 +302,7 @@
                     fill:#2398db;
                 }
 
-<script type="text/javascript" src="jquery-2.1.0.min.js"></script>
-        <script type="text/javascript" src="wireframes.js"></script>
+/*  ======================================================
     Editor custom styles
     ====================================================== */
     .pageHeader--editor {
@@ -1224,7 +1223,7 @@
             .diagram__lightbox {
                 background-position:0 0;
             }
-            .diagram__lightbox-ads {
+            .diagram__lightbox-playlist {
                 background-position:0 -8.125em;
             }
             .diagram__light, .diagram__inline {
@@ -1241,7 +1240,7 @@
                 .wizard__choice--small .diagram__lightbox {
                     background-position:0 0;
                 }
-                .wizard__choice--small .diagram__lightbox-ads {
+                .wizard__choice--small .diagram__lightbox-playlist {
                     background-position:0 -6.5em;
                 }
                 .wizard__choice--small .diagram__light, 

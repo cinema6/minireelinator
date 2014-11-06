@@ -1444,15 +1444,22 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     .then(createMinireel);
             };
 
-            this.convertCard = function(card, minireel) {
+            this.convertCard = function(card, _minireel) {
                 var dataTemplates, cardBases, cardType, dataType,
                     org = portal.cModel.org,
+                    minireel = _minireel || {
+                        data: {
+                            mode: null,
+                            deck: []
+                        }
+                    },
                     displayAdsEnabled = (minireel &&
                         minireel.data.adConfig &&
                         minireel.data.adConfig.display.enabled) ||
                         (org &&
                         org.adConfig &&
                         org.adConfig.display.enabled),
+                    mode = minireel.data.mode,
                     newCard = {
                         data: {}
                     };
@@ -1592,16 +1599,22 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return camelSource(card.data.service);
                         },
                         modules: function(card) {
-                            var shouldAlwaysHaveDisplayAd = !!card.placementId,
-                                canHaveDisplayAd = displayAdsEnabled &&
-                                    !card.sponsored && card.data.service !== 'adUnit',
-                                modules = card.type === 'videoBallot' ? ['ballot'] : [];
+                            var modules = {
+                                'ballot': function() { return card.type === 'videoBallot'; },
+                                'displayAd': function() {
+                                    var shouldAlwaysHaveDisplayAd = !!card.placementId,
+                                        canHaveDisplayAd = displayAdsEnabled &&
+                                            !card.sponsored && card.data.service !== 'adUnit';
 
-                            if (shouldAlwaysHaveDisplayAd || canHaveDisplayAd) {
-                                modules.push('displayAd');
-                            }
+                                    return shouldAlwaysHaveDisplayAd || canHaveDisplayAd;
+                                },
+                                'post': function() { return minireel.data.deck.length === 1; }
+                            };
 
-                            return modules;
+                            return Object.keys(modules)
+                                .filter(function(module) {
+                                    return modules[module]();
+                                });
                         },
                         ballot: function(card) {
                             return card.data.ballot;
