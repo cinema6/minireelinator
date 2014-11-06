@@ -1,6 +1,41 @@
 <div class="modalBody__group modalBody__group--sideTabs mrEdit__videoTab">
     <form>
         <div ng-if="card.sponsored">
+            <div class="clearfix">
+                <div class="twoCol">
+                    <label class="radiobox radiobox--hasLabel clearfix"
+                    style="margin-bottom:0.25em;">
+                        <input type="radio"
+                            ng-value="false"
+                            ng-change="SponsorCardVideoCtrl.videoUrl = ''"
+                            ng-model="SponsorCardVideoCtrl.isAdUnit"
+                            name="minireel-endcap"
+                            class="radiobox__input"/>
+                        <span class="btn__icon faa fab">
+                            &nbsp;
+                        </span>
+                        <span class="btn__label">
+                            3rd-Party Video
+                        </span>
+                    </label>
+                </div>
+                <div class="twoCol">
+                    <label class="radiobox radiobox--hasLabel clearfix"
+                    style="margin-bottom:0.25em;">
+                        <input type="radio"
+                            ng-value="true"
+                            ng-model="SponsorCardVideoCtrl.isAdUnit"
+                            name="minireel-endcap"
+                            class="radiobox__input"/>
+                        <span class="btn__icon faa fab">
+                            &nbsp;
+                        </span>
+                        <span class="btn__label">
+                            Ad Unit
+                        </span>
+                    </label>
+                </div>
+            </div>
             <ng-switch on="card.data.service">
                 <div ng-switch-when="adUnit" class="clearfix">
                     <div class="twoCol">
@@ -47,41 +82,9 @@
                     </span>
                 </label>
             </ng-switch>
-            <div class="clearfix">
-                <div class="twoCol">
-                    <label class="radiobox radiobox--hasLabel clearfix">
-                        <input type="radio"
-                            ng-value="false"
-                            ng-change="SponsorCardVideoCtrl.videoUrl = ''"
-                            ng-model="SponsorCardVideoCtrl.isAdUnit"
-                            name="minireel-endcap"
-                            class="radiobox__input"/>
-                        <span class="btn__icon faa fab">
-                            &nbsp;
-                        </span>
-                        <span class="btn__label">
-                            3rd-Party Video
-                        </span>
-                    </label>
-                </div>
-                <div class="twoCol">
-                    <label class="radiobox radiobox--hasLabel clearfix">
-                        <input type="radio"
-                            ng-value="true"
-                            ng-model="SponsorCardVideoCtrl.isAdUnit"
-                            name="minireel-endcap"
-                            class="radiobox__input"/>
-                        <span class="btn__icon faa fab">
-                            &nbsp;
-                        </span>
-                        <span class="btn__label">
-                            Ad Unit
-                        </span>
-                    </label>
-                </div>
-            </div>
         </div>
-        <div class="twoCol" ng-switch="card.data.service">
+        <div class="twoCol" ng-switch="card.data.service"
+        style="width:50%; margin:-0.5em 3% 0 0;">
             <div ng-switch-when="adUnit" ng-controller="AdPlayerController as AdPlayerCtrl">
                 <div ng-switch="SponsorCardVideoCtrl.adPreviewType">
                     <vpaid-player ng-switch-when="vpaid"
@@ -108,19 +111,22 @@
                 style="display: block;">
             </video-preview>
         </div>
-        <div class="twoCol">
-            <strong>Allow Users to Skip This Video? <span class="typo--danger">*</span></strong><br />
+        <div class="twoCol" style="width:47%; margin-top:0.5em;">
             <label class="checkbox--inline">
                 <input id="includeDisplayAd" type="checkbox" ng-model="SponsorCardVideoCtrl.canSkip" ng-disabled="!card.data.service" class="checkbox__input">
                 <span class="btn__label faa">&nbsp;</span>
+            </label>
+            <label for="includeDisplayAd">
+                <strong>Allow Users to Skip This Video? <span class="typo--danger">*</span></strong>
             </label>
             <label ng-if="!SponsorCardVideoCtrl.canSkip">
                 After <input type="number" ng-model="SponsorCardVideoCtrl.skip" /> Seconds
             </label>
             <br />
-
+            <p>
             <strong>Do you want this video to start playing automatically?</strong>
             <c6-dropdown options="SponsorCardVideoCtrl.autoplayOptions" value="card.data.autoplay"></c6-dropdown>
+            </p>
 
             <strong>Do you want the MiniReel to advance to the next slide when this video is over?</strong>
             <c6-dropdown options="SponsorCardVideoCtrl.autoadvanceOptions" value="card.data.autoadvance"></c6-dropdown>
