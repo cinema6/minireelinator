@@ -738,16 +738,6 @@ WizardController           , VideoCardController          , LinksController     
                 title: card.title,
                 mode: 'lightbox'
             };
-            Object.defineProperties(this, {
-                enableCompanionAd: {
-                    get: function() {
-                        return this.data.mode === 'lightbox-ads';
-                    },
-                    set: function(bool) {
-                        this.data.mode = 'lightbox' + (bool ? '-ads' : '');
-                    }
-                }
-            });
 
             this.place = function() {
                 var data = this.data;
