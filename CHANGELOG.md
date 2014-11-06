@@ -1,6 +1,8 @@
 # MiniReelinator
 
 * *[v1.4.0.rc1]*
+  * Enable the post-video (watch-again) module in the single-video
+    player
   * Removed display ad settings from the single-video placement screen
     (this will be managed from the Ad Settings Manager now.)
 
