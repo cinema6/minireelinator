@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.4.0.rc1]*
+  * Enable the post-video (watch-again) module in the single-video
+    player
+
 ## v1.3.0 (October 28, 2014)
 * *[v1.3.0.rc3]*
   * [FEATURE]: Allow custom skip times to be entered for sponsored cards
