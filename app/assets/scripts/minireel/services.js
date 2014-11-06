@@ -1239,8 +1239,19 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             this.enableDisplayAds = function(minireel) {
                 minireel.data.deck.forEach(function(card) {
-                    if (card.type !== 'adUnit' && card.modules.indexOf('displayAd') < 0) {
-                        card.modules.push('displayAd');
+                    var hasDisplayModule = card.modules.indexOf('displayAd') > -1,
+                        shouldAlwaysBeDisabled = (/text|links|displayAd/).test(card.type),
+                        shouldAlwaysBeEnabled = !shouldAlwaysBeDisabled && card.placementId,
+                        canBeEnabled = !shouldAlwaysBeDisabled && !card.sponsored && card.type !== 'adUnit';
+
+                    if (shouldAlwaysBeEnabled || canBeEnabled) {
+                        if (!hasDisplayModule) {
+                            card.modules.push('displayAd');
+                        }
+                    } else {
+                        card.modules = card.modules.filter(function(mod) {
+                            return mod !== 'displayAd';
+                        });
                     }
                 });
 
@@ -1249,10 +1260,18 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             this.disableDisplayAds = function(minireel) {
                 minireel.data.deck.forEach(function(card) {
-                    if (card.type !== 'adUnit') {
+                    var hasDisplayModule = card.modules.indexOf('displayAd') > -1,
+                        shouldAlwaysBeDisabled = (/text|links|displayAd/).test(card.type),
+                        shouldAlwaysBeEnabled = !shouldAlwaysBeDisabled && card.placementId;
+
+                    if (shouldAlwaysBeDisabled || !shouldAlwaysBeEnabled) {
                         card.modules = card.modules.filter(function(mod) {
                             return mod !== 'displayAd';
                         });
+                    } else {
+                        if (!hasDisplayModule) {
+                            card.modules.push('displayAd');
+                        }
                     }
                 });
 
@@ -1573,10 +1592,15 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return camelSource(card.data.service);
                         },
                         modules: function(card) {
-                            var modules = card.type === 'videoBallot' ? ['ballot'] : [];
-                            if (displayAdsEnabled) {
+                            var shouldAlwaysHaveDisplayAd = !!card.placementId,
+                                canHaveDisplayAd = displayAdsEnabled &&
+                                    !card.sponsored && card.data.service !== 'adUnit',
+                                modules = card.type === 'videoBallot' ? ['ballot'] : [];
+
+                            if (shouldAlwaysHaveDisplayAd || canHaveDisplayAd) {
                                 modules.push('displayAd');
                             }
+
                             return modules;
                         },
                         ballot: function(card) {
@@ -1631,8 +1655,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return 'Recap of ' + minireel.data.title;
                         },
                         note: copy(),
-                        modules: function() {
-                            return displayAdsEnabled ? ['displayAd'] : [];
+                        modules: function(card) {
+                            return (card.placementId || (displayAdsEnabled && !card.sponsored)) ?
+                                ['displayAd'] :
+                                [];
                         },
                         placementId: copy(null),
                         templateUrl: copy(null),

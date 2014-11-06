@@ -267,7 +267,7 @@
                                 title: 'The Dumbest Turtle',
                                 note: 'Blah blah blah',
                                 source: 'YouTube',
-                                modules: [],
+                                modules: ['displayAd'],
                                 placementId: '12345',
                                 templateUrl: '//portal.cinema6.com/collateral/minireel/templates/huffpost.html',
                                 sponsored: true,
@@ -1583,7 +1583,7 @@
                         });
                     });
 
-                    ddescribe('convertForPlayer(minireel)', function() {
+                    describe('convertForPlayer(minireel)', function() {
                         it('should convert back to the player format', function() {
                             var converted,
                                 result;
@@ -1614,24 +1614,185 @@
                                 converted = MiniReelService.convertForEditor(minireel);
                             });
 
-                            // portal.cModel.org.data = {
-                            //     adConfig: {
-                            //         display: {
-                            //             enabled: true
-                            //         }
-                            //     }
-                            // };
+                            result = MiniReelService.convertForPlayer(converted);
+
+                            result.data.deck.forEach(function(card) {
+                                if (!(/adUnit|text|links|displayAd/).test(card.type)) {
+                                    expect(card.modules.indexOf('displayAd')).not.toBe(-1);
+                                } else if (card.type !== 'links') {
+                                    expect(card.modules.indexOf('displayAd')).toBe(-1);
+                                }
+                            });
+
+                            minireel.data.adConfig.display.enabled = false;
+
+                            $rootScope.$apply(function() {
+                                converted = MiniReelService.convertForEditor(minireel);
+                            });
 
                             result = MiniReelService.convertForPlayer(converted);
 
                             result.data.deck.forEach(function(card) {
-                                if (card.type !== 'adUnit') {
-                                    console.log(card.modules, card.type);
-                                    // Do all card types get displayAd module expect adUnit? Text? Links?
-                                    // TODO: delete minireel.data.adConfig and then set cModel.org.data.adConfig
+                                if ((!card.placementId && !(/ad|links/).test(card.type)) ||
+                                    (/adUnit|text|displayAd/).test(card.type)) {
+                                    expect(card.modules.indexOf('displayAd')).toBe(-1);
+                                } else if (card.type !== 'links') {
                                     expect(card.modules.indexOf('displayAd')).not.toBe(-1);
                                 }
                             });
+
+                            delete minireel.data.adConfig;
+
+                            portal.cModel.org.adConfig = {
+                                display: {
+                                    enabled: true
+                                }
+                            };
+
+                            $rootScope.$apply(function() {
+                                converted = MiniReelService.convertForEditor(minireel);
+                            });
+
+                            result = MiniReelService.convertForPlayer(converted);
+
+                            result.data.deck.forEach(function(card) {
+                                if (!(/adUnit|text|links|displayAd/).test(card.type)) {
+                                    expect(card.modules.indexOf('displayAd')).not.toBe(-1);
+                                } else if (card.type !== 'links') {
+                                    expect(card.modules.indexOf('displayAd')).toBe(-1);
+                                }
+                            });
+
+                            portal.cModel.org.adConfig = {
+                                display: {
+                                    enabled: false
+                                }
+                            };
+
+                            $rootScope.$apply(function() {
+                                converted = MiniReelService.convertForEditor(minireel);
+                            });
+
+                            result = MiniReelService.convertForPlayer(converted);
+
+                            result.data.deck.forEach(function(card) {
+                                if ((!card.placementId && !(/ad|links/).test(card.type)) ||
+                                    (/adUnit|text|displayAd/).test(card.type)) {
+                                    expect(card.modules.indexOf('displayAd')).toBe(-1);
+                                } else if (card.type !== 'links') {
+                                    expect(card.modules.indexOf('displayAd')).not.toBe(-1);
+                                }
+                            });
+                        });
+
+                        it('should never have displayAd module on adUnits unless placementId is defined', function() {
+                            var converted,
+                                result;
+
+                            minireel.data.deck = [
+                                {
+                                    id: 'rc-82a19a12065636',
+                                    type: 'adUnit',
+                                    title: 'AdUnit Card',
+                                    note: 'It\'s Ad Tech!',
+                                    placementId: null,
+                                    templateUrl: null,
+                                    sponsored: false,
+                                    campaign: {
+                                        campaignId: null,
+                                        advertiserId: null,
+                                        minViewTime: null
+                                    },
+                                    collateral: {},
+                                    links: {},
+                                    thumbs: {
+                                        small: 'logo.jpg',
+                                        large: 'logo.jpg'
+                                    },
+                                    params: {},
+                                    modules: [],
+                                    data: {
+                                        skip: true,
+                                        vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
+                                        vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
+                                    }
+                                }
+                            ];
+
+                            $rootScope.$apply(function() {
+                                converted = MiniReelService.convertForEditor(minireel);
+                            });
+
+                            result = MiniReelService.convertForPlayer(converted);
+
+                            expect(result.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
+
+                            minireel.data.deck[0].placementId = 12345;
+
+                            $rootScope.$apply(function() {
+                                converted = MiniReelService.convertForEditor(minireel);
+                            });
+
+                            result = MiniReelService.convertForPlayer(converted);
+
+                            expect(result.data.deck[0].modules.indexOf('displayAd')).toBe(0);
+                        });
+
+                        it('should never have displayAd module on sponsored cards unless placementId is defined', function() {
+                            var converted,
+                                result;
+
+                            minireel.data.adConfig.display.enabled = true;
+
+                            minireel.data.deck = [
+                                {
+                                    id: 'rc-f940abe0c1f3f0',
+                                    type: 'video',
+                                    title: 'No video yet..',
+                                    note: 'Lame...',
+                                    modules: [],
+                                    placementId: null,
+                                    templateUrl: null,
+                                    sponsored: true,
+                                    campaign: {
+                                        campaignId: null,
+                                        advertiserId: null,
+                                        minViewTime: null
+                                    },
+                                    collateral: {},
+                                    links: {},
+                                    params: {},
+                                    data: {}
+                                }
+                            ];
+
+                            $rootScope.$apply(function() {
+                                converted = MiniReelService.convertForEditor(minireel);
+                            });
+
+                            result = MiniReelService.convertForPlayer(converted);
+
+                            expect(result.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
+
+                            minireel.data.deck[0].placementId = 12345;
+
+                            $rootScope.$apply(function() {
+                                converted = MiniReelService.convertForEditor(minireel);
+                            });
+
+                            result = MiniReelService.convertForPlayer(converted);
+
+                            expect(result.data.deck[0].modules.indexOf('displayAd')).toBe(0);
+
+                            minireel.data.adConfig.display.enabled = false;
+
+                            $rootScope.$apply(function() {
+                                converted = MiniReelService.convertForEditor(minireel);
+                            });
+
+                            result = MiniReelService.convertForPlayer(converted);
+
+                            expect(result.data.deck[0].modules.indexOf('displayAd')).toBe(0);
                         });
 
                         it('should support performing the conversion on a specified object', function() {
@@ -1733,6 +1894,234 @@
                             expect(MiniReelService.adChoicesOf(org, data.experience.data)).toEqual({
                                 video: [{value:'cinema6'}],
                                 display: [{value:'cinema6'}, {value:'cinema6-publisher'}, {value:'publisher'}, {value:'publisher-cinema6'}]
+                            });
+                        });
+                    });
+
+                    describe('disableDisplayAds(minireel)', function() {
+                        it('should ensure that text, links, and displayAd cards never have displayAd module', function() {
+                            minireel.data.deck.forEach(function(card) {
+                                if ((/text|links|displayAd/).test(card.type)) {
+                                    card.modules = ['displayAd'];
+                                }
+                            });
+
+                            minireel = MiniReelService.disableDisplayAds(minireel);
+
+                            minireel.data.deck.forEach(function(card) {
+                                if ((/text|links|displayAd/).test(card.type)) {
+                                    expect(card.modules.indexOf('displayAd')).toBe(-1);
+                                }
+                            });
+                        });
+
+                        it('should ensure that adUnits never have displayAd module unless placementId is defined', function() {
+                            minireel.data.deck = [
+                                {
+                                    type: 'adUnit',
+                                    modules: ['displayAd']
+                                }
+                            ];
+
+                            minireel = MiniReelService.disableDisplayAds(minireel);
+
+                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
+
+                            minireel.data.deck[0].sponsored = true;
+                            minireel = MiniReelService.disableDisplayAds(minireel);
+
+                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
+
+                            minireel.data.deck[0].placementId = 12345;
+                            minireel = MiniReelService.disableDisplayAds(minireel);
+
+                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(0);
+                        });
+
+                        it('should ensure that displayAd cards never have displayAd module even if placementId is defined', function() {
+                            minireel.data.deck = [
+                                {
+                                    type: 'displayAd',
+                                    modules: ['displayAd']
+                                }
+                            ];
+
+                            minireel = MiniReelService.disableDisplayAds(minireel);
+
+                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
+
+                            minireel.data.deck[0].sponsored = true;
+                            minireel = MiniReelService.disableDisplayAds(minireel);
+
+                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
+
+                            minireel.data.deck[0].placementId = 12345;
+                            minireel = MiniReelService.disableDisplayAds(minireel);
+
+                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
+                        });
+
+                        it('should remove the displayAd module on any eligible cards that don not have placementIds', function() {
+                            minireel.data.deck = [
+                                {
+                                    type: 'youtube',
+                                    modules: ['displayAd']
+                                },
+                                {
+                                    type: 'vimeo',
+                                    modules: ['displayAd']
+                                },
+                                {
+                                    type: 'dailymotion',
+                                    modules: ['displayAd']
+                                },
+                                {
+                                    type: 'video',
+                                    modules: ['displayAd']
+                                },
+                                {
+                                    type: 'videoBallot',
+                                    modules: ['displayAd']
+                                },
+                                {
+                                    type: 'recap',
+                                    modules: ['displayAd']
+                                }
+                            ];
+
+                            minireel = MiniReelService.disableDisplayAds(minireel);
+
+                            minireel.data.deck.forEach(function(card) {
+                                expect(card.modules.indexOf('displayAd')).toBe(-1);
+                            });
+
+                            minireel.data.deck.forEach(function(card) {
+                                card.placementId = 12345;
+                            });
+
+                            minireel = MiniReelService.disableDisplayAds(minireel);
+
+                            minireel.data.deck.forEach(function(card) {
+                                expect(card.modules.indexOf('displayAd')).toBe(0);
+                            });
+                        });
+                    });
+
+                    describe('enableDisplayAds(minireel)', function() {
+                        it('should ensure that text, links, and displayAd cards never have displayAd module', function() {
+                            minireel.data.deck.forEach(function(card) {
+                                if ((/text|links|displayAd/).test(card.type)) {
+                                    card.modules = ['displayAd'];
+                                }
+                            });
+
+                            minireel = MiniReelService.enableDisplayAds(minireel);
+
+                            minireel.data.deck.forEach(function(card) {
+                                if ((/text|links|displayAd/).test(card.type)) {
+                                    expect(card.modules.indexOf('displayAd')).toBe(-1);
+                                }
+                            });
+                        });
+
+                        it('should ensure that adUnits never have displayAd module unless placementId is defined', function() {
+                            minireel.data.deck = [
+                                {
+                                    type: 'adUnit',
+                                    modules: ['displayAd']
+                                }
+                            ];
+
+                            minireel = MiniReelService.enableDisplayAds(minireel);
+
+                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
+
+                            minireel.data.deck[0].sponsored = true;
+                            minireel = MiniReelService.enableDisplayAds(minireel);
+
+                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
+
+                            minireel.data.deck[0].placementId = 12345;
+                            minireel = MiniReelService.enableDisplayAds(minireel);
+
+                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(0);
+                        });
+
+                        it('should ensure that displayAd cards never have displayAd module even if placementId is defined', function() {
+                            minireel.data.deck = [
+                                {
+                                    type: 'displayAd',
+                                    modules: ['displayAd']
+                                }
+                            ];
+
+                            minireel = MiniReelService.enableDisplayAds(minireel);
+
+                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
+
+                            minireel.data.deck[0].sponsored = true;
+                            minireel = MiniReelService.enableDisplayAds(minireel);
+
+                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
+
+                            minireel.data.deck[0].placementId = 12345;
+                            minireel = MiniReelService.enableDisplayAds(minireel);
+
+                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
+                        });
+
+                        it('should set the displayAd module on any eligible cards that are not sponsored or are sponsored but have placementIds', function() {
+                            minireel.data.deck = [
+                                {
+                                    type: 'youtube',
+                                    modules: []
+                                },
+                                {
+                                    type: 'vimeo',
+                                    modules: []
+                                },
+                                {
+                                    type: 'dailymotion',
+                                    modules: []
+                                },
+                                {
+                                    type: 'video',
+                                    modules: []
+                                },
+                                {
+                                    type: 'videoBallot',
+                                    modules: []
+                                },
+                                {
+                                    type: 'recap',
+                                    modules: []
+                                }
+                            ];
+
+                            minireel = MiniReelService.enableDisplayAds(minireel);
+
+                            minireel.data.deck.forEach(function(card) {
+                                expect(card.modules.indexOf('displayAd')).toBe(0);
+                            });
+
+                            minireel.data.deck.forEach(function(card) {
+                                card.sponsored = true;
+                            });
+
+                            minireel = MiniReelService.enableDisplayAds(minireel);
+
+                            minireel.data.deck.forEach(function(card) {
+                                expect(card.modules.indexOf('displayAd')).toBe(-1);
+                            });
+
+                            minireel.data.deck.forEach(function(card) {
+                                card.placementId = 12345;
+                            });
+
+                            minireel = MiniReelService.enableDisplayAds(minireel);
+
+                            minireel.data.deck.forEach(function(card) {
+                                expect(card.modules.indexOf('displayAd')).toBe(0);
                             });
                         });
                     });
