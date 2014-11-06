@@ -1647,6 +1647,14 @@
 
                             expect(MiniReelService.convertForPlayer(converted).data.deck[0].params.ad).toBe(true);
                         });
+
+                        it('should give the video in a single-video minireel the "post" module', function() {
+                            var converted = MiniReelService.convertForEditor(minireel);
+
+                            converted.data.deck = [MiniReelService.createCard('video')];
+
+                            expect(MiniReelService.convertForPlayer(converted).data.deck[0].modules).toContain('post');
+                        });
                     });
 
                     describe('adChoicesOf(org, data)', function() {

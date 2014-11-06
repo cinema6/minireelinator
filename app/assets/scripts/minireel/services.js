@@ -1403,9 +1403,15 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     .then(createMinireel);
             };
 
-            this.convertCard = function(card, minireel) {
+            this.convertCard = function(card, _minireel) {
                 var dataTemplates, cardBases, cardType, dataType,
-                    mode = minireel && minireel.data.mode,
+                    minireel = _minireel || {
+                        data: {
+                            mode: null,
+                            deck: []
+                        }
+                    },
+                    mode = minireel.data.mode,
                     newCard = {
                         data: {}
                     };
@@ -1545,11 +1551,16 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return camelSource(card.data.service);
                         },
                         modules: function(card) {
-                            var modules = card.type === 'videoBallot' ? ['ballot'] : [];
-                            if(mode === 'lightbox-ads') {
-                                modules.push('displayAd');
-                            }
-                            return modules;
+                            var modules = {
+                                'ballot': function() { return card.type === 'videoBallot'; },
+                                'displayAd': function() { return mode === 'lightbox-ads'; },
+                                'post': function() { return minireel.data.deck.length === 1; }
+                            };
+
+                            return Object.keys(modules)
+                                .filter(function(module) {
+                                    return modules[module]();
+                                });
                         },
                         ballot: function(card) {
                             return card.data.ballot;
