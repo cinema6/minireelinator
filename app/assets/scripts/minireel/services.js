@@ -1256,7 +1256,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             }
 
             function disableModule(card, module) {
-                return card.modules = card.modules.filter(function(cardModule) {
+                card.modules = card.modules.filter(function(cardModule) {
                     return cardModule !== module;
                 });
             }
