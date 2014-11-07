@@ -5,8 +5,54 @@ function( angular , c6uilib , c6State  , services          ,
     'use strict';
 
     var forEach = angular.forEach,
-        copy = angular.copy,
-        isDefined = angular.isDefined;
+        isDefined = angular.isDefined,
+        isUndefined = angular.isUndefined,
+        ngCopy = angular.copy;
+
+    // Copy the value from the raw source with an optional
+    // default.
+    function copy(def) {
+        return function(data, key) {
+            var value = data[key];
+
+            return isUndefined(value) ?
+                def : ngCopy(value);
+        };
+    }
+
+    function ensureAdConfig(adConfig) {
+        var videoConfig = {
+            firstPlacement: copy(2),
+            frequency: copy(0),
+            waterfall: copy('cinema6'),
+            skip: copy(6)
+        },
+        displayConfig = {
+            waterfall: copy('cinema6'),
+            enabled: copy(false)
+        };
+
+        adConfig = adConfig || {
+            video: {},
+            display: {}
+        };
+
+        forEach(videoConfig, function(fn, key) {
+            adConfig.video[key] = fn(adConfig.video, key);
+        });
+
+        forEach(displayConfig, function(fn, key) {
+            adConfig.display[key] = fn(adConfig.display, key);
+        });
+
+        return adConfig;
+    }
+
+    function equalOrUndefine() {
+        return function(target, current, key) {
+            return target[key] === current[key] ? target[key] : void 0;
+        };
+    }
 
     return angular.module('c6.app.minireel.adManager', [c6uilib.name, c6State.name, services.name])
         .config(['c6StateProvider',
@@ -80,32 +126,19 @@ function( angular , c6uilib , c6State  , services          ,
                 permissions = $scope.PortalCtrl.model.permissions;
 
             function getAdConfig(object) {
-                var systemDefault = {
-                    video: {
-                        firstPlacement: 2,
-                        frequency: 0,
-                        waterfall: 'cinema6',
-                        skip: 6
-                    },
-                    display: {
-                        waterfall: 'cinema6',
-                        enabled: false
-                    }
-                };
-
                 if (object && object.adConfig) {
-                    return copy(object.adConfig);
+                    return ngCopy(ensureAdConfig(object.adConfig));
                 }
 
                 if (object && object.data) {
                     if (object.data.adConfig) {
-                        return copy(object.data.adConfig);
+                        return ngCopy(ensureAdConfig(object.data.adConfig));
                     } else {
-                        return copy(org.adConfig || systemDefault);
+                        return ngCopy(ensureAdConfig(org.adConfig));
                     }
                 }
 
-                return systemDefault;
+                return ensureAdConfig();
             }
 
             function staticAdCount(minireel) {
@@ -130,12 +163,6 @@ function( angular , c6uilib , c6State  , services          ,
                     },
                     sharedConfig;
 
-                function equalOrUndefine() {
-                    return function(target, current, key) {
-                        return target[key] === current[key] ? target[key] : void 0;
-                    };
-                }
-
                 if (!customExperiences.length) {
                     return getAdConfig(org);
                 }
@@ -144,7 +171,7 @@ function( angular , c6uilib , c6State  , services          ,
                     return getAdConfig(experiences[0]);
                 }
 
-                sharedConfig = copy(customExperiences[0].data.adConfig);
+                sharedConfig = ngCopy(customExperiences[0].data.adConfig);
 
                 experiences.forEach(function(exp) {
                     var config = getAdConfig(exp);
@@ -289,6 +316,22 @@ function( angular , c6uilib , c6State  , services          ,
                 org = PortalCtrl.model.org,
                 data = MiniReelCtrl.model.data;
 
+            function getAdConfig(object) {
+                if (object && object.adConfig) {
+                    return ngCopy(ensureAdConfig(object.adConfig));
+                }
+
+                if (object && object.data) {
+                    if (object.data.adConfig) {
+                        return ngCopy(ensureAdConfig(object.data.adConfig));
+                    } else {
+                        return ngCopy(ensureAdConfig(org.adConfig));
+                    }
+                }
+
+                return ensureAdConfig();
+            }
+
             function makeArray(length) {
                 var array = [];
 
@@ -332,35 +375,6 @@ function( angular , c6uilib , c6State  , services          ,
                 });
 
                 return config;
-            }
-
-            function getAdConfig(object) {
-                var systemDefault = {
-                    video: {
-                        firstPlacement: 2,
-                        frequency: 0,
-                        waterfall: 'cinema6',
-                        skip: 6
-                    },
-                    display: {
-                        waterfall: 'cinema6',
-                        enabled: false
-                    }
-                };
-
-                if (object && object.adConfig) {
-                    return copy(object.adConfig);
-                }
-
-                if (object && object.data) {
-                    if (object.data.adConfig) {
-                        return copy(object.data.adConfig);
-                    } else {
-                        return copy(org.adConfig || systemDefault);
-                    }
-                }
-
-                return systemDefault;
             }
 
             function cleanDeck(deck) {

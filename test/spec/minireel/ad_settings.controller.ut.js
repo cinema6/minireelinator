@@ -766,6 +766,28 @@
 
                             expect(c6State.goTo.calls.count()).toEqual(goToCallCount + 1);
                         });
+
+                        it('should handle incomplete adConfig', function() {
+                            var saveDeferred = $q.defer(),
+                                org = {
+                                    id: 'org1',
+                                    save: jasmine.createSpy('org.save()').and.returnValue(saveDeferred.promise),
+                                    adConfig: {
+                                        video: {},
+                                        display: {}
+                                    }
+                                };
+
+                            initCtrl({
+                                type: 'org',
+                                settings: settings,
+                                data: {id: 'o-1'}
+                            }, org);
+
+                            AdSettingsCtrl.save();
+
+                            expect(PortalCtrl.model.org.adConfig).toEqual(settings);
+                        });
                     });
 
                     describe('when editing minireel(s)', function() {
@@ -834,6 +856,47 @@
 
                             expect(MiniReelService.disableDisplayAds).toHaveBeenCalled();
                             expect(MiniReelService.enableDisplayAds).not.toHaveBeenCalled();
+                        });
+
+                        it('should handle incomplete adConfig', function() {
+                            var saveDeferred = $q.defer(),
+                                org = {
+                                    id: 'org1',
+                                    save: jasmine.createSpy('org.save()').and.returnValue(saveDeferred.promise),
+                                    adConfig: {
+                                        video: {},
+                                        display: {}
+                                    }
+                                };
+
+                            minireels.forEach(function(minireel) {
+                                minireel.save = jasmine.createSpy('exp.save()').and.returnValue(saveDeferred.promise);
+                            });
+
+                            initCtrl({
+                                type: 'minireels',
+                                settings: settings,
+                                data: minireels
+                            }, org);
+
+                            AdSettingsCtrl.save();
+
+                            minireels.forEach(function(minireel) {
+                                expect(minireel.data.adConfig).toEqual(settings);
+                            });
+
+                            minireels.forEach(function(minireel) {
+                                minireel.data.adConfig = {
+                                    video: {},
+                                    display: {}
+                                };
+                            });
+
+                            AdSettingsCtrl.save();
+
+                            minireels.forEach(function(minireel) {
+                                expect(minireel.data.adConfig).toEqual(settings);
+                            });
                         });
                     });
                 });

@@ -680,7 +680,8 @@
                             video: {
                                 frequency: 1,
                                 firstPlacement: 1,
-                            }
+                            },
+                            display: {}
                         };
 
                         expect(AdManagerCtrl.adCountOf(minireel)).toBe(8);
@@ -689,7 +690,8 @@
                             video: {
                                 frequency: 1,
                                 firstPlacement: -1,
-                            }
+                            },
+                            display: {}
                         };
 
                         expect(AdManagerCtrl.adCountOf(minireel)).toBe(0);
@@ -729,6 +731,47 @@
                             },
                             data: {
                                 id: 'org1'
+                            }
+                        }]);
+                    });
+
+                    it('should handle incomplete adConfigs', function() {
+                        PortalCtrl.model.org.adConfig = {
+                            video: {},
+                            display: {}
+                        };
+
+                        AdManagerCtrl.editOrgSettings();
+
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [{
+                            readOnly: false,
+                            type: 'org',
+                            settings: {
+                                video: {
+                                    frequency: 0,
+                                    firstPlacement: 2,
+                                    waterfall: 'cinema6',
+                                    skip: 6
+                                },
+                                display: {
+                                    waterfall: 'cinema6',
+                                    enabled: false
+                                }
+                            },
+                            data: {
+                                id: 'org1',
+                                adConfig: {
+                                    video: {
+                                        frequency: 0,
+                                        firstPlacement: 2,
+                                        waterfall: 'cinema6',
+                                        skip: 6
+                                    },
+                                    display: {
+                                        waterfall: 'cinema6',
+                                        enabled: false
+                                    }
+                                }
                             }
                         }]);
                     });
@@ -835,6 +878,33 @@
                                 data: [minireel]
                             }]);
                         });
+                    });
+
+                    it('should handle incomplete adConfig', function() {
+                        minireel.data.adConfig = {
+                            video: {},
+                            display: {}
+                        };
+
+                        AdManagerCtrl.editSettings([minireel]);
+
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [{
+                            readOnly: false,
+                            type: 'minireels',
+                            settings: {
+                                video: {
+                                    frequency: 0,
+                                    firstPlacement: 2,
+                                    waterfall: 'cinema6',
+                                    skip: 6
+                                },
+                                display: {
+                                    waterfall: 'cinema6',
+                                    enabled: false
+                                }
+                            },
+                            data: [minireel]
+                        }]);
                     });
 
                     describe('when editing multiple minireels', function() {
@@ -1088,7 +1158,7 @@
                     });
 
                     it('should add displayAd modules based on Org adConfig', function() {
-                        PortalCtrl.model.org.adConfig = { display: { enabled: true }};
+                        PortalCtrl.model.org.adConfig = { video: {}, display: { enabled: true }};
 
                         spyOn(MiniReelService, 'enableDisplayAds').and.callThrough();
                         spyOn(MiniReelService, 'disableDisplayAds').and.callThrough();
@@ -1100,7 +1170,7 @@
                     });
 
                     it('should remove displayAd modules based on Org adConfig', function() {
-                        PortalCtrl.model.org.adConfig = { display: { enabled: false }};
+                        PortalCtrl.model.org.adConfig = { video: {}, display: { enabled: false }};
 
                         spyOn(MiniReelService, 'enableDisplayAds').and.callThrough();
                         spyOn(MiniReelService, 'disableDisplayAds').and.callThrough();
