@@ -6,8 +6,7 @@ function( angular , c6uilib , c6State  , services          ,
 
     var forEach = angular.forEach,
         copy = angular.copy,
-        isDefined = angular.isDefined,
-        equals = angular.equals;
+        isDefined = angular.isDefined;
 
     return angular.module('c6.app.minireel.adManager', [c6uilib.name, c6State.name, services.name])
         .config(['c6StateProvider',
@@ -73,9 +72,9 @@ function( angular , c6uilib , c6State  , services          ,
         }])
 
         .controller('AdManagerController', ['$scope','c6State','$q','ConfirmDialogService',
-                                            'cState','$injector',
+                                            'cState','$injector','MiniReelService',
         function                           ( $scope , c6State , $q , ConfirmDialogService ,
-                                             cState , $injector ) {
+                                             cState , $injector , MiniReelService ) {
             var self = this,
                 org = $scope.PortalCtrl.model.org,
                 permissions = $scope.PortalCtrl.model.permissions;
@@ -89,7 +88,8 @@ function( angular , c6uilib , c6State  , services          ,
                         skip: 6
                     },
                     display: {
-                        waterfall: 'cinema6'
+                        waterfall: 'cinema6',
+                        enabled: false
                     }
                 };
 
@@ -125,7 +125,8 @@ function( angular , c6uilib , c6State  , services          ,
                         skip: equalOrUndefine()
                     },
                     displayTemplate = {
-                        waterfall: equalOrUndefine()
+                        waterfall: equalOrUndefine(),
+                        enabled: equalOrUndefine()
                     },
                     sharedConfig;
 
@@ -247,6 +248,9 @@ function( angular , c6uilib , c6State  , services          ,
                         return $q.all(minireels.map(function(exp) {
                             exp.data.deck = cleanDeck(exp.data.deck);
                             exp.data.adConfig = null;
+                            exp = getAdConfig(org).display.enabled ?
+                                MiniReelService.enableDisplayAds(exp) :
+                                MiniReelService.disableDisplayAds(exp);
                             return exp.save();
                         }));
                     },
@@ -339,7 +343,8 @@ function( angular , c6uilib , c6State  , services          ,
                         skip: 6
                     },
                     display: {
-                        waterfall: 'cinema6'
+                        waterfall: 'cinema6',
+                        enabled: false
                     }
                 };
 
@@ -397,8 +402,8 @@ function( angular , c6uilib , c6State  , services          ,
             this.baseState = 'MR:AdManager.Settings.';
             this.tabs = [
                 new Tab('Frequency', self.baseState + 'Frequency'),
-                new Tab('Video Server', self.baseState + 'VideoServer'),
-                new Tab('Display Server', self.baseState + 'DisplayServer')
+                new Tab('Video Ad Settings', self.baseState + 'VideoServer'),
+                new Tab('Display Ad Settings', self.baseState + 'DisplayServer')
             ];
 
             this.frequency = cState.cModel.settings.video.frequency;
@@ -515,13 +520,10 @@ function( angular , c6uilib , c6State  , services          ,
                         skip: self.skip
                     },
                     display: {
-                        waterfall: cState.cModel.settings.display.waterfall
+                        waterfall: cState.cModel.settings.display.waterfall,
+                        enabled: cState.cModel.settings.display.enabled
                     }
                 };
-
-                if (equals(settings, getAdConfig(org))) {
-                    return c6State.goTo('MR:AdManager');
-                }
 
                 if (cState.cModel.type === 'org') {
                     org.adConfig = settings;
@@ -532,6 +534,9 @@ function( angular , c6uilib , c6State  , services          ,
                     $q.all(cState.cModel.data.map(function(exp) {
                         exp.data.adConfig = convertNewSettings(exp, settings);
                         exp.data.deck = cleanDeck(exp.data.deck);
+                        exp = settings.display.enabled ?
+                            MiniReelService.enableDisplayAds(exp) :
+                            MiniReelService.disableDisplayAds(exp);
                         return exp.save();
                     })).then(function() {
                         c6State.goTo('MR:AdManager');

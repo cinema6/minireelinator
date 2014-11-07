@@ -1,6 +1,8 @@
 # MiniReelinator
 
 * *[v1.4.0.rc1]*
+  * Add checkbox in Display Ad Settings to enable/disable display ads
+    on eligible cards
   * Enable the post-video (watch-again) module in the single-video
     player
   * Removed display ad settings from the single-video placement screen

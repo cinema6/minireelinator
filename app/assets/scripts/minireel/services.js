@@ -1237,6 +1237,54 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 });
             };
 
+            function shouldHaveDisplayAd(card, enabling) {
+                if ((/text|links|displayAd/).test(card.type)) { return false; }
+
+                if (!!card.placementId) { return true; }
+
+                if (card.sponsored || card.type === 'adUnit') { return false; }
+
+                return enabling;
+            }
+
+            function enableModule(card, module) {
+                var modules = card.modules;
+
+                if (modules.indexOf(module) > -1) { return; }
+
+                modules.push(module);
+            }
+
+            function disableModule(card, module) {
+                card.modules = card.modules.filter(function(cardModule) {
+                    return cardModule !== module;
+                });
+            }
+
+            this.enableDisplayAds = function(minireel) {
+                minireel.data.deck.forEach(function(card) {
+                    if (shouldHaveDisplayAd(card, true)) {
+                        enableModule(card, 'displayAd');
+                    } else {
+                        disableModule(card, 'displayAd');
+                    }
+                });
+
+                return minireel;
+            };
+
+            this.disableDisplayAds = function(minireel) {
+                minireel.data.deck.forEach(function(card) {
+                    if (shouldHaveDisplayAd(card, false)) {
+                        enableModule(card, 'displayAd');
+                    } else {
+                        disableModule(card, 'displayAd');
+                    }
+                });
+
+                return minireel;
+            };
+
             this.enablePreview = function(minireel) {
                 minireel.access = 'public';
 
@@ -1405,13 +1453,19 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             this.convertCard = function(card, _minireel) {
                 var dataTemplates, cardBases, cardType, dataType,
+                    org = portal.cModel.org,
                     minireel = _minireel || {
                         data: {
                             mode: null,
                             deck: []
                         }
                     },
-                    mode = minireel.data.mode,
+                    displayAdsEnabled = (minireel &&
+                        minireel.data.adConfig &&
+                        minireel.data.adConfig.display.enabled) ||
+                        (org &&
+                        org.adConfig &&
+                        org.adConfig.display.enabled),
                     newCard = {
                         data: {}
                     };
@@ -1553,7 +1607,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         modules: function(card) {
                             var modules = {
                                 'ballot': function() { return card.type === 'videoBallot'; },
-                                'displayAd': function() { return mode === 'lightbox-ads'; },
+                                'displayAd': function() {
+                                    var shouldAlwaysHaveDisplayAd = !!card.placementId,
+                                        canHaveDisplayAd = displayAdsEnabled &&
+                                            !card.sponsored && card.data.service !== 'adUnit';
+
+                                    return shouldAlwaysHaveDisplayAd || canHaveDisplayAd;
+                                },
                                 'post': function() { return minireel.data.deck.length === 1; }
                             };
 
@@ -1614,8 +1674,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return 'Recap of ' + minireel.data.title;
                         },
                         note: copy(),
-                        modules: function() {
-                            return mode === 'lightbox-ads' ? ['displayAd'] : [];
+                        modules: function(card) {
+                            return (card.placementId || (displayAdsEnabled && !card.sponsored)) ?
+                                ['displayAd'] :
+                                [];
                         },
                         placementId: copy(null),
                         templateUrl: copy(null),

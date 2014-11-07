@@ -7,6 +7,7 @@ define(['app','minireel/mixins/VideoCardController'], function(appModule, VideoC
             $controller,
             MiniReelService,
             $scope,
+            c6State, portal,
             SponsorCardVideoCtrl;
 
         var card;
@@ -20,6 +21,9 @@ define(['app','minireel/mixins/VideoCardController'], function(appModule, VideoC
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
                 MiniReelService = $injector.get('MiniReelService');
+                c6State = $injector.get('c6State');
+                portal = c6State.get('Portal');
+                portal.cModel = {};
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
