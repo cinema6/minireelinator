@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## v1.4.0 (November 7, 2014)
+* *[v1.4.0.rc2]*
+  * [FIX]: Ensure that incomplete adConfig settings are handled
+  in AdManager
+  * [FIX]: Fix verbiage on Display Ad Settings tab in AdManager
+
 * *[v1.4.0.rc1]*
   * Add checkbox in Display Ad Settings to enable/disable display ads
     on eligible cards
