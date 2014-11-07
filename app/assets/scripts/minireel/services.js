@@ -1237,22 +1237,36 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 });
             };
 
+            function shouldHaveDisplayAd(card, enabling) {
+                if ((/text|links|displayAd/).test(card.type)) { return false; }
+
+                if (!!card.placementId) { return true; }
+
+                if (card.sponsored || card.type === 'adUnit') { return false; }
+
+                return enabling;
+            }
+
+            function enableModule(card, module) {
+                var modules = card.modules;
+
+                if (modules.indexOf(module) > -1) { return; }
+
+                modules.push(module);
+            }
+
+            function disableModule(card, module) {
+                return card.modules = card.modules.filter(function(cardModule) {
+                    return cardModule !== module;
+                });
+            }
+
             this.enableDisplayAds = function(minireel) {
                 minireel.data.deck.forEach(function(card) {
-                    var hasDisplayModule = card.modules.indexOf('displayAd') > -1,
-                        shouldAlwaysBeDisabled = (/text|links|displayAd/).test(card.type),
-                        shouldAlwaysBeEnabled = !shouldAlwaysBeDisabled && card.placementId,
-                        canBeEnabled = !shouldAlwaysBeDisabled &&
-                            !card.sponsored && card.type !== 'adUnit';
-
-                    if (shouldAlwaysBeEnabled || canBeEnabled) {
-                        if (!hasDisplayModule) {
-                            card.modules.push('displayAd');
-                        }
+                    if (shouldHaveDisplayAd(card, true)) {
+                        enableModule(card, 'displayAd');
                     } else {
-                        card.modules = card.modules.filter(function(mod) {
-                            return mod !== 'displayAd';
-                        });
+                        disableModule(card, 'displayAd');
                     }
                 });
 
@@ -1261,18 +1275,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             this.disableDisplayAds = function(minireel) {
                 minireel.data.deck.forEach(function(card) {
-                    var hasDisplayModule = card.modules.indexOf('displayAd') > -1,
-                        shouldAlwaysBeDisabled = (/text|links|displayAd/).test(card.type),
-                        shouldAlwaysBeEnabled = !shouldAlwaysBeDisabled && card.placementId;
-
-                    if (shouldAlwaysBeDisabled || !shouldAlwaysBeEnabled) {
-                        card.modules = card.modules.filter(function(mod) {
-                            return mod !== 'displayAd';
-                        });
+                    if (shouldHaveDisplayAd(card, false)) {
+                        enableModule(card, 'displayAd');
                     } else {
-                        if (!hasDisplayModule) {
-                            card.modules.push('displayAd');
-                        }
+                        disableModule(card, 'displayAd');
                     }
                 });
 
