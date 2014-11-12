@@ -1,5 +1,11 @@
 # MiniReelinator
 
+## v1.4.1 (November 12, 2014)
+* *[v1.4.1.rc1]*
+  * [FIX]: Fix for an issue that caused SSL warnings when trying to
+    access preview links
+* *[/v1.4.1.rc1]*
+
 ## v1.4.0 (November 7, 2014)
 * *[v1.4.0.rc2]*
   * [FIX]: Ensure that incomplete adConfig settings are handled

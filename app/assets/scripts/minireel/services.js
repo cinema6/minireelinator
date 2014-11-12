@@ -1301,9 +1301,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 if (minireel.access === 'public') {
                     var path;
                     if (c6Defines.kDebug) {
-                        path = 'https://c-6.co';
+                        path = '//staging.cinema6.com';
                     } else {
-                        path = 'https://ci6.co';
+                        path = '//cinema6.com';
                     }
                     path = path + '/preview?id=' + encodeURIComponent(minireel.id);
                     return path;

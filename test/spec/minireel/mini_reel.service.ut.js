@@ -943,7 +943,7 @@
                             it('should be the correct short url in staging', function() {
                                 c6Defines.kDebug = true;
                                 result = MiniReelService.previewUrlOf(minireel);
-                                expect(result).toBe('https://c-6.co/preview?' +
+                                expect(result).toBe('//staging.cinema6.com/preview?' +
                                    'id=' + encodeURIComponent(minireel.id)
                                 );
                             });
@@ -951,7 +951,7 @@
                             it('should be the correct short url in production', function() {
                                 c6Defines.kDebug = false;
                                 result = MiniReelService.previewUrlOf(minireel);
-                                expect(result).toBe('https://ci6.co/preview?' +
+                                expect(result).toBe('//cinema6.com/preview?' +
                                    'id=' + encodeURIComponent(minireel.id)
                                 );
                             });
