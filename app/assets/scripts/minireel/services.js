@@ -1686,6 +1686,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return 'Vimeo';
                     case 'dailymotion':
                         return 'DailyMotion';
+                    case 'aol':
+                        return 'AOL On';
+                    case 'yahoo':
+                        return 'Yahoo! Screen';
                     }
                 }
 
@@ -1704,10 +1708,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     case 'video':
                     case 'videoBallot':
                         switch (card.data.service) {
-                            case 'yahoo':
-                            case 'aol':
-                                return 'embedded';
-                            default:
+                        case 'yahoo':
+                        case 'aol':
+                            return 'embedded';
+                        default:
                             return card.data.service;
                         }
                         break;
@@ -1831,7 +1835,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             case 'aol':
                                 return 'embedded';
                             default:
-                            return service || card.type;
+                                return service || card.type;
                             }
                         },
                         title: copy(null),
