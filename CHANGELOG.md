@@ -1,5 +1,27 @@
 # MiniReelinator
 
+## v1.4.1 (November 12, 2014)
+* *[v1.4.1.rc1]*
+  * [FIX]: Fix for an issue that caused SSL warnings when trying to
+    access preview links
+* *[/v1.4.1.rc1]*
+
+## v1.4.0 (November 7, 2014)
+* *[v1.4.0.rc2]*
+  * [FIX]: Ensure that incomplete adConfig settings are handled
+  in AdManager
+  * [FIX]: Fix verbiage on Display Ad Settings tab in AdManager
+* *[/v1.4.0.rc2]*
+
+* *[v1.4.0.rc1]*
+  * Add checkbox in Display Ad Settings to enable/disable display ads
+    on eligible cards
+  * Enable the post-video (watch-again) module in the single-video
+    player
+  * Removed display ad settings from the single-video placement screen
+    (this will be managed from the Ad Settings Manager now.)
+* *[/v1.4.0.rc1]*
+
 ## v1.3.0 (October 28, 2014)
 * *[v1.3.0.rc3]*
   * [FEATURE]: Allow custom skip times to be entered for sponsored cards

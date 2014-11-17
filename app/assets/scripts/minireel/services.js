@@ -1444,6 +1444,54 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 });
             };
 
+            function shouldHaveDisplayAd(card, enabling) {
+                if ((/text|links|displayAd/).test(card.type)) { return false; }
+
+                if (!!card.placementId) { return true; }
+
+                if (card.sponsored || card.type === 'adUnit') { return false; }
+
+                return enabling;
+            }
+
+            function enableModule(card, module) {
+                var modules = card.modules;
+
+                if (modules.indexOf(module) > -1) { return; }
+
+                modules.push(module);
+            }
+
+            function disableModule(card, module) {
+                card.modules = card.modules.filter(function(cardModule) {
+                    return cardModule !== module;
+                });
+            }
+
+            this.enableDisplayAds = function(minireel) {
+                minireel.data.deck.forEach(function(card) {
+                    if (shouldHaveDisplayAd(card, true)) {
+                        enableModule(card, 'displayAd');
+                    } else {
+                        disableModule(card, 'displayAd');
+                    }
+                });
+
+                return minireel;
+            };
+
+            this.disableDisplayAds = function(minireel) {
+                minireel.data.deck.forEach(function(card) {
+                    if (shouldHaveDisplayAd(card, false)) {
+                        enableModule(card, 'displayAd');
+                    } else {
+                        disableModule(card, 'displayAd');
+                    }
+                });
+
+                return minireel;
+            };
+
             this.enablePreview = function(minireel) {
                 minireel.access = 'public';
 
@@ -1460,9 +1508,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 if (minireel.access === 'public') {
                     var path;
                     if (c6Defines.kDebug) {
-                        path = 'https://c-6.co';
+                        path = '//staging.cinema6.com';
                     } else {
-                        path = 'https://ci6.co';
+                        path = '//cinema6.com';
                     }
                     path = path + '/preview?id=' + encodeURIComponent(minireel.id);
                     return path;
@@ -1610,9 +1658,21 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     .then(createMinireel);
             };
 
-            this.convertCard = function(card, minireel) {
+            this.convertCard = function(card, _minireel) {
                 var dataTemplates, cardBases, cardType, dataType,
-                    mode = minireel && minireel.data.mode,
+                    org = portal.cModel.org,
+                    minireel = _minireel || {
+                        data: {
+                            mode: null,
+                            deck: []
+                        }
+                    },
+                    displayAdsEnabled = (minireel &&
+                        minireel.data.adConfig &&
+                        minireel.data.adConfig.display.enabled) ||
+                        (org &&
+                        org.adConfig &&
+                        org.adConfig.display.enabled),
                     newCard = {
                         data: {}
                     };
@@ -1780,11 +1840,22 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return camelSource(card.data.service);
                         },
                         modules: function(card) {
-                            var modules = card.type === 'videoBallot' ? ['ballot'] : [];
-                            if(mode === 'lightbox-ads') {
-                                modules.push('displayAd');
-                            }
-                            return modules;
+                            var modules = {
+                                'ballot': function() { return card.type === 'videoBallot'; },
+                                'displayAd': function() {
+                                    var shouldAlwaysHaveDisplayAd = !!card.placementId,
+                                        canHaveDisplayAd = displayAdsEnabled &&
+                                            !card.sponsored && card.data.service !== 'adUnit';
+
+                                    return shouldAlwaysHaveDisplayAd || canHaveDisplayAd;
+                                },
+                                'post': function() { return minireel.data.deck.length === 1; }
+                            };
+
+                            return Object.keys(modules)
+                                .filter(function(module) {
+                                    return modules[module]();
+                                });
                         },
                         ballot: function(card) {
                             return card.data.ballot;
@@ -1838,8 +1909,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return 'Recap of ' + minireel.data.title;
                         },
                         note: copy(),
-                        modules: function() {
-                            return mode === 'lightbox-ads' ? ['displayAd'] : [];
+                        modules: function(card) {
+                            return (card.placementId || (displayAdsEnabled && !card.sponsored)) ?
+                                ['displayAd'] :
+                                [];
                         },
                         placementId: copy(null),
                         templateUrl: copy(null),

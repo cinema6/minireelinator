@@ -12,6 +12,7 @@
                 c6State,
                 cState,
                 AdSettingsCtrl,
+                MiniReelService,
                 model,
                 minireels,
                 settings,
@@ -36,7 +37,8 @@
                         skip: 6
                     },
                     display: {
-                        waterfall: 'cinema6'
+                        waterfall: 'cinema6',
+                        enabled: false
                     }
                 };
 
@@ -44,7 +46,17 @@
                     {
                         id: 'e-1',
                         data: {
-                            deck: [{},{},{}],
+                            deck: [
+                                {
+                                    modules: []
+                                },
+                                {
+                                    modules: []
+                                },
+                                {
+                                    modules: []
+                                }
+                            ],
                             adConfig: {
                                 video: {
                                     firstPlacement: 2,
@@ -53,7 +65,8 @@
                                     skip: 6
                                 },
                                 display: {
-                                    waterfall: 'cinema6'
+                                    waterfall: 'cinema6',
+                                    enabled: false
                                 }
                             }
                         }
@@ -61,7 +74,17 @@
                     {
                         id: 'e-2',
                         data: {
-                            deck: [{},{},{},{},{}]
+                            deck: [
+                                {
+                                    modules: []
+                                },
+                                {
+                                    modules: []
+                                },
+                                {
+                                    modules: []
+                                }
+                            ]
                         }
                     }
                 ];
@@ -73,6 +96,9 @@
                     $rootScope = $injector.get('$rootScope');
                     $controller = $injector.get('$controller');
                     $q = $injector.get('$q');
+                    MiniReelService = $injector.get('MiniReelService');
+                    spyOn(MiniReelService, 'enableDisplayAds').and.callThrough();
+                    spyOn(MiniReelService, 'disableDisplayAds').and.callThrough();
 
                     c6State = $injector.get('c6State');
                     spyOn(c6State, 'goTo');
@@ -741,14 +767,16 @@
                             expect(c6State.goTo.calls.count()).toEqual(goToCallCount + 1);
                         });
 
-                        it('should not save anything if settings have not changed', function() {
-                            var goToCallCount,
+                        it('should handle incomplete adConfig', function() {
+                            var saveDeferred = $q.defer(),
                                 org = {
                                     id: 'org1',
-                                    save: jasmine.createSpy('org.save()')
+                                    save: jasmine.createSpy('org.save()').and.returnValue(saveDeferred.promise),
+                                    adConfig: {
+                                        video: {},
+                                        display: {}
+                                    }
                                 };
-
-                            settings.video.frequency = 0;
 
                             initCtrl({
                                 type: 'org',
@@ -756,12 +784,9 @@
                                 data: {id: 'o-1'}
                             }, org);
 
-                            goToCallCount = c6State.goTo.calls.count();
-
                             AdSettingsCtrl.save();
 
-                            expect(org.save).not.toHaveBeenCalled();
-                            expect(c6State.goTo.calls.count()).toEqual(goToCallCount + 1);
+                            expect(PortalCtrl.model.org.adConfig).toEqual(settings);
                         });
                     });
 
@@ -798,14 +823,14 @@
                             expect(c6State.goTo.calls.count()).toEqual(goToCallCount + 1);
                         });
 
-                        it('should not save anything if settings have not changed', function() {
-                            var goToCallCount;
+                        it('should enable/disable displayAd modules for all minireel(s)', function() {
+                            var saveDeferred = $q.defer();
+
+                            settings.display.enabled = true;
 
                             minireels.forEach(function(minireel) {
-                                minireel.save = jasmine.createSpy('exp.save()');
+                                minireel.save = jasmine.createSpy('exp.save()').and.returnValue(saveDeferred.promise);
                             });
-
-                            settings.video.frequency = 0;
 
                             initCtrl({
                                 type: 'minireels',
@@ -813,15 +838,65 @@
                                 data: minireels
                             });
 
-                            goToCallCount = c6State.goTo.calls.count();
+                            AdSettingsCtrl.save();
+
+                            expect(MiniReelService.enableDisplayAds).toHaveBeenCalled();
+                            expect(MiniReelService.disableDisplayAds).not.toHaveBeenCalled();
+
+                            MiniReelService.enableDisplayAds.calls.reset();
+                            settings.display.enabled = false;
+
+                            initCtrl({
+                                type: 'minireels',
+                                settings: settings,
+                                data: minireels
+                            });
+
+                            AdSettingsCtrl.save();
+
+                            expect(MiniReelService.disableDisplayAds).toHaveBeenCalled();
+                            expect(MiniReelService.enableDisplayAds).not.toHaveBeenCalled();
+                        });
+
+                        it('should handle incomplete adConfig', function() {
+                            var saveDeferred = $q.defer(),
+                                org = {
+                                    id: 'org1',
+                                    save: jasmine.createSpy('org.save()').and.returnValue(saveDeferred.promise),
+                                    adConfig: {
+                                        video: {},
+                                        display: {}
+                                    }
+                                };
+
+                            minireels.forEach(function(minireel) {
+                                minireel.save = jasmine.createSpy('exp.save()').and.returnValue(saveDeferred.promise);
+                            });
+
+                            initCtrl({
+                                type: 'minireels',
+                                settings: settings,
+                                data: minireels
+                            }, org);
 
                             AdSettingsCtrl.save();
 
                             minireels.forEach(function(minireel) {
-                                expect(minireel.save).not.toHaveBeenCalled();
+                                expect(minireel.data.adConfig).toEqual(settings);
                             });
 
-                            expect(c6State.goTo.calls.count()).toEqual(goToCallCount + 1);
+                            minireels.forEach(function(minireel) {
+                                minireel.data.adConfig = {
+                                    video: {},
+                                    display: {}
+                                };
+                            });
+
+                            AdSettingsCtrl.save();
+
+                            minireels.forEach(function(minireel) {
+                                expect(minireel.data.adConfig).toEqual(settings);
+                            });
                         });
                     });
                 });

@@ -680,7 +680,8 @@
                             video: {
                                 frequency: 1,
                                 firstPlacement: 1,
-                            }
+                            },
+                            display: {}
                         };
 
                         expect(AdManagerCtrl.adCountOf(minireel)).toBe(8);
@@ -689,7 +690,8 @@
                             video: {
                                 frequency: 1,
                                 firstPlacement: -1,
-                            }
+                            },
+                            display: {}
                         };
 
                         expect(AdManagerCtrl.adCountOf(minireel)).toBe(0);
@@ -723,11 +725,53 @@
                                     skip: 6
                                 },
                                 display: {
-                                    waterfall: 'cinema6'
+                                    waterfall: 'cinema6',
+                                    enabled: false
                                 }
                             },
                             data: {
                                 id: 'org1'
+                            }
+                        }]);
+                    });
+
+                    it('should handle incomplete adConfigs', function() {
+                        PortalCtrl.model.org.adConfig = {
+                            video: {},
+                            display: {}
+                        };
+
+                        AdManagerCtrl.editOrgSettings();
+
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [{
+                            readOnly: false,
+                            type: 'org',
+                            settings: {
+                                video: {
+                                    frequency: 0,
+                                    firstPlacement: 2,
+                                    waterfall: 'cinema6',
+                                    skip: 6
+                                },
+                                display: {
+                                    waterfall: 'cinema6',
+                                    enabled: false
+                                }
+                            },
+                            data: {
+                                id: 'org1',
+                                adConfig: {
+                                    video: {
+                                        frequency: 0,
+                                        firstPlacement: 2,
+                                        waterfall: 'cinema6',
+                                        skip: 6
+                                    },
+                                    display: {
+                                        waterfall: 'cinema6',
+                                        enabled: false
+                                    }
+                                }
                             }
                         }]);
                     });
@@ -741,7 +785,8 @@
                                 skip: false
                             },
                             display: {
-                                waterfall: 'cinema6'
+                                waterfall: 'cinema6',
+                                enabled: true
                             }
                         };
 
@@ -758,7 +803,8 @@
                                     skip: false
                                 },
                                 display: {
-                                    waterfall: 'cinema6'
+                                    waterfall: 'cinema6',
+                                    enabled: true
                                 }
                             },
                             data: {
@@ -771,7 +817,8 @@
                                         skip: false
                                     },
                                     display: {
-                                        waterfall: 'cinema6'
+                                        waterfall: 'cinema6',
+                                        enabled: true
                                     }
                                 }
                             }
@@ -806,7 +853,8 @@
                                     skip: 6
                                 },
                                 display: {
-                                    waterfall: 'cinema6'
+                                    waterfall: 'cinema6',
+                                    enabled: true
                                 }
                             };
 
@@ -823,12 +871,40 @@
                                         skip: 6
                                     },
                                     display: {
-                                        waterfall: 'cinema6'
+                                        waterfall: 'cinema6',
+                                        enabled: true
                                     }
                                 },
                                 data: [minireel]
                             }]);
                         });
+                    });
+
+                    it('should handle incomplete adConfig', function() {
+                        minireel.data.adConfig = {
+                            video: {},
+                            display: {}
+                        };
+
+                        AdManagerCtrl.editSettings([minireel]);
+
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:AdManager.Settings', [{
+                            readOnly: false,
+                            type: 'minireels',
+                            settings: {
+                                video: {
+                                    frequency: 0,
+                                    firstPlacement: 2,
+                                    waterfall: 'cinema6',
+                                    skip: 6
+                                },
+                                display: {
+                                    waterfall: 'cinema6',
+                                    enabled: false
+                                }
+                            },
+                            data: [minireel]
+                        }]);
                     });
 
                     describe('when editing multiple minireels', function() {
@@ -846,7 +922,8 @@
                                                 skip: 6
                                             },
                                             display: {
-                                                waterfall: 'cinema6'
+                                                waterfall: 'cinema6',
+                                                enabled: true
                                             }
                                         }
                                     }
@@ -862,7 +939,8 @@
                                                 skip: 6
                                             },
                                             display: {
-                                                waterfall: 'cinema6'
+                                                waterfall: 'cinema6',
+                                                enabled: true
                                             }
                                         }
                                     }
@@ -882,7 +960,8 @@
                                         skip: 6
                                     },
                                     display: {
-                                        waterfall: 'cinema6'
+                                        waterfall: 'cinema6',
+                                        enabled: true
                                     }
                                 },
                                 data: minireels
@@ -901,7 +980,8 @@
                                                 skip: true
                                             },
                                             display: {
-                                                waterfall: 'cinema6'
+                                                waterfall: 'cinema6',
+                                                enabled: true
                                             }
                                         }
                                     }
@@ -917,7 +997,8 @@
                                                 skip: 6
                                             },
                                             display: {
-                                                waterfall: 'publisher'
+                                                waterfall: 'publisher',
+                                                enabled: false
                                             }
                                         }
                                     }
@@ -937,7 +1018,8 @@
                                         skip: undefined
                                     },
                                     display: {
-                                        waterfall: undefined
+                                        waterfall: undefined,
+                                        enabled: undefined
                                     }
                                 },
                                 data: minireels
@@ -956,7 +1038,8 @@
                                                 skip: 6
                                             },
                                             display: {
-                                                waterfall: 'cinema6'
+                                                waterfall: 'cinema6',
+                                                enabled: false
                                             }
                                         }
                                     }
@@ -972,7 +1055,8 @@
                                                 skip: 6
                                             },
                                             display: {
-                                                waterfall: 'publisher'
+                                                waterfall: 'publisher',
+                                                enabled: false
                                             }
                                         }
                                     }
@@ -992,7 +1076,8 @@
                                         skip: 6
                                     },
                                     display: {
-                                        waterfall: undefined
+                                        waterfall: undefined,
+                                        enabled: false
                                     }
                                 },
                                 data: minireels
@@ -1002,53 +1087,55 @@
                 });
 
                 describe('useDefaultSettings()', function() {
-                    it('should go through all selected minireels and delete static ad cards and adConfig blocks', function() {
-                        var onAffirm, onCancel,
-                            minireels = [
-                                {
-                                    id: 'e-1',
-                                    data: {
-                                        adConfig: {},
-                                        deck: [
-                                            {
-                                                ad: true
-                                            }
-                                        ]
-                                    },
-                                    save: jasmine.createSpy('minireel.save()')
-                                },
-                                {
-                                    id: 'e-2',
-                                    data: {
-                                        adConfig: {},
-                                        deck: [
-                                            {
-                                                ad: true
-                                            },
-                                            {
-                                                ad: true
-                                            }
-                                        ]
-                                    },
-                                    save: jasmine.createSpy('minireel.save()')
-                                },
-                                {
-                                    id: 'e-3',
-                                    data: {
-                                        adConfig: {},
-                                        deck: []
-                                    },
-                                    save: jasmine.createSpy('minireel.save()')
-                                }
-                            ];
+                    var onAffirm, onCancel, minireels;
 
+                    beforeEach(function() {
+                        minireels = [
+                            {
+                                id: 'e-1',
+                                data: {
+                                    adConfig: {},
+                                    deck: [
+                                        {
+                                            ad: true
+                                        }
+                                    ]
+                                },
+                                save: jasmine.createSpy('minireel.save()')
+                            },
+                            {
+                                id: 'e-2',
+                                data: {
+                                    adConfig: {},
+                                    deck: [
+                                        {
+                                            ad: true
+                                        },
+                                        {
+                                            ad: true
+                                        }
+                                    ]
+                                },
+                                save: jasmine.createSpy('minireel.save()')
+                            },
+                            {
+                                id: 'e-3',
+                                data: {
+                                    adConfig: {},
+                                    deck: []
+                                },
+                                save: jasmine.createSpy('minireel.save()')
+                            }
+                        ];
 
                         spyOn(ConfirmDialogService, 'display');
                         AdManagerCtrl.useDefaultSettings(minireels);
 
                         onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
                         onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
+                    });
 
+                    it('should go through all selected minireels and delete static ad cards and adConfig blocks', function() {
                         expect(ConfirmDialogService.display).toHaveBeenCalled();
 
                         onAffirm();
@@ -1058,6 +1145,40 @@
                             expect(minireel.data.deck.length).toBe(0);
                             expect(minireel.save).toHaveBeenCalled();
                         });
+                    });
+
+                    it('should remove displayAd modules if no Org adConfig is defined', function() {
+                        spyOn(MiniReelService, 'enableDisplayAds').and.callThrough();
+                        spyOn(MiniReelService, 'disableDisplayAds').and.callThrough();
+
+                        onAffirm();
+
+                        expect(MiniReelService.enableDisplayAds).not.toHaveBeenCalled();
+                        expect(MiniReelService.disableDisplayAds).toHaveBeenCalled();
+                    });
+
+                    it('should add displayAd modules based on Org adConfig', function() {
+                        PortalCtrl.model.org.adConfig = { video: {}, display: { enabled: true }};
+
+                        spyOn(MiniReelService, 'enableDisplayAds').and.callThrough();
+                        spyOn(MiniReelService, 'disableDisplayAds').and.callThrough();
+
+                        onAffirm();
+
+                        expect(MiniReelService.enableDisplayAds).toHaveBeenCalled();
+                        expect(MiniReelService.disableDisplayAds).not.toHaveBeenCalled();
+                    });
+
+                    it('should remove displayAd modules based on Org adConfig', function() {
+                        PortalCtrl.model.org.adConfig = { video: {}, display: { enabled: false }};
+
+                        spyOn(MiniReelService, 'enableDisplayAds').and.callThrough();
+                        spyOn(MiniReelService, 'disableDisplayAds').and.callThrough();
+
+                        onAffirm();
+
+                        expect(MiniReelService.enableDisplayAds).not.toHaveBeenCalled();
+                        expect(MiniReelService.disableDisplayAds).toHaveBeenCalled();
                     });
                 });
 

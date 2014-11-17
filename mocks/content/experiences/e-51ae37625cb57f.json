@@ -13,17 +13,17 @@
                 "description": "When triggered, this MiniReel will open a lightbox on top of the web page.",
                 "modes": [
                     {
-                        "name": "Lightbox, without Companion Ad",
+                        "name": "Lightbox Player",
                         "value": "lightbox",
-                        "description": "Simple video and text MiniReel. No character limits, the content space will scroll as needed.",
+                        "description": "Video player with editorial in the sidebar. No character limits, the content space will scroll as needed.",
                         "limits": {},
                         "autoplayable": true
                     },
                     {
-                        "name": "Lightbox, with Companion Ad",
+                        "name": "Lightbox, with Playlist",
                         "disabled": false,
-                        "value": "lightbox-ads",
-                        "description": "A 300x250 ad will be displayed on every slide. No character limits, the content space will scroll as needed.",
+                        "value": "lightbox-playlist",
+                        "description": "Video player with editorial under the video. A playlist will be displayed in the sidebar. No character limits, the content space will scroll as needed.",
                         "limits": {},
                         "autoplayable": true
                     }

@@ -32,6 +32,16 @@
                 </span>
             </label>
         </div>
+
+        <h1 ng-show="AdSettingsCtrl.model.type !== 'org'" class="forms__name--title">Do you want to show Companion Ads for this MiniReel?</h1>
+        <h1 ng-show="AdSettingsCtrl.model.type === 'org'" class="forms__name--title">Do you want to show Companion Ads for MiniReels by default?</h1>
+        <label class="checkbox--inline">
+            <input id="enableDisplayAds" type="checkbox" ng-model="AdSettingsCtrl.model.settings.display.enabled" class="checkbox__input">
+            <span class="btn__label faa">&nbsp;</span>
+        </label>
+        <label for="enableDisplayAds">
+            <span>Yes, put a <strong>300x250 Companion Ad</strong> next to each video in the MiniReel.</span>
+        </label>
     </form>
 </div>
 <footer class="modalFooter__group">

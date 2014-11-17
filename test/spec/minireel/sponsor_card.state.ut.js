@@ -10,7 +10,8 @@ define(['app','minireel/services'], function(appModule, servicesModule) {
             MiniReelService,
             $location,
             $q,
-            sponsorCard;
+            sponsorCard,
+            portal;
 
         var card;
 
@@ -39,6 +40,8 @@ define(['app','minireel/services'], function(appModule, servicesModule) {
                 $q = $injector.get('$q');
             });
 
+            portal = c6State.get('Portal');
+            portal.cModel = {};
             sponsorCard = c6State.get('MR:SponsorCard');
         });
 

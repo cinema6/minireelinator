@@ -16,6 +16,7 @@
                 VideoThumbnailService,
                 SettingsService,
                 c6UrlParser,
+                c6State, portal,
                 _private;
 
             var minireel,
@@ -74,6 +75,9 @@
                     VideoThumbnailService = $injector.get('VideoThumbnailService');
                     SettingsService = $injector.get('SettingsService');
                     c6UrlParser = $injector.get('c6UrlParser');
+                    c6State = $injector.get('c6State');
+                    portal = c6State.get('Portal');
+                    portal.cModel = {};
 
                     EditorService = $injector.get('EditorService');
                     _private = EditorService._private;
