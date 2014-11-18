@@ -1088,6 +1088,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     },
                     autoplay: copy(null),
                     autoadvance: copy(null),
+                    survey: function(data, key, card) {
+                        return (card.modules || []).indexOf('post') > -1 ?
+                            (card.ballot || null) : null;
+                    },
                     service: function(data, key, card) {
                         var type = card.type;
 
@@ -1614,7 +1618,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                                     return shouldAlwaysHaveDisplayAd || canHaveDisplayAd;
                                 },
-                                'post': function() { return minireel.data.deck.length === 1; }
+                                'post': function() {
+                                    return minireel.data.deck.length === 1 || card.data.survey;
+                                }
                             };
 
                             return Object.keys(modules)
@@ -1623,7 +1629,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 });
                         },
                         ballot: function(card) {
-                            return card.data.ballot;
+                            return card.data.ballot || card.data.survey || undefined;
                         },
                         thumbs: function(card) {
                             return (card.thumb || undefined) && {
