@@ -383,6 +383,104 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 return election;
             }
 
+            /**
+             * Accepts an array of cards and a ballot.
+             *
+             * Returns a new ballot object for the given cards (using the values of the existing
+             * ballot, if present.)
+             */
+            function ballotFor(cards, existingBallot) {
+                return cards.reduce(function(ballot, card) {
+                    var existingVotes = existingBallot[card.id] || [];
+
+                    ballot[card.id] = card.ballot.choices.map(function(choice, index) {
+                        return existingVotes[index] || 0;
+                    });
+                    return ballot;
+                }, {});
+            }
+
+            /**
+             * Accepts an optional id.
+             *
+             * If the id is provided, the election with that id will be fetched from the DB.
+             * If the id is not provided, a new election will be created.
+             */
+            function getElection(id) {
+                return id ?
+                    cinema6.db.findAll('election', { id: id })
+                        .then(function extractSingle(elections) {
+                            return elections[0];
+                        }) :
+                    $q.when(cinema6.db.create('election', {
+                        ballot: {}
+                    }));
+            }
+
+            /**
+             * The function is meant to be called in the .then() method of a promise.
+             *
+             * The function updateBallot() returns will update an item's election's ballot with a
+             * proper ballot configuration for the cards provided.
+             */
+            function updateBallot(cards) {
+                return function(item) {
+                    var ballot = item.election.ballot;
+
+                    extend(ballot, ballotFor(cards, ballot));
+
+                    return item;
+                };
+            }
+
+            /**
+             * This method synchronizes a MiniReel with the vote service. It will create/update
+             * elections as necessary.
+             */
+            this.sync = function(minireel) {
+                function getItems(minireel) {
+                    var deck = minireel.data.deck;
+
+                    return $q.all([
+                        // Create/fetch the election for the MiniReel.
+                        $q.all({
+                            data: minireel.data,
+                            election: getElection(minireel.data.election)
+                        }).then(updateBallot(deck.filter(function(card) {
+                            return card.ballot && !card.sponsored;
+                        }))) // Update ballot based on latest card data.
+                    ].concat(deck.filter(function(card) {
+                        return card.ballot && card.sponsored;
+                    }).map(function(card) {
+                        // Create/fetch the election for each sponsored card.
+                        return $q.all({
+                            data: card.ballot,
+                            election: getElection(card.ballot.election)
+                        }).then(updateBallot([card])); // Update ballot based on latest card data.
+                    }))).then(function filterElections(items) {
+                        // Filter out any "empty" elections (to prevent creating unneeded
+                        // elections.)
+                        return items.filter(function(item) {
+                            return Object.keys(item.election.ballot).length > 0;
+                        });
+                    });
+                }
+
+                return getItems(minireel)
+                    .then(function(items) {
+                        return $q.all(items.map(function(item) {
+                            // Save every created election
+                            return item.election.save()
+                                .then(function saveElection(election) {
+                                    // Update the card/minireel with the election id.
+                                    item.data.election = election.id;
+                                });
+                        }));
+                    }).then(function resolveToMR() {
+                        return minireel;
+                    });
+            };
+
             this.initialize = function(minireel) {
                 $log.info('Attempt initialize minireel election');
                 if (hasElectionData(minireel.data.deck) === false){
