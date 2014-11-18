@@ -983,14 +983,14 @@
                         var result,
                             success,
                             saveDeferred,
-                            updateVoteDeferred;
+                            syncVoteDeferred;
 
                         beforeEach(function() {
                             saveDeferred = $q.defer();
-                            updateVoteDeferred = $q.defer();
+                            syncVoteDeferred = $q.defer();
                             success = jasmine.createSpy('success');
-                            spyOn(VoteService, 'update').and
-                                .returnValue(updateVoteDeferred.promise);
+                            spyOn(VoteService, 'sync').and
+                                .returnValue(syncVoteDeferred.promise);
 
                             spyOn(minireel, 'save').and.returnValue(saveDeferred.promise);
 
@@ -999,12 +999,12 @@
                             });
 
                             $rootScope.$apply(function() {
-                                updateVoteDeferred.resolve(minireel);
+                                syncVoteDeferred.resolve(minireel);
                             });
                         });
 
-                        it('should call VoteService.update',function(){
-                            expect(VoteService.update).toHaveBeenCalledWith(minireel);
+                        it('should call VoteService.sync()',function(){
+                            expect(VoteService.sync).toHaveBeenCalledWith(minireel);
                         });
 
                         it('should set the minireel\'s status to "active"', function() {
@@ -1021,36 +1021,6 @@
                             });
 
                             expect(success).toHaveBeenCalledWith(minireel);
-                        });
-
-                        describe('if the minireel has no election', function() {
-                            var initializeDeferred;
-
-                            beforeEach(function() {
-                                success.calls.reset();
-                                minireel.save.calls.reset();
-
-                                initializeDeferred = $q.defer();
-
-                                spyOn(VoteService, 'initialize').and.returnValue(initializeDeferred.promise);
-
-                                delete minireel.data.election;
-
-                                $rootScope.$apply(function() {
-                                    MiniReelService.publish(minireel).then(success);
-                                });
-                            });
-
-                            it('should initialize the election before saving the minireel', function() {
-                                expect(minireel.save).not.toHaveBeenCalled();
-                                expect(VoteService.initialize).toHaveBeenCalledWith(minireel);
-
-                                $rootScope.$apply(function() {
-                                    initializeDeferred.resolve({});
-                                });
-
-                                expect(minireel.save).toHaveBeenCalled();
-                            });
                         });
                     });
 

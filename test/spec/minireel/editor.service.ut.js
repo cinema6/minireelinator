@@ -1003,8 +1003,7 @@
 
                     describe('sync()', function() {
                         var success, failure,
-                            initVoteDeferred,
-                            updateVoteDeferred,
+                            syncVoteDeferred,
                             saveDeferred;
 
                         beforeEach(function() {
@@ -1012,13 +1011,10 @@
                             failure = jasmine.createSpy('sync() failure');
 
                             saveDeferred = $q.defer();
-                            initVoteDeferred = $q.defer();
-                            updateVoteDeferred = $q.defer();
+                            syncVoteDeferred = $q.defer();
 
-                            spyOn(VoteService, 'initialize').and
-                                .returnValue(initVoteDeferred.promise);
-                            spyOn(VoteService, 'update').and
-                                .returnValue(updateVoteDeferred.promise);
+                            spyOn(VoteService, 'sync').and
+                                .returnValue(syncVoteDeferred.promise);
                             spyOn(minireel, 'save').and.returnValue(saveDeferred.promise);
                         });
 
@@ -1065,8 +1061,7 @@
                             });
 
                             it('should not save the election with status pending',function(){
-                                expect(VoteService.update).not.toHaveBeenCalled();
-                                expect(VoteService.initialize).not.toHaveBeenCalled();
+                                expect(VoteService.sync).not.toHaveBeenCalled();
                             });
 
                             it('should copy the data from the proxy to the editor minireel', function() {
@@ -1121,12 +1116,11 @@
                                 });
                             });
                         });
-                        describe('if republishing an open minireel without election',function(){
+                        describe('if republishing an open minireel',function(){
                             var proxy;
 
                             beforeEach(function() {
                                 minireel.status = 'active';
-                                delete minireel.data.election;
 
                                 $rootScope.$apply(function() {
                                     proxy = EditorService.open(minireel);
@@ -1137,19 +1131,19 @@
                                 proxy.data.deck.splice(1, 1);
                             });
 
-                            describe('and election init succeeds',function(){
-                                it('should init the election',function(){
+                            describe('and election sync succeeds',function(){
+                                it('should sync the election',function(){
                                     $rootScope.$apply(function() {
                                         EditorService.sync().then(success);
-                                        initVoteDeferred.resolve();
+                                        syncVoteDeferred.resolve(minireel);
                                     });
-                                    expect(VoteService.initialize).toHaveBeenCalled();
+                                    expect(VoteService.sync).toHaveBeenCalledWith(minireel);
                                 });
-                                
+
                                 it('should save the MiniReel', function() {
                                     $rootScope.$apply(function() {
                                         EditorService.sync().then(success);
-                                        initVoteDeferred.resolve();
+                                        syncVoteDeferred.resolve(minireel);
                                     });
                                     expect(minireel.save).toHaveBeenCalled();
                                 });
@@ -1158,33 +1152,11 @@
                                 it('should save the MiniReel', function() {
                                     $rootScope.$apply(function() {
                                         EditorService.sync().then(success).catch(failure);
-                                        initVoteDeferred.reject('Failed!');
+                                        syncVoteDeferred.reject('Failed!');
                                     });
                                     expect(minireel.save).not.toHaveBeenCalled();
                                     expect(failure).toHaveBeenCalledWith('Failed!');
                                 });
-                            });
-
-                        });
-                        describe('if republishing an open minireel with election',function(){
-                            var proxy;
-                            beforeEach(function() {
-                                minireel.status = 'active';
-                                $rootScope.$apply(function() {
-                                    proxy = EditorService.open(minireel);
-                                });
-
-                                proxy.data.title = 'Here is a New Title!';
-                                proxy.data.mode = 'light';
-                                proxy.data.deck.splice(1, 1);
-
-                                $rootScope.$apply(function() {
-                                    EditorService.sync().then(success);
-                                });
-                            });
-
-                            it('should update the election with election set and status active',function(){
-                                expect(VoteService.update).toHaveBeenCalled();
                             });
 
                         });

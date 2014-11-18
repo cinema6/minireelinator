@@ -210,24 +210,12 @@ VideoCardController           ) {
             this.sync = queue.wrap(function() {
                 var minireel = _private.minireel;
 
-                function syncWithElection(miniReel) {
-                    if (miniReel.status !== 'active'){
-                        return $q.when(miniReel);
+                function syncWithElection(minireel) {
+                    if (minireel.status !== 'active'){
+                        return $q.when(minireel);
                     }
 
-                    if (miniReel.data.election) {
-                        return VoteService
-                            .update(miniReel)
-                            .then(function(){
-                                return miniReel;
-                            });
-                    }
-
-                    return VoteService
-                        .initialize(miniReel)
-                        .then(function(){
-                            return miniReel;
-                        });
+                    return VoteService.sync(minireel);
                 }
 
                 if (!minireel) {
