@@ -598,6 +598,27 @@ WizardController           , VideoCardController          , LinksController     
             }]);
         }])
 
+        .controller('SponsorCardSurveyController', ['$scope',
+        function                                   ( $scope ) {
+            var SponsorCardCtrl = $scope.SponsorCardCtrl,
+                card = SponsorCardCtrl.model;
+
+            Object.defineProperties(this, {
+                hasSurvey: {
+                    get: function() {
+                        return !!card.data.survey;
+                    },
+                    set: function(bool) {
+                        card.data.survey = !!bool ? {
+                            election: null,
+                            prompt: null,
+                            choices: []
+                        } : null;
+                    }
+                }
+            });
+        }])
+
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('MR:SponsorCard.Branding', [function() {
