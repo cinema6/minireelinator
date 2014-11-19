@@ -156,7 +156,8 @@
                                 title: 'The Smartest Turtle',
                                 note: 'Blah blah blah',
                                 source: 'DailyMotion',
-                                modules: ['ballot'],
+                                modules: ['post'],
+                                sponsored: true,
                                 ballot: {
                                     prompt: 'How smart was it?',
                                     choices: [
@@ -352,6 +353,10 @@
                             minireel.lastUpdated = nowISO;
                             minireel.newField = 'foo foo';
                             delete minireel.org;
+                            minireel.data.deck[1].ballot.election = 'el-04c9fbeb92c53b';
+                            minireel.data.deck[2].ballot.election = 'el-4f1fe77257a6bb';
+                            minireel.data.election = 'el-621d99c034e72f';
+                            minireel.data.deck.splice(0, 1);
 
                             MiniReelService.convertForEditor.calls.reset();
 
@@ -378,6 +383,10 @@
                             }).toThrow();
 
                             expect(proxy.hasOwnProperty('org')).toBe(false);
+
+                            expect(proxy.data.deck[1].data.ballot.election).toBe(minireel.data.deck[0].ballot.election);
+                            expect(proxy.data.deck[2].data.survey.election).toBe(minireel.data.deck[1].ballot.election);
+                            expect(proxy.data.election).toBe(minireel.data.election);
                         });
                     });
                 });
