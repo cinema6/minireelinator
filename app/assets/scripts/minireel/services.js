@@ -3,7 +3,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
     'use strict';
 
     var forEach = angular.forEach,
-        ngCopy = angular.copy,
+        copy = angular.copy,
         isNumber = angular.isNumber,
         isUndefined = angular.isUndefined,
         isDefined = angular.isDefined,
@@ -316,106 +316,103 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
         }])
 
-        .service('VoteService', ['cinema6','$q','$log',
-        function                ( cinema6 , $q , $log ) {
-            function hasElectionData(deck){
-                var hasData = false;
-                forEach(deck,function(card){
-                    if ((!hasData) &&
-                        ((card.modules || []).indexOf('ballot') >= 0) &&
-                        (card.ballot) &&
-                        (card.ballot.choices)) {
-                        $log.info('Card has ballot data:',card);
-                        hasData = true;
-                    }
-                });
-                return hasData;
+        .service('VoteService', ['cinema6','$q',
+        function                ( cinema6 , $q ) {
+            /**
+             * Accepts an array of cards and a ballot.
+             *
+             * Returns a new ballot object for the given cards (using the values of the existing
+             * ballot, if present.)
+             */
+            function ballotFor(cards, existingBallot) {
+                return cards.reduce(function(ballot, card) {
+                    var existingVotes = existingBallot[card.id] || [];
+
+                    ballot[card.id] = card.ballot.choices.map(function(choice, index) {
+                        return existingVotes[index] || 0;
+                    });
+                    return ballot;
+                }, {});
             }
 
-            function generateData(deck, election) {
-                var useArrayStorage = true;
+            /**
+             * Accepts an optional id.
+             *
+             * If the id is provided, the election with that id will be fetched from the DB.
+             * If the id is not provided, a new election will be created.
+             */
+            function getElection(id) {
+                return id ?
+                    cinema6.db.findAll('election', { id: id })
+                        .then(function extractSingle(elections) {
+                            return elections[0];
+                        }) :
+                    $q.when(cinema6.db.create('election', {
+                        ballot: {}
+                    }));
+            }
 
-                function cardWithId(id) {
-                    return deck.filter(function(card) {
-                        return card.id === id;
-                    })[0];
-                }
+            /**
+             * The function is meant to be called in the .then() method of a promise.
+             *
+             * The function updateBallot() returns will update an item's election's ballot with a
+             * proper ballot configuration for the cards provided.
+             */
+            function updateBallot(cards) {
+                return function(item) {
+                    var ballot = item.election.ballot;
 
-                election = election || {
-                    ballot: {}
+                    copy(ballotFor(cards, ballot), ballot);
+
+                    return item;
                 };
-
-                forEach(election.ballot,function(vals){
-                    if ((useArrayStorage === true) && (!isArray(vals))){
-                        useArrayStorage = false;
-                    }
-                });
-
-                forEach(deck, function(card) {
-                    var item;
-
-                    if ((card.modules || []).indexOf('ballot') < 0) {
-                        return;
-                    }
-
-                    item = election.ballot[card.id] || (useArrayStorage ? [] : {});
-
-                    forEach(card.ballot.choices, function(choice,index) {
-                        if (angular.isArray(item)){
-                            item[index] = item[index] || 0;
-                        } else {
-                            item[choice] = item[choice] || 0;
-                        }
-                    });
-
-                    election.ballot[card.id] = item;
-                });
-
-                forEach(Object.keys(election.ballot), function(id) {
-                    var card = cardWithId(id),
-                        shouldHaveBallot = !!card && (card.modules || []).indexOf('ballot') > -1;
-
-                    if (!shouldHaveBallot) {
-                        delete election.ballot[id];
-                    }
-                });
-
-                return election;
             }
 
-            this.initialize = function(minireel) {
-                $log.info('Attempt initialize minireel election');
-                if (hasElectionData(minireel.data.deck) === false){
-                    $log.info('Minireel has no election data, return without create');
-                    return $q.when(null);
-                }
-                $log.info('Minireel has election data, create');
-                return cinema6.db.create('election', generateData(minireel.data.deck))
-                    .save()
-                    .then(function attachId(election) {
-                        minireel.data.election = election.id;
+            /**
+             * This method synchronizes a MiniReel with the vote service. It will create/update
+             * elections as necessary.
+             */
+            this.sync = function(minireel) {
+                function getItems(minireel) {
+                    var deck = minireel.data.deck;
 
-                        return election;
+                    return $q.all([
+                        // Create/fetch the election for the MiniReel.
+                        $q.all({
+                            data: minireel.data,
+                            election: getElection(minireel.data.election)
+                        }).then(updateBallot(deck.filter(function(card) {
+                            return card.ballot && !card.sponsored;
+                        }))) // Update ballot based on latest card data.
+                    ].concat(deck.filter(function(card) {
+                        return card.ballot && card.sponsored;
+                    }).map(function(card) {
+                        // Create/fetch the election for each sponsored card.
+                        return $q.all({
+                            data: card.ballot,
+                            election: getElection(card.ballot.election)
+                        }).then(updateBallot([card])); // Update ballot based on latest card data.
+                    }))).then(function filterElections(items) {
+                        // Filter out any "empty" elections (to prevent creating unneeded
+                        // elections.)
+                        return items.filter(function(item) {
+                            return Object.keys(item.election.ballot).length > 0;
+                        });
                     });
-            };
-
-            this.update = function(minireel) {
-                $log.info('Attempt update minireel election: ' + minireel.data.election);
-                if (hasElectionData(minireel.data.deck) === false){
-                    $log.info('Minireel has no election data, return without update');
-                    return $q.when(null);
                 }
-                $log.info('Minireel has no election data, update');
-                return cinema6.db.findAll('election', { id: minireel.data.election })
-                    .then(function updateElection(elections) {
-                        return generateData(minireel.data.deck, elections[0]);
-                    })
-                    .then(function saveElection(election) {
-                        if (election) {
-                            return election.save();
-                        } else {
-                            return null;
-                        }
+
+                return getItems(minireel)
+                    .then(function(items) {
+                        return $q.all(items.map(function(item) {
+                            // Save every created election
+                            return item.election.save()
+                                .then(function saveElection(election) {
+                                    // Update the card/minireel with the election id.
+                                    item.data.election = election.id;
+                                });
+                        }));
+                    }).then(function resolveToMR() {
+                        return minireel;
                     });
             };
         }])
@@ -903,6 +900,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                      'SettingsService',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
                                       SettingsService ) {
+            var ngCopy = angular.copy;
+
             var self = this,
                 portal = c6State.get('Portal');
 
@@ -1088,6 +1087,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     },
                     autoplay: copy(null),
                     autoadvance: copy(null),
+                    survey: function(data, key, card) {
+                        return (card.modules || []).indexOf('post') > -1 ?
+                            (card.ballot || null) : null;
+                    },
                     service: function(data, key, card) {
                         var type = card.type;
 
@@ -1314,20 +1317,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             this.publish = function(minireel) {
                 function saveElection(minireel) {
-                    function returnMiniReel(){
-                        return minireel;
-                    }
-
-                    if (minireel.data.election) {
-                        return VoteService.update(minireel)
-                            .then(returnMiniReel);
-                    }
-
-                    return VoteService.initialize(minireel)
-                        .then(returnMiniReel);
+                    return VoteService.sync(minireel);
                 }
 
-                return $q.when(saveElection(minireel))
+                return saveElection(minireel)
                     .then(function setActive(minireel) {
                         minireel.status = 'active';
 
@@ -1614,7 +1607,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                                     return shouldAlwaysHaveDisplayAd || canHaveDisplayAd;
                                 },
-                                'post': function() { return minireel.data.deck.length === 1; }
+                                'post': function() {
+                                    return minireel.data.deck.length === 1 || card.data.survey;
+                                }
                             };
 
                             return Object.keys(modules)
@@ -1623,7 +1618,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 });
                         },
                         ballot: function(card) {
-                            return card.data.ballot;
+                            return card.data.ballot || card.data.survey || undefined;
                         },
                         thumbs: function(card) {
                             return (card.thumb || undefined) && {

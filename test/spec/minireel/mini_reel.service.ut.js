@@ -267,7 +267,7 @@
                                 title: 'The Dumbest Turtle',
                                 note: 'Blah blah blah',
                                 source: 'YouTube',
-                                modules: ['displayAd'],
+                                modules: ['displayAd', 'post'],
                                 placementId: '12345',
                                 templateUrl: '//portal.cinema6.com/collateral/minireel/templates/huffpost.html',
                                 sponsored: true,
@@ -290,6 +290,14 @@
                                         type: 'text',
                                         label: 'OH HAI!'
                                     }
+                                },
+                                ballot: {
+                                    electionId: 'el-8bb2395fbea873',
+                                    prompt: 'Are you willing to spend all your money on this product?',
+                                    choices: [
+                                        'Of Course',
+                                        'I Have no Money'
+                                    ]
                                 },
                                 data: {
                                     hideSource: true,
@@ -554,6 +562,7 @@
                                     skip: 'anytime',
                                     autoplay: null,
                                     autoadvance: null,
+                                    survey: null,
                                     service: null,
                                     videoid: null,
                                     start: null,
@@ -608,6 +617,7 @@
                                     skip: 'anytime',
                                     autoplay: null,
                                     autoadvance: null,
+                                    survey: null,
                                     service: null,
                                     videoid: null,
                                     start: null,
@@ -973,14 +983,14 @@
                         var result,
                             success,
                             saveDeferred,
-                            updateVoteDeferred;
+                            syncVoteDeferred;
 
                         beforeEach(function() {
                             saveDeferred = $q.defer();
-                            updateVoteDeferred = $q.defer();
+                            syncVoteDeferred = $q.defer();
                             success = jasmine.createSpy('success');
-                            spyOn(VoteService, 'update').and
-                                .returnValue(updateVoteDeferred.promise);
+                            spyOn(VoteService, 'sync').and
+                                .returnValue(syncVoteDeferred.promise);
 
                             spyOn(minireel, 'save').and.returnValue(saveDeferred.promise);
 
@@ -989,12 +999,12 @@
                             });
 
                             $rootScope.$apply(function() {
-                                updateVoteDeferred.resolve(minireel);
+                                syncVoteDeferred.resolve(minireel);
                             });
                         });
 
-                        it('should call VoteService.update',function(){
-                            expect(VoteService.update).toHaveBeenCalledWith(minireel);
+                        it('should call VoteService.sync()',function(){
+                            expect(VoteService.sync).toHaveBeenCalledWith(minireel);
                         });
 
                         it('should set the minireel\'s status to "active"', function() {
@@ -1011,36 +1021,6 @@
                             });
 
                             expect(success).toHaveBeenCalledWith(minireel);
-                        });
-
-                        describe('if the minireel has no election', function() {
-                            var initializeDeferred;
-
-                            beforeEach(function() {
-                                success.calls.reset();
-                                minireel.save.calls.reset();
-
-                                initializeDeferred = $q.defer();
-
-                                spyOn(VoteService, 'initialize').and.returnValue(initializeDeferred.promise);
-
-                                delete minireel.data.election;
-
-                                $rootScope.$apply(function() {
-                                    MiniReelService.publish(minireel).then(success);
-                                });
-                            });
-
-                            it('should initialize the election before saving the minireel', function() {
-                                expect(minireel.save).not.toHaveBeenCalled();
-                                expect(VoteService.initialize).toHaveBeenCalledWith(minireel);
-
-                                $rootScope.$apply(function() {
-                                    initializeDeferred.resolve({});
-                                });
-
-                                expect(minireel.save).toHaveBeenCalled();
-                            });
                         });
                     });
 
@@ -1204,6 +1184,7 @@
                                     skip: 'anytime',
                                     autoplay: null,
                                     autoadvance: null,
+                                    survey: null,
                                     service: 'youtube',
                                     videoid: '47tfg8734',
                                     start: 10,
@@ -1235,6 +1216,7 @@
                                     skip: 25,
                                     autoplay: null,
                                     autoadvance: null,
+                                    survey: null,
                                     service: 'vimeo',
                                     videoid: '48hfrei49',
                                     start: null,
@@ -1273,6 +1255,7 @@
                                     skip: 'never',
                                     autoplay: null,
                                     autoadvance: null,
+                                    survey: null,
                                     service: 'dailymotion',
                                     videoid: 'vfu85f5',
                                     start: undefined,
@@ -1323,6 +1306,14 @@
                                     skip: 'delay',
                                     autoplay: false,
                                     autoadvance: true,
+                                    survey: {
+                                        electionId: 'el-8bb2395fbea873',
+                                        prompt: 'Are you willing to spend all your money on this product?',
+                                        choices: [
+                                            'Of Course',
+                                            'I Have no Money'
+                                        ]
+                                    },
                                     service: 'youtube',
                                     videoid: 'fn4378r4d',
                                     start: 0,
@@ -1354,6 +1345,7 @@
                                     skip: 'anytime',
                                     autoplay: null,
                                     autoadvance: null,
+                                    survey: null,
                                     service: 'adUnit',
                                     videoid: JSON.stringify({
                                         vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
@@ -1601,6 +1593,9 @@
                                 }
                             });
                             expect(result.data).toEqual(minireel.data);
+                            minireel.data.deck.forEach(function(card, index) {
+                                expect(card).toEqual(result.data.deck[index], card.id);
+                            });
                             expect(result).not.toBe(minireel);
                         });
 
