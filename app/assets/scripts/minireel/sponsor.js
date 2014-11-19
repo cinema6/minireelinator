@@ -334,6 +334,7 @@ WizardController           , VideoCardController          , LinksController     
                     cardCount = minireel && minireel.data.deck.length,
                     exclude = (model.sponsored ? [] : [
                         'MR:SponsorCard.Copy',
+                        'MR:SponsorCard.Survey',
                         'MR:SponsorCard.Links',
                         'MR:SponsorCard.Ads',
                         'MR:SponsorCard.Tracking',
@@ -355,6 +356,11 @@ WizardController           , VideoCardController          , LinksController     
                         name: 'Video Content',
                         sref: 'MR:SponsorCard.Video',
                         required: true
+                    },
+                    {
+                        name: 'Survey',
+                        sref: 'MR:SponsorCard.Survey',
+                        required: false
                     },
                     {
                         name: 'Branding',
