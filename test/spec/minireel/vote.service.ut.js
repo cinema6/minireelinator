@@ -343,7 +343,8 @@
 
                             elections[0].ballot = {
                                 'rc-22119a8cf9f755': [0, 200],
-                                'rc-89094f9b7f8c93': [100, 32]
+                                'rc-89094f9b7f8c93': [100, 32],
+                                'rc-e5dd20f59e49b1': [23, 0]
                             };
 
                             elections[1].ballot = {

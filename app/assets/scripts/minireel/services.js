@@ -3,7 +3,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
     'use strict';
 
     var forEach = angular.forEach,
-        ngCopy = angular.copy,
+        copy = angular.copy,
         isNumber = angular.isNumber,
         isUndefined = angular.isUndefined,
         isDefined = angular.isDefined,
@@ -362,7 +362,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 return function(item) {
                     var ballot = item.election.ballot;
 
-                    extend(ballot, ballotFor(cards, ballot));
+                    copy(ballotFor(cards, ballot), ballot);
 
                     return item;
                 };
@@ -900,6 +900,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                      'SettingsService',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
                                       SettingsService ) {
+            var ngCopy = angular.copy;
+
             var self = this,
                 portal = c6State.get('Portal');
 
