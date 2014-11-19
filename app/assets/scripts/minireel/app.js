@@ -97,6 +97,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                         this.route('/card/:cardId', 'MR:SponsorCard', function() {
                             this.state('MR:SponsorCard.Copy');
                             this.state('MR:SponsorCard.Video');
+                            this.state('MR:SponsorCard.Survey');
                             this.state('MR:SponsorCard.Branding');
                             this.state('MR:SponsorCard.Links');
                             this.state('MR:SponsorCard.Ads');

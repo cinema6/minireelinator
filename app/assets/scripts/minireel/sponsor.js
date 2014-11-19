@@ -591,6 +591,15 @@ WizardController           , VideoCardController          , LinksController     
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
+            c6StateProvider.state('MR:SponsorCard.Survey', [function() {
+                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_card/survey.html';
+                this.controller = 'SponsorCardSurveyController';
+                this.controllerAs = 'SponsorCardSurveyCtrl';
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
             c6StateProvider.state('MR:SponsorCard.Branding', [function() {
                 this.templateUrl = 'views/minireel/sponsor/manager/sponsor_card/branding.html';
                 this.controller = 'SponsorCardBrandingController';
