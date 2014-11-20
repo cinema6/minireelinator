@@ -334,6 +334,7 @@ WizardController           , VideoCardController          , LinksController     
                     cardCount = minireel && minireel.data.deck.length,
                     exclude = (model.sponsored ? [] : [
                         'MR:SponsorCard.Copy',
+                        'MR:SponsorCard.Survey',
                         'MR:SponsorCard.Links',
                         'MR:SponsorCard.Ads',
                         'MR:SponsorCard.Tracking',
@@ -355,6 +356,11 @@ WizardController           , VideoCardController          , LinksController     
                         name: 'Video Content',
                         sref: 'MR:SponsorCard.Video',
                         required: true
+                    },
+                    {
+                        name: 'Survey',
+                        sref: 'MR:SponsorCard.Survey',
+                        required: false
                     },
                     {
                         name: 'Branding',
@@ -586,6 +592,36 @@ WizardController           , VideoCardController          , LinksController     
 
             ['<vast-player>:init', '<vpaid-player>:init'].forEach(function($event) {
                 $scope.$on($event, handlePlayerInit);
+            });
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:SponsorCard.Survey', [function() {
+                this.templateUrl = 'views/minireel/sponsor/manager/sponsor_card/survey.html';
+                this.controller = 'SponsorCardSurveyController';
+                this.controllerAs = 'SponsorCardSurveyCtrl';
+            }]);
+        }])
+
+        .controller('SponsorCardSurveyController', ['$scope',
+        function                                   ( $scope ) {
+            var SponsorCardCtrl = $scope.SponsorCardCtrl,
+                card = SponsorCardCtrl.model;
+
+            Object.defineProperties(this, {
+                hasSurvey: {
+                    get: function() {
+                        return !!card.data.survey;
+                    },
+                    set: function(bool) {
+                        card.data.survey = !!bool ? {
+                            election: null,
+                            prompt: null,
+                            choices: []
+                        } : null;
+                    }
+                }
             });
         }])
 

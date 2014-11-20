@@ -140,6 +140,11 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
                                 required: true
                             },
                             {
+                                name: 'Survey',
+                                sref: 'MR:SponsorCard.Survey',
+                                required: false
+                            },
+                            {
                                 name: 'Branding',
                                 sref: 'MR:SponsorCard.Branding',
                                 required: true
@@ -190,6 +195,11 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
                                 required: true
                             },
                             {
+                                name: 'Survey',
+                                sref: 'MR:SponsorCard.Survey',
+                                required: false
+                            },
+                            {
                                 name: 'Branding',
                                 sref: 'MR:SponsorCard.Branding',
                                 required: true
@@ -235,6 +245,11 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
                                     name: 'Video Content',
                                     sref: 'MR:SponsorCard.Video',
                                     required: true
+                                },
+                                {
+                                    name: 'Survey',
+                                    sref: 'MR:SponsorCard.Survey',
+                                    required: false
                                 },
                                 {
                                     name: 'Branding',

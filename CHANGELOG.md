@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.5.0.rc1]*
+  * [FEATURE]: Added support for adding surveys to sponsored cards
+
 ## v1.4.1 (November 12, 2014)
 * *[v1.4.1.rc1]*
   * [FIX]: Fix for an issue that caused SSL warnings when trying to

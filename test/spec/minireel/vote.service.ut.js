@@ -2,9 +2,6 @@
     'use strict';
 
     define(['minireel/services'], function(servicesModule) {
-        /* global angular:true */
-        var extend = angular.extend;
-
         describe('VoteService', function() {
             var VoteService,
                 cinema6,
@@ -95,6 +92,7 @@
                                 "note": "How may we help you?",
                                 "source": "Vimeo",
                                 "modules": [],
+                                "sponsored": true,
                                 "data": {
                                     "videoid": "81766071",
                                     "start": 35,
@@ -157,6 +155,48 @@
                                 }
                             },
                             {
+                                "id": "rc-726f43b2ef1e82",
+                                "type": "youtube",
+                                "title": "DOCTOR WHO - 50TH ANNIVERSARY - DRUNK REACTION VIDEO + SUPRISE REACTION",
+                                "note": "**SPOILERS FOR THE DAY OF THE DOCTOR aka 50TH ANNIVERSARY**",
+                                "source": "YouTube",
+                                "modules": ["post"],
+                                "sponsored": true,
+                                "ballot": {
+                                    "prompt": "Will you watch Doctor Who next week?",
+                                    "choices": [
+                                        "Of Course",
+                                        "I'll Be Dead Next Week"
+                                    ]
+                                },
+                                "data": {
+                                    "videoid": "wsp6XzaDj_4",
+                                    "rel": 0,
+                                    "modestbranding": 1
+                                }
+                            },
+                            {
+                                "id": "rc-802dab79200a5c",
+                                "type": "youtube",
+                                "title": "Hip Bathroom Signs Are The Worst",
+                                "note": "Can't We Just Go?",
+                                "source": "YouTube",
+                                "modules": ["post"],
+                                "sponsored": true,
+                                "ballot": {
+                                    "prompt": "Will you go to a hip restaurant?",
+                                    "choices": [
+                                        "Yes",
+                                        "I'm Not Hip"
+                                    ]
+                                },
+                                "data": {
+                                    "videoid": "wsp6XzaDj_4",
+                                    "rel": 0,
+                                    "modestbranding": 1
+                                }
+                            },
+                            {
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
                                 title: 'Recap',
@@ -183,308 +223,221 @@
             });
 
             describe('methods', function() {
-                describe('initialize(minireel)', function() {
-                    var success,
-                        electionData,
-                        election,
-                        saveDeferred;
+                describe('sync(minireel)', function() {
+                    var success, failure,
+                        elections, saveDeferreds;
 
                     beforeEach(function() {
                         var create = cinema6.db.create;
 
-                        saveDeferred = $q.defer();
-                        success = jasmine.createSpy('success');
+                        success = jasmine.createSpy('success()');
+                        failure = jasmine.createSpy('failure()');
 
-                        spyOn(cinema6.db, 'create')
-                            .and.callFake(function() {
-                                election = create.apply(cinema6.db, arguments);
+                        elections = [];
+                        saveDeferreds = [];
 
-                                spyOn(election, 'save')
-                                    .and.returnValue(saveDeferred.promise);
+                        spyOn(cinema6.db, 'create').and.callFake(function() {
+                            var election = elections[elections.push(create.apply(cinema6.db, arguments)) - 1];
 
-                                return election;
-                            });
+                            spyOn(election, 'save').and.returnValue(saveDeferreds[saveDeferreds.push($q.defer()) - 1].promise);
 
+                            return election;
+                        });
                     });
 
-                    describe('minireel with survey questions',function(){
+                    describe('if no elections have been initialized', function() {
+                        beforeEach(function() {
+                            $rootScope.$apply(function() {
+                                VoteService.sync(minireel).then(success, failure);
+                            });
+                        });
 
-                        beforeEach(function(){
-                            electionData = {
+                        it('should create an election for the MiniReel', function() {
+                            expect(elections[0]).toEqual(jasmine.objectContaining({
                                 ballot: {
                                     'rc-22119a8cf9f755': [0, 0],
                                     'rc-4770a2d7f85ce0': [0, 0],
                                     'rc-89094f9b7f8c93': [0, 0],
                                     'rc-e2947c9bec017e': [0, 0]
                                 }
-                            };
-                            
-                            $rootScope.$apply(function() {
-                                VoteService.initialize(minireel).then(success);
+                            }));
+                        });
+
+                        it('should create an election for each sponsored card', function() {
+                            expect(elections[1]).toEqual(jasmine.objectContaining({
+                                ballot: {
+                                    'rc-726f43b2ef1e82': [0, 0]
+                                }
+                            }));
+
+                            expect(elections[2]).toEqual(jasmine.objectContaining({
+                                ballot: {
+                                    'rc-802dab79200a5c': [0, 0]
+                                }
+                            }));
+                        });
+
+                        it('should save all of the elections', function() {
+                            elections.forEach(function(election) {
+                                expect(election.save).toHaveBeenCalled();
                             });
                         });
 
-                        it('should create and election', function() {
-                            expect(cinema6.db.create).toHaveBeenCalledWith('election', electionData);
-                        });
+                        describe('after all the elections have been saved', function() {
+                            var ids;
 
-                        it('should store the electionId on the minireel and resolve to the election', function() {
-                            $rootScope.$apply(function() {
-                                saveDeferred.resolve(extend(election), {
-                                    id: 'fixture0'
+                            beforeEach(function() {
+                                ids = [
+                                    'el-7597466d710fa9',
+                                    'el-86cfd08a249375',
+                                    'el-103485e55510be'
+                                ];
+
+                                elections.forEach(function(election, index) {
+                                    election.id = ids[index];
+
+                                    $rootScope.$apply(function() {
+                                        saveDeferreds[index].resolve(election);
+                                    });
                                 });
                             });
 
-                            expect(minireel.data.election).toBe(election.id);
-                            expect(success).toHaveBeenCalledWith(election);
-                        });
+                            it('should save the id of the minireel\'s election on the minireel', function() {
+                                expect(minireel.data.election).toBe(ids[0]);
+                            });
 
+                            it('should save the id of the sponsored cards\' elections on the cards', function() {
+                                var sponsoredBallotCards = minireel.data.deck.filter(function(card) {
+                                        return card.sponsored && card.ballot;
+                                    }),
+                                    sponsoredElectionIds = ids.slice(1, 3);
+
+                                sponsoredBallotCards.forEach(function(card, index) {
+                                    expect(card.ballot.election).toBe(sponsoredElectionIds[index]);
+                                });
+                            });
+
+                            it('should resolve the promise to the minireel', function() {
+                                expect(success).toHaveBeenCalledWith(minireel);
+                            });
+                        });
                     });
 
-                    describe('minireel without survey questions',function(){
+                    describe('if elections have already been initialized', function() {
+                        var ids;
 
-                        beforeEach(function(){
-                            angular.forEach(minireel.data.deck,function(card){
-                                card.modules = [];
-                                delete card.ballot;
+                        beforeEach(function() {
+                            ids = [
+                                'el-9f82673aacb9b7',
+                                'el-1d630a0443fe4d',
+                                'el-3e720f84b59f6e'
+                            ];
+
+                            elections = ids.map(function(id) {
+                                var election = cinema6.db.create('election', {});
+
+                                election.id = id;
+
+                                return election;
                             });
+
+                            elections[0].ballot = {
+                                'rc-22119a8cf9f755': [0, 200],
+                                'rc-89094f9b7f8c93': [100, 32],
+                                'rc-e5dd20f59e49b1': [23, 0]
+                            };
+
+                            elections[1].ballot = {
+                                'rc-726f43b2ef1e82': [50, 100]
+                            };
+                            elections[2].ballot = {
+                                'rc-802dab79200a5c': [100, 150]
+                            };
+
+                            minireel.data.election = ids[0];
+                            minireel.data.deck.filter(function(card) {
+                                return card.ballot && card.sponsored;
+                            }).forEach(function(card, index) {
+                                card.ballot.election = this[index];
+                            }, ids.slice(1, 4));
+
+                            cinema6.db.create.calls.reset();
+
+                            spyOn(cinema6.db, 'findAll').and.callFake(function(type, query) {
+                                if (type !== 'election') { return $q.reject('INVALID'); }
+
+                                return $q.when(elections.filter(function(election) {
+                                    return election.id === query.id;
+                                }));
+                            });
+
                             $rootScope.$apply(function() {
-                                VoteService.initialize(minireel).then(success);
+                                VoteService.sync(minireel).then(success, failure);
                             });
                         });
 
-                        it('should not create the election', function() {
+                        it('should not create any new elections', function() {
                             expect(cinema6.db.create).not.toHaveBeenCalled();
                         });
 
-                        it('should not store the electionId on the minireel', function() {
-                            expect(minireel.data.election).not.toBeDefined();
-                            expect(success).toHaveBeenCalledWith(null);
-                        });
-                    });
-                });
-
-                describe('update(minireel)', function() {
-                    var success,
-                        election,
-                        saveDeferred;
-
-                    beforeEach(function() {
-                        saveDeferred = $q.defer();
-                        success = jasmine.createSpy('success');
-
-                        minireel.data.election = 'el-6d75a6bc5b273b';
-                    });
-
-                    describe('election as object with survey questions',function(){
-                        beforeEach(function(){
-                            minireel.data.deck.splice(2, 1);
-                            minireel.data.deck.push(
-                                {
-                                    id: 'rc-d9e637e92002cc',
-                                    modules: ['ballot'],
-                                    ballot: {
-                                        choices: ['Stobered It', 'Minznered It']
-                                    }
-                                },
-                                {
-                                    id: 'rc-7f405190bc796e',
-                                    modules: []
-                                }
-                            );
-                            
-                            election = cinema6.db.create('election', {
-                                id: 'el-6d75a6bc5b273b',
-                                ballot: {
-                                    'rc-22119a8cf9f755': {
-                                        'Catchy': 100,
-                                        'Annoying': 200
-                                    },
-                                    'rc-4770a2d7f85ce0': {
-                                        'Funny': 300,
-                                        'Lame': 400
-                                    },
-                                    'rc-89094f9b7f8c93': {
-                                        'Cool': 500,
-                                        'Boring': 600
-                                    },
-                                    'rc-e2947c9bec017e': {
-                                        'Too Cool': 700,
-                                        'Too Geeky': 800
-                                    }
-                                }
-                            });
-
-                            spyOn(election, 'save').and.returnValue(saveDeferred.promise);
-
-
-                            spyOn(cinema6.db, 'findAll')
-                                .and.returnValue($q.when([election]));
-
-                            $rootScope.$apply(function() {
-                                VoteService.update(minireel).then(success);
+                        it('should update the existing minireel election', function() {
+                            expect(elections[0].ballot).toEqual({
+                                'rc-22119a8cf9f755': [0, 200],
+                                'rc-89094f9b7f8c93': [100, 32],
+                                'rc-4770a2d7f85ce0': [0, 0],
+                                'rc-e2947c9bec017e': [0, 0]
                             });
                         });
 
-                        it('should fetch the election', function() {
-                            expect(cinema6.db.findAll).toHaveBeenCalledWith('election', {
-                                id: minireel.data.election
+                        it('should update the existing sponsored card elections', function() {
+                            expect(elections[1].ballot).toEqual({
+                                'rc-726f43b2ef1e82': [50, 100]
+                            });
+                            expect(elections[2].ballot).toEqual({
+                                'rc-802dab79200a5c': [100, 150]
                             });
                         });
 
-                        it('should update the election', function() {
-                            expect(election).toEqual(jasmine.objectContaining({
-                                ballot: {
-                                    'rc-22119a8cf9f755': {
-                                        'Catchy': 100,
-                                        'Annoying': 200
-                                    },
-                                    'rc-89094f9b7f8c93': {
-                                        'Cool': 500,
-                                        'Boring': 600
-                                    },
-                                    'rc-e2947c9bec017e': {
-                                        'Too Cool': 700,
-                                        'Too Geeky': 800
-                                    },
-                                    'rc-d9e637e92002cc': {
-                                        'Stobered It': 0,
-                                        'Minznered It': 0
-                                    }
-                                }
-                            }));
+                        it('should save all of the elections', function() {
+                            elections.forEach(function(election) {
+                                expect(election.save).toHaveBeenCalled();
+                            });
                         });
 
-                        it('should save the election', function() {
-                            expect(election.save).toHaveBeenCalled();
-                        });
-
-                        it('should resolve the promsie after the save completes', function() {
-                            $rootScope.$apply(function() {
-                                saveDeferred.resolve(election);
+                        describe('after all of the elections have been saved', function() {
+                            beforeEach(function() {
+                                elections.forEach(function(election, index) {
+                                    $rootScope.$apply(function() {
+                                        saveDeferreds[index].resolve(election);
+                                    });
+                                });
                             });
 
-                            expect(success).toHaveBeenCalledWith(election);
+                            it('should resolve to the MiniReel', function() {
+                                expect(success).toHaveBeenCalledWith(minireel);
+                            });
                         });
                     });
 
-                    describe('election as array with survey questions',function(){
-                        beforeEach(function(){
-                            minireel.data.deck.splice(2, 1);
-                            minireel.data.deck.push(
-                                {
-                                    id: 'rc-d9e637e92002cc',
-                                    modules: ['ballot'],
-                                    ballot: {
-                                        choices: ['Stobered It', 'Minznered It']
-                                    }
-                                },
-                                {
-                                    id: 'rc-7f405190bc796e',
-                                    modules: []
-                                }
-                            );
-                            
-                            election = cinema6.db.create('election', {
-                                id: 'el-6d75a6bc5b273b',
-                                ballot: {
-                                    'rc-22119a8cf9f755': [ 100, 200],
-                                    'rc-4770a2d7f85ce0': [ 300, 400],
-                                    'rc-89094f9b7f8c93': [ 500, 600],
-                                    'rc-e2947c9bec017e': [ 700, 800]
-                                }
-                            });
-
-                            spyOn(election, 'save').and.returnValue(saveDeferred.promise);
-
-
-                            spyOn(cinema6.db, 'findAll')
-                                .and.returnValue($q.when([election]));
-
-                            $rootScope.$apply(function() {
-                                VoteService.update(minireel).then(success);
-                            });
-                        });
-
-                        it('should fetch the election', function() {
-                            expect(cinema6.db.findAll).toHaveBeenCalledWith('election', {
-                                id: minireel.data.election
-                            });
-                        });
-
-                        it('should update the election', function() {
-                            expect(election).toEqual(jasmine.objectContaining({
-                                ballot: {
-                                    'rc-22119a8cf9f755': [ 100, 200],
-                                    'rc-89094f9b7f8c93': [ 500, 600],
-                                    'rc-e2947c9bec017e': [ 700, 800],
-                                    'rc-d9e637e92002cc': [ 0, 0]
-                                }
-                            }));
-                        });
-
-                        it('should save the election', function() {
-                            expect(election.save).toHaveBeenCalled();
-                        });
-
-                        it('should resolve the promsie after the save completes', function() {
-                            $rootScope.$apply(function() {
-                                saveDeferred.resolve(election);
-                            });
-
-                            expect(success).toHaveBeenCalledWith(election);
-                        });
-                    });
-
-                    describe('without survey questions',function(){
-                        beforeEach(function(){
-                            angular.forEach(minireel.data.deck,function(card){
-                                card.modules = [];
+                    describe('if the minireel has no elections', function() {
+                        beforeEach(function() {
+                            minireel.data.deck.forEach(function(card) {
                                 delete card.ballot;
                             });
-                            
-                            election = cinema6.db.create('election', {
-                                id: 'el-6d75a6bc5b273b',
-                                ballot: {
-                                    'rc-22119a8cf9f755': {
-                                        'Catchy': 100,
-                                        'Annoying': 200
-                                    },
-                                    'rc-4770a2d7f85ce0': {
-                                        'Funny': 300,
-                                        'Lame': 400
-                                    },
-                                    'rc-89094f9b7f8c93': {
-                                        'Cool': 500,
-                                        'Boring': 600
-                                    },
-                                    'rc-e2947c9bec017e': {
-                                        'Too Cool': 700,
-                                        'Too Geeky': 800
-                                    }
-                                }
-                            });
-
-                            spyOn(election, 'save').and.returnValue(saveDeferred.promise);
-                            
-                            spyOn(cinema6.db, 'findAll')
-                                .and.returnValue($q.when([election]));
 
                             $rootScope.$apply(function() {
-                                VoteService.update(minireel).then(success);
+                                VoteService.sync(minireel).then(success, failure);
                             });
                         });
 
-                        it('should fetch the election', function() {
-                            expect(cinema6.db.findAll).not.toHaveBeenCalled();
+                        it('should not save any elections', function() {
+                            elections.forEach(function(election) {
+                                expect(election.save).not.toHaveBeenCalled();
+                            });
                         });
 
-                        it('should not save the election', function() {
-                            expect(election.save).not.toHaveBeenCalled();
-                        });
-
-                        it('should resolve the promsie with null', function() {
-                            expect(success).toHaveBeenCalledWith(null);
+                        it('should resolve to the minireel', function() {
+                            expect(success).toHaveBeenCalledWith(minireel);
                         });
                     });
                 });

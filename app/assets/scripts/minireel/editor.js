@@ -79,6 +79,68 @@ VideoCardController           ) {
                 );
             }
 
+            /**
+             * Accepts a property name and a collection.
+             *
+             * Returns an object with the members of the collection keyed by the provided prop.
+             */
+            function keyBy(prop, array) {
+                return array.reduce(function(result, item) {
+                    result[item[prop]] = item;
+                    return result;
+                }, {});
+            }
+
+            /**
+             * Accepts an object and a string property name. The property name gave have "."s in it
+             * to represent the properties of an object.
+             *
+             * Returns the value of the provided property from the object.
+             *
+             * Unlike native JS getters which will TypeError if it expects an object but gets a
+             * non-object (e.g minireel.data.deck[0].ballot.election, if 'ballot' is undefined,)
+             * this function will just return 'undefined' without throwing an Error.
+             */
+            function get(object, prop) {
+                return prop.split('.')
+                    .filter(function(prop) {
+                        return !!prop;
+                    })
+                    .reduce(function(result, prop) {
+                        return result && result[prop];
+                    }, object);
+            }
+
+            /**
+             * Accepts an object, a string property name and a value. Like get(), the property name
+             * can have "."s in it to represent the properties of an object.
+             *
+             * This function sets the provided property of the provided object to the provided
+             * value.
+             *
+             * Like get(), this function will not throw errors if it expects an object but gets a
+             * non-object.
+             */
+            function set(object, prop, value) {
+                var props = prop.split('.'),
+                    lastProp = props.pop(),
+                    target = get(object, props.join('.'));
+
+                return target && (target[lastProp] = value);
+            }
+
+            /**
+             * Accepts two objects (from and to) and a property name as a string.
+             *
+             * This function copies the value of "prop" on "from" to the "prop" on "to".
+             *
+             * Because this function uses get() and set(), it will not throw errors it encounters
+             * any non-objects that it expects to be objects.
+             */
+            function attemptCopy(from, to, prop) {
+                return set(to, prop, get(from, prop));
+            }
+
             _private.minireel = null;
             _private.editorMinireel = null;
             _private.proxy = null;
@@ -143,17 +205,41 @@ VideoCardController           ) {
             };
 
             _private.syncToProxy = function(proxy, editorMinireel, minireel) {
-                MiniReelService.convertForEditor(minireel, editorMinireel);
+                var cards,
+                    // Card props that should be copied to the proxy
+                    cardCopyProps = [
+                        'data.ballot.election',
+                        'data.survey.election'
+                    ],
+                    // MiniReel.data props that should be copied to the proxy
+                    dataCopyProps = [
+                        'election'
+                    ];
 
+                MiniReelService.convertForEditor(minireel, editorMinireel);
+                cards = keyBy('id', editorMinireel.data.deck);
+
+                // Copy new MiniReel props to the proxy
                 forEach(editorMinireel, function(value, key) {
                     if (proxy.hasOwnProperty(key)) { return; }
 
                     return readOnly(editorMinireel, key, proxy);
                 });
+                // Delete deleted MiniReel props from the proxy
                 forEach(proxy, function(value, key) {
                     if (editorMinireel.hasOwnProperty(key)) { return; }
 
                     delete proxy[key];
+                });
+                // Copy necessary MiniReel.data props to the proxy
+                forEach(dataCopyProps, function(prop) {
+                    attemptCopy(editorMinireel.data, proxy.data, prop);
+                });
+                // Copy necessary card props to the proxy
+                forEach(proxy.data.deck, function(proxyCard) {
+                    cardCopyProps.forEach(function(prop) {
+                        attemptCopy(cards[proxyCard.id], proxyCard, prop);
+                    });
                 });
 
                 return proxy;
@@ -230,24 +316,12 @@ VideoCardController           ) {
             this.sync = queue.wrap(function() {
                 var minireel = _private.minireel;
 
-                function syncWithElection(miniReel) {
-                    if (miniReel.status !== 'active'){
-                        return $q.when(miniReel);
+                function syncWithElection(minireel) {
+                    if (minireel.status !== 'active'){
+                        return $q.when(minireel);
                     }
 
-                    if (miniReel.data.election) {
-                        return VoteService
-                            .update(miniReel)
-                            .then(function(){
-                                return miniReel;
-                            });
-                    }
-
-                    return VoteService
-                        .initialize(miniReel)
-                        .then(function(){
-                            return miniReel;
-                        });
+                    return VoteService.sync(minireel);
                 }
 
                 if (!minireel) {
@@ -260,12 +334,7 @@ VideoCardController           ) {
                     .then(function save(minireel){
                         return minireel.save();
                     })
-                    .then(syncToProxy)
-                    .then(function updateElection(proxy){
-                        // See comment in publish
-                        proxy.data.election = minireel.data.election;
-                        return proxy;
-                    });
+                    .then(syncToProxy);
             }, this);
 
             this.enablePreview = queue.wrap(function() {
@@ -293,8 +362,7 @@ VideoCardController           ) {
             }, this);
 
             this.publish = queue.wrap(function() {
-                var minireel = _private.minireel,
-                    editorMinireel = _private.editorMinireel;
+                var minireel = _private.minireel;
 
                 if (!minireel) {
                     return rejectNothingOpen();
@@ -304,14 +372,7 @@ VideoCardController           ) {
                     .then(function publish() {
                         return MiniReelService.publish(syncToMinireel());
                     })
-                    .then(syncToProxy)
-                    .then(function updateElection(proxy) {
-                        // Because the proxy is the source of truth for the data object, we need to
-                        // make sure it gets updated with the election.
-                        proxy.data.election = editorMinireel.data.election;
-
-                        return proxy;
-                    });
+                    .then(syncToProxy);
             }, this);
 
             this.unpublish = queue.wrap(function() {
