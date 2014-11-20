@@ -124,20 +124,24 @@
                             ng-switch="video.site">
                             <youtube-player ng-switch-when="youtube"
                                 videoid="{{video.videoid}}"
+                                class="playerBox"
                                 autoplay>
                             </youtube-player>
                             <vimeo-player id="vimeo__{{video.videoid}}"
                                 ng-switch-when="vimeo"
+                                class="playerBox"
                                 videoid="{{video.videoid}}"
                                 autoplay>
                             </vimeo-player>
                             <dailymotion-player id="dailymotion__{{video.videoid}}"
                                 ng-switch-when="dailymotion"
+                                class="playerBox"
                                 videoid="{{video.videoid}}"
                                 autoplay>
                             </dailymotion-player>
                             <embedded-player id="embedded__{{video.videoid}}"
                                 ng-switch-default
+                                class="playerBox"
                                 code="{{VideoSearchCtrl.embedCodeFor(video.site, video.videoid)}}">
                             </embedded-player>
                         </div>

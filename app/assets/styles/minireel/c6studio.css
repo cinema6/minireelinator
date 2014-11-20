@@ -991,6 +991,7 @@
 
             .vidSearchHeader__optionsMenu {
                 top:3em; right:3.75em;
+                max-height:18em;
             }
                 .vidSearchHeader__optionsMenu .fa-check:before {
                     color:#ddd;
@@ -1145,12 +1146,18 @@
                         width:100%; height:18em;
                         padding:0;
                         background:#000;
+                        position: relative;
                     }
-                        .vidSearchPlayer__playerBox youtube-player, 
-                        .vidSearchPlayer__playerBox vimeo-player, 
-                        .vidSearchPlayer__playerBox dailymotion-player, 
+                        .vidSearchPlayer__playerBox .playerBox,
+                        .vidSearchPlayer__playerBox .playerBox div,
+                        .vidSearchPlayer__playerBox .playerBox object,
+                        .vidSearchPlayer__playerBox .playerBox video,
+                        .vidSearchPlayer__playerBox .playerBox iframe, 
                         .vidSearchPlayer__playerBox .vidFrame {
-                            height:100%;
+                            height:100% !important; width:100% !important;
+                            position:absolute;
+                            top:0; left:0;
+                            border:0;
                         }
 
                     .vidSearchPlayer__createBtn,
