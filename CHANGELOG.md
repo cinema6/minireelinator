@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## v1.5.0 (November 20, 2014)
+* *[v1.5.0.rc2]*
+  * Added error message when trying to preview AOL videos (because they
+    cannot be previewed over HTTPS
+* *[/v1.5.0.rc2]*
+
 * *[v1.5.0.rc1]*
   * [FEATURE]: Added support for adding surveys to sponsored cards
   * [FEATURE]: Added support for creating Yahoo! Screen and AOL On cards
