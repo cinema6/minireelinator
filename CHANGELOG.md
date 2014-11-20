@@ -1,7 +1,10 @@
 # MiniReelinator
 
+## v1.5.0 (November 20, 2014)
 * *[v1.5.0.rc1]*
   * [FEATURE]: Added support for adding surveys to sponsored cards
+  * [FEATURE]: Added support for creating Yahoo! Screen and AOL On cards
+* *[/v1.5.0.rc1]*
 
 ## v1.4.1 (November 12, 2014)
 * *[v1.4.1.rc1]*
