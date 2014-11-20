@@ -13,6 +13,7 @@
                 VoteService,
                 EditorService,
                 CollateralService,
+                VideoThumbnailService,
                 SettingsService,
                 c6UrlParser,
                 c6State, portal,
@@ -71,6 +72,7 @@
                     VoteService = $injector.get('VoteService');
                     cinema6 = $injector.get('cinema6');
                     CollateralService = $injector.get('CollateralService');
+                    VideoThumbnailService = $injector.get('VideoThumbnailService');
                     SettingsService = $injector.get('SettingsService');
                     c6UrlParser = $injector.get('c6UrlParser');
                     c6State = $injector.get('c6State');
@@ -217,6 +219,104 @@
 
                             $rootScope.$apply(function() {
                                 _private.performPresync(proxy).then(success);
+                            });
+                        });
+
+                        describe('if there are some yahoo or aol cards', function() {
+                            var yahooCard, aolCard, customThumbCard,
+                                thumbs;
+
+                            function ThumbModel() {
+                                this.small = null;
+                                this.large = null;
+                                this.__deferred__ = $q.defer();
+                            }
+                            ThumbModel.prototype = {
+                                ensureFulfillment: function() {
+                                    return this.__deferred__.promise;
+                                },
+                                __resolve__: function(url) {
+                                    var thumbModel = this;
+
+                                    $rootScope.$apply(function() {
+                                        ['small', 'large'].forEach(function(prop) {
+                                            this[prop] = url;
+                                        }, thumbModel);
+
+                                        thumbModel.__deferred__.resolve(thumbModel);
+                                    });
+                                }
+                            };
+
+                            beforeEach(function() {
+                                proxy.data.deck.splice(1, 0, (function() {
+                                    yahooCard = MiniReelService.createCard('video');
+
+                                    yahooCard.data.service = 'yahoo';
+                                    yahooCard.data.videoid = 'pasta-caramelized-lemons-103613220';
+
+                                    return yahooCard;
+                                }()), (function() {
+                                    aolCard = MiniReelService.createCard('video');
+
+                                    aolCard.data.service = 'aol';
+                                    aolCard.data.videoid = 'the-wackiest-candidates-of-2014-518495778';
+
+                                    return aolCard;
+                                }()), (function() {
+                                    customThumbCard = MiniReelService.createCard('video');
+
+                                    customThumbCard.data.service = 'yahoo';
+                                    customThumbCard.data.videoid = 'issues-live-concert-130000202';
+                                    customThumbCard.thumb = 'custom-thumb.jpg';
+
+                                    return customThumbCard;
+                                }()));
+
+                                thumbs = {
+                                    yahoo: {
+                                        'pasta-caramelized-lemons-103613220': new ThumbModel()
+                                    },
+                                    aol: {
+                                        'the-wackiest-candidates-of-2014-518495778': new ThumbModel()
+                                    }
+                                };
+
+                                spyOn(VideoThumbnailService, 'getThumbsFor')
+                                    .and.callFake(function(service, videoid) {
+                                        return thumbs[service][videoid] || new ThumbModel();
+                                    });
+
+                                success.calls.reset();
+
+                                $rootScope.$apply(function() {
+                                    _private.performPresync(proxy).then(success);
+                                });
+                            });
+
+                            it('should fetch thumbs for yahoo and aol cards without thumbnails', function() {
+                                expect(VideoThumbnailService.getThumbsFor.calls.count()).toBe(2);
+                                [yahooCard, aolCard].forEach(function(card) {
+                                    expect(VideoThumbnailService.getThumbsFor).toHaveBeenCalledWith(card.data.service, card.data.videoid);
+                                });
+                            });
+
+                            describe('when the thumbs have been fetched', function() {
+                                beforeEach(function() {
+                                    expect(success).not.toHaveBeenCalled();
+
+                                    thumbs.yahoo[yahooCard.data.videoid].__resolve__('i-am-a-yahoo-thumb.jpg');
+                                    thumbs.aol[aolCard.data.videoid].__resolve__('i-am-an-aol-thumb.jpg');
+                                });
+
+                                it('should set the thumb property on the cards', function() {
+                                    expect(yahooCard.thumb).toBe('i-am-a-yahoo-thumb.jpg');
+                                    expect(aolCard.thumb).toBe('i-am-an-aol-thumb.jpg');
+                                });
+
+                                it('should resolve', function() {
+                                    expect(success).toHaveBeenCalledWith(proxy);
+                                });
                             });
                         });
 

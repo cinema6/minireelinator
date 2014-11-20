@@ -28,15 +28,19 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
         return word.slice(0, 1).toUpperCase() + word.slice(1);
     }
 
+    function toCamelcase(string) {
+        var words = string.split('_');
+
+        return words.slice(0, 1)
+            .concat(words.slice(1)
+                .map(capitalize))
+            .join('');
+    }
+
     function camelcaseify(object) {
         return mapObject(object, function(value, key) {
-            var words = key.split('_');
-
             return [
-                words.slice(0, 1)
-                    .concat(words.slice(1)
-                        .map(capitalize))
-                    .join(''),
+                toCamelcase(key),
                 value
             ];
         });
@@ -55,6 +59,143 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
     }
 
     return angular.module('c6.app.minireel.services', [c6uilib.name])
+        .service('YQLService', ['$http','$q',
+        function               ( $http , $q ) {
+            this.query = function(query) {
+                return $http.get('https://query.yahooapis.com/v1/public/yql', {
+                    params: {
+                        format: 'json',
+                        q: query
+                    }
+                }).then(function(response) {
+                    return response.data.query.results;
+                }, function(response) {
+                    return $q.reject(response.data.error.description);
+                });
+            };
+        }])
+
+        .service('OpenGraphService', ['YQLService','$q',
+        function                     ( YQLService , $q ) {
+            var multiTypes = ['image', 'audio', 'video'];
+
+            this.getData = function(page) {
+                return YQLService.query(
+                    'select * from html where url="' +
+                        page +
+                        '" and xpath="//head//meta" and compat="html5"'
+                ).then(function(result) {
+                    var ogTags = ((result && result.meta) || [])
+                        // just get the open graph meta tags
+                        .filter(function(tag) {
+                            return (/^og:/).test(tag.property);
+                        })
+                        .map(function(tag) {
+                            var parts = tag.property.replace(/^og:/, '')
+                                .split(':')
+                                .map(toCamelcase);
+
+                            // Create an object to represent each open graph directive.
+                            // This tag <meta property="og:image:width" content="600" />
+                            // will produce the following object:
+                            // {
+                            //     group: 'image',
+                            //     prop: 'width',
+                            //     value: 600
+                            // }
+                            return {
+                                group: parts[0],
+                                prop: parts[1] || 'value',
+                                value: parseFloat(tag.content) || tag.content
+                            };
+                        }),
+                        // Get all tags that have single values
+                        singleOgTags = ogTags.filter(function(tag) {
+                            return multiTypes.indexOf(tag.group) < 0;
+                        }),
+                        multiOgTags = multiTypes.map(function(type) {
+                            // Group together tags that can have multiple values (arrays).
+                            //
+                            // These tags:
+                            // {
+                            //     group: 'image',
+                            //     prop: 'value',
+                            //     value: 'foo.jpg'
+                            // },
+                            // {
+                            //     group: 'image',
+                            //     prop: 'width',
+                            //     value: 800
+                            // },
+                            // {
+                            //     group: 'image',
+                            //     prop: 'height',
+                            //     value: 600
+                            // },
+                            // {
+                            //     group: 'image',
+                            //     prop: 'value',
+                            //     value: 'bar.jpg'
+                            // },
+                            // {
+                            //     group: 'image',
+                            //     prop: 'type',
+                            //     value: 'image/jpg'
+                            // }
+                            //
+                            // Will produce the following object:
+                            // {
+                            //     group: 'image',
+                            //     items: [
+                            //         {
+                            //             value: 'foo.jpg',
+                            //             width: 800,
+                            //             height: 600
+                            //         },
+                            //         {
+                            //             value: 'bar.jpg',
+                            //             type: 'image/jpg'
+                            //         }
+                            //     ]
+                            // }
+                            return {
+                                group: type + 's',
+                                items: ogTags.filter(function(tag) {
+                                    return tag.group === type;
+                                }).reduce(function(array, tag) {
+                                    var item = array[array.length - 1];
+
+                                    if (!item || tag.prop in item) {
+                                        item = array[array.push({}) - 1];
+                                    }
+
+                                    item[tag.prop] = tag.value;
+
+                                    return array;
+                                }, [])
+                            };
+                        });
+
+                    if (ogTags.length < 1) {
+                        return $q.reject(new Error('Cannot find OpenGraph data for ' + page + '.'));
+                    }
+
+                    return singleOgTags.reduce(function(result, tag) {
+                        // Copy single-value open graph tags to the final result object
+                        (result[tag.group] || (result[tag.group] = {}))[tag.prop] = tag.value;
+                        return result;
+                    }, multiOgTags.reduce(function(result, tag) {
+                        // Copy multi-value open graph tags to the final result object
+                        if (tag.items.length > 0) {
+                            result[tag.group] = tag.items;
+                        }
+
+                        return result;
+                    }, {}));
+                });
+            };
+        }])
+
         .factory('requireCJS', ['$http','$cacheFactory','$q',
         function               ( $http , $cacheFactory , $q ) {
             var cache = $cacheFactory('requireCJS');
@@ -574,8 +715,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
         }])
 
-        .service('VideoThumbnailService', ['$q','$cacheFactory','$http',
-        function                          ( $q , $cacheFactory , $http ) {
+        .service('VideoThumbnailService', ['$q','$cacheFactory','$http','VideoService',
+                                           'OpenGraphService',
+        function                          ( $q , $cacheFactory , $http , VideoService ,
+                                            OpenGraphService ) {
             var _private = {},
                 cache = $cacheFactory('VideoThumbnailService:models');
 
@@ -635,6 +778,18 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 });
             };
 
+            _private.fetchOpenGraphThumbs = function(service, videoid) {
+                return OpenGraphService.getData(VideoService.urlFromData(service, videoid))
+                    .then(function(data) {
+                        var image = data.images[0].value;
+
+                        return {
+                            small: image,
+                            large: image
+                        };
+                    });
+            };
+
             this.getThumbsFor = function(service, videoid) {
                 var key = service + ':' + videoid;
 
@@ -647,6 +802,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return new ThumbModel(_private.fetchVimeoThumbs(videoid));
                         case 'dailymotion':
                             return new ThumbModel(_private.fetchDailyMotionThumbs(videoid));
+                        case 'yahoo':
+                        case 'aol':
+                            return new ThumbModel(_private.fetchOpenGraphThumbs(service, videoid));
                         default:
                             return new ThumbModel($q.when({
                                 small: null,
@@ -721,13 +879,19 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     return 'http://vimeo.com/' + id;
                 case 'dailymotion':
                     return 'http://www.dailymotion.com/video/' + id;
+                case 'aol':
+                    return 'http://on.aol.com/video/' + id;
+                case 'yahoo':
+                    return 'https://screen.yahoo.com/' + id + '.html';
 
                 }
             };
 
             this.dataFromUrl = function(url) {
                 var parsed = c6UrlParser(url),
-                    service = (parsed.hostname.match(/youtube|dailymotion|vimeo/) || [])[0],
+                    service = (parsed.hostname.match(
+                        /youtube|dailymotion|vimeo|aol|yahoo/
+                    ) || [])[0],
                     id,
                     idFetchers = {
                         youtube: function(url) {
@@ -746,6 +910,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return (pathname
                                 .replace(/\/video\//, '')
                                 .match(/[a-zA-Z0-9]+/) || [])[0];
+                        },
+                        aol: function(url) {
+                            return (url.pathname.match(/[^\/]+$/) || [null])[0];
+                        },
+                        yahoo: function(url) {
+                            return (url.pathname
+                                .match(/[^/]+(?=(\.html))/) || [null])[0];
                         }
                     };
 
@@ -772,6 +943,41 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     service: service,
                     id: id
                 };
+            };
+
+            this.embedCodeFromData = function(service, id) {
+                function aolSrc(id) {
+                    return 'http://pshared.5min.com/Scripts/PlayerSeed.js?' +
+                        'sid=281&width=560&height=450&playList=' + (id.match(/\d+$/) || [])[0];
+                }
+
+                function yahooSrc(id) {
+                    return 'https://screen.yahoo.com/' + id + '.html?' +
+                        'format=embed';
+                }
+
+                switch (service) {
+                case 'aol':
+                    return [
+                        '<div style="text-align:center">',
+                        '    <script src="' + aolSrc(id) + '"></script>',
+                        '    <br/>',
+                        '</div>'
+                    ].join('\n');
+                case 'yahoo':
+                    return [
+                        '<iframe width="100%"',
+                        '    height="100%"',
+                        '    scrolling="no"',
+                        '    frameborder="0"',
+                        '    src="' + yahooSrc(id) + '"',
+                        '    allowfullscreen="true"',
+                        '    mozallowfullscreen="true"',
+                        '    webkitallowfullscreen="true"',
+                        '    allowtransparency="true">',
+                        '</iframe>'
+                    ].join('\n');
+                }
             };
         }])
 
@@ -897,9 +1103,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
         }])
 
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
-                                     'SettingsService',
+                                     'SettingsService','VideoService',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
-                                      SettingsService ) {
+                                      SettingsService , VideoService ) {
             var ngCopy = angular.copy;
 
             var self = this,
@@ -975,6 +1181,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'vimeo':
                         case 'dailymotion':
                         case 'adUnit':
+                        case 'embedded':
                             return 'video' + ((card.modules.indexOf('ballot') > -1) ?
                                 'Ballot' : '');
                         default:
@@ -1472,6 +1679,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return 'Vimeo';
                     case 'dailymotion':
                         return 'DailyMotion';
+                    case 'aol':
+                        return 'AOL On';
+                    case 'yahoo':
+                        return 'Yahoo! Screen';
                     }
                 }
 
@@ -1489,7 +1700,14 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     switch (card.type) {
                     case 'video':
                     case 'videoBallot':
-                        return card.data.service;
+                        switch (card.data.service) {
+                        case 'yahoo':
+                        case 'aol':
+                            return 'embedded';
+                        default:
+                            return card.data.service;
+                        }
+                        break;
                     default:
                         return card.type;
                     }
@@ -1559,6 +1777,19 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return (fromJson(data.videoid) || {}).vpaid;
                         }
                     },
+                    embedded: {
+                        hideSource: hideSourceValue(),
+                        autoplay: copy(null),
+                        autoadvance: copy(null),
+                        skip: skipValue(),
+                        start: trimmer(),
+                        end: trimmer(),
+                        service: copy(),
+                        videoid: copy(null),
+                        code: function(data) {
+                            return VideoService.embedCodeFromData(data.service, data.videoid);
+                        }
+                    },
                     ad: {
                         autoplay: copy(true),
                         source: copy('cinema6'),
@@ -1590,7 +1821,15 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     video: {
                         id: copy(),
                         type: function(card) {
-                            return card.data.service || card.type;
+                            var service = card.data.service;
+
+                            switch (service) {
+                            case 'yahoo':
+                            case 'aol':
+                                return 'embedded';
+                            default:
+                                return service || card.type;
+                            }
                         },
                         title: copy(null),
                         note: copy(null),

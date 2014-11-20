@@ -6,9 +6,9 @@ function( angular , c6State  , services          ) {
 
     return angular.module('c6.app.minireel.editor.videoSearch', [c6State.name, services.name])
         .controller('VideoSearchController', ['$scope','VideoSearchService','MiniReelService',
-                                              'c6State','$document','$q',
+                                              'c6State','$document','$q','VideoService',
         function                             ( $scope , VideoSearchService , MiniReelService ,
-                                               c6State , $document , $q ) {
+                                               c6State , $document , $q , VideoService ) {
             var self = this,
                 EditorCtrl = $scope.EditorCtrl;
 
@@ -23,7 +23,9 @@ function( angular , c6State  , services          ) {
                 sites: {
                     youtube: true,
                     vimeo: true,
-                    dailymotion: true
+                    dailymotion: true,
+                    yahoo: true,
+                    aol: true
                 },
                 hd: false
             };
@@ -33,11 +35,32 @@ function( angular , c6State  , services          ) {
             this.result = null;
             this.error = null;
             this.currentPreview = null;
-            this.sites = {
-                youtube: 'YouTube',
-                vimeo: 'Vimeo',
-                dailymotion: 'Dailymotion'
-            };
+            this.siteItems = [
+                {
+                    label: 'YouTube',
+                    value: 'youtube'
+                },
+                {
+                    label: 'Vimeo',
+                    value: 'vimeo'
+                },
+                {
+                    label: 'Dailymotion',
+                    value: 'dailymotion'
+                },
+                {
+                    label: 'AOL On',
+                    value: 'aol'
+                },
+                {
+                    label: 'Yahoo! Screen',
+                    value: 'yahoo'
+                }
+            ];
+            this.sites = this.siteItems.reduce(function(sites, item) {
+                sites[item.value] = item.label;
+                return sites;
+            }, {});
             this.showQueryDropdown = false;
             Object.defineProperties(this, {
                 addButtonText: {
@@ -47,6 +70,10 @@ function( angular , c6State  , services          ) {
                     }
                 }
             });
+
+            this.embedCodeFor = function() {
+                return VideoService.embedCodeFromData.apply(VideoService, arguments);
+            };
 
             this.toggleProp = function(object, prop) {
                 if (arguments.length < 2) {
@@ -71,7 +98,7 @@ function( angular , c6State  , services          ) {
                 return VideoSearchService.find({
                     query: this.query.query,
                     hd: this.query.hd || undefined,
-                    sites: ['youtube', 'vimeo', 'dailymotion']
+                    sites: Object.keys(this.sites)
                         .filter(function(site) {
                             return !!this.query.sites[site];
                         }, this)

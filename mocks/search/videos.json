@@ -98,5 +98,29 @@
     {
         "type": "dailymotion",
         "videoid": "x2259uv"
+    },
+    {
+        "type": "aol",
+        "videoid": "doctors--ebola-case-was-too-advanced-518519339"
+    },
+    {
+        "type": "aol",
+        "videoid": "town-that-thrived-on-logging-is-looking-for-a-second-growth-518519108"
+    },
+    {
+        "type": "aol",
+        "videoid": "snapchat-could-gain-a-valuable-foothold-in-mobile-payments-518520217"
+    },
+    {
+        "type": "yahoo",
+        "videoid": "jennifer-lawrence-josh-hutcherson-liam-032606858"
+    },
+    {
+        "type": "yahoo",
+        "videoid": "drink-white-house-cold-open-083608212"
+    },
+    {
+        "type": "yahoo",
+        "videoid": "french-chef-000000398"
     }
 ]

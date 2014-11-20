@@ -23,20 +23,14 @@
                     'vidSearchHeader__optionsBtn--focus': VideoSearchCtrl.showQueryDropdown
                 }">&nbsp;</button>
             <div class="vidSearchHeader__optionsMenu ui__clickDropMenu" ng-show="VideoSearchCtrl.showQueryDropdown">
-                <button ng-click="VideoSearchCtrl.toggleProp(VideoSearchCtrl.query.sites, 'youtube')" ng-class="{
-                    'ui__clickDropBtn--checked': VideoSearchCtrl.query.sites.youtube
-                }" class="ui__clickDropBtn" type="button" title="YouTube">
-                    <span class="btn__label fab fa-check"> YouTube</span>
-                </button>
-                <button ng-click="VideoSearchCtrl.toggleProp(VideoSearchCtrl.query.sites, 'vimeo')" ng-class="{
-                    'ui__clickDropBtn--checked': VideoSearchCtrl.query.sites.vimeo
-                }" class="ui__clickDropBtn" type="button" title="Vimeo">
-                    <span class="btn__label fab fa-check"> Vimeo</span>
-                </button>
-                <button ng-click="VideoSearchCtrl.toggleProp(VideoSearchCtrl.query.sites, 'dailymotion')" ng-class="{
-                    'ui__clickDropBtn--checked': VideoSearchCtrl.query.sites.dailymotion
-                }" class="ui__clickDropBtn" type="button" title="DailyMotion">
-                    <span class="btn__label fab fa-check"> DailyMotion</span>
+                <button ng-repeat="item in VideoSearchCtrl.siteItems"
+                    ng-click="VideoSearchCtrl.toggleProp(VideoSearchCtrl.query.sites, item.value)" ng-class="{
+                        'ui__clickDropBtn--checked': VideoSearchCtrl.query.sites[item.value]
+                    }"
+                    class="ui__clickDropBtn"
+                    type="button"
+                    title="{{item.label}}">
+                    <span class="btn__label fab fa-check"> {{item.label}}</span>
                 </button>
                 <button ng-click="VideoSearchCtrl.toggleProp(VideoSearchCtrl.query, 'hd')" ng-class="{
                     'ui__clickDropBtn--checked': VideoSearchCtrl.query.hd
@@ -129,14 +123,27 @@
                         <div class="vidSearchPlayer__playerBox"
                             ng-switch="video.site">
                             <youtube-player ng-switch-when="youtube"
-                            videoid="{{video.videoid}}" autoplay></youtube-player>
+                                videoid="{{video.videoid}}"
+                                class="playerBox"
+                                autoplay>
+                            </youtube-player>
                             <vimeo-player id="vimeo__{{video.videoid}}"
-                            ng-switch-when="vimeo"
-                            videoid="{{video.videoid}}" autoplay></vimeo-player>
-                            <dailymotion-player
-                            id="dailymotion__{{video.videoid}}"
-                            ng-switch-when="dailymotion"
-                            videoid="{{video.videoid}}" autoplay></dailymotion-player>
+                                ng-switch-when="vimeo"
+                                class="playerBox"
+                                videoid="{{video.videoid}}"
+                                autoplay>
+                            </vimeo-player>
+                            <dailymotion-player id="dailymotion__{{video.videoid}}"
+                                ng-switch-when="dailymotion"
+                                class="playerBox"
+                                videoid="{{video.videoid}}"
+                                autoplay>
+                            </dailymotion-player>
+                            <embedded-player id="embedded__{{video.videoid}}"
+                                ng-switch-default
+                                class="playerBox"
+                                code="{{VideoSearchCtrl.embedCodeFor(video.site, video.videoid)}}">
+                            </embedded-player>
                         </div>
                         <button class="btn btn--primary vidSearchPlayer__createBtn" ng-click="$event.stopPropagation(); VideoSearchCtrl.addVideo(video); EditorCtrl.focusOn('modal');">{{VideoSearchCtrl.addButtonText}}</button>
                     </div>

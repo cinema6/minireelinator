@@ -9,6 +9,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
             $scope,
             MiniReelService,
             c6State,
+            VideoService,
             VideoSearchCtrl,
             EditorCtrl;
 
@@ -51,6 +52,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                 MiniReelService = $injector.get('MiniReelService');
                 VideoSearchService = $injector.get('VideoSearchService');
                 c6State = $injector.get('c6State');
+                VideoService = $injector.get('VideoService');
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
@@ -106,7 +108,9 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                         sites: {
                             youtube: true,
                             vimeo: true,
-                            dailymotion: true
+                            dailymotion: true,
+                            aol: true,
+                            yahoo: true
                         },
                         hd: false
                     });
@@ -124,8 +128,21 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                     expect(VideoSearchCtrl.sites).toEqual({
                         youtube: 'YouTube',
                         vimeo: 'Vimeo',
-                        dailymotion: 'Dailymotion'
+                        dailymotion: 'Dailymotion',
+                        aol: 'AOL On',
+                        yahoo: 'Yahoo! Screen'
                     });
+                });
+            });
+
+            describe('siteItems', function() {
+                it('should be an array of items for each site', function() {
+                    expect(VideoSearchCtrl.siteItems).toEqual(Object.keys(VideoSearchCtrl.sites).map(function(value) {
+                        return {
+                            label: VideoSearchCtrl.sites[value],
+                            value: value
+                        };
+                    }));
                 });
             });
 
@@ -169,6 +186,17 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
         });
 
         describe('methods', function() {
+            describe('embedCodeFor(service, videoid)', function() {
+                it('should proxy to VideoService.embedCodeFromData()', function() {
+                    [
+                        ['aol', 'japans-surprise-recession--economy-shrinks-1-6--518518239'],
+                        ['yahoo', 'orleans-saints-fan-quot-zero-204100617']
+                    ].forEach(function(args) {
+                        expect(VideoSearchCtrl.embedCodeFor.apply(VideoSearchCtrl, args)).toBe(VideoService.embedCodeFromData.apply(VideoService, args));
+                    });
+                });
+            });
+
             describe('toggleQueryDropdown()', function() {
                 it('should toggle the showQueryDropdown property', function() {
                     VideoSearchCtrl.toggleQueryDropdown();
@@ -261,7 +289,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                 it('should search for the video', function() {
                     expect(VideoSearchService.find).toHaveBeenCalledWith({
                         query: VideoSearchCtrl.query.query,
-                        sites: 'youtube,vimeo,dailymotion',
+                        sites: 'youtube,vimeo,dailymotion,aol,yahoo',
                         hd: undefined
                     });
                 });
@@ -303,7 +331,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                     it('should search with hd: true', function() {
                         expect(VideoSearchService.find).toHaveBeenCalledWith({
                             query: VideoSearchCtrl.query.query,
-                            sites: 'youtube,vimeo,dailymotion',
+                            sites: 'youtube,vimeo,dailymotion,aol,yahoo',
                             hd: true
                         });
                     });

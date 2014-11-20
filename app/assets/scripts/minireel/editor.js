@@ -42,9 +42,9 @@ VideoCardController           ) {
         }])
 
         .service('EditorService', ['MiniReelService','$q','c6AsyncQueue','VoteService',
-                                   'CollateralService','SettingsService',
+                                   'CollateralService','SettingsService','VideoThumbnailService',
         function                  ( MiniReelService , $q , c6AsyncQueue , VoteService ,
-                                    CollateralService , SettingsService ) {
+                                    CollateralService , SettingsService , VideoThumbnailService ) {
             var _private = {},
                 queue = c6AsyncQueue(),
                 beforeSyncFns = {};
@@ -163,6 +163,21 @@ VideoCardController           ) {
                     });
                 }
 
+                function fetchThumbs(proxy) {
+                    return $q.all(proxy.data.deck.filter(function(card) {
+                        return (/^(yahoo|aol)$/).test(card.data.service) && !card.thumb;
+                    }).map(function(card) {
+                        var service = card.data.service,
+                            videoid = card.data.videoid;
+
+                        return VideoThumbnailService.getThumbsFor(service, videoid)
+                            .ensureFulfillment()
+                            .then(function(thumb) {
+                                card.thumb = thumb.large;
+                            });
+                    }));
+                }
+
                 function beforeSync(proxy) {
                     return $q.all(Object.keys(beforeSyncFns).map(function(id) {
                         return beforeSyncFns[id](proxy);
@@ -173,7 +188,12 @@ VideoCardController           ) {
 
                 return beforeSync(proxy)
                     .then(function() {
-                        return syncWithCollateral(proxy);
+                        return $q.all([syncWithCollateral, fetchThumbs].map(function(fn) {
+                            return fn(proxy);
+                        }));
+                    })
+                    .then(function() {
+                        return proxy;
                     });
             };
 
@@ -1943,8 +1963,8 @@ VideoCardController           ) {
             };
         }])
 
-        .directive('videoPreview', ['c6UrlMaker','$timeout',
-        function                   ( c6UrlMaker , $timeout ) {
+        .directive('videoPreview', ['c6UrlMaker','$timeout','VideoService',
+        function                   ( c6UrlMaker , $timeout , VideoService ) {
             return {
                 restrict: 'E',
                 templateUrl: 'views/minireel/directives/video_preview.html',
@@ -2044,6 +2064,13 @@ VideoCardController           ) {
                             .on('error', $emitError);
                     }
 
+                    Object.defineProperties(scope, {
+                        embedCode: {
+                            get: function() {
+                                return VideoService.embedCodeFromData(scope.service, scope.videoid);
+                            }
+                        }
+                    });
 
                     scope.$watch('videoid', function(id) {
                         if (!id) { return; }
