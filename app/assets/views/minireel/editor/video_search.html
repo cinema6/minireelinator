@@ -139,8 +139,8 @@
                                 videoid="{{video.videoid}}"
                                 autoplay>
                             </dailymotion-player>
-                            <div ng-switch-when="aol">
-                                <p>Sorry, but our secure environment prevents us from showing a preview of this video... You can watch it <a ng-href="{{video.link}}" target="_blank">here</a>.</p>
+                            <div ng-switch-when="aol" class="playerMessage__group">
+                                <p class="playerMessage__copy">Sorry, but our secure environment prevents us from showing a preview of this video... You can watch it <a ng-href="{{video.link}}" target="_blank">here</a>.</p>
                             </div>
                             <embedded-player id="embedded__{{video.videoid}}"
                                 ng-switch-default
