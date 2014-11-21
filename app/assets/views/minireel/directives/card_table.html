@@ -1,5 +1,15 @@
 <c6-drag-space class="table__group" controller-as="DragCtrl" id="drag-space">
     <c6-alias model="EditorCtrl.model.data.deck" as="deck">
+        <button class="btn tableNav__btn tableNav__btn--prev" title="Previous" type="button">
+            <span class="btn__label faa fa-chevron-left">
+                <span class="ir">Previous</span>
+            </span>
+        </button>
+        <button class="btn tableNav__btn tableNav__btn--next" title="Next" type="button">
+            <span class="btn__label faa fa-chevron-right">
+                <span class="ir">Next</span>
+            </span>
+        </button>
         <div class="table__left-zone" id="scroll-left" c6-drag-zone>&nbsp;</div>
         <ul id="card-scroller" class="card__list" c6-bind-scroll="CardTableCtrl.position">
             <li class="card__list-item">
@@ -57,3 +67,44 @@
         <div class="table__right-zone" id="scroll-right" c6-drag-zone>&nbsp;</div>
     <c6-alias model="EditorCtrl.model.data.deck" as="deck">
 </c6-drag-space>
+
+<div class="pageMap__group">
+    <div class="pageMap__scrollBox" style="width:140px;">
+        <div class="pageMap__scroller" style="width:100px;">
+            <div class="pageMap__scrollBar">&nbsp;</div>
+        </div>
+        <ul class="pageMap__list">
+            <li class="pageMap__item">
+                <button class="btnInvis pageMap__page pageMap__page--error">
+                    <span class="btn__label">1</span>
+                </button>
+            </li>
+            <li class="pageMap__item">
+                <button class="btnInvis pageMap__page">
+                    <span class="btn__label">2</span>
+                </button>
+            </li>
+            <li class="pageMap__item">
+                <button class="btnInvis pageMap__page">
+                    <span class="btn__label">3</span>
+                </button>
+            </li>
+            <li class="pageMap__item">
+                <button class="btnInvis pageMap__page">
+                    <span class="btn__label">4</span>
+                </button>
+            </li>
+            <li class="pageMap__item">
+                <button class="btnInvis pageMap__page">
+                    <span class="btn__label">5</span>
+                </button>
+            </li>
+
+            <li class="pageMap__item">
+                <button class="btnInvis pageMap__page">
+                    <span class="btn__label">6</span>
+                </button>
+            </li>
+        </ul>
+    </div>
+</div>

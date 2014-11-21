@@ -260,6 +260,9 @@
             .btn:disabled {
                 opacity:0.5;
             }
+            .btn:disabled:hover {
+                border:1px solid #ddd;
+            }
         .btn--primary, .btn--primary:focus {
             background:#eaf7ff; color:#2398db;
             border:1px solid #bfe7ff; 
