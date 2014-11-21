@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## v1.5.0 (November 20, 2014)
+* *[v1.5.0.rc3]*
+  * [FIX]: Fix for an issue where AOL On video durations would appear as
+    "NaN:NaN" in the search results
+* *[/v1.5.0.rc3]*
+
 * *[v1.5.0.rc2]*
   * Added error message when trying to preview AOL videos (because they
     cannot be previewed over HTTPS
