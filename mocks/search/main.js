@@ -62,7 +62,7 @@ module.exports = function(http) {
             videoid: video.videoid,
             site: video.type,
             hd: hd,
-            duration: randomNumberBetween(30, 300)
+            duration: site !== 'aol' ? randomNumberBetween(30, 300) : undefined
         };
     }
 
