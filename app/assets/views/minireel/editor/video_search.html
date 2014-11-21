@@ -108,10 +108,10 @@
                             </h2>
                             <p class="vidSearchResult__metaData">
                             via <a href="{{video.link}}" class="vidSearcResult__sourceLink" 
-                                    title="{{VideoSearchCtrl.sites[video.site]}}" target="_blank" ng-click="$event.stopPropagation()">{{VideoSearchCtrl.sites[video.site]}}</a>  
-                                &nbsp;|&nbsp;  
-                                <span
-                                    class="vidSearcResult__duration">{{video.duration | timestamp}}</span>
+                                    title="{{VideoSearchCtrl.sites[video.site]}}" target="_blank" ng-click="$event.stopPropagation()">{{VideoSearchCtrl.sites[video.site]}}</a>
+                                <span ng-if="video.duration">&nbsp;|&nbsp;
+                                    <span class="vidSearcResult__duration">{{video.duration | timestamp}}</span>
+                                </span>
                             </p>
                             <p class="vidSearchResult__desc">
                                 {{video.description}}
