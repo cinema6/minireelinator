@@ -206,7 +206,7 @@
                         });
 
                         it('should enable the "copy", "ballot", and "video" tabs', function() {
-                            expect(EditCardCtrl.tabs).toEqual([copy, video, ballot]);
+                            expect(EditCardCtrl.tabs).toEqual([video, copy, ballot]);
                         });
 
                         it('should not set data.source', function() {
@@ -221,7 +221,7 @@
                         });
 
                         it('should enable the "copy" and "video" tabs', function() {
-                            expect(EditCardCtrl.tabs).toEqual([copy, video, ballot]);
+                            expect(EditCardCtrl.tabs).toEqual([video, copy, ballot]);
                         });
 
                         it('should not set data.source', function() {
@@ -236,7 +236,7 @@
                         });
 
                         it('should enable the "copy" and "video" tabs', function() {
-                            expect(EditCardCtrl.tabs).toEqual([copy, video, ballot]);
+                            expect(EditCardCtrl.tabs).toEqual([video, copy, ballot]);
                         });
 
                         it('should not set data.source', function() {

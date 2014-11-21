@@ -1373,7 +1373,7 @@ VideoCardController           ) {
                     case 'video':
                     case 'videoBallot':
                     case 'text':
-                        return [copyTab, videoTab, ballotTab];
+                        return [videoTab, copyTab, ballotTab];
                     default:
                         return [];
                     }
