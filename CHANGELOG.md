@@ -1,5 +1,11 @@
 # MiniReelinator
 
+## v1.5.1 (November 21, 2014)
+* *[v1.5.1.rc1]*
+  * [FIX]: Fix for an issue that would cause AOL On Videos not to load
+    in the preview page
+* *[/v1.5.1.rc1]*
+
 ## v1.5.0 (November 20, 2014)
 * *[v1.5.0.rc3]*
   * [FIX]: Fix for an issue where AOL On video durations would appear as

@@ -1513,7 +1513,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     if (c6Defines.kDebug) {
                         path = '//staging.cinema6.com';
                     } else {
-                        path = '//cinema6.com';
+                        path = 'http://cinema6.com';
                     }
                     path = path + '/preview?id=' + encodeURIComponent(minireel.id);
                     return path;
