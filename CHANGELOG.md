@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.6.0.rc1]*
+  * Changed tab order for new card wizard
+
 ## v1.5.1 (November 21, 2014)
 * *[v1.5.1.rc1]*
   * [FIX]: Fix for an issue that would cause AOL On Videos not to load
