@@ -954,6 +954,7 @@
         background:#444;
         height:3.75em;
         width:100%;
+        overflow: hidden;
     }
 
     .pageMap__scrollBox {
@@ -967,6 +968,7 @@
         top:0; left:0;
         height:3.75em;
         cursor:move;
+        min-width:1.25em;
     }
         .pageMap__scrollBar {
             height:1.75em; width:100%;
