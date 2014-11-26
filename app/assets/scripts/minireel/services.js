@@ -883,6 +883,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     return 'http://on.aol.com/video/' + id;
                 case 'yahoo':
                     return 'https://screen.yahoo.com/' + id + '.html';
+                case 'rumble':
+                    return 'https://rumble.com/' + id + '.html';
 
                 }
             };
@@ -890,7 +892,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             this.dataFromUrl = function(url) {
                 var parsed = c6UrlParser(url),
                     service = (parsed.hostname.match(
-                        /youtube|dailymotion|vimeo|aol|yahoo/
+                        /youtube|dailymotion|vimeo|aol|yahoo|rumble/
                     ) || [])[0],
                     id,
                     idFetchers = {
@@ -917,20 +919,24 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         yahoo: function(url) {
                             return (url.pathname
                                 .match(/[^/]+(?=(\.html))/) || [null])[0];
+                        },
+                        rumble: function(url) {
+                            return (url.pathname
+                                .match(/[^/]+(?=(\.html))/) || [null])[0];
                         }
                     };
 
                 function params(search) {
-                    var pairs = search.split('&'),
-                        object = {};
+                    return search.split('&')
+                        .map(function(pair) {
+                            return pair.split('=')
+                                .map(decodeURIComponent);
+                        })
+                        .reduce(function(params, pair) {
+                            params[pair[0]] = pair[1];
 
-                    forEach(pairs, function(pair) {
-                        pair = pair.split('=');
-
-                        object[pair[0]] = pair[1];
-                    });
-
-                    return object;
+                            return params;
+                        }, {});
                 }
 
                 if (!service) { return null; }
@@ -943,6 +949,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     service: service,
                     id: id
                 };
+            };
+
+            this.embedIdFromVideoId = function(service, videoid) {
+                switch (service) {
+                case 'rumble':
+                    return videoid.match(/^[^-]+/)[0]
+                        .replace(/^v/, '8.');
+
+                default:
+                    return videoid;
+                }
             };
 
             this.embedCodeFromData = function(service, id) {
