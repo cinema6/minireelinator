@@ -1197,6 +1197,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'youtube':
                         case 'vimeo':
                         case 'dailymotion':
+                        case 'rumble':
                         case 'adUnit':
                         case 'embedded':
                             return 'video' + ((card.modules.indexOf('ballot') > -1) ?
@@ -1319,7 +1320,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         var type = card.type;
 
                         return data.service ||
-                            (type.search(/^(youtube|dailymotion|vimeo|adUnit)$/) > -1 ?
+                            (type.search(/^(youtube|dailymotion|vimeo|adUnit|rumble)$/) > -1 ?
                                 type : null);
                     },
                     videoid: function(data, key, card) {
@@ -1329,6 +1330,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 vast: data.vast,
                                 vpaid: data.vpaid
                             });
+                        case 'rumble':
+                            return data.siteid || null;
                         default:
                             return data.videoid || null;
                         }
@@ -1692,14 +1695,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                     case 'youtube':
                         return 'YouTube';
-                    case 'vimeo':
-                        return 'Vimeo';
                     case 'dailymotion':
                         return 'DailyMotion';
                     case 'aol':
                         return 'AOL On';
                     case 'yahoo':
                         return 'Yahoo! Screen';
+                    case 'adUnit':
+                        return undefined;
+                    default:
+                        return (source || undefined) &&
+                            source.charAt(0).toUpperCase() + source.slice(1);
                     }
                 }
 
@@ -1781,6 +1787,20 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         end: trimmer(),
                         related: value(0),
                         videoid: copy(null)
+                    },
+                    rumble: {
+                        hideSource: hideSourceValue(),
+                        autoplay: copy(null),
+                        autoadvance: copy(null),
+                        skip: skipValue(),
+                        start: trimmer(),
+                        end: trimmer(),
+                        siteid: function(data) {
+                            return data.videoid;
+                        },
+                        videoid: function(data) {
+                            return VideoService.embedIdFromVideoId('rumble', data.videoid);
+                        }
                     },
                     adUnit: {
                         hideSource: hideSourceValue(),
