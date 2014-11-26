@@ -804,6 +804,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return new ThumbModel(_private.fetchDailyMotionThumbs(videoid));
                         case 'yahoo':
                         case 'aol':
+                        case 'rumble':
                             return new ThumbModel(_private.fetchOpenGraphThumbs(service, videoid));
                         default:
                             return new ThumbModel($q.when({

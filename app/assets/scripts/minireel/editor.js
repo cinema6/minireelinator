@@ -165,7 +165,7 @@ VideoCardController           ) {
 
                 function fetchThumbs(proxy) {
                     return $q.all(proxy.data.deck.filter(function(card) {
-                        return (/^(yahoo|aol)$/).test(card.data.service) && !card.thumb;
+                        return (/^(yahoo|aol|rumble)$/).test(card.data.service) && !card.thumb;
                     }).map(function(card) {
                         var service = card.data.service,
                             videoid = card.data.videoid;
