@@ -18,23 +18,6 @@ function( angular , c6State  , services          ) {
                 return $q.reject(error);
             }
 
-            this.query = {
-                query: '',
-                sites: {
-                    youtube: true,
-                    vimeo: true,
-                    dailymotion: true,
-                    yahoo: true,
-                    aol: true
-                },
-                hd: false
-            };
-            this.scrollPosition = {
-                y: 0
-            };
-            this.result = null;
-            this.error = null;
-            this.currentPreview = null;
             this.siteItems = [
                 {
                     label: 'YouTube',
@@ -49,6 +32,10 @@ function( angular , c6State  , services          ) {
                     value: 'dailymotion'
                 },
                 {
+                    label: 'Rumble',
+                    value: 'rumble'
+                },
+                {
                     label: 'AOL On',
                     value: 'aol'
                 },
@@ -61,6 +48,20 @@ function( angular , c6State  , services          ) {
                 sites[item.value] = item.label;
                 return sites;
             }, {});
+            this.query = {
+                query: '',
+                sites: this.siteItems.reduce(function(sites, item) {
+                    sites[item.value] = true;
+                    return sites;
+                }, {}),
+                hd: false
+            };
+            this.scrollPosition = {
+                y: 0
+            };
+            this.result = null;
+            this.error = null;
+            this.currentPreview = null;
             this.showQueryDropdown = false;
             Object.defineProperties(this, {
                 addButtonText: {

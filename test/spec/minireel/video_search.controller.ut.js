@@ -105,13 +105,10 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                 it('should be an object', function() {
                     expect(VideoSearchCtrl.query).toEqual({
                         query: '',
-                        sites: {
-                            youtube: true,
-                            vimeo: true,
-                            dailymotion: true,
-                            aol: true,
-                            yahoo: true
-                        },
+                        sites: Object.keys(VideoSearchCtrl.sites).reduce(function(obj, site) {
+                            obj[site] = true;
+                            return obj;
+                        }, {}),
                         hd: false
                     });
                 });
@@ -129,6 +126,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                         youtube: 'YouTube',
                         vimeo: 'Vimeo',
                         dailymotion: 'Dailymotion',
+                        rumble: 'Rumble',
                         aol: 'AOL On',
                         yahoo: 'Yahoo! Screen'
                     });
@@ -289,7 +287,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                 it('should search for the video', function() {
                     expect(VideoSearchService.find).toHaveBeenCalledWith({
                         query: VideoSearchCtrl.query.query,
-                        sites: 'youtube,vimeo,dailymotion,aol,yahoo',
+                        sites: Object.keys(VideoSearchCtrl.sites).join(','),
                         hd: undefined
                     });
                 });
@@ -331,7 +329,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                     it('should search with hd: true', function() {
                         expect(VideoSearchService.find).toHaveBeenCalledWith({
                             query: VideoSearchCtrl.query.query,
-                            sites: 'youtube,vimeo,dailymotion,aol,yahoo',
+                            sites: Object.keys(VideoSearchCtrl.sites).join(','),
                             hd: true
                         });
                     });
