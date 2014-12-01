@@ -333,6 +333,65 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             };
         }])
 
+        .constant('CardAdapter', ['config','$http','$q',
+        function                 ( config , $http , $q ) {
+            function url(end) {
+                return config.apiBase + '/content/' + end;
+            }
+
+            function pick(prop) {
+                return function(object) {
+                    return object[prop];
+                };
+            }
+
+            function putInArray(item) {
+                return [item];
+            }
+
+            function value(val) {
+                return function() {
+                    return val;
+                };
+            }
+
+            this.findAll = function() {
+                return $http.get(url('cards'))
+                    .then(pick('data'));
+            };
+
+            this.find = function(type, id) {
+                return $http.get(url('card/' + id))
+                    .then(pick('data'))
+                    .then(putInArray);
+            };
+
+            this.findQuery = function(type, query) {
+                return $http.get(url('cards'), { params: query })
+                    .then(pick('data'), function(response) {
+                        return response.status === 404 ?
+                            [] : $q.reject(response);
+                    });
+            };
+
+            this.create = function(type, data) {
+                return $http.post(url('card'), data)
+                    .then(pick('data'))
+                    .then(putInArray);
+            };
+
+            this.erase = function(type, card) {
+                return $http.delete(url('card/' + card.id))
+                    .then(value(null));
+            };
+
+            this.update = function(type, card) {
+                return $http.put(url('card/' + card.id), card)
+                    .then(pick('data'))
+                    .then(putInArray);
+            };
+        }])
+
         .constant('CWRXAdapter', ['config','$injector',
         function                 ( config , $injector ) {
             var self = this,
@@ -355,27 +414,28 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         }])
 
         .config(['cinema6Provider','ContentAdapter','CWRXAdapter',
-                 'VoteAdapter','OrgAdapter','UserAdapter',
+                 'VoteAdapter','OrgAdapter','UserAdapter','CardAdapter',
         function( cinema6Provider , ContentAdapter , CWRXAdapter ,
-                  VoteAdapter , OrgAdapter , UserAdapter ) {
-            ContentAdapter.config = {
-                apiBase: '/api'
-            };
-            VoteAdapter.config = {
-                apiBase: '/api'
-            };
-            OrgAdapter.config = {
-                apiBase: '/api'
-            };
-            UserAdapter.config = {
-                apiBase: '/api'
-            };
+                  VoteAdapter , OrgAdapter , UserAdapter , CardAdapter ) {
+
+            [
+                ContentAdapter,
+                VoteAdapter,
+                OrgAdapter,
+                UserAdapter,
+                CardAdapter
+            ].forEach(function(Adapter) {
+                Adapter.config = {
+                    apiBase: '/api'
+                };
+            });
 
             CWRXAdapter.config = {
                 election: VoteAdapter,
                 experience: ContentAdapter,
                 org: OrgAdapter,
-                user: UserAdapter
+                user: UserAdapter,
+                card: CardAdapter
             };
 
             cinema6Provider.useAdapter(CWRXAdapter);
