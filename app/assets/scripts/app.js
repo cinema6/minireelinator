@@ -385,9 +385,31 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
             }]);
 
+            $provide.constant('CategoryAdapter', ['config','$http','$q',
+            function                             ( config , $http , $q ) {
+                function url() {
+                    return config.apiBase + '/content/categories';
+                }
 
+                this.findAll = function() {
+                    return $http.get(url())
+                        .then(pick('data'));
+                };
 
+                this.findQuery = function(type, query) {
+                    return $http.get(url(), { params: query })
+                        .then(pick('data'), function(response) {
+                            return response.status === 404 ?
+                                [] : $q.reject(response);
+                        });
+                };
+
+                ['find', 'create', 'update', 'erase'].forEach(function(method) {
+                    this[method] = function() {
+                        return $q.reject('CategoryAdapter.' + method + '() is not implemented.');
                     };
+                }, this);
+            }]);
 
             $provide.constant('CWRXAdapter', ['config','$injector',
             function                 ( config , $injector ) {
@@ -413,15 +435,18 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
         .config(['cinema6Provider','ContentAdapter','CWRXAdapter',
                  'VoteAdapter','OrgAdapter','UserAdapter','CardAdapter',
+                 'CategoryAdapter',
         function( cinema6Provider , ContentAdapter , CWRXAdapter ,
-                  VoteAdapter , OrgAdapter , UserAdapter , CardAdapter ) {
+                  VoteAdapter , OrgAdapter , UserAdapter , CardAdapter ,
+                  CategoryAdapter ) {
 
             [
                 ContentAdapter,
                 VoteAdapter,
                 OrgAdapter,
                 UserAdapter,
-                CardAdapter
+                CardAdapter,
+                CategoryAdapter
             ].forEach(function(Adapter) {
                 Adapter.config = {
                     apiBase: '/api'
@@ -433,7 +458,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 experience: ContentAdapter,
                 org: OrgAdapter,
                 user: UserAdapter,
-                card: CardAdapter
+                card: CardAdapter,
+                category: CategoryAdapter
             };
 
             cinema6Provider.useAdapter(CWRXAdapter);
