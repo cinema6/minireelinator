@@ -411,6 +411,32 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 }, this);
             }]);
 
+            $provide.constant('AdvertiserAdapter', ['config','$http','$q',
+            function                               ( config , $http , $q ) {
+                function url() {
+                    return config.apiBase + '/account/advertisers';
+                }
+
+                this.findAll = function() {
+                    return $http.get(url())
+                        .then(pick('data'));
+                };
+
+                this.findQuery = function(type, query) {
+                    return $http.get(url(), { params: query })
+                        .then(pick('data'), function(response) {
+                            return response.status === 404 ?
+                                [] : $q.reject(response);
+                        });
+                };
+
+                ['find', 'create', 'update', 'erase'].forEach(function(method) {
+                    this[method] = function() {
+                        return $q.reject('AdvertiserAdapter.' + method + '() is not implemented.');
+                    };
+                }, this);
+            }]);
+
             $provide.constant('CWRXAdapter', ['config','$injector',
             function                 ( config , $injector ) {
                 var self = this,
@@ -435,10 +461,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
         .config(['cinema6Provider','ContentAdapter','CWRXAdapter',
                  'VoteAdapter','OrgAdapter','UserAdapter','CardAdapter',
-                 'CategoryAdapter',
+                 'CategoryAdapter','AdvertiserAdapter',
         function( cinema6Provider , ContentAdapter , CWRXAdapter ,
                   VoteAdapter , OrgAdapter , UserAdapter , CardAdapter ,
-                  CategoryAdapter ) {
+                  CategoryAdapter , AdvertiserAdapter ) {
 
             [
                 ContentAdapter,
@@ -459,7 +485,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 org: OrgAdapter,
                 user: UserAdapter,
                 card: CardAdapter,
-                category: CategoryAdapter
+                category: CategoryAdapter,
+                advertiser: AdvertiserAdapter
             };
 
             cinema6Provider.useAdapter(CWRXAdapter);
