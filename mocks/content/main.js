@@ -197,4 +197,22 @@ module.exports = function(http) {
 
         this.respond(204, '');
     });
+
+    /***********************************************************************************************
+     * Category Endpoints
+     **********************************************************************************************/
+
+    http.whenGET('/api/content/categories', function(request) {
+        this.respond(200, grunt.file.expand(path.resolve(__dirname, './categories/*.json'))
+            .map(function(path) {
+                var id = path.match(/[^\/]+(?=\.json)/)[0];
+
+                return extend(grunt.file.readJSON(path), { id: id });
+            }).filter(function(card) {
+                return Object.keys(request.query)
+                    .every(function(key) {
+                        return request.query[key] === card[key];
+                    });
+            }));
+    });
 };
