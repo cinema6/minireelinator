@@ -46,15 +46,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
             }
 
-            function justKeys(keys) {
-                return function(object) {
-                    return keys.reduce(function(result, key) {
-                        result[key] = object[key];
-                        return result;
-                    }, {});
-                };
-            }
-
             function fillMeta(meta) {
                 return function(response) {
                     var data = {
@@ -560,8 +551,34 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
             }]);
 
+            $provide.constant('ExpGroupAdapter', ['config','$http','$q',
+            function                             ( config , $http , $q ) {
+                function url() {
+                    return config.apiBase + '/expgroups';
+                }
+
+                this.findAll = function() {
+                    return $http.get(url())
+                        .then(pick('data'));
+                };
+
+                this.findQuery = function(type, query) {
+                    return $http.get(url(), { params: query })
+                        .then(pick('data'), function(response) {
+                            return response.status === 404 ?
+                                [] : $q.reject(response);
+                        });
+                };
+
+                ['find', 'create', 'update', 'erase'].forEach(function(method) {
+                    this[method] = function() {
+                        return $q.reject('ExpGroupAdapter.' + method + '() is not implemented.');
+                    };
+                }, this);
+            }]);
+
             $provide.constant('CWRXAdapter', ['config','$injector',
-            function                 ( config , $injector ) {
+            function                         ( config , $injector ) {
                 var self = this,
                     adapters = {};
 
@@ -584,10 +601,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
         .config(['cinema6Provider','ContentAdapter','CWRXAdapter',
                  'VoteAdapter','OrgAdapter','UserAdapter','CardAdapter',
-                 'CategoryAdapter','AdvertiserAdapter',
+                 'CategoryAdapter','AdvertiserAdapter','ExpGroupAdapter',
         function( cinema6Provider , ContentAdapter , CWRXAdapter ,
                   VoteAdapter , OrgAdapter , UserAdapter , CardAdapter ,
-                  CategoryAdapter , AdvertiserAdapter ) {
+                  CategoryAdapter , AdvertiserAdapter , ExpGroupAdapter ) {
 
             [
                 ContentAdapter,
@@ -595,7 +612,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 OrgAdapter,
                 UserAdapter,
                 CardAdapter,
-                CategoryAdapter
+                CategoryAdapter,
+                ExpGroupAdapter
             ].forEach(function(Adapter) {
                 Adapter.config = {
                     apiBase: '/api'
@@ -609,7 +627,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 user: UserAdapter,
                 card: CardAdapter,
                 category: CategoryAdapter,
-                advertiser: AdvertiserAdapter
+                advertiser: AdvertiserAdapter,
+                expGroup: ExpGroupAdapter
             };
 
             cinema6Provider.useAdapter(CWRXAdapter);
