@@ -486,21 +486,22 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 }
 
                 this.decorateCampaign = function(campaign) {
+                    ['miniReels', 'cards', 'targetMiniReels']
+                        .forEach(function(prop) {
+                            campaign[prop].forEach(function(data) {
+                                cacheAdtechId(prop, data);
+                            });
+                        });
+
                     return $q.all({
                         advertiser: cinema6.db.find('advertiser', campaign.advertiserId),
                         miniReels: $q.all(campaign.miniReels.map(function(data) {
-                            cacheAdtechId('miniReels', data);
-
                             return cinema6.db.find('experience', data.id);
                         })),
                         cards: $q.all(campaign.cards.map(function(data) {
-                            cacheAdtechId('cards', data);
-
                             return cinema6.db.find('card', data.id);
                         })),
                         targetMiniReels: $q.all(campaign.targetMiniReels.map(function(data) {
-                            cacheAdtechId('targetMiniReels', data);
-
                             return cinema6.db.find('experience', data.id);
                         }))
                     }).then(function(data) {
