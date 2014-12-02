@@ -1,0 +1,21 @@
+{
+    "data": {
+        "related": 0,
+        "videoid": "x18b09a"
+    },
+    "type": "dailymotion",
+    "title": "Kristen Stewart for Channel",
+    "note": "Psychotic glamour",
+    "source": "DailyMotion",
+    "modules": [
+        "ballot"
+    ],
+    "ballot": {
+        "prompt": "What did you think of this video?",
+        "choices": [
+            "Funny",
+            "Lame"
+        ]
+    },
+    "displayAdSource": null
+}
