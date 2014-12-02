@@ -7,7 +7,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
     var forEach = angular.forEach,
         copy = angular.copy,
         noop = angular.noop,
-        isObject = angular.isObject;
+        isObject = angular.isObject,
+        extend = angular.extend;
 
     return angular.module('c6.app', [
         ui.name,
@@ -42,6 +43,35 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             function value(val) {
                 return function() {
                     return val;
+                };
+            }
+
+            function justKeys(keys) {
+                return function(object) {
+                    return keys.reduce(function(result, key) {
+                        result[key] = object[key];
+                        return result;
+                    }, {});
+                };
+            }
+
+            function fillMeta(meta) {
+                return function(response) {
+                    var data = {
+                        items: response.headers('Content-Range')
+                            .match(/\d+/g)
+                            .map(function(num, index) {
+                                return [this[index], parseInt(num)];
+                            }, ['start', 'end', 'total'])
+                            .reduce(function(obj, pair) {
+                                obj[pair[0]] = pair[1];
+                                return obj;
+                            }, {})
+                    };
+
+                    extend(meta, data);
+
+                    return response;
                 };
             }
 
@@ -296,20 +326,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
 
                 this.findQuery = function(type, query, meta) {
-                    function setPageInfo(response) {
-                        meta.items = response.headers('Content-Range')
-                            .match(/\d+/g)
-                            .map(function(num, index) {
-                                return [this[index], parseInt(num)];
-                            }, ['start', 'end', 'total'])
-                            .reduce(function(obj, pair) {
-                                obj[pair[0]] = pair[1];
-                                return obj;
-                            }, {});
-
-                        return response;
-                    }
-
                     function handleError(response) {
                         return response.status === 404 ?
                             [] : $q.reject(response);
@@ -317,7 +333,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                     return $http.get(url('experiences'), {
                             params: query
-                        }).then(setPageInfo)
+                        }).then(fillMeta(meta))
                             .then(pick('data'), handleError)
                             .then(decorateWithUsers);
                 };
@@ -435,6 +451,113 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         return $q.reject('AdvertiserAdapter.' + method + '() is not implemented.');
                     };
                 }, this);
+            }]);
+
+            $provide.constant('CampaignAdapter', ['config','$http','$q','cinema6',
+            function                             ( config , $http , $q , cinema6 ) {
+                var adapter = this,
+                    adtechIdCache = {
+                        miniReels: {},
+                        cards: {},
+                        targetMiniReels: {}
+                    };
+
+                function url(end) {
+                    return config.apiBase + '/' + end;
+                }
+
+                function decorateCampaigns(campaigns) {
+                    return $q.all(campaigns.map(function(campaign) {
+                        return adapter.decorateCampaign(campaign);
+                    }));
+                }
+
+                function cacheAdtechId(type, data) {
+                    adtechIdCache[type][data.id] = data.adtechId;
+                }
+
+                function undecorateCampaign(campaign) {
+                    delete campaign.advertiser;
+
+                    return extend(
+                        campaign,
+                        ['miniReels', 'cards', 'targetMiniReels']
+                            .reduce(function(result, prop) {
+                                result[prop] = campaign[prop].map(function(item) {
+                                    return {
+                                        id: item.id,
+                                        adtechId: adtechIdCache[prop][item.id]
+                                    };
+                                });
+                                return result;
+                            }, {})
+                    );
+                }
+
+                this.decorateCampaign = function(campaign) {
+                    return $q.all({
+                        advertiser: cinema6.db.find('advertiser', campaign.advertiserId),
+                        miniReels: $q.all(campaign.miniReels.map(function(data) {
+                            cacheAdtechId('miniReels', data);
+
+                            return cinema6.db.find('experience', data.id);
+                        })),
+                        cards: $q.all(campaign.cards.map(function(data) {
+                            cacheAdtechId('cards', data);
+
+                            return cinema6.db.find('card', data.id);
+                        })),
+                        targetMiniReels: $q.all(campaign.targetMiniReels.map(function(data) {
+                            cacheAdtechId('targetMiniReels', data);
+
+                            return cinema6.db.find('experience', data.id);
+                        }))
+                    }).then(function(data) {
+                        return extend(campaign, data);
+                    });
+                };
+
+                this.findAll = function() {
+                    return $http.get(url('campaigns'))
+                        .then(pick('data'))
+                        .then(decorateCampaigns);
+                };
+
+                this.find = function(type, id) {
+                    return $http.get(url('campaign/' + id))
+                        .then(pick('data'))
+                        .then(this.decorateCampaign)
+                        .then(putInArray);
+                };
+
+                this.findQuery = function(type, query, meta) {
+                    return $http.get(url('campaigns'), { params: query })
+                        .then(fillMeta(meta))
+                        .then(pick('data'), function(response) {
+                            return response.status === 404 ?
+                                [] : $q.reject(response);
+                        })
+                        .then(decorateCampaigns);
+                };
+
+                this.create = function(type, data) {
+                    return $http.post(url('campaign'), undecorateCampaign(data))
+                        .then(pick('data'))
+                        .then(this.decorateCampaign)
+                        .then(putInArray);
+                };
+
+                this.erase = function(type, campaign) {
+                    return $http.delete(url('campaign/' + campaign.id))
+                        .then(value(null));
+                };
+
+                this.update = function(type, campaign) {
+                    return $http.put(url('campaign/' + campaign.id), undecorateCampaign(campaign))
+                        .then(pick('data'))
+                        .then(this.decorateCampaign)
+                        .then(putInArray);
+                };
             }]);
 
             $provide.constant('CWRXAdapter', ['config','$injector',
