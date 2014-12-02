@@ -25,8 +25,7 @@
                         require('http-mock')({
                             '/api/search': 'mocks/search/main.js',
                             '/api/auth': 'mocks/auth/main.js',
-                            '/api/account/org': 'mocks/org/main.js',
-                            '/api/account/user': 'mocks/user/main.js',
+                            '/api/account': 'mocks/account/main.js',
                             '/api/content': 'mocks/content/main.js',
                             '/api/election': 'mocks/vote/main.js'
                         }),
