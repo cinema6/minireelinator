@@ -219,6 +219,117 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
         }])
 
+        .factory('paginatedDbList', ['scopePromise','cinema6',
+        function                    ( scopePromise , cinema6 ) {
+            function extend() {
+                var objects = Array.prototype.slice.call(arguments);
+
+                return objects.reduce(function(result, object) {
+                    return Object.keys(object).reduce(function(result, key) {
+                        result[key] = object[key];
+                        return result;
+                    }, result);
+                }, {});
+            }
+
+            function value(val) {
+                return function() {
+                    return val;
+                };
+            }
+
+            function copyProps(props, from, to) {
+                props.forEach(function(prop) {
+                    to[prop] = from[prop];
+                });
+
+                return to;
+            }
+
+            function PaginatedList(type, query, limit) {
+                this.type = type;
+
+                this.update(query, limit);
+            }
+            PaginatedList.prototype = {
+                ensureResolution: function() {
+                    return this.items.ensureResolution()
+                        .then(value(this));
+                },
+
+                update: function(query, limit) {
+                    this.query = extend(query);
+                    this.limit = limit;
+
+                    return this.goTo(1);
+                },
+                goTo: function(page) {
+                    var list = this,
+                        limit = this.limit,
+                        previousItems = this.items || {
+                            value: [],
+                            page: {},
+                            selected: []
+                        };
+
+                    this.page = page;
+
+                    this.items = scopePromise(cinema6.db.findAll(this.type, extend(this.query, {
+                        limit: this.limit,
+                        skip: (this.page - 1) * this.limit
+                    })), previousItems.value);
+                    copyProps(['page', 'selected'], previousItems, this.items);
+
+                    this.items.ensureResolution()
+                        .then(function(items) {
+                            var info = items.value.meta.items;
+
+                            items.page = {
+                                current: ((info.start - 1) / limit) + 1,
+                                total: Math.ceil(info.total / limit)
+                            };
+                            list.selectNone();
+                        });
+
+                    return this;
+                },
+                next: function() {
+                    return this.goTo(this.page + 1);
+                },
+                prev: function() {
+                    return this.goTo(Math.max(this.page - 1, 1));
+                },
+
+                selectAll: function(_predicate) {
+                    var predicate = _predicate || value(true);
+
+                    return (this.items.selected = this.items.value.map(function() {
+                        return !!predicate.apply(null, arguments);
+                    }));
+                },
+                selectNone: function() {
+                    return this.selectAll(value(false));
+                },
+                getSelected: function() {
+                    return this.items.value.filter(function(item, index) {
+                        return this[index];
+                    }, this.items.selected);
+                },
+                areAllSelected: function(predicate) {
+                    return this.items.value
+                        .filter(predicate || value(true))
+                        .map(function(item) {
+                            return this.items.selected[this.items.value.indexOf(item)];
+                        }, this)
+                        .indexOf(false) < 0;
+                }
+            };
+
+            return function(type, query, limit) {
+                return new PaginatedList(type, query, limit);
+            };
+        }])
+
         .factory('scopePromise', ['$q',
         function                 ( $q ) {
             function ScopedPromise(promise, initialValue) {
