@@ -325,13 +325,50 @@ function( angular , c6uilib , services          , c6Drag           ) {
             };
         }])
 
-        .directive('cardTable', [function() {
+        .directive('cardTablePaginator', [function() {
+            return {
+                restrict: 'E',
+                link: function(scope, $element) {
+                    var $list = $element.find('.pageMap__list'),
+                        $scrollBox = $element.find('.pageMap__scrollBox');
+
+                    scope.$watch('scrollerViewRatio', function(ratio) {
+                        scope.scrollerWidth = $scrollBox.width() * ratio;
+                    });
+
+                    scope.$watch(function() {
+                        return $list.width();
+                    }, function(width) {
+                        if (width) {
+                            scope.scrollBoxWidth = width;
+                        }
+                    });
+                }
+            };
+        }])
+
+        .directive('cardTable', ['$window','c6Debounce',function($window,c6Debounce) {
             return {
                 restrict: 'E',
                 templateUrl: 'views/minireel/directives/card_table.html',
                 controller: 'CardTableController',
                 controllerAs: 'CardTableCtrl',
-                scope: true
+                scope: true,
+                link: function(scope, $element, attrs, controller) {
+                    var $$window = angular.element($window),
+                        $cardScroller = $element.find('#card-scroller'),
+                        $firstAddNewButton = $cardScroller.find('.card__list-item'),
+                        setDimensions = c6Debounce(function() {
+                            controller.setScrollerRect($cardScroller[0].getBoundingClientRect());
+                            controller.setFirstButtonWidth($firstAddNewButton.width());
+                        }, 250);
+
+                    setDimensions();
+                    $$window.on('resize', setDimensions);
+                    $element.on('$destroy', function() {
+                        $$window.off('resize', setDimensions);
+                    });
+                }
             };
         }])
 
@@ -339,6 +376,7 @@ function( angular , c6uilib , services          , c6Drag           ) {
         function                           ( $scope , $q , $interval , VideoThumbnailService ) {
             var self = this,
                 EditorCtrl = $scope.EditorCtrl,
+                deck = EditorCtrl.model.data.deck,
                 forEach = angular.forEach;
 
             function getDragCtrl() {
@@ -429,10 +467,87 @@ function( angular , c6uilib , services          , c6Drag           ) {
 
                 forEach(DragCtrl.draggables, addCard);
                 DragCtrl.on('draggableAdded', addCard);
+
+                return DragCtrl;
+            }
+
+            function initPagination(DragCtrl) {
+                function getAltDirection(direction) {
+                    return direction === 'right' ? 'left' : 'right';
+                }
+
+                function isOverlapping(card, direction) {
+                    var altDirection = getAltDirection(direction);
+
+                    return (card.display[direction] > self.scrollerRect[direction]) &&
+                        (card.display[altDirection] < self.scrollerRect[direction]);
+                }
+
+                function isCloser(card, closest, direction) {
+                    var altDirection = getAltDirection(direction);
+
+                    return (Math.abs(card.display[altDirection] - self.scrollerRect[direction])) <
+                        (Math.abs(closest.display[altDirection] - self.scrollerRect[direction]));
+                }
+
+                self.scrollTo = function(card) {
+                    var _card = DragCtrl.draggables[card.id];
+
+                    DragCtrl.refresh();
+
+                    self.position.x = self.position.x -
+                        self.scrollerRect.left -
+                        self.firstButtonWidth +
+                        _card.display.left;
+                };
+
+                self.scroll = function(direction) {
+                    var altDirection = getAltDirection(direction),
+                        overlappingCard,
+                        closestCard;
+
+                    DragCtrl.refresh();
+
+                    angular.forEach(DragCtrl.draggables, function(card) {
+                        if (isOverlapping(card, direction)) {
+                            overlappingCard = card;
+                        }
+
+                        closestCard = closestCard ? (
+                                isCloser(card, closestCard, direction) ?
+                                card :
+                                closestCard
+                            ) :
+                            card;
+                    });
+
+                    self.position.x = self.position.x -
+                        self.scrollerRect[altDirection] + (
+                                direction === 'right' ?
+                                -(self.firstButtonWidth) :
+                                self.firstButtonWidth
+                            ) + (
+                                overlappingCard ?
+                                overlappingCard.display[altDirection] :
+                                closestCard.display[altDirection]
+                            );
+                };
+
+                Object.defineProperties($scope, {
+                    scrollerViewRatio: {
+                        get: function() {
+                            var id = deck[deck.length - 1].id,
+                                fullWidth = DragCtrl.draggables[id].display.right;
+
+                            return self.scrollerRect.width / fullWidth;
+                        }
+                    }
+                });
             }
 
             this.position = { x: 0 };
             this.enableDrop = true;
+            this.scrollerRect = { width: 0 };
 
             this.getThumbs = function(card) {
                 var data = card.data;
@@ -440,7 +555,16 @@ function( angular , c6uilib , services          , c6Drag           ) {
                 return VideoThumbnailService.getThumbsFor(data.service, data.videoid);
             };
 
+            this.setScrollerRect = function(rect) {
+                self.scrollerRect = rect;
+            };
+
+            this.setFirstButtonWidth = function(width) {
+                self.firstButtonWidth = width;
+            };
+
             getDragCtrl()
-                .then(handleDragEvents);
+                .then(handleDragEvents)
+                .then(initPagination);
         }]);
 });
