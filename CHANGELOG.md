@@ -1,5 +1,11 @@
 # MiniReelinator
 
+## v1.5.2 (December 4, 2014)
+* *[v1.5.2.rc1]*
+  * [FIX]: Copied MRs will now have their own elections in the vote
+    database
+* *[/v1.5.2.rc1]*
+
 ## v1.5.1 (November 21, 2014)
 * *[v1.5.1.rc1]*
   * [FIX]: Fix for an issue that would cause AOL On Videos not to load
