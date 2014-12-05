@@ -1610,10 +1610,13 @@
                                 });
 
                                 cinema6.db.create.calls.mostRecent().args[1].data.deck.forEach(function(card, index) {
-                                    if (index === 0) { return; }
+                                    var original = angular.copy(minireel.data.deck[index]);
+
+                                    expect(card.id).toMatch(/rc-[a-zA-Z0-9]{14}/);
+                                    expect(card.id).not.toBe(original.id);
 
                                     expect(card).toEqual((function() {
-                                        var original = angular.copy(minireel.data.deck[index]);
+                                        original.id = jasmine.any(String);
 
                                         if (original.ballot) {
                                             delete original.ballot.election;

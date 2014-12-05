@@ -1645,6 +1645,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     minireel.status = 'pending';
                     minireel.access = 'public';
                     minireel.data.deck.forEach(function(card) {
+                        card.id = generateId('rc');
+
                         if (card.ballot) {
                             delete card.ballot.election;
                         }
