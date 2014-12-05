@@ -1751,9 +1751,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         title = minireel.data.title;
 
                     delete minireel.id;
+                    delete minireel.data.election;
                     minireel.data.title = toCopy ? (title + ' (copy)') : null;
                     minireel.status = 'pending';
                     minireel.access = 'public';
+                    minireel.data.deck.forEach(function(card) {
+                        card.id = generateId('rc');
+
+                        if (card.ballot) {
+                            delete card.ballot.election;
+                        }
+                    });
 
                     return minireel;
                 }
