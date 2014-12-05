@@ -139,7 +139,28 @@ define(['app'], function(appModule) {
             });
         });
 
-        ['find', 'create', 'update', 'erase'].forEach(function(method) {
+        describe('find(type, id)', function() {
+            var advertiser;
+
+            beforeEach(function() {
+                advertiser = {
+                    id: 'a-addca077b557eb'
+                };
+
+                $httpBackend.expectGET('/api/account/advertiser/a-addca077b557eb')
+                    .respond(200, advertiser);
+
+                adapter.find('advertiser', 'a-addca077b557eb').then(success, failure);
+
+                $httpBackend.flush();
+            });
+
+            it('should resolve to the advertiser in an array', function() {
+                expect(success).toHaveBeenCalledWith([advertiser]);
+            });
+        });
+
+        ['create', 'update', 'erase'].forEach(function(method) {
             describe(method + '()', function() {
                 beforeEach(function() {
                     $rootScope.$apply(function() {
