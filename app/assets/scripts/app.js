@@ -621,7 +621,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 CardAdapter,
                 CategoryAdapter,
                 ExpGroupAdapter,
-                CampaignAdapter
+                CampaignAdapter,
+                AdvertiserAdapter
             ].forEach(function(Adapter) {
                 Adapter.config = {
                     apiBase: '/api'
