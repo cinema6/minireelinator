@@ -600,10 +600,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             }]);
         }])
 
-        .config(['cinema6Provider','ContentAdapter','CWRXAdapter',
+        .config(['cinema6Provider','ContentAdapter','CWRXAdapter','CampaignAdapter',
                  'VoteAdapter','OrgAdapter','UserAdapter','CardAdapter',
                  'CategoryAdapter','AdvertiserAdapter','ExpGroupAdapter',
-        function( cinema6Provider , ContentAdapter , CWRXAdapter ,
+        function( cinema6Provider , ContentAdapter , CWRXAdapter , CampaignAdapter ,
                   VoteAdapter , OrgAdapter , UserAdapter , CardAdapter ,
                   CategoryAdapter , AdvertiserAdapter , ExpGroupAdapter ) {
 
@@ -614,7 +614,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 UserAdapter,
                 CardAdapter,
                 CategoryAdapter,
-                ExpGroupAdapter
+                ExpGroupAdapter,
+                CampaignAdapter
             ].forEach(function(Adapter) {
                 Adapter.config = {
                     apiBase: '/api'
@@ -629,7 +630,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 card: CardAdapter,
                 category: CategoryAdapter,
                 advertiser: AdvertiserAdapter,
-                expGroup: ExpGroupAdapter
+                expGroup: ExpGroupAdapter,
+                campaign: CampaignAdapter
             };
 
             cinema6Provider.useAdapter(CWRXAdapter);
