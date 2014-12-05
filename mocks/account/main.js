@@ -99,4 +99,16 @@ module.exports = function(http) {
                     });
             }));
     });
+
+    http.whenGET('/api/account/advertiser/**', function(request) {
+        var id = idFromPath(request.pathname),
+            filePath = objectPath('advertisers', id),
+            advertiser = grunt.file.exists(filePath) ? grunt.file.readJSON(filePath) : null;
+
+        if (advertiser) {
+            this.respond(200, extend(advertiser, { id: id }));
+        } else {
+            this.respond(404, 'NOT FOUND');
+        }
+    });
 };
