@@ -246,10 +246,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 return to;
             }
 
-            function PaginatedList(type, query, limit) {
+            function PaginatedList(type, query, limit, page) {
                 this.type = type;
+                this.query = extend(query);
+                this.limit = limit;
 
-                this.update(query, limit);
+                this.goTo(page);
             }
             PaginatedList.prototype = {
                 ensureResolution: function() {
@@ -299,6 +301,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 prev: function() {
                     return this.goTo(Math.max(this.page - 1, 1));
                 },
+                refresh: function() {
+                    return this.goTo(this.page);
+                },
 
                 selectAll: function(_predicate) {
                     var predicate = _predicate || value(true);
@@ -325,8 +330,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 }
             };
 
-            return function(type, query, limit) {
-                return new PaginatedList(type, query, limit);
+            return function(type, query, limit, page) {
+                return new PaginatedList(type, query, limit, page || 1);
             };
         }])
 

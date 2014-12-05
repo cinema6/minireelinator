@@ -1,7 +1,7 @@
 define(['minireel/services'], function(servicesModule) {
     'use strict';
 
-    describe('paginatedDbList(type, query, limit)', function() {
+    describe('paginatedDbList(type, query, limit, page)', function() {
         var cinema6,
             $rootScope,
             scopePromise,
@@ -50,6 +50,26 @@ define(['minireel/services'], function(servicesModule) {
                     filter: 'all',
                     limit: 10,
                     skip: 0
+                });
+            });
+
+            describe('calling with a page', function() {
+                beforeEach(function() {
+                    cinema6.db.findAll.calls.reset();
+
+                    result = paginatedDbList('campaign', {
+                        org: 'o-5013988a2d7b6f'
+                    }, 50, 3);
+
+                    expect(cinema6.db.findAll.calls.count()).toBe(1);
+                });
+
+                it('should make a database query for that page', function() {
+                    expect(cinema6.db.findAll).toHaveBeenCalledWith('campaign', {
+                        org: 'o-5013988a2d7b6f',
+                        limit: 50,
+                        skip: 100
+                    });
                 });
             });
 
@@ -329,6 +349,26 @@ define(['minireel/services'], function(servicesModule) {
                             it('should return itself', function() {
                                 expect(prevResult).toBe(result);
                             });
+                        });
+                    });
+
+                    describe('refresh()', function() {
+                        var refreshResult;
+
+                        beforeEach(function() {
+                            result.goTo(3);
+
+                            spyOn(result, 'goTo').and.callThrough();
+
+                            refreshResult = result.refresh();
+                        });
+
+                        it('should goTo() the current page', function() {
+                            expect(result.goTo).toHaveBeenCalledWith(3);
+                        });
+
+                        it('should return itself', function() {
+                            expect(refreshResult).toBe(result);
                         });
                     });
 
