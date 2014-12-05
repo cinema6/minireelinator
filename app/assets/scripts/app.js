@@ -420,24 +420,30 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
             $provide.constant('AdvertiserAdapter', ['config','$http','$q',
             function                               ( config , $http , $q ) {
-                function url() {
-                    return config.apiBase + '/account/advertisers';
+                function url(end) {
+                    return config.apiBase + '/account/' + end;
                 }
 
                 this.findAll = function() {
-                    return $http.get(url())
+                    return $http.get(url('advertisers'))
                         .then(pick('data'));
                 };
 
+                this.find = function(type, id) {
+                    return $http.get(url('advertiser/' + id))
+                        .then(pick('data'))
+                        .then(putInArray);
+                };
+
                 this.findQuery = function(type, query) {
-                    return $http.get(url(), { params: query })
+                    return $http.get(url('advertisers'), { params: query })
                         .then(pick('data'), function(response) {
                             return response.status === 404 ?
                                 [] : $q.reject(response);
                         });
                 };
 
-                ['find', 'create', 'update', 'erase'].forEach(function(method) {
+                ['create', 'update', 'erase'].forEach(function(method) {
                     this[method] = function() {
                         return $q.reject('AdvertiserAdapter.' + method + '() is not implemented.');
                     };
