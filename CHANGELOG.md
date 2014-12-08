@@ -1,6 +1,6 @@
 # MiniReelinator
 
-* *[v1.5.4.rc1]*
+* *[v1.6.0.rc1]*
   * Changed tab order for new card wizard
 
 ## v1.5.3 (December 4, 2014)
