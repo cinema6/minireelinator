@@ -68,21 +68,17 @@
     <c6-alias model="EditorCtrl.model.data.deck" as="deck">
 </c6-drag-space>
 
-<card-table-paginator>
-    <div class="pageMap__group">
-        <div c6-drag-space class="pageMap__scrollBox" ng-style="{ width: scrollBoxWidth }">
-            <div c6-draggable class="pageMap__scroller" ng-style="{ width: scrollerWidth }">
-                <div class="pageMap__scrollBar">&nbsp;</div>
-            </div>
-            <ul class="pageMap__list">
-                <li ng-repeat="card in EditorCtrl.model.data.deck" class="pageMap__item">
-                    <button class="btnInvis pageMap__page"
-                    ng-class="{'pageMap__page--error' : EditorCtrl.errorForCard(card)}"
-                    ng-click="CardTableCtrl.scrollTo(card)">
-                        <span class="btn__label">{{$index + 1}}</span>
-                    </button>
-                </li>
-            </ul>
-        </div>
-    </div>
+<card-table-paginator
+    on-scroll="CardTableCtrl.scrollTo(position)"
+    scroller-view-ratio="CardTableCtrl.scrollerViewRatio"
+    scroller-view-position="CardTableCtrl.scrollerViewPosition">
+        <ul class="pageMap__list">
+            <li style="width:25px;margin: 0 2px;background-color:#eee;text-align:left;" ng-repeat="card in EditorCtrl.model.data.deck" class="pageMap__item">
+                <button class="btnInvis pageMap__page"
+                ng-class="{'pageMap__page--error' : EditorCtrl.errorForCard(card)}"
+                ng-click="CardTableCtrl.scrollToCard(card)">
+                    <span class="btn__label">{{$index + 1}}</span>
+                </button>
+            </li>
+        </ul>
 </card-table-paginator>
