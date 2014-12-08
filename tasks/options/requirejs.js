@@ -12,7 +12,10 @@ module.exports = {
             },
             modules: [{
                 name: 'main'
-            }]
+            }],
+            rawText: {
+                'version': 'define([], "<%= _version %>");'
+            }
         }
     }
 };

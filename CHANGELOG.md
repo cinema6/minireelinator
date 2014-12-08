@@ -1,5 +1,22 @@
 # MiniReelinator
 
+* *[v1.6.0.rc1]*
+  * Changed tab order for new card wizard
+  * [FEATURE]: Added ability to render embed code for MiniReel.tv
+    (iframe embed code)
+
+## v1.5.3 (December 4, 2014)
+* *[v1.5.3.rc1]*
+  * When a MR is copied, the cards in that MR will be given new IDs
+  * [FEATURE]: The app build version is now shown in the footer
+* *[/v1.5.3.rc1]*
+
+## v1.5.2 (December 4, 2014)
+* *[v1.5.2.rc1]*
+  * [FIX]: Copied MRs will now have their own elections in the vote
+    database
+* *[/v1.5.2.rc1]*
+
 ## v1.5.1 (November 21, 2014)
 * *[v1.5.1.rc1]*
   * [FIX]: Fix for an issue that would cause AOL On Videos not to load

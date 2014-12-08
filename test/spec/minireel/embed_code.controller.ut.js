@@ -20,7 +20,7 @@
                 $attrs = {};
 
                 orgSettings = {
-                    embedTypes: ['shortcode', 'script'],
+                    embedTypes: ['shortcode', 'script', 'iframe'],
                     embedDefaults: {
                         size: null
                     }
@@ -39,6 +39,7 @@
                     MiniReelState.cModel = {
                         data: {
                             c6EmbedSrc: '//lib.cinema6.com/c6embed/v0.7.0-0-g495dfa0/c6embed.min.js',
+                            soloPlayerUrl: '//cinema6.com/solo',
                             modes: [
                                 {
                                     value: 'lightbox',
@@ -133,6 +134,10 @@
                             {
                                 name: 'Script Tag',
                                 value: 'script'
+                            },
+                            {
+                                name: 'IFrame',
+                                value: 'iframe'
                             }
                         ]);
                     });
@@ -210,6 +215,50 @@
                 });
 
                 describe('code', function() {
+                    describe('if the format is "iframe"', function() {
+                        beforeEach(function() {
+                            EmbedCodeCtrl.format = 'iframe';
+                        });
+
+                        it('should be an iframe', function() {
+                            expect(EmbedCodeCtrl.code).toMatch(/<iframe .+?><\/iframe>/);
+                        });
+
+                        it('should have a frameborder of 0', function() {
+                            expect(EmbedCodeCtrl.code).toMatch(/frameborder="0"/);
+                        });
+
+                        it('should have a src that points to the solo page', function() {
+                            expect(EmbedCodeCtrl.code).toMatch(/\/\/cinema6\.com\/solo\?id=e-0277a8c7564f87/);
+                        });
+
+                        describe('if the size is responsive', function() {
+                            beforeEach(function() {
+                                EmbedCodeCtrl.mode = 'responsive';
+                            });
+
+                            it('should have a width and height of 100%', function() {
+                                expect(EmbedCodeCtrl.code).toMatch(/width="100%"/);
+                                expect(EmbedCodeCtrl.code).toMatch(/height="100%"/);
+                            });
+                        });
+
+                        describe('if the size is not responsive', function() {
+                            beforeEach(function() {
+                                EmbedCodeCtrl.mode = 'custom';
+                                EmbedCodeCtrl.size = {
+                                    height: '200px',
+                                    width: '300px'
+                                };
+                            });
+
+                            it('should have width and height set', function() {
+                                expect(EmbedCodeCtrl.code).toMatch(/width="300px"/);
+                                expect(EmbedCodeCtrl.code).toMatch(/height="200px"/);
+                            });
+                        });
+                    });
+
                     describe('if the format is "shortcode"', function() {
                         beforeEach(function() {
                             EmbedCodeCtrl.format = 'shortcode';

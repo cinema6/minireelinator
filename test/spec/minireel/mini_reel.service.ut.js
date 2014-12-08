@@ -294,7 +294,7 @@
                                     }
                                 },
                                 ballot: {
-                                    electionId: 'el-8bb2395fbea873',
+                                    election: 'el-8bb2395fbea873',
                                     prompt: 'Are you willing to spend all your money on this product?',
                                     choices: [
                                         'Of Course',
@@ -1398,7 +1398,7 @@
                                     autoplay: false,
                                     autoadvance: true,
                                     survey: {
-                                        electionId: 'el-8bb2395fbea873',
+                                        election: 'el-8bb2395fbea873',
                                         prompt: 'Are you willing to spend all your money on this product?',
                                         choices: [
                                             'Of Course',
@@ -1671,9 +1671,20 @@
                                 });
 
                                 cinema6.db.create.calls.mostRecent().args[1].data.deck.forEach(function(card, index) {
-                                    if (index === 0) { return; }
+                                    var original = angular.copy(minireel.data.deck[index]);
 
-                                    expect(minireel.data.deck[index]).toEqual(card);
+                                    expect(card.id).toMatch(/rc-[a-zA-Z0-9]{14}/);
+                                    expect(card.id).not.toBe(original.id);
+
+                                    expect(card).toEqual((function() {
+                                        original.id = jasmine.any(String);
+
+                                        if (original.ballot) {
+                                            delete original.ballot.election;
+                                        }
+
+                                        return original;
+                                    }()));
                                 });
                             });
 
@@ -1682,6 +1693,8 @@
                                 expect(newModel.data.title).toBe('My MiniReel (copy)');
                                 expect(newModel.status).toBe('pending');
                                 expect(newModel.access).toBe('public');
+                                expect('election' in newModel.data).toBe(false);
+                                expect('election' in newModel.data.deck[5].ballot).toBe(false);
                             });
                         });
 
