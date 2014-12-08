@@ -570,6 +570,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
             var minireelState = c6State.get('MiniReel'),
                 categories = minireelState.cModel.data.modes,
                 c6EmbedSrc = minireelState.cModel.data.c6EmbedSrc,
+                soloPlayerUrl = minireelState.cModel.data.soloPlayerUrl,
                 orgSettings = SettingsService.getReadOnly('MR::org');
 
             var allFormats = {
@@ -580,6 +581,10 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                 shortcode: {
                     name: 'Wordpress Shortcode',
                     value: 'shortcode'
+                },
+                iframe: {
+                    name: 'IFrame',
+                    value: 'iframe'
                 }
             };
 
@@ -660,6 +665,16 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                         return formatEmbed(
                             '<script src="' + c6EmbedSrc + '" |data-{attr}="{value}"|></script>',
                             data
+                        );
+                    case 'iframe':
+                        return formatEmbed(
+                            '<iframe |{attr}="{value}"|></iframe>',
+                            {
+                                src: soloPlayerUrl + '?id=' + minireel.id,
+                                frameborder: '0',
+                                width: explicitDimensions ? this.size.width : '100%',
+                                height: explicitDimensions ? this.size.height : '100%'
+                            }
                         );
                     }
                 }
