@@ -4,6 +4,7 @@
   * Changed tab order for new card wizard
   * [FEATURE]: Added ability to render embed code for MiniReel.tv
     (iframe embed code)
+  * [FEATURE]: Added ability to add Rumble.com videos to MiniReels
 
 ## v1.5.3 (December 4, 2014)
 * *[v1.5.3.rc1]*

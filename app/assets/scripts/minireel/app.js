@@ -321,6 +321,19 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
             };
         }])
 
+        .filter('embedid', ['VideoService',
+        function           ( VideoService ) {
+            var embedIdFromVideoId = VideoService.embedIdFromVideoId;
+
+            function reverse(array) {
+                return Array.prototype.reverse.call(array);
+            }
+
+            return function() {
+                return embedIdFromVideoId.apply(null, reverse(arguments));
+            };
+        }])
+
         .directive('paginatorControls', [function() {
             return {
                 scope: {
