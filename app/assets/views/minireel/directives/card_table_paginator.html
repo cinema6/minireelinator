@@ -4,5 +4,14 @@
             <div class="pageMap__scrollBar">&nbsp;</div>
         </div>
         <div ng-transclude></div>
+        <!-- <ul class="pageMap__list">
+            <li style="width:25px;margin: 0 2px;background-color:#fff;text-align:center;" ng-repeat="card in paginatorDeck" class="pageMap__item">
+                <button class="btnInvis pageMap__page"
+                ng-class="{'pageMap__page--error' : errorForCard({card: card})}"
+                ng-click="scrollTo({card: card})">
+                    <span class="btn__label">{{$index + 1}}</span>
+                </button>
+            </li>
+        </ul> -->
     </div>
 </div>

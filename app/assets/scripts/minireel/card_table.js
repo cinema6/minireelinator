@@ -331,6 +331,7 @@ function( angular , c6uilib , services          , c6Drag           ) {
                 templateUrl: 'views/minireel/directives/card_table_paginator.html',
                 transclude: true,
                 scope: {
+                    deck: '=',
                     onScroll: '&',
                     scrollerViewRatio: '=',
                     scrollerViewPosition: '='
@@ -340,6 +341,7 @@ function( angular , c6uilib , services          , c6Drag           ) {
                         $scrollBox = $element.find('.pageMap__scrollBox'),
                         $scroller = $element.find('.pageMap__scroller'),
                         scroller = $scroller.data('cDrag'),
+                        buttonWidth = 0,
                         data = {};
 
                     function beforeMove(marker, event) {
@@ -373,9 +375,20 @@ function( angular , c6uilib , services          , c6Drag           ) {
                         });
                     }
 
-                    function roundDecimal(num) {
-                        return num;
-                        // return parseFloat((Math.round(num * 2) / 2).toFixed(1));
+                    function setScrollBoxWidth() {
+                        var stopWatch = scope.$watch(function() {
+                            return $list.find('.pageMap__item').length;
+                        }, function(items) {
+                            var buttons = scope.deck.length + 1,
+                                listWidth = $list.width();
+
+                            if (items === buttons) {
+                                buttonWidth = listWidth / buttons;
+                                scope.scrollBoxWidth = listWidth;
+                                scope.scrollerWidth = listWidth * scope.scrollerViewRatio;
+                                stopWatch();
+                            }
+                        });
                     }
 
                     Object.defineProperties(data, {
@@ -390,26 +403,29 @@ function( angular , c6uilib , services          , c6Drag           ) {
                         .on('dropStart', dropStart);
 
                     scope.$watch('scrollerViewRatio', function(ratio) {
-                        scope.scrollerWidth = roundDecimal($scrollBox.width() * ratio);
+                        if (!buttonWidth) { return; }
+
+                        var scrollBoxWidth = buttonWidth;
+
+                        scope.deck.forEach(function() {
+                            scrollBoxWidth += buttonWidth;
+                        });
+
+                        scope.scrollBoxWidth = scrollBoxWidth;
+                        scope.scrollerWidth = scrollBoxWidth * ratio;
                     });
 
                     scope.$watch('scrollerViewPosition', function(position) {
-                        $scroller.css({left: roundDecimal($scrollBox.width() * position) + 'px'});
+                        $scroller.css({ left: scope.scrollBoxWidth * position + 'px' });
                     });
 
-                    scope.$watch(function() {
-                        return $list.width();
-                    }, function(width) {
-                        if (width) {
-                            scope.scrollBoxWidth = width;
-                            scope.scrollerWidth = roundDecimal(width * scope.scrollerViewRatio);
-                        }
-                    });
+                    setScrollBoxWidth();
                 }
             };
         }])
 
-        .directive('cardTable', ['$window','c6Debounce',function($window,c6Debounce) {
+        .directive('cardTable', ['$window','c6Debounce',
+        function                ( $window , c6Debounce ) {
             return {
                 restrict: 'E',
                 templateUrl: 'views/minireel/directives/card_table.html',
@@ -419,15 +435,17 @@ function( angular , c6uilib , services          , c6Drag           ) {
                 link: function(scope, $element, attrs, controller) {
                     var $$window = angular.element($window),
                         $cardScroller = $element.find('#card-scroller'),
-                        $firstAddNewButton = $cardScroller.find('.card__list-item'),
                         setDimensions = c6Debounce(function() {
-                            var fullWidth = 0;
-                            $cardScroller.find('.card__list-item').each(function(i, el) {
-                                fullWidth += el.clientWidth;
-                            });
-                            controller.setScrollerFullWidth(fullWidth - $firstAddNewButton.width());
+                            var $items = $cardScroller.find('.card__list-item'),
+                                firstButtonWidth = $items[0].clientWidth,
+                                cardWidth = $items[1].clientWidth,
+                                lastCardWidth = $items[$items.length - 1].clientWidth,
+                                fullWidth = (cardWidth * (controller.deck.length - 1)) +
+                                    lastCardWidth;
+
+                            controller.setScrollerFullWidth(fullWidth);
+                            controller.setFirstButtonWidth(firstButtonWidth);
                             controller.setScrollerRect($cardScroller[0].getBoundingClientRect());
-                            controller.setFirstButtonWidth($firstAddNewButton.width());
                         }, 250);
 
                     setDimensions();
@@ -435,6 +453,8 @@ function( angular , c6uilib , services          , c6Drag           ) {
                     $element.on('$destroy', function() {
                         $$window.off('resize', setDimensions);
                     });
+
+                    scope.$watchCollection('EditorCtrl.model.data.deck', setDimensions);
                 }
             };
         }])
@@ -557,14 +577,14 @@ function( angular , c6uilib , services          , c6Drag           ) {
                 }
 
                 self.scrollToCard = function(card) {
-                    var _card = DragCtrl.draggables[card.id];
+                    var draggable = DragCtrl.draggables[card.id];
 
                     DragCtrl.refresh();
 
                     self.position.x = self.position.x -
                         self.scrollerRect.left -
                         self.firstButtonWidth +
-                        _card.display.left;
+                        draggable.display.left;
                 };
 
                 self.scrollTo = function(position) {
@@ -594,7 +614,9 @@ function( angular , c6uilib , services          , c6Drag           ) {
 
                     self.position.x = Math.max(
                             0, Math.min(
-                                (self.scrollerFullWidth - self.scrollerRect.width),
+                                (self.scrollerFullWidth +
+                                self.firstButtonWidth -
+                                self.scrollerRect.width),
                                 self.position.x -
                                 self.scrollerRect[altDirection] + (
                                         direction === 'right' ?
@@ -612,7 +634,10 @@ function( angular , c6uilib , services          , c6Drag           ) {
                 Object.defineProperties(self, {
                     scrollerViewRatio: {
                         get: function() {
-                            return (self.scrollerRect.width - self.firstButtonWidth) / self.scrollerFullWidth;
+                            var percent = (self.scrollerRect.width - self.firstButtonWidth) /
+                                self.scrollerFullWidth;
+
+                            return Math.min(percent, 1);
                         }
                     },
                     scrollerViewPosition: {
@@ -625,9 +650,10 @@ function( angular , c6uilib , services          , c6Drag           ) {
 
             this.position = { x: 0 };
             this.enableDrop = true;
-            this.scrollerRect = { width: 0 };
-            this.firstButtonWidth = 0;
-            this.scrollerFullWidth = 0;
+            this.scrollerRect = { width: 1 };
+            this.firstButtonWidth = 1;
+            this.scrollerFullWidth = 1;
+            this.deck = EditorCtrl.model.data.deck;
 
             this.getThumbs = function(card) {
                 var data = card.data;
