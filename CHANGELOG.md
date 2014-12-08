@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.6.0.rc1]*
+  * Changed tab order for new card wizard
+
 ## v1.5.3 (December 4, 2014)
 * *[v1.5.3.rc1]*
   * When a MR is copied, the cards in that MR will be given new IDs
