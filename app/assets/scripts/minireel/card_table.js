@@ -325,10 +325,36 @@ function( angular , c6uilib , services          , c6Drag           ) {
             };
         }])
 
+        .directive('cardTablePaginatorItem', [function() {
+            return {
+                restrict: 'A',
+                require: '^cardTablePaginator',
+                link: function(scope, $element, attrs, controller) {
+                    controller.itemReady();
+                }
+            };
+        }])
+
+        .controller('CardTablePaginatorController', ['$scope',function($scope) {
+            var buttonCounter = 0;
+
+            $scope.ready = false;
+
+            this.itemReady = function() {
+                buttonCounter++;
+
+                if (buttonCounter === $scope.deck.length - 1) {
+                    $scope.ready = true;
+                }
+            };
+        }])
+
         .directive('cardTablePaginator', [function() {
             return {
                 restrict: 'E',
                 templateUrl: 'views/minireel/directives/card_table_paginator.html',
+                controller: 'CardTablePaginatorController',
+                controllerAs: 'CardTablePaginatorCtrl',
                 transclude: true,
                 scope: {
                     deck: '=',
@@ -380,21 +406,32 @@ function( angular , c6uilib , services          , c6Drag           ) {
                         });
                     }
 
-                    function setScrollBoxWidth() {
-                        var stopWatch = scope.$watch(function() {
-                            return $list.find('.pageMap__item').length;
-                        }, function(items) {
+                    // function setScrollBoxWidth() {
+                    //     var stopWatch = scope.$watch(function() {
+                    //         return $list.find('.pageMap__item').length;
+                    //     }, function(items) {
+                    //         var buttons = scope.deck.length + 1,
+                    //             listWidth = $list.width();
+
+                    //         if (items === buttons) {
+                    //             buttonWidth = listWidth / buttons;
+                    //             scope.scrollBoxWidth = listWidth;
+                    //             scope.scrollerWidth = listWidth * scope.scrollerViewRatio;
+                    //             stopWatch();
+                    //         }
+                    //     });
+                    // }
+
+                    scope.$watch('ready', function(ready) {
+                        if (ready) {
                             var buttons = scope.deck.length + 1,
                                 listWidth = $list.width();
 
-                            if (items === buttons) {
-                                buttonWidth = listWidth / buttons;
-                                scope.scrollBoxWidth = listWidth;
-                                scope.scrollerWidth = listWidth * scope.scrollerViewRatio;
-                                stopWatch();
-                            }
-                        });
-                    }
+                            buttonWidth = listWidth / buttons;
+                            scope.scrollBoxWidth = listWidth;
+                            scope.scrollerWidth = listWidth * scope.scrollerViewRatio;
+                        }
+                    });
 
                     scroller.on('beforeMove', beforeMove)
                         .on('dropStart', dropStart);
@@ -416,7 +453,7 @@ function( angular , c6uilib , services          , c6Drag           ) {
                         $scroller.css({ left: scope.scrollBoxWidth * position + 'px' });
                     });
 
-                    setScrollBoxWidth();
+                    // setScrollBoxWidth();
                 }
             };
         }])

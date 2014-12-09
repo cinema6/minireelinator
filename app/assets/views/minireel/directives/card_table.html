@@ -74,7 +74,7 @@
     scroller-view-ratio="CardTableCtrl.scrollerViewRatio"
     scroller-view-position="CardTableCtrl.scrollerViewPosition">
         <ul class="pageMap__list">
-            <li style="width:25px;margin: 0 2px;background-color:#fff;text-align:center;" ng-repeat="card in EditorCtrl.model.data.deck" class="pageMap__item" ng-if="($index !== EditorCtrl.model.data.deck.length - 1)">
+            <li style="width:25px;margin: 0 2px;background-color:#fff;text-align:center;" ng-repeat="card in EditorCtrl.model.data.deck" class="pageMap__item" ng-if="($index !== EditorCtrl.model.data.deck.length - 1)" card-table-paginator-item>
                 <button class="btnInvis pageMap__page"
                 ng-class="{'pageMap__page--error' : EditorCtrl.errorForCard(card)}"
                 ng-click="CardTableCtrl.scrollToCard(card)">
