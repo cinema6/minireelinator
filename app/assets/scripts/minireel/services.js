@@ -308,6 +308,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 selectAll: function(_predicate) {
                     var predicate = _predicate || value(true);
 
+                    /* jshint boss:true */
                     return (this.items.selected = this.items.value.map(function() {
                         return !!predicate.apply(null, arguments);
                     }));
