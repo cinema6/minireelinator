@@ -1,11 +1,15 @@
 {
+    "adtechId": "87654321",
+    "name": "the_bar_2",
+    "label": "The Bar (2)",
+    "categories": ["food"],
+    "advertiserId": "a-282824b8bb40a2",
+    "logos": {
+        "square": "square.png"
+    },
+    "links": {},
     "miniReels": [],
-    "cards": [
-        {
-            "adtechId": "55132748",
-            "id": "rc-475345435"
-        }
-    ],
+    "cards": [],
     "targetMiniReels": [],
     "created": "2014-12-02T18:03:22.663Z",
     "user": "u-35b096c999711b",
