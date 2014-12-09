@@ -1,7 +1,7 @@
 <div class="mast__group">
     <header class="mast clearfix">
         <nav class="mainNav">
-            <ul class="mainNav__list clearfix">
+            <ul class="mainNav__list clearfix" c6-alias="PortalCtrl.model as user">
                 <li class="mainNav__item">
                     <a c6-sref="Application" title="Cinema6" 
                         class="c6Brand c6Brand--dark c6Sprite--alpha">
@@ -32,9 +32,14 @@
                         <span class="mainNav__label">Ad Manager</span>
                     </a>
                 </li>
-                <li class="mainNav__item" ng-if="!!PortalCtrl.model.permissions.experiences.editSponsorships">
+                <li class="mainNav__item" ng-if="!!user.permissions.experiences.editSponsorships">
                     <a c6-sref="MR:Sponsor.Manager" title="Sponsorship Manager" class="mainNav__link">
                         <span class="mainNav__label">Sponsorship Manager</span>
+                    </a>
+                </li>
+                <li class="mainNav__item" ng-if="user.permissions.campaigns.edit === 'all'">
+                    <a c6-sref="MR:Campaigns" title="Campaign Manager" class="mainNav__link">
+                        <span class="mainNav__label">Campaign Manager</span>
                     </a>
                 </li>
 
@@ -64,7 +69,7 @@
                         </li>
                     </ul>
                 </li>
-                <li c6-alias="PortalCtrl.model as user" class="mainNav__item mainNav__item--user">
+                <li class="mainNav__item mainNav__item--user">
                     <a c6-sref="Account" c6-params="{}" title="Welcome {{user.firstName}} {{user.lastName}}" class="mainNav__link mainNav__link--userInfo">
                         <span class="mainNav__label">{{user.firstName}} {{user.lastName}}</span>
                         <span class="mainNav__profileHolder">
