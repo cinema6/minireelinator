@@ -173,7 +173,7 @@
         float:left;
         width:50%;
     }
-    youtube-player, vimeo-player, dailymotion-player, .vidFrame {
+    youtube-player, vimeo-player, dailymotion-player, rumble-player, .vidFrame {
         display: block;
         width: 100%; height:20em;
     }

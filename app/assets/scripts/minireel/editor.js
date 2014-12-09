@@ -165,7 +165,7 @@ VideoCardController           ) {
 
                 function fetchThumbs(proxy) {
                     return $q.all(proxy.data.deck.filter(function(card) {
-                        return (/^(yahoo|aol)$/).test(card.data.service) && !card.thumb;
+                        return (/^(yahoo|aol|rumble)$/).test(card.data.service) && !card.thumb;
                     }).map(function(card) {
                         var service = card.data.service,
                             videoid = card.data.videoid;
@@ -1304,18 +1304,18 @@ VideoCardController           ) {
                     get: function() {
                         var state = c6State.current;
 
-                        if (/^(MR:EditCard.(Video|Ballot))$/.test(state)) {
+                        if (/^(MR:EditCard.(Copy|Ballot))$/.test(state)) {
                             return copy({
                                 text: EditorCtrl.model.status === 'active' ? 'I\'m Done!' : 'Save',
                                 action: function() { self.save(); },
-                                enabled: this.canSave
+                                enabled: this.videoComplete && this.canSave
                             }, primaryButton);
                         }
 
                         return copy({
                             text: 'Next Step',
-                            action: function() { c6State.goTo('MR:EditCard.Video'); },
-                            enabled: this.copyComplete && !EditorCtrl.errorForCard(this.model)
+                            action: function() { c6State.goTo('MR:EditCard.Copy'); },
+                            enabled: this.videoComplete && !EditorCtrl.errorForCard(this.model)
                         }, primaryButton);
                     }
                 },
@@ -1373,7 +1373,7 @@ VideoCardController           ) {
                     case 'video':
                     case 'videoBallot':
                     case 'text':
-                        return [copyTab, videoTab, ballotTab];
+                        return [videoTab, copyTab, ballotTab];
                     default:
                         return [];
                     }

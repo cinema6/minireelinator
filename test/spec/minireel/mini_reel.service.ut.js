@@ -525,6 +525,35 @@
                                 card.data.code = VideoService.embedCodeFromData(card.data.service, card.data.videoid);
 
                                 return card;
+                            }()),
+                            (function() {
+                                var card = {
+                                    id: 'rc-8142d1b5897b32',
+                                    type: 'rumble',
+                                    title: 'Rumble Card',
+                                    note: 'This is a Rumble card.',
+                                    source: 'Rumble',
+                                    placementId: null,
+                                    templateUrl: null,
+                                    sponsored: false,
+                                    campaign: {
+                                        campaignId: null,
+                                        advertiserId: null,
+                                        minViewTime: null
+                                    },
+                                    collateral: {},
+                                    links: {},
+                                    params: {},
+                                    modules: [],
+                                    data: {
+                                        skip: true,
+                                        siteid: 'v2z8ro-willie-perfoming-at-school-talent-show'
+                                    }
+                                };
+
+                                card.data.videoid = VideoService.embedIdFromVideoId('rumble', card.data.siteid);
+
+                                return card;
                             }())
                         ]
                     }
@@ -1481,6 +1510,38 @@
                                     end: null
                                 }
                             });
+
+                            expect(deck[13]).toEqual({
+                                id: 'rc-8142d1b5897b32',
+                                type: 'video',
+                                title: 'Rumble Card',
+                                note: 'This is a Rumble card.',
+                                label: 'Video',
+                                ad: false,
+                                view: 'video',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
+                                params: {},
+                                thumb: null,
+                                data: {
+                                    skip: 'anytime',
+                                    autoplay: null,
+                                    autoadvance: null,
+                                    survey: null,
+                                    service: 'rumble',
+                                    videoid: 'v2z8ro-willie-perfoming-at-school-talent-show',
+                                    start: null,
+                                    end: null
+                                }
+                            });
                         });
 
                         it('should transpile the links cards', function() {
@@ -1733,7 +1794,7 @@
                             });
                             expect(result.data).toEqual(minireel.data);
                             minireel.data.deck.forEach(function(card, index) {
-                                expect(card).toEqual(result.data.deck[index], card.id);
+                                expect(result.data.deck[index]).toEqual(card, card.id);
                             });
                             expect(result).not.toBe(minireel);
                         });

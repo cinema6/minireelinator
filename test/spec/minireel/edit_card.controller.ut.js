@@ -206,7 +206,7 @@
                         });
 
                         it('should enable the "copy", "ballot", and "video" tabs', function() {
-                            expect(EditCardCtrl.tabs).toEqual([copy, video, ballot]);
+                            expect(EditCardCtrl.tabs).toEqual([video, copy, ballot]);
                         });
 
                         it('should not set data.source', function() {
@@ -221,7 +221,7 @@
                         });
 
                         it('should enable the "copy" and "video" tabs', function() {
-                            expect(EditCardCtrl.tabs).toEqual([copy, video, ballot]);
+                            expect(EditCardCtrl.tabs).toEqual([video, copy, ballot]);
                         });
 
                         it('should not set data.source', function() {
@@ -236,7 +236,7 @@
                         });
 
                         it('should enable the "copy" and "video" tabs', function() {
-                            expect(EditCardCtrl.tabs).toEqual([copy, video, ballot]);
+                            expect(EditCardCtrl.tabs).toEqual([video, copy, ballot]);
                         });
 
                         it('should not set data.source', function() {
@@ -622,9 +622,9 @@
                             });
                         });
 
-                        describe('on the MR:EditCard.Copy state', function() {
+                        describe('on the MR:EditCard.Video state', function() {
                             beforeEach(function() {
-                                setCurrentState('MR:EditCard.Copy');
+                                setCurrentState('MR:EditCard.Video');
                             });
 
                             describe('the text', function() {
@@ -639,7 +639,7 @@
                                 });
 
                                 it('should go to the editor.editCard.video state', function() {
-                                    expect(c6State.goTo).toHaveBeenCalledWith('MR:EditCard.Video');
+                                    expect(c6State.goTo).toHaveBeenCalledWith('MR:EditCard.Copy');
                                 });
                             });
 
@@ -650,28 +650,15 @@
                                             EditorCtrl.errorForCard.and.returnValue(error);
                                         });
 
-                                        [true, false].forEach(function(bool) {
-                                            describe('if copyComplete is ' + bool, function() {
-                                                beforeEach(function() {
-                                                    Object.defineProperty(EditCardCtrl, 'copyComplete', {
-                                                        value: bool
-                                                    });
-                                                });
-
-                                                it('should be ' + bool && !error, function() {
-                                                    expect(EditCardCtrl.primaryButton.enabled).toBe(bool && !error);
-                                                    if (EditorCtrl.errorForCard.calls.count()) {
-                                                        expect(EditorCtrl.errorForCard.calls.mostRecent().args[0]).toBe(model);
-                                                    }
-                                                });
-                                            });
+                                        it('should be ' + !error, function() {
+                                            expect(EditCardCtrl.primaryButton.enabled).toBe(!error);
                                         });
                                     });
                                 });
                             });
                         });
 
-                        ['MR:EditCard.Video', 'MR:EditCard.Ballot'].forEach(function(state) {
+                        ['MR:EditCard.Copy', 'MR:EditCard.Ballot'].forEach(function(state) {
                             describe('on the ' + state + ' state', function() {
                                 beforeEach(function() {
                                     setCurrentState(state);
