@@ -7,10 +7,12 @@ define([], function() {
 
         this.limit = parseInt(query.limit) || 50;
         this.page = parseInt(query.page) || 1;
+        this.filter = null;
 
         this.queryParams = {
             limit: '=',
-            page: '='
+            page: '=',
+            filter: '='
         };
     }
 
