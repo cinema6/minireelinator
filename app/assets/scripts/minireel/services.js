@@ -920,6 +920,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return new ThumbModel(_private.fetchDailyMotionThumbs(videoid));
                         case 'yahoo':
                         case 'aol':
+                        case 'rumble':
                             return new ThumbModel(_private.fetchOpenGraphThumbs(service, videoid));
                         default:
                             return new ThumbModel($q.when({
@@ -999,6 +1000,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     return 'http://on.aol.com/video/' + id;
                 case 'yahoo':
                     return 'https://screen.yahoo.com/' + id + '.html';
+                case 'rumble':
+                    return 'https://rumble.com/' + id + '.html';
 
                 }
             };
@@ -1006,7 +1009,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             this.dataFromUrl = function(url) {
                 var parsed = c6UrlParser(url),
                     service = (parsed.hostname.match(
-                        /youtube|dailymotion|vimeo|aol|yahoo/
+                        /youtube|dailymotion|vimeo|aol|yahoo|rumble/
                     ) || [])[0],
                     id,
                     idFetchers = {
@@ -1033,20 +1036,24 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         yahoo: function(url) {
                             return (url.pathname
                                 .match(/[^/]+(?=(\.html))/) || [null])[0];
+                        },
+                        rumble: function(url) {
+                            return (url.pathname
+                                .match(/[^/]+(?=(\.html))/) || [null])[0];
                         }
                     };
 
                 function params(search) {
-                    var pairs = search.split('&'),
-                        object = {};
+                    return search.split('&')
+                        .map(function(pair) {
+                            return pair.split('=')
+                                .map(decodeURIComponent);
+                        })
+                        .reduce(function(params, pair) {
+                            params[pair[0]] = pair[1];
 
-                    forEach(pairs, function(pair) {
-                        pair = pair.split('=');
-
-                        object[pair[0]] = pair[1];
-                    });
-
-                    return object;
+                            return params;
+                        }, {});
                 }
 
                 if (!service) { return null; }
@@ -1059,6 +1066,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     service: service,
                     id: id
                 };
+            };
+
+            this.embedIdFromVideoId = function(service, videoid) {
+                switch (service) {
+                case 'rumble':
+                    return videoid.match(/^[^-]+/)[0]
+                        .replace(/^v/, '8.');
+
+                default:
+                    return videoid;
+                }
             };
 
             this.embedCodeFromData = function(service, id) {
@@ -1296,6 +1314,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'youtube':
                         case 'vimeo':
                         case 'dailymotion':
+                        case 'rumble':
                         case 'adUnit':
                         case 'embedded':
                             return 'video' + ((card.modules.indexOf('ballot') > -1) ?
@@ -1418,7 +1437,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         var type = card.type;
 
                         return data.service ||
-                            (type.search(/^(youtube|dailymotion|vimeo|adUnit)$/) > -1 ?
+                            (type.search(/^(youtube|dailymotion|vimeo|adUnit|rumble)$/) > -1 ?
                                 type : null);
                     },
                     videoid: function(data, key, card) {
@@ -1428,6 +1447,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 vast: data.vast,
                                 vpaid: data.vpaid
                             });
+                        case 'rumble':
+                            return data.siteid || null;
                         default:
                             return data.videoid || null;
                         }
@@ -1799,14 +1820,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                     case 'youtube':
                         return 'YouTube';
-                    case 'vimeo':
-                        return 'Vimeo';
                     case 'dailymotion':
                         return 'DailyMotion';
                     case 'aol':
                         return 'AOL On';
                     case 'yahoo':
                         return 'Yahoo! Screen';
+                    case 'adUnit':
+                        return undefined;
+                    default:
+                        return (source || undefined) &&
+                            source.charAt(0).toUpperCase() + source.slice(1);
                     }
                 }
 
@@ -1888,6 +1912,20 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         end: trimmer(),
                         related: value(0),
                         videoid: copy(null)
+                    },
+                    rumble: {
+                        hideSource: hideSourceValue(),
+                        autoplay: copy(null),
+                        autoadvance: copy(null),
+                        skip: skipValue(),
+                        start: trimmer(),
+                        end: trimmer(),
+                        siteid: function(data) {
+                            return data.videoid;
+                        },
+                        videoid: function(data) {
+                            return VideoService.embedIdFromVideoId('rumble', data.videoid);
+                        }
                     },
                     adUnit: {
                         hideSource: hideSourceValue(),
