@@ -406,21 +406,8 @@ function( angular , c6uilib , services          , c6Drag           ) {
                         });
                     }
 
-                    // function setScrollBoxWidth() {
-                    //     var stopWatch = scope.$watch(function() {
-                    //         return $list.find('.pageMap__item').length;
-                    //     }, function(items) {
-                    //         var buttons = scope.deck.length + 1,
-                    //             listWidth = $list.width();
-
-                    //         if (items === buttons) {
-                    //             buttonWidth = listWidth / buttons;
-                    //             scope.scrollBoxWidth = listWidth;
-                    //             scope.scrollerWidth = listWidth * scope.scrollerViewRatio;
-                    //             stopWatch();
-                    //         }
-                    //     });
-                    // }
+                    scroller.on('beforeMove', beforeMove)
+                        .on('dropStart', dropStart);
 
                     scope.$watch('ready', function(ready) {
                         if (ready) {
@@ -433,11 +420,8 @@ function( angular , c6uilib , services          , c6Drag           ) {
                         }
                     });
 
-                    scroller.on('beforeMove', beforeMove)
-                        .on('dropStart', dropStart);
-
                     scope.$watch('scrollerViewRatio', function(ratio) {
-                        if (!buttonWidth) { return; }
+                        if (!scope.ready) { return; }
 
                         var scrollBoxWidth = buttonWidth;
 
@@ -450,10 +434,10 @@ function( angular , c6uilib , services          , c6Drag           ) {
                     });
 
                     scope.$watch('scrollerViewPosition', function(position) {
+                        if (!scope.ready) { return; }
+
                         $scroller.css({ left: scope.scrollBoxWidth * position + 'px' });
                     });
-
-                    // setScrollBoxWidth();
                 }
             };
         }])
