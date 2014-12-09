@@ -341,20 +341,24 @@ function( angular , c6uilib , services          , c6Drag           ) {
                         $scrollBox = $element.find('.pageMap__scrollBox'),
                         $scroller = $element.find('.pageMap__scroller'),
                         scroller = $scroller.data('cDrag'),
-                        buttonWidth = 0,
-                        data = {};
+                        buttonWidth = 0;
+
+                    function getScrollBoxRect() {
+                        return $scrollBox[0].getBoundingClientRect();
+                    }
 
                     function beforeMove(marker, event) {
-                        var desired = event.desired,
+                        var scrollBoxRect = getScrollBoxRect(),
+                            desired = event.desired,
                             position = Math.min(
                                     Math.max(
                                         desired.left,
-                                        data.scrollBoxRect.left
+                                        scrollBoxRect.left
                                     ),
-                                    data.scrollBoxRect.right - scroller.display.width
+                                    scrollBoxRect.right - scroller.display.width
                                 ),
-                            positionRatio = (position - data.scrollBoxRect.left) /
-                                data.scrollBoxRect.width;
+                            positionRatio = (position - scrollBoxRect.left) /
+                                scrollBoxRect.width;
 
                         event.preventDefault();
 
@@ -364,13 +368,14 @@ function( angular , c6uilib , services          , c6Drag           ) {
                     }
 
                     function dropStart() {
-                        var currLeft = parseInt($scroller.css('left'));
+                        var scrollBoxRect = getScrollBoxRect(),
+                            currLeft = parseInt($scroller.css('left'));
 
                         $scroller.css({
                             top: '',
                             left: Math.min(
-                                    currLeft - data.scrollBoxRect.left,
-                                    data.scrollBoxRect.width - scroller.display.width
+                                    currLeft - scrollBoxRect.left,
+                                    scrollBoxRect.width - scroller.display.width
                                 ) + 'px'
                         });
                     }
@@ -390,14 +395,6 @@ function( angular , c6uilib , services          , c6Drag           ) {
                             }
                         });
                     }
-
-                    Object.defineProperties(data, {
-                        scrollBoxRect: {
-                            get: function() {
-                                return $scrollBox[0].getBoundingClientRect();
-                            }
-                        }
-                    });
 
                     scroller.on('beforeMove', beforeMove)
                         .on('dropStart', dropStart);
