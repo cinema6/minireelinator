@@ -1,9 +1,9 @@
 define( ['angular','c6uilib','c6_state','minireel/services','minireel/tracker',
          'minireel/c6_drag','minireel/card_table','minireel/editor','minireel/manager',
-         'minireel/ad_manager','minireel/sponsor','c6_defines','cryptojs'],
+         'minireel/ad_manager','minireel/sponsor','minireel/campaign','c6_defines','cryptojs'],
 function( angular , c6uilib , c6State  , services          , tracker          ,
           c6Drag           , cardTable           , editor          , manager          ,
-          adManager           , sponsor          , c6Defines  , cryptojs ) {
+          adManager           , sponsor          , campaign          , c6Defines  , cryptojs ) {
     /* jshint -W106 */
     'use strict';
 
@@ -14,7 +14,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
     return angular.module('c6.app.minireel', [
         c6uilib.name, c6State.name, c6Drag.name,
         services.name, tracker.name, cardTable.name, editor.name,
-        manager.name, adManager.name, sponsor.name
+        manager.name, adManager.name, sponsor.name, campaign.name
     ])
         .config(['$sceDelegateProvider','$compileProvider',
         function( $sceDelegateProvider , $compileProvider ) {
@@ -111,6 +111,8 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                         });
                     });
                 });
+
+                this.route('/campaigns', 'MR:Campaigns');
             });
         }])
 
