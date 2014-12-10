@@ -26,9 +26,13 @@
             }
             Zone.prototype = prototype;
 
-            function Draggable(id) {
+            function Draggable(id, left, right) {
                 this.id = id;
                 this.currentlyOver = [];
+                this.display = {
+                    left: left,
+                    right: right
+                };
 
                 c6EventEmitter(this);
             }
@@ -78,6 +82,115 @@
                         expect(CardTableCtrl.enableDrop).toBe(true);
                     });
                 });
+
+                describe('scrollerRect', function() {
+                    it('should be an object with width of 1', function() {
+                        expect(CardTableCtrl.scrollerRect).toEqual({ width: 1 });
+                    });
+                });
+
+                describe('firstButtonWidth', function() {
+                    it('should be 1', function() {
+                        expect(CardTableCtrl.firstButtonWidth).toBe(1);
+                    });
+                });
+
+                describe('scrollerFullWidth', function() {
+                    it('should be 1', function() {
+                        expect(CardTableCtrl.scrollerFullWidth).toBe(1);
+                    });
+                });
+
+                describe('deck', function() {
+                    it('should be the deck', function() {
+                        expect(CardTableCtrl.deck).toEqual($scope.EditorCtrl.model.data.deck);
+                    });
+                });
+
+                describe('scrollerViewRatio', function() {
+                    it('should be undefined', function() {
+                        expect(CardTableCtrl.scrollerViewRatio).not.toBeDefined();
+                    });
+
+                    describe('when DragCtrl is loaded', function() {
+                        beforeEach(function() {
+                            DragCtrl.addZone(new Zone('scroll-left'));
+                            DragCtrl.addZone(new Zone('scroll-right'));
+                            $scope.$apply(function() {
+                                $scope.DragCtrl = DragCtrl;
+                            });
+                        });
+
+                        it('should be 0 once DragCtrl is found', function() {
+                            expect(CardTableCtrl.scrollerViewRatio).toBe(0);
+                        });
+
+                        it('should calculate based on width of scroller area in view, width of the entire hidden scrollable container, and the first button width', function() {
+                            CardTableCtrl.setScrollerRect({width: 1050});
+                            CardTableCtrl.setScrollerFullWidth(4000);
+                            CardTableCtrl.setFirstButtonWidth(50);
+
+                            expect(CardTableCtrl.scrollerViewRatio).toBe(0.25);
+
+                            CardTableCtrl.setScrollerRect({width: 550});
+                            CardTableCtrl.setScrollerFullWidth(4000);
+                            CardTableCtrl.setFirstButtonWidth(50);
+
+                            expect(CardTableCtrl.scrollerViewRatio).toBe(0.125);
+                        });
+
+                        it('should not be more than 1 if the viewable area is wider than the scrollable container', function() {
+                            CardTableCtrl.setScrollerRect({width: 1050});
+                            CardTableCtrl.setScrollerFullWidth(500);
+                            CardTableCtrl.setFirstButtonWidth(50);
+
+                            expect(CardTableCtrl.scrollerViewRatio).toBe(1);
+
+                            CardTableCtrl.setScrollerRect({width: 1050});
+                            CardTableCtrl.setScrollerFullWidth(4000);
+                            CardTableCtrl.setFirstButtonWidth(50);
+
+                            expect(CardTableCtrl.scrollerViewRatio).toBe(0.25);
+                        });
+                    });
+                });
+
+                describe('scrollerViewPosition', function() {
+                    it('should be undefined', function() {
+                        expect(CardTableCtrl.scrollerViewPosition).not.toBeDefined();
+                    });
+
+                    describe('when DragCtrl is loaded', function() {
+                        beforeEach(function() {
+                            DragCtrl.addZone(new Zone('scroll-left'));
+                            DragCtrl.addZone(new Zone('scroll-right'));
+                            $scope.$apply(function() {
+                                $scope.DragCtrl = DragCtrl;
+                            });
+                        });
+
+                        it('should be 0', function() {
+                            expect(CardTableCtrl.scrollerViewPosition).toBe(0);
+                        });
+
+                        it('should calculate based on position.x within the full scrollable container', function() {
+                            CardTableCtrl.position.x = 50;
+                            CardTableCtrl.setScrollerFullWidth(5000);
+
+                            expect(CardTableCtrl.scrollerViewPosition).toBe(0.01);
+
+                            CardTableCtrl.position.x = 100;
+                            CardTableCtrl.setScrollerFullWidth(5000);
+
+                            expect(CardTableCtrl.scrollerViewPosition).toBe(0.02);
+
+                            CardTableCtrl.position.x = 100;
+                            CardTableCtrl.setScrollerFullWidth(4000);
+
+                            expect(CardTableCtrl.scrollerViewPosition).toBe(0.025);
+                        });
+                    });
+                });
             });
 
             describe('methods', function() {
@@ -107,6 +220,375 @@
                             }
                         })).toBe(thumbs);
                         expect(VideoThumbnailService.getThumbsFor).toHaveBeenCalledWith('vimeo', '12345');
+                    });
+                });
+
+                describe('setScrollerFullWidth(width)', function() {
+                    it('should set the scrollerFullWidth property', function() {
+                        CardTableCtrl.setScrollerFullWidth(1000);
+                        expect(CardTableCtrl.scrollerFullWidth).toBe(1000);
+                    });
+                });
+
+                describe('setScrollerRect(rect)', function() {
+                    it('should set the scrollerRect property', function() {
+                        var rect = {
+                            width: 900,
+                            left: 50,
+                            right: 1300,
+                            top: 1000,
+                            bottom: 600,
+                            height: 400
+                        };
+
+                        CardTableCtrl.setScrollerRect(rect);
+                        expect(CardTableCtrl.scrollerRect).toEqual(rect);
+                    });
+                });
+
+                describe('setFirstButtonWidth(width)', function() {
+                    it('should set the firstButtonWidth property', function() {
+                        CardTableCtrl.setFirstButtonWidth(60);
+                        expect(CardTableCtrl.firstButtonWidth).toBe(60);
+                    });
+                });
+
+                describe('scroll(direction)', function() {
+                    it('should be undefined', function() {
+                        expect(CardTableCtrl.scroll).not.toBeDefined();
+                    });
+
+                    describe('after DragCtrl is loaded', function() {
+                        describe('when going right', function() {
+                            var scrollerRect, deck,
+                                model1, model2, model3, model4, model5,
+                                card1, card2, card3, card4, card5;
+
+                            beforeEach(function() {
+                                CardTableCtrl.setScrollerFullWidth(5500);
+                                CardTableCtrl.setFirstButtonWidth(0);
+
+                                model1 = { id: 'rc-7bc713f331ae68' };
+                                model2 = { id: 'rc-b56ea317bbd92b' };
+                                model3 = { id: 'rc-8b25c1792c6ba1' };
+                                model4 = { id: 'rc-8c658546dc5c5f' };
+                                model5 = { id: 'rc-bc717117888f80' };
+
+                                deck = EditorCtrl.model.data.deck = [model1, model2, model3, model4, model5];
+
+                                card1 = new Draggable('rc-7bc713f331ae68', 0, 1000);
+                                card2 = new Draggable('rc-b56ea317bbd92b', 1100, 2100);
+                                card3 = new Draggable('rc-8b25c1792c6ba1', 2200, 3200);
+                                card4 = new Draggable('rc-8c658546dc5c5f', 3300, 4300);
+                                card5 = new Draggable('rc-bc717117888f80', 4400, 5500);
+
+                                DragCtrl.addDraggable(card1);
+                                DragCtrl.addDraggable(card2);
+                                DragCtrl.addDraggable(card3);
+                                DragCtrl.addDraggable(card4);
+                                DragCtrl.addDraggable(card5);
+
+                                DragCtrl.addZone(new Zone('scroll-left'));
+                                DragCtrl.addZone(new Zone('scroll-right'));
+
+                                $scope.$apply(function() {
+                                    $scope.DragCtrl = DragCtrl;
+                                });
+                            });
+
+                            describe('when a card is partially in view', function() {
+                                it('should set the position so that the overlapping card is first from left', function() {
+                                    CardTableCtrl.scrollerRect = {
+                                        width: 1500,
+                                        left: 0,
+                                        right: 1500
+                                    };
+                                    CardTableCtrl.position.x = 0;
+
+                                    CardTableCtrl.scroll('right');
+                                    expect(CardTableCtrl.position.x).toBe(1100);
+                                });
+
+                                it('should account for first button width', function() {
+                                    CardTableCtrl.firstButtonWidth = 50;
+                                    CardTableCtrl.scrollerRect = {
+                                        width: 1500,
+                                        left: 0,
+                                        right: 1500
+                                    };
+                                    CardTableCtrl.position.x = 0;
+
+                                    CardTableCtrl.scroll('right');
+                                    expect(CardTableCtrl.position.x).toBe(1050);
+                                });
+
+                                it('should not set position too far to the right', function() {
+                                    CardTableCtrl.scrollerRect = {
+                                        width: 1500,
+                                        left: 0,
+                                        right: 1500
+                                    };
+                                    CardTableCtrl.position.x = 3800;
+                                    CardTableCtrl.scroll('right');
+                                    expect(CardTableCtrl.position.x).toBe(4000);
+                                });
+                            });
+
+                            describe('when there is no card overlapping the edge', function() {
+                                it('should set the position so that the next card outside of view is first from left', function() {
+                                    CardTableCtrl.scrollerRect = {
+                                        width: 1000,
+                                        left: 0,
+                                        right: 1000
+                                    };
+                                    CardTableCtrl.position.x = 0;
+
+                                    CardTableCtrl.scroll('right');
+                                    expect(CardTableCtrl.position.x).toBe(1100);
+                                });
+
+                                it('should account for first button width', function() {
+                                    CardTableCtrl.firstButtonWidth = 50;
+                                    CardTableCtrl.scrollerRect = {
+                                        width: 1000,
+                                        left: 0,
+                                        right: 1000
+                                    };
+                                    CardTableCtrl.position.x = 0;
+
+                                    CardTableCtrl.scroll('right');
+                                    expect(CardTableCtrl.position.x).toBe(1050);
+                                });
+
+                                it('should not set position too far to the right', function() {
+                                    CardTableCtrl.scrollerRect = {
+                                        width: 1000,
+                                        left: 0,
+                                        right: 1000
+                                    };
+                                    CardTableCtrl.position.x = 4200;
+                                    CardTableCtrl.scroll('right');
+                                    expect(CardTableCtrl.position.x).toBe(4500);
+                                });
+                            });
+                        });
+
+                        describe('when going left', function() {
+                            var scrollerRect, deck,
+                                model1, model2, model3, model4, model5,
+                                card1, card2, card3, card4, card5;
+
+                            beforeEach(function() {
+                                CardTableCtrl.setScrollerFullWidth(5500);
+                                CardTableCtrl.setFirstButtonWidth(0);
+
+                                model1 = { id: 'rc-7bc713f331ae68' };
+                                model2 = { id: 'rc-b56ea317bbd92b' };
+                                model3 = { id: 'rc-8b25c1792c6ba1' };
+                                model4 = { id: 'rc-8c658546dc5c5f' };
+                                model5 = { id: 'rc-bc717117888f80' };
+
+                                deck = EditorCtrl.model.data.deck = [model1, model2, model3, model4, model5];
+
+                                card1 = new Draggable('rc-7bc713f331ae68', -2700, -1700);
+                                card2 = new Draggable('rc-b56ea317bbd92b', -1600, -600);
+                                card3 = new Draggable('rc-8b25c1792c6ba1', -500, 500);
+                                card4 = new Draggable('rc-8c658546dc5c5f', 600, 1600);
+                                card5 = new Draggable('rc-bc717117888f80', 1700, 2700);
+
+                                DragCtrl.addDraggable(card1);
+                                DragCtrl.addDraggable(card2);
+                                DragCtrl.addDraggable(card3);
+                                DragCtrl.addDraggable(card4);
+                                DragCtrl.addDraggable(card5);
+
+                                DragCtrl.addZone(new Zone('scroll-left'));
+                                DragCtrl.addZone(new Zone('scroll-right'));
+
+                                $scope.$apply(function() {
+                                    $scope.DragCtrl = DragCtrl;
+                                });
+                            });
+
+                            describe('when a card is partially in view', function() {
+                                it('should set the position so that the overlapping card is all the way right', function() {
+                                    CardTableCtrl.scrollerRect = {
+                                        width: 1500,
+                                        left: 0,
+                                        right: 1500
+                                    };
+                                    CardTableCtrl.position.x = 3000;
+
+                                    CardTableCtrl.scroll('left');
+                                    expect(CardTableCtrl.position.x).toBe(2000);
+                                });
+
+                                it('should account for first button width', function() {
+                                    CardTableCtrl.firstButtonWidth = 50;
+                                    CardTableCtrl.scrollerRect = {
+                                        width: 1500,
+                                        left: 0,
+                                        right: 1500
+                                    };
+                                    CardTableCtrl.position.x = 3000;
+
+                                    CardTableCtrl.scroll('left');
+                                    expect(CardTableCtrl.position.x).toBe(2050);
+                                });
+
+                                it('should not set position too far to the right', function() {
+                                    CardTableCtrl.scrollerRect = {
+                                        width: 1500,
+                                        left: 0,
+                                        right: 1500
+                                    };
+                                    CardTableCtrl.position.x = 1000;
+                                    CardTableCtrl.scroll('left');
+                                    expect(CardTableCtrl.position.x).toBe(0);
+                                });
+                            });
+
+                            describe('when there is no card overlapping the edge', function() {
+                                beforeEach(function() {
+                                    CardTableCtrl.scrollerRect = {
+                                        width: 1000,
+                                        left: 0,
+                                        right: 1000
+                                    };
+                                    card1.display.left = -2200
+                                    card1.display.right = -1200;
+                                    card2.display.left = -1100;
+                                    card2.display.right = -100;
+                                    card3.display.left = 0;
+                                    card3.display.right = 1000;
+                                    card4.display.left = 1100;
+                                    card4.display.right = 2100;
+                                    card5.display.left = 2200;
+                                    card5.display.right = 3200;
+                                });
+
+                                it('should set the position so that the next card outside of view is first from left', function() {
+                                    CardTableCtrl.position.x = 2200; // lines up with 3rd card
+
+                                    CardTableCtrl.scroll('left');
+                                    expect(CardTableCtrl.position.x).toBe(1100); // moves to line up with 2nd card
+                                });
+
+                                it('should account for first button width', function() {
+                                    CardTableCtrl.firstButtonWidth = 50;
+                                    CardTableCtrl.position.x = 2200;
+
+                                    CardTableCtrl.scroll('left');
+                                    expect(CardTableCtrl.position.x).toBe(1150);
+                                });
+
+                                it('should not set position too far to the right', function() {
+                                    CardTableCtrl.scrollerRect = {
+                                        width: 1000,
+                                        left: 0,
+                                        right: 1000
+                                    };
+                                    CardTableCtrl.position.x = 500;
+                                    CardTableCtrl.scroll('left');
+                                    expect(CardTableCtrl.position.x).toBe(0);
+                                });
+                            });
+                        });
+                    });
+                });
+
+                describe('scrollTo(position)', function() {
+                    it('should be undefined', function() {
+                        expect(CardTableCtrl.scrollTo).not.toBeDefined();
+                    });
+
+                    describe('when DragCtrl has been loaded', function() {
+                        it('should set the position based on the width of the scrollable container', function() {
+                            DragCtrl.addZone(new Zone('scroll-left'));
+                            DragCtrl.addZone(new Zone('scroll-right'));
+
+                            $scope.$apply(function() {
+                                $scope.DragCtrl = DragCtrl;
+                            });
+
+                            spyOn($scope, '$digest');
+
+                            CardTableCtrl.scrollerFullWidth = 1000;
+
+                            CardTableCtrl.scrollTo(0.5);
+
+                            expect(CardTableCtrl.position.x).toBe(500);
+                            expect($scope.$digest).toHaveBeenCalled();
+                        });
+                    });
+                });
+
+                describe('scrollToCard(card)', function() {
+                    it('should be undefined', function() {
+                        expect(CardTableCtrl.scrollToCard).not.toBeDefined();
+                    });
+
+                    describe('when DragCtrl has been loaded', function() {
+                        var scrollerRect, deck,
+                            model1, model2, model3, model4, model5,
+                            card1, card2, card3, card4, card5;
+
+                        beforeEach(function() {
+                            CardTableCtrl.setScrollerFullWidth(5500);
+                            CardTableCtrl.setFirstButtonWidth(0);
+
+                            model1 = { id: 'rc-7bc713f331ae68' };
+                            model2 = { id: 'rc-b56ea317bbd92b' };
+                            model3 = { id: 'rc-8b25c1792c6ba1' };
+                            model4 = { id: 'rc-8c658546dc5c5f' };
+                            model5 = { id: 'rc-bc717117888f80' };
+
+                            deck = EditorCtrl.model.data.deck = [model1, model2, model3, model4, model5];
+
+                            card1 = new Draggable('rc-7bc713f331ae68', 0, 1000);
+                            card2 = new Draggable('rc-b56ea317bbd92b', 1100, 2100);
+                            card3 = new Draggable('rc-8b25c1792c6ba1', 2200, 3200);
+                            card4 = new Draggable('rc-8c658546dc5c5f', 3300, 4300);
+                            card5 = new Draggable('rc-bc717117888f80', 4400, 5500);
+
+                            DragCtrl.addDraggable(card1);
+                            DragCtrl.addDraggable(card2);
+                            DragCtrl.addDraggable(card3);
+                            DragCtrl.addDraggable(card4);
+                            DragCtrl.addDraggable(card5);
+
+                            DragCtrl.addZone(new Zone('scroll-left'));
+                            DragCtrl.addZone(new Zone('scroll-right'));
+
+                            $scope.$apply(function() {
+                                $scope.DragCtrl = DragCtrl;
+                            });
+                        });
+
+                        it('should set the position so that the selected card is all the way to left', function() {
+                            CardTableCtrl.scrollerRect = {
+                                width: 1500,
+                                left: 0,
+                                right: 1500
+                            };
+                            CardTableCtrl.position.x = 0;
+
+                            CardTableCtrl.scrollToCard(model3);
+                            expect(CardTableCtrl.position.x).toBe(2200);
+
+                            [card1,card2,card3,card4,card5].forEach(function(card) {
+                                card.display.left -= 2200;
+                                card.display.right -= 2200;
+                            });
+
+                            CardTableCtrl.scrollToCard(model1);
+                            expect(CardTableCtrl.position.x).toBe(0);
+
+                            [card1,card2,card3,card4,card5].forEach(function(card) {
+                                card.display.left += 2200;
+                                card.display.right += 2200;
+                            });
+                        });
                     });
                 });
             });

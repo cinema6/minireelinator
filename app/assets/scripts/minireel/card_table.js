@@ -594,22 +594,6 @@ function( angular , c6uilib , services          , c6Drag           ) {
                         (Math.abs(closest.display[altDirection] - self.scrollerRect[direction]));
                 }
 
-                self.scrollToCard = function(card) {
-                    var draggable = DragCtrl.draggables[card.id];
-
-                    DragCtrl.refresh();
-
-                    self.position.x = self.position.x -
-                        self.scrollerRect.left -
-                        self.firstButtonWidth +
-                        draggable.display.left;
-                };
-
-                self.scrollTo = function(position) {
-                    self.position.x = self.scrollerFullWidth * position;
-                    $scope.$digest();
-                };
-
                 self.scroll = function(direction) {
                     var altDirection = getAltDirection(direction),
                         overlappingCard,
@@ -647,6 +631,22 @@ function( angular , c6uilib , services          , c6Drag           ) {
                                     )
                             )
                         );
+                };
+
+                self.scrollTo = function(position) {
+                    self.position.x = self.scrollerFullWidth * position;
+                    $scope.$digest();
+                };
+
+                self.scrollToCard = function(card) {
+                    var draggable = DragCtrl.draggables[card.id];
+
+                    DragCtrl.refresh();
+
+                    self.position.x = self.position.x -
+                        self.scrollerRect.left -
+                        self.firstButtonWidth +
+                        draggable.display.left;
                 };
 
                 Object.defineProperties(self, {
