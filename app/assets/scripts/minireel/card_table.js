@@ -363,9 +363,9 @@ function( angular , c6uilib , services          , c6Drag           ) {
                     scrollerViewPosition: '='
                 },
                 link: function(scope, $element) {
-                    var $list = $element.find('.pageMap__list'),
-                        $scrollBox = $element.find('.pageMap__scrollBox'),
-                        $scroller = $element.find('.pageMap__scroller'),
+                    var $list = $element.find('#paginator-list'),
+                        $scrollBox = $element.find('#paginator-scroll-box'),
+                        $scroller = $element.find('#paginator-scroller'),
                         scroller = $scroller.data('cDrag'),
                         buttonWidth = 0;
 
@@ -454,7 +454,7 @@ function( angular , c6uilib , services          , c6Drag           ) {
                     var $$window = angular.element($window),
                         $cardScroller = $element.find('#card-scroller'),
                         setDimensions = c6Debounce(function() {
-                            var $items = $cardScroller.find('.card__list-item'),
+                            var $items = $cardScroller.find('.js-card-list-item'),
                                 firstButtonWidth = $items[0].clientWidth,
                                 cardWidth = $items[1].clientWidth,
                                 lastCardWidth = $items[$items.length - 1].clientWidth,

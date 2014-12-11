@@ -2,14 +2,13 @@
     'use strict';
 
     define(['minireel/card_table','app','templates'], function(appModule,cardTableModule) {
-        describe('<card-table>', function() {
+        ddescribe('<card-table-paginator>', function() {
             var $rootScope,
                 $scope,
-                $compile,
-                $window,
-                $timeout,
-                cardTable,
-                Ctrl;
+                $compile;
+
+            var paginator,
+                scope;
 
             beforeEach(function() {
                 module(appModule.name);
@@ -18,11 +17,13 @@
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
                     $compile = $injector.get('$compile');
-                    $window = $injector.get('$window');
-                    $timeout = $injector.get('$timeout');
 
                     $scope = $rootScope.$new();
                 });
+
+                $scope.scrollSpy = jasmine.createSpy('scrollSpy');
+                $scope.scrollerViewPosition = 0;
+                $scope.scrollerViewRatio = 0;
 
                 $scope.EditorCtrl = {
                     model: {
@@ -73,64 +74,23 @@
                     }
                 };
 
+                paginator = $('<card-table-paginator deck="EditorCtrl.model.data.deck" on-scroll="scrollSpy(position)" scroller-view-position="scrollerViewPosition" scroller-view-ratio="scrollerViewRatio"><ul id="paginator-list" style="display:inline-block;list-style:none;margin:0;padding:0;"><li card-table-paginator-item ng-repeat="card in EditorCtrl.model.data.deck" style="width:25px;display:inline-block;margin:0;padding:0;">{{$index}}</li></ul></card-table-paginator>');
+                $('body').append(paginator);
+
                 $scope.$apply(function() {
-                    cardTable = $compile('<card-table></card-table>')($scope);
+                    paginator = $compile(paginator)($scope);
                 });
 
-                Ctrl = cardTable.controller('cardTable');
-                spyOn(Ctrl, 'getThumbs');
-                spyOn(Ctrl, 'setScrollerFullWidth');
-                spyOn(Ctrl, 'setFirstButtonWidth');
-                spyOn(Ctrl, 'setScrollerRect');
+                scope = paginator.isolateScope();
             });
 
-            describe('initialization', function() {
-                it('should set props on the Ctrl', function() {
-                    $timeout.flush();
-                    expect(Ctrl.setScrollerFullWidth).toHaveBeenCalled();
-                    expect(Ctrl.setFirstButtonWidth).toHaveBeenCalled();
-                    expect(Ctrl.setScrollerRect).toHaveBeenCalled();
-                });
+            afterEach(function() {
+                paginator.remove();
             });
 
-            describe('when a card is added to the deck', function() {
-                it('should recalculate', function() {
-                    $timeout.flush();
-                    Ctrl.setScrollerFullWidth.calls.reset();
-                    Ctrl.setFirstButtonWidth.calls.reset();
-                    Ctrl.setScrollerRect.calls.reset();
-
-                    $scope.EditorCtrl.model.data.deck.push({
-                        id: 'rc-6',
-                        title: 'Card 6',
-                        view: 'video',
-                        data: {
-                            service: 'youtube'
-                        }
-                    });
-                    $scope.$digest();
-                    $timeout.flush();
-
-                    expect(Ctrl.setScrollerFullWidth).toHaveBeenCalled();
-                    expect(Ctrl.setFirstButtonWidth).toHaveBeenCalled();
-                    expect(Ctrl.setScrollerRect).toHaveBeenCalled();
-                });
-            });
-
-            describe('when the window is resized', function() {
-                it('should recalculate', function() {
-                    $timeout.flush();
-                    Ctrl.setScrollerFullWidth.calls.reset();
-                    Ctrl.setFirstButtonWidth.calls.reset();
-                    Ctrl.setScrollerRect.calls.reset();
-
-                    angular.element($window).trigger('resize');
-                    $scope.$digest();
-                    $timeout.flush();
-
-                    expect(Ctrl.setScrollerFullWidth).toHaveBeenCalled();
-                    expect(Ctrl.setFirstButtonWidth).toHaveBeenCalled();
-                    expect(Ctrl.setScrollerRect).toHaveBeenCalled();
+            describe('when ready', function() {
+                it('should set scope variables', function() {
+                    expect(scope.scrollBoxWidth).toBe(125);
                 });
             });
         });
