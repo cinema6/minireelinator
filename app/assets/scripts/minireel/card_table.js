@@ -472,7 +472,11 @@ function( angular , c6uilib , services          , c6Drag           ) {
                         $$window.off('resize', setDimensions);
                     });
 
-                    scope.$watchCollection('EditorCtrl.model.data.deck', setDimensions);
+                    scope.$watchCollection('EditorCtrl.model.data.deck', function(deck, oldDeck) {
+                        if (deck.length !== oldDeck.length) {
+                            setDimensions();
+                        }
+                    });
                 }
             };
         }])
