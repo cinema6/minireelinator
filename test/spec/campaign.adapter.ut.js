@@ -343,7 +343,6 @@ define(['app'], function(appModule) {
 
             beforeEach(function() {
                 campaign = {
-                    advertiserId: 'a-94b3a91e07a8c1',
                     advertiser: {
                         id: 'a-94b3a91e07a8c1',
                         name: 'Coca-Cola'
@@ -383,6 +382,7 @@ define(['app'], function(appModule) {
                 };
 
                 postData = without(['advertiser'], extend(campaign, {
+                    advertiserId: campaign.advertiser.id,
                     miniReels: campaign.miniReels.map(function(minireel) {
                         return {
                             id: minireel.id

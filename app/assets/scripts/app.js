@@ -474,8 +474,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 }
 
                 function undecorateCampaign(campaign) {
-                    delete campaign.advertiser;
-
                     return extend(
                         campaign,
                         ['miniReels', 'cards', 'targetMiniReels']
@@ -487,7 +485,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                                     };
                                 });
                                 return result;
-                            }, {})
+                            }, {
+                                advertiser: undefined,
+                                advertiserId: campaign.advertiser.id
+                            })
                     );
                 }
 
