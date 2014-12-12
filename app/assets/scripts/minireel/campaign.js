@@ -5,6 +5,16 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
     return angular.module('c6.app.minireel.campaign', [c6State.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
+            c6StateProvider.state('MR:CampaignTab', ['c6State',
+            function                                ( c6State ) {
+                this.enter = function() {
+                    c6State.goTo('MR:Campaigns');
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
             c6StateProvider.state('MR:Campaigns', ['$injector','paginatedDbList',
             function                              ( $injector , paginatedDbList ) {
                 $injector.invoke(PaginatedListState, this);
