@@ -133,6 +133,25 @@
                     expect(Ctrl.setScrollerRect).toHaveBeenCalled();
                 });
             });
+
+            describe('when cards in the deck are re-ordered', function() {
+                it('should not trigger a resize', function() {
+                    var editedDeck = angular.copy($scope.EditorCtrl.model.data.deck);
+                    editedDeck.reverse();
+
+                    $timeout.flush();
+                    Ctrl.setScrollerFullWidth.calls.reset();
+                    Ctrl.setFirstButtonWidth.calls.reset();
+                    Ctrl.setScrollerRect.calls.reset();
+
+                    $scope.EditorCtrl.model.data.deck = editedDeck;
+                    $scope.$digest();
+
+                    expect(Ctrl.setScrollerFullWidth).not.toHaveBeenCalled();
+                    expect(Ctrl.setFirstButtonWidth).not.toHaveBeenCalled();
+                    expect(Ctrl.setScrollerRect).not.toHaveBeenCalled();
+                });
+            });
         });
     });
 }());

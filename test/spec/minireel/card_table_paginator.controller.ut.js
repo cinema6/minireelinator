@@ -2,7 +2,7 @@
     'use strict';
 
     define(['minireel/card_table'], function(cardTableModule) {
-        ddescribe('CardTablePaginatorController', function() {
+        describe('CardTablePaginatorController', function() {
             var $rootScope,
                 $scope,
                 $controller,
@@ -45,10 +45,11 @@
 
             describe('methods', function() {
                 describe('itemReady', function() {
-                    it('should increment the button counter until the quantity matched the deck and then set $scope.ready to true', function() {
+                    it('should increment the button counter until the quantity matches the deck (minus recap card) and then set $scope.ready to true', function() {
                         $scope.deck.forEach(function(el, i, arr) {
+                            var allCardsExceptRecapAreLoaded = i >= arr.length - 2;
                             PaginatorCtrl.itemReady();
-                            expect($scope.ready).toBe(i === arr.length - 1);
+                            expect($scope.ready).toBe(allCardsExceptRecapAreLoaded);
                         });
                     });
                 });
