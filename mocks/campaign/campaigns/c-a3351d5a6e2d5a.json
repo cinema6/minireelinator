@@ -1,7 +1,6 @@
 {
     "adtechId": "87654321",
-    "name": "the_bar_2",
-    "label": "The Bar (2)",
+    "name": "The Bar (2)",
     "categories": ["food"],
     "advertiserId": "a-282824b8bb40a2",
     "logos": {
