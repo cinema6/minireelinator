@@ -2,7 +2,7 @@
 <header class="pageHeader container">
     <div class="pageHeader__titleBar clearfix">
         <h1 class="pageTitle">Campaigns</h1>
-        <a c6-sref="MR:New.General" title="New Campaign" class="btnAction btnAction--primary btnAction--hasIcon" >
+        <a c6-sref="MR:Campaigns.New" title="New Campaign" class="btnAction btnAction--primary btnAction--hasIcon" >
             <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                  viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
                 <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M9,0C4,0,0,4,0,9c0,5,4,9,9,9s9-4,9-9C18,4,14,0,9,0z M9,16c-3.9,0-7-3.1-7-7
@@ -53,7 +53,7 @@
         <ul class="miniReels__list grid">
             <li class="miniReels__item grid__item" ng-show="!campaigns.length">
                 <article class="miniReels__welcomeMsg">
-                    <p><a class="btnAction btnAction--primary">Create Campaign</a></p>
+                    <p><a c6-sref="MR:Campaigns.New" class="btnAction btnAction--primary">Create Campaign</a></p>
                 </article>
             </li>
 

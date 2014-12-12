@@ -56,5 +56,55 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     }
                 });
             };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Campaigns.New', ['$q','cinema6',
+            function                                 ( $q , cinema6 ) {
+                this.templateUrl = 'views/minireel/campaigns/new.html';
+                this.controller = 'CampaignsNewController';
+                this.controllerAs = 'CampaignsNewCtrl';
+
+                this.model = function() {
+                    return $q.all({
+                        campaign: cinema6.db.create('campaign', {
+                            name: null,
+                            categories: [],
+                            minViewTime: -1,
+                            advertiser: null,
+                            customer: null,
+                            logos: {
+                                square: null
+                            },
+                            links: {},
+                            miniReels: [],
+                            cards: [],
+                            targetMiniReels: []
+                        }),
+                        advertisers: cinema6.db.findAll('advertiser')
+                    });
+                };
+            }]);
+        }])
+
+        .controller('CampaignsNewController', ['c6State',
+        function                              ( c6State ) {
+            this.initWithModel = function(model) {
+                this.model = model.campaign;
+                this.advertisers = model.advertisers;
+
+                this.advertiserOptions = this.advertisers.reduce(function(result, advertiser) {
+                    result[advertiser.name] = advertiser;
+                    return result;
+                }, { None: null });
+            };
+
+            this.save = function() {
+                return this.model.save()
+                    .then(function(campaign) {
+                        return c6State.goTo('MR:Campaign', [campaign]);
+                    });
+            };
         }]);
 });
