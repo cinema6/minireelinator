@@ -1,14 +1,16 @@
 (function() {
     'use strict';
 
-    define(['minireel/card_table','app','templates'], function(appModule,cardTableModule) {
-        ddescribe('<card-table-paginator>', function() {
+    define(['helpers/drag','minireel/card_table','app','templates'], function(helpers,appModule,cardTableModule) {
+        describe('<card-table-paginator>', function() {
             var $rootScope,
                 $scope,
                 $compile;
 
             var paginator,
                 scope;
+
+            var Finger = helpers.Finger;
 
             beforeEach(function() {
                 module(appModule.name);
@@ -117,18 +119,69 @@
             });
 
             describe('scrolling', function() {
-                it('should', function() {
-                    var scroller = paginator.find('#paginator-scroller').data('cDrag');
+                var scrollBoxRect, $scroller, scroller, finger, top, left;
 
-                    var _event = {
-                        desired: {
-                            left: 1,
-                        }
-                    };
+                beforeEach(function() {
+                    scrollBoxRect = paginator.find('#paginator-scroll-box')[0].getBoundingClientRect();
+                    $scroller = paginator.find('#paginator-scroller');
+                    scroller = paginator.find('#paginator-scroller').data('cDrag');
+                    finger = new Finger();
+                    top = scroller.display.top;
+                    left = scroller.display.left;
+                });
 
-                    scroller.emit(_event);
+                it('should start at the edge of the scroll box', function() {
+                    expect(scroller.display.left).toEqual(scrollBoxRect.left);
+                });
 
-                    expect($scope.scrollSpy).toHaveBeenCalled();
+                it('should only move along the x-axis', function() {
+                    scroller.refresh();
+
+                    finger.placeOn($scroller);
+                    finger.drag(10, 10);
+                    $scope.$apply();
+                    scroller.refresh();
+                    expect(scroller.display.left).toBe(left + 10);
+
+                    finger.drag(10, 10);
+                    $scope.$apply();
+                    scroller.refresh();
+                    expect(scroller.display.left).toBe(left + 20);
+                    expect(scroller.display.top).toBe(top);
+                });
+
+                it('should not move past the edge of the scroll box', function() {
+                    scroller.refresh();
+
+                    finger.placeOn($scroller);
+                    finger.drag(5000, 5000);
+                    $scope.$apply();
+                    scroller.refresh();
+                    expect(scroller.display.right).toBe(scrollBoxRect.right);
+
+                    finger.drag(-5000, -5000);
+                    $scope.$apply();
+                    scroller.refresh();
+                    expect(scroller.display.left).toBe(scrollBoxRect.left);
+                });
+
+                it('should pass the positionRatio to the controller', function() {
+                    scroller.refresh();
+
+                    finger.placeOn($scroller);
+                    finger.drag(10, 10);
+                    $scope.$apply();
+                    expect($scope.scrollSpy).toHaveBeenCalledWith(0.1);
+                });
+
+                it('should set the scroller\'s left css prop to be relative to scroll box when dropped', function() {
+                    scroller.refresh();
+
+                    finger.placeOn($scroller);
+                    finger.drag(10, 10);
+                    finger.lift();
+                    $scope.$apply();
+                    expect($scroller[0].style.left).toBe('10px');
                 });
             });
         });

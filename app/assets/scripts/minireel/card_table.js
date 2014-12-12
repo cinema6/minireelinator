@@ -335,7 +335,8 @@ function( angular , c6uilib , services          , c6Drag           ) {
             };
         }])
 
-        .controller('CardTablePaginatorController', ['$scope',function($scope) {
+        .controller('CardTablePaginatorController', ['$scope',
+        function                                    ( $scope ) {
             var buttonCounter = 0;
 
             $scope.ready = false;
@@ -343,7 +344,7 @@ function( angular , c6uilib , services          , c6Drag           ) {
             this.itemReady = function() {
                 buttonCounter++;
 
-                if (buttonCounter === $scope.deck.length - 1) {
+                if (buttonCounter === $scope.deck.length) {
                     $scope.ready = true;
                 }
             };
