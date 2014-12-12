@@ -116,6 +116,8 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                     this.state('MR:Campaigns', function() {
                         this.route('/new', 'MR:Campaigns.New');
                     });
+
+                    this.route('/:campaignId', 'MR:Campaign');
                 });
             });
         }])

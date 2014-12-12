@@ -116,5 +116,21 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         return c6State.goTo('MR:Campaign', [campaign]);
                     });
             };
-        }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Campaign', ['cinema6',
+            function                             ( cinema6 ) {
+                this.templateUrl = 'views/minireel/campaigns/campaign.html';
+                this.controller = 'CampaignController';
+                this.controllerAs = 'CampaignCtrl';
+
+                this.model = function(params) {
+                    return cinema6.db.find('campaign', params.campaignId);
+                };
+            }]);
+        }])
+
+        .controller('CampaignController', [function() {}]);
 });
