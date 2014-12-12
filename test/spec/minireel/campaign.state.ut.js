@@ -25,6 +25,18 @@ define(['app'], function(appModule) {
             expect(campaign).toEqual(jasmine.any(Object));
         });
 
+        describe('enter()', function() {
+            beforeEach(function() {
+                spyOn(c6State, 'goTo');
+
+                campaign.enter();
+            });
+
+            it('should go to the MR:Campaign.General state', function() {
+                expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.General');
+            });
+        });
+
         describe('model()', function() {
             var model,
                 success, failure;

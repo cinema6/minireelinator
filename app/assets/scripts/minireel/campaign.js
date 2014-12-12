@@ -120,11 +120,15 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Campaign', ['cinema6',
-            function                             ( cinema6 ) {
+            c6StateProvider.state('MR:Campaign', ['cinema6','c6State',
+            function                             ( cinema6 , c6State ) {
                 this.templateUrl = 'views/minireel/campaigns/campaign.html';
                 this.controller = 'CampaignController';
                 this.controllerAs = 'CampaignCtrl';
+
+                this.enter = function() {
+                    c6State.goTo('MR:Campaign.General');
+                };
 
                 this.model = function(params) {
                     return cinema6.db.find('campaign', params.campaignId);
@@ -132,5 +136,25 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignController', [function() {}]);
+        .controller('CampaignController', [function() {}])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Campaign.General', ['cinema6',
+            function                                     ( cinema6 ) {
+                this.templateUrl = 'views/minireel/campaigns/campaign/general.html';
+                this.controller = 'CampaignGeneralController';
+                this.controllerAs = 'CampaignGeneralCtrl';
+
+                this.model = function() {
+                    return cinema6.db.findAll('category');
+                };
+            }]);
+        }])
+
+        .controller('CampaignGeneralController', [function() {
+            this.initWithModel = function(model) {
+                this.categories = model;
+            };
+        }]);
 });
