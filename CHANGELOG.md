@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.7.0.rc1]*
+  * [FEATURE]: Added ability to make sponsored cards completely
+    unskippable
+
 ## v1.6.0 (December 8, 2014)
 * *[v1.6.0.rc1]*
   * Changed tab order for new card wizard
