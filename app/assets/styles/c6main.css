@@ -135,6 +135,9 @@
         .fa-refresh:before {
             content: '\f021';
         }
+        .fa-bars:before {
+            content: '\f0c9';
+        }
 
 /*  ======================================================
     Helper classes
@@ -1089,6 +1092,10 @@
                     background:#fff;
                 }
 
+            .mainNav__barsBtn {
+                padding-top:0;
+            }
+
             .mainNav__link--userInfo {
                 padding:0.75em 1.5em;
             }
@@ -1106,6 +1113,47 @@
             .mainNav .c6Brand {
                 margin:0.5em 1.5em; padding:0;
             }
+
+            .dropNav__group {
+                display:none;
+                position: absolute;
+                z-index: 200;
+                border:1px solid #ddd; border-bottom:0;
+            }
+                .mainNav__item--dropDown:hover .dropNav__group {
+                    display: block;
+                }
+
+                .dropNav__item {
+                    border-bottom:1px solid #ddd;
+                }
+                .dropNav__link {
+                    background:#fff; color:#646464;
+                    display: block;
+                    margin:0; padding:1em; border:0;
+                    -webkit-transition: all 0.25s; transition: all 0.25s;
+                    width:12em;
+                    line-height:1;
+                    cursor:pointer;
+                    font-weight:300;
+                    -webkit-box-sizing: content-box;
+                    -moz-box-sizing: content-box;
+                    box-sizing: content-box;
+                }
+                    .dropNav__link:hover {
+                        background:#eaf7ff;
+                        border:0;
+                        color:#2398db;
+                    }
+                    .dropNav__link.c6-active {
+                        background:#646464;
+                        color:#fff;
+                    }
+                        .dropNav__link.c6-active .ui__icon {
+                            fill:#fff;
+                        }
+
+
             .userNav__child {
                 display: none;
                 position:absolute; right:0; top:100%; z-index:200;
@@ -1151,6 +1199,24 @@
         }
         .mainNav__label {
             margin:0;
+        }
+    }
+
+    @media screen and (max-width:81.1875em) {
+        .css-expanded {
+            display: none;
+        }
+        .css-collapsed {
+            display:block;
+        }
+    }
+
+    @media screen and (min-width:81.25em) {
+        .css-expanded {
+            display: block;
+        }
+        .css-collapsed {
+            display:none;
         }
     }
 
