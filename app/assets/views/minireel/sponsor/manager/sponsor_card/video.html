@@ -136,9 +136,15 @@
                     Must watch entire video
                 </label>
             </div>
+            <br />
+            <label class="checkbox--inline">
+                <input id="showControls" type="checkbox" ng-model="card.data.controls" ng-disabled="!card.data.service" class="checkbox__input">
+                <span class="btn__label faa">&nbsp;</span>
+            </label>
+            <label for="showControls">Show video controls?</label>
             <p>
-            <strong>Do you want this video to start playing automatically?</strong>
-            <c6-dropdown options="SponsorCardVideoCtrl.autoplayOptions" value="card.data.autoplay"></c6-dropdown>
+                <strong>Do you want this video to start playing automatically?</strong>
+                <c6-dropdown options="SponsorCardVideoCtrl.autoplayOptions" value="card.data.autoplay"></c6-dropdown>
             </p>
 
             <strong>Do you want the MiniReel to advance to the next slide when this video is over?</strong>
