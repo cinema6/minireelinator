@@ -1,8 +1,10 @@
 # MiniReelinator
 
+## v1.7.0
 * *[v1.7.0.rc1]*
   * [FEATURE]: Added ability to make sponsored cards completely
     unskippable
+  * [FEATURE]: Added media queries to collapse nav for smaller screens.
 
 ## v1.6.0 (December 8, 2014)
 * *[v1.6.0.rc1]*
