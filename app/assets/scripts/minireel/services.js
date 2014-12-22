@@ -1428,6 +1428,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return data.skip;
                         }
                     },
+                    controls: copy(true),
                     autoplay: copy(null),
                     autoadvance: copy(null),
                     survey: function(data, key, card) {
@@ -1887,6 +1888,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     youtube: {
                         hideSource: hideSourceValue(),
                         autoplay: copy(null),
+                        controls: copy(),
                         autoadvance: copy(null),
                         skip: skipValue(),
                         modestbranding: value(0),
@@ -1907,6 +1909,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     dailymotion: {
                         hideSource: hideSourceValue(),
                         autoplay: copy(null),
+                        controls: copy(),
                         autoadvance: copy(null),
                         skip: skipValue(),
                         start: trimmer(),
@@ -1931,6 +1934,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     adUnit: {
                         hideSource: hideSourceValue(),
                         autoplay: copy(null),
+                        controls: copy(),
                         autoadvance: copy(null),
                         skip: skipValue(),
                         vast: function(data) {

@@ -183,6 +183,7 @@
                                 modules: [],
                                 data: {
                                     skip: true,
+                                    controls: true,
                                     videoid: '47tfg8734',
                                     start: 10,
                                     end: 40,
@@ -258,6 +259,7 @@
                                     ]
                                 },
                                 data: {
+                                    controls: true,
                                     skip: false,
                                     videoid: 'vfu85f5',
                                     related: 0
@@ -303,6 +305,7 @@
                                 },
                                 data: {
                                     hideSource: true,
+                                    controls: false,
                                     skip: 6,
                                     autoplay: false,
                                     autoadvance: true,
@@ -462,6 +465,7 @@
                                 modules: [],
                                 data: {
                                     skip: true,
+                                    controls: true,
                                     vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
                                     vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
                                 }
@@ -651,6 +655,7 @@
                                 params: {},
                                 data: {
                                     skip: 'anytime',
+                                    controls: true,
                                     autoplay: null,
                                     autoadvance: null,
                                     survey: null,
@@ -706,6 +711,7 @@
                                 params: {},
                                 data: {
                                     skip: 'anytime',
+                                    controls: true,
                                     autoplay: null,
                                     autoadvance: null,
                                     survey: null,
@@ -1273,6 +1279,7 @@
                                 params: {},
                                 data: {
                                     skip: 'anytime',
+                                    controls: true,
                                     autoplay: null,
                                     autoadvance: null,
                                     survey: null,
@@ -1305,6 +1312,7 @@
                                 params: {},
                                 data: {
                                     skip: 25,
+                                    controls: true,
                                     autoplay: null,
                                     autoadvance: null,
                                     survey: null,
@@ -1344,6 +1352,7 @@
                                 params: {},
                                 data: {
                                     skip: 'never',
+                                    controls: true,
                                     autoplay: null,
                                     autoadvance: null,
                                     survey: null,
@@ -1396,6 +1405,7 @@
                                 data: {
                                     skip: 'delay',
                                     autoplay: false,
+                                    controls: false,
                                     autoadvance: true,
                                     survey: {
                                         election: 'el-8bb2395fbea873',
@@ -1434,6 +1444,7 @@
                                 thumb: 'logo.jpg',
                                 data: {
                                     skip: 'anytime',
+                                    controls: true,
                                     autoplay: null,
                                     autoadvance: null,
                                     survey: null,
@@ -1469,6 +1480,7 @@
                                 thumb: null,
                                 data: {
                                     skip: 'anytime',
+                                    controls: true,
                                     autoplay: null,
                                     autoadvance: null,
                                     survey: null,
@@ -1501,6 +1513,7 @@
                                 thumb: null,
                                 data: {
                                     skip: 'anytime',
+                                    controls: true,
                                     autoplay: null,
                                     autoadvance: null,
                                     survey: null,
@@ -1533,6 +1546,7 @@
                                 thumb: null,
                                 data: {
                                     skip: 'anytime',
+                                    controls: true,
                                     autoplay: null,
                                     autoadvance: null,
                                     survey: null,
