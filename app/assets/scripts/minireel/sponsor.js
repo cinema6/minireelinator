@@ -563,7 +563,15 @@ function( angular , c6State  , editor   , MiniReelListController          ,
                         this.model.data.skip = bool ? 'anytime' : 'delay';
                     }
                 },
-                skip: {
+                mustWatchInEntirety: {
+                    get: function() {
+                        return this.model.data.skip === 'never';
+                    },
+                    set: function(bool) {
+                        this.model.data.skip = bool ? 'never' : 'delay';
+                    }
+                },
+                skipTime: {
                     get: function() {
                         return MiniReelService.convertCard(this.model).data.skip;
                     },

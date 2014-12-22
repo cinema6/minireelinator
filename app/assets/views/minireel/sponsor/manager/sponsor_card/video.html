@@ -119,10 +119,23 @@
             <label for="includeDisplayAd">
                 <strong>Allow Users to Skip This Video? <span class="typo--danger">*</span></strong>
             </label>
-            <label ng-if="!SponsorCardVideoCtrl.canSkip">
-                After <input type="number" ng-model="SponsorCardVideoCtrl.skip" /> Seconds
-            </label>
-            <br />
+            <div ng-if="!SponsorCardVideoCtrl.canSkip">
+                <div ng-if="!SponsorCardVideoCtrl.mustWatchInEntirety">
+                    <label>
+                        Skip after <input type="number" ng-model="SponsorCardVideoCtrl.skipTime" /> Seconds
+                    </label>
+                    <br />
+                    <em>or</em>
+                    <br />
+                </div>
+                <label class="checkbox--inline">
+                    <input id="neverSkip" type="checkbox" ng-model="SponsorCardVideoCtrl.mustWatchInEntirety" ng-disabled="!card.data.service" class="checkbox__input">
+                    <span class="btn__label faa">&nbsp;</span>
+                </label>
+                <label for="neverSkip">
+                    Must watch entire video
+                </label>
+            </div>
             <p>
             <strong>Do you want this video to start playing automatically?</strong>
             <c6-dropdown options="SponsorCardVideoCtrl.autoplayOptions" value="card.data.autoplay"></c6-dropdown>
