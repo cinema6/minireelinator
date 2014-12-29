@@ -7,8 +7,22 @@
         "square": "square.png"
     },
     "links": {},
-    "miniReels": [],
-    "cards": [],
+    "miniReels": [
+        {
+            "id": "e-80fcd03196b3d2",
+            "adtechId": "12345678"
+        },
+        {
+            "id": "e-220f09b2398217",
+            "adtechId": "654321"
+        }
+    ],
+    "cards": [
+        {
+            "id": "rc-5ff4ca42a5f6fd",
+            "adtechId": "13579"
+        }
+    ],
     "targetMiniReels": [],
     "created": "2014-12-02T18:03:22.663Z",
     "user": "u-35b096c999711b",
