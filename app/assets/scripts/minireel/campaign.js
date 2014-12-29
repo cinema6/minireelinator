@@ -211,5 +211,12 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
                 this.newLink = new Link();
             };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Campaign.Creatives', [function() {
+                this.templateUrl = 'views/minireel/campaigns/campaign/creatives.html';
+            }]);
         }]);
 });
