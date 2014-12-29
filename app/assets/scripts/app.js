@@ -477,18 +477,18 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     return extend(
                         campaign,
                         ['miniReels', 'cards', 'targetMiniReels']
-                            .reduce(function(result, prop) {
-                                result[prop] = campaign[prop].map(function(item) {
-                                    return {
-                                        id: item.id,
-                                        adtechId: adtechIdCache[prop][item.id]
-                                    };
-                                });
-                                return result;
-                            }, {
-                                advertiser: undefined,
-                                advertiserId: campaign.advertiser.id
-                            })
+                        .reduce(function(result, prop) {
+                            result[prop] = campaign[prop].map(function(item) {
+                                return {
+                                    id: item.id,
+                                    adtechId: adtechIdCache[prop][item.id]
+                                };
+                            });
+                            return result;
+                        }, {
+                            advertiser: undefined,
+                            advertiserId: campaign.advertiser.id
+                        })
                     );
                 }
 
