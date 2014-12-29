@@ -136,7 +136,35 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignController', [function() {}])
+        .controller('CampaignController', [function() {
+            this.initWithModel = function(campaign) {
+                this.model = campaign;
+
+                this.links = ['Action', 'Website', 'Facebook', 'Twitter', 'YouTube', 'Pinterest']
+                    .concat(Object.keys(campaign.links))
+                    .filter(function(name, index, names) {
+                        return names.indexOf(name) === index;
+                    })
+                    .map(function(name) {
+                        var href = campaign.links[name] || null;
+
+                        return {
+                            name: name,
+                            href: href
+                        };
+                    });
+            };
+
+            this.removeLink = function(link) {
+                this.links = this.links.filter(function(listLink) {
+                    return listLink !== link;
+                });
+            };
+
+            this.addLink = function(link) {
+                this.links = this.links.concat([link]);
+            };
+        }])
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
@@ -155,6 +183,33 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         .controller('CampaignGeneralController', [function() {
             this.initWithModel = function(model) {
                 this.categories = model;
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Campaign.Assets', [function() {
+                this.templateUrl = 'views/minireel/campaigns/campaign/assets.html';
+                this.controller = 'CampaignAssetsController';
+                this.controllerAs = 'CampaignAssetsCtrl';
+            }]);
+        }])
+
+        .controller('CampaignAssetsController', ['$scope',
+        function                                ( $scope ) {
+            var CampaignCtrl = $scope.CampaignCtrl;
+
+            function Link() {
+                this.name = 'Untitled';
+                this.href = null;
+            }
+
+            this.newLink = new Link();
+
+            this.push = function() {
+                CampaignCtrl.addLink(this.newLink);
+
+                this.newLink = new Link();
             };
         }]);
 });
