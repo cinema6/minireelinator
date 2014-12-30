@@ -255,7 +255,34 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         function( c6StateProvider ) {
             c6StateProvider.state('MR:Campaign.Creatives', [function() {
                 this.templateUrl = 'views/minireel/campaigns/campaign/creatives.html';
+                this.controller = 'CampaignCreativesController';
+                this.controllerAs = 'CampaignCreativesCtrl';
             }]);
+        }])
+
+        .controller('CampaignCreativesController', ['$scope',
+        function                                   ( $scope ) {
+            var CampaignCtrl = $scope.CampaignCtrl,
+                campaign = CampaignCtrl.model;
+
+            function removeFromArray(array, item) {
+                var index = array.indexOf(item);
+
+                if (index < 0) {
+                    return null;
+                }
+
+                array.splice(index, 1);
+                return item;
+            }
+
+            this.remove = function(item) {
+                function removeItemFrom(array) {
+                    return removeFromArray(array, item);
+                }
+
+                [campaign.miniReels, campaign.cards].forEach(removeItemFrom);
+            };
         }])
 
         .config(['c6StateProvider',
