@@ -1,0 +1,46 @@
+<form class="pageBody__group pageBody__group--sideTabs">
+    <h1 class="forms__title">Logos</h1>
+
+    <label class="forms__pair forms__pair--spacer clearfix">
+        <span class="forms__name forms__name--extended" > Square:</span>
+        <span class="forms__inputHolder forms__inputHolder--short">
+            <input class="forms__textField forms__textField--padded forms__textField--block" ng-model="campaign.logos.square" type="text"></input>
+        </span>
+    </label>
+
+    <h1 class="forms__title">Links</h1>
+    <label class="forms__pair clearfix" ng-repeat="link in CampaignCtrl.links" style="margin:0.25em 0;">
+        <span class="forms__name">
+            {{link.name}}
+        </span>
+        <span class="forms__inputHolder" style="float:left; width:36.5em;">
+            <input type="text" class="forms__textField forms__textField--block" ng-model="link.href">
+        </span>
+        <button class="btnInvis ui__iconHolder18" style="float:right; margin:0.25em 0 0 0;" ng-click="CampaignCtrl.removeLink(link)">
+            <span class="fab fa-trash">&nbsp;</span>
+        </button>
+    </label>
+    <c6-alias model="CampaignAssetsCtrl.newLink" as="newLink">
+        <div class="twoCol">
+            <label class="forms__pair clearfix">
+                <span class="forms__name">
+                    Name
+                </span>
+                <span class="forms__inputHolder forms__inputHolder--short">
+                    <input type="text" c6-autoselect class="forms__textField forms__textField--block" ng-model="newLink.name">
+                </span>
+            </label>
+        </div>
+        <div class="twoCol">
+            <label class="forms__pair clearfix">
+                <span class="forms__name">
+                    Link
+                </span>
+                <span class="forms__inputHolder forms__inputHolder--short">
+                    <input type="text" c6-autoselect class="forms__textField forms__textField--block" ng-model="newLink.href">
+                </span>
+            </label>
+        </div>
+        <button class="btnAction btnAction--success" style="margin:0.5em 0 0 0;" ng-click="CampaignAssetsCtrl.push();">Add</button>
+    </c6-alias>
+</form>
