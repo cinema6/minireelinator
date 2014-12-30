@@ -1,0 +1,35 @@
+<div class="pageBody__group pageBody__group--sideTabs">
+    <h1 class="forms__title">Placements</h1>
+
+    <section class="twoCol">
+        <strong>Search for MiniReels</strong>
+        <form ng-submit="CampaignPlacementsCtrl.search()">
+            <label class="forms__pair forms__pair--spacer clearfix">
+                <span class="forms__name" > By Title:</span>
+                <span class="forms__inputHolder forms__inputHolder--short">
+                    <input class="forms__textField forms__textField--padded" ng-model="CampaignPlacementsCtrl.query" type="text"></input>
+                    <button class="btn btn--primary">Search</button>
+                </span>
+            </label>
+        </form>
+        <div ng-if="CampaignPlacementsCtrl.result" c6-alias="CampaignPlacementsCtrl.result.value as minireels">
+            <span ng-show="minireels.length < 1">Your search yielded no results. Try again!</span>
+            <ul>
+                <li ng-repeat="minireel in minireels | filter:CampaignPlacementsCtrl.isNotAlreadyTargeted">
+                    {{minireel.data.title}}
+                    <button class="btn btn--success" ng-click="CampaignPlacementsCtrl.add(minireel)">Add</button>
+                </li>
+            </ul>
+        </div>
+    </section>
+    <section class="twoCol" c6-alias="campaign.targetMiniReels as minireels">
+        <strong>Current Placements</strong><br />
+        <span ng-show="minireels.length < 1">This campaign is not targeting any MiniReels. Start by searching for a MiniReel.</span>
+        <ul>
+            <li ng-repeat="minireel in minireels">
+                {{minireel.data.title}}
+                <button class="btn btn--danger" ng-click="CampaignPlacementsCtrl.remove(minireel)">Remove</button>
+            </li>
+        </ul>
+    </section>
+</div>

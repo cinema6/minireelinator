@@ -218,5 +218,45 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             c6StateProvider.state('MR:Campaign.Creatives', [function() {
                 this.templateUrl = 'views/minireel/campaigns/campaign/creatives.html';
             }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Campaign.Placements', [function() {
+                this.templateUrl = 'views/minireel/campaigns/campaign/placements.html';
+                this.controller = 'CampaignPlacementsController';
+                this.controllerAs = 'CampaignPlacementsCtrl';
+            }]);
+        }])
+
+        .controller('CampaignPlacementsController', ['$scope','scopePromise','cinema6',
+        function                                    ( $scope , scopePromise , cinema6 ) {
+            var PortalCtrl = $scope.PortalCtrl,
+                CampaignCtrl = $scope.CampaignCtrl,
+                campaign = CampaignCtrl.model;
+
+            this.result = null;
+            this.query = '';
+
+            this.search = function() {
+                return (this.result = scopePromise(cinema6.db.findAll('experience', {
+                    org: PortalCtrl.model.org.id,
+                    text: this.query
+                }))).promise;
+            };
+
+            this.add = function(minireel) {
+                campaign.targetMiniReels.push(minireel);
+            };
+
+            this.remove = function(minireel) {
+                var targetMiniReels = campaign.targetMiniReels;
+
+                targetMiniReels.splice(targetMiniReels.indexOf(minireel), 1);
+            };
+
+            this.isNotAlreadyTargeted = function(minireel) {
+                return campaign.targetMiniReels.indexOf(minireel) < 0;
+            };
         }]);
 });
