@@ -2,13 +2,52 @@
     <header class="mast clearfix">
         <nav class="mainNav">
             <ul class="mainNav__list clearfix" c6-alias="PortalCtrl.model as user">
+                <li class="mainNav__item mainNav__item--dropDown css-collapsed">
+                    <button type="button" title="Nav" class="btnInvis mainNav__link mainNav__barsBtn fab fa-bars"></button>
+                    <ul class="dropNav__group">
+                        <li class="dropNav__item">
+                            <a c6-sref="MR:Studio" title="Studio" class="dropNav__link">
+                                <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                     viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                                    <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" fill="#020202" d="M18,1v17H0V1H18z M11.7,8.5L7.8,6.1C7.7,6,7.5,6,7.3,6
+                                        C7.1,6.1,7,6.3,7,6.4v5.1C7,11.7,7.1,12,7.3,12c0,0,0.3,0.1,0.5-0.1l3.9-2.5C11.8,9.4,12,9.3,12,9S11.8,8.6,11.7,8.5z M2,3h1v1H2V3z
+                                         M2,5h1v1H2V5z M2,7h1v1H2V7z M2,9h1v1H2V9z M2,11h1v1H2V11z M2,13h1v1H2V13z M2,15h1v1H2V15z M15,3h1v1h-1V3z M15,5h1v1h-1V5z
+                                         M15,7h1v1h-1V7z M15,9h1v1h-1V9z M15,11h1v1h-1V11z M15,13h1v1h-1V13z M15,15h1v1h-1V15z"/>
+                                </svg>
+                                <span class="mainNav__label">Studio</span>
+                            </a>
+                        </li>
+                        <li class="dropNav__item" ng-if="PortalCtrl.enableAdManager">
+                            <a c6-sref="MR:AdManager" title="Ad Manager" class="dropNav__link">
+                                <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                     viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                                    <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" fill="#020202" d="M9,8c0.6,0,1,0.4,1,1c0,0.6-0.4,1-1,1c-0.6,0-1-0.4-1-1C8,8.4,8.4,8,9,8z M9,4
+                                        c2.8,0,5,2.2,5,5c0,2.8-2.2,5-5,5c-2.8,0-5-2.2-5-5C4,6.2,6.2,4,9,4z M9,6c1.7,0,3,1.3,3,3c0,1.7-1.3,3-3,3c-1.7,0-3-1.3-3-3
+                                        C6,7.3,7.3,6,9,6z M9,0c5,0,9,4,9,9c0,5-4,9-9,9s-9-4-9-9C0,4,4,0,9,0z M9,2c3.9,0,7,3.1,7,7c0,3.9-3.1,7-7,7s-7-3.1-7-7
+                                        C2,5.1,5.1,2,9,2z"/>
+                                </svg>
+                                <span class="mainNav__label">Ad Manager</span>
+                            </a>
+                        </li>
+                        <li class="dropNav__item" ng-if="!!user.permissions.experiences.editSponsorships">
+                            <a c6-sref="MR:Sponsor.Manager" title="Sponsorship Manager" class="dropNav__link">
+                                <span class="mainNav__label">Sponsorship Manager</span>
+                            </a>
+                        </li>
+                        <li class="dropNav__item" ng-if="user.permissions.campaigns.edit === 'all'">
+                            <a c6-sref="MR:Campaigns" title="Campaign Manager" class="dropNav__link">
+                                <span class="mainNav__label">Campaign Manager</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="mainNav__item">
                     <a c6-sref="Application" title="Cinema6" 
                         class="c6Brand c6Brand--dark c6Sprite--alpha">
                         <span class="ir">Cinema6</span>
                     </a>
                 </li>
-                <li class="mainNav__item">
+                <li class="mainNav__item css-expanded">
                     <a c6-sref="MR:Studio" title="Studio" class="mainNav__link">
                         <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                              viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
@@ -20,7 +59,7 @@
                         <span class="mainNav__label">Studio</span>
                     </a>
                 </li>
-                <li class="mainNav__item" ng-if="PortalCtrl.enableAdManager">
+                <li class="mainNav__item css-expanded" ng-if="PortalCtrl.enableAdManager">
                     <a c6-sref="MR:AdManager" title="Ad Manager" class="mainNav__link">
                         <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                              viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
@@ -32,12 +71,12 @@
                         <span class="mainNav__label">Ad Manager</span>
                     </a>
                 </li>
-                <li class="mainNav__item" ng-if="!!user.permissions.experiences.editSponsorships">
+                <li class="mainNav__item css-expanded" ng-if="!!user.permissions.experiences.editSponsorships">
                     <a c6-sref="MR:Sponsor.Manager" title="Sponsorship Manager" class="mainNav__link">
                         <span class="mainNav__label">Sponsorship Manager</span>
                     </a>
                 </li>
-                <li class="mainNav__item" ng-if="user.permissions.campaigns.edit === 'all'">
+                <li class="mainNav__item css-expanded" ng-if="user.permissions.campaigns.edit === 'all'">
                     <a c6-sref="MR:CampaignTab" title="Campaign Manager" class="mainNav__link">
                         <span class="mainNav__label">Campaign Manager</span>
                     </a>

@@ -6,7 +6,7 @@
         "minireelinator": {
             "minireelDefaults": {
                 "splash": {
-                    "ratio": "1-1",
+                    "ratio": "6-5",
                     "theme": "img-only"
                 }
             }
@@ -15,7 +15,7 @@
     "firstName": "Josh",
     "lastName": "Minzner",
     "created": "2014-03-13T15:28:23.653Z",
-    "lastUpdated": "2014-10-14T16:47:13.254Z",
+    "lastUpdated": "2014-12-15T17:14:19.820Z",
     "org": "o-e4e8b0f244bafc",
     "permissions": {
         "elections": {
