@@ -4,6 +4,7 @@ define(['minireel/campaign'], function(campaignModule) {
     describe('CampaignController', function() {
         var $rootScope,
             $controller,
+            $q,
             cinema6,
             $scope,
             CampaignCtrl;
@@ -16,17 +17,21 @@ define(['minireel/campaign'], function(campaignModule) {
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
+                $q = $injector.get('$q');
                 cinema6 = $injector.get('cinema6');
 
                 campaign = cinema6.db.create('campaign', {
-                    id: '',
+                    id: 'e-48eec2c6b81060',
                     links: {
                         'Action': 'buynow.html',
                         'Facebook': 'fb.html'
                     },
                     logos: {
                         square: 'logo.jpg'
-                    }
+                    },
+                    miniReels: [],
+                    cards: [],
+                    targetMiniReels: []
                 });
 
                 $scope = $rootScope.$new();
@@ -47,6 +52,42 @@ define(['minireel/campaign'], function(campaignModule) {
             describe('model', function() {
                 it('should be the campaign', function() {
                     expect(CampaignCtrl.model).toBe(campaign);
+                });
+            });
+
+            describe('cleanModel', function() {
+                it('should be a pojo copy of the model', function() {
+                    expect(CampaignCtrl.cleanModel).toEqual(campaign.pojoify());
+                });
+            });
+
+            describe('isClean', function() {
+                describe('if the model has not been changed', function() {
+                    it('should be true', function() {
+                        expect(CampaignCtrl.isClean).toBe(true);
+                    });
+                });
+
+                describe('if the model is changed', function() {
+                    beforeEach(function() {
+                        campaign.miniReels.push({});
+                    });
+
+                    it('should be false', function() {
+                        expect(CampaignCtrl.isClean).toBe(false);
+                    });
+
+                    describe('if the links are changed', function() {
+                        beforeEach(function() {
+                            CampaignCtrl.cleanModel = campaign.pojoify();
+
+                            CampaignCtrl.links[0].href = 'http://new.href/';
+                        });
+
+                        it('should be false', function() {
+                            expect(CampaignCtrl.isClean).toBe(false);
+                        });
+                    });
                 });
             });
 
@@ -158,6 +199,80 @@ define(['minireel/campaign'], function(campaignModule) {
                         expect(CampaignCtrl.links).toContain(link);
                     });
                     expect(CampaignCtrl.links).toContain(newLink);
+                });
+            });
+
+            describe('save()', function() {
+                var success, failure,
+                    saveDeferred;
+
+                beforeEach(function() {
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
+
+                    saveDeferred = $q.defer();
+
+                    CampaignCtrl.links = [
+                        {
+                            name: 'Action',
+                            href: null
+                        },
+                        {
+                            name: 'Website',
+                            href: 'mysite.com'
+                        },
+                        {
+                            name: 'Facebook',
+                            href: ''
+                        },
+                        {
+                            name: 'Twitter',
+                            href: null
+                        },
+                        {
+                            name: 'YouTube',
+                            href: 'yt.com'
+                        },
+                        {
+                            name: 'Pinterest',
+                            href: null
+                        }
+                    ];
+
+                    campaign.cards.push({}, {});
+
+                    spyOn(campaign, 'save').and.returnValue(saveDeferred.promise);
+
+                    $scope.$apply(function() {
+                        CampaignCtrl.save().then(success, failure);
+                    });
+                });
+
+                it('should update the campaign\'s links', function() {
+                    expect(campaign.links).toEqual({
+                        'Website': 'mysite.com',
+                        'YouTube': 'yt.com'
+                    });
+                });
+
+                it('should save the campaign', function() {
+                    expect(campaign.save).toHaveBeenCalled();
+                });
+
+                describe('when the campaign is done saving', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            saveDeferred.resolve(campaign);
+                        });
+                    });
+
+                    it('should update the cleanModel', function() {
+                        expect(CampaignCtrl.cleanModel).toEqual(campaign.pojoify());
+                    });
+
+                    it('should resolve to the campaign', function() {
+                        expect(success).toHaveBeenCalledWith(campaign);
+                    });
                 });
             });
         });

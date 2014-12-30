@@ -28,4 +28,14 @@
     </nav>
 
     <c6-view class="mainContent__group"></c6-view>
+
+    <footer style="display: block;">
+        <button ng-click="CampaignCtrl.save()"
+            ng-disabled="CampaignCtrl.isClean"
+            class="btnAction btnAction--success btnAction--last"
+            type="button"
+            title="Save">
+            Save
+        </button>
+    </footer>
 </div>

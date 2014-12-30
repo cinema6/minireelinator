@@ -2,6 +2,9 @@ define (['angular','c6_state','./mixins/PaginatedListState','./mixins/PaginatedL
 function( angular , c6State  , PaginatedListState          , PaginatedListController          ) {
     'use strict';
 
+    var equals = angular.equals,
+        extend = angular.extend;
+
     return angular.module('c6.app.minireel.campaign', [c6State.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
@@ -137,8 +140,33 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         }])
 
         .controller('CampaignController', [function() {
+            var CampaignCtrl = this;
+
+            function createModelLinks(uiLinks) {
+                return uiLinks.filter(function(link) {
+                    return !!link.href;
+                }).reduce(function(links, link) {
+                    links[link.name] = link.href;
+                    return links;
+                }, {});
+            }
+
+            Object.defineProperties(this, {
+                isClean: {
+                    get: function() {
+                        return equals(
+                            extend(this.model.pojoify(), {
+                                links: createModelLinks(this.links)
+                            }),
+                            this.cleanModel
+                        );
+                    }
+                }
+            });
+
             this.initWithModel = function(campaign) {
                 this.model = campaign;
+                this.cleanModel = campaign.pojoify();
 
                 this.links = ['Action', 'Website', 'Facebook', 'Twitter', 'YouTube', 'Pinterest']
                     .concat(Object.keys(campaign.links))
@@ -163,6 +191,16 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
             this.addLink = function(link) {
                 this.links = this.links.concat([link]);
+            };
+
+            this.save = function() {
+                this.model.links = createModelLinks(this.links);
+
+                return this.model.save().then(function(campaign) {
+                    CampaignCtrl.cleanModel = campaign.pojoify();
+
+                    return campaign;
+                });
             };
         }])
 
