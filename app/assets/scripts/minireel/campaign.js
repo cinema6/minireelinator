@@ -351,6 +351,32 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
+            c6StateProvider.state('MR:Creatives.NewMiniReel.Type', ['c6State',
+            function                                               ( c6State ) {
+                var MiniReelState = c6State.get('MiniReel');
+
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/creatives/new_mini_reel/type.html';
+                this.controller = 'GenericController';
+                this.controllerAs = 'CreativesNewMiniReelTypeCtrl';
+
+                this.model = function() {
+                    var modes = MiniReelState.cModel.data.modes;
+
+                    return modes.map(function(mode) {
+                        return mode.modes;
+                    }).reduce(function(result, modes) {
+                        // Flatten modes into a single array (get rid of hierarchy.)
+                        return result.concat(modes);
+                    }).filter(function(mode) {
+                        return !mode.deprecated;
+                    });
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
             c6StateProvider.state('MR:Campaign.Placements', [function() {
                 this.templateUrl = 'views/minireel/campaigns/campaign/placements.html';
                 this.controller = 'CampaignPlacementsController';

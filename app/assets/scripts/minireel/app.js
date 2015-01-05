@@ -123,6 +123,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                         this.route('/creatives', 'MR:Campaign.Creatives', function() {
                             this.route('/minireel/new', 'MR:Creatives.NewMiniReel', function() {
                                 this.state('MR:Creatives.NewMiniReel.General');
+                                this.state('MR:Creatives.NewMiniReel.Type');
                             });
                         });
                         this.route('/placements', 'MR:Campaign.Placements');
