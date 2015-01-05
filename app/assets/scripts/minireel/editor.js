@@ -9,7 +9,20 @@ VideoCardController           ) {
         copy = angular.copy,
         forEach = angular.forEach,
         isDefined = angular.isDefined,
+        isObject = angular.isObject,
         noop = angular.noop;
+
+    function deepFreeze(object) {
+        forEach(object, function(value) {
+            if (isObject(value)) {
+                deepFreeze(value);
+            }
+        });
+
+        Object.freeze(object);
+
+        return object;
+    }
 
     return angular.module('c6.app.minireel.editor', [
         videoSearch.name,
@@ -145,6 +158,8 @@ VideoCardController           ) {
             _private.editorMinireel = null;
             _private.proxy = null;
 
+            _private.campaign = null;
+
             _private.performPresync = function(proxy) {
                 function syncWithCollateral(proxy) {
                     if (proxy.data.splash.source === 'specified') {
@@ -265,10 +280,16 @@ VideoCardController           ) {
                     get: function() {
                         return _private.proxy;
                     }
+                },
+
+                campaign: {
+                    get: function() {
+                        return _private.campaign;
+                    }
                 }
             });
 
-            this.open = function(minireel) {
+            this.open = function(minireel, campaign) {
                 var editorMinireel = MiniReelService.convertForEditor(minireel),
                     proxy = {},
                     data = copy(editorMinireel.data);
@@ -298,6 +319,8 @@ VideoCardController           ) {
                 _private.minireel = minireel;
                 _private.editorMinireel = editorMinireel;
                 _private.proxy = proxy;
+
+                _private.campaign = campaign ? deepFreeze(campaign.pojoify()) : null;
 
                 return proxy;
             };
