@@ -120,7 +120,11 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                     this.route('/:campaignId', 'MR:Campaign', function() {
                         this.route('/general', 'MR:Campaign.General');
                         this.route('/assets', 'MR:Campaign.Assets');
-                        this.route('/creatives', 'MR:Campaign.Creatives');
+                        this.route('/creatives', 'MR:Campaign.Creatives', function() {
+                            this.route('/minireel/new', 'MR:Creatives.NewMiniReel', function() {
+                                this.state('MR:Creatives.NewMiniReel.General');
+                            });
+                        });
                         this.route('/placements', 'MR:Campaign.Placements');
                     });
                 });
