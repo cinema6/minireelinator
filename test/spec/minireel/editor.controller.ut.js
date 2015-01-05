@@ -113,7 +113,8 @@
                     $scope = $rootScope.$new();
                     PortalCtrl = $scope.PortalCtrl = {
                         model: {
-                            org: {}
+                            org: {},
+                            permissions: {}
                         }
                     };
                     MiniReelCtrl = $scope.MiniReelCtrl = {
@@ -653,12 +654,6 @@
                         EditorCtrl.newCard(3);
                     });
 
-                    xit('should transition to the MR:NewCard state', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('MR:NewCard', null, {
-                            insertAt: 3
-                        });
-                    });
-
                     it('should create a new videoBallot card', function() {
                         expect(MiniReelService.createCard).toHaveBeenCalledWith('videoBallot');
                     });
@@ -666,6 +661,34 @@
                     it('should transition to the editor.editCard state with the card and the insertionIndex', function() {
                         expect(c6State.goTo).toHaveBeenCalledWith('MR:EditCard', [lastCreatedCard], {
                             insertAt: 3
+                        });
+                    });
+
+                    describe('if the user can edit campaigns', function() {
+                        beforeEach(function() {
+                            PortalCtrl.model.permissions.campaigns = {};
+
+                            MiniReelService.createCard.calls.reset();
+                            c6State.goTo.calls.reset();
+
+                            $scope.$apply(function() {
+                                EditorCtrl = $controller('EditorController', {
+                                    $scope: $scope
+                                });
+                                EditorCtrl.initWithModel({});
+                            });
+
+                            EditorCtrl.newCard(5);
+                        });
+
+                        it('should not create a card', function() {
+                            expect(MiniReelService.createCard).not.toHaveBeenCalled();
+                        });
+
+                        it('should go to the NewCard state', function() {
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor.NewCard', null, {
+                                insertAt: 5
+                            });
                         });
                     });
                 });

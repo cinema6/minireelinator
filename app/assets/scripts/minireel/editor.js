@@ -461,7 +461,9 @@ VideoCardController           ) {
                                           MiniReelService , CollateralService ,
                                           VideoErrorService ) {
             var self = this,
+                PortalCtrl = $scope.PortalCtrl,
                 MiniReelCtrl = $scope.MiniReelCtrl,
+                canSeeCampaigns = !!PortalCtrl.model.permissions.campaigns,
                 cardLimits = {
                     copy: Infinity
                 },
@@ -670,20 +672,22 @@ VideoCardController           ) {
                 });
             };
 
-            this.newCard = function(insertionIndex/*,evtSrc*/) {
-//                if (evtSrc){
-//                    MiniReelCtrl.sendPageEvent('Editor','Click','New Card',self.pageObject);
-//                }
+            this.newCard = function(insertionIndex) {
+                function createVideoCard() {
+                    var card = MiniReelService.createCard('videoBallot');
 
-                // TODO: Delete this code
-                /*c6State.goTo('MR:Editor.NewCard', null, {
-                    insertAt: insertionIndex
-                });*/
-                var card = MiniReelService.createCard('videoBallot');
+                    return c6State.goTo('MR:EditCard', [card], {
+                        insertAt: insertionIndex
+                    });
+                }
 
-                c6State.goTo('MR:EditCard', [card], {
-                    insertAt: insertionIndex
-                });
+                function promptCardTypeChoice() {
+                    return c6State.goTo('MR:Editor.NewCard', null, {
+                        insertAt: insertionIndex
+                    });
+                }
+
+                return (canSeeCampaigns ? promptCardTypeChoice : createVideoCard)();
             };
 
             this.editCard = function(card) {
