@@ -1740,6 +1740,7 @@
                                             splash: null
                                         },
                                         params: {},
+                                        links: {},
                                         deck: [
                                             (function() {
                                                 var recap = MiniReelService.createCard('recap');

@@ -4,6 +4,7 @@ define(['app'], function(appModule) {
     describe('MR:Creatives.NewMiniReel state', function() {
         var $rootScope,
             $q,
+            cinema6,
             c6State,
             MiniReelService,
             campaign,
@@ -15,6 +16,7 @@ define(['app'], function(appModule) {
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 $q = $injector.get('$q');
+                cinema6 = $injector.get('cinema6');
                 c6State = $injector.get('c6State');
                 MiniReelService = $injector.get('MiniReelService');
 
@@ -22,10 +24,21 @@ define(['app'], function(appModule) {
                 creativesNewMiniReel = c6State.get('MR:Creatives.NewMiniReel');
             });
 
-            campaign.cModel = {
+            campaign.cModel = cinema6.db.create('campaign', {
                 id: 'cam-f67ec7c4ada34d',
-                categories: ['food', 'vehicles', 'gaming']
-            };
+                categories: ['food', 'vehicles', 'gaming'],
+                logos: {
+                    square: 'my-square-logo.png'
+                },
+                links: {
+                    Facebook: 'fb.html',
+                    Twitter: 'twit.com'
+                },
+                advertiser: {
+                    id: 'a-b8ab2ceb807ca4',
+                    name: 'Diageo'
+                }
+            });
         });
 
         it('should exist', function() {
@@ -39,6 +52,11 @@ define(['app'], function(appModule) {
             beforeEach(function() {
                 minireel = {
                     data: {
+                        links: {},
+                        collateral: {
+                            splash: null
+                        },
+                        params: {},
                         deck: []
                     }
                 };
@@ -64,7 +82,22 @@ define(['app'], function(appModule) {
             it('should add campaign data to the MiniReel', function() {
                 expect(minireel).toEqual(jasmine.objectContaining({
                     campaignId: campaign.cModel.id,
-                    categoryList: campaign.cModel.categories
+                    categoryList: campaign.cModel.categories,
+                    data: jasmine.objectContaining({
+                        collateral: jasmine.objectContaining({
+                            logo: campaign.cModel.logos.square
+                        }),
+                        links: jasmine.objectContaining(campaign.cModel.links),
+                        params: jasmine.objectContaining({
+                            sponsor: campaign.cModel.advertiser.name
+                        })
+                    })
+                }));
+                expect(minireel.data.collateral).toEqual(jasmine.objectContaining({
+                    splash: null
+                }));
+                expect(minireel.data).toEqual(jasmine.objectContaining({
+                    deck: []
                 }));
                 expect(minireel.categoryList).not.toBe(campaign.cModel.categories);
             });

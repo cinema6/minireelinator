@@ -50,6 +50,11 @@ define(['minireel/campaign', 'minireel/mixins/WizardController'], function(campa
                     });
                     minireel = CreativesNewMiniReelCtrl.model = cinema6.db.create('experience', {
                         data: {
+                            collateral: {
+                                splash: null
+                            },
+                            links: {},
+                            params: {},
                             deck: []
                         }
                     });

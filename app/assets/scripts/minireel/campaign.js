@@ -6,7 +6,23 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
     var equals = angular.equals,
         extend = angular.extend,
-        copy = angular.copy;
+        copy = angular.copy,
+        forEach = angular.forEach,
+        isObject = angular.isObject;
+
+    function deepExtend(target, extension) {
+        forEach(extension, function(extensionValue, prop) {
+            var targetValue = target[prop];
+
+            if (isObject(extensionValue) && isObject(targetValue)) {
+                deepExtend(targetValue, extensionValue);
+            } else {
+                target[prop] = copy(extensionValue);
+            }
+        });
+
+        return target;
+    }
 
     return angular.module('c6.app.minireel.campaign', [c6State.name])
         .config(['c6StateProvider',
@@ -320,9 +336,18 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
                     return MiniReelService.create()
                         .then(function addCampaignData(minireel) {
-                            return extend(minireel, {
+                            return deepExtend(minireel, {
                                 campaignId: campaign.id,
-                                categoryList: copy(campaign.categories)
+                                categoryList: campaign.categories,
+                                data: {
+                                    links: campaign.links,
+                                    collateral: {
+                                        logo: campaign.logos.square
+                                    },
+                                    params: {
+                                        sponsor: campaign.advertiser.name
+                                    }
+                                }
                             });
                         });
                 };
