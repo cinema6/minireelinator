@@ -124,6 +124,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                             this.route('/minireel/new', 'MR:Creatives.NewMiniReel', function() {
                                 this.state('MR:Creatives.NewMiniReel.General');
                                 this.state('MR:Creatives.NewMiniReel.Type');
+                                this.state('MR:Creatives.NewMiniReel.Playback');
                             });
                         });
                         this.route('/placements', 'MR:Campaign.Placements');
