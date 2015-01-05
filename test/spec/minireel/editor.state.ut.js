@@ -8,6 +8,7 @@
                 EditorState,
                 $rootScope,
                 $q,
+                $location,
                 cinema6,
                 EditorService,
                 c6State;
@@ -35,6 +36,7 @@
 
                     $rootScope = $injector.get('$rootScope');
                     $q = $injector.get('$q');
+                    $location = $injector.get('$location');
                     cinema6 = $injector.get('cinema6');
                     playerMeta = $injector.get('playerMeta');
                     c6State = $injector.get('c6State');
@@ -78,14 +80,66 @@
             });
 
             describe('afterModel()', function() {
+                var success, failure;
+
                 beforeEach(function() {
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
+
                     spyOn(EditorService, 'open').and.returnValue(editorMinireel);
 
-                    EditorState.afterModel(minireel);
+                    $rootScope.$apply(function() {
+                        EditorState.afterModel(minireel).then(success, failure);
+                    });
                 });
 
                 it('should open the minireel for editing', function() {
-                    expect(EditorService.open).toHaveBeenCalledWith(minireel);
+                    expect(EditorService.open).toHaveBeenCalledWith(minireel, null);
+                });
+
+                it('should resolve to the editor minireel', function() {
+                    expect(success).toHaveBeenCalledWith(editorMinireel);
+                });
+
+                describe('if there is a campaign id in the params', function() {
+                    var id, campaign;
+
+                    beforeEach(function() {
+                        EditorService.open.calls.reset();
+                        success.calls.reset();
+
+                        id = 'cam-7bb1140874bc78';
+
+                        spyOn($location, 'search').and.returnValue({
+                            campaign: id
+                        });
+
+                        cinema6.db.push('campaign', id, {
+                            id: id,
+                            advertiser: cinema6.db.create('advertiser', {
+                                id: 'a-fd495306658e0e'
+                            })
+                        });
+
+                        $rootScope.$apply(function() {
+                            cinema6.db.find('campaign', id).then(function(_campaign) {
+                                campaign = _campaign;
+                            });
+                        });
+
+                        $rootScope.$apply(function() {
+                            EditorState.afterModel(minireel).then(success, failure);
+                        });
+                    });
+
+                    it('should open the MiniReel with its campaign', function() {
+                        expect($location.search).toHaveBeenCalledWith();
+                        expect(EditorService.open).toHaveBeenCalledWith(minireel, campaign);
+                    });
+
+                    it('should resolve to the editor minireel', function() {
+                        expect(success).toHaveBeenCalledWith(editorMinireel);
+                    });
                 });
             });
         });

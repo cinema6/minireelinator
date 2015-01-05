@@ -427,8 +427,8 @@ VideoCardController           ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Editor', ['cinema6','EditorService',
-            function                           ( cinema6 , EditorService ) {
+            c6StateProvider.state('MR:Editor', ['cinema6','EditorService','$location','$q',
+            function                           ( cinema6 , EditorService , $location , $q ) {
                 this.controller = 'EditorController';
                 this.controllerAs = 'EditorCtrl';
                 this.templateUrl = 'views/minireel/editor.html';
@@ -437,7 +437,14 @@ VideoCardController           ) {
                     return cinema6.db.find('experience', params.minireelId);
                 };
                 this.afterModel = function(model) {
-                    return EditorService.open(model);
+                    var campaignId = $location.search().campaign;
+
+                    return $q.all([
+                        model,
+                        (campaignId ? cinema6.db.find('campaign', campaignId) : null)
+                    ]).then(function(args) {
+                        return EditorService.open.apply(EditorService, args);
+                    });
                 };
                 this.title = function(model) {
                     return 'Cinema6: Editing "' + model.data.title + '"';
@@ -576,6 +583,7 @@ VideoCardController           ) {
 
             this.initWithModel = function() {
                 this.model = EditorService.state.minireel;
+                this.campaign = EditorService.state.campaign;
 
                 MiniReelCtrl.branding = this.model.data.branding;
             };
