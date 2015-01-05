@@ -1769,6 +1769,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     splash: null
                                 },
                                 params: {},
+                                links: {},
                                 deck: [self.createCard('recap')]
                             }
                         });

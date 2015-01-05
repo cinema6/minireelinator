@@ -1,9 +1,28 @@
-define (['angular','c6_state','./mixins/PaginatedListState','./mixins/PaginatedListController'],
-function( angular , c6State  , PaginatedListState          , PaginatedListController          ) {
+define (['angular','c6_state','./mixins/PaginatedListState','./mixins/PaginatedListController',
+         './mixins/WizardController'],
+function( angular , c6State  , PaginatedListState          , PaginatedListController          ,
+          WizardController          ) {
     'use strict';
 
     var equals = angular.equals,
-        extend = angular.extend;
+        extend = angular.extend,
+        copy = angular.copy,
+        forEach = angular.forEach,
+        isObject = angular.isObject;
+
+    function deepExtend(target, extension) {
+        forEach(extension, function(extensionValue, prop) {
+            var targetValue = target[prop];
+
+            if (isObject(extensionValue) && isObject(targetValue)) {
+                deepExtend(targetValue, extensionValue);
+            } else {
+                target[prop] = copy(extensionValue);
+            }
+        });
+
+        return target;
+    }
 
     return angular.module('c6.app.minireel.campaign', [c6State.name])
         .config(['c6StateProvider',
@@ -283,6 +302,144 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
                 [campaign.miniReels, campaign.cards].forEach(removeItemFrom);
             };
+
+            this.add = function(item) {
+                var collection = [
+                    {
+                        matcher: (/^e-/),
+                        value: campaign.miniReels
+                    },
+                    {
+                        matcher: (/^rc-/),
+                        value: campaign.cards
+                    }
+                ].reduce(function(value, collection) {
+                    return collection.matcher.test(item.id) ? collection.value : value;
+                }, null);
+
+                return collection[collection.push(item) - 1];
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Creatives.NewMiniReel', ['c6State','MiniReelService',
+            function                                          ( c6State , MiniReelService ) {
+                var CampaignState = c6State.get('MR:Campaign');
+
+                this.templateUrl = 'views/minireel/campaigns/campaign/creatives/new_mini_reel.html';
+                this.controller = 'CreativesNewMiniReelController';
+                this.controllerAs = 'CreativesNewMiniReelCtrl';
+
+                this.model = function() {
+                    var campaign = CampaignState.cModel;
+
+                    return MiniReelService.create()
+                        .then(function addCampaignData(minireel) {
+                            return deepExtend(minireel, {
+                                campaignId: campaign.id,
+                                categoryList: campaign.categories,
+                                data: {
+                                    links: campaign.links,
+                                    collateral: {
+                                        logo: campaign.logos.square
+                                    },
+                                    params: {
+                                        sponsor: campaign.advertiser.name
+                                    }
+                                }
+                            });
+                        });
+                };
+            }]);
+        }])
+
+        .controller('CreativesNewMiniReelController', ['$injector','$scope','c6State',
+        function                                      ( $injector , $scope , c6State ) {
+            var CampaignCreativesCtrl = $scope.CampaignCreativesCtrl,
+                CampaignCtrl = $scope.CampaignCtrl;
+
+            $injector.invoke(WizardController, this);
+
+            this.tabs = [
+                {
+                    name: 'General',
+                    sref: 'MR:Creatives.NewMiniReel.General'
+                },
+                {
+                    name: 'MiniReel Type',
+                    sref: 'MR:Creatives.NewMiniReel.Type'
+                },
+                {
+                    name: 'Playback Settings',
+                    sref: 'MR:Creatives.NewMiniReel.Playback'
+                }
+            ];
+
+            this.confirm = function() {
+                return this.model.save()
+                    .then(function(minireel) {
+                        return CampaignCreativesCtrl.add(minireel);
+                    })
+                    .then(function(minireel) {
+                        return c6State.goTo('MR:Editor', [minireel], {
+                            campaign: CampaignCtrl.model.id
+                        }).then(function() {
+                            return minireel;
+                        });
+                    });
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Creatives.NewMiniReel.General', ['cinema6','$q',
+            function                                                  ( cinema6 , $q ) {
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/creatives/new_mini_reel/general.html';
+                this.controller = 'GenericController';
+                this.controllerAs = 'CreativesNewMiniReelGeneralCtrl';
+
+                this.model = function() {
+                    return $q.all({
+                        categories: cinema6.db.findAll('category')
+                    });
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Creatives.NewMiniReel.Type', ['c6State',
+            function                                               ( c6State ) {
+                var MiniReelState = c6State.get('MiniReel');
+
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/creatives/new_mini_reel/type.html';
+                this.controller = 'GenericController';
+                this.controllerAs = 'CreativesNewMiniReelTypeCtrl';
+
+                this.model = function() {
+                    var modes = MiniReelState.cModel.data.modes;
+
+                    return modes.map(function(mode) {
+                        return mode.modes;
+                    }).reduce(function(result, modes) {
+                        // Flatten modes into a single array (get rid of hierarchy.)
+                        return result.concat(modes);
+                    }).filter(function(mode) {
+                        return !mode.deprecated;
+                    });
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Creatives.NewMiniReel.Playback', [function() {
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/creatives/new_mini_reel/playback.html';
+            }]);
         }])
 
         .config(['c6StateProvider',

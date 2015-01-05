@@ -95,5 +95,71 @@ define(['minireel/campaign'], function(campaignModule) {
                 });
             });
         });
+
+        describe('add(item)', function() {
+            var result;
+
+            beforeEach(function() {
+                campaign.miniReels.push.apply(campaign.miniReels, ['e-f8f1341c77fb57', 'e-095e8df1cdd0c1', 'e-11e1cc3b9efa7f'].map(function(id) {
+                    return cinema6.db.create('experience', {
+                        id: id,
+                        data: {
+                            deck: []
+                        }
+                    });
+                }));
+
+                campaign.cards.push.apply(campaign.cards, ['rc-69f8ae2e995e0d', 'rc-fe5d81d4ad982f', 'rc-9555f364197617'].map(function(id) {
+                    return cinema6.db.create('card', {
+                        id: id,
+                        data: {}
+                    });
+                }));
+            });
+
+            describe('if called with a minireel', function() {
+                var minireel;
+
+                beforeEach(function() {
+                    minireel = cinema6.db.create('experience', {
+                        id: 'e-5480ecc1063d7e',
+                        data: {
+                            deck: []
+                        }
+                    });
+
+                    result = CampaignCreativesCtrl.add(minireel);
+                });
+
+                it('should add the minireel to the campaign', function() {
+                    expect(campaign.miniReels[3]).toBe(minireel);
+                });
+
+                it('should return the minireel', function() {
+                    expect(result).toBe(minireel);
+                });
+            });
+
+            describe('if called with a card', function() {
+                var card;
+
+                beforeEach(function() {
+                    card = cinema6.db.create('card', {
+                        id: 'rc-5480ecc1063d7e',
+                        data: {}
+                    });
+
+                    result = CampaignCreativesCtrl.add(card);
+                });
+
+                it('should add the card to the campaign', function() {
+                    expect(campaign.cards[3]).toBe(card);
+                });
+
+                it('should return the card', function() {
+                    expect(result).toBe(card);
+                });
+            });
+        });
     });
 });
