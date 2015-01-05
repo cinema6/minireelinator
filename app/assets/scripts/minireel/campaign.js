@@ -286,6 +286,23 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
                 [campaign.miniReels, campaign.cards].forEach(removeItemFrom);
             };
+
+            this.add = function(item) {
+                var collection = [
+                    {
+                        matcher: (/^e-/),
+                        value: campaign.miniReels
+                    },
+                    {
+                        matcher: (/^rc-/),
+                        value: campaign.cards
+                    }
+                ].reduce(function(value, collection) {
+                    return collection.matcher.test(item.id) ? collection.value : value;
+                }, null);
+
+                return collection[collection.push(item) - 1];
+            };
         }])
 
         .config(['c6StateProvider',
@@ -312,8 +329,11 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CreativesNewMiniReelController', ['$injector',
-        function                                      ( $injector ) {
+        .controller('CreativesNewMiniReelController', ['$injector','$scope','c6State',
+        function                                      ( $injector , $scope , c6State ) {
+            var CampaignCreativesCtrl = $scope.CampaignCreativesCtrl,
+                CampaignCtrl = $scope.CampaignCtrl;
+
             $injector.invoke(WizardController, this);
 
             this.tabs = [
@@ -330,6 +350,20 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     sref: 'MR:Creatives.NewMiniReel.Playback'
                 }
             ];
+
+            this.confirm = function() {
+                return this.model.save()
+                    .then(function(minireel) {
+                        return CampaignCreativesCtrl.add(minireel);
+                    })
+                    .then(function(minireel) {
+                        return c6State.goTo('MR:Editor', [minireel], {
+                            campaign: CampaignCtrl.model.id
+                        }).then(function() {
+                            return minireel;
+                        });
+                    });
+            };
         }])
 
         .config(['c6StateProvider',

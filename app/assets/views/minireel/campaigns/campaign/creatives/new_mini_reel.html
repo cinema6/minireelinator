@@ -42,12 +42,12 @@
             title="Next Step">
             Next Step
         </button>
-        <button ng-click="CreativesNewMiniReelCtrl.save()"
+        <button ng-click="CreativesNewMiniReelCtrl.confirm()"
             class="btnAction btnAction--success btnAction--last"
             type="button"
             ng-show="(CreativesNewMiniReelCtrl.tabs.indexOf(CreativesNewMiniReelCtrl.currentTab) + 1) === CreativesNewMiniReelCtrl.tabs.length"
-            title="Save">
-            Save
+            title="Confirm">
+            Confirm
         </button>
         <p class="modalFooter__guideText">Step {{(CreativesNewMiniReelCtrl.tabs.indexOf(CreativesNewMiniReelCtrl.currentTab) + 1) || 1}} of {{CreativesNewMiniReelCtrl.tabs.length}}</p>
     </footer>
