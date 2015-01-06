@@ -558,7 +558,12 @@
                                 card.data.videoid = VideoService.embedIdFromVideoId('rumble', card.data.siteid);
 
                                 return card;
-                            }())
+                            }()),
+                            {
+                                id: 'rc-c99a6f4c6b4c54',
+                                type: 'wildcard',
+                                data: {}
+                            }
                         ]
                     }
                 });
@@ -874,6 +879,33 @@
                                 data: {
                                     size: '300x250'
                                 }
+                            });
+                        });
+
+                        it('should support creating a wildcard card', function() {
+                            var card = MiniReelService.createCard('wildcard');
+
+                            expect(card).toEqual({
+                                id: jasmine.any(String),
+                                type: 'wildcard',
+                                title: null,
+                                note: null,
+                                label: 'Wildcard Placeholder',
+                                ad: false,
+                                view: 'wildcard',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: true,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                thumb: null,
+                                links: {},
+                                params: {},
+                                data: {}
                             });
                         });
                     });
@@ -1638,6 +1670,31 @@
                                 }
                             });
                         });
+
+                        it('should transpile the wildcards', function() {
+                            expect(deck[14]).toEqual({
+                                id: 'rc-c99a6f4c6b4c54',
+                                type: 'wildcard',
+                                title: null,
+                                note: null,
+                                label: 'Wildcard Placeholder',
+                                ad: false,
+                                view: 'wildcard',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: true,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                thumb: null,
+                                links: {},
+                                params: {},
+                                data: {}
+                            });
+                        });
                     });
 
                     describe('create(minireel)', function() {
@@ -1827,10 +1884,10 @@
                             result = MiniReelService.convertForPlayer(converted);
 
                             result.data.deck.forEach(function(card) {
-                                if (!(/adUnit|text|links|displayAd/).test(card.type)) {
+                                if (!(/adUnit|text|links|displayAd|wildcard/).test(card.type)) {
                                     expect(card.modules.indexOf('displayAd')).not.toBe(-1);
                                 } else if (card.type !== 'links') {
-                                    expect(card.modules.indexOf('displayAd')).toBe(-1);
+                                    expect((card.modules || []).indexOf('displayAd')).toBe(-1);
                                 }
                             });
 
@@ -1845,7 +1902,7 @@
                             result.data.deck.forEach(function(card) {
                                 if ((!card.placementId && !(/ad|links/).test(card.type)) ||
                                     (/adUnit|text|displayAd/).test(card.type)) {
-                                    expect(card.modules.indexOf('displayAd')).toBe(-1);
+                                    expect((card.modules || []).indexOf('displayAd')).toBe(-1);
                                 } else if (card.type !== 'links') {
                                     expect(card.modules.indexOf('displayAd')).not.toBe(-1);
                                 }
@@ -1866,10 +1923,10 @@
                             result = MiniReelService.convertForPlayer(converted);
 
                             result.data.deck.forEach(function(card) {
-                                if (!(/adUnit|text|links|displayAd/).test(card.type)) {
+                                if (!(/adUnit|text|links|displayAd|wildcard/).test(card.type)) {
                                     expect(card.modules.indexOf('displayAd')).not.toBe(-1);
                                 } else if (card.type !== 'links') {
-                                    expect(card.modules.indexOf('displayAd')).toBe(-1);
+                                    expect((card.modules || []).indexOf('displayAd')).toBe(-1);
                                 }
                             });
 
@@ -1888,7 +1945,7 @@
                             result.data.deck.forEach(function(card) {
                                 if ((!card.placementId && !(/ad|links/).test(card.type)) ||
                                     (/adUnit|text|displayAd/).test(card.type)) {
-                                    expect(card.modules.indexOf('displayAd')).toBe(-1);
+                                    expect((card.modules || []).indexOf('displayAd')).toBe(-1);
                                 } else if (card.type !== 'links') {
                                     expect(card.modules.indexOf('displayAd')).not.toBe(-1);
                                 }
