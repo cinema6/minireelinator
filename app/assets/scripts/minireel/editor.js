@@ -461,9 +461,7 @@ VideoCardController           ) {
                                           MiniReelService , CollateralService ,
                                           VideoErrorService ) {
             var self = this,
-                PortalCtrl = $scope.PortalCtrl,
                 MiniReelCtrl = $scope.MiniReelCtrl,
-                canSeeCampaigns = !!PortalCtrl.model.permissions.campaigns,
                 cardLimits = {
                     copy: Infinity
                 },
@@ -673,21 +671,9 @@ VideoCardController           ) {
             };
 
             this.newCard = function(insertionIndex) {
-                function createVideoCard() {
-                    var card = MiniReelService.createCard('videoBallot');
-
-                    return c6State.goTo('MR:EditCard', [card], {
-                        insertAt: insertionIndex
-                    });
-                }
-
-                function promptCardTypeChoice() {
-                    return c6State.goTo('MR:Editor.NewCard', null, {
-                        insertAt: insertionIndex
-                    });
-                }
-
-                return (canSeeCampaigns ? promptCardTypeChoice : createVideoCard)();
+                return c6State.goTo('MR:Editor.NewCard', null, {
+                    insertAt: insertionIndex
+                });
             };
 
             this.editCard = function(card) {
@@ -928,15 +914,6 @@ VideoCardController           ) {
                 this.model = function() {
                     return copy(EditorService.state.minireel);
                 };
-            }]);
-        }])
-
-        .config(['c6StateProvider',
-        function( c6StateProvider ) {
-            c6StateProvider.state('MR:Editor.NewCard', [function() {
-                this.controller = 'NewCardController';
-                this.controllerAs = 'NewCardCtrl';
-                this.templateUrl = 'views/minireel/editor/new_card.html';
             }]);
         }])
 
@@ -1526,14 +1503,62 @@ VideoCardController           ) {
             };
         }])
 
-        .controller('NewCardController', ['c6State','MiniReelService',
-        function                         ( c6State , MiniReelService ) {
-            this.type = 'videoBallot';
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Editor.NewCard', ['MiniReelService','c6State','$q',
+            function                                   ( MiniReelService , c6State , $q ) {
+                var PortalState = c6State.get('Portal'),
+                    user = PortalState.cModel;
+
+                this.controller = 'NewCardController';
+                this.controllerAs = 'NewCardCtrl';
+                this.templateUrl = 'views/minireel/editor/new_card.html';
+
+                this.queryParams = {
+                    insertionIndex: '&insertAt'
+                };
+
+                this.model = function() {
+                    return MiniReelService.createCard('videoBallot');
+                };
+
+                this.afterModel = function(card) {
+                    if (!!user.permissions.campaigns) { return $q.when(true); }
+
+                    c6State.goTo('MR:EditCard', [card], null, true);
+
+                    return $q.reject(new Error('User does not have access to campaigns.'));
+                };
+            }]);
+        }])
+
+        .controller('NewCardController', ['c6State','MiniReelService','$scope',
+        function                         ( c6State , MiniReelService , $scope ) {
+            var EditorCtrl = $scope.EditorCtrl,
+                minireel = EditorCtrl.model;
+
+            Object.defineProperties(this, {
+                type: {
+                    get: function() {
+                        return this.model.type;
+                    },
+                    set: function(value) {
+                        MiniReelService.setCardType(this.model, value);
+                    }
+                }
+            });
 
             this.edit = function() {
-                var card = MiniReelService.createCard(this.type);
+                var card = this.model,
+                    insertionIndex = this.insertionIndex;
 
-                c6State.goTo('MR:EditCard', [card]);
+                return c6State.goTo('MR:EditCard', [card], { insertAt: this.insertionIndex }, true)
+                    .catch(function() {
+                        return minireel.data.deck.splice(insertionIndex, 0, card);
+                    })
+                    .then(function() {
+                        return card;
+                    });
             };
         }])
 
