@@ -914,7 +914,7 @@
                         it('should change the type of a card to the specified type', function() {
                             var card = MiniReelService.createCard(),
                                 id = card.id,
-                                videoCard, videoBallotCard, adCard, linksCard, displayAdCard, recapCard;
+                                videoCard, videoBallotCard, adCard, linksCard, displayAdCard, recapCard, wildcardCard;
 
                             function sameId(card) {
                                 card.id = id;
@@ -944,10 +944,10 @@
                                 return card;
                             }()));
 
-                            adCard = MiniReelService.setCardType(card, 'ad');
-                            expect(adCard).toBe(card);
-                            expect(adCard).toEqual(sameId(MiniReelService.createCard('ad')));
-                            adCard.title = null;
+                            wildcardCard = MiniReelService.setCardType(card, 'wildcard');
+                            expect(wildcardCard).toBe(card);
+                            expect(wildcardCard).toEqual(sameId(MiniReelService.createCard('wildcard')));
+                            wildcardCard.sponsored = false;
 
                             linksCard = MiniReelService.setCardType(card, 'links');
                             expect(linksCard).toBe(card);

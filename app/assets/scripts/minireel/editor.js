@@ -630,6 +630,8 @@ VideoCardController           ) {
 
             this.canEditCard = function(card) {
                 switch (card.type) {
+                case 'wildcard':
+                    return true;
                 case 'recap':
                 case 'displayAd':
                     return false;

@@ -558,6 +558,16 @@
                         it('should be false', function() {
                             expect(EditorCtrl.canEditCard(card)).toBe(false);
                         });
+
+                        describe('if it is a wildcard', function() {
+                            beforeEach(function() {
+                                MiniReelService.setCardType(card, 'wildcard');
+                            });
+
+                            it('should be true', function() {
+                                expect(EditorCtrl.canEditCard(card)).toBe(true);
+                            });
+                        });
                     });
                 });
 

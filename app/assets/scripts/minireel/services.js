@@ -1504,7 +1504,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     displayAd: {
                         size: value('300x250')
                     },
-                    recap: {}
+                    recap: {},
+                    wildcard: {}
                 };
 
                 /******************************************************\
