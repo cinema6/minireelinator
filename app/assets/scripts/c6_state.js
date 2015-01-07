@@ -833,7 +833,8 @@ function( angular , c6uilib ) {
                     }
 
                     return qSeries(states.map(function(state) {
-                        var currentModel = state.cModel;
+                        var currentModel = state.cModel,
+                            stateParams = fnExtend(state.cParams, params);
 
                         function orModel() {
                             var args = Array.prototype.slice.call(arguments),
@@ -848,7 +849,7 @@ function( angular , c6uilib ) {
                         }
 
                         function model() {
-                            return orModel(state.model || noop, fnExtend(state.cParams, params));
+                            return orModel(state.model || noop, stateParams);
                         }
 
                         function afterModel(model) {
@@ -863,7 +864,7 @@ function( angular , c6uilib ) {
                             }).call(state, state.cModel);
 
                             result = shouldBeCalled ?
-                                afterModelFn.call(state, model) : null;
+                                afterModelFn.call(state, model, stateParams) : null;
                             afterModelFn.lastCallValue = model;
 
                             return result;

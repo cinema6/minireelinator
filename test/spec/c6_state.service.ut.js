@@ -970,7 +970,7 @@
                                     });
 
                                     it('should call afterModel() with the model', function() {
-                                        expect(posts.afterModel).toHaveBeenCalledWith(posts.myModel);
+                                        expect(posts.afterModel).toHaveBeenCalledWith(posts.myModel, extend(posts.cParams, params));
                                     });
 
                                     it('should call the title() hook with the model and assign the result to the cTitle property', function() {
@@ -1031,7 +1031,7 @@
                                 });
 
                                 it('should call afterModel()', function() {
-                                    expect(comments.afterModel).toHaveBeenCalledWith({});
+                                    expect(comments.afterModel).toHaveBeenCalledWith({}, params);
                                 });
 
                                 it('should inherit its parent\'s cTitle', function() {
