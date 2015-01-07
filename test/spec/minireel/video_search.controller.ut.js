@@ -10,6 +10,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
             MiniReelService,
             c6State,
             VideoService,
+            PortalCtrl,
             VideoSearchCtrl,
             EditorCtrl;
 
@@ -56,6 +57,13 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
+                    $scope.PortalCtrl = PortalCtrl = $controller('PortalController', {
+                        $scope: $scope
+                    });
+                    PortalCtrl.model = {
+                        permissions: {}
+                    };
+
                     $scope.EditorCtrl = EditorCtrl = $controller('EditorController', {
                         $scope: $scope
                     });

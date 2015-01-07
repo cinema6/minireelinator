@@ -1,7 +1,18 @@
 (function() {
     'use strict';
 
-    define(['c6_state'], function(c6StateModule) {
+    define(['angular', 'c6_state'], function(angular, c6StateModule) {
+        function extend() {
+            var objects = Array.prototype.slice.call(arguments);
+
+            return objects.reduce(function(result, object) {
+                return Object.keys(object).reduce(function(result, key) {
+                    result[key] = object[key];
+                    return result;
+                }, result);
+            }, {});
+        }
+
         describe('c6State', function() {
             var c6StateProvider,
                 $injector,
@@ -774,12 +785,18 @@
                             });
                         });
 
-                        describe('resolveStates(states)', function() {
+                        describe('resolveStates(states, params)', function() {
                             var applicationHTML, postsHTML, commentsHTML,
                                 application, posts, post, comments,
-                                success, failure;
+                                success, failure,
+                                params;
 
                             beforeEach(function() {
+                                params = {
+                                    test: 'Hello',
+                                    foo: 'bar'
+                                };
+
                                 success = jasmine.createSpy('success');
                                 failure = jasmine.createSpy('failure');
 
@@ -858,7 +875,7 @@
                                 };
 
                                 $rootScope.$apply(function() {
-                                    _private.resolveStates([application, posts, post, comments]).then(success, failure);
+                                    _private.resolveStates([application, posts, post, comments], params).then(success, failure);
                                 });
 
                                 $httpBackend.flush();
@@ -898,7 +915,7 @@
                                         beforeEach(function() {
                                             posts.cRendered = true;
                                             $rootScope.$apply(function() {
-                                                _private.resolveStates([posts]);
+                                                _private.resolveStates([posts], null);
                                             });
                                         });
 
@@ -911,7 +928,7 @@
                                         beforeEach(function() {
                                             posts.cRendered = false;
                                             $rootScope.$apply(function() {
-                                                _private.resolveStates([posts]);
+                                                _private.resolveStates([posts], null);
                                             });
                                         });
 
@@ -934,7 +951,7 @@
                                     });
 
                                     it('should resolve the model', function() {
-                                        expect(posts.model).toHaveBeenCalledWith(posts.cParams);
+                                        expect(posts.model).toHaveBeenCalledWith(extend(posts.cParams, params));
                                     });
                                 });
 
@@ -953,7 +970,7 @@
                                     });
 
                                     it('should call afterModel() with the model', function() {
-                                        expect(posts.afterModel).toHaveBeenCalledWith(posts.myModel);
+                                        expect(posts.afterModel).toHaveBeenCalledWith(posts.myModel, extend(posts.cParams, params));
                                     });
 
                                     it('should call the title() hook with the model and assign the result to the cTitle property', function() {
@@ -1014,7 +1031,7 @@
                                 });
 
                                 it('should call afterModel()', function() {
-                                    expect(comments.afterModel).toHaveBeenCalledWith({});
+                                    expect(comments.afterModel).toHaveBeenCalledWith({}, params);
                                 });
 
                                 it('should inherit its parent\'s cTitle', function() {
@@ -1239,7 +1256,7 @@
                                     c6State.goTo('Home');
                                 });
 
-                                expect(_private.resolveStates).toHaveBeenCalledWith([application, home]);
+                                expect(_private.resolveStates).toHaveBeenCalledWith([application, home], null);
 
                                 $rootScope.$apply(function() {
                                     c6State.goTo('About');
@@ -1254,7 +1271,7 @@
                                 $timeout.flush();
 
                                 expect(_private.resolveStates.calls.count()).toBe(2);
-                                expect(_private.resolveStates).toHaveBeenCalledWith([application, home, about]);
+                                expect(_private.resolveStates).toHaveBeenCalledWith([application, home, about], null);
                             });
 
                             describe('if called with only a state name', function() {
@@ -1265,7 +1282,7 @@
                                 });
 
                                 it('should resolve the state', function() {
-                                    expect(_private.resolveStates).toHaveBeenCalledWith([application, home, about]);
+                                    expect(_private.resolveStates).toHaveBeenCalledWith([application, home, about], null);
                                 });
 
                                 describe('when the states are resolved', function() {
@@ -1351,6 +1368,8 @@
 
                             describe('if called with query params', function() {
                                 beforeEach(function() {
+                                    _private.resolveStates.calls.reset();
+
                                     $location.search.and.returnValue($location);
 
                                     $rootScope.$apply(function() {
@@ -1363,6 +1382,13 @@
                                         renderStatesDeferred.resolve([application, about]);
                                     });
                                     $timeout.flush();
+                                });
+
+                                it('should call resolveStates with the params', function() {
+                                    expect(_private.resolveStates).toHaveBeenCalledWith([application, home, about], {
+                                        hello: 'foo',
+                                        test: 'bar'
+                                    });
                                 });
 
                                 it('should update the query params', function() {

@@ -1,47 +1,104 @@
 (function() {
     'use strict';
 
-    define(['minireel/editor', 'app'], function(editorModule, appModule) {
+    define(['app'], function(appModule) {
         describe('NewCardController', function() {
             var $rootScope,
                 $scope,
+                $log,
+                $q,
                 $controller,
                 VideoService,
-                computer,
                 c6State,
+                SettingsService,
                 MiniReelService,
+                EditorService,
+                PortalState,
+                MiniReelCtrl,
+                EditorCtrl,
                 NewCardCtrl;
 
-            var model;
+            var model, minireel;
 
             beforeEach(function() {
-                model = null;
-
-                module('c6.ui', function($provide) {
-                    $provide.decorator('c6Computed', function($delegate) {
-                        return jasmine.createSpy('c6Computed()')
-                            .and.callFake(function() {
-                                computer = $delegate.apply($delegate, arguments);
-                                return computer;
-                            });
-                    });
-                });
-
                 module(appModule.name);
-                module(editorModule.name);
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
+                    $log = $injector.get('$log');
+                    $q = $injector.get('$q');
                     $controller = $injector.get('$controller');
                     VideoService = $injector.get('VideoService');
                     c6State = $injector.get('c6State');
+                    SettingsService = $injector.get('SettingsService');
                     MiniReelService = $injector.get('MiniReelService');
+                    EditorService = $injector.get('EditorService');
 
-                    c6State.get('MR:Editor').cModel = { id: 'e-fcfb709c23e0fd' };
+                    model = MiniReelService.createCard('videoBallot');
+
+                    PortalState = c6State.get('Portal');
+                    PortalState.cModel = {
+                        org: {
+                            id: 'o-8e8b72b9fe19d4'
+                        }
+                    };
+
+                    SettingsService
+                        .register('MR::org', {
+                            embedTypes: ['script'],
+                            minireelDefaults: {
+                                mode: 'light',
+                                autoplay: true,
+                                splash: {
+                                    ratio: '3-2',
+                                    theme: 'img-text-overlay'
+                                }
+                            },
+                            embedDefaults: {
+                                size: null
+                            }
+                        }, { localSync: false })
+                        .register('MR::user', {
+                            minireelDefaults: {
+                                splash: {
+                                    ratio: SettingsService.getReadOnly('MR::org')
+                                        .minireelDefaults.splash.ratio,
+                                    theme: SettingsService.getReadOnly('MR::org')
+                                        .minireelDefaults.splash.theme
+                                }
+                            }
+                        }, { localSync: false });
 
                     $scope = $rootScope.$new();
-                    NewCardCtrl = $controller('NewCardController', { $scope: $scope, cModel: model });
-                    NewCardCtrl.model = model;
+                    $scope.$apply(function() {
+                        MiniReelService.create().then(function(minireel) {
+                            EditorService.open(minireel);
+                        });
+                    });
+                    minireel = EditorService.state.minireel;
+
+                    minireel.data.deck.unshift.apply(minireel.data.deck, ['text', 'videoBallot', 'videoBallot', 'video'].map(function(type) {
+                        return MiniReelService.createCard(type);
+                    }));
+
+                    $scope.$apply(function() {
+                        MiniReelCtrl = $scope.MiniReelCtrl = $controller('MiniReelController', {
+                            $scope: $scope
+                        });
+
+                        EditorCtrl = $scope.EditorCtrl = $controller('EditorController', {
+                            $scope: $scope,
+                            $log: {
+                                context: function() {
+                                    return $log;
+                                }
+                            }
+                        });
+                        EditorCtrl.initWithModel({});
+
+                        NewCardCtrl = $controller('NewCardController', { $scope: $scope, cModel: model });
+                        NewCardCtrl.model = model;
+                    });
                 });
             });
 
@@ -51,35 +108,83 @@
 
             describe('properties', function() {
                 describe('type', function() {
-                    it('should be initialized as "videoBallot"', function() {
-                        expect(NewCardCtrl.type).toBe('videoBallot');
+                    describe('getting', function() {
+                        it('should be whatever the model\'s type is', function() {
+                            expect(NewCardCtrl.type).toBe(model.type);
+
+                            MiniReelService.setCardType(model, 'video');
+                            expect(NewCardCtrl.type).toBe(model.type);
+                        });
+                    });
+
+                    describe('setting', function() {
+                        beforeEach(function() {
+                            spyOn(MiniReelService, 'setCardType').and.callThrough();
+                        });
+
+                        it('should set the card type', function() {
+                            NewCardCtrl.type = 'text';
+                            expect(MiniReelService.setCardType).toHaveBeenCalledWith(model, 'text');
+
+                            NewCardCtrl.type = 'wildcard';
+                            expect(MiniReelService.setCardType).toHaveBeenCalledWith(model, 'wildcard');
+                        });
                     });
                 });
             });
 
             describe('methods', function() {
                 describe('edit()', function() {
-                    var card;
+                    var goToDeferred,
+                        success, failure;
 
                     beforeEach(function() {
-                        card = {
-                            id: 'rc-39635762f9ab06'
-                        };
+                        goToDeferred = $q.defer();
 
-                        NewCardCtrl.type = 'blah';
-                        spyOn(c6State, 'goTo');
-                        spyOn(MiniReelService, 'createCard')
-                            .and.returnValue(card);
+                        success = jasmine.createSpy('success()');
+                        failure = jasmine.createSpy('failure()');
 
-                        NewCardCtrl.edit();
+                        spyOn(c6State, 'goTo').and.returnValue(goToDeferred.promise);
+
+                        NewCardCtrl.insertionIndex = 3;
+
+                        $scope.$apply(function() {
+                            NewCardCtrl.edit().then(success, failure);
+                        });
                     });
 
-                    it('should create a card of the current type', function() {
-                        expect(MiniReelService.createCard).toHaveBeenCalledWith(NewCardCtrl.type);
+                    it('should goTo the card editing state', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:EditCard', [model], {
+                            insertAt: NewCardCtrl.insertionIndex
+                        }, true);
                     });
 
-                    it('should transition to the edit card state', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('MR:EditCard', [card]);
+                    describe('if the transition fails', function() {
+                        beforeEach(function() {
+                            $scope.$apply(function() {
+                                goToDeferred.reject('Cannot edit this card.');
+                            });
+                        });
+
+                        it('should add the card to the deck', function() {
+                            expect(minireel.data.deck[3]).toBe(model);
+                        });
+
+                        it('should resolve to the card', function() {
+                            expect(success).toHaveBeenCalledWith(model);
+                        });
+                    });
+
+                    describe('if the transition succeeds', function() {
+                        beforeEach(function() {
+                            $scope.$apply(function() {
+                                goToDeferred.resolve(c6State.get('MR:EditCard'));
+                            });
+                        });
+
+                        it('should resolve to the card', function() {
+                            expect(success).toHaveBeenCalledWith(model);
+                        });
                     });
                 });
             });
