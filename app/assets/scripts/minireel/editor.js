@@ -1199,7 +1199,7 @@ VideoCardController           ) {
                         var types = ['video', 'videoBallot', 'text'];
 
                         if (!model || types.indexOf(model.type) < 0 || model.sponsored) {
-                            c6State.goTo('MR:Editor', null, {});
+                            c6State.goTo('MR:Editor', null, {}, true);
                             return $q.reject('Cannot edit this card.');
                         }
                     };
@@ -1509,8 +1509,7 @@ VideoCardController           ) {
         function( c6StateProvider ) {
             c6StateProvider.state('MR:Editor.NewCard', ['MiniReelService','c6State','$q',
             function                                   ( MiniReelService , c6State , $q ) {
-                var PortalState = c6State.get('Portal'),
-                    user = PortalState.cModel;
+                var PortalState = c6State.get('Portal');
 
                 this.controller = 'NewCardController';
                 this.controllerAs = 'NewCardCtrl';
@@ -1525,6 +1524,8 @@ VideoCardController           ) {
                 };
 
                 this.afterModel = function(card) {
+                    var user = PortalState.cModel;
+
                     if (!!user.permissions.campaigns) { return $q.when(true); }
 
                     c6State.goTo('MR:EditCard', [card], null, true);

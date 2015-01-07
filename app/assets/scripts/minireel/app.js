@@ -64,12 +64,12 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                             this.route('/', 'MR:Splash.Source');
                             this.route('/', 'MR:Splash.Image');
                         });
+                        this.route('/card/new', 'MR:Editor.NewCard');
                         this.route('/card/:cardId', 'MR:EditCard', function() {
                             this.state('MR:EditCard.Copy');
                             this.state('MR:EditCard.Video');
                             this.state('MR:EditCard.Ballot');
                         });
-                        this.route('/card/new', 'MR:Editor.NewCard');
                     });
                 });
 
