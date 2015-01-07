@@ -89,7 +89,7 @@
                     spyOn(EditorService, 'open').and.returnValue(editorMinireel);
 
                     $rootScope.$apply(function() {
-                        EditorState.afterModel(minireel).then(success, failure);
+                        EditorState.afterModel(minireel, {}).then(success, failure);
                     });
                 });
 
@@ -110,10 +110,6 @@
 
                         id = 'cam-7bb1140874bc78';
 
-                        spyOn($location, 'search').and.returnValue({
-                            campaign: id
-                        });
-
                         cinema6.db.push('campaign', id, {
                             id: id,
                             advertiser: cinema6.db.create('advertiser', {
@@ -128,12 +124,13 @@
                         });
 
                         $rootScope.$apply(function() {
-                            EditorState.afterModel(minireel).then(success, failure);
+                            EditorState.afterModel(minireel, {
+                                campaign: id
+                            }).then(success, failure);
                         });
                     });
 
                     it('should open the MiniReel with its campaign', function() {
-                        expect($location.search).toHaveBeenCalledWith();
                         expect(EditorService.open).toHaveBeenCalledWith(minireel, campaign);
                     });
 
