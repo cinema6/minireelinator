@@ -572,6 +572,47 @@
                                 expect(state.minireel).toBe(_private.proxy);
                             });
                         });
+
+                        describe('campaign', function() {
+                            describe('initially', function() {
+                                it('should be null', function() {
+                                    expect(state.campaign).toBeNull();
+                                });
+                            });
+
+                            describe('if a minireel is opened with a campaign', function() {
+                                var campaign;
+
+                                beforeEach(function() {
+                                    campaign = cinema6.db.create('campaign', {
+                                        id: 'cam-a2d328601310a1',
+                                        advertiser: cinema6.db.create('advertiser', {
+                                            id: 'a-9709eb4a3c41b2'
+                                        })
+                                    });
+
+                                    EditorService.open(minireel, campaign);
+                                });
+
+                                it('should be pojo of the campaign', function() {
+                                    expect(state.campaign).toEqual(campaign.pojoify());
+                                });
+
+                                it('should not be mutatable', function() {
+                                    expect(function() {
+                                        state.campaign = null;
+                                    }).toThrow();
+
+                                    try {
+                                        state.campaign.id = null;
+                                        state.campaign.advertiser.id = null;
+                                    } catch (e) {}
+
+                                    expect(state.campaign.id).not.toBeNull();
+                                    expect(state.campaign.advertiser.id).not.toBeNull();
+                                });
+                            });
+                        });
                     });
                 });
 

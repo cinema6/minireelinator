@@ -44,6 +44,10 @@
             </form>
         </div>
         <div class="metaData__group">
+            <span ng-if="EditorCtrl.campaign">
+                <span>Campaign: <a c6-sref="MR:Campaign.Creatives" c6-models="[EditorCtrl.campaign, null]" c6-params="{}"><strong>{{EditorCtrl.campaign.name}}</strong></a></span>
+                <span class="typo--faded">&nbsp;|&nbsp;</span>
+            </span>
             <span ng-if="PortalCtrl.model.type !== 'ContentProvider'">
                 Type: <a c6-sref="MR:Settings.Mode" class="miniReel__type" title="AutoPlay MiniReel"><strong>{{EditorCtrl.prettyMode}}</strong></a> 
                 <span class="typo--faded">&nbsp;|&nbsp;</span>

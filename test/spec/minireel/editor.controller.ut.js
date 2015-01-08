@@ -98,7 +98,8 @@
                     EditorService.state = {
                         dirty: false,
                         inFlight: false,
-                        minireel: cModel
+                        minireel: cModel,
+                        campaign: null
                     };
                     MiniReelService = $injector.get('MiniReelService');
                     ConfirmDialogService = $injector.get('ConfirmDialogService');
@@ -112,7 +113,8 @@
                     $scope = $rootScope.$new();
                     PortalCtrl = $scope.PortalCtrl = {
                         model: {
-                            org: {}
+                            org: {},
+                            permissions: {}
                         }
                     };
                     MiniReelCtrl = $scope.MiniReelCtrl = {
@@ -192,6 +194,31 @@
                 describe('model', function() {
                     it('should be the EditorService\'s MiniReel', function() {
                         expect(EditorCtrl.model).toBe(cModel);
+                    });
+                });
+
+                describe('campaign', function() {
+                    describe('if the MR is not part of a campaign', function() {
+                        it('should be null', function() {
+                            expect(EditorCtrl.campaign).toBeNull();
+                        });
+                    });
+
+                    describe('if the MR is part of a campaign', function() {
+                        beforeEach(function() {
+                            EditorService.state.campaign = cinema6.db.create('campaign', {
+                                id: 'cam-9ca56c92960d7d',
+                                advertiser: cinema6.db.create('advertiser', {
+                                    id: 'a-194f90241797ed'
+                                })
+                            }).pojoify();
+
+                            EditorCtrl.initWithModel({});
+                        });
+
+                        it('should be the campaign', function() {
+                            expect(EditorCtrl.campaign).toBe(EditorService.state.campaign);
+                        });
                     });
                 });
 
@@ -531,6 +558,16 @@
                         it('should be false', function() {
                             expect(EditorCtrl.canEditCard(card)).toBe(false);
                         });
+
+                        describe('if it is a wildcard', function() {
+                            beforeEach(function() {
+                                MiniReelService.setCardType(card, 'wildcard');
+                            });
+
+                            it('should be true', function() {
+                                expect(EditorCtrl.canEditCard(card)).toBe(true);
+                            });
+                        });
                     });
                 });
 
@@ -627,18 +664,8 @@
                         EditorCtrl.newCard(3);
                     });
 
-                    xit('should transition to the MR:NewCard state', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('MR:NewCard', null, {
-                            insertAt: 3
-                        });
-                    });
-
-                    it('should create a new videoBallot card', function() {
-                        expect(MiniReelService.createCard).toHaveBeenCalledWith('videoBallot');
-                    });
-
-                    it('should transition to the editor.editCard state with the card and the insertionIndex', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('MR:EditCard', [lastCreatedCard], {
+                    it('should go to the NewCard state', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor.NewCard', null, {
                             insertAt: 3
                         });
                     });

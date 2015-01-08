@@ -27,6 +27,21 @@ function( angular , c6uilib ) {
         }, {});
     }
 
+    /*
+     * Extend function in the functional style where a new object is returned, rather than an
+     * existing object being mutated.
+     */
+    function fnExtend() {
+        var objects = Array.prototype.slice.call(arguments);
+
+        return objects.reduce(function(result, object) {
+            return Object.keys(object || {}).reduce(function(result, key) {
+                result[key] = object[key];
+                return result;
+            }, result);
+        }, {});
+    }
+
     function find(collection, predicate) {
         return collection.reduce(function(result, next) {
             return result || (predicate(next) ? next : result);
@@ -702,7 +717,7 @@ function( angular , c6uilib ) {
                         state.cModel = models[index];
                     });
 
-                    return _private.resolveStates(family)
+                    return _private.resolveStates(family, params || null)
                         .then(_private.renderStates)
                         .then(function syncUrl(states) {
                             return _private.syncUrl(states, !!replace);
@@ -822,7 +837,7 @@ function( angular , c6uilib ) {
                     return path;
                 };
 
-                _private.resolveStates = function(states) {
+                _private.resolveStates = function(states, params) {
                     function setupTemplate(state) {
                         var templateUrl = state.templateUrl;
 
@@ -838,7 +853,8 @@ function( angular , c6uilib ) {
                     }
 
                     return qSeries(states.map(function(state) {
-                        var currentModel = state.cModel;
+                        var currentModel = state.cModel,
+                            stateParams = fnExtend(state.cParams, params);
 
                         function orModel() {
                             var args = Array.prototype.slice.call(arguments),
@@ -853,7 +869,7 @@ function( angular , c6uilib ) {
                         }
 
                         function model() {
-                            return orModel(state.model || noop, state.cParams);
+                            return orModel(state.model || noop, stateParams);
                         }
 
                         function afterModel(model) {
@@ -868,7 +884,7 @@ function( angular , c6uilib ) {
                             }).call(state, state.cModel);
 
                             result = shouldBeCalled ?
-                                afterModelFn.call(state, model) : null;
+                                afterModelFn.call(state, model, stateParams) : null;
                             afterModelFn.lastCallValue = model;
 
                             return result;

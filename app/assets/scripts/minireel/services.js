@@ -1357,6 +1357,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     return 'Text';
                                 case 'displayAd':
                                     return 'Display Ad';
+                                case 'wildcard':
+                                    return 'Wildcard Placeholder';
 
                                 default:
                                     return null;
@@ -1383,7 +1385,15 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     },
                     placementId: copy(null),
                     templateUrl: copy(null),
-                    sponsored: copy(false),
+                    sponsored: function(card) {
+                        switch (this.type) {
+                        case 'wildcard':
+                            return true;
+
+                        default:
+                            return card.sponsored || false;
+                        }
+                    },
                     campaign: copy({
                         campaignId: null,
                         advertiserId: null,
@@ -1494,7 +1504,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     displayAd: {
                         size: value('300x250')
                     },
-                    recap: {}
+                    recap: {},
+                    wildcard: {}
                 };
 
                 /******************************************************\
@@ -1597,7 +1608,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             }
 
             function enableModule(card, module) {
-                var modules = card.modules;
+                var modules = card.modules || [];
 
                 if (modules.indexOf(module) > -1) { return; }
 
@@ -1605,6 +1616,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             }
 
             function disableModule(card, module) {
+                if (!card.modules) { return; }
+
                 card.modules = card.modules.filter(function(cardModule) {
                     return cardModule !== module;
                 });
@@ -2116,6 +2129,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 sponsor: minireel.data.params.sponsor
                             };
                         }
+                    },
+                    wildcard: {
+                        id: copy(),
+                        type: value('wildcard')
                     }
                 };
 

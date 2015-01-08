@@ -29,7 +29,7 @@
                     </div>
                     <div class="miniReel__imgBox">
                         <a c6-sref="MR:Editor" c6-models="[$this]"
-                        c6-params="{}">
+                        c6-params="{ campaign: campaign.id }">
                             <div class="miniReel__img"
                             title="Edit This MiniReel: {{$this.data.title}}" 
                             c6-bg-img="{{$this.data.collateral.splash}}">
@@ -41,7 +41,7 @@
                         <h1 class="miniReel__title">
                             <a class="miniReel__titleLink" 
                             c6-sref="MR:Editor" c6-models="[$this]" 
-                            c6-params="{}"
+                            c6-params="{ campaign: campaign.id }"
                             title="Edit This MiniReel: {{$this.data.title}}">
                                 {{$this.data.title}}
                             </a>
