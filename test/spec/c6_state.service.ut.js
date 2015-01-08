@@ -173,6 +173,62 @@
                                     .state('Comments.Meta', [function() {}]);
                             });
 
+                            describe('mapping a state in multiple places', function() {
+                                var aboutChildren, postsChildren;
+
+                                beforeEach(function() {
+                                    c6StateProvider.map(function() {
+                                        this.route('/about', 'About', function() {
+                                            this.route('/:postId', 'Posts.Post', 'about.post', function() {
+                                                this.route('/comments', 'Posts.Post.Comments', 'about.post.comments');
+                                            });
+                                        });
+                                        this.route('/posts', 'Posts', function() {
+                                            this.route('/:postId', 'Posts.Post', 'posts.post', function() {
+                                                this.route('/comments', 'Posts.Post.Comments', 'posts.post.comments');
+                                            });
+                                        });
+                                    });
+
+                                    get();
+
+                                    aboutChildren = {
+                                        post: c6State.get('about.post'),
+                                        comments: c6State.get('about.post.comments')
+                                    };
+
+                                    postsChildren = {
+                                        post: c6State.get('posts.post'),
+                                        comments: c6State.get('posts.post.comments')
+                                    };
+                                });
+
+                                it('should create unique instances of the states', function() {
+                                    expect(aboutChildren.post).not.toBe(postsChildren.post);
+                                    expect(aboutChildren.comments).not.toBe(postsChildren.comments);
+
+                                    expect(aboutChildren.post.constructor).toBe(postsChildren.post.constructor);
+                                    expect(aboutChildren.comments.constructor).toBe(postsChildren.comments.constructor);
+                                });
+
+                                it('should create differences in the properties on each instance', function() {
+                                    expect(aboutChildren.post.cParent).toBe(c6State.get('About'));
+                                    expect(postsChildren.post.cParent).toBe(c6State.get('Posts'));
+                                    expect(aboutChildren.comments.cParent).toBe(aboutChildren.post);
+                                    expect(postsChildren.comments.cParent).toBe(postsChildren.post);
+
+                                    expect(aboutChildren.post.cName).toBe('about.post');
+                                    expect(postsChildren.post.cName).toBe('posts.post');
+                                    expect(aboutChildren.comments.cName).toBe('about.post.comments');
+                                    expect(postsChildren.comments.cName).toBe('posts.post.comments');
+
+                                    expect(aboutChildren.post.cUrl).toBe('/about/:postId');
+                                    expect(postsChildren.post.cUrl).toBe('/posts/:postId');
+                                    expect(aboutChildren.comments.cUrl).toBe('/about/:postId/comments');
+                                    expect(postsChildren.comments.cUrl).toBe('/posts/:postId/comments');
+                                });
+                            });
+
                             describe('specifying a parent state', function() {
                                 beforeEach(function() {
                                     c6StateProvider.map('Posts', function() {
@@ -1428,7 +1484,7 @@
                             });
                         });
 
-                        describe('get(state)', function() {
+                       describe('get(state)', function() {
                             var Home, Sidebar, Contacts,
                                 home, sidebar, contacts, post;
 
@@ -1458,7 +1514,7 @@
 
                             describe('the auto-generated Error state', function() {
                                 it('should be gettable', function() {
-                                    var error = c6State.get('Error');
+                                    var error = get().get('Error');
 
                                     expect(error).toEqual(jasmine.objectContaining({
                                         cModel: null,

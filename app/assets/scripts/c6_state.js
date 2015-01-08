@@ -6,7 +6,26 @@ function( angular , c6uilib ) {
         extend = angular.extend,
         equals = angular.equals,
         forEach = angular.forEach,
-        copy = angular.copy;
+        copy = angular.copy,
+        isFunction = angular.isFunction,
+        isString = angular.isString;
+
+    function argParser(config, args) {
+        function truePredicate() {
+            return true;
+        }
+
+        return Object.keys(config).reduce(function(result, key) {
+            result[key] = config[key].reduce(function(value, item) {
+                var arg = args[item[0]],
+                    predicate = item[1] || truePredicate;
+
+                return value || (predicate(arg) ? arg : value);
+            }, undefined);
+
+            return result;
+        }, {});
+    }
 
     function find(collection, predicate) {
         return collection.reduce(function(result, next) {
@@ -664,7 +683,8 @@ function( angular , c6uilib ) {
                 this.get = function(name) {
                     var context = contexts[currentContext],
                         constructor = context.stateConstructors[name],
-                        initializers = (constructor && constructor.initializers);
+                        initializers = constructor &&
+                            constructor.initializers.concat(constructor.initializers[name]);
 
                     return states[name] || (constructor &&
                         (states[name] = initializers.reduce(function(state, initializer) {
@@ -920,29 +940,29 @@ function( angular , c6uilib ) {
                 this.context = context;
             }
             Mapper.prototype = {
-                state: function(name, mapFn) {
+                state: function(constructorName) {
                     var parent = this.parent,
-                        context = this.context;
+                        context = this.context,
+                        args = argParser({
+                            name: [[1, isString], [0]],
+                            mapFn: [[2, isFunction], [1, isFunction]]
+                        }, arguments),
+                        name = args.name, mapFn = args.mapFn;
 
                     stateConfigs.relate(parent, name)
                         .push(name, function() {
-                            var constructor = stateConstructors[name],
-                                initializers = constructor.initializers ||
-                                    (constructor.initializers = []),
+                            var constructor = stateConstructors[constructorName],
+                                initializers = constructor.initializers[name] ||
+                                    (constructor.initializers[name] = []),
                                 routes = (context.routes || new List()),
                                 parentUrl = (routes.get(parent) || {}).url ||
                                     (context.enableUrlRouting ? '' : null);
 
                             initializers.push(function(c6State) {
                                 this.cParent = parent && c6State.get(parent);
-                                this.cTitle = null;
                                 this.cUrl = parentUrl;
-                                this.cModel = null;
-                                this.cTemplate = null;
                                 this.cContext = context.name;
                                 this.cName = name;
-                                this.cParams = null;
-                                this.cRendered = false;
                             });
 
                             context.stateConstructors[name] = constructor;
@@ -954,8 +974,13 @@ function( angular , c6uilib ) {
                         mapFn.call(new Mapper(this.context, name));
                     }
                 },
-                route: function(route, name, mapFn) {
-                    var context = this.context;
+                route: function(route, constructorName) {
+                    var context = this.context,
+                        args = argParser({
+                            name: [[2, isString], [1]],
+                            mapFn: [[3, isFunction], [2, isFunction]]
+                        }, arguments),
+                        name = args.name, mapFn = args.mapFn;
 
                     if (!this.context.enableUrlRouting) {
                         throw new Error(
@@ -965,14 +990,14 @@ function( angular , c6uilib ) {
                         );
                     }
 
-                    this.state(name);
+                    this.state(constructorName, name);
 
                     stateConfigs.push(name, function() {
-                        var constructor = stateConstructors[name],
+                        var constructor = stateConstructors[constructorName],
                             url = (route || null) &&
                                 context.routes.get(name).url.replace(/\/$/, '') + route;
 
-                        constructor.initializers.push(function() {
+                        constructor.initializers[name].push(function() {
                             this.cUrl = url;
                             this.cParams = url && (route.match(/:[^\/]+/g) || [])
                                 .reduce(function(params, match) {
@@ -1028,6 +1053,13 @@ function( angular , c6uilib ) {
 
             this.state = function(name, constructor) {
                 stateConstructors[name] = constructor;
+                constructor.initializers = [function() {
+                    this.cTitle = null;
+                    this.cModel = null;
+                    this.cTemplate = null;
+                    this.cParams = null;
+                    this.cRendered = false;
+                }];
 
                 return this;
             };
