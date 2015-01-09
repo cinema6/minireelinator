@@ -132,6 +132,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                                     this.state('MR:Wildcard.Copy', 'MR:New:Wildcard.Copy');
                                     this.state('MR:Wildcard.Video', 'MR:New:Wildcard.Video');
                                     this.state('MR:Wildcard.Survey', 'MR:New:Wildcard.Survey');
+                                    this.state('MR:Wildcard.Branding', 'MR:New:Wildcard.Branding');
                                     this.state(
                                         'MR:Wildcard.Advertising',
                                         'MR:New:Wildcard.Advertising'

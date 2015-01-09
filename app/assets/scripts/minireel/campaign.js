@@ -503,6 +503,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     sref: 'MR:Wildcard.Survey'
                 },
                 {
+                    name: 'Branding',
+                    sref: 'MR:Wildcard.Branding'
+                },
+                {
                     name: 'Advertising',
                     sref: 'MR:Wildcard.Advertising'
                 }
@@ -661,6 +665,39 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             choices: []
                         } : null;
                     }
+                }
+            });
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Branding', [function() {
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/creatives/wildcard/branding.html';
+                this.controller = 'WildcardBrandingController';
+                this.controllerAs = 'WildcardBrandingCtrl';
+            }]);
+        }])
+
+        .controller('WildcardBrandingController', ['$scope',
+        function                                  ( $scope ) {
+            var WildcardCtrl = $scope.WildcardCtrl,
+                card = WildcardCtrl.model;
+
+            this.actionTypeOptions = ['Button', 'Text']
+                .reduce(function(options, label) {
+                    options[label] = label.toLowerCase();
+                    return options;
+                }, {});
+
+            card.params.action = card.params.action || {
+                type: 'button',
+                label: ''
+            };
+
+            $scope.$on('$destroy', function() {
+                if (!card.params.action.label) {
+                    card.params.action = null;
                 }
             });
         }])
