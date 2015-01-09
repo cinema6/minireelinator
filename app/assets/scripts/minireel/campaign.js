@@ -1,14 +1,16 @@
 define (['angular','c6_state','./mixins/PaginatedListState','./mixins/PaginatedListController',
-         './mixins/WizardController'],
+         './mixins/WizardController','./mixins/VideoCardController'],
 function( angular , c6State  , PaginatedListState          , PaginatedListController          ,
-          WizardController          ) {
+          WizardController          , VideoCardController          ) {
     'use strict';
 
     var equals = angular.equals,
         extend = angular.extend,
         copy = angular.copy,
         forEach = angular.forEach,
-        isObject = angular.isObject;
+        isObject = angular.isObject,
+        fromJson = angular.fromJson,
+        toJson = angular.toJson;
 
     function deepExtend(target, extension) {
         forEach(extension, function(extensionValue, prop) {
@@ -452,9 +454,13 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     var campaign = CampaignState.cModel,
                         card = cinema6.db.create('card', MiniReelService.createCard('videoBallot'));
 
-                    return extend(card, {
+                    return deepExtend(card, {
                         id: undefined,
-                        campaignId: campaign.id
+                        campaignId: campaign.id,
+                        sponsored: true,
+                        data: {
+                            autoadvance: false
+                        }
                     });
                 };
 
@@ -512,6 +518,124 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             c6StateProvider.state('MR:Wildcard.Copy', [function() {
                 this.templateUrl = 'views/minireel/campaigns/campaign/creatives/wildcard/copy.html';
             }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Video', [function() {
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/creatives/wildcard/video.html';
+                this.controller = 'WildcardVideoController';
+                this.controllerAs = 'WildcardVideoCtrl';
+
+                this.model = function() {
+                    return this.cParent.cModel;
+                };
+            }]);
+        }])
+
+        .controller('WildcardVideoController', ['$injector','MiniReelService',
+        function                               ( $injector , MiniReelService ) {
+            function getJSONProp(json, prop) {
+                return (fromJson(json) || {})[prop];
+            }
+
+            function setJSONProp(json, prop, value) {
+                var proto = {};
+
+                proto[prop] = value;
+
+                return toJson(extend(fromJson(json) || {}, proto));
+            }
+
+            $injector.invoke(VideoCardController, this);
+
+            this.autoplayOptions = {
+                'Use MiniReel defaults': null,
+                'Yes': true,
+                'No': false
+            };
+            this.autoadvanceOptions = {
+                'Yes': true,
+                'No': false
+            };
+            this.adPreviewType = 'vpaid';
+            this.adPreviewPageUrl = '';
+            Object.defineProperties(this, {
+                isAdUnit: {
+                    get: function() {
+                        return this.model.data.service === 'adUnit';
+                    },
+                    set: function(bool) {
+                        this.model.data.service = bool ? 'adUnit' : null;
+                    }
+                },
+                vastTag: {
+                    get: function() {
+                        return getJSONProp(this.model.data.videoid, 'vast') || null;
+                    },
+                    set: function(value) {
+                        this.model.data.videoid = setJSONProp(
+                            this.model.data.videoid,
+                            'vast',
+                            value
+                        );
+                    }
+                },
+                vpaidTag: {
+                    get: function() {
+                        return getJSONProp(this.model.data.videoid, 'vpaid') || null;
+                    },
+                    set: function(value) {
+                        this.model.data.videoid = setJSONProp(
+                            this.model.data.videoid,
+                            'vpaid',
+                            value
+                        );
+                    }
+                },
+                adTag: {
+                    get: function() {
+                        var tag = (function() {
+                            switch (this.adPreviewType) {
+                            case 'vast':
+                                return this.vastTag;
+                            case 'vpaid':
+                                return this.vpaidTag;
+                            }
+                        }.call(this));
+
+                        return tag && tag.replace(
+                            '{pageUrl}',
+                            encodeURIComponent(this.adPreviewPageUrl)
+                        );
+                    }
+                },
+                canSkip: {
+                    get: function() {
+                        return this.model.data.skip === 'anytime';
+                    },
+                    set: function(bool) {
+                        this.model.data.skip = bool ? 'anytime' : 'delay';
+                    }
+                },
+                mustWatchInEntirety: {
+                    get: function() {
+                        return this.model.data.skip === 'never';
+                    },
+                    set: function(bool) {
+                        this.model.data.skip = bool ? 'never' : 'delay';
+                    }
+                },
+                skipTime: {
+                    get: function() {
+                        return MiniReelService.convertCard(this.model).data.skip;
+                    },
+                    set: function(value) {
+                        this.model.data.skip = value;
+                    }
+                }
+            });
         }])
 
         .config(['c6StateProvider',

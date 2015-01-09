@@ -130,6 +130,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                             this.route('/card/new', 'MR:NewWildcard', function() {
                                 this.state('MR:Wildcard', 'MR:New:Wildcard', function() {
                                     this.state('MR:Wildcard.Copy', 'MR:New:Wildcard.Copy');
+                                    this.state('MR:Wildcard.Video', 'MR:New:Wildcard.Video');
                                 });
                             });
                         });

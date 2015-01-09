@@ -73,7 +73,11 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
             it('should be for a wildcard', function() {
                 expect(result).toEqual(jasmine.objectContaining({
                     id: undefined,
-                    campaignId: campaign.cModel.id
+                    campaignId: campaign.cModel.id,
+                    sponsored: true,
+                    data: jasmine.objectContaining({
+                        autoadvance: false
+                    })
                 }));
             });
         });
