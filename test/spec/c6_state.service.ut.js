@@ -1510,7 +1510,7 @@
                             });
                         });
 
-                       describe('get(state)', function() {
+                       describe('get(nameOrConstructorName)', function() {
                             var Home, Sidebar, Contacts,
                                 home, sidebar, contacts, post;
 
@@ -1536,6 +1536,84 @@
                                 c6StateProvider.state('Post', function() {});
                                 c6StateProvider.state('Sidebar', Sidebar);
                                 c6StateProvider.state('Contacts', Contacts);
+                            });
+
+                            describe('when called with the name of a constructor', function() {
+                                var NewPage, EditPage,
+                                    Page, PageCopy, PageMeta;
+
+                                function setCurrent(name) {
+                                    Object.defineProperty(c6State, 'current', { value: name });
+                                }
+
+                                beforeEach(function() {
+                                    NewPage = function() {};
+                                    EditPage = function() {};
+
+                                    Page = function() {};
+                                    PageCopy = function() {};
+                                    PageMeta = function() {};
+
+                                    c6StateProvider
+                                        .state('NewPage', NewPage)
+                                        .state('EditPage', EditPage)
+
+                                        .state('Page', Page)
+                                        .state('PageCopy', PageCopy)
+                                        .state('PageMeta', PageMeta);
+
+                                    c6StateProvider.map(function() {
+                                        this.state('NewPage', function() {
+                                            this.state('Page', 'New:Page', function() {
+                                                this.state('PageCopy', 'New:PageCopy');
+                                                this.state('PageMeta', 'New:PageMeta');
+                                            });
+                                        });
+
+                                        this.state('EditPage', function() {
+                                            this.state('Page', 'Edit:Page', function() {
+                                                this.state('PageCopy', 'Edit:PageCopy');
+                                                this.state('PageMeta', 'Edit:PageMeta', function() {
+                                                    this.state('Page', 'Meta:Page');
+                                                });
+                                            });
+                                        });
+                                    });
+
+                                    get();
+                                });
+
+                                it('should get the instance of that constructor closest to the current state', function() {
+                                    setCurrent('NewPage');
+                                    expect(c6State.get('Page')).toBe(c6State.get('New:Page'));
+                                    expect(c6State.get('PageCopy')).toBe(c6State.get('New:PageCopy'));
+                                    expect(c6State.get('PageMeta')).toBe(c6State.get('New:PageMeta'));
+
+                                    setCurrent('New:Page');
+                                    expect(c6State.get('Page')).toBe(c6State.get('New:Page'));
+                                    expect(c6State.get('PageCopy')).toBe(c6State.get('New:PageCopy'));
+                                    expect(c6State.get('PageMeta')).toBe(c6State.get('New:PageMeta'));
+
+                                    setCurrent('New:PageCopy');
+                                    expect(c6State.get('Page')).toBe(c6State.get('New:Page'));
+                                    expect(c6State.get('PageCopy')).toBe(c6State.get('New:PageCopy'));
+                                    expect(c6State.get('PageMeta')).toBe(c6State.get('New:PageMeta'));
+
+                                    setCurrent('EditPage');
+                                    expect(c6State.get('Page')).toBe(c6State.get('Edit:Page'));
+                                    expect(c6State.get('PageCopy')).toBe(c6State.get('Edit:PageCopy'));
+                                    expect(c6State.get('PageMeta')).toBe(c6State.get('Edit:PageMeta'));
+
+                                    setCurrent('Edit:Page');
+                                    expect(c6State.get('Page')).toBe(c6State.get('Edit:Page'));
+                                    expect(c6State.get('PageCopy')).toBe(c6State.get('Edit:PageCopy'));
+                                    expect(c6State.get('PageMeta')).toBe(c6State.get('Edit:PageMeta'));
+
+                                    setCurrent('Edit:PageMeta');
+                                    expect(c6State.get('Page')).toBe(c6State.get('Meta:Page'));
+                                    expect(c6State.get('PageCopy')).toBe(c6State.get('Edit:PageCopy'));
+                                    expect(c6State.get('PageMeta')).toBe(c6State.get('Edit:PageMeta'));
+                                });
                             });
 
                             describe('the auto-generated Error state', function() {
