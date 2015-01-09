@@ -640,6 +640,37 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Survey', [function() {
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/creatives/wildcard/survey.html';
+                this.controller = 'WildcardSurveyController';
+                this.controllerAs = 'WildcardSurveyCtrl';
+            }]);
+        }])
+
+        .controller('WildcardSurveyController', ['$scope',
+        function                                   ( $scope ) {
+            var WildcardCtrl = $scope.WildcardCtrl,
+                card = WildcardCtrl.model;
+
+            Object.defineProperties(this, {
+                hasSurvey: {
+                    get: function() {
+                        return !!card.data.survey;
+                    },
+                    set: function(bool) {
+                        card.data.survey = !!bool ? {
+                            election: null,
+                            prompt: null,
+                            choices: []
+                        } : null;
+                    }
+                }
+            });
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
             c6StateProvider.state('MR:Campaign.Placements', [function() {
                 this.templateUrl = 'views/minireel/campaigns/campaign/placements.html';
                 this.controller = 'CampaignPlacementsController';
