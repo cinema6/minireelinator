@@ -671,6 +671,14 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Advertising', [function() {
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/creatives/wildcard/advertising.html';
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
             c6StateProvider.state('MR:Campaign.Placements', [function() {
                 this.templateUrl = 'views/minireel/campaigns/campaign/placements.html';
                 this.controller = 'CampaignPlacementsController';
