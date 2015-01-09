@@ -94,7 +94,7 @@
                         </button>
                     </div>
                     <div class="miniReel__imgBox">
-                        <a c6-sref="MR:Editor" c6-models="[$this]"
+                        <a c6-sref="MR:Edit:Wildcard" c6-models="[$this, null]"
                         c6-params="{}">
                             <div class="miniReel__img"
                             title="Edit This MiniReel: {{$this.title}}" 
@@ -105,7 +105,8 @@
                     </div>
                     <div class="miniReel__titleBox">
                         <h1 class="miniReel__title">
-                            <a class="miniReel__titleLink" 
+                            <a class="miniReel__titleLink" c6-sref="MR:Edit:Wildcard"
+                            c6-models="[$this, null]"
                             title="Edit This Card: {{$this.title}}">
                                 {{$this.title}}
                             </a>

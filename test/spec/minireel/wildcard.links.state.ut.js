@@ -1,7 +1,7 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    ['MR:New:Wildcard.Links'].forEach(function(stateName) {
+    ['MR:New:Wildcard.Links', 'MR:Edit:Wildcard.Links'].forEach(function(stateName) {
         describe(stateName + ' state', function() {
             var c6State,
                 MiniReelService,

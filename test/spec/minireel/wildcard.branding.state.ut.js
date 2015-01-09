@@ -1,7 +1,7 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    ['MR:New:Wildcard.Branding'].forEach(function(stateName) {
+    ['MR:New:Wildcard.Branding', 'MR:Edit:Wildcard.Branding'].forEach(function(stateName) {
         describe(stateName + ' state', function() {
             var c6State,
                 wildcardBranding;

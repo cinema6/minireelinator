@@ -1,7 +1,7 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    ['MR:New:Wildcard.Video'].forEach(function(stateName) {
+    ['MR:New:Wildcard.Video', 'MR:Edit:Wildcard.Video'].forEach(function(stateName) {
         describe(stateName + ' state', function() {
             var c6State,
                 wildcardVideo;

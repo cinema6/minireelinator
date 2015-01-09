@@ -484,6 +484,20 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
+            c6StateProvider.state('MR:EditWildcard', ['cinema6','c6State',
+            function                                 ( cinema6 , c6State ) {
+                this.model = function(params) {
+                    return cinema6.db.find('card', params.cardId);
+                };
+
+                this.enter = function() {
+                    return c6State.goTo('MR:Edit:Wildcard', null, null, true);
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
             c6StateProvider.state('MR:Wildcard', [function() {
                 this.templateUrl = 'views/minireel/campaigns/campaign/creatives/wildcard.html';
                 this.controller = 'WildcardController';

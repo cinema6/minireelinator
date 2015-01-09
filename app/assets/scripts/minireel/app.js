@@ -140,6 +140,20 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                                     );
                                 });
                             });
+
+                            this.route('/card/:cardId', 'MR:EditWildcard', function() {
+                                this.state('MR:Wildcard', 'MR:Edit:Wildcard', function() {
+                                    this.state('MR:Wildcard.Copy', 'MR:Edit:Wildcard.Copy');
+                                    this.state('MR:Wildcard.Video', 'MR:Edit:Wildcard.Video');
+                                    this.state('MR:Wildcard.Survey', 'MR:Edit:Wildcard.Survey');
+                                    this.state('MR:Wildcard.Branding', 'MR:Edit:Wildcard.Branding');
+                                    this.state('MR:Wildcard.Links', 'MR:Edit:Wildcard.Links');
+                                    this.state(
+                                        'MR:Wildcard.Advertising',
+                                        'MR:Edit:Wildcard.Advertising'
+                                    );
+                                });
+                            });
                         });
                         this.route('/placements', 'MR:Campaign.Placements');
                     });

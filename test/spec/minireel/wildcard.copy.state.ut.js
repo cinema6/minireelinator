@@ -1,7 +1,7 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    ['MR:New:Wildcard.Copy'].forEach(function(stateName) {
+    ['MR:New:Wildcard.Copy', 'MR:Edit:Wildcard.Copy'].forEach(function(stateName) {
         describe(stateName + ' state', function() {
             var c6State,
                 wildcardCopy;

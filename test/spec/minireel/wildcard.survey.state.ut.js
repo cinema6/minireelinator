@@ -1,7 +1,7 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    ['MR:New:Wildcard.Survey'].forEach(function(stateName) {
+    ['MR:New:Wildcard.Survey', 'MR:Edit:Wildcard.Survey'].forEach(function(stateName) {
         describe(stateName + ' state', function() {
             var c6State,
                 wildcardSurvey;
