@@ -444,6 +444,78 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
+            c6StateProvider.state('MR:NewWildcard', ['MiniReelService','cinema6','c6State',
+            function                                ( MiniReelService , cinema6 , c6State ) {
+                var CampaignState = c6State.get('MR:Campaign');
+
+                this.model = function() {
+                    var campaign = CampaignState.cModel,
+                        card = cinema6.db.create('card', MiniReelService.createCard('videoBallot'));
+
+                    return extend(card, {
+                        id: undefined,
+                        campaignId: campaign.id
+                    });
+                };
+
+                this.enter = function() {
+                    return c6State.goTo('MR:New:Wildcard', null, null, true);
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard', [function() {
+                this.templateUrl = 'views/minireel/campaigns/campaign/creatives/wildcard.html';
+                this.controller = 'WildcardController';
+                this.controllerAs = 'WildcardCtrl';
+
+                this.model = function() {
+                    return this.cParent.cModel;
+                };
+            }]);
+        }])
+
+        .controller('WildcardController', ['$injector',
+        function                          ( $injector ) {
+            $injector.invoke(WizardController, this);
+
+            this.tabs = [
+                {
+                    name: 'Editorial Content',
+                    sref: 'MR:Wildcard.Copy',
+                    required: true
+                },
+                {
+                    name: 'Video Content',
+                    sref: 'MR:Wildcard.Video',
+                    required: true
+                },
+                {
+                    name: 'Survey',
+                    sref: 'MR:Wildcard.Survey'
+                },
+                {
+                    name: 'Advertising',
+                    sref: 'MR:Wildcard.Advertising'
+                },
+                {
+                    name: 'Targets',
+                    sref: 'MR:Wildcard.Targets'
+                }
+            ];
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Copy', [function() {
+                this.templateUrl = 'views/minireel/campaigns/campaign/creatives/wildcard/copy.html';
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
             c6StateProvider.state('MR:Campaign.Placements', [function() {
                 this.templateUrl = 'views/minireel/campaigns/campaign/placements.html';
                 this.controller = 'CampaignPlacementsController';

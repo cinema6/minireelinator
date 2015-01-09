@@ -126,6 +126,12 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                                 this.state('MR:Creatives.NewMiniReel.Type');
                                 this.state('MR:Creatives.NewMiniReel.Playback');
                             });
+
+                            this.route('/card/new', 'MR:NewWildcard', function() {
+                                this.state('MR:Wildcard', 'MR:New:Wildcard', function() {
+                                    this.state('MR:Wildcard.Copy', 'MR:New:Wildcard.Copy');
+                                });
+                            });
                         });
                         this.route('/placements', 'MR:Campaign.Placements');
                     });
