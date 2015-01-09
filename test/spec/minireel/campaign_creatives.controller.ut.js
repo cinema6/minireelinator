@@ -138,6 +138,21 @@ define(['minireel/campaign'], function(campaignModule) {
                 it('should return the minireel', function() {
                     expect(result).toBe(minireel);
                 });
+
+                describe('if called with a minireel that is already added', function() {
+                    beforeEach(function() {
+                        result = CampaignCreativesCtrl.add(minireel);
+                    });
+
+                    it('should return the minireel', function() {
+                        expect(result).toBe(minireel);
+                    });
+
+                    it('should not add the minireel again', function() {
+                        expect(campaign.miniReels[3]).toBe(minireel);
+                        expect(campaign.miniReels[4]).not.toBeDefined();
+                    });
+                });
             });
 
             describe('if called with a card', function() {
@@ -158,6 +173,21 @@ define(['minireel/campaign'], function(campaignModule) {
 
                 it('should return the card', function() {
                     expect(result).toBe(card);
+                });
+
+                describe('if called with a card that is already added', function() {
+                    beforeEach(function() {
+                        result = CampaignCreativesCtrl.add(card);
+                    });
+
+                    it('should return the card', function() {
+                        expect(result).toBe(card);
+                    });
+
+                    it('should not add the minireel again', function() {
+                        expect(campaign.cards[3]).toBe(card);
+                        expect(campaign.cards[4]).not.toBeDefined();
+                    });
                 });
             });
         });

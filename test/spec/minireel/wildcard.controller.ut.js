@@ -1,24 +1,53 @@
-define(['minireel/campaign', 'minireel/mixins/WizardController'], function(campaignModule, WizardController) {
+define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardController) {
     'use strict';
 
     describe('WildcardController', function() {
         var $rootScope,
             $controller,
+            $q,
+            c6State,
+            MiniReelService,
+            cinema6,
             $scope,
+            CampaignCtrl,
+            CampaignCreativesCtrl,
             WildcardCtrl;
 
+        var campaign, card;
+
         beforeEach(function() {
-            module(campaignModule.name);
+            module(appModule.name);
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
+                $q = $injector.get('$q');
+                c6State = $injector.get('c6State');
+                MiniReelService = $injector.get('MiniReelService');
+                cinema6 = $injector.get('cinema6');
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
+                    CampaignCtrl = $scope.CampaignCtrl = $controller('CampaignController', {
+                        $scope: $scope
+                    });
+                    CampaignCtrl.initWithModel((campaign = cinema6.db.create('campaign', {
+                        id: 'cam-af23821dc75e2f',
+                        links: {},
+                        logos: {},
+                        cards: [],
+                        miniReels: []
+                    })));
+
+                    CampaignCreativesCtrl = $scope.CampaignCreativesCtrl = $controller('CampaignCreativesController', {
+                        $scope: $scope
+                    });
+
                     WildcardCtrl = $scope.WildcardCtrl = $controller('WildcardController', {
                         $scope: $scope
                     });
+                    card = WildcardCtrl.model = cinema6.db.create('card', MiniReelService.createCard('videoBallot'));
+                    delete card.id;
                 });
             });
         });
@@ -28,9 +57,9 @@ define(['minireel/campaign', 'minireel/mixins/WizardController'], function(campa
         });
 
         it('should inherit from the WizardController', inject(function($injector) {
-            expect(Object.keys(WildcardCtrl)).toEqual(Object.keys($injector.instantiate(WizardController, {
+            expect(Object.keys(WildcardCtrl)).toEqual(jasmine.objectContaining(Object.keys($injector.instantiate(WizardController, {
                 $scope: $scope
-            })));
+            }))));
         }));
 
         describe('properties', function() {
@@ -64,6 +93,66 @@ define(['minireel/campaign', 'minireel/mixins/WizardController'], function(campa
                             sref: 'MR:Wildcard.Advertising'
                         }
                     ]);
+                });
+            });
+        });
+
+        describe('methods', function() {
+            describe('save()', function() {
+                var success, failure,
+                    saveDeferred;
+
+                beforeEach(function() {
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
+
+                    saveDeferred = $q.defer();
+
+                    spyOn(CampaignCreativesCtrl, 'add').and.callThrough();
+                    spyOn(card, 'save').and.returnValue(saveDeferred.promise);
+
+                    $scope.$apply(function() {
+                        WildcardCtrl.save().then(success, failure);
+                    });
+                });
+
+                it('should save the card', function() {
+                    expect(card.save).toHaveBeenCalled();
+                });
+
+                describe('when the save is completed', function() {
+                    var goToDeferred;
+
+                    beforeEach(function() {
+                        goToDeferred = $q.defer();
+
+                        spyOn(c6State, 'goTo').and.returnValue(goToDeferred.promise);
+
+                        card.id = 'rc-e832762cc5e126';
+                        $scope.$apply(function() {
+                            saveDeferred.resolve(card);
+                        });
+                    });
+
+                    it('should add the card to the campaign', function() {
+                        expect(CampaignCreativesCtrl.add).toHaveBeenCalledWith(card);
+                    });
+
+                    it('should go to the "MR:Campaign.Creatives" state', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.Creatives');
+                    });
+
+                    describe('after the state transition', function() {
+                        beforeEach(function() {
+                            $scope.$apply(function() {
+                                goToDeferred.resolve(c6State.get('MR:Campaign.Creatives'));
+                            });
+                        });
+
+                        it('should resolve to the card', function() {
+                            expect(success).toHaveBeenCalledWith(card);
+                        });
+                    });
                 });
             });
         });

@@ -319,6 +319,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     return collection.matcher.test(item.id) ? collection.value : value;
                 }, null);
 
+                if (collection.indexOf(item) > -1) { return item; }
+
                 return collection[collection.push(item) - 1];
             };
         }])
@@ -493,8 +495,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('WildcardController', ['$injector',
-        function                          ( $injector ) {
+        .controller('WildcardController', ['$injector','$scope','c6State',
+        function                          ( $injector , $scope , c6State ) {
+            var CampaignCreativesCtrl = $scope.CampaignCreativesCtrl;
+
             $injector.invoke(WizardController, this);
 
             this.tabs = [
@@ -525,6 +529,18 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     sref: 'MR:Wildcard.Advertising'
                 }
             ];
+
+            this.save = function() {
+                var card = this.model;
+
+                return this.model.save().then(function() {
+                    return CampaignCreativesCtrl.add(card);
+                }).then(function() {
+                    return c6State.goTo('MR:Campaign.Creatives');
+                }).then(function() {
+                    return card;
+                });
+            };
         }])
 
         .config(['c6StateProvider',
