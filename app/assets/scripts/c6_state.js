@@ -6,7 +6,26 @@ function( angular , c6uilib ) {
         extend = angular.extend,
         equals = angular.equals,
         forEach = angular.forEach,
-        copy = angular.copy;
+        copy = angular.copy,
+        isFunction = angular.isFunction,
+        isString = angular.isString;
+
+    function argParser(config, args) {
+        function truePredicate() {
+            return true;
+        }
+
+        return Object.keys(config).reduce(function(result, key) {
+            result[key] = config[key].reduce(function(value, item) {
+                var arg = args[item[0]],
+                    predicate = item[1] || truePredicate;
+
+                return value || (predicate(arg) ? arg : value);
+            }, undefined);
+
+            return result;
+        }, {});
+    }
 
     /*
      * Extend function in the functional style where a new object is returned, rather than an
@@ -191,7 +210,7 @@ function( angular , c6uilib ) {
                                 var state = attrs.c6Sref,
                                     sameState = c6State.current === state,
                                     sameUrl = sameState ||
-                                        (c6State.get(c6State.current).cUrl ===
+                                        ((c6State.get(c6State.current) || {}).cUrl ===
                                             c6State.get(state).cUrl);
 
                                 if (isAnchor && !sameUrl) {
@@ -571,6 +590,116 @@ function( angular , c6uilib ) {
                 }
             };
 
+            function StateTree  () {
+                this.constructors = {};
+                this.instances = {};
+            }
+            StateTree.prototype = {
+                $injector: null,
+
+                addConstructor: function(name, constructor, mixins) {
+                    if (this.constructors[name]) {
+                        return this;
+                    }
+
+                    this.constructors[name] = {
+                        name: name,
+                        fn: constructor,
+                        mixins: mixins,
+                        instances: []
+                    };
+
+                    return this;
+                },
+                addInstance: function(instanceName, constructorName, parentName, mixins) {
+                    var parent = this.instances[parentName],
+                        config = {
+                            name: instanceName,
+                            constructor: this.constructors[constructorName],
+                            mixins: [],
+                            instance: null,
+                            children: [],
+                            parent: parent
+                        };
+
+                    this.instances[instanceName] = config;
+                    (parentName ? parent.children : []).push(config);
+                    config.constructor.instances.push(config);
+
+                    return this.addInstanceInitializers(instanceName, mixins || []);
+                },
+                addInstanceInitializers: function(name, mixins) {
+                    var existing = this.instances[name].mixins;
+
+                    existing.push.apply(existing, mixins);
+
+                    return this;
+                },
+
+                descendentsOf: function(instance) {
+                    var stateTree = this;
+
+                    return instance.children.reduce(function(result, child) {
+                        return result.concat(stateTree.descendentsOf(child));
+                    }, instance.children);
+                },
+                ancestorsOf: function(instance) {
+                    var result = [];
+
+                    function push(instance) {
+                        result.push(instance);
+
+                        if (!instance.parent) { return; }
+
+                        push(instance.parent);
+                    }
+
+                    push(instance.parent);
+
+                    return result;
+                },
+                closestInstance: function(constructorName, instanceName) {
+                    var constructor = this.constructors[constructorName],
+                        instance = this.instances[instanceName],
+                        stateTree = this;
+
+                    function closest(instances, target) {
+                        var siblings = target.parent.children,
+                            allInstances = [].concat(
+                                siblings,
+                                stateTree.descendentsOf(target),
+                                stateTree.ancestorsOf(target)
+                            ).reverse();
+
+                        return allInstances[instances.reduce(function(index, instance) {
+                            var instanceIndex = allInstances.indexOf(instance);
+
+                            return Math.max(index, instanceIndex);
+                        }, -1)];
+                    }
+
+                    return (constructor && instance) &&
+                        (closest(constructor.instances, instance) || {}).name;
+                },
+
+                instantiate: function(name) {
+                    var $injector = this.$injector,
+                        c6State = $injector.get('c6State'),
+                        config = this.instances[name],
+                        mixins = config.constructor.mixins.concat(config.mixins);
+
+                    /* jshint boss:true */
+                    return (config.instance = mixins.reduce(function(instance, fn) {
+                        return mixin(instance, fn, c6State);
+                    }, $injector.instantiate(config.constructor.fn)));
+                },
+                get: function(name) {
+                    var config = this.instances[name];
+
+                    return config && (config.instance || this.instantiate(name));
+                }
+            };
+
             C6State.$inject = ['$injector','$q','$http','$templateCache','$location','$rootScope',
                                'c6AsyncQueue','c6EventEmitter','$timeout'];
             function C6State  ( $injector , $q , $http , $templateCache , $location , $rootScope ,
@@ -578,8 +707,7 @@ function( angular , c6uilib ) {
                 var self = this,
                     _private = {};
 
-                var states = {},
-                    lastPath = null,
+                var lastPath = null,
                     currentContext = 'main',
                     queue = c6AsyncQueue();
 
@@ -677,14 +805,15 @@ function( angular , c6uilib ) {
                 };
 
                 this.get = function(name) {
-                    var context = contexts[currentContext],
-                        constructor = context.stateConstructors[name],
-                        initializers = (constructor && constructor.initializers);
+                    var tree = contexts[currentContext].tree;
 
-                    return states[name] || (constructor &&
-                        (states[name] = initializers.reduce(function(state, initializer) {
-                            return mixin(state, initializer, self);
-                        }, $injector.instantiate(constructor))));
+                    function byConstructor(name) {
+                        var instanceName = tree.closestInstance(name, self.current);
+
+                        return tree.get(instanceName);
+                    }
+
+                    return tree.get(name) || byConstructor(name);
                 };
 
                 this.goTo = queue.wrap(function(stateName, models, params, replace) {
@@ -936,32 +1065,36 @@ function( angular , c6uilib ) {
                 this.context = context;
             }
             Mapper.prototype = {
-                state: function(name, mapFn) {
+                state: function(constructorName) {
                     var parent = this.parent,
-                        context = this.context;
+                        context = this.context,
+                        args = argParser({
+                            name: [[1, isString], [0]],
+                            mapFn: [[2, isFunction], [1, isFunction]]
+                        }, arguments),
+                        name = args.name, mapFn = args.mapFn;
 
                     stateConfigs.relate(parent, name)
                         .push(name, function() {
-                            var constructor = stateConstructors[name],
-                                initializers = constructor.initializers ||
-                                    (constructor.initializers = []),
+                            var constructor = stateConstructors[constructorName],
                                 routes = (context.routes || new List()),
                                 parentUrl = (routes.get(parent) || {}).url ||
                                     (context.enableUrlRouting ? '' : null);
 
-                            initializers.push(function(c6State) {
-                                this.cParent = parent && c6State.get(parent);
-                                this.cTitle = null;
-                                this.cUrl = parentUrl;
-                                this.cModel = null;
-                                this.cTemplate = null;
-                                this.cContext = context.name;
-                                this.cName = name;
-                                this.cParams = null;
-                                this.cRendered = false;
-                            });
-
-                            context.stateConstructors[name] = constructor;
+                            context.tree
+                                .addConstructor(constructorName, constructor, [function() {
+                                    this.cTitle = null;
+                                    this.cModel = null;
+                                    this.cTemplate = null;
+                                    this.cParams = null;
+                                    this.cRendered = false;
+                                }])
+                                .addInstance(name, constructorName, parent, [function(c6State) {
+                                    this.cParent = parent && c6State.get(parent);
+                                    this.cUrl = parentUrl;
+                                    this.cContext = context.name;
+                                    this.cName = name;
+                                }]);
 
                             routes.set(name, new Route(name, parentUrl));
                         });
@@ -970,8 +1103,13 @@ function( angular , c6uilib ) {
                         mapFn.call(new Mapper(this.context, name));
                     }
                 },
-                route: function(route, name, mapFn) {
-                    var context = this.context;
+                route: function(route, constructorName) {
+                    var context = this.context,
+                        args = argParser({
+                            name: [[2, isString], [1]],
+                            mapFn: [[3, isFunction], [2, isFunction]]
+                        }, arguments),
+                        name = args.name, mapFn = args.mapFn;
 
                     if (!this.context.enableUrlRouting) {
                         throw new Error(
@@ -981,14 +1119,13 @@ function( angular , c6uilib ) {
                         );
                     }
 
-                    this.state(name);
+                    this.state(constructorName, name);
 
                     stateConfigs.push(name, function() {
-                        var constructor = stateConstructors[name],
-                            url = (route || null) &&
+                        var url = (route || null) &&
                                 context.routes.get(name).url.replace(/\/$/, '') + route;
 
-                        constructor.initializers.push(function() {
+                        context.tree.addInstanceInitializers(name, [function() {
                             this.cUrl = url;
                             this.cParams = url && (route.match(/:[^\/]+/g) || [])
                                 .reduce(function(params, match) {
@@ -1006,7 +1143,7 @@ function( angular , c6uilib ) {
 
                                 return result;
                             };
-                        });
+                        }]);
 
                         context.routes.set(name, new Route(name, url));
                     });
@@ -1072,7 +1209,7 @@ function( angular , c6uilib ) {
 
                 config = extend(contexts[context] || {
                     name: context,
-                    stateConstructors: {},
+                    tree: new StateTree(),
                     viewDelegates: [],
                     routes: config.enableUrlRouting ? new List() : null,
                     current: null
@@ -1083,6 +1220,8 @@ function( angular , c6uilib ) {
 
             this.$get = ['$injector',
             function    ( $injector ) {
+                StateTree.prototype.$injector = $injector;
+
                 forEach(contexts, function(context) {
                     this.map(context.name, null, function() {
                         if (context.enableUrlRouting) {

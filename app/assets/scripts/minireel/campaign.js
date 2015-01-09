@@ -1,14 +1,16 @@
 define (['angular','c6_state','./mixins/PaginatedListState','./mixins/PaginatedListController',
-         './mixins/WizardController'],
+         './mixins/WizardController','./mixins/VideoCardController','./mixins/LinksController'],
 function( angular , c6State  , PaginatedListState          , PaginatedListController          ,
-          WizardController          ) {
+          WizardController          , VideoCardController          , LinksController          ) {
     'use strict';
 
     var equals = angular.equals,
         extend = angular.extend,
         copy = angular.copy,
         forEach = angular.forEach,
-        isObject = angular.isObject;
+        isObject = angular.isObject,
+        fromJson = angular.fromJson,
+        toJson = angular.toJson;
 
     function deepExtend(target, extension) {
         forEach(extension, function(extensionValue, prop) {
@@ -317,6 +319,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     return collection.matcher.test(item.id) ? collection.value : value;
                 }, null);
 
+                if (collection.indexOf(item) > -1) { return item; }
+
                 return collection[collection.push(item) - 1];
             };
         }])
@@ -439,6 +443,335 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             c6StateProvider.state('MR:Creatives.NewMiniReel.Playback', [function() {
                 this.templateUrl =
                     'views/minireel/campaigns/campaign/creatives/new_mini_reel/playback.html';
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:NewWildcard', ['MiniReelService','cinema6','c6State',
+            function                                ( MiniReelService , cinema6 , c6State ) {
+                var CampaignState = c6State.get('MR:Campaign');
+
+                this.model = function() {
+                    var campaign = CampaignState.cModel,
+                        card = cinema6.db.create('card', MiniReelService.createCard('videoBallot'));
+
+                    return deepExtend(card, {
+                        id: undefined,
+                        campaignId: campaign.id,
+                        sponsored: true,
+                        collateral: {
+                            logo: campaign.logos.square
+                        },
+                        links: campaign.links,
+                        params: {
+                            sponsor: campaign.advertiser.name
+                        },
+                        campaign: {
+                            minViewTime: campaign.minViewTime
+                        },
+                        data: {
+                            autoadvance: false
+                        }
+                    });
+                };
+
+                this.enter = function() {
+                    return c6State.goTo('MR:New:Wildcard', null, null, true);
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:EditWildcard', ['cinema6','c6State',
+            function                                 ( cinema6 , c6State ) {
+                this.model = function(params) {
+                    return cinema6.db.find('card', params.cardId);
+                };
+
+                this.enter = function() {
+                    return c6State.goTo('MR:Edit:Wildcard', null, null, true);
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard', [function() {
+                this.templateUrl = 'views/minireel/campaigns/campaign/creatives/wildcard.html';
+                this.controller = 'WildcardController';
+                this.controllerAs = 'WildcardCtrl';
+
+                this.model = function() {
+                    return this.cParent.cModel;
+                };
+            }]);
+        }])
+
+        .controller('WildcardController', ['$injector','$scope','c6State',
+        function                          ( $injector , $scope , c6State ) {
+            var CampaignCreativesCtrl = $scope.CampaignCreativesCtrl;
+
+            $injector.invoke(WizardController, this);
+
+            this.tabs = [
+                {
+                    name: 'Editorial Content',
+                    sref: 'MR:Wildcard.Copy',
+                    required: true
+                },
+                {
+                    name: 'Video Content',
+                    sref: 'MR:Wildcard.Video',
+                    required: true
+                },
+                {
+                    name: 'Survey',
+                    sref: 'MR:Wildcard.Survey'
+                },
+                {
+                    name: 'Branding',
+                    sref: 'MR:Wildcard.Branding'
+                },
+                {
+                    name: 'Links',
+                    sref: 'MR:Wildcard.Links'
+                },
+                {
+                    name: 'Advertising',
+                    sref: 'MR:Wildcard.Advertising'
+                }
+            ];
+
+            this.save = function() {
+                var card = this.model;
+
+                return this.model.save().then(function() {
+                    return CampaignCreativesCtrl.add(card);
+                }).then(function() {
+                    return c6State.goTo('MR:Campaign.Creatives');
+                }).then(function() {
+                    return card;
+                });
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Copy', [function() {
+                this.templateUrl = 'views/minireel/campaigns/campaign/creatives/wildcard/copy.html';
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Video', [function() {
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/creatives/wildcard/video.html';
+                this.controller = 'WildcardVideoController';
+                this.controllerAs = 'WildcardVideoCtrl';
+
+                this.model = function() {
+                    return this.cParent.cModel;
+                };
+            }]);
+        }])
+
+        .controller('WildcardVideoController', ['$injector','MiniReelService',
+        function                               ( $injector , MiniReelService ) {
+            function getJSONProp(json, prop) {
+                return (fromJson(json) || {})[prop];
+            }
+
+            function setJSONProp(json, prop, value) {
+                var proto = {};
+
+                proto[prop] = value;
+
+                return toJson(extend(fromJson(json) || {}, proto));
+            }
+
+            $injector.invoke(VideoCardController, this);
+
+            this.autoplayOptions = {
+                'Use MiniReel defaults': null,
+                'Yes': true,
+                'No': false
+            };
+            this.autoadvanceOptions = {
+                'Yes': true,
+                'No': false
+            };
+            this.adPreviewType = 'vpaid';
+            this.adPreviewPageUrl = '';
+            Object.defineProperties(this, {
+                isAdUnit: {
+                    get: function() {
+                        return this.model.data.service === 'adUnit';
+                    },
+                    set: function(bool) {
+                        this.model.data.service = bool ? 'adUnit' : null;
+                    }
+                },
+                vastTag: {
+                    get: function() {
+                        return getJSONProp(this.model.data.videoid, 'vast') || null;
+                    },
+                    set: function(value) {
+                        this.model.data.videoid = setJSONProp(
+                            this.model.data.videoid,
+                            'vast',
+                            value
+                        );
+                    }
+                },
+                vpaidTag: {
+                    get: function() {
+                        return getJSONProp(this.model.data.videoid, 'vpaid') || null;
+                    },
+                    set: function(value) {
+                        this.model.data.videoid = setJSONProp(
+                            this.model.data.videoid,
+                            'vpaid',
+                            value
+                        );
+                    }
+                },
+                adTag: {
+                    get: function() {
+                        var tag = (function() {
+                            switch (this.adPreviewType) {
+                            case 'vast':
+                                return this.vastTag;
+                            case 'vpaid':
+                                return this.vpaidTag;
+                            }
+                        }.call(this));
+
+                        return tag && tag.replace(
+                            '{pageUrl}',
+                            encodeURIComponent(this.adPreviewPageUrl)
+                        );
+                    }
+                },
+                canSkip: {
+                    get: function() {
+                        return this.model.data.skip === 'anytime';
+                    },
+                    set: function(bool) {
+                        this.model.data.skip = bool ? 'anytime' : 'delay';
+                    }
+                },
+                mustWatchInEntirety: {
+                    get: function() {
+                        return this.model.data.skip === 'never';
+                    },
+                    set: function(bool) {
+                        this.model.data.skip = bool ? 'never' : 'delay';
+                    }
+                },
+                skipTime: {
+                    get: function() {
+                        return MiniReelService.convertCard(this.model).data.skip;
+                    },
+                    set: function(value) {
+                        this.model.data.skip = value;
+                    }
+                }
+            });
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Survey', [function() {
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/creatives/wildcard/survey.html';
+                this.controller = 'WildcardSurveyController';
+                this.controllerAs = 'WildcardSurveyCtrl';
+            }]);
+        }])
+
+        .controller('WildcardSurveyController', ['$scope',
+        function                                   ( $scope ) {
+            var WildcardCtrl = $scope.WildcardCtrl,
+                card = WildcardCtrl.model;
+
+            Object.defineProperties(this, {
+                hasSurvey: {
+                    get: function() {
+                        return !!card.data.survey;
+                    },
+                    set: function(bool) {
+                        card.data.survey = !!bool ? {
+                            election: null,
+                            prompt: null,
+                            choices: []
+                        } : null;
+                    }
+                }
+            });
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Branding', [function() {
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/creatives/wildcard/branding.html';
+                this.controller = 'WildcardBrandingController';
+                this.controllerAs = 'WildcardBrandingCtrl';
+            }]);
+        }])
+
+        .controller('WildcardBrandingController', ['$scope',
+        function                                  ( $scope ) {
+            var WildcardCtrl = $scope.WildcardCtrl,
+                card = WildcardCtrl.model;
+
+            this.actionTypeOptions = ['Button', 'Text']
+                .reduce(function(options, label) {
+                    options[label] = label.toLowerCase();
+                    return options;
+                }, {});
+
+            card.params.action = card.params.action || {
+                type: 'button',
+                label: ''
+            };
+
+            $scope.$on('$destroy', function() {
+                if (!card.params.action.label) {
+                    card.params.action = null;
+                }
+            });
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Links', [function() {
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/creatives/wildcard/links.html';
+                this.controller = 'WildcardLinksController';
+                this.controllerAs = 'WildcardLinksCtrl';
+
+                this.model = function() {
+                    return this.cParent.cModel.links;
+                };
+            }]);
+        }])
+
+        .controller('WildcardLinksController', ['$scope','$injector',
+        function                                  ( $scope , $injector ) {
+            $injector.invoke(LinksController, this, {
+                $scope: $scope
+            });
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Advertising', [function() {
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/creatives/wildcard/advertising.html';
             }]);
         }])
 

@@ -184,6 +184,62 @@
                                     .state('Comments.Meta', [function() {}]);
                             });
 
+                            describe('mapping a state in multiple places', function() {
+                                var aboutChildren, postsChildren;
+
+                                beforeEach(function() {
+                                    c6StateProvider.map(function() {
+                                        this.route('/about', 'About', function() {
+                                            this.route('/:postId', 'Posts.Post', 'about.post', function() {
+                                                this.route('/comments', 'Posts.Post.Comments', 'about.post.comments');
+                                            });
+                                        });
+                                        this.route('/posts', 'Posts', function() {
+                                            this.route('/:postId', 'Posts.Post', 'posts.post', function() {
+                                                this.route('/comments', 'Posts.Post.Comments', 'posts.post.comments');
+                                            });
+                                        });
+                                    });
+
+                                    get();
+
+                                    aboutChildren = {
+                                        post: c6State.get('about.post'),
+                                        comments: c6State.get('about.post.comments')
+                                    };
+
+                                    postsChildren = {
+                                        post: c6State.get('posts.post'),
+                                        comments: c6State.get('posts.post.comments')
+                                    };
+                                });
+
+                                it('should create unique instances of the states', function() {
+                                    expect(aboutChildren.post).not.toBe(postsChildren.post);
+                                    expect(aboutChildren.comments).not.toBe(postsChildren.comments);
+
+                                    expect(aboutChildren.post.constructor).toBe(postsChildren.post.constructor);
+                                    expect(aboutChildren.comments.constructor).toBe(postsChildren.comments.constructor);
+                                });
+
+                                it('should create differences in the properties on each instance', function() {
+                                    expect(aboutChildren.post.cParent).toBe(c6State.get('About'));
+                                    expect(postsChildren.post.cParent).toBe(c6State.get('Posts'));
+                                    expect(aboutChildren.comments.cParent).toBe(aboutChildren.post);
+                                    expect(postsChildren.comments.cParent).toBe(postsChildren.post);
+
+                                    expect(aboutChildren.post.cName).toBe('about.post');
+                                    expect(postsChildren.post.cName).toBe('posts.post');
+                                    expect(aboutChildren.comments.cName).toBe('about.post.comments');
+                                    expect(postsChildren.comments.cName).toBe('posts.post.comments');
+
+                                    expect(aboutChildren.post.cUrl).toBe('/about/:postId');
+                                    expect(postsChildren.post.cUrl).toBe('/posts/:postId');
+                                    expect(aboutChildren.comments.cUrl).toBe('/about/:postId/comments');
+                                    expect(postsChildren.comments.cUrl).toBe('/posts/:postId/comments');
+                                });
+                            });
+
                             describe('specifying a parent state', function() {
                                 beforeEach(function() {
                                     c6StateProvider.map('Posts', function() {
@@ -1454,7 +1510,7 @@
                             });
                         });
 
-                        describe('get(state)', function() {
+                       describe('get(nameOrConstructorName)', function() {
                             var Home, Sidebar, Contacts,
                                 home, sidebar, contacts, post;
 
@@ -1482,9 +1538,87 @@
                                 c6StateProvider.state('Contacts', Contacts);
                             });
 
+                            describe('when called with the name of a constructor', function() {
+                                var NewPage, EditPage,
+                                    Page, PageCopy, PageMeta;
+
+                                function setCurrent(name) {
+                                    Object.defineProperty(c6State, 'current', { value: name });
+                                }
+
+                                beforeEach(function() {
+                                    NewPage = function() {};
+                                    EditPage = function() {};
+
+                                    Page = function() {};
+                                    PageCopy = function() {};
+                                    PageMeta = function() {};
+
+                                    c6StateProvider
+                                        .state('NewPage', NewPage)
+                                        .state('EditPage', EditPage)
+
+                                        .state('Page', Page)
+                                        .state('PageCopy', PageCopy)
+                                        .state('PageMeta', PageMeta);
+
+                                    c6StateProvider.map(function() {
+                                        this.state('NewPage', function() {
+                                            this.state('Page', 'New:Page', function() {
+                                                this.state('PageCopy', 'New:PageCopy');
+                                                this.state('PageMeta', 'New:PageMeta');
+                                            });
+                                        });
+
+                                        this.state('EditPage', function() {
+                                            this.state('Page', 'Edit:Page', function() {
+                                                this.state('PageCopy', 'Edit:PageCopy');
+                                                this.state('PageMeta', 'Edit:PageMeta', function() {
+                                                    this.state('Page', 'Meta:Page');
+                                                });
+                                            });
+                                        });
+                                    });
+
+                                    get();
+                                });
+
+                                it('should get the instance of that constructor closest to the current state', function() {
+                                    setCurrent('NewPage');
+                                    expect(c6State.get('Page')).toBe(c6State.get('New:Page'));
+                                    expect(c6State.get('PageCopy')).toBe(c6State.get('New:PageCopy'));
+                                    expect(c6State.get('PageMeta')).toBe(c6State.get('New:PageMeta'));
+
+                                    setCurrent('New:Page');
+                                    expect(c6State.get('Page')).toBe(c6State.get('New:Page'));
+                                    expect(c6State.get('PageCopy')).toBe(c6State.get('New:PageCopy'));
+                                    expect(c6State.get('PageMeta')).toBe(c6State.get('New:PageMeta'));
+
+                                    setCurrent('New:PageCopy');
+                                    expect(c6State.get('Page')).toBe(c6State.get('New:Page'));
+                                    expect(c6State.get('PageCopy')).toBe(c6State.get('New:PageCopy'));
+                                    expect(c6State.get('PageMeta')).toBe(c6State.get('New:PageMeta'));
+
+                                    setCurrent('EditPage');
+                                    expect(c6State.get('Page')).toBe(c6State.get('Edit:Page'));
+                                    expect(c6State.get('PageCopy')).toBe(c6State.get('Edit:PageCopy'));
+                                    expect(c6State.get('PageMeta')).toBe(c6State.get('Edit:PageMeta'));
+
+                                    setCurrent('Edit:Page');
+                                    expect(c6State.get('Page')).toBe(c6State.get('Edit:Page'));
+                                    expect(c6State.get('PageCopy')).toBe(c6State.get('Edit:PageCopy'));
+                                    expect(c6State.get('PageMeta')).toBe(c6State.get('Edit:PageMeta'));
+
+                                    setCurrent('Edit:PageMeta');
+                                    expect(c6State.get('Page')).toBe(c6State.get('Meta:Page'));
+                                    expect(c6State.get('PageCopy')).toBe(c6State.get('Edit:PageCopy'));
+                                    expect(c6State.get('PageMeta')).toBe(c6State.get('Edit:PageMeta'));
+                                });
+                            });
+
                             describe('the auto-generated Error state', function() {
                                 it('should be gettable', function() {
-                                    var error = c6State.get('Error');
+                                    var error = get().get('Error');
 
                                     expect(error).toEqual(jasmine.objectContaining({
                                         cModel: null,

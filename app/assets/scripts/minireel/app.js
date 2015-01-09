@@ -126,6 +126,34 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                                 this.state('MR:Creatives.NewMiniReel.Type');
                                 this.state('MR:Creatives.NewMiniReel.Playback');
                             });
+
+                            this.route('/card/new', 'MR:NewWildcard', function() {
+                                this.state('MR:Wildcard', 'MR:New:Wildcard', function() {
+                                    this.state('MR:Wildcard.Copy', 'MR:New:Wildcard.Copy');
+                                    this.state('MR:Wildcard.Video', 'MR:New:Wildcard.Video');
+                                    this.state('MR:Wildcard.Survey', 'MR:New:Wildcard.Survey');
+                                    this.state('MR:Wildcard.Branding', 'MR:New:Wildcard.Branding');
+                                    this.state('MR:Wildcard.Links', 'MR:New:Wildcard.Links');
+                                    this.state(
+                                        'MR:Wildcard.Advertising',
+                                        'MR:New:Wildcard.Advertising'
+                                    );
+                                });
+                            });
+
+                            this.route('/card/:cardId', 'MR:EditWildcard', function() {
+                                this.state('MR:Wildcard', 'MR:Edit:Wildcard', function() {
+                                    this.state('MR:Wildcard.Copy', 'MR:Edit:Wildcard.Copy');
+                                    this.state('MR:Wildcard.Video', 'MR:Edit:Wildcard.Video');
+                                    this.state('MR:Wildcard.Survey', 'MR:Edit:Wildcard.Survey');
+                                    this.state('MR:Wildcard.Branding', 'MR:Edit:Wildcard.Branding');
+                                    this.state('MR:Wildcard.Links', 'MR:Edit:Wildcard.Links');
+                                    this.state(
+                                        'MR:Wildcard.Advertising',
+                                        'MR:Edit:Wildcard.Advertising'
+                                    );
+                                });
+                            });
                         });
                         this.route('/placements', 'MR:Campaign.Placements');
                     });

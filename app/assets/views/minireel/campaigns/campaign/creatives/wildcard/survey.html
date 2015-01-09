@@ -1,0 +1,38 @@
+<div class="modalBody__group modalBody__group--sideTabs mrEdit__ballotTab">
+    <p class="modalBody__message">
+        Surveys are an optional way to present a poll along with the video.
+    </p>
+
+    <label class="checkbox--inline">
+        <input id="includeDisplayAd" type="checkbox" ng-model="WildcardSurveyCtrl.hasSurvey" class="checkbox__input">
+        <span class="btn__label faa">&nbsp;</span>
+    </label>
+    <label for="includeDisplayAd"><strong>Yes</strong>, include a survey</label>
+
+    <form c6-alias="WildcardCtrl.model.data.survey as survey" ng-if="WildcardSurveyCtrl.hasSurvey">
+        <label class="forms__pair mrEdit__slideQuestion clearfix">
+            <span class="forms__name">Question</span>
+            <span class="forms__inputHolder">
+                <input ng-model="survey.prompt" type="text" maxlength="100" 
+                class="forms__textField forms__textField--block">
+                <span class="typo--guidance typo--warning">({{survey.prompt.length || 0}} of 100 max characters recommended)</span>
+            </span>
+        </label>
+        <label class="forms__pair mrEdit__slideQuestion clearfix" c6-alias="survey.choices as choices">
+            <span class="forms__name">Option 1</span>
+            <span class="forms__inputHolder">
+                <input id="option1" ng-model="choices[0]" maxlength="40" type="text"
+                class="forms__textField forms__textField--block">
+                <span class="typo--guidance typo--warning">({{choices[0].length || 0}} of 40 max characters)</span>
+            </span>
+        </label>
+        <label class="forms__pair mrEdit__slideQuestion clearfix" c6-alias="survey.choices as choices">
+            <span class="forms__name">Option 2</span>
+            <span class="forms__inputHolder">
+                <input id="option2" ng-model="choices[1]" maxlength="40" type="text"
+                class="forms__textField forms__textField--block">
+                <span class="typo--guidance typo--warning">({{choices[1].length || 0}} of 40 max characters)</span>
+            </span>
+        </label>
+    </form>
+</div>
