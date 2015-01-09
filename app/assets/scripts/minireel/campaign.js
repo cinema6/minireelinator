@@ -1,7 +1,7 @@
 define (['angular','c6_state','./mixins/PaginatedListState','./mixins/PaginatedListController',
-         './mixins/WizardController','./mixins/VideoCardController'],
+         './mixins/WizardController','./mixins/VideoCardController','./mixins/LinksController'],
 function( angular , c6State  , PaginatedListState          , PaginatedListController          ,
-          WizardController          , VideoCardController          ) {
+          WizardController          , VideoCardController          , LinksController          ) {
     'use strict';
 
     var equals = angular.equals,
@@ -507,6 +507,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     sref: 'MR:Wildcard.Branding'
                 },
                 {
+                    name: 'Links',
+                    sref: 'MR:Wildcard.Links'
+                },
+                {
                     name: 'Advertising',
                     sref: 'MR:Wildcard.Advertising'
                 }
@@ -699,6 +703,27 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 if (!card.params.action.label) {
                     card.params.action = null;
                 }
+            });
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Links', [function() {
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/creatives/wildcard/links.html';
+                this.controller = 'WildcardLinksController';
+                this.controllerAs = 'WildcardLinksCtrl';
+
+                this.model = function() {
+                    return this.cParent.cModel.links;
+                };
+            }]);
+        }])
+
+        .controller('WildcardLinksController', ['$scope','$injector',
+        function                                  ( $scope , $injector ) {
+            $injector.invoke(LinksController, this, {
+                $scope: $scope
             });
         }])
 

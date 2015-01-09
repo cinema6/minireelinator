@@ -22,7 +22,7 @@ function( angular ) {
         this.initWithModel = function(links) {
             this.model = links;
 
-            this.links = ['Action', 'Website', 'Facebook', 'Twitter', 'Pinterest']
+            this.links = ['Action', 'Website', 'Facebook', 'Twitter', 'Pinterest', 'YouTube']
                 .concat(Object.keys(links))
                 .filter(function(name, index, names) {
                     return names.indexOf(name) === index;

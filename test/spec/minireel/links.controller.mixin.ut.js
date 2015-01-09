@@ -85,6 +85,10 @@ define(['angular','minireel/mixins/LinksController'], function(angular, LinksCon
                             href: '/share/pinterest.htm'
                         },
                         {
+                            name: 'YouTube',
+                            href: null
+                        },
+                        {
                             name: 'My Custom Thang',
                             href: 'blegh.html'
                         },
@@ -101,7 +105,7 @@ define(['angular','minireel/mixins/LinksController'], function(angular, LinksCon
                     });
 
                     it('should be the defaults', function() {
-                        expect(LinksCtrl.links).toEqual(['Action', 'Website', 'Facebook', 'Twitter', 'Pinterest'].map(function(name) {
+                        expect(LinksCtrl.links).toEqual(['Action', 'Website', 'Facebook', 'Twitter', 'Pinterest', 'YouTube'].map(function(name) {
                             return {
                                 name: name,
                                 href: null
