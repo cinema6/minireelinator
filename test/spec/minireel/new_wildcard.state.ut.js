@@ -57,7 +57,19 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
 
             beforeEach(function() {
                 campaign.cModel = cinema6.db.create('campaign', {
-                    id: 'cam-0cfe6925aaf571'
+                    id: 'cam-0cfe6925aaf571',
+                    logos: {
+                        square: 'awesome-logo.png'
+                    },
+                    links: {
+                        'YouTube': 'youtubepage.html',
+                        'Facebook': 'facebookpage.html'
+                    },
+                    advertiser: cinema6.db.create('advertiser', {
+                        id: 'cam-52fb2554b038bf',
+                        name: 'Microsoft'
+                    }),
+                    minViewTime: 15
                 });
                 cinema6.db.create.calls.reset();
 
@@ -75,6 +87,16 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     id: undefined,
                     campaignId: campaign.cModel.id,
                     sponsored: true,
+                    collateral: jasmine.objectContaining({
+                        logo: campaign.cModel.logos.square
+                    }),
+                    links: jasmine.objectContaining(campaign.cModel.links),
+                    params: jasmine.objectContaining({
+                        sponsor: campaign.cModel.advertiser.name
+                    }),
+                    campaign: jasmine.objectContaining({
+                        minViewTime: campaign.cModel.minViewTime
+                    }),
                     data: jasmine.objectContaining({
                         autoadvance: false
                     })

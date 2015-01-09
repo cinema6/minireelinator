@@ -458,6 +458,16 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         id: undefined,
                         campaignId: campaign.id,
                         sponsored: true,
+                        collateral: {
+                            logo: campaign.logos.square
+                        },
+                        links: campaign.links,
+                        params: {
+                            sponsor: campaign.advertiser.name
+                        },
+                        campaign: {
+                            minViewTime: campaign.minViewTime
+                        },
                         data: {
                             autoadvance: false
                         }
