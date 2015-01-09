@@ -505,10 +505,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 {
                     name: 'Advertising',
                     sref: 'MR:Wildcard.Advertising'
-                },
-                {
-                    name: 'Targets',
-                    sref: 'MR:Wildcard.Targets'
                 }
             ];
         }])

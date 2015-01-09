@@ -54,10 +54,6 @@ define(['minireel/campaign', 'minireel/mixins/WizardController'], function(campa
                         {
                             name: 'Advertising',
                             sref: 'MR:Wildcard.Advertising'
-                        },
-                        {
-                            name: 'Targets',
-                            sref: 'MR:Wildcard.Targets'
                         }
                     ]);
                 });
