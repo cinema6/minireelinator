@@ -94,7 +94,16 @@ define(['app'], function(appModule) {
                             id: 'e-e182df71093fdd',
                             adtechId: '86429753'
                         }
-                    ]
+                    ],
+                    staticCardMap: {
+                        'e-d43686a9835df1': {
+                            'rc-72ba2dff0fdebf': 'rc-223a31e4d985c4',
+                            'rc-bd83763f6a7a5a': 'rc-06f6db8ba1877f'
+                        },
+                        'e-91705e579c27cc': {
+                            'rc-32c5ebb72266ab': 'rc-06f6db8ba1877f'
+                        }
+                    }
                 };
 
                 advertiserId = campaign.advertiserId;
@@ -135,6 +144,29 @@ define(['app'], function(appModule) {
                     'e-e182df71093fdd': {
                         id: 'e-e182df71093fdd',
                         title: 'You HAVE to Watch This NOW!'
+                    },
+                    'e-d43686a9835df1': {
+                        id: 'e-d43686a9835df1',
+                        data: {
+                            deck: [
+                                {
+                                    id: 'rc-72ba2dff0fdebf'
+                                },
+                                {
+                                    id: 'rc-bd83763f6a7a5a'
+                                }
+                            ]
+                        }
+                    },
+                    'e-91705e579c27cc': {
+                        id: 'e-91705e579c27cc',
+                        data: {
+                            deck: [
+                                {
+                                    id: 'rc-32c5ebb72266ab'
+                                }
+                            ]
+                        }
                     }
                 };
 
@@ -185,6 +217,33 @@ define(['app'], function(appModule) {
                 expect(campaign.targetMiniReels).toEqual(targetMiniReelIds.map(function(id) {
                     return minireels[id];
                 }));
+            });
+
+            it('should convert the staticCardMap to a larger format', function() {
+                expect(campaign.staticCardMap).toEqual([
+                    {
+                        minireel: minireels['e-d43686a9835df1'],
+                        cards: [
+                            {
+                                wildcard: cards['rc-223a31e4d985c4'],
+                                placeholder: minireels['e-d43686a9835df1'].data.deck[0]
+                            },
+                            {
+                                wildcard: cards['rc-06f6db8ba1877f'],
+                                placeholder: minireels['e-d43686a9835df1'].data.deck[1]
+                            }
+                        ]
+                    },
+                    {
+                        minireel: minireels['e-91705e579c27cc'],
+                        cards: [
+                            {
+                                wildcard: cards['rc-06f6db8ba1877f'],
+                                placeholder: minireels['e-91705e579c27cc'].data.deck[0]
+                            }
+                       ]
+                    }
+                ]);
             });
         });
 
@@ -394,7 +453,8 @@ define(['app'], function(appModule) {
                                 deck: [{}]
                             }
                         }
-                    ]
+                    ],
+                    staticCardMap: []
                 };
 
                 postData = without(['advertiser', 'customer'], extend(campaign, {
@@ -414,7 +474,8 @@ define(['app'], function(appModule) {
                         return {
                             id: minireel.id
                         };
-                    })
+                    }),
+                    staticCardMap: {}
                 }));
 
                 response = extend(postData, {
@@ -488,13 +549,32 @@ define(['app'], function(appModule) {
                             id: 'e-6bcadd5f84d9d8',
                             adtechId: '24681379'
                         }
-                    ]
+                    ],
+                    staticCardMap: {
+                        'e-50a82df1192d11': {
+                            'rc-7bd45eb26582e5': 'rc-789f23554ad597',
+                            'rc-1d2de31db9ecdb': 'rc-c755e74bb92856'
+                        },
+                        'e-6a76407457ebc4': {
+                            'rc-5e7caca2cd0180': 'rc-c755e74bb92856'
+                        },
+                        'e-2fa13f2f543cfb': {
+                            'rc-1d2de31db9ecdb': 'rc-c755e74bb92856'
+                        }
+                    }
                 };
 
                 spyOn(cinema6.db, 'find').and.callFake(function(type, id) {
                     return $q.when({
                         id: id,
-                        title: type
+                        title: type,
+                        data: {
+                            deck: [
+                                { id: 'rc-7bd45eb26582e5' },
+                                { id: 'rc-1d2de31db9ecdb' },
+                                { id: 'rc-5e7caca2cd0180' }
+                            ]
+                        }
                     });
                 });
 
@@ -502,6 +582,29 @@ define(['app'], function(appModule) {
                     adapter.decorateCampaign(extend(rawCampaign)).then(function(_campaign) {
                         campaign = _campaign;
                     });
+                });
+
+                campaign.staticCardMap.push({
+                    minireel: {
+                        id: 'e-499b27c3f68b5f',
+                        data: {
+                            deck: []
+                        }
+                    },
+                    cards: [
+                        {
+                            placeholder: { id: 'rc-e0844f6c12a7b7' },
+                            wildcard: null
+                        },
+                        {
+                            placeholder: { id: 'rc-68f44577ae362b' },
+                            wildcard: null
+                        }
+                    ]
+                });
+                campaign.staticCardMap[2].cards.push({
+                    placeholder: { id: 'rc-dc6ebb1fa9fdb5' },
+                    wildcard: null
                 });
 
                 response = extend(rawCampaign, {
