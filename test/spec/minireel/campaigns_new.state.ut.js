@@ -40,23 +40,23 @@ define(['app', 'c6uilib'], function(appModule, c6uilib) {
         });
 
         describe('model()', function() {
-            var advertisers,
+            var customers,
                 success, failure;
 
             beforeEach(function() {
-                advertisers = [
+                customers = [
                     {
-                        id: 'a-a057764cb53d45',
+                        id: 'cus-a057764cb53d45',
                         name: 'vehicles',
                         label: 'Autos & Vehicles'
                     },
                     {
-                        id: 'a-50480bdd7b3f55',
+                        id: 'cus-50480bdd7b3f55',
                         name: 'education',
                         label: 'Education'
                     },
                     {
-                        id: 'a-676edfc8aee43c',
+                        id: 'cus-676edfc8aee43c',
                         name: 'howto',
                         label: 'Howto & DIY'
                     }
@@ -65,7 +65,7 @@ define(['app', 'c6uilib'], function(appModule, c6uilib) {
                 success = jasmine.createSpy('success()');
                 failure = jasmine.createSpy('failure()');
 
-                spyOn(cinema6.db, 'findAll').and.returnValue($q.when(advertisers));
+                spyOn(cinema6.db, 'findAll').and.returnValue($q.when(customers));
 
                 $rootScope.$apply(function() {
                     campaignsNew.model().then(success, failure);
@@ -89,14 +89,14 @@ define(['app', 'c6uilib'], function(appModule, c6uilib) {
                 });
             });
 
-            it('should find all the categories', function() {
-                expect(cinema6.db.findAll).toHaveBeenCalledWith('advertiser');
+            it('should find all the customers', function() {
+                expect(cinema6.db.findAll).toHaveBeenCalledWith('customer');
             });
 
             it('should resolve to an object with the new campaign and categories', function() {
                 expect(success).toHaveBeenCalledWith({
                     campaign: dbModel,
-                    advertisers: advertisers
+                    customers: customers
                 });
             });
         });

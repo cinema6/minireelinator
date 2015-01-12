@@ -116,22 +116,34 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             cards: [],
                             targetMiniReels: []
                         }),
-                        advertisers: cinema6.db.findAll('advertiser')
+                        customers: cinema6.db.findAll('customer')
                     });
                 };
             }]);
         }])
 
-        .controller('CampaignsNewController', ['c6State',
-        function                              ( c6State ) {
-            this.initWithModel = function(model) {
-                this.model = model.campaign;
-                this.advertisers = model.advertisers;
+        .controller('CampaignsNewController', ['$scope','c6State','c6Computed',
+        function                              ( $scope , c6State , c6Computed ) {
+            var c = c6Computed($scope);
 
-                this.advertiserOptions = this.advertisers.reduce(function(result, advertiser) {
-                    result[advertiser.name] = advertiser;
+            function optionsByName(items) {
+                return items.reduce(function(result, item) {
+                    result[item.name] = item;
                     return result;
                 }, { None: null });
+            }
+
+            c(this, 'advertiserOptions', function() {
+                var customer = this.model.customer;
+
+                return optionsByName(customer && customer.advertisers || []);
+            }, ['CampaignsNewCtrl.model.customer']);
+
+            this.initWithModel = function(model) {
+                this.model = model.campaign;
+                this.customers = model.customers;
+
+                this.customerOptions = optionsByName(this.customers);
             };
 
             this.save = function() {
