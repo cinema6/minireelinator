@@ -61,13 +61,14 @@ define(['app'], function(appModule) {
 
         describe('decorateCampaign(campaign)', function() {
             var campaign,
-                advertiserId, miniReelIds, cardIds, targetMiniReelIds,
-                minireels, cards, advertisers;
+                advertiserId, customerId, miniReelIds, cardIds, targetMiniReelIds,
+                minireels, cards, advertisers, customers;
 
             beforeEach(function() {
                 campaign = {
                     id: 'c-c66191ccc3eb37',
                     advertiserId: 'a-3f7cf5012b15b4',
+                    customerId: 'cus-5156b33a6f834c',
                     miniReels: [
                         {
                             id: 'e-18306aa3d27d54',
@@ -97,6 +98,7 @@ define(['app'], function(appModule) {
                 };
 
                 advertiserId = campaign.advertiserId;
+                customerId = campaign.customerId;
                 miniReelIds = campaign.miniReels.map(function(data) {
                     return data.id;
                 });
@@ -111,6 +113,13 @@ define(['app'], function(appModule) {
                     'a-3f7cf5012b15b4': {
                         id: 'a-3f7cf5012b15b4',
                         name: 'Toyota'
+                    }
+                };
+
+                customers = {
+                    'cus-5156b33a6f834c': {
+                        id: 'cus-5156b33a6f834c',
+                        name: 'Sterling Cooper Draper Pryce'
                     }
                 };
 
@@ -148,6 +157,8 @@ define(['app'], function(appModule) {
                         return $q.when(cards[id]);
                     case 'advertiser':
                         return $q.when(advertisers[id]);
+                    case 'customer':
+                        return $q.when(customers[id]);
                     default:
                         return $q.reject('NOT FOUND');
                     }
@@ -164,6 +175,7 @@ define(['app'], function(appModule) {
 
             it('should decorate references to cards and minireels with actual objects', function() {
                 expect(campaign.advertiser).toBe(advertisers[advertiserId]);
+                expect(campaign.customer).toBe(customers[customerId]);
                 expect(campaign.miniReels).toEqual(miniReelIds.map(function(id) {
                     return minireels[id];
                 }));
@@ -347,6 +359,10 @@ define(['app'], function(appModule) {
                         id: 'a-94b3a91e07a8c1',
                         name: 'Coca-Cola'
                     },
+                    customer: {
+                        id: 'cus-1e061e7a787603',
+                        name: 'Sterling Cooper Draper Pryce'
+                    },
                     miniReels: [
                         {
                             id: 'e-eedf5ac16a340c',
@@ -381,8 +397,9 @@ define(['app'], function(appModule) {
                     ]
                 };
 
-                postData = without(['advertiser'], extend(campaign, {
+                postData = without(['advertiser', 'customer'], extend(campaign, {
                     advertiserId: campaign.advertiser.id,
+                    customerId: campaign.customer.id,
                     miniReels: campaign.miniReels.map(function(minireel) {
                         return {
                             id: minireel.id
@@ -453,6 +470,7 @@ define(['app'], function(appModule) {
                     id: 'c-2d56941fa19b69',
                     created: '2014-12-01T23:26:46.182Z',
                     advertiserId: 'a-6d54ea5400aa8e',
+                    customerId: 'cus-1e061e7a787603',
                     miniReels: [
                         {
                             id: 'e-5b984daae2786c',

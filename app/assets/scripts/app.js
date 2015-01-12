@@ -539,7 +539,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             return result;
                         }, {
                             advertiser: undefined,
-                            advertiserId: campaign.advertiser.id
+                            advertiserId: campaign.advertiser.id,
+
+                            customer: undefined,
+                            customerId: campaign.customer.id
                         })
                     );
                 }
@@ -553,6 +556,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         });
 
                     return $q.all({
+                        customer: cinema6.db.find('customer', campaign.customerId),
                         advertiser: cinema6.db.find('advertiser', campaign.advertiserId),
                         miniReels: $q.all(campaign.miniReels.map(function(data) {
                             return cinema6.db.find('experience', data.id);
