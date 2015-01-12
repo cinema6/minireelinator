@@ -12,7 +12,7 @@ define(['app'], function(appModule) {
             CampaignsCtrl,
             CampaignsNewCtrl;
 
-        var campaign, advertisers,
+        var campaign, customers,
             model;
 
         beforeEach(function() {
@@ -40,7 +40,7 @@ define(['app'], function(appModule) {
                     cards: [],
                     targetMiniReels: []
                 });
-                advertisers = [
+                customers = [
                     {
                         id: 'a-a057764cb53d45',
                         name: 'vehicles',
@@ -60,7 +60,7 @@ define(['app'], function(appModule) {
 
                 model = {
                     campaign: campaign,
-                    advertisers: advertisers
+                    customers: customers
                 };
 
                 $scope = $rootScope.$new();
@@ -96,19 +96,67 @@ define(['app'], function(appModule) {
                 });
             });
 
-            describe('advertisers', function() {
+            describe('customers', function() {
                 it('should be the advertiser', function() {
-                    expect(CampaignsNewCtrl.advertisers).toBe(advertisers);
+                    expect(CampaignsNewCtrl.customers).toBe(customers);
+                });
+            });
+
+            describe('customerOptions', function() {
+                it('should be an object of customers keyed by their name', function() {
+                    expect(CampaignsNewCtrl.customerOptions).toEqual({
+                        'None': null,
+                        vehicles: customers[0],
+                        education: customers[1],
+                        howto: customers[2]
+                    });
                 });
             });
 
             describe('advertiserOptions', function() {
-                it('should be an object of advertisers keyed by their name', function() {
-                    expect(CampaignsNewCtrl.advertiserOptions).toEqual({
-                        'None': null,
-                        vehicles: advertisers[0],
-                        education: advertisers[1],
-                        howto: advertisers[2]
+                describe('before the campaign has a customer', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            campaign.customer = null;
+                        });
+                    });
+
+                    it('should not list any options', function() {
+                        expect(CampaignsNewCtrl.advertiserOptions).toEqual({
+                            None: null
+                        });
+                    });
+                });
+
+                describe('when the campaign has a customer', function() {
+                    var customer;
+
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            customer = campaign.customer = {
+                                id: 'cus-eacd637506f15c',
+                                advertisers: [
+                                    {
+                                        name: 'Diageo'
+                                    },
+                                    {
+                                        name: 'Activision'
+                                    },
+                                    {
+                                        name: 'Ubisoft'
+                                    }
+                                ]
+                            };
+                        });
+                    });
+
+                    it('should be an object of advertisers keyed by their name', function() {
+                        expect(CampaignsNewCtrl.advertiserOptions).toEqual({
+                            None: null,
+                            Diageo: customer.advertisers[0],
+                            Activision: customer.advertisers[1],
+                            Ubisoft: customer.advertisers[2]
+                        });
                     });
                 });
             });

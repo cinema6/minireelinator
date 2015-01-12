@@ -418,6 +418,58 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 }, this);
             }]);
 
+            $provide.constant('CustomerAdapter', ['config','$http','cinema6','$q',
+            function                             ( config , $http , cinema6 , $q ) {
+                var adapter = this;
+
+                function url(end) {
+                    return config.apiBase + '/account/' + end;
+                }
+
+                function decorateAll(customers) {
+                    return $q.all(customers.map(function(customer) {
+                        return adapter.decorate(customer);
+                    }));
+                }
+
+                this.decorate = function(customer) {
+                    return $q.all({
+                        advertisers: $q.all(customer.advertisers.map(function(id) {
+                            return cinema6.db.find('advertiser', id);
+                        }))
+                    }).then(function(data) {
+                        return extend(customer, data);
+                    });
+                };
+
+                this.findAll = function() {
+                    return $http.get(url('customers'))
+                        .then(pick('data'))
+                        .then(decorateAll);
+                };
+
+                this.find = function(type, id) {
+                    return $http.get(url('customer/' + id))
+                        .then(pick('data'))
+                        .then(this.decorate)
+                        .then(putInArray);
+                };
+
+                this.findQuery = function(type, query) {
+                    return $http.get(url('customers'), { params: query })
+                        .then(pick('data'))
+                        .then(decorateAll);
+                };
+
+                ['create', 'update', 'erase'].forEach(function(method) {
+                    this[method] = function() {
+                        return $q.reject(
+                            new Error('CustomerAdapter.' + method + '() is not implemented.')
+                        );
+                    };
+                }, this);
+            }]);
+
             $provide.constant('AdvertiserAdapter', ['config','$http','$q',
             function                               ( config , $http , $q ) {
                 function url(end) {
@@ -487,7 +539,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             return result;
                         }, {
                             advertiser: undefined,
-                            advertiserId: campaign.advertiser.id
+                            advertiserId: campaign.advertiser.id,
+
+                            customer: undefined,
+                            customerId: campaign.customer.id
                         })
                     );
                 }
@@ -501,6 +556,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         });
 
                     return $q.all({
+                        customer: cinema6.db.find('customer', campaign.customerId),
                         advertiser: cinema6.db.find('advertiser', campaign.advertiserId),
                         miniReels: $q.all(campaign.miniReels.map(function(data) {
                             return cinema6.db.find('experience', data.id);
@@ -608,10 +664,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         }])
 
         .config(['cinema6Provider','ContentAdapter','CWRXAdapter','CampaignAdapter',
-                 'VoteAdapter','OrgAdapter','UserAdapter','CardAdapter',
+                 'VoteAdapter','OrgAdapter','UserAdapter','CardAdapter','CustomerAdapter',
                  'CategoryAdapter','AdvertiserAdapter','ExpGroupAdapter',
         function( cinema6Provider , ContentAdapter , CWRXAdapter , CampaignAdapter ,
-                  VoteAdapter , OrgAdapter , UserAdapter , CardAdapter ,
+                  VoteAdapter , OrgAdapter , UserAdapter , CardAdapter , CustomerAdapter ,
                   CategoryAdapter , AdvertiserAdapter , ExpGroupAdapter ) {
 
             [
@@ -623,7 +679,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 CategoryAdapter,
                 ExpGroupAdapter,
                 CampaignAdapter,
-                AdvertiserAdapter
+                AdvertiserAdapter,
+                CustomerAdapter
             ].forEach(function(Adapter) {
                 Adapter.config = {
                     apiBase: '/api'
@@ -639,7 +696,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 category: CategoryAdapter,
                 advertiser: AdvertiserAdapter,
                 expGroup: ExpGroupAdapter,
-                campaign: CampaignAdapter
+                campaign: CampaignAdapter,
+                customer: CustomerAdapter
             };
 
             cinema6Provider.useAdapter(CWRXAdapter);

@@ -111,4 +111,34 @@ module.exports = function(http) {
             this.respond(404, 'NOT FOUND');
         }
     });
+
+    /***********************************************************************************************
+     * Customer Endpoints
+     **********************************************************************************************/
+
+    http.whenGET('/api/account/customers', function(request) {
+        this.respond(200, grunt.file.expand(path.resolve(__dirname, './customers/*.json'))
+            .map(function(path) {
+                var id = path.match(/[^\/]+(?=\.json)/)[0];
+
+                return extend(grunt.file.readJSON(path), { id: id });
+            }).filter(function(customer) {
+                return Object.keys(request.query)
+                    .every(function(key) {
+                        return request.query[key] === customer[key];
+                    });
+            }));
+    });
+
+    http.whenGET('/api/account/customer/**', function(request) {
+        var id = idFromPath(request.pathname),
+            filePath = objectPath('customers', id),
+            customer = grunt.file.exists(filePath) ? grunt.file.readJSON(filePath) : null;
+
+        if (customer) {
+            this.respond(200, extend(customer, { id: id }));
+        } else {
+            this.respond(404, 'NOT FOUND');
+        }
+    });
 };
