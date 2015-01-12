@@ -790,21 +790,69 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Campaign.Placements', [function() {
+            c6StateProvider.state('MR:Campaign.Placements', ['c6State',
+            function                                        ( c6State ) {
+                var CampaignState = c6State.get('MR:Campaign');
+
                 this.templateUrl = 'views/minireel/campaigns/campaign/placements.html';
                 this.controller = 'CampaignPlacementsController';
                 this.controllerAs = 'CampaignPlacementsCtrl';
+
+                this.model = function() {
+                    var campaign = CampaignState.cModel;
+
+                    return campaign.staticCardMap;
+                };
             }]);
         }])
 
         .controller('CampaignPlacementsController', ['$scope','scopePromise','cinema6',
         function                                    ( $scope , scopePromise , cinema6 ) {
-            var PortalCtrl = $scope.PortalCtrl,
-                CampaignCtrl = $scope.CampaignCtrl,
-                campaign = CampaignCtrl.model;
+            var CampaignPlacementsCtrl = this,
+                PortalCtrl = $scope.PortalCtrl;
+
+            function overwrite(array, newArray) {
+                array.length = 0;
+                array.push.apply(array, newArray);
+                return array;
+            }
+
+            function find(collection, predicate) {
+                return collection.reduce(function(result, item) {
+                    return predicate(item) ? item : result;
+                }, null);
+            }
+
+            function createCardEntries(minireel) {
+                return minireel.data.deck.filter(function(card) {
+                    return card.type === 'wildcard';
+                }).map(function(placeholder) {
+                    return {
+                        placeholder: placeholder,
+                        wildcard: null
+                    };
+                });
+            }
 
             this.result = null;
             this.query = '';
+
+            this.initWithModel = function(staticCardMap) {
+                this.model = overwrite(staticCardMap, staticCardMap.map(function(entry) {
+                    var minireel = entry.minireel,
+                        cards = entry.cards;
+
+                    return extend(entry, {
+                        cards: createCardEntries(minireel).map(function(entry) {
+                            var placeholder = entry.placeholder;
+
+                            return find(cards, function(entry) {
+                                return entry.placeholder === placeholder;
+                            }) || entry;
+                        })
+                    });
+                }));
+            };
 
             this.search = function() {
                 return (this.result = scopePromise(cinema6.db.findAll('experience', {
@@ -814,17 +862,28 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             };
 
             this.add = function(minireel) {
-                campaign.targetMiniReels.push(minireel);
+                this.model.push({
+                    minireel: minireel,
+                    cards: createCardEntries(minireel)
+                });
             };
 
             this.remove = function(minireel) {
-                var targetMiniReels = campaign.targetMiniReels;
+                overwrite(this.model, this.model.filter(function(entry) {
+                    return entry.minireel !== minireel;
+                }));
+            };
 
-                targetMiniReels.splice(targetMiniReels.indexOf(minireel), 1);
+            this.filledCardsOf = function(entry) {
+                return entry.cards.filter(function(item) {
+                    return !!item.wildcard;
+                });
             };
 
             this.isNotAlreadyTargeted = function(minireel) {
-                return campaign.targetMiniReels.indexOf(minireel) < 0;
+                return CampaignPlacementsCtrl.model.map(function(entry) {
+                    return entry.minireel;
+                }).indexOf(minireel) < 0;
             };
         }]);
 });

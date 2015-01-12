@@ -10,10 +10,11 @@ define(['app'], function(appModule) {
             ScopedPromise,
             $scope,
             PortalCtrl,
-            CampaignCtrl,
             CampaignPlacementsCtrl;
 
-        var campaign;
+        var staticCardMap;
+
+        var myWildcard;
 
         beforeEach(function() {
             module(appModule.name);
@@ -25,22 +26,13 @@ define(['app'], function(appModule) {
                 cinema6 = $injector.get('cinema6');
                 scopePromise = $injector.get('scopePromise');
 
-                campaign = cinema6.db.create('campaign', {
-                    logos: {},
-                    links: {},
-                    targetMiniReels: [
-                        cinema6.db.create('experience', {
-                            id: 'e-cb7197757d91f7',
-                            data: {}
-                        }),
-                        cinema6.db.create('experience', {
-                            id: 'e-95076b2d8a1657',
-                            data: {}
-                        })
-                    ]
-                });
-
                 ScopedPromise = scopePromise($q.defer().promise).constructor;
+
+                myWildcard = cinema6.db.create('card', {
+                    id: 'rc-17e31bd5abcd54',
+                    type: 'video',
+                    data: {}
+                });
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
@@ -53,14 +45,46 @@ define(['app'], function(appModule) {
                         }
                     };
 
-                    $scope.CampaignCtrl = CampaignCtrl = $controller('CampaignController', {
-                        $scope: $scope
-                    });
-                    CampaignCtrl.initWithModel(campaign);
-
                     $scope.CampaignPlacementsCtrl = CampaignPlacementsCtrl = $controller('CampaignPlacementsController', {
                         $scope: $scope
                     });
+                    CampaignPlacementsCtrl.initWithModel((function() {
+                        var minireel = cinema6.db.create('experience', {
+                            id: 'e-cc597c4791834f',
+                            data: {
+                                deck: [
+                                    {
+                                        id: 'rc-0cf7574bedb733',
+                                        type: 'text'
+                                    },
+                                    {
+                                        id: 'rc-e9a3504eea35af',
+                                        type: 'wildcard'
+                                    },
+                                    {
+                                        id: 'rc-b10a89b8373ce4',
+                                        type: 'video'
+                                    },
+                                    {
+                                        id: 'rc-39c0db593bf6d1',
+                                        type: 'wildcard'
+                                    }
+                                ]
+                            }
+                        });
+
+                        return (staticCardMap = [
+                            {
+                                minireel: minireel,
+                                cards: [
+                                    {
+                                        placeholder: minireel.data.deck[3],
+                                        wildcard: myWildcard
+                                    }
+                                ]
+                            }
+                        ]);
+                    }()));
                 });
             });
         });
@@ -79,6 +103,27 @@ define(['app'], function(appModule) {
             describe('query', function() {
                 it('should be an empty string', function() {
                     expect(CampaignPlacementsCtrl.query).toBe('');
+                });
+            });
+
+            describe('model', function() {
+                it('should be the static card map', function() {
+                    expect(CampaignPlacementsCtrl.model).toBe(staticCardMap);
+                });
+
+                it('should be augmented to include an entry for every minireel\'s placeholder cards', function() {
+                    var minireel = staticCardMap[0].minireel;
+
+                    expect(staticCardMap[0].cards).toEqual([
+                        {
+                            placeholder: minireel.data.deck[1],
+                            wildcard: null
+                        },
+                        {
+                            placeholder: minireel.data.deck[3],
+                            wildcard: myWildcard
+                        }
+                    ]);
                 });
             });
         });
@@ -122,37 +167,110 @@ define(['app'], function(appModule) {
 
                 beforeEach(function() {
                     minireel = cinema6.db.create('expeience', {
-                        id: 'e-2af4cc821a6b04'
+                        id: 'e-2af4cc821a6b04',
+                        data: {
+                            deck: [
+                                {
+                                    id: 'rc-92df6f0e4b361c',
+                                    type: 'video'
+                                },
+                                {
+                                    id: 'rc-c2a9655f75e245',
+                                    type: 'videoBallot'
+                                },
+                                {
+                                    id: 'rc-a1688bb26326ec',
+                                    type: 'wildcard'
+                                },
+                                {
+                                    id: 'rc-f94b6351eaefe5',
+                                    type: 'wildcard'
+                                },
+                                {
+                                    id: 'rc-653a9712dbb6ca',
+                                    type: 'recap'
+                                }
+                            ]
+                        }
                     });
 
                     CampaignPlacementsCtrl.add(minireel);
                 });
 
-                it('should add the minireel to the targetMiniReels', function() {
-                    expect(campaign.targetMiniReels.length).not.toBe(1);
-                    expect(campaign.targetMiniReels).toContain(minireel);
+                it('should add the minireel to the staticCardMap', function() {
+                    expect(staticCardMap.length).not.toBe(1);
+                    expect(staticCardMap[1]).toEqual({
+                        minireel: minireel,
+                        cards: [
+                            {
+                                placeholder: minireel.data.deck[2],
+                                wildcard: null
+                            },
+                            {
+                                placeholder: minireel.data.deck[3],
+                                wildcard: null
+                            }
+                        ]
+                    });
                 });
             });
 
             describe('remove(minireel)', function() {
-                var minireel;
+                var minireel, entry;
 
                 beforeEach(function() {
-                    minireel = campaign.targetMiniReels[1];
+                    minireel = cinema6.db.create('experience', {
+                        id: 'e-8afbf48a0681cc',
+                        data: {
+                            deck: []
+                        }
+                    });
+
+                    entry = staticCardMap[staticCardMap.push({
+                        minireel: minireel,
+                        cards: []
+                    }) - 1];
 
                     CampaignPlacementsCtrl.remove(minireel);
                 });
 
-                it('should remove the minrieel from the targetMiniReels', function() {
-                    expect(campaign.targetMiniReels.length).not.toBe(0);
-                    expect(campaign.targetMiniReels).not.toContain(minireel);
+                it('should remove the minireel\'s entry from the staticCardMap', function() {
+                    expect(staticCardMap.length).not.toBe(0);
+                    expect(staticCardMap).not.toContain(entry);
+                });
+            });
+
+            describe('filledCardsOf(entry)', function() {
+                beforeEach(function() {
+                    staticCardMap.push({
+                        minireel: {},
+                        cards: [
+                            {
+                                placeholder: {},
+                                wildcard: {}
+                            },
+                            {
+                                placeholder: {},
+                                wildcard: {}
+                            }
+                        ]
+                    });
+                });
+
+                it('should return the cards of an entry that have a wildcard', function() {
+                    expect(CampaignPlacementsCtrl.filledCardsOf(staticCardMap[0])).toEqual([staticCardMap[0].cards[1]]);
+                    expect(CampaignPlacementsCtrl.filledCardsOf(staticCardMap[1])).toEqual(staticCardMap[1].cards);
                 });
             });
 
             describe('isNotAlreadyTargeted(minireel)', function() {
+                var isNotAlreadyTargeted;
+
                 var notTargeted;
 
                 beforeEach(function() {
+                    isNotAlreadyTargeted = CampaignPlacementsCtrl.isNotAlreadyTargeted;
+
                     notTargeted = ['e-e9581182c1a22c', 'e-31cc21b9470ad7', 'e-1c9a3807418b45'].map(function(id) {
                         return cinema6.db.create('experience', {
                             id: id,
@@ -162,28 +280,31 @@ define(['app'], function(appModule) {
                         });
                     });
 
-                    campaign.targetMiniReels.push.apply(campaign.targetMiniReels, ['e-b9f84d3f9ee970', 'e-c59097d3a2bb06'].map(function(id) {
-                        return cinema6.db.create('experience', {
-                            id: id,
-                            data: {
-                                deck: []
-                            }
-                        });
+                    staticCardMap.push.apply(staticCardMap, ['e-b9f84d3f9ee970', 'e-c59097d3a2bb06'].map(function(id) {
+                        return {
+                            minireel: cinema6.db.create('experience', {
+                                id: id,
+                                data: {
+                                    deck: []
+                                }
+                            }),
+                            cards: []
+                        };
                     }));
                 });
 
                 describe('if the minireel is not being targeted', function() {
                     it('should return true', function() {
                         notTargeted.forEach(function(minireel) {
-                            expect(CampaignPlacementsCtrl.isNotAlreadyTargeted(minireel)).toBe(true);
+                            expect(isNotAlreadyTargeted(minireel)).toBe(true);
                         });
                     });
                 });
 
                 describe('if the minireel is being targeted', function() {
                     it('should return false', function() {
-                        campaign.targetMiniReels.forEach(function(minireel) {
-                            expect(CampaignPlacementsCtrl.isNotAlreadyTargeted(minireel)).toBe(false);
+                        staticCardMap.forEach(function(entry) {
+                            expect(isNotAlreadyTargeted(entry.minireel)).toBe(false);
                         });
                     });
                 });

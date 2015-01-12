@@ -22,14 +22,14 @@
             </ul>
         </div>
     </section>
-    <section class="twoCol" c6-alias="campaign.targetMiniReels as minireels">
-        <strong>Current Placements</strong><br />
-        <span ng-show="minireels.length < 1">This campaign is not targeting any MiniReels. Start by searching for a MiniReel.</span>
+    <section class="twoCol" c6-alias="CampaignPlacementsCtrl.model as map">
+        <strong>Current Static Placements</strong><br />
+        <span ng-show="map.length < 1">This campaign's cards have no static placements in MiniReels.</span>
         <ul>
-            <li ng-repeat="minireel in minireels">
-                {{minireel.data.title}}
+            <li ng-repeat="entry in map"><c6-alias model="entry.minireel" as="minireel">
+                <strong>{{minireel.data.title}}</strong>: {{CampaignPlacementsCtrl.filledCardsOf(entry).length}}/{{entry.cards.length}} filled
                 <button class="btn btn--danger" ng-click="CampaignPlacementsCtrl.remove(minireel)">Remove</button>
-            </li>
+            </c6-alias></li>
         </ul>
     </section>
 </div>
