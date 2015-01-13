@@ -562,7 +562,14 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                                         }, {});
                                     return result;
                                 }, {});
-                            }())
+                            }()),
+
+                            miniReelGroups: campaign.miniReelGroups.map(function(group) {
+                                return extend(group, {
+                                    miniReels: group.miniReels.map(pick('id')),
+                                    cards: group.cards.map(pick('id'))
+                                });
+                            })
                         })
                     );
                 }
@@ -570,6 +577,12 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 this.decorateCampaign = function(campaign) {
                     var findCard = MiniReelService.findCard;
                     var staticCardMap = campaign.staticCardMap;
+
+                    function getDbModel(type) {
+                        return function(id) {
+                            return cinema6.db.find(type, id);
+                        };
+                    }
 
                     ['miniReels', 'cards', 'targetMiniReels']
                         .forEach(function(prop) {
@@ -579,20 +592,20 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         });
 
                     return $q.all({
-                        customer: cinema6.db.find('customer', campaign.customerId),
-                        advertiser: cinema6.db.find('advertiser', campaign.advertiserId),
-                        miniReels: $q.all(campaign.miniReels.map(function(data) {
-                            return cinema6.db.find('experience', data.id);
-                        })),
-                        cards: $q.all(campaign.cards.map(function(data) {
-                            return cinema6.db.find('card', data.id);
-                        })),
-                        targetMiniReels: $q.all(campaign.targetMiniReels.map(function(data) {
-                            return cinema6.db.find('experience', data.id);
-                        })),
+                        customer: getDbModel('customer')(campaign.customerId),
+                        advertiser: getDbModel('advertiser')(campaign.advertiserId),
+                        miniReels: $q.all(
+                            campaign.miniReels.map(pick('id')).map(getDbModel('experience'))
+                        ),
+                        cards: $q.all(
+                            campaign.cards.map(pick('id')).map(getDbModel('card'))
+                        ),
+                        targetMiniReels: $q.all(
+                            campaign.targetMiniReels.map(pick('id')).map(getDbModel('experience'))
+                        ),
                         staticCardMap: $q.all(Object.keys(staticCardMap).map(function(minireelId) {
                             var map = staticCardMap[minireelId],
-                                findMiniReel = cinema6.db.find('experience', minireelId);
+                                findMiniReel = getDbModel('experience')(minireelId);
 
                             return $q.all({
                                 minireel: findMiniReel,
@@ -603,9 +616,17 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                                         placeholder: findMiniReel.then(function(minireel) {
                                             return findCard(minireel.data.deck, placeholderId);
                                         }),
-                                        wildcard: cinema6.db.find('card', wildcardId)
+                                        wildcard: getDbModel('card')(wildcardId)
                                     });
                                 }))
+                            });
+                        })),
+                        miniReelGroups: $q.all(campaign.miniReelGroups.map(function(entry) {
+                            return $q.all({
+                                miniReels: $q.all(entry.miniReels.map(getDbModel('experience'))),
+                                cards: $q.all(entry.cards.map(getDbModel('card')))
+                            }).then(function(data) {
+                                return extend(entry, data);
                             });
                         }))
                     }).then(function(data) {

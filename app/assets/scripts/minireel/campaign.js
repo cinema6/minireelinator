@@ -122,7 +122,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             miniReels: [],
                             cards: [],
                             targetMiniReels: [],
-                            staticCardMap: []
+                            staticCardMap: [],
+                            miniReelGroups: []
                         }),
                         customers: cinema6.db.findAll('customer')
                     });
