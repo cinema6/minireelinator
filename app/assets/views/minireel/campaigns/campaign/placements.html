@@ -27,9 +27,10 @@
         <span ng-show="map.length < 1">This campaign's cards have no static placements in MiniReels.</span>
         <ul>
             <li ng-repeat="entry in map"><c6-alias model="entry.minireel" as="minireel">
-                <strong>{{minireel.data.title}}</strong>: {{CampaignPlacementsCtrl.filledCardsOf(entry).length}}/{{entry.cards.length}} filled
+                <strong><a c6-sref="MR:Placements.MiniReel" c6-models="[entry]">{{minireel.data.title}}</a></strong>: {{CampaignPlacementsCtrl.filledCardsOf(entry).length}}/{{entry.cards.length}} filled
                 <button class="btn btn--danger" ng-click="CampaignPlacementsCtrl.remove(minireel)">Remove</button>
             </c6-alias></li>
         </ul>
     </section>
 </div>
+<c6-view></c6-view>

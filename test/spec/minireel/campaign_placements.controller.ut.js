@@ -5,6 +5,7 @@ define(['app'], function(appModule) {
         var $rootScope,
             $controller,
             $q,
+            c6State,
             cinema6,
             scopePromise,
             ScopedPromise,
@@ -23,6 +24,7 @@ define(['app'], function(appModule) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
                 $q = $injector.get('$q');
+                c6State = $injector.get('c6State');
                 cinema6 = $injector.get('cinema6');
                 scopePromise = $injector.get('scopePromise');
 
@@ -194,6 +196,8 @@ define(['app'], function(appModule) {
                         }
                     });
 
+                    spyOn(c6State, 'goTo');
+
                     CampaignPlacementsCtrl.add(minireel);
                 });
 
@@ -212,6 +216,10 @@ define(['app'], function(appModule) {
                             }
                         ]
                     });
+                });
+
+                it('should go to the "MR:Placements.MiniReel" state', function() {
+                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Placements.MiniReel', [staticCardMap[1]]);
                 });
             });
 

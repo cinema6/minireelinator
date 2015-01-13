@@ -12,6 +12,13 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         fromJson = angular.fromJson,
         toJson = angular.toJson;
 
+    function shallowCopy(object, to) {
+        return Object.keys(object).reduce(function(result, key) {
+            result[key] = object[key];
+            return result;
+        }, copy({}, to || {}));
+    }
+
     function deepExtend(target, extension) {
         forEach(extension, function(extensionValue, prop) {
             var targetValue = target[prop];
@@ -806,8 +813,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignPlacementsController', ['$scope','scopePromise','cinema6',
-        function                                    ( $scope , scopePromise , cinema6 ) {
+        .controller('CampaignPlacementsController', ['$scope','scopePromise','cinema6','c6State',
+        function                                    ( $scope , scopePromise , cinema6 , c6State ) {
             var CampaignPlacementsCtrl = this,
                 PortalCtrl = $scope.PortalCtrl;
 
@@ -862,10 +869,12 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             };
 
             this.add = function(minireel) {
-                this.model.push({
-                    minireel: minireel,
-                    cards: createCardEntries(minireel)
-                });
+                return c6State.goTo('MR:Placements.MiniReel', [
+                    this.model[this.model.push({
+                        minireel: minireel,
+                        cards: createCardEntries(minireel)
+                    }) - 1]
+                ]);
             };
 
             this.remove = function(minireel) {
@@ -884,6 +893,61 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 return CampaignPlacementsCtrl.model.map(function(entry) {
                     return entry.minireel;
                 }).indexOf(minireel) < 0;
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Placements.MiniReel', ['c6State',
+            function                                        ( c6State ) {
+                var CampaignPlacementsState = c6State.get('MR:Campaign.Placements');
+
+                this.templateUrl = 'views/minireel/campaigns/campaign/placements/mini_reel.html';
+                this.controller = 'PlacementsMiniReelController';
+                this.controllerAs = 'PlacementsMiniReelCtrl';
+
+                this.serializeParams = function(model) {
+                    return {
+                        minireelId: model.minireel.id
+                    };
+                };
+
+                this.model = function(params) {
+                    var staticCardMap = CampaignPlacementsState.cModel;
+
+                    return staticCardMap[staticCardMap.map(function(entry) {
+                        return entry.minireel.id;
+                    }).indexOf(params.minireelId)];
+                };
+            }]);
+        }])
+
+        .controller('PlacementsMiniReelController', ['$scope','c6State',
+        function                                    ( $scope , c6State ) {
+            var CampaignCtrl = $scope.CampaignCtrl,
+                cards = CampaignCtrl.model.cards;
+
+            this.cardOptions = cards.reduce(function(cardOptions, card) {
+                cardOptions[card.title] = card;
+                return cardOptions;
+            }, { 'None': null });
+
+            this.initWithModel = function(entry) {
+                this.model = extend(shallowCopy(entry), {
+                    cards: entry.cards.map(function(item) {
+                        return shallowCopy(item);
+                    })
+                });
+
+                this.original = entry;
+            };
+
+            this.confirm = function() {
+                extend(this.original, {
+                    cards: this.model.cards
+                });
+
+                return c6State.goTo('MR:Campaign.Placements');
             };
         }]);
 });
