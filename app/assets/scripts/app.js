@@ -503,7 +503,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             }]);
 
             $provide.constant('CampaignAdapter', ['config','$http','$q','cinema6',
-            function                             ( config , $http , $q , cinema6 ) {
+                                                  'MiniReelService',
+            function                             ( config , $http , $q , cinema6 ,
+                                                   MiniReelService ) {
                 var adapter = this,
                     adtechIdCache = {
                         miniReels: {},
@@ -542,12 +544,33 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             advertiserId: campaign.advertiser.id,
 
                             customer: undefined,
-                            customerId: campaign.customer.id
+                            customerId: campaign.customer.id,
+
+                            staticCardMap: (function() {
+                                function hasWildcard(entry) {
+                                    return !!entry.wildcard;
+                                }
+
+                                return campaign.staticCardMap.filter(function(entry) {
+                                    return entry.cards.some(hasWildcard);
+                                }).reduce(function(result, entry) {
+                                    result[entry.minireel.id] = entry.cards
+                                        .filter(hasWildcard)
+                                        .reduce(function(result, entry) {
+                                            result[entry.placeholder.id] = entry.wildcard.id;
+                                            return result;
+                                        }, {});
+                                    return result;
+                                }, {});
+                            }())
                         })
                     );
                 }
 
                 this.decorateCampaign = function(campaign) {
+                    var findCard = MiniReelService.findCard;
+                    var staticCardMap = campaign.staticCardMap;
+
                     ['miniReels', 'cards', 'targetMiniReels']
                         .forEach(function(prop) {
                             campaign[prop].forEach(function(data) {
@@ -566,6 +589,24 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         })),
                         targetMiniReels: $q.all(campaign.targetMiniReels.map(function(data) {
                             return cinema6.db.find('experience', data.id);
+                        })),
+                        staticCardMap: $q.all(Object.keys(staticCardMap).map(function(minireelId) {
+                            var map = staticCardMap[minireelId],
+                                findMiniReel = cinema6.db.find('experience', minireelId);
+
+                            return $q.all({
+                                minireel: findMiniReel,
+                                cards: $q.all(Object.keys(map).map(function(placeholderId) {
+                                    var wildcardId = map[placeholderId];
+
+                                    return $q.all({
+                                        placeholder: findMiniReel.then(function(minireel) {
+                                            return findCard(minireel.data.deck, placeholderId);
+                                        }),
+                                        wildcard: cinema6.db.find('card', wildcardId)
+                                    });
+                                }))
+                            });
                         }))
                     }).then(function(data) {
                         return extend(campaign, data);
