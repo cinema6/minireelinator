@@ -158,6 +158,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                         this.route('/placements', 'MR:Campaign.Placements', function() {
                             this.route('/minireel/:minireelId', 'MR:Placements.MiniReel');
                         });
+                        this.route('/minireel-groups', 'MR:Campaign.MiniReelGroups');
                     });
                 });
             });

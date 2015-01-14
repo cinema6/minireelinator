@@ -950,5 +950,27 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
                 return c6State.goTo('MR:Campaign.Placements');
             };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Campaign.MiniReelGroups', ['c6State',
+            function                                            ( c6State ) {
+                var CampaignState = c6State.get('MR:Campaign');
+
+                this.templateUrl = 'views/minireel/campaigns/campaign/mini_reel_groups.html';
+                this.controller = 'CampaignMiniReelGroupsController';
+                this.controllerAs = 'CampaignMiniReelGroupsCtrl';
+
+                this.model = function() {
+                    return CampaignState.cModel.miniReelGroups;
+                };
+            }]);
+        }])
+
+        .controller('CampaignMiniReelGroupsController', [function() {
+            this.remove = function(group) {
+                this.model.splice(this.model.indexOf(group), 1);
+            };
         }]);
 });
