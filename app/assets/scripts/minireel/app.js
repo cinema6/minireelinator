@@ -165,6 +165,10 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                                         'MR:MiniReelGroup.General',
                                         'MR:New:MiniReelGroup.General'
                                     );
+                                    this.state(
+                                        'MR:MiniReelGroup.Cards',
+                                        'MR:New:MiniReelGroup.Cards'
+                                    );
                                 });
                             });
                         });

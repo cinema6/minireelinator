@@ -1038,5 +1038,40 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     'mini_reel_groups/mini_reel_group/general.html'
                 ].join('\n');
             }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:MiniReelGroup.Cards', [function() {
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/mini_reel_groups/mini_reel_group/cards.html';
+                this.controller = 'MiniReelGroupCardsController';
+                this.controllerAs = 'MiniReelGroupCardsCtrl';
+
+                this.model = function() {
+                    return this.cParent.cModel.cards;
+                };
+            }]);
+        }])
+
+        .controller('MiniReelGroupCardsController', ['$scope',
+        function                                    ( $scope ) {
+            var MiniReelGroupCardsCtrl = this,
+                CampaignCtrl = $scope.CampaignCtrl,
+                campaign = CampaignCtrl.model;
+
+            this.campaignCards = campaign.cards;
+
+            this.add = function(card) {
+                return this.model.push(card);
+            };
+
+            this.remove = function(card) {
+                return this.model.splice(this.model.indexOf(card), 1);
+            };
+
+            this.isNotBeingTargeted = function(card) {
+                return MiniReelGroupCardsCtrl.model.indexOf(card) < 0;
+            };
         }]);
 });
