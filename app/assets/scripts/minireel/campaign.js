@@ -972,5 +972,71 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             this.remove = function(group) {
                 this.model.splice(this.model.indexOf(group), 1);
             };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:NewMiniReelGroup', ['c6State',
+            function                                     ( c6State ) {
+                var CampaignMiniReelGroupsState = c6State.get('MR:Campaign.MiniReelGroups');
+
+                this.model = function() {
+                    var groups = CampaignMiniReelGroupsState.cModel;
+
+                    return {
+                        label: 'Group ' + (groups.length + 1),
+                        miniReels: [],
+                        cards: []
+                    };
+                };
+
+                this.enter = function() {
+                    return c6State.goTo('MR:New:MiniReelGroup', null, null, true);
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:MiniReelGroup', [function() {
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/mini_reel_groups/mini_reel_group.html';
+                this.controller = 'MiniReelGroupController';
+                this.controllerAs = 'MiniReelGroupCtrl';
+
+                this.model = function() {
+                    return this.cParent.cModel;
+                };
+            }]);
+        }])
+
+        .controller('MiniReelGroupController', ['$injector',
+        function                               ( $injector ) {
+            $injector.invoke(WizardController, this);
+
+            this.tabs = [
+                {
+                    name: 'General',
+                    sref: 'MR:MiniReelGroup.General'
+                },
+                {
+                    name: 'Cards',
+                    sref: 'MR:MiniReelGroup.Cards'
+                },
+                {
+                    name: 'MiniReels',
+                    sref: 'MR:MiniReelGroup.MiniReels'
+                }
+            ];
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:MiniReelGroup.General', [function() {
+                this.templateUrl = [
+                    'views/minireel/campaigns/campaign/',
+                    'mini_reel_groups/mini_reel_group/general.html'
+                ].join('\n');
+            }]);
         }]);
 });

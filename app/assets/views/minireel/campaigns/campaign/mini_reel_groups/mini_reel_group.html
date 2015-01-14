@@ -1,0 +1,56 @@
+<div class="modal__group" c6-alias="MiniReelGroupCtrl.model as group">
+    <header class="modalHeader__group">
+        <h1 class="modal__title">{{group.label}}</h1>
+        <button class="modal__closeBtn btnInvis" c6-sref="MR:Campaign.MiniReelGroups"><span class="ir">Close</span>
+            <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M16.5,0L9,7.5L1.5,0L0,1.5L7.5,9L0,16.5L1.5,18L9,10.5l7.5,7.5l1.5-1.5L10.5,9
+                L18,1.5L16.5,0z"/>
+            </svg>
+        </button>
+    </header>
+
+    <nav class="modalTabs__group clearfix">
+        <ul class="sideTabs__list">
+            <li ng-repeat="tab in MiniReelGroupCtrl.tabs" class="sideTabs__item">
+                <a c6-sref="{{tab.sref}}" class="sideTabs__tab" title="{{tab.name}}">
+                    {{tab.name}}
+                    <strong ng-show="tab.required">*</strong>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <c6-view></c6-view>
+    <footer class="modalFooter__group">
+        <button class="btnAction btnAction--first btnAction--danger"
+            c6-sref="MR:Campaign.MiniReelGroups"
+            ng-show="MiniReelGroupCtrl.tabs.indexOf(MiniReelGroupCtrl.currentTab) < 1"
+            title="Cancel">
+            Cancel
+        </button>
+        <button class="btnAction btnAction--first"
+            c6-sref="{{MiniReelGroupCtrl.tabs[MiniReelGroupCtrl.tabs.indexOf(MiniReelGroupCtrl.currentTab) - 1].sref}}"
+            ng-show="MiniReelGroupCtrl.tabs.indexOf(MiniReelGroupCtrl.currentTab) > 0"
+            title="Previous">
+            Previous Step
+        </button>
+        <button class="btnAction btnAction--primary btnAction--last"
+            c6-sref="{{MiniReelGroupCtrl.tabs[MiniReelGroupCtrl.tabs.indexOf(MiniReelGroupCtrl.currentTab) + 1].sref}}"
+            type="button"
+            ng-show="((MiniReelGroupCtrl.tabs.indexOf(MiniReelGroupCtrl.currentTab) + 1) || 1) < MiniReelGroupCtrl.tabs.length"
+            title="Next Step">
+            Next Step
+        </button>
+        <button ng-click="MiniReelGroupCtrl.save()"
+            class="btnAction btnAction--success btnAction--last"
+            type="button"
+            ng-show="(MiniReelGroupCtrl.tabs.indexOf(MiniReelGroupCtrl.currentTab) + 1) === MiniReelGroupCtrl.tabs.length"
+            ng-disabled="MiniReelGroupCtrl.placements.length < 1 && !MiniReelGroupCtrl.minireel"
+            title="Save">
+            Save
+        </button>
+        <p class="modalFooter__guideText">Step {{(MiniReelGroupCtrl.tabs.indexOf(MiniReelGroupCtrl.currentTab) + 1) || 1}} of {{MiniReelGroupCtrl.tabs.length}}</p>
+    </footer>
+</div>
+<div class="modal__overlay">&nbsp;</div>
