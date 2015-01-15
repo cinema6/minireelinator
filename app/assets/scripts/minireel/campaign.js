@@ -999,6 +999,28 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
+            c6StateProvider.state('MR:EditMiniReelGroup', ['c6State',
+            function                                      ( c6State ) {
+                var CampaignMiniReelGroupsState = c6State.get('MR:Campaign.MiniReelGroups');
+
+                this.model = function(params) {
+                    return CampaignMiniReelGroupsState.cModel[params.index];
+                };
+
+                this.enter = function() {
+                    return c6State.goTo('MR:Edit:MiniReelGroup', null, null, true);
+                };
+
+                this.serializeParams = function(model) {
+                    return {
+                        index: CampaignMiniReelGroupsState.cModel.indexOf(model)
+                    };
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
             c6StateProvider.state('MR:MiniReelGroup', [function() {
                 this.templateUrl =
                     'views/minireel/campaigns/campaign/mini_reel_groups/mini_reel_group.html';

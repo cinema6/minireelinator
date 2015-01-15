@@ -1,7 +1,7 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    ['MR:New:MiniReelGroup.Cards'].forEach(function(stateName) {
+    ['MR:New:MiniReelGroup.Cards', 'MR:Edit:MiniReelGroup.Cards'].forEach(function(stateName) {
         describe(stateName + ' state', function() {
             var c6State,
                 miniReelGroupCards;

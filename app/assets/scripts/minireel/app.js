@@ -175,6 +175,23 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                                     );
                                 });
                             });
+
+                            this.route('/edit/:index', 'MR:EditMiniReelGroup', function() {
+                                this.state('MR:MiniReelGroup', 'MR:Edit:MiniReelGroup', function() {
+                                    this.state(
+                                        'MR:MiniReelGroup.General',
+                                        'MR:Edit:MiniReelGroup.General'
+                                    );
+                                    this.state(
+                                        'MR:MiniReelGroup.Cards',
+                                        'MR:Edit:MiniReelGroup.Cards'
+                                    );
+                                    this.state(
+                                        'MR:MiniReelGroup.MiniReels',
+                                        'MR:Edit:MiniReelGroup.MiniReels'
+                                    );
+                                });
+                            });
                         });
                     });
                 });
