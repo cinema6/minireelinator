@@ -528,14 +528,24 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.controller = 'WildcardController';
                 this.controllerAs = 'WildcardCtrl';
 
+                this.card = null;
+
+                this.beforeModel = function() {
+                    this.card = this.cParent.cModel;
+                };
+
                 this.model = function() {
-                    return this.cParent.cModel;
+                    return this.card.pojoify();
+                };
+
+                this.updateCard = function() {
+                    return this.card._update(this.cModel).save();
                 };
             }]);
         }])
 
-        .controller('WildcardController', ['$injector','$scope','c6State',
-        function                          ( $injector , $scope , c6State ) {
+        .controller('WildcardController', ['$injector','$scope','c6State','cState',
+        function                          ( $injector , $scope , c6State , cState ) {
             var CampaignCreativesCtrl = $scope.CampaignCreativesCtrl;
 
             $injector.invoke(WizardController, this);
@@ -570,14 +580,11 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             ];
 
             this.save = function() {
-                var card = this.model;
-
-                return this.model.save().then(function() {
+                return cState.updateCard().then(function(card) {
                     return CampaignCreativesCtrl.add(card);
-                }).then(function() {
-                    return c6State.goTo('MR:Campaign.Creatives');
-                }).then(function() {
-                    return card;
+                }).then(function(card) {
+                    return c6State.goTo('MR:Campaign.Creatives')
+                        .then(function() { return card; });
                 });
             };
         }])
