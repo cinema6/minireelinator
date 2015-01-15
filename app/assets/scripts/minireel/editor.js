@@ -1686,7 +1686,7 @@ VideoCardController           ) {
                         }
 
                         if(newCard) {
-                            card = MiniReelService.convertCard(newCard, experience);
+                            card = MiniReelService.convertCardForPlayer(newCard, experience);
                             session.ping('mrPreview:jumpToCard', card);
                         } else {
                             card = null;

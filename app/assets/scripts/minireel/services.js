@@ -1812,7 +1812,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     .then(createMinireel);
             };
 
-            this.convertCard = function(card, _minireel) {
+            this.convertCardForPlayer = function(card, _minireel) {
                 var dataTemplates, cardBases, cardType, dataType,
                     org = portal.cModel.org,
                     minireel = _minireel || {
@@ -2160,7 +2160,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             this.convertForPlayer = function(minireel, target) {
                 var deck = minireel.data.deck,
                     convertedDeck = deck.map(function(card) {
-                        return self.convertCard(card, minireel);
+                        return self.convertCardForPlayer(card, minireel);
                     });
 
                 forEach(minireel.data.ads, function(card, _index) {
