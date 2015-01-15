@@ -21,6 +21,14 @@ define(['c6_state'], function(c6StateModule) {
         }
 
         beforeEach(function() {
+            module('ng', function($provide) {
+                $provide.value('$location', {
+                    absUrl: function() {
+                        return window.location.href;
+                    }
+                });
+            });
+
             module(c6StateModule.name);
             module(function(c6StateProvider) {
                 c6StateProvider.config({

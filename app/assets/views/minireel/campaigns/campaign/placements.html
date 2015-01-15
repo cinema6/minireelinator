@@ -1,0 +1,36 @@
+<div class="pageBody__group pageBody__group--sideTabs">
+    <h1 class="forms__title">Placements</h1>
+
+    <section class="twoCol">
+        <strong>Search for MiniReels</strong>
+        <form ng-submit="CampaignPlacementsCtrl.search()">
+            <label class="forms__pair forms__pair--spacer clearfix">
+                <span class="forms__name" > By Title:</span>
+                <span class="forms__inputHolder forms__inputHolder--short">
+                    <input class="forms__textField forms__textField--padded" ng-model="CampaignPlacementsCtrl.query" type="text"></input>
+                    <button class="btn btn--primary">Search</button>
+                </span>
+            </label>
+        </form>
+        <div ng-if="CampaignPlacementsCtrl.result" c6-alias="CampaignPlacementsCtrl.result.value as minireels">
+            <span ng-show="minireels.length < 1">Your search yielded no results. Try again!</span>
+            <ul>
+                <li ng-repeat="minireel in minireels | filter:CampaignPlacementsCtrl.isNotAlreadyTargeted">
+                    {{minireel.data.title}}
+                    <button class="btn btn--success" ng-click="CampaignPlacementsCtrl.add(minireel)">Add</button>
+                </li>
+            </ul>
+        </div>
+    </section>
+    <section class="twoCol" c6-alias="CampaignPlacementsCtrl.model as map">
+        <strong>Current Static Placements</strong><br />
+        <span ng-show="map.length < 1">This campaign's cards have no static placements in MiniReels.</span>
+        <ul>
+            <li ng-repeat="entry in map"><c6-alias model="entry.minireel" as="minireel">
+                <strong><a c6-sref="MR:Placements.MiniReel" c6-models="[entry]">{{minireel.data.title}}</a></strong>: {{CampaignPlacementsCtrl.filledCardsOf(entry).length}}/{{entry.cards.length}} filled
+                <button class="btn btn--danger" ng-click="CampaignPlacementsCtrl.remove(minireel)">Remove</button>
+            </c6-alias></li>
+        </ul>
+    </section>
+</div>
+<c6-view></c6-view>

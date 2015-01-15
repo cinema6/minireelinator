@@ -298,12 +298,16 @@
             });
 
             it('should add the "c6-active" class when the state the sref points to is active', function() {
+                var BarState = c6State.in('foo', function() {
+                    return c6State.get('Bar');
+                });
+                c6State.in.calls.reset();
                 spyOn(c6State, 'isActive').and.returnValue(false);
 
                 expect($sref.hasClass('c6-active')).toBe(true);
 
                 c6State.emit('stateChange');
-                expect(c6State.isActive).toHaveBeenCalledWith(c6State.get('Bar'));
+                expect(c6State.isActive).toHaveBeenCalledWith(BarState);
                 expect($sref.hasClass('c6-active')).toBe(false);
                 expect(c6State.in).toHaveBeenCalledWith('foo', jasmine.any(Function));
 

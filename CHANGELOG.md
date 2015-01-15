@@ -1,8 +1,36 @@
 # MiniReelinator
 
-## v1.6.0
-* *[v1.6.0.rc1]*
+* *[v1.8.0.rc1]*
   * [FEATURE]: studio editor nav updated with left/right buttons and pageMap styles
+
+## v1.7.0 (December 22, 2014)
+* *[v1.7.0.rc1]*
+  * [FEATURE]: Added ability to make sponsored cards completely
+    unskippable
+  * [FEATURE]: Added media queries to collapse nav for smaller screens.
+  * [FEATURE]: Added ability to enable/disable player controls for a
+    video
+* *[v1.7.0.rc1]*
+
+## v1.6.0 (December 8, 2014)
+* *[v1.6.0.rc1]*
+  * Changed tab order for new card wizard
+  * [FEATURE]: Added ability to render embed code for MiniReel.tv
+    (iframe embed code)
+  * [FEATURE]: Added ability to add Rumble.com videos to MiniReels
+* *[/v1.6.0.rc1]*
+
+## v1.5.3 (December 4, 2014)
+* *[v1.5.3.rc1]*
+  * When a MR is copied, the cards in that MR will be given new IDs
+  * [FEATURE]: The app build version is now shown in the footer
+* *[/v1.5.3.rc1]*
+
+## v1.5.2 (December 4, 2014)
+* *[v1.5.2.rc1]*
+  * [FIX]: Copied MRs will now have their own elections in the vote
+    database
+* *[/v1.5.2.rc1]*
 
 ## v1.5.1 (November 21, 2014)
 * *[v1.5.1.rc1]*

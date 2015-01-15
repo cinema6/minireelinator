@@ -183,6 +183,7 @@
                                 modules: [],
                                 data: {
                                     skip: true,
+                                    controls: true,
                                     videoid: '47tfg8734',
                                     start: 10,
                                     end: 40,
@@ -258,6 +259,7 @@
                                     ]
                                 },
                                 data: {
+                                    controls: true,
                                     skip: false,
                                     videoid: 'vfu85f5',
                                     related: 0
@@ -294,7 +296,7 @@
                                     }
                                 },
                                 ballot: {
-                                    electionId: 'el-8bb2395fbea873',
+                                    election: 'el-8bb2395fbea873',
                                     prompt: 'Are you willing to spend all your money on this product?',
                                     choices: [
                                         'Of Course',
@@ -303,6 +305,7 @@
                                 },
                                 data: {
                                     hideSource: true,
+                                    controls: false,
                                     skip: 6,
                                     autoplay: false,
                                     autoadvance: true,
@@ -462,6 +465,7 @@
                                 modules: [],
                                 data: {
                                     skip: true,
+                                    controls: true,
                                     vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
                                     vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
                                 }
@@ -525,7 +529,41 @@
                                 card.data.code = VideoService.embedCodeFromData(card.data.service, card.data.videoid);
 
                                 return card;
-                            }())
+                            }()),
+                            (function() {
+                                var card = {
+                                    id: 'rc-8142d1b5897b32',
+                                    type: 'rumble',
+                                    title: 'Rumble Card',
+                                    note: 'This is a Rumble card.',
+                                    source: 'Rumble',
+                                    placementId: null,
+                                    templateUrl: null,
+                                    sponsored: false,
+                                    campaign: {
+                                        campaignId: null,
+                                        advertiserId: null,
+                                        minViewTime: null
+                                    },
+                                    collateral: {},
+                                    links: {},
+                                    params: {},
+                                    modules: [],
+                                    data: {
+                                        skip: true,
+                                        siteid: 'v2z8ro-willie-perfoming-at-school-talent-show'
+                                    }
+                                };
+
+                                card.data.videoid = VideoService.embedIdFromVideoId('rumble', card.data.siteid);
+
+                                return card;
+                            }()),
+                            {
+                                id: 'rc-c99a6f4c6b4c54',
+                                type: 'wildcard',
+                                data: {}
+                            }
                         ]
                     }
                 });
@@ -622,6 +660,7 @@
                                 params: {},
                                 data: {
                                     skip: 'anytime',
+                                    controls: true,
                                     autoplay: null,
                                     autoadvance: null,
                                     survey: null,
@@ -677,6 +716,7 @@
                                 params: {},
                                 data: {
                                     skip: 'anytime',
+                                    controls: true,
                                     autoplay: null,
                                     autoadvance: null,
                                     survey: null,
@@ -841,13 +881,40 @@
                                 }
                             });
                         });
+
+                        it('should support creating a wildcard card', function() {
+                            var card = MiniReelService.createCard('wildcard');
+
+                            expect(card).toEqual({
+                                id: jasmine.any(String),
+                                type: 'wildcard',
+                                title: null,
+                                note: null,
+                                label: 'Wildcard Placeholder',
+                                ad: false,
+                                view: 'wildcard',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: true,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                thumb: null,
+                                links: {},
+                                params: {},
+                                data: {}
+                            });
+                        });
                     });
 
                     describe('setCardType(card, type)', function() {
                         it('should change the type of a card to the specified type', function() {
                             var card = MiniReelService.createCard(),
                                 id = card.id,
-                                videoCard, videoBallotCard, adCard, linksCard, displayAdCard, recapCard;
+                                videoCard, videoBallotCard, adCard, linksCard, displayAdCard, recapCard, wildcardCard;
 
                             function sameId(card) {
                                 card.id = id;
@@ -877,10 +944,10 @@
                                 return card;
                             }()));
 
-                            adCard = MiniReelService.setCardType(card, 'ad');
-                            expect(adCard).toBe(card);
-                            expect(adCard).toEqual(sameId(MiniReelService.createCard('ad')));
-                            adCard.title = null;
+                            wildcardCard = MiniReelService.setCardType(card, 'wildcard');
+                            expect(wildcardCard).toBe(card);
+                            expect(wildcardCard).toEqual(sameId(MiniReelService.createCard('wildcard')));
+                            wildcardCard.sponsored = false;
 
                             linksCard = MiniReelService.setCardType(card, 'links');
                             expect(linksCard).toBe(card);
@@ -1244,6 +1311,7 @@
                                 params: {},
                                 data: {
                                     skip: 'anytime',
+                                    controls: true,
                                     autoplay: null,
                                     autoadvance: null,
                                     survey: null,
@@ -1276,6 +1344,7 @@
                                 params: {},
                                 data: {
                                     skip: 25,
+                                    controls: true,
                                     autoplay: null,
                                     autoadvance: null,
                                     survey: null,
@@ -1315,6 +1384,7 @@
                                 params: {},
                                 data: {
                                     skip: 'never',
+                                    controls: true,
                                     autoplay: null,
                                     autoadvance: null,
                                     survey: null,
@@ -1367,9 +1437,10 @@
                                 data: {
                                     skip: 'delay',
                                     autoplay: false,
+                                    controls: false,
                                     autoadvance: true,
                                     survey: {
-                                        electionId: 'el-8bb2395fbea873',
+                                        election: 'el-8bb2395fbea873',
                                         prompt: 'Are you willing to spend all your money on this product?',
                                         choices: [
                                             'Of Course',
@@ -1405,6 +1476,7 @@
                                 thumb: 'logo.jpg',
                                 data: {
                                     skip: 'anytime',
+                                    controls: true,
                                     autoplay: null,
                                     autoadvance: null,
                                     survey: null,
@@ -1440,6 +1512,7 @@
                                 thumb: null,
                                 data: {
                                     skip: 'anytime',
+                                    controls: true,
                                     autoplay: null,
                                     autoadvance: null,
                                     survey: null,
@@ -1472,11 +1545,45 @@
                                 thumb: null,
                                 data: {
                                     skip: 'anytime',
+                                    controls: true,
                                     autoplay: null,
                                     autoadvance: null,
                                     survey: null,
                                     service: 'aol',
                                     videoid: 'arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876',
+                                    start: null,
+                                    end: null
+                                }
+                            });
+
+                            expect(deck[13]).toEqual({
+                                id: 'rc-8142d1b5897b32',
+                                type: 'video',
+                                title: 'Rumble Card',
+                                note: 'This is a Rumble card.',
+                                label: 'Video',
+                                ad: false,
+                                view: 'video',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                links: {},
+                                params: {},
+                                thumb: null,
+                                data: {
+                                    skip: 'anytime',
+                                    controls: true,
+                                    autoplay: null,
+                                    autoadvance: null,
+                                    survey: null,
+                                    service: 'rumble',
+                                    videoid: 'v2z8ro-willie-perfoming-at-school-talent-show',
                                     start: null,
                                     end: null
                                 }
@@ -1563,6 +1670,31 @@
                                 }
                             });
                         });
+
+                        it('should transpile the wildcards', function() {
+                            expect(deck[14]).toEqual({
+                                id: 'rc-c99a6f4c6b4c54',
+                                type: 'wildcard',
+                                title: null,
+                                note: null,
+                                label: 'Wildcard Placeholder',
+                                ad: false,
+                                view: 'wildcard',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: true,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null
+                                },
+                                collateral: {},
+                                thumb: null,
+                                links: {},
+                                params: {},
+                                data: {}
+                            });
+                        });
                     });
 
                     describe('create(minireel)', function() {
@@ -1610,9 +1742,20 @@
                                 });
 
                                 cinema6.db.create.calls.mostRecent().args[1].data.deck.forEach(function(card, index) {
-                                    if (index === 0) { return; }
+                                    var original = angular.copy(minireel.data.deck[index]);
 
-                                    expect(minireel.data.deck[index]).toEqual(card);
+                                    expect(card.id).toMatch(/rc-[a-zA-Z0-9]{14}/);
+                                    expect(card.id).not.toBe(original.id);
+
+                                    expect(card).toEqual((function() {
+                                        original.id = jasmine.any(String);
+
+                                        if (original.ballot) {
+                                            delete original.ballot.election;
+                                        }
+
+                                        return original;
+                                    }()));
                                 });
                             });
 
@@ -1621,6 +1764,8 @@
                                 expect(newModel.data.title).toBe('My MiniReel (copy)');
                                 expect(newModel.status).toBe('pending');
                                 expect(newModel.access).toBe('public');
+                                expect('election' in newModel.data).toBe(false);
+                                expect('election' in newModel.data.deck[5].ballot).toBe(false);
                             });
                         });
 
@@ -1652,6 +1797,7 @@
                                             splash: null
                                         },
                                         params: {},
+                                        links: {},
                                         deck: [
                                             (function() {
                                                 var recap = MiniReelService.createCard('recap');
@@ -1720,7 +1866,7 @@
                             });
                             expect(result.data).toEqual(minireel.data);
                             minireel.data.deck.forEach(function(card, index) {
-                                expect(card).toEqual(result.data.deck[index], card.id);
+                                expect(result.data.deck[index]).toEqual(card, card.id);
                             });
                             expect(result).not.toBe(minireel);
                         });
@@ -1738,10 +1884,10 @@
                             result = MiniReelService.convertForPlayer(converted);
 
                             result.data.deck.forEach(function(card) {
-                                if (!(/adUnit|text|links|displayAd/).test(card.type)) {
+                                if (!(/adUnit|text|links|displayAd|wildcard/).test(card.type)) {
                                     expect(card.modules.indexOf('displayAd')).not.toBe(-1);
                                 } else if (card.type !== 'links') {
-                                    expect(card.modules.indexOf('displayAd')).toBe(-1);
+                                    expect((card.modules || []).indexOf('displayAd')).toBe(-1);
                                 }
                             });
 
@@ -1756,7 +1902,7 @@
                             result.data.deck.forEach(function(card) {
                                 if ((!card.placementId && !(/ad|links/).test(card.type)) ||
                                     (/adUnit|text|displayAd/).test(card.type)) {
-                                    expect(card.modules.indexOf('displayAd')).toBe(-1);
+                                    expect((card.modules || []).indexOf('displayAd')).toBe(-1);
                                 } else if (card.type !== 'links') {
                                     expect(card.modules.indexOf('displayAd')).not.toBe(-1);
                                 }
@@ -1777,10 +1923,10 @@
                             result = MiniReelService.convertForPlayer(converted);
 
                             result.data.deck.forEach(function(card) {
-                                if (!(/adUnit|text|links|displayAd/).test(card.type)) {
+                                if (!(/adUnit|text|links|displayAd|wildcard/).test(card.type)) {
                                     expect(card.modules.indexOf('displayAd')).not.toBe(-1);
                                 } else if (card.type !== 'links') {
-                                    expect(card.modules.indexOf('displayAd')).toBe(-1);
+                                    expect((card.modules || []).indexOf('displayAd')).toBe(-1);
                                 }
                             });
 
@@ -1799,7 +1945,7 @@
                             result.data.deck.forEach(function(card) {
                                 if ((!card.placementId && !(/ad|links/).test(card.type)) ||
                                     (/adUnit|text|displayAd/).test(card.type)) {
-                                    expect(card.modules.indexOf('displayAd')).toBe(-1);
+                                    expect((card.modules || []).indexOf('displayAd')).toBe(-1);
                                 } else if (card.type !== 'links') {
                                     expect(card.modules.indexOf('displayAd')).not.toBe(-1);
                                 }

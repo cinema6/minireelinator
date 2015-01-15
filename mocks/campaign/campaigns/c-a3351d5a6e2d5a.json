@@ -1,0 +1,34 @@
+{
+    "adtechId": "87654321",
+    "name": "The Bar (2)",
+    "categories": ["food"],
+    "advertiserId": "a-282824b8bb40a2",
+    "customerId": "cus-71e725f8bf33d5",
+    "logos": {
+        "square": "square.png"
+    },
+    "links": {},
+    "miniReels": [
+        {
+            "id": "e-80fcd03196b3d2",
+            "adtechId": "12345678"
+        },
+        {
+            "id": "e-220f09b2398217",
+            "adtechId": "654321"
+        }
+    ],
+    "cards": [
+        {
+            "id": "rc-5ff4ca42a5f6fd",
+            "adtechId": "13579"
+        }
+    ],
+    "targetMiniReels": [],
+    "staticCardMap": {},
+    "miniReelGroups": [],
+    "created": "2014-12-02T18:03:22.663Z",
+    "user": "u-35b096c999711b",
+    "org": "o-e4e8b0f244bafc",
+    "lastUpdated": "2014-12-02T18:03:22.663Z"
+}

@@ -1,0 +1,36 @@
+{
+    "created": "2014-06-12T22:05:59.173Z",
+    "lastUpdated": "2014-06-12T22:05:59.173Z",
+    "minAdCount": 2,
+    "name": "C6 Josh Org",
+    "status": "active",
+    "waterfalls": {
+        "video": [
+            "cinema6",
+            "cinema6-publisher",
+            "publisher-cinema6"
+        ],
+        "display": [
+            "cinema6",
+            "publisher",
+            "cinema6-publisher",
+            "publisher-cinema6"
+        ]
+    },
+    "config": {
+        "minireelinator": {
+            "embedTypes": ["script", "shortcode", "iframe"],
+            "minireelDefaults": {
+                "mode": "light",
+                "autoplay": true,
+                "splash": {
+                    "ratio": "3-2",
+                    "theme": "img-text-overlay"
+                }
+            },
+            "embedDefaults": {
+                "size": null
+            }
+        }
+    }
+}

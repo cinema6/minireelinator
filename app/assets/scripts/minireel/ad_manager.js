@@ -1,13 +1,14 @@
-define( ['angular','c6uilib','c6_state','minireel/services',
-'minireel/mixins/MiniReelListController'],
-function( angular , c6uilib , c6State  , services          ,
- MiniReelListController                 ) {
+define( ['angular','c6uilib','c6_state','./services',
+         './mixins/MiniReelListController','./mixins/PaginatedListState'],
+function( angular , c6uilib , c6State  , services   ,
+          MiniReelListController          , PaginatedListState          ) {
     'use strict';
 
     var forEach = angular.forEach,
         isDefined = angular.isDefined,
         isUndefined = angular.isUndefined,
-        ngCopy = angular.copy;
+        ngCopy = angular.copy,
+        extend = angular.extend;
 
     // Copy the value from the raw source with an optional
     // default.
@@ -72,22 +73,20 @@ function( angular , c6uilib , c6State  , services          ,
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('MR:AdManager', ['cinema6','c6State','scopePromise','$location',
-            function                              ( cinema6 , c6State , scopePromise , $location ) {
-                var query = $location.search();
+                                                   '$injector',
+            function                              ( cinema6 , c6State , scopePromise , $location ,
+                                                    $injector ) {
+                $injector.invoke(PaginatedListState, this);
 
                 this.controller = 'AdManagerController';
                 this.controllerAs = 'AdManagerCtrl';
                 this.templateUrl = 'views/minireel/ad_manager.html';
 
-                this.filter = query.filter || 'all';
-                this.limit = parseInt(query.limit) || 50;
-                this.page = parseInt(query.page) || 1;
+                this.filter = $location.search().filter || 'all';
 
-                this.queryParams = {
-                    filter: '=',
-                    limit: '=',
-                    page: '='
-                };
+                extend(this.queryParams, {
+                    filter: '='
+                });
 
                 this.title = function() {
                     return 'Cinema6 Ad Manager';

@@ -1,0 +1,57 @@
+{
+    "applications": [
+        "e-51ae37625cb57f"
+    ],
+    "config": {
+        "minireelinator": {
+            "minireelDefaults": {
+                "splash": {
+                    "ratio": "6-5",
+                    "theme": "img-only"
+                }
+            }
+        }
+    },
+    "firstName": "Josh",
+    "lastName": "Minzner",
+    "created": "2014-03-13T15:28:23.653Z",
+    "lastUpdated": "2014-12-15T17:14:19.820Z",
+    "org": "o-e4e8b0f244bafc",
+    "permissions": {
+        "elections": {
+            "read": "all",
+            "create": "all",
+            "edit": "all",
+            "delete": "all"
+        },
+        "experiences": {
+            "read": "all",
+            "create": "all",
+            "edit": "all",
+            "delete": "all",
+            "editAdConfig": "org",
+            "editSponsorships": "all"
+        },
+        "orgs": {
+            "read": "all",
+            "create": "all",
+            "edit": "all",
+            "delete": "all",
+            "editAdConfig": "org"
+        },
+        "users": {
+            "read": "all",
+            "create": "all",
+            "edit": "all",
+            "delete": "all"
+        },
+        "campaigns": {
+            "read": "all",
+            "create": "all",
+            "edit": "all",
+            "delete": "all"
+        }
+    },
+    "status": "active",
+    "type": "Publisher"
+}

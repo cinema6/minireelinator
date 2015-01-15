@@ -109,7 +109,7 @@
                         EditCardState.afterModel(badModel).catch(fail);
                     });
                     expect(fail).toHaveBeenCalled();
-                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', null, {});
+                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', null, {}, true);
                 });
 
                 describe('if the model is falsy', function() {
@@ -127,7 +127,7 @@
                     });
 
                     it('should redirect back to the editor', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', null, {});
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', null, {}, true);
                     });
                 });
 
@@ -149,7 +149,7 @@
                     });
 
                     it('should redirect back to the editor', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', null, {});
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', null, {}, true);
                     });
                 });
             });

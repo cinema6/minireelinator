@@ -1,13 +1,14 @@
 define( ['angular','ngAnimate','minireel/app','account/app','login','portal','c6uilib','c6log',
-         'c6_defines','templates','forgot_password','preview_minireel','ui'],
+         'c6_defines','templates','forgot_password','preview_minireel','ui','version'],
 function( angular , ngAnimate , minireel     , account     , login , portal , c6uilib , c6log ,
-          c6Defines  , templates , forgotPassword  , previewMiniReel  , ui ) {
+          c6Defines  , templates , forgotPassword  , previewMiniReel  , ui , version ) {
     'use strict';
 
     var forEach = angular.forEach,
         copy = angular.copy,
         noop = angular.noop,
-        isObject = angular.isObject;
+        isObject = angular.isObject,
+        extend = angular.extend;
 
     return angular.module('c6.app', [
         ui.name,
@@ -27,355 +28,738 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             c6UrlMakerProvider.location(c6Defines.kApiUrl, 'api');
         }])
 
-        .constant('VoteAdapter', ['$http','config','$q',
-        function                 ( $http , config , $q ) {
-            function clean(model) {
-                delete model.org;
-                delete model.created;
-                delete model.id;
-
-                return model;
-            }
-
-            this.findAll = function() {
-                return $q.reject('The vote service does not support finding all elections.');
-            };
-
-            this.find = function(type, id) {
-                return $http.get(config.apiBase + '/election/' + id, {
-                    cache: true
-                }).then(function arrayify(response) {
-                    return [response.data];
-                });
-            };
-
-            this.findQuery = function(type, query) {
-                return this.find(type, query.id);
-            };
-
-            this.create = function(type, data) {
-                return $http.post(config.apiBase + '/election', clean(data))
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
-            };
-
-            this.erase = function(type, model) {
-                return $http.delete(config.apiBase + '/election/' + model.id)
-                    .then(function returnNull() {
-                        return null;
-                    });
-            };
-
-            this.update = function(type, model) {
-                return $http.put(config.apiBase + '/election/' + model.id, clean(model))
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
-            };
-        }])
-
-        .constant('UserAdapter', ['$http','$q','cinema6','config',
-        function                 ( $http , $q , cinema6 , config ) {
-            //var self = this;
-
-            function clean(model) {
-                delete model.id;
-                delete model.created;
-                delete model.org;
-                delete model.email;
-                delete model.permissions;
-
-                return model;
-            }
-
-            function returnData(response) {
-                return response.data;
-            }
-
-            function arrayify(data) {
-                return [data];
-            }
-
-            /*function decorateAllUsersWithOrgs(users) {
-                return $q.all(users.map(self.decorateWithOrg));
-            }*/
-
-            this.decorateWithOrg = function(user) {
-                return cinema6.db.find('org', user.org)
-                    .then(function attach(org) {
-                        user.org = org;
-                        return user;
-                    });
-            };
-
-            /*this.findAll = function() {
-                return $http.get(config.apiBase + '/account/users')
-                    .then(returnData)
-                    .then(decorateAllUsersWithOrgs);
-            };*/
-
-            this.find = function(type, id) {
-                return $http.get(config.apiBase + '/account/user/' + id, {
-                    cache: true
-                }).then(returnData)
-                    .then(this.decorateWithOrg)
-                    .then(arrayify);
-            };
-
-            /*this.findQuery = function(type, query) {
-                function returnData(response) {
-                    return response.data;
-                }
-
-                function handleError(response) {
-                    return response.status === 404 ?
-                        [] : $q.reject(response);
-                }
-
-                return $http.get(config.apiBase + '/account/users', {
-                        params: query
-                    })
-                    .then(returnData)
-                    .then(decorateAllUsersWithOrgs)
-                    .catch(handleError);
-            };*/
-
-            /*this.create = function(type, data) {
-                return $http.post(config.apiBase + '/account/user', data)
-                    .then(returnData)
-                    .then(self.decorateWithOrg)
-                    .then(arrayify);
-            };*/
-
-            /*this.erase = function(type, model) {
-                return $http.delete(config.apiBase + '/account/user/' + model.id)
-                    .then(function returnNull() {
-                        return null;
-                    });
-            };*/
-
-            this.update = function(type, model) {
-                return $http.put(config.apiBase + '/account/user/' + model.id, clean(model))
-                    .then(returnData)
-                    .then(this.decorateWithOrg)
-                    .then(arrayify);
-            };
-
-            ['findAll', 'findQuery', 'create', 'erase'].forEach(function(method) {
-                this[method] = function() {
-                    return $q.reject('UserAdapter.' + method + '() method is not implemented.');
+        .config(['$provide',
+        function( $provide ) {
+            function pick(prop) {
+                return function(object) {
+                    return object[prop];
                 };
-            }, this);
-        }])
-
-        .constant('OrgAdapter', ['$http','$q','config',
-        function                ( $http , $q , config ) {
-            function clean(model) {
-                delete model.id;
-                delete model.created;
-
-                return model;
             }
 
-            this.findAll = function() {
-                return $http.get(config.apiBase + '/account/orgs')
-                    .then(function returnData(response) {
-                        return response.data;
-                    });
-            };
-
-            this.find = function(type, id) {
-                return $http.get(config.apiBase + '/account/org/' + id, {
-                    cache: true
-                }).then(function arrayify(response) {
-                    return [response.data];
-                });
-            };
-
-            this.findQuery = function(type, query) {
-                function returnData(response) {
-                    return response.data;
-                }
-
-                function handleError(response) {
-                    return response.status === 404 ?
-                        [] : $q.reject(response);
-                }
-
-                return $http.get(config.apiBase + '/account/orgs', {
-                        params: query
-                    })
-                    .then(returnData, handleError);
-            };
-
-            this.create = function(type, data) {
-                return $http.post(config.apiBase + '/account/org', clean(data))
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
-            };
-
-            this.erase = function(type, model) {
-                return $http.delete(config.apiBase + '/account/org/' + model.id)
-                    .then(function returnNull() {
-                        return null;
-                    });
-            };
-
-            this.update = function(type, model) {
-                return $http.put(config.apiBase + '/account/org/' + model.id, clean(model))
-                    .then(function arrayify(response) {
-                        return [response.data];
-                    });
-            };
-        }])
-
-        .constant('ContentAdapter', ['$http','$q','cinema6','config',
-        function                    ( $http , $q , cinema6 , config ) {
-            var self = this;
-
-            function clean(model) {
-                delete model.id;
-                delete model.org;
-                delete model.created;
-                model.user = model.user && model.user.id;
-
-                return model;
+            function putInArray(item) {
+                return [item];
             }
 
-            function returnData(response) {
-                return response.data;
+            function value(val) {
+                return function() {
+                    return val;
+                };
             }
 
-            function arrayify(object) {
-                return [object];
-            }
+            function fillMeta(meta) {
+                return function(response) {
+                    var data = {
+                        items: response.headers('Content-Range')
+                            .match(/\d+/g)
+                            .map(function(num, index) {
+                                return [this[index], parseInt(num)];
+                            }, ['start', 'end', 'total'])
+                            .reduce(function(obj, pair) {
+                                obj[pair[0]] = pair[1];
+                                return obj;
+                            }, {})
+                    };
 
-            function decorateWithUsers(experiences) {
-                return $q.all(experiences.map(self.decorateWithUser));
-            }
-
-            this.decorateWithUser = function(experience) {
-                return cinema6.db.find('user', experience.user)
-                    .then(function decorate(user) {
-                        experience.user = user;
-                        return experience;
-                    })
-                    .catch(function nullify() {
-                        experience.user = null;
-                        return experience;
-                    });
-            };
-
-            this.findAll = function() {
-                return $http.get(config.apiBase + '/content/experiences')
-                    .then(function returnData(response) {
-                        return response.data;
-                    })
-                    .then(decorateWithUsers);
-            };
-
-            this.find = function(type, id) {
-                return $http.get(config.apiBase + '/content/experience/' + id, {
-                    cache: true
-                }).then(returnData)
-                    .then(this.decorateWithUser)
-                    .then(arrayify);
-            };
-
-            this.findQuery = function(type, query, meta) {
-                function setPageInfo(response) {
-                    meta.items = response.headers('Content-Range')
-                        .match(/\d+/g)
-                        .map(function(num, index) {
-                            return [this[index], parseInt(num)];
-                        }, ['start', 'end', 'total'])
-                        .reduce(function(obj, pair) {
-                            obj[pair[0]] = pair[1];
-                            return obj;
-                        }, {});
+                    extend(meta, data);
 
                     return response;
+                };
+            }
+
+            $provide.constant('VoteAdapter', ['$http','config','$q',
+            function                         ( $http , config , $q ) {
+                function clean(model) {
+                    delete model.org;
+                    delete model.created;
+                    delete model.id;
+
+                    return model;
                 }
 
-                function handleError(response) {
-                    return response.status === 404 ?
-                        [] : $q.reject(response);
+                function url(end) {
+                    return config.apiBase + '/election' + (end ? ('/' + end) : '');
                 }
 
-                return $http.get(config.apiBase + '/content/experiences', {
-                        params: query
-                    }).then(setPageInfo)
-                        .then(returnData, handleError)
-                        .then(decorateWithUsers);
-            };
+                this.findAll = function() {
+                    return $q.reject('The vote service does not support finding all elections.');
+                };
 
-            this.create = function(type, data) {
-                return $http.post(config.apiBase + '/content/experience', clean(data))
-                    .then(returnData)
-                    .then(this.decorateWithUser)
-                    .then(arrayify);
-            };
-
-            this.erase = function(type, model) {
-                return $http.delete(config.apiBase + '/content/experience/' + model.id)
-                    .then(function returnNull() {
-                        return null;
+                this.find = function(type, id) {
+                    return $http.get(url(id), {
+                        cache: true
+                    }).then(function arrayify(response) {
+                        return [response.data];
                     });
-            };
+                };
 
-            this.update = function(type, model) {
-                return $http.put(config.apiBase + '/content/experience/' + model.id, clean(model))
-                    .then(returnData)
-                    .then(this.decorateWithUser)
-                    .then(arrayify);
-            };
-        }])
+                this.findQuery = function(type, query) {
+                    return this.find(type, query.id);
+                };
 
-        .constant('CWRXAdapter', ['config','$injector',
-        function                 ( config , $injector ) {
-            var self = this,
-                adapters = {};
+                this.create = function(type, data) {
+                    return $http.post(url(), clean(data))
+                        .then(function arrayify(response) {
+                            return [response.data];
+                        });
+                };
 
-            forEach(config, function(Constructor, type) {
-                adapters[type] = $injector.instantiate(Constructor, {
-                    config: Constructor.config
-                });
-            });
+                this.erase = function(type, model) {
+                    return $http.delete(url(model.id))
+                        .then(function returnNull() {
+                            return null;
+                        });
+                };
 
-            ['find', 'findAll', 'findQuery', 'create', 'erase', 'update']
-                .forEach(function(method) {
-                    self[method] = function(type) {
-                        var delegate = adapters[type];
+                this.update = function(type, model) {
+                    return $http.put(url(model.id), clean(model))
+                        .then(function arrayify(response) {
+                            return [response.data];
+                        });
+                };
+            }]);
 
-                        return delegate[method].apply(delegate, arguments);
+            $provide.constant('UserAdapter', ['$http','$q','cinema6','config',
+            function                         ( $http , $q , cinema6 , config ) {
+                //var self = this;
+
+                function clean(model) {
+                    delete model.id;
+                    delete model.created;
+                    delete model.org;
+                    delete model.email;
+                    delete model.permissions;
+
+                    return model;
+                }
+
+                function url(id) {
+                    return config.apiBase + '/account/user/' + id;
+                }
+
+                /*function decorateAllUsersWithOrgs(users) {
+                    return $q.all(users.map(self.decorateWithOrg));
+                }*/
+
+                this.decorateWithOrg = function(user) {
+                    return cinema6.db.find('org', user.org)
+                        .then(function attach(org) {
+                            user.org = org;
+                            return user;
+                        });
+                };
+
+                /*this.findAll = function() {
+                    return $http.get(config.apiBase + '/account/users')
+                        .then(returnData)
+                        .then(decorateAllUsersWithOrgs);
+                };*/
+
+                this.find = function(type, id) {
+                    return $http.get(url(id), {
+                        cache: true
+                    }).then(pick('data'))
+                        .then(this.decorateWithOrg)
+                        .then(putInArray);
+                };
+
+                /*this.findQuery = function(type, query) {
+                    function returnData(response) {
+                        return response.data;
+                    }
+
+                    function handleError(response) {
+                        return response.status === 404 ?
+                            [] : $q.reject(response);
+                    }
+
+                    return $http.get(config.apiBase + '/account/users', {
+                            params: query
+                        })
+                        .then(returnData)
+                        .then(decorateAllUsersWithOrgs)
+                        .catch(handleError);
+                };*/
+
+                /*this.create = function(type, data) {
+                    return $http.post(config.apiBase + '/account/user', data)
+                        .then(returnData)
+                        .then(self.decorateWithOrg)
+                        .then(arrayify);
+                };*/
+
+                /*this.erase = function(type, model) {
+                    return $http.delete(config.apiBase + '/account/user/' + model.id)
+                        .then(function returnNull() {
+                            return null;
+                        });
+                };*/
+
+                this.update = function(type, model) {
+                    return $http.put(url(model.id), clean(model))
+                        .then(pick('data'))
+                        .then(this.decorateWithOrg)
+                        .then(putInArray);
+                };
+
+                ['findAll', 'findQuery', 'create', 'erase'].forEach(function(method) {
+                    this[method] = function() {
+                        return $q.reject('UserAdapter.' + method + '() method is not implemented.');
                     };
+                }, this);
+            }]);
+
+            $provide.constant('OrgAdapter', ['$http','$q','config',
+            function                        ( $http , $q , config ) {
+                function clean(model) {
+                    delete model.id;
+                    delete model.created;
+
+                    return model;
+                }
+
+                function url(end) {
+                    return config.apiBase + '/account/' + end;
+                }
+
+                this.findAll = function() {
+                    return $http.get(url('orgs'))
+                        .then(function returnData(response) {
+                            return response.data;
+                        });
+                };
+
+                this.find = function(type, id) {
+                    return $http.get(url('org/' + id), {
+                        cache: true
+                    }).then(function arrayify(response) {
+                        return [response.data];
+                    });
+                };
+
+                this.findQuery = function(type, query) {
+                    function handleError(response) {
+                        return response.status === 404 ?
+                            [] : $q.reject(response);
+                    }
+
+                    return $http.get(url('orgs'), {
+                        params: query
+                    }).then(pick('data'), handleError);
+                };
+
+                this.create = function(type, data) {
+                    return $http.post(config.apiBase + '/account/org', clean(data))
+                        .then(function arrayify(response) {
+                            return [response.data];
+                        });
+                };
+
+                this.erase = function(type, model) {
+                    return $http.delete(config.apiBase + '/account/org/' + model.id)
+                        .then(function returnNull() {
+                            return null;
+                        });
+                };
+
+                this.update = function(type, model) {
+                    return $http.put(config.apiBase + '/account/org/' + model.id, clean(model))
+                        .then(function arrayify(response) {
+                            return [response.data];
+                        });
+                };
+            }]);
+
+            $provide.constant('ContentAdapter', ['$http','$q','cinema6','config',
+            function                            ( $http , $q , cinema6 , config ) {
+                var self = this;
+
+                function url(end) {
+                    return config.apiBase + '/content/' + end;
+                }
+
+                function clean(model) {
+                    delete model.id;
+                    delete model.org;
+                    delete model.created;
+                    model.user = model.user && model.user.id;
+
+                    return model;
+                }
+
+                function decorateWithUsers(experiences) {
+                    return $q.all(experiences.map(self.decorateWithUser));
+                }
+
+                this.decorateWithUser = function(experience) {
+                    return cinema6.db.find('user', experience.user)
+                        .then(function decorate(user) {
+                            experience.user = user;
+                            return experience;
+                        })
+                        .catch(function nullify() {
+                            experience.user = null;
+                            return experience;
+                        });
+                };
+
+                this.findAll = function() {
+                    return $http.get(url('experiences'))
+                        .then(pick('data'))
+                        .then(decorateWithUsers);
+                };
+
+                this.find = function(type, id) {
+                    return $http.get(url('experience/' + id), {
+                        cache: true
+                    }).then(pick('data'))
+                        .then(this.decorateWithUser)
+                        .then(putInArray);
+                };
+
+                this.findQuery = function(type, query, meta) {
+                    function handleError(response) {
+                        return response.status === 404 ?
+                            [] : $q.reject(response);
+                    }
+
+                    return $http.get(url('experiences'), {
+                            params: query
+                        }).then(fillMeta(meta))
+                            .then(pick('data'), handleError)
+                            .then(decorateWithUsers);
+                };
+
+                this.create = function(type, data) {
+                    return $http.post(url('experience'), clean(data))
+                        .then(pick('data'))
+                        .then(this.decorateWithUser)
+                        .then(putInArray);
+                };
+
+                this.erase = function(type, model) {
+                    return $http.delete(url('experience/' + model.id))
+                        .then(value(null));
+                };
+
+                this.update = function(type, model) {
+                    return $http.put(url('experience/' + model.id), clean(model))
+                        .then(pick('data'))
+                        .then(this.decorateWithUser)
+                        .then(putInArray);
+                };
+            }]);
+
+            $provide.constant('CardAdapter', ['config','$http','$q',
+            function                         ( config , $http , $q ) {
+                function url(end) {
+                    return config.apiBase + '/content/' + end;
+                }
+
+                this.findAll = function() {
+                    return $http.get(url('cards'))
+                        .then(pick('data'));
+                };
+
+                this.find = function(type, id) {
+                    return $http.get(url('card/' + id))
+                        .then(pick('data'))
+                        .then(putInArray);
+                };
+
+                this.findQuery = function(type, query) {
+                    return $http.get(url('cards'), { params: query })
+                        .then(pick('data'), function(response) {
+                            return response.status === 404 ?
+                                [] : $q.reject(response);
+                        });
+                };
+
+                this.create = function(type, data) {
+                    return $http.post(url('card'), data)
+                        .then(pick('data'))
+                        .then(putInArray);
+                };
+
+                this.erase = function(type, card) {
+                    return $http.delete(url('card/' + card.id))
+                        .then(value(null));
+                };
+
+                this.update = function(type, card) {
+                    return $http.put(url('card/' + card.id), card)
+                        .then(pick('data'))
+                        .then(putInArray);
+                };
+            }]);
+
+            $provide.constant('CategoryAdapter', ['config','$http','$q',
+            function                             ( config , $http , $q ) {
+                function url() {
+                    return config.apiBase + '/content/categories';
+                }
+
+                this.findAll = function() {
+                    return $http.get(url())
+                        .then(pick('data'));
+                };
+
+                this.findQuery = function(type, query) {
+                    return $http.get(url(), { params: query })
+                        .then(pick('data'), function(response) {
+                            return response.status === 404 ?
+                                [] : $q.reject(response);
+                        });
+                };
+
+                ['find', 'create', 'update', 'erase'].forEach(function(method) {
+                    this[method] = function() {
+                        return $q.reject('CategoryAdapter.' + method + '() is not implemented.');
+                    };
+                }, this);
+            }]);
+
+            $provide.constant('CustomerAdapter', ['config','$http','cinema6','$q',
+            function                             ( config , $http , cinema6 , $q ) {
+                var adapter = this;
+
+                function url(end) {
+                    return config.apiBase + '/account/' + end;
+                }
+
+                function decorateAll(customers) {
+                    return $q.all(customers.map(function(customer) {
+                        return adapter.decorate(customer);
+                    }));
+                }
+
+                this.decorate = function(customer) {
+                    return $q.all({
+                        advertisers: $q.all(customer.advertisers.map(function(id) {
+                            return cinema6.db.find('advertiser', id);
+                        }))
+                    }).then(function(data) {
+                        return extend(customer, data);
+                    });
+                };
+
+                this.findAll = function() {
+                    return $http.get(url('customers'))
+                        .then(pick('data'))
+                        .then(decorateAll);
+                };
+
+                this.find = function(type, id) {
+                    return $http.get(url('customer/' + id))
+                        .then(pick('data'))
+                        .then(this.decorate)
+                        .then(putInArray);
+                };
+
+                this.findQuery = function(type, query) {
+                    return $http.get(url('customers'), { params: query })
+                        .then(pick('data'))
+                        .then(decorateAll);
+                };
+
+                ['create', 'update', 'erase'].forEach(function(method) {
+                    this[method] = function() {
+                        return $q.reject(
+                            new Error('CustomerAdapter.' + method + '() is not implemented.')
+                        );
+                    };
+                }, this);
+            }]);
+
+            $provide.constant('AdvertiserAdapter', ['config','$http','$q',
+            function                               ( config , $http , $q ) {
+                function url(end) {
+                    return config.apiBase + '/account/' + end;
+                }
+
+                this.findAll = function() {
+                    return $http.get(url('advertisers'))
+                        .then(pick('data'));
+                };
+
+                this.find = function(type, id) {
+                    return $http.get(url('advertiser/' + id))
+                        .then(pick('data'))
+                        .then(putInArray);
+                };
+
+                this.findQuery = function(type, query) {
+                    return $http.get(url('advertisers'), { params: query })
+                        .then(pick('data'), function(response) {
+                            return response.status === 404 ?
+                                [] : $q.reject(response);
+                        });
+                };
+
+                ['create', 'update', 'erase'].forEach(function(method) {
+                    this[method] = function() {
+                        return $q.reject('AdvertiserAdapter.' + method + '() is not implemented.');
+                    };
+                }, this);
+            }]);
+
+            $provide.constant('CampaignAdapter', ['config','$http','$q','cinema6',
+                                                  'MiniReelService',
+            function                             ( config , $http , $q , cinema6 ,
+                                                   MiniReelService ) {
+                var adapter = this,
+                    adtechIdCache = {
+                        miniReels: {},
+                        cards: {},
+                        targetMiniReels: {}
+                    };
+
+                function url(end) {
+                    return config.apiBase + '/' + end;
+                }
+
+                function decorateCampaigns(campaigns) {
+                    return $q.all(campaigns.map(function(campaign) {
+                        return adapter.decorateCampaign(campaign);
+                    }));
+                }
+
+                function cacheAdtechId(type, data) {
+                    adtechIdCache[type][data.id] = data.adtechId;
+                }
+
+                function undecorateCampaign(campaign) {
+                    return extend(
+                        campaign,
+                        ['miniReels', 'cards', 'targetMiniReels']
+                        .reduce(function(result, prop) {
+                            result[prop] = campaign[prop].map(function(item) {
+                                return {
+                                    id: item.id,
+                                    adtechId: adtechIdCache[prop][item.id]
+                                };
+                            });
+                            return result;
+                        }, {
+                            advertiser: undefined,
+                            advertiserId: campaign.advertiser.id,
+
+                            customer: undefined,
+                            customerId: campaign.customer.id,
+
+                            staticCardMap: (function() {
+                                function hasWildcard(entry) {
+                                    return !!entry.wildcard;
+                                }
+
+                                return campaign.staticCardMap.filter(function(entry) {
+                                    return entry.cards.some(hasWildcard);
+                                }).reduce(function(result, entry) {
+                                    result[entry.minireel.id] = entry.cards
+                                        .filter(hasWildcard)
+                                        .reduce(function(result, entry) {
+                                            result[entry.placeholder.id] = entry.wildcard.id;
+                                            return result;
+                                        }, {});
+                                    return result;
+                                }, {});
+                            }()),
+
+                            miniReelGroups: campaign.miniReelGroups.map(function(group) {
+                                return extend(group, {
+                                    miniReels: group.miniReels.map(pick('id')),
+                                    cards: group.cards.map(pick('id'))
+                                });
+                            })
+                        })
+                    );
+                }
+
+                this.decorateCampaign = function(campaign) {
+                    var findCard = MiniReelService.findCard;
+                    var staticCardMap = campaign.staticCardMap;
+
+                    function getDbModel(type) {
+                        return function(id) {
+                            return cinema6.db.find(type, id);
+                        };
+                    }
+
+                    ['miniReels', 'cards', 'targetMiniReels']
+                        .forEach(function(prop) {
+                            campaign[prop].forEach(function(data) {
+                                cacheAdtechId(prop, data);
+                            });
+                        });
+
+                    return $q.all({
+                        customer: getDbModel('customer')(campaign.customerId),
+                        advertiser: getDbModel('advertiser')(campaign.advertiserId),
+                        miniReels: $q.all(
+                            campaign.miniReels.map(pick('id')).map(getDbModel('experience'))
+                        ),
+                        cards: $q.all(
+                            campaign.cards.map(pick('id')).map(getDbModel('card'))
+                        ),
+                        targetMiniReels: $q.all(
+                            campaign.targetMiniReels.map(pick('id')).map(getDbModel('experience'))
+                        ),
+                        staticCardMap: $q.all(Object.keys(staticCardMap).map(function(minireelId) {
+                            var map = staticCardMap[minireelId],
+                                findMiniReel = getDbModel('experience')(minireelId);
+
+                            return $q.all({
+                                minireel: findMiniReel,
+                                cards: $q.all(Object.keys(map).map(function(placeholderId) {
+                                    var wildcardId = map[placeholderId];
+
+                                    return $q.all({
+                                        placeholder: findMiniReel.then(function(minireel) {
+                                            return findCard(minireel.data.deck, placeholderId);
+                                        }),
+                                        wildcard: getDbModel('card')(wildcardId)
+                                    });
+                                }))
+                            });
+                        })),
+                        miniReelGroups: $q.all(campaign.miniReelGroups.map(function(entry) {
+                            return $q.all({
+                                miniReels: $q.all(entry.miniReels.map(getDbModel('experience'))),
+                                cards: $q.all(entry.cards.map(getDbModel('card')))
+                            }).then(function(data) {
+                                return extend(entry, data);
+                            });
+                        }))
+                    }).then(function(data) {
+                        return extend(campaign, data);
+                    });
+                };
+
+                this.findAll = function() {
+                    return $http.get(url('campaigns'))
+                        .then(pick('data'))
+                        .then(decorateCampaigns);
+                };
+
+                this.find = function(type, id) {
+                    return $http.get(url('campaign/' + id))
+                        .then(pick('data'))
+                        .then(this.decorateCampaign)
+                        .then(putInArray);
+                };
+
+                this.findQuery = function(type, query, meta) {
+                    return $http.get(url('campaigns'), { params: query })
+                        .then(fillMeta(meta))
+                        .then(pick('data'), function(response) {
+                            return response.status === 404 ?
+                                [] : $q.reject(response);
+                        })
+                        .then(decorateCampaigns);
+                };
+
+                this.create = function(type, data) {
+                    return $http.post(url('campaign'), undecorateCampaign(data))
+                        .then(pick('data'))
+                        .then(this.decorateCampaign)
+                        .then(putInArray);
+                };
+
+                this.erase = function(type, campaign) {
+                    return $http.delete(url('campaign/' + campaign.id))
+                        .then(value(null));
+                };
+
+                this.update = function(type, campaign) {
+                    return $http.put(url('campaign/' + campaign.id), undecorateCampaign(campaign))
+                        .then(pick('data'))
+                        .then(this.decorateCampaign)
+                        .then(putInArray);
+                };
+            }]);
+
+            $provide.constant('ExpGroupAdapter', ['config','$http','$q',
+            function                             ( config , $http , $q ) {
+                function url() {
+                    return config.apiBase + '/expgroups';
+                }
+
+                this.findAll = function() {
+                    return $http.get(url())
+                        .then(pick('data'));
+                };
+
+                this.findQuery = function(type, query) {
+                    return $http.get(url(), { params: query })
+                        .then(pick('data'), function(response) {
+                            return response.status === 404 ?
+                                [] : $q.reject(response);
+                        });
+                };
+
+                ['find', 'create', 'update', 'erase'].forEach(function(method) {
+                    this[method] = function() {
+                        return $q.reject('ExpGroupAdapter.' + method + '() is not implemented.');
+                    };
+                }, this);
+            }]);
+
+            $provide.constant('CWRXAdapter', ['config','$injector',
+            function                         ( config , $injector ) {
+                var self = this,
+                    adapters = {};
+
+                forEach(config, function(Constructor, type) {
+                    adapters[type] = $injector.instantiate(Constructor, {
+                        config: Constructor.config
+                    });
                 });
+
+                ['find', 'findAll', 'findQuery', 'create', 'erase', 'update']
+                    .forEach(function(method) {
+                        self[method] = function(type) {
+                            var delegate = adapters[type];
+
+                            return delegate[method].apply(delegate, arguments);
+                        };
+                    });
+            }]);
         }])
 
-        .config(['cinema6Provider','ContentAdapter','CWRXAdapter',
-                 'VoteAdapter','OrgAdapter','UserAdapter',
-        function( cinema6Provider , ContentAdapter , CWRXAdapter ,
-                  VoteAdapter , OrgAdapter , UserAdapter ) {
-            ContentAdapter.config = {
-                apiBase: '/api'
-            };
-            VoteAdapter.config = {
-                apiBase: '/api'
-            };
-            OrgAdapter.config = {
-                apiBase: '/api'
-            };
-            UserAdapter.config = {
-                apiBase: '/api'
-            };
+        .config(['cinema6Provider','ContentAdapter','CWRXAdapter','CampaignAdapter',
+                 'VoteAdapter','OrgAdapter','UserAdapter','CardAdapter','CustomerAdapter',
+                 'CategoryAdapter','AdvertiserAdapter','ExpGroupAdapter',
+        function( cinema6Provider , ContentAdapter , CWRXAdapter , CampaignAdapter ,
+                  VoteAdapter , OrgAdapter , UserAdapter , CardAdapter , CustomerAdapter ,
+                  CategoryAdapter , AdvertiserAdapter , ExpGroupAdapter ) {
+
+            [
+                ContentAdapter,
+                VoteAdapter,
+                OrgAdapter,
+                UserAdapter,
+                CardAdapter,
+                CategoryAdapter,
+                ExpGroupAdapter,
+                CampaignAdapter,
+                AdvertiserAdapter,
+                CustomerAdapter
+            ].forEach(function(Adapter) {
+                Adapter.config = {
+                    apiBase: '/api'
+                };
+            });
 
             CWRXAdapter.config = {
                 election: VoteAdapter,
                 experience: ContentAdapter,
                 org: OrgAdapter,
-                user: UserAdapter
+                user: UserAdapter,
+                card: CardAdapter,
+                category: CategoryAdapter,
+                advertiser: AdvertiserAdapter,
+                expGroup: ExpGroupAdapter,
+                campaign: CampaignAdapter,
+                customer: CustomerAdapter
             };
 
             cinema6Provider.useAdapter(CWRXAdapter);
@@ -539,6 +923,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             });
         }])
 
-        .controller('AppController', [function() {}]);
-
+        .controller('AppController', [function() {
+            this.version = version;
+        }]);
 });

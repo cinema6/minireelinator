@@ -223,7 +223,7 @@
                         });
 
                         describe('if there are some yahoo or aol cards', function() {
-                            var yahooCard, aolCard, customThumbCard,
+                            var yahooCard, aolCard, rumbleCard, customThumbCard,
                                 thumbs;
 
                             function ThumbModel() {
@@ -264,6 +264,13 @@
 
                                     return aolCard;
                                 }()), (function() {
+                                    rumbleCard = MiniReelService.createCard('video');
+
+                                    rumbleCard.data.service = 'rumble';
+                                    rumbleCard.data.videoid = 'v2z8ro-willie-perfoming-at-school-talent-show';
+
+                                    return rumbleCard;
+                                }()), (function() {
                                     customThumbCard = MiniReelService.createCard('video');
 
                                     customThumbCard.data.service = 'yahoo';
@@ -279,6 +286,9 @@
                                     },
                                     aol: {
                                         'the-wackiest-candidates-of-2014-518495778': new ThumbModel()
+                                    },
+                                    rumble: {
+                                        'v2z8ro-willie-perfoming-at-school-talent-show': new ThumbModel()
                                     }
                                 };
 
@@ -295,8 +305,8 @@
                             });
 
                             it('should fetch thumbs for yahoo and aol cards without thumbnails', function() {
-                                expect(VideoThumbnailService.getThumbsFor.calls.count()).toBe(2);
-                                [yahooCard, aolCard].forEach(function(card) {
+                                expect(VideoThumbnailService.getThumbsFor.calls.count()).toBe(3);
+                                [yahooCard, aolCard, rumbleCard].forEach(function(card) {
                                     expect(VideoThumbnailService.getThumbsFor).toHaveBeenCalledWith(card.data.service, card.data.videoid);
                                 });
                             });
@@ -307,11 +317,13 @@
 
                                     thumbs.yahoo[yahooCard.data.videoid].__resolve__('i-am-a-yahoo-thumb.jpg');
                                     thumbs.aol[aolCard.data.videoid].__resolve__('i-am-an-aol-thumb.jpg');
+                                    thumbs.rumble[rumbleCard.data.videoid].__resolve__('i-am-a-rumble-thumb.jpg');
                                 });
 
                                 it('should set the thumb property on the cards', function() {
                                     expect(yahooCard.thumb).toBe('i-am-a-yahoo-thumb.jpg');
                                     expect(aolCard.thumb).toBe('i-am-an-aol-thumb.jpg');
+                                    expect(rumbleCard.thumb).toBe('i-am-a-rumble-thumb.jpg');
                                 });
 
                                 it('should resolve', function() {
@@ -558,6 +570,47 @@
 
                                 _private.proxy = {};
                                 expect(state.minireel).toBe(_private.proxy);
+                            });
+                        });
+
+                        describe('campaign', function() {
+                            describe('initially', function() {
+                                it('should be null', function() {
+                                    expect(state.campaign).toBeNull();
+                                });
+                            });
+
+                            describe('if a minireel is opened with a campaign', function() {
+                                var campaign;
+
+                                beforeEach(function() {
+                                    campaign = cinema6.db.create('campaign', {
+                                        id: 'cam-a2d328601310a1',
+                                        advertiser: cinema6.db.create('advertiser', {
+                                            id: 'a-9709eb4a3c41b2'
+                                        })
+                                    });
+
+                                    EditorService.open(minireel, campaign);
+                                });
+
+                                it('should be pojo of the campaign', function() {
+                                    expect(state.campaign).toEqual(campaign.pojoify());
+                                });
+
+                                it('should not be mutatable', function() {
+                                    expect(function() {
+                                        state.campaign = null;
+                                    }).toThrow();
+
+                                    try {
+                                        state.campaign.id = null;
+                                        state.campaign.advertiser.id = null;
+                                    } catch (e) {}
+
+                                    expect(state.campaign.id).not.toBeNull();
+                                    expect(state.campaign.advertiser.id).not.toBeNull();
+                                });
                             });
                         });
                     });

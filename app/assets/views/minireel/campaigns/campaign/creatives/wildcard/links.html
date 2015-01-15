@@ -1,0 +1,47 @@
+<div class="modalBody__group modalBody__group--sideTabs mrAdManager__videoServer">
+    <form c6-alias="WildcardLinksCtrl.links as links">
+        <h1 class="forms__name--title">Links</h1>
+        <p class="forms__introText">What links should be included in the card?</p>
+
+        <label class="forms__pair clearfix" ng-repeat="link in links"
+        style="margin:0.25em 0;">
+            <span class="forms__name">
+                {{link.name}}
+            </span>
+            <span class="forms__inputHolder"
+            style="float:left; width:36.5em;">
+                <input type="text" class="forms__textField forms__textField--block" ng-model="link.href">
+            </span>
+            <button class="btnInvis ui__iconHolder18" 
+            style="float:right; margin:0.25em 0 0 0;"
+            ng-click="WildcardLinksCtrl.remove(link)">
+                <span class="fab fa-trash">&nbsp;</span>
+            </button>
+        </label>
+        <c6-alias model="WildcardLinksCtrl.newLink" as="newLink">
+            <div class="twoCol">
+                <label class="forms__pair clearfix">
+                    <span class="forms__name">
+                        Name
+                    </span>
+                    <span class="forms__inputHolder forms__inputHolder--short">
+                        <input type="text" c6-autoselect class="forms__textField forms__textField--block" ng-model="newLink.name">
+                    </span>
+                </label>
+            </div>
+            <div class="twoCol">
+                <label class="forms__pair clearfix">
+                    <span class="forms__name">
+                        Link
+                    </span>
+                    <span class="forms__inputHolder forms__inputHolder--short">
+                        <input type="text" c6-autoselect class="forms__textField forms__textField--block" ng-model="newLink.href">
+                    </span>
+                </label>
+            </div>
+            <button class="btnAction btnAction--success" 
+            style="margin:0.5em 0 0 0;"
+            ng-click="WildcardLinksCtrl.push();">Add</button>
+        </c6-alias>
+    </form>
+</div>

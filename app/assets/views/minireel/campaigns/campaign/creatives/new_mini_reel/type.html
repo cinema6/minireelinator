@@ -1,0 +1,23 @@
+<div class="modalBody__group modalBody__group--sideTabs mrConfigure__mode">
+    <ul class="wizard__group">
+        <li ng-repeat="mode in CreativesNewMiniReelTypeCtrl.model" 
+            class="wizard__choice"
+            ng-class="{'wizard__choice--disabled': mode.disabled}">
+            <label class="radiobox radiobox--large wizard__hitarea" for="mode-{{mode.value}}">
+                <input id="mode-{{mode.value}}" type="radio" 
+                    ng-disabled="mode.disabled"
+                    name="minireel-mode" ng-value="mode.value"
+                    class="radiobox__input" ng-model="minireel.data.mode"/>
+                <span class="btn__icon faa fab">&nbsp;</span>
+                <span class="wizard__diagram c6studioSprite--fff diagram__{{mode.value}}">&nbsp;</span>
+                <span class="wizard__copy">
+                    <span class="wizard__title">{{mode.name}}</span>
+                    <span class="wizard__description">{{mode.description}}</span>
+                </span>
+            </label>
+        </li>
+    </ul>
+    <p class="modalBody__fineprint typo--warning">
+        <strong>!</strong> These changes affect desktop experiences only.
+    </p>
+</div>

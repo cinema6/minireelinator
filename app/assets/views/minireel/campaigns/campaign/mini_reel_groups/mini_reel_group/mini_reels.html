@@ -1,0 +1,29 @@
+<div class="modalBody__group modalBody__group--sideTabs mrEdit__videoTab">
+    <div class="clearfix">
+        <form class="twoCol" ng-submit="MiniReelGroupMiniReelsCtrl.search()">
+            <label class="clearfix">
+                <span class="forms__inputHolder forms__inputHolder--short">
+                    <input type="text" class="forms__textField forms__textField--block" placeholder="Search by Title" ng-model="MiniReelGroupMiniReelsCtrl.query">
+                </span>
+            </label>
+            <div ng-if="MiniReelGroupMiniReelsCtrl.result" c6-alias="MiniReelGroupMiniReelsCtrl.result.value as minireels">
+                <span ng-show="minireels.length < 1">Your search yielded no results. Try again!</span>
+                <ul>
+                    <li ng-repeat="minireel in minireels | filter:MiniReelGroupMiniReelsCtrl.isNotBeingTargeted">
+                        {{minireel.data.title}}
+                        <input type="button" value="Add" class="btn btn--success" ng-click="MiniReelGroupMiniReelsCtrl.add(minireel)"></input>
+                    </li>
+                </ul>
+            </div>
+        </form>
+        <div class="twoCol">
+            <strong>{{group.label}}'s MiniReels</strong>
+            <ul>
+                <li ng-repeat="minireel in MiniReelGroupMiniReelsCtrl.model">
+                    {{minireel.data.title}}
+                    <button class="btn btn--danger" ng-click="MiniReelGroupMiniReelsCtrl.remove(minireel)">Remove</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
