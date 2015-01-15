@@ -55,6 +55,44 @@ define(['app'], function(appModule) {
                     expect(groups).not.toContain(removed);
                 });
             });
+
+            describe('add(group)', function() {
+                var group;
+
+                beforeEach(function() {
+                    groups.push.apply(groups,
+                        ['Group 1', 'Group 2', 'Group 3'].map(function(label) {
+                            return {
+                                label: label
+                            };
+                        })
+                    );
+
+                    group = {
+                        label: 'Group 4'
+                    };
+
+                    CampaignMiniReelGroupsCtrl.add(group);
+                });
+
+                it('should add the group to the model', function() {
+                    expect(groups.length).toBe(4);
+                    expect(groups[3]).toBe(group);
+                });
+
+                describe('if called with a group that is already added', function() {
+                    beforeEach(function() {
+                        group = groups[2];
+
+                        CampaignMiniReelGroupsCtrl.add(group);
+                    });
+
+                    it('should not add the group again', function() {
+                        expect(groups.length).toBe(4);
+                        expect(groups.indexOf(group)).toBe(groups.lastIndexOf(group));
+                    });
+                });
+            });
         });
     });
 });

@@ -964,6 +964,12 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         }])
 
         .controller('CampaignMiniReelGroupsController', [function() {
+            this.add = function(group) {
+                if (this.model.indexOf(group) > -1) { return; }
+
+                this.model.push(group);
+            };
+
             this.remove = function(group) {
                 this.model.splice(this.model.indexOf(group), 1);
             };
@@ -1005,8 +1011,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('MiniReelGroupController', ['$injector',
-        function                               ( $injector ) {
+        .controller('MiniReelGroupController', ['$scope','c6State','$injector',
+        function                               ( $scope , c6State , $injector ) {
+            var CampaignMiniReelGroupsCtrl = $scope.CampaignMiniReelGroupsCtrl;
+
             $injector.invoke(WizardController, this);
 
             this.tabs = [
@@ -1023,6 +1031,12 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     sref: 'MR:MiniReelGroup.MiniReels'
                 }
             ];
+
+            this.save = function() {
+                CampaignMiniReelGroupsCtrl.add(this.model);
+
+                return c6State.goTo('MR:Campaign.MiniReelGroups');
+            };
         }])
 
         .config(['c6StateProvider',
