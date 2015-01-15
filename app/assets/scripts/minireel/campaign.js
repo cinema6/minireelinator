@@ -1048,14 +1048,27 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.controller = 'MiniReelGroupController';
                 this.controllerAs = 'MiniReelGroupCtrl';
 
+                this.group = null;
+
+                this.beforeModel = function() {
+                    this.group = this.cParent.cModel;
+                };
+
                 this.model = function() {
-                    return this.cParent.cModel;
+                    return extend(copy(this.group), {
+                        miniReels: this.group.miniReels.slice(),
+                        cards: this.group.cards.slice()
+                    });
+                };
+
+                this.updateGroup = function() {
+                    return shallowCopy(this.cModel, this.group);
                 };
             }]);
         }])
 
-        .controller('MiniReelGroupController', ['$scope','c6State','$injector',
-        function                               ( $scope , c6State , $injector ) {
+        .controller('MiniReelGroupController', ['$scope','c6State','$injector','cState',
+        function                               ( $scope , c6State , $injector , cState ) {
             var CampaignMiniReelGroupsCtrl = $scope.CampaignMiniReelGroupsCtrl;
 
             $injector.invoke(WizardController, this);
@@ -1076,7 +1089,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             ];
 
             this.save = function() {
-                CampaignMiniReelGroupsCtrl.add(this.model);
+                CampaignMiniReelGroupsCtrl.add(cState.updateGroup());
 
                 return c6State.goTo('MR:Campaign.MiniReelGroups');
             };
