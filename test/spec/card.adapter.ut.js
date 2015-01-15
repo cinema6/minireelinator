@@ -15,7 +15,10 @@ define(['app'], function(appModule) {
     describe('CardAdapter', function() {
         var CardAdapter,
             adapter,
-            $httpBackend;
+            $httpBackend,
+            c6State,
+            PortalState,
+            MiniReelService;
 
         var success, failure;
 
@@ -28,6 +31,11 @@ define(['app'], function(appModule) {
             inject(function($injector) {
                 CardAdapter = $injector.get('CardAdapter');
                 $httpBackend = $injector.get('$httpBackend');
+                c6State = $injector.get('c6State');
+                MiniReelService = $injector.get('MiniReelService');
+
+                PortalState = c6State.get('Portal');
+                PortalState.cModel = {};
 
                 CardAdapter.config = {
                     apiBase: '/api'
@@ -66,8 +74,8 @@ define(['app'], function(appModule) {
                 $httpBackend.flush();
             });
 
-            it('should resolve to the cards', function() {
-                expect(success).toHaveBeenCalledWith(cards);
+            it('should resolve to the cards in the editor format', function() {
+                expect(success).toHaveBeenCalledWith(cards.map(MiniReelService.convertCardForEditor));
             });
         });
 
@@ -91,7 +99,7 @@ define(['app'], function(appModule) {
             });
 
             it('should respond with the card wrapped in an array', function() {
-                expect(success).toHaveBeenCalledWith([card]);
+                expect(success).toHaveBeenCalledWith([MiniReelService.convertCardForEditor(card)]);
             });
         });
 
@@ -120,7 +128,7 @@ define(['app'], function(appModule) {
             });
 
             it('should resolve to the cards', function() {
-                expect(success).toHaveBeenCalledWith(cards);
+                expect(success).toHaveBeenCalledWith(cards.map(MiniReelService.convertCardForEditor));
             });
 
             describe('if there is a 404', function() {
@@ -173,16 +181,17 @@ define(['app'], function(appModule) {
                 card = {
                     title: 'wiuhfu4rrf4',
                     note: 'ksjd skdjfh sdkfh',
-                    type: 'youtube',
+                    type: 'video',
                     data: {
+                        service: 'youtube',
                         start: 5,
                         end: 25
                     }
                 };
 
-                response = extend(card, { id: 'rc-8a868fb3d0d9b8' });
+                response = MiniReelService.convertCardForPlayer(extend(card, { id: 'rc-8a868fb3d0d9b8' }));
 
-                $httpBackend.expectPOST('/api/content/card', card)
+                $httpBackend.expectPOST('/api/content/card', MiniReelService.convertCardForPlayer(card))
                     .respond(201, response);
 
                 adapter.create('card', card).then(success, failure);
@@ -191,7 +200,7 @@ define(['app'], function(appModule) {
             });
 
             it('should respond with the response in an array', function() {
-                expect(success).toHaveBeenCalledWith([response]);
+                expect(success).toHaveBeenCalledWith([MiniReelService.convertCardForEditor(response)]);
             });
         });
 
@@ -228,17 +237,18 @@ define(['app'], function(appModule) {
 
                 card = {
                     id: id,
-                    type: 'youtube',
+                    type: 'video',
                     lastUpdated: '2014-12-01T17:32:59.916Z',
                     data: {
+                        source: 'vimeo',
                         autoplay: false,
                         autoadvance: true
                     }
                 };
 
-                response = extend(card, { lastUpdated: (new Date()).toISOString() });
+                response = MiniReelService.convertCardForPlayer(extend(card, { lastUpdated: (new Date()).toISOString() }));
 
-                $httpBackend.expectPUT('/api/content/card/' + id, card)
+                $httpBackend.expectPUT('/api/content/card/' + id, MiniReelService.convertCardForPlayer(card))
                     .respond(200, response);
 
                 adapter.update('card', card).then(success, failure);
@@ -247,7 +257,7 @@ define(['app'], function(appModule) {
             });
 
             it('should respond with the result in an array', function() {
-                expect(success).toHaveBeenCalledWith([response]);
+                expect(success).toHaveBeenCalledWith([MiniReelService.convertCardForEditor(response)]);
             });
         });
     });
