@@ -1186,6 +1186,24 @@
                         });
                     });
 
+                    describe('convertCardForEditor(card)', function() {
+                        var editorMR;
+
+                        beforeEach(function() {
+                            editorMR = MiniReelService.convertForEditor(minireel);
+                        });
+
+                        it('should convert cards for the editor individually', function() {
+                            minireel.data.deck.filter(function(card) {
+                                return card.type !== 'ad';
+                            }).forEach(function(card, index) {
+                                var editorCard = editorMR.data.deck[index];
+
+                                expect(MiniReelService.convertCardForEditor(card)).toEqual(editorCard);
+                            });
+                        });
+                    });
+
                     describe('convertForEditor(minireel)', function() {
                         var result,
                             deck;

@@ -1700,6 +1700,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 return minireel.erase();
             };
 
+            this.convertCardForEditor = function(card) {
+                return makeCard(card);
+            };
+
             this.convertForEditor = function(minireel, target) {
                 var model = target || {};
 
@@ -1729,9 +1733,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         filter(function(card) {
                             return card.type !== 'ad';
                         })
-                        .map(function(card) {
-                            return makeCard(card);
-                        }),
+                        .map(this.convertCardForEditor),
                     ads: minireel.data.deck
                         .reduce(function(ads, card, index) {
                             if (card.ad) {
