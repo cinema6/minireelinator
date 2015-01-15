@@ -158,6 +158,41 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                         this.route('/placements', 'MR:Campaign.Placements', function() {
                             this.route('/minireel/:minireelId', 'MR:Placements.MiniReel');
                         });
+                        this.route('/minireel-groups', 'MR:Campaign.MiniReelGroups', function() {
+                            this.route('/new', 'MR:NewMiniReelGroup', function() {
+                                this.state('MR:MiniReelGroup', 'MR:New:MiniReelGroup', function() {
+                                    this.state(
+                                        'MR:MiniReelGroup.General',
+                                        'MR:New:MiniReelGroup.General'
+                                    );
+                                    this.state(
+                                        'MR:MiniReelGroup.Cards',
+                                        'MR:New:MiniReelGroup.Cards'
+                                    );
+                                    this.state(
+                                        'MR:MiniReelGroup.MiniReels',
+                                        'MR:New:MiniReelGroup.MiniReels'
+                                    );
+                                });
+                            });
+
+                            this.route('/edit/:index', 'MR:EditMiniReelGroup', function() {
+                                this.state('MR:MiniReelGroup', 'MR:Edit:MiniReelGroup', function() {
+                                    this.state(
+                                        'MR:MiniReelGroup.General',
+                                        'MR:Edit:MiniReelGroup.General'
+                                    );
+                                    this.state(
+                                        'MR:MiniReelGroup.Cards',
+                                        'MR:Edit:MiniReelGroup.Cards'
+                                    );
+                                    this.state(
+                                        'MR:MiniReelGroup.MiniReels',
+                                        'MR:Edit:MiniReelGroup.MiniReels'
+                                    );
+                                });
+                            });
+                        });
                     });
                 });
             });

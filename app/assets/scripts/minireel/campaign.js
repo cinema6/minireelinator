@@ -1,7 +1,9 @@
 define (['angular','c6_state','./mixins/PaginatedListState','./mixins/PaginatedListController',
-         './mixins/WizardController','./mixins/VideoCardController','./mixins/LinksController'],
+         './mixins/WizardController','./mixins/VideoCardController','./mixins/LinksController',
+         './mixins/MiniReelSearchController'],
 function( angular , c6State  , PaginatedListState          , PaginatedListController          ,
-          WizardController          , VideoCardController          , LinksController          ) {
+          WizardController          , VideoCardController          , LinksController          ,
+          MiniReelSearchController          ) {
     'use strict';
 
     var equals = angular.equals,
@@ -122,7 +124,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             miniReels: [],
                             cards: [],
                             targetMiniReels: [],
-                            staticCardMap: []
+                            staticCardMap: [],
+                            miniReelGroups: []
                         }),
                         customers: cinema6.db.findAll('customer')
                     });
@@ -813,10 +816,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignPlacementsController', ['$scope','scopePromise','cinema6','c6State',
-        function                                    ( $scope , scopePromise , cinema6 , c6State ) {
-            var CampaignPlacementsCtrl = this,
-                PortalCtrl = $scope.PortalCtrl;
+        .controller('CampaignPlacementsController', ['$scope','c6State','$injector',
+        function                                    ( $scope , c6State , $injector ) {
+            var CampaignPlacementsCtrl = this;
 
             function overwrite(array, newArray) {
                 array.length = 0;
@@ -841,8 +843,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 });
             }
 
-            this.result = null;
-            this.query = '';
+            $injector.invoke(MiniReelSearchController, this, {
+                $scope: $scope
+            });
 
             this.initWithModel = function(staticCardMap) {
                 this.model = overwrite(staticCardMap, staticCardMap.map(function(entry) {
@@ -859,13 +862,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         })
                     });
                 }));
-            };
-
-            this.search = function() {
-                return (this.result = scopePromise(cinema6.db.findAll('experience', {
-                    org: PortalCtrl.model.org.id,
-                    text: this.query
-                }))).promise;
             };
 
             this.add = function(minireel) {
@@ -948,6 +944,202 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 });
 
                 return c6State.goTo('MR:Campaign.Placements');
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Campaign.MiniReelGroups', ['c6State',
+            function                                            ( c6State ) {
+                var CampaignState = c6State.get('MR:Campaign');
+
+                this.templateUrl = 'views/minireel/campaigns/campaign/mini_reel_groups.html';
+                this.controller = 'CampaignMiniReelGroupsController';
+                this.controllerAs = 'CampaignMiniReelGroupsCtrl';
+
+                this.model = function() {
+                    return CampaignState.cModel.miniReelGroups;
+                };
+            }]);
+        }])
+
+        .controller('CampaignMiniReelGroupsController', [function() {
+            this.add = function(group) {
+                if (this.model.indexOf(group) > -1) { return; }
+
+                this.model.push(group);
+            };
+
+            this.remove = function(group) {
+                this.model.splice(this.model.indexOf(group), 1);
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:NewMiniReelGroup', ['c6State',
+            function                                     ( c6State ) {
+                var CampaignMiniReelGroupsState = c6State.get('MR:Campaign.MiniReelGroups');
+
+                this.model = function() {
+                    var groups = CampaignMiniReelGroupsState.cModel;
+
+                    return {
+                        label: 'Group ' + (groups.length + 1),
+                        miniReels: [],
+                        cards: []
+                    };
+                };
+
+                this.enter = function() {
+                    return c6State.goTo('MR:New:MiniReelGroup', null, null, true);
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:EditMiniReelGroup', ['c6State',
+            function                                      ( c6State ) {
+                var CampaignMiniReelGroupsState = c6State.get('MR:Campaign.MiniReelGroups');
+
+                this.model = function(params) {
+                    return CampaignMiniReelGroupsState.cModel[params.index];
+                };
+
+                this.enter = function() {
+                    return c6State.goTo('MR:Edit:MiniReelGroup', null, null, true);
+                };
+
+                this.serializeParams = function(model) {
+                    return {
+                        index: CampaignMiniReelGroupsState.cModel.indexOf(model)
+                    };
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:MiniReelGroup', [function() {
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/mini_reel_groups/mini_reel_group.html';
+                this.controller = 'MiniReelGroupController';
+                this.controllerAs = 'MiniReelGroupCtrl';
+
+                this.model = function() {
+                    return this.cParent.cModel;
+                };
+            }]);
+        }])
+
+        .controller('MiniReelGroupController', ['$scope','c6State','$injector',
+        function                               ( $scope , c6State , $injector ) {
+            var CampaignMiniReelGroupsCtrl = $scope.CampaignMiniReelGroupsCtrl;
+
+            $injector.invoke(WizardController, this);
+
+            this.tabs = [
+                {
+                    name: 'General',
+                    sref: 'MR:MiniReelGroup.General'
+                },
+                {
+                    name: 'Cards',
+                    sref: 'MR:MiniReelGroup.Cards'
+                },
+                {
+                    name: 'MiniReels',
+                    sref: 'MR:MiniReelGroup.MiniReels'
+                }
+            ];
+
+            this.save = function() {
+                CampaignMiniReelGroupsCtrl.add(this.model);
+
+                return c6State.goTo('MR:Campaign.MiniReelGroups');
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:MiniReelGroup.General', [function() {
+                this.templateUrl = [
+                    'views/minireel/campaigns/campaign/',
+                    'mini_reel_groups/mini_reel_group/general.html'
+                ].join('\n');
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:MiniReelGroup.Cards', [function() {
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/mini_reel_groups/mini_reel_group/cards.html';
+                this.controller = 'MiniReelGroupCardsController';
+                this.controllerAs = 'MiniReelGroupCardsCtrl';
+
+                this.model = function() {
+                    return this.cParent.cModel.cards;
+                };
+            }]);
+        }])
+
+        .controller('MiniReelGroupCardsController', ['$scope',
+        function                                    ( $scope ) {
+            var MiniReelGroupCardsCtrl = this,
+                CampaignCtrl = $scope.CampaignCtrl,
+                campaign = CampaignCtrl.model;
+
+            this.campaignCards = campaign.cards;
+
+            this.add = function(card) {
+                return this.model.push(card);
+            };
+
+            this.remove = function(card) {
+                return this.model.splice(this.model.indexOf(card), 1);
+            };
+
+            this.isNotBeingTargeted = function(card) {
+                return MiniReelGroupCardsCtrl.model.indexOf(card) < 0;
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:MiniReelGroup.MiniReels', [function() {
+                this.templateUrl = [
+                    'views/minireel/campaigns/campaign/',
+                    'mini_reel_groups/mini_reel_group/mini_reels.html'
+                ].join('\n');
+                this.controller = 'MiniReelGroupMiniReelsController';
+                this.controllerAs = 'MiniReelGroupMiniReelsCtrl';
+
+                this.model = function() {
+                    return this.cParent.cModel.miniReels;
+                };
+            }]);
+        }])
+
+        .controller('MiniReelGroupMiniReelsController', ['$scope','$injector',
+        function                                        ( $scope , $injector ) {
+            var MiniReelGroupMiniReelsCtrl = this;
+
+            $injector.invoke(MiniReelSearchController, this, {
+                $scope: $scope
+            });
+
+            this.add = function(minireel) {
+                return this.model.push(minireel);
+            };
+
+            this.remove = function(minireel) {
+                return this.model.splice(this.model.indexOf(minireel), 1);
+            };
+
+            this.isNotBeingTargeted = function(minireel) {
+                return MiniReelGroupMiniReelsCtrl.model.indexOf(minireel) < 0;
             };
         }]);
 });
