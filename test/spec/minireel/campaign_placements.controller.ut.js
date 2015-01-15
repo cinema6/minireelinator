@@ -7,6 +7,7 @@ define(['app'], function(appModule) {
             $q,
             c6State,
             cinema6,
+            MiniReelService,
             scopePromise,
             ScopedPromise,
             $scope,
@@ -27,6 +28,7 @@ define(['app'], function(appModule) {
                 $q = $injector.get('$q');
                 c6State = $injector.get('c6State');
                 cinema6 = $injector.get('cinema6');
+                MiniReelService = $injector.get('MiniReelService');
                 scopePromise = $injector.get('scopePromise');
 
                 ScopedPromise = scopePromise($q.defer().promise).constructor;
@@ -272,6 +274,23 @@ define(['app'], function(appModule) {
                 it('should return the cards of an entry that have a wildcard', function() {
                     expect(CampaignPlacementsCtrl.filledCardsOf(staticCardMap[0])).toEqual([staticCardMap[0].cards[1]]);
                     expect(CampaignPlacementsCtrl.filledCardsOf(staticCardMap[1])).toEqual(staticCardMap[1].cards);
+                });
+            });
+
+            describe('availableSlotsIn(minireel)', function() {
+                var result;
+
+                beforeEach(function() {
+                    result = CampaignPlacementsCtrl.availableSlotsIn({
+                        data: {
+                            deck: ['text', 'video', 'videoBallot', 'wildcard', 'wildcard', 'video', 'wildcard', 'recap']
+                                .map(MiniReelService.createCard)
+                        }
+                    });
+                });
+
+                it('should return the number of wildcards in the deck', function() {
+                    expect(result).toBe(3);
                 });
             });
 

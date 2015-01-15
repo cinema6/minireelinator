@@ -834,10 +834,14 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 }, null);
             }
 
-            function createCardEntries(minireel) {
+            function wildcardsOf(minireel) {
                 return minireel.data.deck.filter(function(card) {
                     return card.type === 'wildcard';
-                }).map(function(placeholder) {
+                });
+            }
+
+            function createCardEntries(minireel) {
+                return wildcardsOf(minireel).map(function(placeholder) {
                     return {
                         placeholder: placeholder,
                         wildcard: null
@@ -891,6 +895,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 return entry.cards.filter(function(item) {
                     return !!item.wildcard;
                 });
+            };
+
+            this.availableSlotsIn = function(minireel) {
+                return wildcardsOf(minireel).length;
             };
 
             this.isNotAlreadyTargeted = function(minireel) {
