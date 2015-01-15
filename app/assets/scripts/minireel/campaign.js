@@ -1068,5 +1068,42 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             this.isNotBeingTargeted = function(card) {
                 return MiniReelGroupCardsCtrl.model.indexOf(card) < 0;
             };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:MiniReelGroup.MiniReels', [function() {
+                this.templateUrl = [
+                    'views/minireel/campaigns/campaign/',
+                    'mini_reel_groups/mini_reel_group/mini_reels.html'
+                ].join('\n');
+                this.controller = 'MiniReelGroupMiniReelsController';
+                this.controllerAs = 'MiniReelGroupMiniReelsCtrl';
+
+                this.model = function() {
+                    return this.cParent.cModel.miniReels;
+                };
+            }]);
+        }])
+
+        .controller('MiniReelGroupMiniReelsController', ['$scope','$injector',
+        function                                        ( $scope , $injector ) {
+            var MiniReelGroupMiniReelsCtrl = this;
+
+            $injector.invoke(MiniReelSearchController, this, {
+                $scope: $scope
+            });
+
+            this.add = function(minireel) {
+                return this.model.push(minireel);
+            };
+
+            this.remove = function(minireel) {
+                return this.model.splice(this.model.indexOf(minireel), 1);
+            };
+
+            this.isNotBeingTargeted = function(minireel) {
+                return MiniReelGroupMiniReelsCtrl.model.indexOf(minireel) < 0;
+            };
         }]);
 });
