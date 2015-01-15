@@ -1,7 +1,9 @@
 define (['angular','c6_state','./mixins/PaginatedListState','./mixins/PaginatedListController',
-         './mixins/WizardController','./mixins/VideoCardController','./mixins/LinksController'],
+         './mixins/WizardController','./mixins/VideoCardController','./mixins/LinksController',
+         './mixins/MiniReelSearchController'],
 function( angular , c6State  , PaginatedListState          , PaginatedListController          ,
-          WizardController          , VideoCardController          , LinksController          ) {
+          WizardController          , VideoCardController          , LinksController          ,
+          MiniReelSearchController          ) {
     'use strict';
 
     var equals = angular.equals,
@@ -814,10 +816,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignPlacementsController', ['$scope','scopePromise','cinema6','c6State',
-        function                                    ( $scope , scopePromise , cinema6 , c6State ) {
-            var CampaignPlacementsCtrl = this,
-                PortalCtrl = $scope.PortalCtrl;
+        .controller('CampaignPlacementsController', ['$scope','c6State','$injector',
+        function                                    ( $scope , c6State , $injector ) {
+            var CampaignPlacementsCtrl = this;
 
             function overwrite(array, newArray) {
                 array.length = 0;
@@ -842,8 +843,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 });
             }
 
-            this.result = null;
-            this.query = '';
+            $injector.invoke(MiniReelSearchController, this, {
+                $scope: $scope
+            });
 
             this.initWithModel = function(staticCardMap) {
                 this.model = overwrite(staticCardMap, staticCardMap.map(function(entry) {
@@ -860,13 +862,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         })
                     });
                 }));
-            };
-
-            this.search = function() {
-                return (this.result = scopePromise(cinema6.db.findAll('experience', {
-                    org: PortalCtrl.model.org.id,
-                    text: this.query
-                }))).promise;
             };
 
             this.add = function(minireel) {
