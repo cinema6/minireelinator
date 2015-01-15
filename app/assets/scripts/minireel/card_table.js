@@ -581,15 +581,25 @@ function( angular , c6uilib , services          , c6Drag           ) {
             }
 
             function initPagination(DragCtrl) {
+                function animateScroll(targetPosition) {
+                    var direction = targetPosition > self.position.x ? 1 : -1,
+                        interval = $interval(function() {
+                            if (Math.abs(targetPosition - self.position.x) < 100) {
+                                self.position.x = targetPosition;
+                                $interval.cancel(interval);
+                            } else {
+                                self.position.x += 100 * direction;
+                            }
+                        }, 17);
+                }
+
                 function getAltDirection(direction) {
                     return direction === 'right' ? 'left' : 'right';
                 }
 
                 function isOverlapping(card, direction) {
-                    var altDirection = getAltDirection(direction);
-
-                    return (card.display[direction] > self.scrollerRect[direction]) &&
-                        (card.display[altDirection] < self.scrollerRect[direction]);
+                    return (card.display.left < self.scrollerRect[direction]) &&
+                        (card.display.right > self.scrollerRect[direction]);
                 }
 
                 function isCloser(card, closest, direction) {
@@ -619,23 +629,23 @@ function( angular , c6uilib , services          , c6Drag           ) {
                             card;
                     });
 
-                    self.position.x = Math.max(
-                            0, Math.min(
-                                (self.scrollerFullWidth +
-                                self.firstButtonWidth -
-                                self.scrollerRect.width),
-                                self.position.x -
-                                self.scrollerRect[altDirection] + (
-                                        direction === 'right' ?
-                                        -(self.firstButtonWidth) :
-                                        self.firstButtonWidth
-                                    ) + (
-                                        overlappingCard ?
-                                        overlappingCard.display[altDirection] :
-                                        closestCard.display[altDirection]
-                                    )
-                            )
-                        );
+                    animateScroll(Math.max(
+                        0, Math.min(
+                            (self.scrollerFullWidth +
+                            self.firstButtonWidth -
+                            self.scrollerRect.width),
+                            self.position.x -
+                            self.scrollerRect[altDirection] + (
+                                    direction === 'right' ?
+                                    -(self.firstButtonWidth) :
+                                    self.firstButtonWidth
+                                ) + (
+                                    overlappingCard ?
+                                    overlappingCard.display[altDirection] :
+                                    closestCard.display[altDirection]
+                                )
+                        )
+                    ));
                 };
 
                 self.scrollTo = function(position) {
@@ -648,10 +658,13 @@ function( angular , c6uilib , services          , c6Drag           ) {
 
                     DragCtrl.refresh();
 
-                    self.position.x = self.position.x -
+                    animateScroll(Math.min(self.position.x -
                         self.scrollerRect.left -
                         self.firstButtonWidth +
-                        draggable.display.left;
+                        draggable.display.left,
+                        self.scrollerFullWidth +
+                        self.firstButtonWidth -
+                        self.scrollerRect.width));
                 };
 
                 Object.defineProperties(self, {

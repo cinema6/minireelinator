@@ -297,6 +297,25 @@
                             });
 
                             describe('when a card is partially in view', function() {
+                                it('should move 100 pixels every 17ms until it reaches the target position', function() {
+                                    CardTableCtrl.scrollerRect = {
+                                        width: 1500,
+                                        left: 0,
+                                        right: 1500
+                                    };
+                                    CardTableCtrl.position.x = 0;
+
+                                    CardTableCtrl.scroll('right');
+                                    $interval.flush(17);
+                                    expect(CardTableCtrl.position.x).toBe(100);
+                                    $interval.flush(17);
+                                    expect(CardTableCtrl.position.x).toBe(200);
+                                    $interval.flush(17);
+                                    expect(CardTableCtrl.position.x).toBe(300);
+                                    $interval.flush(5000);
+                                    expect(CardTableCtrl.position.x).toBe(1100);
+                                });
+
                                 it('should set the position so that the overlapping card is first from left', function() {
                                     CardTableCtrl.scrollerRect = {
                                         width: 1500,
@@ -306,6 +325,7 @@
                                     CardTableCtrl.position.x = 0;
 
                                     CardTableCtrl.scroll('right');
+                                    $interval.flush(5000);
                                     expect(CardTableCtrl.position.x).toBe(1100);
                                 });
 
@@ -319,6 +339,7 @@
                                     CardTableCtrl.position.x = 0;
 
                                     CardTableCtrl.scroll('right');
+                                    $interval.flush(5000);
                                     expect(CardTableCtrl.position.x).toBe(1050);
                                 });
 
@@ -330,11 +351,31 @@
                                     };
                                     CardTableCtrl.position.x = 3800;
                                     CardTableCtrl.scroll('right');
+                                    $interval.flush(5000);
                                     expect(CardTableCtrl.position.x).toBe(4000);
                                 });
                             });
 
                             describe('when there is no card overlapping the edge', function() {
+                                it('should move 100 pixels every 17ms until it reaches the target position', function() {
+                                    CardTableCtrl.scrollerRect = {
+                                        width: 1000,
+                                        left: 0,
+                                        right: 1000
+                                    };
+                                    CardTableCtrl.position.x = 0;
+
+                                    CardTableCtrl.scroll('right');
+                                    $interval.flush(17);
+                                    expect(CardTableCtrl.position.x).toBe(100);
+                                    $interval.flush(17);
+                                    expect(CardTableCtrl.position.x).toBe(200);
+                                    $interval.flush(17);
+                                    expect(CardTableCtrl.position.x).toBe(300);
+                                    $interval.flush(5000);
+                                    expect(CardTableCtrl.position.x).toBe(1100);
+                                });
+
                                 it('should set the position so that the next card outside of view is first from left', function() {
                                     CardTableCtrl.scrollerRect = {
                                         width: 1000,
@@ -344,6 +385,7 @@
                                     CardTableCtrl.position.x = 0;
 
                                     CardTableCtrl.scroll('right');
+                                    $interval.flush(5000);
                                     expect(CardTableCtrl.position.x).toBe(1100);
                                 });
 
@@ -357,6 +399,7 @@
                                     CardTableCtrl.position.x = 0;
 
                                     CardTableCtrl.scroll('right');
+                                    $interval.flush(5000);
                                     expect(CardTableCtrl.position.x).toBe(1050);
                                 });
 
@@ -368,6 +411,7 @@
                                     };
                                     CardTableCtrl.position.x = 4200;
                                     CardTableCtrl.scroll('right');
+                                    $interval.flush(5000);
                                     expect(CardTableCtrl.position.x).toBe(4500);
                                 });
                             });
@@ -411,6 +455,25 @@
                             });
 
                             describe('when a card is partially in view', function() {
+                                it('should move 100 pixels every 17ms until it reaches the target position', function() {
+                                    CardTableCtrl.scrollerRect = {
+                                        width: 1500,
+                                        left: 0,
+                                        right: 1500
+                                    };
+                                    CardTableCtrl.position.x = 3000;
+
+                                    CardTableCtrl.scroll('left');
+                                    $interval.flush(17);
+                                    expect(CardTableCtrl.position.x).toBe(2900);
+                                    $interval.flush(17);
+                                    expect(CardTableCtrl.position.x).toBe(2800);
+                                    $interval.flush(17);
+                                    expect(CardTableCtrl.position.x).toBe(2700);
+                                    $interval.flush(5000);
+                                    expect(CardTableCtrl.position.x).toBe(2000);
+                                });
+
                                 it('should set the position so that the overlapping card is all the way right', function() {
                                     CardTableCtrl.scrollerRect = {
                                         width: 1500,
@@ -420,6 +483,7 @@
                                     CardTableCtrl.position.x = 3000;
 
                                     CardTableCtrl.scroll('left');
+                                    $interval.flush(5000);
                                     expect(CardTableCtrl.position.x).toBe(2000);
                                 });
 
@@ -433,6 +497,7 @@
                                     CardTableCtrl.position.x = 3000;
 
                                     CardTableCtrl.scroll('left');
+                                    $interval.flush(5000);
                                     expect(CardTableCtrl.position.x).toBe(2050);
                                 });
 
@@ -444,6 +509,7 @@
                                     };
                                     CardTableCtrl.position.x = 1000;
                                     CardTableCtrl.scroll('left');
+                                    $interval.flush(5000);
                                     expect(CardTableCtrl.position.x).toBe(0);
                                 });
                             });
@@ -467,10 +533,25 @@
                                     card5.display.right = 3200;
                                 });
 
+                                it('should move 100 pixels every 17ms until it reaches the target position', function() {
+                                    CardTableCtrl.position.x = 2200;
+
+                                    CardTableCtrl.scroll('left');
+                                    $interval.flush(17);
+                                    expect(CardTableCtrl.position.x).toBe(2100);
+                                    $interval.flush(17);
+                                    expect(CardTableCtrl.position.x).toBe(2000);
+                                    $interval.flush(17);
+                                    expect(CardTableCtrl.position.x).toBe(1900);
+                                    $interval.flush(5000);
+                                    expect(CardTableCtrl.position.x).toBe(1100);
+                                });
+
                                 it('should set the position so that the next card outside of view is first from left', function() {
                                     CardTableCtrl.position.x = 2200; // lines up with 3rd card
 
                                     CardTableCtrl.scroll('left');
+                                    $interval.flush(5000);
                                     expect(CardTableCtrl.position.x).toBe(1100); // moves to line up with 2nd card
                                 });
 
@@ -479,6 +560,7 @@
                                     CardTableCtrl.position.x = 2200;
 
                                     CardTableCtrl.scroll('left');
+                                    $interval.flush(5000);
                                     expect(CardTableCtrl.position.x).toBe(1150);
                                 });
 
@@ -490,6 +572,7 @@
                                     };
                                     CardTableCtrl.position.x = 500;
                                     CardTableCtrl.scroll('left');
+                                    $interval.flush(5000);
                                     expect(CardTableCtrl.position.x).toBe(0);
                                 });
                             });
@@ -516,6 +599,7 @@
                             CardTableCtrl.scrollerFullWidth = 1000;
 
                             CardTableCtrl.scrollTo(0.5);
+                            $interval.flush(5000);
 
                             expect(CardTableCtrl.position.x).toBe(500);
                             expect($scope.$digest).toHaveBeenCalled();
@@ -574,6 +658,7 @@
                             CardTableCtrl.position.x = 0;
 
                             CardTableCtrl.scrollToCard(model3);
+                            $interval.flush(5000);
                             expect(CardTableCtrl.position.x).toBe(2200);
 
                             [card1,card2,card3,card4,card5].forEach(function(card) {
@@ -582,6 +667,46 @@
                             });
 
                             CardTableCtrl.scrollToCard(model1);
+                            $interval.flush(5000);
+                            expect(CardTableCtrl.position.x).toBe(0);
+
+                            [card1,card2,card3,card4,card5].forEach(function(card) {
+                                card.display.left += 2200;
+                                card.display.right += 2200;
+                            });
+                        });
+
+                        it('should move 100 pixels every 17ms until it reaches the target position', function() {
+                            CardTableCtrl.scrollerRect = {
+                                width: 1500,
+                                left: 0,
+                                right: 1500
+                            };
+                            CardTableCtrl.position.x = 0;
+
+                            CardTableCtrl.scrollToCard(model3);
+                            $interval.flush(17);
+                            expect(CardTableCtrl.position.x).toBe(100);
+                            $interval.flush(17);
+                            expect(CardTableCtrl.position.x).toBe(200);
+                            $interval.flush(17);
+                            expect(CardTableCtrl.position.x).toBe(300);
+                            $interval.flush(5000);
+                            expect(CardTableCtrl.position.x).toBe(2200);
+
+                            [card1,card2,card3,card4,card5].forEach(function(card) {
+                                card.display.left -= 2200;
+                                card.display.right -= 2200;
+                            });
+
+                            CardTableCtrl.scrollToCard(model1);
+                            $interval.flush(17);
+                            expect(CardTableCtrl.position.x).toBe(2100);
+                            $interval.flush(17);
+                            expect(CardTableCtrl.position.x).toBe(2000);
+                            $interval.flush(17);
+                            expect(CardTableCtrl.position.x).toBe(1900);
+                            $interval.flush(5000);
                             expect(CardTableCtrl.position.x).toBe(0);
 
                             [card1,card2,card3,card4,card5].forEach(function(card) {
