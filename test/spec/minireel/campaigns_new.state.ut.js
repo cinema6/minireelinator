@@ -86,7 +86,8 @@ define(['app', 'c6uilib'], function(appModule, c6uilib) {
                     miniReels: [],
                     cards: [],
                     targetMiniReels: [],
-                    staticCardMap: []
+                    staticCardMap: [],
+                    miniReelGroups: []
                 });
             });
 

@@ -1,0 +1,22 @@
+<div class="modalBody__group modalBody__group--sideTabs mrEdit__videoTab">
+    <div class="clearfix">
+        <div class="twoCol">
+            <strong>Campaign's Cards</strong>
+            <ul>
+                <li ng-repeat="card in MiniReelGroupCardsCtrl.campaignCards | filter:MiniReelGroupCardsCtrl.isNotBeingTargeted">
+                    {{card.title}}
+                    <button class="btn btn--success" ng-click="MiniReelGroupCardsCtrl.add(card)">Add</button>
+                </li>
+            </ul>
+        </div>
+        <div class="twoCol">
+            <strong>{{group.label}}'s Cards</strong>
+            <ul>
+                <li ng-repeat="card in MiniReelGroupCardsCtrl.model">
+                    {{card.title}}
+                    <button class="btn btn--danger" ng-click="MiniReelGroupCardsCtrl.remove(card)">Remove</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
