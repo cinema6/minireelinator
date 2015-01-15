@@ -158,6 +158,13 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             };
 
             this.save = function() {
+                var advertiser = this.model.advertiser;
+
+                deepExtend(this.model, {
+                    links: advertiser.defaultLinks,
+                    logos: advertiser.defaultLogos
+                });
+
                 return this.model.save()
                     .then(function(campaign) {
                         return c6State.goTo('MR:Campaign', [campaign]);
