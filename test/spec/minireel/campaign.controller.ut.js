@@ -261,6 +261,8 @@ define(['minireel/campaign'], function(campaignModule) {
 
                 describe('when the campaign is done saving', function() {
                     beforeEach(function() {
+                        spyOn($scope, '$broadcast').and.callThrough();
+
                         $scope.$apply(function() {
                             saveDeferred.resolve(campaign);
                         });
@@ -272,6 +274,10 @@ define(['minireel/campaign'], function(campaignModule) {
 
                     it('should resolve to the campaign', function() {
                         expect(success).toHaveBeenCalledWith(campaign);
+                    });
+
+                    it('should $broadcast the "CampaignCtrl:campaignDidSave" event', function() {
+                        expect($scope.$broadcast).toHaveBeenCalledWith('CampaignCtrl:campaignDidSave');
                     });
                 });
             });

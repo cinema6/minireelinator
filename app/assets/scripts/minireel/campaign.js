@@ -180,7 +180,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignController', [function() {
+        .controller('CampaignController', ['$scope',
+        function                          ( $scope ) {
             var CampaignCtrl = this;
 
             function createModelLinks(uiLinks) {
@@ -239,6 +240,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
                 return this.model.save().then(function(campaign) {
                     CampaignCtrl.cleanModel = campaign.pojoify();
+                    $scope.$broadcast('CampaignCtrl:campaignDidSave');
 
                     return campaign;
                 });
@@ -814,7 +816,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         }])
 
         .controller('CampaignPlacementsController', ['$scope','scopePromise','cinema6','c6State',
-        function                                    ( $scope , scopePromise , cinema6 , c6State ) {
+                                                     'cState',
+        function                                    ( $scope , scopePromise , cinema6 , c6State ,
+                                                      cState ) {
             var CampaignPlacementsCtrl = this,
                 PortalCtrl = $scope.PortalCtrl;
 
@@ -894,6 +898,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     return entry.minireel;
                 }).indexOf(minireel) < 0;
             };
+
+            $scope.$on('CampaignCtrl:campaignDidSave', function() {
+                CampaignPlacementsCtrl.initWithModel(cState.cModel);
+            });
         }])
 
         .config(['c6StateProvider',

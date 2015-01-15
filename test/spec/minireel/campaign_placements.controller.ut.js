@@ -10,6 +10,7 @@ define(['app'], function(appModule) {
             scopePromise,
             ScopedPromise,
             $scope,
+            CampaignPlacementsState,
             PortalCtrl,
             CampaignPlacementsCtrl;
 
@@ -36,6 +37,8 @@ define(['app'], function(appModule) {
                     data: {}
                 });
 
+                CampaignPlacementsState = c6State.get('MR:Campaign.Placements');
+
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
                     $scope.PortalCtrl = PortalCtrl = $controller('PortalController', {
@@ -48,9 +51,10 @@ define(['app'], function(appModule) {
                     };
 
                     $scope.CampaignPlacementsCtrl = CampaignPlacementsCtrl = $controller('CampaignPlacementsController', {
-                        $scope: $scope
+                        $scope: $scope,
+                        cState: CampaignPlacementsState
                     });
-                    CampaignPlacementsCtrl.initWithModel((function() {
+                    CampaignPlacementsCtrl.initWithModel((CampaignPlacementsState.cModel = (function() {
                         var minireel = cinema6.db.create('experience', {
                             id: 'e-cc597c4791834f',
                             data: {
@@ -86,7 +90,7 @@ define(['app'], function(appModule) {
                                 ]
                             }
                         ]);
-                    }()));
+                    }())));
                 });
             });
         });
@@ -315,6 +319,20 @@ define(['app'], function(appModule) {
                             expect(isNotAlreadyTargeted(entry.minireel)).toBe(false);
                         });
                     });
+                });
+            });
+        });
+
+        describe('$events', function() {
+            describe('CampaignCtrl:campaignDidSave', function() {
+                beforeEach(function() {
+                    spyOn(CampaignPlacementsCtrl, 'initWithModel').and.callThrough();
+
+                    $rootScope.$broadcast('CampaignCtrl:campaignDidSave');
+                });
+
+                it('should call initWithModel again', function() {
+                    expect(CampaignPlacementsCtrl.initWithModel).toHaveBeenCalledWith(CampaignPlacementsState.cModel);
                 });
             });
         });
