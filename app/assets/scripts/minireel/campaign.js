@@ -99,6 +99,16 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     }
                 });
             };
+
+            this.targetMiniReelsOf = function(campaign) {
+                return campaign.miniReelGroups.map(function(group) {
+                    return group.miniReels;
+                }).reduce(function(result, minireels) {
+                    return result.concat(minireels);
+                }, []).filter(function(minireel, index, minireels) {
+                    return minireels.indexOf(minireel) === index;
+                });
+            };
         }])
 
         .config(['c6StateProvider',
@@ -123,7 +133,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             links: {},
                             miniReels: [],
                             cards: [],
-                            targetMiniReels: [],
                             staticCardMap: [],
                             miniReelGroups: []
                         }),
