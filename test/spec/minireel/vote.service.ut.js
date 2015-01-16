@@ -223,7 +223,7 @@
             });
 
             describe('methods', function() {
-                describe('sync(minireel)', function() {
+                describe('syncMiniReel(minireel)', function() {
                     var success, failure,
                         elections, saveDeferreds;
 
@@ -248,7 +248,7 @@
                     describe('if no elections have been initialized', function() {
                         beforeEach(function() {
                             $rootScope.$apply(function() {
-                                VoteService.sync(minireel).then(success, failure);
+                                VoteService.syncMiniReel(minireel).then(success, failure);
                             });
                         });
 
@@ -372,7 +372,7 @@
                             });
 
                             $rootScope.$apply(function() {
-                                VoteService.sync(minireel).then(success, failure);
+                                VoteService.syncMiniReel(minireel).then(success, failure);
                             });
                         });
 
@@ -426,7 +426,7 @@
                             });
 
                             $rootScope.$apply(function() {
-                                VoteService.sync(minireel).then(success, failure);
+                                VoteService.syncMiniReel(minireel).then(success, failure);
                             });
                         });
 

@@ -331,7 +331,7 @@ VideoCardController           ) {
                         return $q.when(minireel);
                     }
 
-                    return VoteService.sync(minireel);
+                    return VoteService.syncMiniReel(minireel);
                 }
 
                 if (!minireel) {

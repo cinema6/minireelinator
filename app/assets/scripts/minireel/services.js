@@ -630,7 +630,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
              * This method synchronizes a MiniReel with the vote service. It will create/update
              * elections as necessary.
              */
-            this.sync = function(minireel) {
+            this.syncMiniReel = function(minireel) {
                 function getItems(minireel) {
                     var deck = minireel.data.deck;
 
@@ -1676,7 +1676,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             this.publish = function(minireel) {
                 function saveElection(minireel) {
-                    return VoteService.sync(minireel);
+                    return VoteService.syncMiniReel(minireel);
                 }
 
                 return saveElection(minireel)

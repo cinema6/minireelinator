@@ -1118,7 +1118,7 @@
                             saveDeferred = $q.defer();
                             syncVoteDeferred = $q.defer();
                             success = jasmine.createSpy('success');
-                            spyOn(VoteService, 'sync').and
+                            spyOn(VoteService, 'syncMiniReel').and
                                 .returnValue(syncVoteDeferred.promise);
 
                             spyOn(minireel, 'save').and.returnValue(saveDeferred.promise);
@@ -1133,7 +1133,7 @@
                         });
 
                         it('should call VoteService.sync()',function(){
-                            expect(VoteService.sync).toHaveBeenCalledWith(minireel);
+                            expect(VoteService.syncMiniReel).toHaveBeenCalledWith(minireel);
                         });
 
                         it('should set the minireel\'s status to "active"', function() {
