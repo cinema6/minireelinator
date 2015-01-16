@@ -181,7 +181,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.controllerAs = 'CampaignCtrl';
 
                 this.enter = function() {
-                    c6State.goTo('MR:Campaign.General');
+                    c6State.goTo('MR:Campaign.General', null, null, true);
                 };
 
                 this.model = function(params) {

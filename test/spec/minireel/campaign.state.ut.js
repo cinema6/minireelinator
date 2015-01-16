@@ -33,7 +33,7 @@ define(['app'], function(appModule) {
             });
 
             it('should go to the MR:Campaign.General state', function() {
-                expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.General');
+                expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.General', null, null, true);
             });
         });
 
