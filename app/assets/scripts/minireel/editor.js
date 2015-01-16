@@ -9,20 +9,7 @@ VideoCardController           ) {
         copy = angular.copy,
         forEach = angular.forEach,
         isDefined = angular.isDefined,
-        isObject = angular.isObject,
         noop = angular.noop;
-
-    function deepFreeze(object) {
-        forEach(object, function(value) {
-            if (isObject(value)) {
-                deepFreeze(value);
-            }
-        });
-
-        Object.freeze(object);
-
-        return object;
-    }
 
     return angular.module('c6.app.minireel.editor', [
         videoSearch.name,
@@ -320,7 +307,7 @@ VideoCardController           ) {
                 _private.editorMinireel = editorMinireel;
                 _private.proxy = proxy;
 
-                _private.campaign = campaign ? deepFreeze(campaign.pojoify()) : null;
+                _private.campaign = campaign || null;
 
                 return proxy;
             };

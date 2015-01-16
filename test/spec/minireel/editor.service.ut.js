@@ -594,22 +594,14 @@
                                     EditorService.open(minireel, campaign);
                                 });
 
-                                it('should be pojo of the campaign', function() {
-                                    expect(state.campaign).toEqual(campaign.pojoify());
+                                it('should be the campaign', function() {
+                                    expect(state.campaign).toBe(campaign);
                                 });
 
                                 it('should not be mutatable', function() {
                                     expect(function() {
                                         state.campaign = null;
                                     }).toThrow();
-
-                                    try {
-                                        state.campaign.id = null;
-                                        state.campaign.advertiser.id = null;
-                                    } catch (e) {}
-
-                                    expect(state.campaign.id).not.toBeNull();
-                                    expect(state.campaign.advertiser.id).not.toBeNull();
                                 });
                             });
                         });
