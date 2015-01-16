@@ -349,20 +349,31 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
             }]);
 
-            $provide.constant('CardAdapter', ['config','$http','$q',
-            function                         ( config , $http , $q ) {
+            $provide.constant('CardAdapter', ['config','$http','$q','MiniReelService',
+                                              'VoteService',
+            function                         ( config , $http , $q , MiniReelService ,
+                                               VoteService ) {
+                var convertCardForEditor = MiniReelService.convertCardForEditor,
+                    convertCardForPlayer = MiniReelService.convertCardForPlayer;
+
                 function url(end) {
                     return config.apiBase + '/content/' + end;
                 }
 
+                function convertCardsForEditor(cards) {
+                    return cards.map(MiniReelService.convertCardForEditor);
+                }
+
                 this.findAll = function() {
                     return $http.get(url('cards'))
-                        .then(pick('data'));
+                        .then(pick('data'))
+                        .then(convertCardsForEditor);
                 };
 
                 this.find = function(type, id) {
                     return $http.get(url('card/' + id))
                         .then(pick('data'))
+                        .then(convertCardForEditor)
                         .then(putInArray);
                 };
 
@@ -371,12 +382,16 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         .then(pick('data'), function(response) {
                             return response.status === 404 ?
                                 [] : $q.reject(response);
-                        });
+                        })
+                        .then(convertCardsForEditor);
                 };
 
                 this.create = function(type, data) {
-                    return $http.post(url('card'), data)
-                        .then(pick('data'))
+                    return VoteService.syncCard(convertCardForPlayer(data))
+                        .then(function(data) {
+                            return $http.post(url('card'), data).then(pick('data'));
+                        })
+                        .then(MiniReelService.convertCardForEditor)
                         .then(putInArray);
                 };
 
@@ -386,8 +401,11 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
 
                 this.update = function(type, card) {
-                    return $http.put(url('card/' + card.id), card)
-                        .then(pick('data'))
+                    return VoteService.syncCard(convertCardForPlayer(card))
+                        .then(function(card) {
+                            return $http.put(url('card/' + card.id), card).then(pick('data'));
+                        })
+                        .then(convertCardForEditor)
                         .then(putInArray);
                 };
             }]);

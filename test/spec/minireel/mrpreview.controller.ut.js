@@ -281,7 +281,7 @@
                     });
 
                     it('should emit mrPreview:closePreview if previewing a card', function() {
-                        spyOn(MiniReelService, 'convertCard').and.returnValue(experience.data.deck[0]);
+                        spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue(experience.data.deck[0]);
                         $scope.$emit('mrPreview:updateExperience', experience, {});
                         spyOn($scope, '$emit');
 
@@ -363,7 +363,7 @@
                         };
 
                         spyOn(MiniReelService, 'convertForPlayer').and.returnValue(experience);
-                        spyOn(MiniReelService, 'convertCard').and.returnValue(newCard);
+                        spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue(newCard);
 
                         $scope.$emit('mrPreview:initExperience', experience, session);
                     });
@@ -392,7 +392,7 @@
                         it('should convert the card and tell the player to jump to the card', function() {
                             $scope.$emit('mrPreview:updateExperience', experience, newCard);
 
-                            expect(MiniReelService.convertCard).toHaveBeenCalled();
+                            expect(MiniReelService.convertCardForPlayer).toHaveBeenCalled();
                             expect(session.ping.calls.argsFor(0)[0]).toBe('mrPreview:jumpToCard');
                         });
                     });
@@ -424,7 +424,7 @@
 
                     describe('if a card has been previewed then reset it', function() {
                         it('should reset it so no card is returned', function() {
-                            spyOn(MiniReelService, 'convertCard').and.returnValue({id: '1'});
+                            spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue({id: '1'});
                             $scope.$emit('mrPreview:updateExperience', experience, {id: '1'});
                             $scope.$emit('mrPreview:reset');
                             session.emit('mrPreview:getCard', {}, responseCallback);

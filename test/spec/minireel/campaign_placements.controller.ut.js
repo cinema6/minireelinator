@@ -7,9 +7,11 @@ define(['app'], function(appModule) {
             $q,
             c6State,
             cinema6,
+            MiniReelService,
             scopePromise,
             ScopedPromise,
             $scope,
+            CampaignPlacementsState,
             PortalCtrl,
             CampaignPlacementsCtrl;
 
@@ -26,6 +28,7 @@ define(['app'], function(appModule) {
                 $q = $injector.get('$q');
                 c6State = $injector.get('c6State');
                 cinema6 = $injector.get('cinema6');
+                MiniReelService = $injector.get('MiniReelService');
                 scopePromise = $injector.get('scopePromise');
 
                 ScopedPromise = scopePromise($q.defer().promise).constructor;
@@ -35,6 +38,8 @@ define(['app'], function(appModule) {
                     type: 'video',
                     data: {}
                 });
+
+                CampaignPlacementsState = c6State.get('MR:Campaign.Placements');
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
@@ -48,9 +53,10 @@ define(['app'], function(appModule) {
                     };
 
                     $scope.CampaignPlacementsCtrl = CampaignPlacementsCtrl = $controller('CampaignPlacementsController', {
-                        $scope: $scope
+                        $scope: $scope,
+                        cState: CampaignPlacementsState
                     });
-                    CampaignPlacementsCtrl.initWithModel((function() {
+                    CampaignPlacementsCtrl.initWithModel((CampaignPlacementsState.cModel = (function() {
                         var minireel = cinema6.db.create('experience', {
                             id: 'e-cc597c4791834f',
                             data: {
@@ -86,7 +92,7 @@ define(['app'], function(appModule) {
                                 ]
                             }
                         ]);
-                    }()));
+                    }())));
                 });
             });
         });
@@ -271,6 +277,23 @@ define(['app'], function(appModule) {
                 });
             });
 
+            describe('availableSlotsIn(minireel)', function() {
+                var result;
+
+                beforeEach(function() {
+                    result = CampaignPlacementsCtrl.availableSlotsIn({
+                        data: {
+                            deck: ['text', 'video', 'videoBallot', 'wildcard', 'wildcard', 'video', 'wildcard', 'recap']
+                                .map(MiniReelService.createCard)
+                        }
+                    });
+                });
+
+                it('should return the number of wildcards in the deck', function() {
+                    expect(result).toBe(3);
+                });
+            });
+
             describe('isNotAlreadyTargeted(minireel)', function() {
                 var isNotAlreadyTargeted;
 
@@ -315,6 +338,20 @@ define(['app'], function(appModule) {
                             expect(isNotAlreadyTargeted(entry.minireel)).toBe(false);
                         });
                     });
+                });
+            });
+        });
+
+        describe('$events', function() {
+            describe('CampaignCtrl:campaignDidSave', function() {
+                beforeEach(function() {
+                    spyOn(CampaignPlacementsCtrl, 'initWithModel').and.callThrough();
+
+                    $rootScope.$broadcast('CampaignCtrl:campaignDidSave');
+                });
+
+                it('should call initWithModel again', function() {
+                    expect(CampaignPlacementsCtrl.initWithModel).toHaveBeenCalledWith(CampaignPlacementsState.cModel);
                 });
             });
         });

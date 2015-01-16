@@ -1118,7 +1118,7 @@
                             saveDeferred = $q.defer();
                             syncVoteDeferred = $q.defer();
                             success = jasmine.createSpy('success');
-                            spyOn(VoteService, 'sync').and
+                            spyOn(VoteService, 'syncMiniReel').and
                                 .returnValue(syncVoteDeferred.promise);
 
                             spyOn(minireel, 'save').and.returnValue(saveDeferred.promise);
@@ -1133,7 +1133,7 @@
                         });
 
                         it('should call VoteService.sync()',function(){
-                            expect(VoteService.sync).toHaveBeenCalledWith(minireel);
+                            expect(VoteService.syncMiniReel).toHaveBeenCalledWith(minireel);
                         });
 
                         it('should set the minireel\'s status to "active"', function() {
@@ -1183,6 +1183,24 @@
                             });
 
                             expect(success).toHaveBeenCalledWith(minireel);
+                        });
+                    });
+
+                    describe('convertCardForEditor(card)', function() {
+                        var editorMR;
+
+                        beforeEach(function() {
+                            editorMR = MiniReelService.convertForEditor(minireel);
+                        });
+
+                        it('should convert cards for the editor individually', function() {
+                            minireel.data.deck.filter(function(card) {
+                                return card.type !== 'ad';
+                            }).forEach(function(card, index) {
+                                var editorCard = editorMR.data.deck[index];
+
+                                expect(MiniReelService.convertCardForEditor(card)).toEqual(editorCard);
+                            });
                         });
                     });
 

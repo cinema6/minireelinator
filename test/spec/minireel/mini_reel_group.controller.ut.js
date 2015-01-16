@@ -1,4 +1,4 @@
-define(['minireel/campaign', 'minireel/mixins/WizardController'], function(campaignModule, WizardController) {
+define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardController) {
     'use strict';
 
     describe('MiniReelGroupController', function() {
@@ -6,18 +6,27 @@ define(['minireel/campaign', 'minireel/mixins/WizardController'], function(campa
             $controller,
             c6State,
             $scope,
+            MiniReelGroupState,
             CampaignMiniReelGroupsCtrl,
             MiniReelGroupCtrl;
 
         var group;
 
         beforeEach(function() {
-            module(campaignModule.name);
+            module(appModule.name);
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
                 c6State = $injector.get('c6State');
+
+                MiniReelGroupState = c6State.get('MR:New:MiniReelGroup');
+                group = MiniReelGroupState.group = {
+                    label: 'THE Group',
+                    miniReels: [],
+                    cards: []
+                };
+                MiniReelGroupState.cModel = MiniReelGroupState.model();
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
@@ -27,13 +36,10 @@ define(['minireel/campaign', 'minireel/mixins/WizardController'], function(campa
                     CampaignMiniReelGroupsCtrl.model = [];
 
                     MiniReelGroupCtrl = $scope.MiniReelGroupCtrl = $controller('MiniReelGroupController', {
-                        $scope: $scope
+                        $scope: $scope,
+                        cState: MiniReelGroupState
                     });
-                    group = MiniReelGroupCtrl.model = {
-                        label: 'THE Group',
-                        miniReels: [],
-                        cards: []
-                    };
+                    MiniReelGroupCtrl.model = MiniReelGroupState.cModel;
                 });
             });
         });
@@ -70,12 +76,19 @@ define(['minireel/campaign', 'minireel/mixins/WizardController'], function(campa
         describe('methods', function() {
             describe('save()', function() {
                 beforeEach(function() {
+                    spyOn(MiniReelGroupState, 'updateGroup').and.callThrough();
                     spyOn(CampaignMiniReelGroupsCtrl, 'add').and.callThrough();
                     spyOn(c6State, 'goTo');
+
+                    MiniReelGroupCtrl.model.label = 'Different Label';
 
                     $scope.$apply(function() {
                         MiniReelGroupCtrl.save();
                     });
+                });
+
+                it('should update the group', function() {
+                    expect(MiniReelGroupState.updateGroup).toHaveBeenCalled();
                 });
 
                 it('should add the group to the campaign', function() {

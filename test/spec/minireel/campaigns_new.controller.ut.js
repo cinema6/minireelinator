@@ -163,20 +163,40 @@ define(['app'], function(appModule) {
         });
 
         describe('methods', function() {
-            var saveDeffered,
+            var saveDeffered, advertiser,
                 success, failure;
 
             beforeEach(function() {
                 success = jasmine.createSpy('success()');
                 failure = jasmine.createSpy('failure()');
 
+                advertiser = cinema6.db.create('advertiser', {
+                    defaultLinks: {
+                        Facebook: 'https://www.facebook.com/pages/Diageo/108265212535624',
+                        Twitter: 'https://twitter.com/Diageo_News'
+                    },
+                    defaultLogos: {
+                        square: 'http://i.imgur.com/YbBIFZv.png'
+                    }
+                });
+
                 saveDeffered = $q.defer();
 
+                campaign.advertiser = advertiser;
                 spyOn(campaign, 'save').and.returnValue(saveDeffered.promise);
 
                 $scope.$apply(function() {
                     CampaignsNewCtrl.save().then(success, failure);
                 });
+            });
+
+            it('should inherit links and logos from the advertiser', function() {
+                expect(campaign).toEqual(jasmine.objectContaining({
+                    links: jasmine.objectContaining(advertiser.defaultLinks),
+                    logos: jasmine.objectContaining(advertiser.defaultLogos),
+                    miniReels: [],
+                    cards: []
+                }));
             });
 
             it('should save the campaign', function() {

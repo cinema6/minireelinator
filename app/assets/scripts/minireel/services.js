@@ -627,10 +627,31 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             }
 
             /**
+             * This method synchronizes a Card with the vote service. It will create/update
+             * elections as necessary.
+             */
+            this.syncCard = function(card) {
+                var ballot = card.ballot;
+
+                if (!ballot || ballot.choices.length < 1 || !!ballot.election) {
+                    return $q.when(card);
+                }
+
+                return cinema6.db.create('election', (function() {
+                    var data = { ballot: {} };
+                    data.ballot[card.id] = card.ballot.choices.map(function() { return 0; });
+                    return data;
+                }())).save().then(function(election) {
+                    card.ballot.election = election.id;
+                    return card;
+                });
+            };
+
+            /**
              * This method synchronizes a MiniReel with the vote service. It will create/update
              * elections as necessary.
              */
-            this.sync = function(minireel) {
+            this.syncMiniReel = function(minireel) {
                 function getItems(minireel) {
                     var deck = minireel.data.deck;
 
@@ -1676,7 +1697,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             this.publish = function(minireel) {
                 function saveElection(minireel) {
-                    return VoteService.sync(minireel);
+                    return VoteService.syncMiniReel(minireel);
                 }
 
                 return saveElection(minireel)
@@ -1698,6 +1719,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             this.erase = function(minireel) {
                 return minireel.erase();
+            };
+
+            this.convertCardForEditor = function(card) {
+                return makeCard(card);
             };
 
             this.convertForEditor = function(minireel, target) {
@@ -1729,9 +1754,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         filter(function(card) {
                             return card.type !== 'ad';
                         })
-                        .map(function(card) {
-                            return makeCard(card);
-                        }),
+                        .map(this.convertCardForEditor),
                     ads: minireel.data.deck
                         .reduce(function(ads, card, index) {
                             if (card.ad) {
@@ -1812,7 +1835,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     .then(createMinireel);
             };
 
-            this.convertCard = function(card, _minireel) {
+            this.convertCardForPlayer = function(card, _minireel) {
                 var dataTemplates, cardBases, cardType, dataType,
                     org = portal.cModel.org,
                     minireel = _minireel || {
@@ -2160,7 +2183,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             this.convertForPlayer = function(minireel, target) {
                 var deck = minireel.data.deck,
                     convertedDeck = deck.map(function(card) {
-                        return self.convertCard(card, minireel);
+                        return self.convertCardForPlayer(card, minireel);
                     });
 
                 forEach(minireel.data.ads, function(card, _index) {

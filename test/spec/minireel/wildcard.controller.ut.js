@@ -9,6 +9,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
             MiniReelService,
             cinema6,
             $scope,
+            WildcardState,
             CampaignCtrl,
             CampaignCreativesCtrl,
             WildcardCtrl;
@@ -25,6 +26,11 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                 c6State = $injector.get('c6State');
                 MiniReelService = $injector.get('MiniReelService');
                 cinema6 = $injector.get('cinema6');
+
+                WildcardState = c6State.get('MR:New:Wildcard');
+                card = WildcardState.card = cinema6.db.create('card', MiniReelService.createCard('videoBallot'));
+                delete card.id;
+                WildcardState.cModel = card.pojoify();
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
@@ -44,10 +50,10 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     });
 
                     WildcardCtrl = $scope.WildcardCtrl = $controller('WildcardController', {
-                        $scope: $scope
+                        $scope: $scope,
+                        cState: WildcardState
                     });
-                    card = WildcardCtrl.model = cinema6.db.create('card', MiniReelService.createCard('videoBallot'));
-                    delete card.id;
+                    WildcardCtrl.model = WildcardState.cModel;
                 });
             });
         });
@@ -100,27 +106,27 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
         describe('methods', function() {
             describe('save()', function() {
                 var success, failure,
-                    saveDeferred;
+                    updateCardDeferred;
 
                 beforeEach(function() {
                     success = jasmine.createSpy('success()');
                     failure = jasmine.createSpy('failure()');
 
-                    saveDeferred = $q.defer();
+                    updateCardDeferred = $q.defer();
 
                     spyOn(CampaignCreativesCtrl, 'add').and.callThrough();
-                    spyOn(card, 'save').and.returnValue(saveDeferred.promise);
+                    spyOn(WildcardState, 'updateCard').and.returnValue(updateCardDeferred.promise);
 
                     $scope.$apply(function() {
                         WildcardCtrl.save().then(success, failure);
                     });
                 });
 
-                it('should save the card', function() {
-                    expect(card.save).toHaveBeenCalled();
+                it('should update the card', function() {
+                    expect(WildcardState.updateCard).toHaveBeenCalled();
                 });
 
-                describe('when the save is completed', function() {
+                describe('when the update is completed', function() {
                     var goToDeferred;
 
                     beforeEach(function() {
@@ -130,7 +136,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
 
                         card.id = 'rc-e832762cc5e126';
                         $scope.$apply(function() {
-                            saveDeferred.resolve(card);
+                            updateCardDeferred.resolve(card);
                         });
                     });
 

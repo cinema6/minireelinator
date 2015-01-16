@@ -594,22 +594,14 @@
                                     EditorService.open(minireel, campaign);
                                 });
 
-                                it('should be pojo of the campaign', function() {
-                                    expect(state.campaign).toEqual(campaign.pojoify());
+                                it('should be the campaign', function() {
+                                    expect(state.campaign).toBe(campaign);
                                 });
 
                                 it('should not be mutatable', function() {
                                     expect(function() {
                                         state.campaign = null;
                                     }).toThrow();
-
-                                    try {
-                                        state.campaign.id = null;
-                                        state.campaign.advertiser.id = null;
-                                    } catch (e) {}
-
-                                    expect(state.campaign.id).not.toBeNull();
-                                    expect(state.campaign.advertiser.id).not.toBeNull();
                                 });
                             });
                         });
@@ -1175,7 +1167,7 @@
                             saveDeferred = $q.defer();
                             syncVoteDeferred = $q.defer();
 
-                            spyOn(VoteService, 'sync').and
+                            spyOn(VoteService, 'syncMiniReel').and
                                 .returnValue(syncVoteDeferred.promise);
                             spyOn(minireel, 'save').and.returnValue(saveDeferred.promise);
                         });
@@ -1223,7 +1215,7 @@
                             });
 
                             it('should not save the election with status pending',function(){
-                                expect(VoteService.sync).not.toHaveBeenCalled();
+                                expect(VoteService.syncMiniReel).not.toHaveBeenCalled();
                             });
 
                             it('should copy the data from the proxy to the editor minireel', function() {
@@ -1299,7 +1291,7 @@
                                         EditorService.sync().then(success);
                                         syncVoteDeferred.resolve(minireel);
                                     });
-                                    expect(VoteService.sync).toHaveBeenCalledWith(minireel);
+                                    expect(VoteService.syncMiniReel).toHaveBeenCalledWith(minireel);
                                 });
 
                                 it('should save the MiniReel', function() {
