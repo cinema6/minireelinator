@@ -368,7 +368,8 @@ function( angular , c6uilib , services          , c6Drag           ) {
                         $scrollBox = $element.find('#paginator-scroll-box'),
                         $scroller = $element.find('#paginator-scroller'),
                         scroller = $scroller.data('cDrag'),
-                        buttonWidth = 0;
+                        buttonWidthWithMargin = 0,
+                        margin = 0;
 
                     function getScrollBoxRect() {
                         return $scrollBox[0].getBoundingClientRect();
@@ -412,10 +413,12 @@ function( angular , c6uilib , services          , c6Drag           ) {
 
                     scope.$watch('ready', function(ready) {
                         if (ready) {
-                            var buttons = scope.deck.length + 1,
+                            var buttons = $list.find('li'),
                                 listWidth = $list.width();
 
-                            buttonWidth = listWidth / buttons;
+                            buttonWidthWithMargin = buttons[1].getBoundingClientRect().left -
+                                buttons[0].getBoundingClientRect().left;
+                            margin = buttonWidthWithMargin - buttons.width();
                             scope.scrollBoxWidth = listWidth;
                             scope.scrollerWidth = listWidth * scope.scrollerViewRatio;
                         }
@@ -424,10 +427,10 @@ function( angular , c6uilib , services          , c6Drag           ) {
                     scope.$watch('scrollerViewRatio', function(ratio) {
                         if (!scope.ready) { return; }
 
-                        var scrollBoxWidth = buttonWidth;
+                        var scrollBoxWidth = buttonWidthWithMargin - margin;
 
                         scope.deck.forEach(function() {
-                            scrollBoxWidth += buttonWidth;
+                            scrollBoxWidth += buttonWidthWithMargin;
                         });
 
                         scope.scrollBoxWidth = scrollBoxWidth;
