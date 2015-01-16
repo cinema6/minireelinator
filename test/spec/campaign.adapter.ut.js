@@ -61,7 +61,7 @@ define(['app'], function(appModule) {
 
         describe('decorateCampaign(campaign)', function() {
             var campaign,
-                advertiserId, customerId, miniReelIds, cardIds, targetMiniReelIds,
+                advertiserId, customerId, miniReelIds, cardIds,
                 minireels, cards, advertisers, customers;
 
             beforeEach(function() {
@@ -69,32 +69,8 @@ define(['app'], function(appModule) {
                     id: 'c-c66191ccc3eb37',
                     advertiserId: 'a-3f7cf5012b15b4',
                     customerId: 'cus-5156b33a6f834c',
-                    miniReels: [
-                        {
-                            id: 'e-18306aa3d27d54',
-                            adtechId: '1234567'
-                        },
-                        {
-                            id: 'e-f3b45211f2d9b7',
-                            adtechId: '7654321'
-                        }
-                    ],
-                    cards: [
-                        {
-                            id: 'rc-223a31e4d985c4',
-                            adtechId: '24681379'
-                        },
-                        {
-                            id: 'rc-06f6db8ba1877f',
-                            adtechId: '13792468'
-                        }
-                    ],
-                    targetMiniReels: [
-                        {
-                            id: 'e-e182df71093fdd',
-                            adtechId: '86429753'
-                        }
-                    ],
+                    miniReels: ['e-18306aa3d27d54', 'e-f3b45211f2d9b7'],
+                    cards: ['rc-223a31e4d985c4','rc-06f6db8ba1877f'],
                     staticCardMap: {
                         'e-d43686a9835df1': {
                             'rc-72ba2dff0fdebf': 'rc-223a31e4d985c4',
@@ -120,15 +96,8 @@ define(['app'], function(appModule) {
 
                 advertiserId = campaign.advertiserId;
                 customerId = campaign.customerId;
-                miniReelIds = campaign.miniReels.map(function(data) {
-                    return data.id;
-                });
-                cardIds = campaign.cards.map(function(data) {
-                    return data.id;
-                });
-                targetMiniReelIds = campaign.targetMiniReels.map(function(data) {
-                    return data.id;
-                });
+                miniReelIds = campaign.miniReels.slice();
+                cardIds = campaign.cards.slice();
 
                 advertisers = {
                     'a-3f7cf5012b15b4': {
@@ -225,9 +194,6 @@ define(['app'], function(appModule) {
                 }));
                 expect(campaign.cards).toEqual(cardIds.map(function(id) {
                     return cards[id];
-                }));
-                expect(campaign.targetMiniReels).toEqual(targetMiniReelIds.map(function(id) {
-                    return minireels[id];
                 }));
             });
 
@@ -472,15 +438,6 @@ define(['app'], function(appModule) {
                             data: {}
                         }
                     ],
-                    targetMiniReels: [
-                        {
-                            id: 'e-287bb6c1441a04',
-                            title: 'It\'s a Target!',
-                            data: {
-                                deck: [{}]
-                            }
-                        }
-                    ],
                     staticCardMap: [],
                     miniReelGroups: []
                 };
@@ -489,19 +446,10 @@ define(['app'], function(appModule) {
                     advertiserId: campaign.advertiser.id,
                     customerId: campaign.customer.id,
                     miniReels: campaign.miniReels.map(function(minireel) {
-                        return {
-                            id: minireel.id
-                        };
+                        return minireel.id;
                     }),
                     cards: campaign.cards.map(function(card) {
-                        return {
-                            id: card.id
-                        };
-                    }),
-                    targetMiniReels: campaign.targetMiniReels.map(function(minireel) {
-                        return {
-                            id: minireel.id
-                        };
+                        return card.id;
                     }),
                     staticCardMap: {}
                 }));
@@ -560,24 +508,8 @@ define(['app'], function(appModule) {
                     created: '2014-12-01T23:26:46.182Z',
                     advertiserId: 'a-6d54ea5400aa8e',
                     customerId: 'cus-1e061e7a787603',
-                    miniReels: [
-                        {
-                            id: 'e-5b984daae2786c',
-                            adtechId: '1234567'
-                        }
-                    ],
-                    cards: [
-                        {
-                            id: 'rc-ddc10b88e25b44',
-                            adtechId: '7654321'
-                        }
-                    ],
-                    targetMiniReels: [
-                        {
-                            id: 'e-6bcadd5f84d9d8',
-                            adtechId: '24681379'
-                        }
-                    ],
+                    miniReels: ['e-5b984daae2786c'],
+                    cards: ['rc-ddc10b88e25b44'],
                     staticCardMap: {
                         'e-50a82df1192d11': {
                             'rc-7bd45eb26582e5': 'rc-789f23554ad597',

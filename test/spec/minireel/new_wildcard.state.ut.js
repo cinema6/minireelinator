@@ -77,7 +77,7 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
             });
 
             it('should be a new card', function() {
-                expect(MiniReelService.createCard).toHaveBeenCalledWith('videoBallot');
+                expect(MiniReelService.createCard).toHaveBeenCalledWith('video');
                 expect(cinema6.db.create).toHaveBeenCalledWith('card', cardTemplate);
                 expect(result).toBe(card);
             });

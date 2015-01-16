@@ -9,20 +9,7 @@ VideoCardController           ) {
         copy = angular.copy,
         forEach = angular.forEach,
         isDefined = angular.isDefined,
-        isObject = angular.isObject,
         noop = angular.noop;
-
-    function deepFreeze(object) {
-        forEach(object, function(value) {
-            if (isObject(value)) {
-                deepFreeze(value);
-            }
-        });
-
-        Object.freeze(object);
-
-        return object;
-    }
 
     return angular.module('c6.app.minireel.editor', [
         videoSearch.name,
@@ -320,7 +307,7 @@ VideoCardController           ) {
                 _private.editorMinireel = editorMinireel;
                 _private.proxy = proxy;
 
-                _private.campaign = campaign ? deepFreeze(campaign.pojoify()) : null;
+                _private.campaign = campaign || null;
 
                 return proxy;
             };
@@ -344,7 +331,7 @@ VideoCardController           ) {
                         return $q.when(minireel);
                     }
 
-                    return VoteService.sync(minireel);
+                    return VoteService.syncMiniReel(minireel);
                 }
 
                 if (!minireel) {
@@ -769,6 +756,17 @@ VideoCardController           ) {
                         ConfirmDialogService.close();
                     }
                 });
+            };
+
+            this.returnToCampaign = function() {
+                var campaign = this.campaign;
+
+                return this.save().then(function() {
+                    return c6State.goTo('MR:Campaign.Creatives', [campaign, null]);
+                }).then(function() {
+                    return campaign;
+                });
+
             };
 
             this.backToDashboard = function() {
@@ -1686,7 +1684,7 @@ VideoCardController           ) {
                         }
 
                         if(newCard) {
-                            card = MiniReelService.convertCard(newCard, experience);
+                            card = MiniReelService.convertCardForPlayer(newCard, experience);
                             session.ping('mrPreview:jumpToCard', card);
                         } else {
                             card = null;

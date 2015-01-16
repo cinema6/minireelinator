@@ -349,20 +349,31 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
             }]);
 
-            $provide.constant('CardAdapter', ['config','$http','$q',
-            function                         ( config , $http , $q ) {
+            $provide.constant('CardAdapter', ['config','$http','$q','MiniReelService',
+                                              'VoteService',
+            function                         ( config , $http , $q , MiniReelService ,
+                                               VoteService ) {
+                var convertCardForEditor = MiniReelService.convertCardForEditor,
+                    convertCardForPlayer = MiniReelService.convertCardForPlayer;
+
                 function url(end) {
                     return config.apiBase + '/content/' + end;
                 }
 
+                function convertCardsForEditor(cards) {
+                    return cards.map(MiniReelService.convertCardForEditor);
+                }
+
                 this.findAll = function() {
                     return $http.get(url('cards'))
-                        .then(pick('data'));
+                        .then(pick('data'))
+                        .then(convertCardsForEditor);
                 };
 
                 this.find = function(type, id) {
                     return $http.get(url('card/' + id))
                         .then(pick('data'))
+                        .then(convertCardForEditor)
                         .then(putInArray);
                 };
 
@@ -371,12 +382,16 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         .then(pick('data'), function(response) {
                             return response.status === 404 ?
                                 [] : $q.reject(response);
-                        });
+                        })
+                        .then(convertCardsForEditor);
                 };
 
                 this.create = function(type, data) {
-                    return $http.post(url('card'), data)
-                        .then(pick('data'))
+                    return VoteService.syncCard(convertCardForPlayer(data))
+                        .then(function(data) {
+                            return $http.post(url('card'), data).then(pick('data'));
+                        })
+                        .then(MiniReelService.convertCardForEditor)
                         .then(putInArray);
                 };
 
@@ -386,8 +401,11 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
 
                 this.update = function(type, card) {
-                    return $http.put(url('card/' + card.id), card)
-                        .then(pick('data'))
+                    return VoteService.syncCard(convertCardForPlayer(card))
+                        .then(function(card) {
+                            return $http.put(url('card/' + card.id), card).then(pick('data'));
+                        })
+                        .then(convertCardForEditor)
                         .then(putInArray);
                 };
             }]);
@@ -506,12 +524,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                                                   'MiniReelService',
             function                             ( config , $http , $q , cinema6 ,
                                                    MiniReelService ) {
-                var adapter = this,
-                    adtechIdCache = {
-                        miniReels: {},
-                        cards: {},
-                        targetMiniReels: {}
-                    };
+                var adapter = this;
 
                 function url(end) {
                     return config.apiBase + '/' + end;
@@ -523,55 +536,42 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     }));
                 }
 
-                function cacheAdtechId(type, data) {
-                    adtechIdCache[type][data.id] = data.adtechId;
-                }
-
                 function undecorateCampaign(campaign) {
-                    return extend(
-                        campaign,
-                        ['miniReels', 'cards', 'targetMiniReels']
-                        .reduce(function(result, prop) {
-                            result[prop] = campaign[prop].map(function(item) {
-                                return {
-                                    id: item.id,
-                                    adtechId: adtechIdCache[prop][item.id]
-                                };
+                    return extend(campaign, {
+                        advertiser: undefined,
+                        advertiserId: campaign.advertiser.id,
+
+                        customer: undefined,
+                        customerId: campaign.customer.id,
+
+                        cards: campaign.cards.map(pick('id')),
+                        miniReels: campaign.miniReels.map(pick('id')),
+
+                        staticCardMap: (function() {
+                            function hasWildcard(entry) {
+                                return !!entry.wildcard;
+                            }
+
+                            return campaign.staticCardMap.filter(function(entry) {
+                                return entry.cards.some(hasWildcard);
+                            }).reduce(function(result, entry) {
+                                result[entry.minireel.id] = entry.cards
+                                    .filter(hasWildcard)
+                                    .reduce(function(result, entry) {
+                                        result[entry.placeholder.id] = entry.wildcard.id;
+                                        return result;
+                                    }, {});
+                                return result;
+                            }, {});
+                        }()),
+
+                        miniReelGroups: campaign.miniReelGroups.map(function(group) {
+                            return extend(group, {
+                                miniReels: group.miniReels.map(pick('id')),
+                                cards: group.cards.map(pick('id'))
                             });
-                            return result;
-                        }, {
-                            advertiser: undefined,
-                            advertiserId: campaign.advertiser.id,
-
-                            customer: undefined,
-                            customerId: campaign.customer.id,
-
-                            staticCardMap: (function() {
-                                function hasWildcard(entry) {
-                                    return !!entry.wildcard;
-                                }
-
-                                return campaign.staticCardMap.filter(function(entry) {
-                                    return entry.cards.some(hasWildcard);
-                                }).reduce(function(result, entry) {
-                                    result[entry.minireel.id] = entry.cards
-                                        .filter(hasWildcard)
-                                        .reduce(function(result, entry) {
-                                            result[entry.placeholder.id] = entry.wildcard.id;
-                                            return result;
-                                        }, {});
-                                    return result;
-                                }, {});
-                            }()),
-
-                            miniReelGroups: campaign.miniReelGroups.map(function(group) {
-                                return extend(group, {
-                                    miniReels: group.miniReels.map(pick('id')),
-                                    cards: group.cards.map(pick('id'))
-                                });
-                            })
                         })
-                    );
+                    });
                 }
 
                 this.decorateCampaign = function(campaign) {
@@ -584,25 +584,13 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         };
                     }
 
-                    ['miniReels', 'cards', 'targetMiniReels']
-                        .forEach(function(prop) {
-                            campaign[prop].forEach(function(data) {
-                                cacheAdtechId(prop, data);
-                            });
-                        });
-
                     return $q.all({
                         customer: getDbModel('customer')(campaign.customerId),
                         advertiser: getDbModel('advertiser')(campaign.advertiserId),
-                        miniReels: $q.all(
-                            campaign.miniReels.map(pick('id')).map(getDbModel('experience'))
-                        ),
-                        cards: $q.all(
-                            campaign.cards.map(pick('id')).map(getDbModel('card'))
-                        ),
-                        targetMiniReels: $q.all(
-                            campaign.targetMiniReels.map(pick('id')).map(getDbModel('experience'))
-                        ),
+
+                        miniReels: $q.all(campaign.miniReels.map(getDbModel('experience'))),
+                        cards: $q.all(campaign.cards.map(getDbModel('card'))),
+
                         staticCardMap: $q.all(Object.keys(staticCardMap).map(function(minireelId) {
                             var map = staticCardMap[minireelId],
                                 findMiniReel = getDbModel('experience')(minireelId);

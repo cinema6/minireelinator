@@ -99,6 +99,16 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     }
                 });
             };
+
+            this.targetMiniReelsOf = function(campaign) {
+                return campaign.miniReelGroups.map(function(group) {
+                    return group.miniReels;
+                }).reduce(function(result, minireels) {
+                    return result.concat(minireels);
+                }, []).filter(function(minireel, index, minireels) {
+                    return minireels.indexOf(minireel) === index;
+                });
+            };
         }])
 
         .config(['c6StateProvider',
@@ -123,7 +133,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             links: {},
                             miniReels: [],
                             cards: [],
-                            targetMiniReels: [],
                             staticCardMap: [],
                             miniReelGroups: []
                         }),
@@ -158,6 +167,13 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             };
 
             this.save = function() {
+                var advertiser = this.model.advertiser;
+
+                deepExtend(this.model, {
+                    links: advertiser.defaultLinks,
+                    logos: advertiser.defaultLogos
+                });
+
                 return this.model.save()
                     .then(function(campaign) {
                         return c6State.goTo('MR:Campaign', [campaign]);
@@ -174,7 +190,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.controllerAs = 'CampaignCtrl';
 
                 this.enter = function() {
-                    c6State.goTo('MR:Campaign.General');
+                    c6State.goTo('MR:Campaign.General', null, null, true);
                 };
 
                 this.model = function(params) {
@@ -183,7 +199,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignController', [function() {
+        .controller('CampaignController', ['$scope',
+        function                          ( $scope ) {
             var CampaignCtrl = this;
 
             function createModelLinks(uiLinks) {
@@ -242,6 +259,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
                 return this.model.save().then(function(campaign) {
                     CampaignCtrl.cleanModel = campaign.pojoify();
+                    $scope.$broadcast('CampaignCtrl:campaignDidSave');
 
                     return campaign;
                 });
@@ -477,7 +495,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
                 this.model = function() {
                     var campaign = CampaignState.cModel,
-                        card = cinema6.db.create('card', MiniReelService.createCard('videoBallot'));
+                        card = cinema6.db.create('card', MiniReelService.createCard('video'));
 
                     return deepExtend(card, {
                         id: undefined,
@@ -526,14 +544,24 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.controller = 'WildcardController';
                 this.controllerAs = 'WildcardCtrl';
 
+                this.card = null;
+
+                this.beforeModel = function() {
+                    this.card = this.cParent.cModel;
+                };
+
                 this.model = function() {
-                    return this.cParent.cModel;
+                    return this.card.pojoify();
+                };
+
+                this.updateCard = function() {
+                    return this.card._update(this.cModel).save();
                 };
             }]);
         }])
 
-        .controller('WildcardController', ['$injector','$scope','c6State',
-        function                          ( $injector , $scope , c6State ) {
+        .controller('WildcardController', ['$injector','$scope','c6State','cState',
+        function                          ( $injector , $scope , c6State , cState ) {
             var CampaignCreativesCtrl = $scope.CampaignCreativesCtrl;
 
             $injector.invoke(WizardController, this);
@@ -568,14 +596,11 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             ];
 
             this.save = function() {
-                var card = this.model;
-
-                return this.model.save().then(function() {
+                return cState.updateCard().then(function(card) {
                     return CampaignCreativesCtrl.add(card);
-                }).then(function() {
-                    return c6State.goTo('MR:Campaign.Creatives');
-                }).then(function() {
-                    return card;
+                }).then(function(card) {
+                    return c6State.goTo('MR:Campaign.Creatives')
+                        .then(function() { return card; });
                 });
             };
         }])
@@ -696,7 +721,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 },
                 skipTime: {
                     get: function() {
-                        return MiniReelService.convertCard(this.model).data.skip;
+                        return MiniReelService.convertCardForPlayer(this.model).data.skip;
                     },
                     set: function(value) {
                         this.model.data.skip = value;
@@ -816,8 +841,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignPlacementsController', ['$scope','c6State','$injector',
-        function                                    ( $scope , c6State , $injector ) {
+        .controller('CampaignPlacementsController', ['$scope','c6State','$injector','cState',
+        function                                    ( $scope , c6State , $injector , cState ) {
             var CampaignPlacementsCtrl = this;
 
             function overwrite(array, newArray) {
@@ -832,10 +857,14 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 }, null);
             }
 
-            function createCardEntries(minireel) {
+            function wildcardsOf(minireel) {
                 return minireel.data.deck.filter(function(card) {
                     return card.type === 'wildcard';
-                }).map(function(placeholder) {
+                });
+            }
+
+            function createCardEntries(minireel) {
+                return wildcardsOf(minireel).map(function(placeholder) {
                     return {
                         placeholder: placeholder,
                         wildcard: null
@@ -885,11 +914,19 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 });
             };
 
+            this.availableSlotsIn = function(minireel) {
+                return wildcardsOf(minireel).length;
+            };
+
             this.isNotAlreadyTargeted = function(minireel) {
                 return CampaignPlacementsCtrl.model.map(function(entry) {
                     return entry.minireel;
                 }).indexOf(minireel) < 0;
             };
+
+            $scope.$on('CampaignCtrl:campaignDidSave', function() {
+                CampaignPlacementsCtrl.initWithModel(cState.cModel);
+            });
         }])
 
         .config(['c6StateProvider',
@@ -1027,14 +1064,27 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.controller = 'MiniReelGroupController';
                 this.controllerAs = 'MiniReelGroupCtrl';
 
+                this.group = null;
+
+                this.beforeModel = function() {
+                    this.group = this.cParent.cModel;
+                };
+
                 this.model = function() {
-                    return this.cParent.cModel;
+                    return extend(copy(this.group), {
+                        miniReels: this.group.miniReels.slice(),
+                        cards: this.group.cards.slice()
+                    });
+                };
+
+                this.updateGroup = function() {
+                    return shallowCopy(this.cModel, this.group);
                 };
             }]);
         }])
 
-        .controller('MiniReelGroupController', ['$scope','c6State','$injector',
-        function                               ( $scope , c6State , $injector ) {
+        .controller('MiniReelGroupController', ['$scope','c6State','$injector','cState',
+        function                               ( $scope , c6State , $injector , cState ) {
             var CampaignMiniReelGroupsCtrl = $scope.CampaignMiniReelGroupsCtrl;
 
             $injector.invoke(WizardController, this);
@@ -1055,7 +1105,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             ];
 
             this.save = function() {
-                CampaignMiniReelGroupsCtrl.add(this.model);
+                CampaignMiniReelGroupsCtrl.add(cState.updateGroup());
 
                 return c6State.goTo('MR:Campaign.MiniReelGroups');
             };

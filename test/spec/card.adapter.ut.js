@@ -15,7 +15,12 @@ define(['app'], function(appModule) {
     describe('CardAdapter', function() {
         var CardAdapter,
             adapter,
-            $httpBackend;
+            $httpBackend,
+            $q,
+            c6State,
+            PortalState,
+            MiniReelService,
+            VoteService;
 
         var success, failure;
 
@@ -28,6 +33,13 @@ define(['app'], function(appModule) {
             inject(function($injector) {
                 CardAdapter = $injector.get('CardAdapter');
                 $httpBackend = $injector.get('$httpBackend');
+                $q = $injector.get('$q');
+                c6State = $injector.get('c6State');
+                MiniReelService = $injector.get('MiniReelService');
+                VoteService = $injector.get('VoteService');
+
+                PortalState = c6State.get('Portal');
+                PortalState.cModel = {};
 
                 CardAdapter.config = {
                     apiBase: '/api'
@@ -66,8 +78,8 @@ define(['app'], function(appModule) {
                 $httpBackend.flush();
             });
 
-            it('should resolve to the cards', function() {
-                expect(success).toHaveBeenCalledWith(cards);
+            it('should resolve to the cards in the editor format', function() {
+                expect(success).toHaveBeenCalledWith(cards.map(MiniReelService.convertCardForEditor));
             });
         });
 
@@ -91,7 +103,7 @@ define(['app'], function(appModule) {
             });
 
             it('should respond with the card wrapped in an array', function() {
-                expect(success).toHaveBeenCalledWith([card]);
+                expect(success).toHaveBeenCalledWith([MiniReelService.convertCardForEditor(card)]);
             });
         });
 
@@ -120,7 +132,7 @@ define(['app'], function(appModule) {
             });
 
             it('should resolve to the cards', function() {
-                expect(success).toHaveBeenCalledWith(cards);
+                expect(success).toHaveBeenCalledWith(cards.map(MiniReelService.convertCardForEditor));
             });
 
             describe('if there is a 404', function() {
@@ -167,22 +179,32 @@ define(['app'], function(appModule) {
         });
 
         describe('create(type, data)', function() {
-            var card, response;
+            var card, electionCard, response;
 
             beforeEach(function() {
                 card = {
                     title: 'wiuhfu4rrf4',
                     note: 'ksjd skdjfh sdkfh',
-                    type: 'youtube',
+                    type: 'video',
                     data: {
+                        service: 'youtube',
                         start: 5,
                         end: 25
                     }
                 };
 
-                response = extend(card, { id: 'rc-8a868fb3d0d9b8' });
+                electionCard = extend(MiniReelService.convertCardForPlayer(card), {
+                    ballot: {
+                        prompt: 'Hello!',
+                        choices: ['Hello', 'Goodbye']
+                    }
+                });
 
-                $httpBackend.expectPOST('/api/content/card', card)
+                spyOn(VoteService, 'syncCard').and.returnValue($q.when(electionCard));
+
+                response = extend(electionCard, { id: 'rc-8a868fb3d0d9b8' });
+
+                $httpBackend.expectPOST('/api/content/card', electionCard)
                     .respond(201, response);
 
                 adapter.create('card', card).then(success, failure);
@@ -191,7 +213,7 @@ define(['app'], function(appModule) {
             });
 
             it('should respond with the response in an array', function() {
-                expect(success).toHaveBeenCalledWith([response]);
+                expect(success).toHaveBeenCalledWith([MiniReelService.convertCardForEditor(response)]);
             });
         });
 
@@ -221,24 +243,34 @@ define(['app'], function(appModule) {
         });
 
         describe('update(type, model)', function() {
-            var id, card, response;
+            var id, card, electionCard, response;
 
             beforeEach(function() {
                 id = 'rc-8780863cdbbff5';
 
                 card = {
                     id: id,
-                    type: 'youtube',
+                    type: 'video',
                     lastUpdated: '2014-12-01T17:32:59.916Z',
                     data: {
+                        source: 'vimeo',
                         autoplay: false,
                         autoadvance: true
                     }
                 };
 
-                response = extend(card, { lastUpdated: (new Date()).toISOString() });
+                electionCard = extend(MiniReelService.convertCardForPlayer(card), {
+                    ballot: {
+                        prompt: 'Will it update?',
+                        choices: ['Yes', 'No']
+                    }
+                });
 
-                $httpBackend.expectPUT('/api/content/card/' + id, card)
+                spyOn(VoteService, 'syncCard').and.returnValue($q.when(electionCard));
+
+                response = extend(electionCard, { lastUpdated: (new Date()).toISOString() });
+
+                $httpBackend.expectPUT('/api/content/card/' + id, electionCard)
                     .respond(200, response);
 
                 adapter.update('card', card).then(success, failure);
@@ -247,7 +279,7 @@ define(['app'], function(appModule) {
             });
 
             it('should respond with the result in an array', function() {
-                expect(success).toHaveBeenCalledWith([response]);
+                expect(success).toHaveBeenCalledWith([MiniReelService.convertCardForEditor(response)]);
             });
         });
     });
