@@ -211,7 +211,7 @@
                                 advertiser: cinema6.db.create('advertiser', {
                                     id: 'a-194f90241797ed'
                                 })
-                            }).pojoify();
+                            });
 
                             EditorCtrl.initWithModel({});
                         });
@@ -957,6 +957,66 @@
 
                         it('should resolve the promise', function() {
                             expect(success).toHaveBeenCalledWith(cModel);
+                        });
+                    });
+                });
+
+                describe('returnToCampaign()', function() {
+                    var success, failure,
+                        saveDeferred;
+
+                    beforeEach(function() {
+                        success = jasmine.createSpy('success()');
+                        failure = jasmine.createSpy('failure()');
+
+                        saveDeferred = $q.defer();
+
+                        EditorCtrl.campaign = cinema6.db.create('campaign', {
+                            id: 'cam-6cf12193448f16',
+                            links: {},
+                            logos: {},
+                            cards: [],
+                            miniReels: []
+                        });
+
+                        spyOn(EditorCtrl, 'save').and.returnValue(saveDeferred.promise);
+
+                        $scope.$apply(function() {
+                            EditorCtrl.returnToCampaign().then(success, failure);
+                        });
+                    });
+
+                    it('should save the MiniReel', function() {
+                        expect(EditorCtrl.save).toHaveBeenCalled();
+                    });
+
+                    describe('when the save completes', function() {
+                        var goToDeferred;
+
+                        beforeEach(function() {
+                            goToDeferred = $q.defer();
+
+                            spyOn(c6State, 'goTo').and.returnValue(goToDeferred.promise);
+
+                            $scope.$apply(function() {
+                                saveDeferred.resolve(cModel);
+                            });
+                        });
+
+                        it('should go to the "MR:Campaign.Creatives" state', function() {
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.Creatives', [EditorCtrl.campaign, null]);
+                        });
+
+                        describe('when the state transition completes', function() {
+                            beforeEach(function() {
+                                $scope.$apply(function() {
+                                    goToDeferred.resolve(c6State.get('MR:Campaign.Creatives'));
+                                });
+                            });
+
+                            it('should resolve to the campaign', function() {
+                                expect(success).toHaveBeenCalledWith(EditorCtrl.campaign);
+                            });
                         });
                     });
                 });

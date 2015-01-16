@@ -758,6 +758,17 @@ VideoCardController           ) {
                 });
             };
 
+            this.returnToCampaign = function() {
+                var campaign = this.campaign;
+
+                return this.save().then(function() {
+                    return c6State.goTo('MR:Campaign.Creatives', [campaign, null]);
+                }).then(function() {
+                    return campaign;
+                });
+
+            };
+
             this.backToDashboard = function() {
                 if (this.model.status === 'active' && this.minireelState.dirty) {
                     ConfirmDialogService.display({
