@@ -18,39 +18,6 @@ module.exports = function(http) {
         return path.resolve(__dirname, './' + type + '/' + id + '.json');
     }
 
-    function makeArray(length) {
-        var array = [];
-
-        while (array.length < length) {
-            array[array.length] = undefined;
-        }
-
-        return array;
-    }
-
-    function randomNumberBetween(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    }
-
-    function withAdtechIds(campaign) {
-        return extend(
-            campaign,
-            ['miniReels', 'cards', 'targetMiniReels']
-                .reduce(function(object, prop) {
-                    object[prop] = campaign[prop].map(function(data) {
-                        return extend({
-                            adtechId: makeArray(8)
-                                .map(function() {
-                                    return randomNumberBetween(1, 9);
-                                })
-                                .join('')
-                        }, data);
-                    });
-                    return object;
-                }, {})
-        );
-    }
-
     http.whenGET('/api/campaigns', function(request) {
         var filters = pluckExcept(request.query, ['sort', 'limit', 'skip']),
             page = withDefaults(mapObject(pluck(request.query, ['limit', 'skip']), parseFloat), {
@@ -123,16 +90,15 @@ module.exports = function(http) {
         var id = genId('c'),
             user = require('../auth/user_cache').user,
             currentTime = (new Date()).toISOString(),
-            campaign = withAdtechIds(extend({
+            campaign = extend({
                 miniReels: [],
-                cards: [],
-                targetMiniReels: []
+                cards: []
             }, request.body, {
                 created: currentTime,
                 user: user.id,
                 org: user.org,
                 lastUpdated: currentTime
-            }));
+            });
 
         grunt.file.write(objectPath('campaigns', id), JSON.stringify(campaign, null, '    '));
 
@@ -143,9 +109,9 @@ module.exports = function(http) {
         var id = idFromPath(request.pathname),
             filePath = objectPath('campaigns', id),
             current = grunt.file.readJSON(filePath),
-            campaign = withAdtechIds(extend(current, request.body, {
+            campaign = extend(current, request.body, {
                 lastUpdated: (new Date()).toISOString()
-            }));
+            });
 
         grunt.file.write(filePath, JSON.stringify(campaign, null, '    '));
 
