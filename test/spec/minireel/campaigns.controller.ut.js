@@ -69,6 +69,47 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
         }));
 
         describe('methods', function() {
+            describe('targetMiniReelsOf(campaign)', function() {
+                var minireels,
+                    result;
+
+                beforeEach(function() {
+                    var campaign;
+
+                    minireels = ['e-9771886e47feb6', 'e-3db5141b52d952', 'e-90b814c1768205', 'e-f821c1eadfce57']
+                        .map(function(id) {
+                            return cinema6.db.create('experience', {
+                                id: id,
+                                data: {
+                                    deck: []
+                                }
+                            });
+                        });
+
+                    campaign = cinema6.db.create('campaign', {
+                        miniReelGroups: [
+                            {
+                                cards: [],
+                                miniReels: minireels.slice(0, 3)
+                            },
+                            {
+                                cards: [],
+                                miniReels: minireels.slice(-3)
+                            }
+                        ]
+                    });
+
+                    result = CampaignsCtrl.targetMiniReelsOf(campaign);
+                });
+
+                it('should return an array of all the minireels the campaign\'s groups include, but without duplicates', function() {
+                    expect(result.length).toBe(minireels.length);
+                    minireels.forEach(function(minireel) {
+                        expect(result).toContain(minireel);
+                    });
+                });
+            });
+
             describe('remove(campaigns)', function() {
                 var campaigns,
                     campaign1EraseDeferred, campaign2EraseDeferred,
