@@ -627,6 +627,27 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             }
 
             /**
+             * This method synchronizes a Card with the vote service. It will create/update
+             * elections as necessary.
+             */
+            this.syncCard = function(card) {
+                var ballot = card.ballot;
+
+                if (!ballot || ballot.choices.length < 1 || !!ballot.election) {
+                    return $q.when(card);
+                }
+
+                return cinema6.db.create('election', (function() {
+                    var data = { ballot: {} };
+                    data.ballot[card.id] = card.ballot.choices.map(function() { return 0; });
+                    return data;
+                }())).save().then(function(election) {
+                    card.ballot.election = election.id;
+                    return card;
+                });
+            };
+
+            /**
              * This method synchronizes a MiniReel with the vote service. It will create/update
              * elections as necessary.
              */
