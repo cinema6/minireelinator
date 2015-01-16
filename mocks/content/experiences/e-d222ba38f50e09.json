@@ -250,6 +250,28 @@
                     "rel": 0,
                     "modestbranding": 1
                 }
+            },
+            {
+                "data": {},
+                "id": "rc-9c9f7d68d16746",
+                "type": "recap",
+                "title": null,
+                "note": null,
+                "label": "Recap",
+                "view": "recap",
+                "ad": false,
+                "placementId": null,
+                "templateUrl": null,
+                "sponsored": false,
+                "campaign": {
+                    "campaignId": null,
+                    "advertiserId": null,
+                    "minViewTime": null
+                },
+                "collateral": {},
+                "thumb": null,
+                "links": {},
+                "params": {}
             }
         ],
         "election": "el-12d858332d17e1"

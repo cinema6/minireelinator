@@ -1,8 +1,10 @@
-define( ['angular','c6uilib','c6_state','minireel/services',
-'minireel/mixins/MiniReelListController'],
-function( angular , c6uilib , c6State  , services          ,
- MiniReelListController                 ) {
+define( ['angular','c6uilib','c6_state','./services',
+         './mixins/MiniReelListController','./mixins/PaginatedListState'],
+function( angular , c6uilib , c6State  , services   ,
+          MiniReelListController          , PaginatedListState          ) {
     'use strict';
+
+    var extend = angular.extend;
 
     return angular.module('c6.app.minireel.manager', [c6uilib.name, c6State.name, services.name])
         .config(['c6StateProvider',
@@ -22,22 +24,20 @@ function( angular , c6uilib , c6State  , services          ,
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('MR:Manager', ['cinema6','c6State','scopePromise','$location',
-            function                            ( cinema6 , c6State , scopePromise , $location ) {
-                var query = $location.search();
+                                                 '$injector',
+            function                            ( cinema6 , c6State , scopePromise , $location ,
+                                                  $injector ) {
+                $injector.invoke(PaginatedListState, this);
 
                 this.controller = 'ManagerController';
                 this.controllerAs = 'ManagerCtrl';
                 this.templateUrl = 'views/minireel/manager.html';
 
-                this.filter = query.filter || 'all';
-                this.limit = parseInt(query.limit) || 50;
-                this.page = parseInt(query.page) || 1;
+                this.filter = $location.search().filter || 'all';
 
-                this.queryParams = {
-                    filter: '=',
-                    limit: '=',
-                    page: '='
-                };
+                extend(this.queryParams, {
+                    filter: '='
+                });
 
                 this.model = function() {
                     return c6State.get('MiniReel')

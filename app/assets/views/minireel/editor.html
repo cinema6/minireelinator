@@ -44,6 +44,10 @@
             </form>
         </div>
         <div class="metaData__group">
+            <span ng-if="EditorCtrl.campaign">
+                <span>Campaign: <a c6-sref="MR:Campaign.Creatives" c6-models="[EditorCtrl.campaign, null]" c6-params="{}"><strong>{{EditorCtrl.campaign.name}}</strong></a></span>
+                <span class="typo--faded">&nbsp;|&nbsp;</span>
+            </span>
             <span ng-if="PortalCtrl.model.type !== 'ContentProvider'">
                 Type: <a c6-sref="MR:Settings.Mode" class="miniReel__type" title="AutoPlay MiniReel"><strong>{{EditorCtrl.prettyMode}}</strong></a> 
                 <span class="typo--faded">&nbsp;|&nbsp;</span>
@@ -74,20 +78,27 @@
                     <span class="btn__label">Preview Link</span>
                 </a>
             </div>
-            <button ng-click="EditorCtrl.publish()" ng-show="minireel.status === 'pending'" class="btnAction btnAction--success btnAction--hasFaIcon" type="button" title="Publish">
-                <span class="btn__label fab fa-cloud-upload">&nbsp; Publish MiniReel</span>
-            </button>
-            <button ng-click="EditorCtrl.confirmSave()" ng-show="EditorCtrl.model.status === 'active'"
-                ng-class="{
-                    'btn__publishChanges--alert': EditorCtrl.minireelState.dirty,
-                    'btn__publishChanges--waiting': EditorCtrl.minireelState.inFlight,
-                    'btn__publishChanges--disabled': !EditorCtrl.minireelState.dirty
-                }"
-                ng-disabled="!EditorCtrl.minireelState.dirty" title="Publish Changes" 
-                class="btnAction btnAction--success btn__publishChanges" type="button">
-                <span class="pubState c6studioSprite--alpha">&nbsp;</span>
-                <span class="btn__label">Publish Changes</span>
-            </button>
+            <span ng-if="!EditorCtrl.campaign">
+                <button ng-click="EditorCtrl.publish()" ng-show="minireel.status === 'pending'" class="btnAction btnAction--success btnAction--hasFaIcon" type="button" title="Publish">
+                    <span class="btn__label fab fa-cloud-upload">&nbsp; Publish MiniReel</span>
+                </button>
+                <button ng-click="EditorCtrl.confirmSave()" ng-show="EditorCtrl.model.status === 'active'"
+                    ng-class="{
+                        'btn__publishChanges--alert': EditorCtrl.minireelState.dirty,
+                        'btn__publishChanges--waiting': EditorCtrl.minireelState.inFlight,
+                        'btn__publishChanges--disabled': !EditorCtrl.minireelState.dirty
+                    }"
+                    ng-disabled="!EditorCtrl.minireelState.dirty" title="Publish Changes" 
+                    class="btnAction btnAction--success btn__publishChanges" type="button">
+                    <span class="pubState c6studioSprite--alpha">&nbsp;</span>
+                    <span class="btn__label">Publish Changes</span>
+                </button>
+            </span>
+            <span ng-if="!!EditorCtrl.campaign">
+                <button ng-click="EditorCtrl.returnToCampaign()" class="btnAction btnAction--success" type="button" title="Done">
+                    <span class="btn__label">Done</span>
+                </button>
+            </span>
             <button ng-click="EditorCtrl.previewMode()" title="Preview" 
             class="btnAction btnAction--primary btnAction--hasFaIcon" type="button">
                 

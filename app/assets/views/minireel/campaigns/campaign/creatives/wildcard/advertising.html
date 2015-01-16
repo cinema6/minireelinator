@@ -1,0 +1,24 @@
+<div class="modalBody__group modalBody__group--sideTabs mrAdManager__videoServer">
+    <form>
+        <h1 class="forms__name--title">Advertising</h1>
+        <p class="forms__introText">What advertising settings would you like this card to have?</p>
+
+        <label class="forms__pair clearfix">
+            <span class="forms__name">
+                Display ID <strong class="typo--danger">*</strong>
+            </span>
+            <span class="forms__inputHolder">
+                <input type="text" class="forms__textField forms__textField--block" ng-model="card.placementId">
+            </span>
+        </label>
+
+        <label class="forms__pair forms__pair--spacer clearfix">
+            <span class="forms__name">
+                Min. View Time <strong class="typo--danger">*</strong>
+            </span>
+            <span class="forms__inputHolder">
+                <input type="number" class="forms__textField forms__textField--block" ng-model="card.campaign.minViewTime">
+            </span>
+        </label>
+    </form>
+</div>

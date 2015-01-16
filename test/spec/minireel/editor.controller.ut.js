@@ -98,7 +98,8 @@
                     EditorService.state = {
                         dirty: false,
                         inFlight: false,
-                        minireel: cModel
+                        minireel: cModel,
+                        campaign: null
                     };
                     MiniReelService = $injector.get('MiniReelService');
                     ConfirmDialogService = $injector.get('ConfirmDialogService');
@@ -112,7 +113,8 @@
                     $scope = $rootScope.$new();
                     PortalCtrl = $scope.PortalCtrl = {
                         model: {
-                            org: {}
+                            org: {},
+                            permissions: {}
                         }
                     };
                     MiniReelCtrl = $scope.MiniReelCtrl = {
@@ -192,6 +194,31 @@
                 describe('model', function() {
                     it('should be the EditorService\'s MiniReel', function() {
                         expect(EditorCtrl.model).toBe(cModel);
+                    });
+                });
+
+                describe('campaign', function() {
+                    describe('if the MR is not part of a campaign', function() {
+                        it('should be null', function() {
+                            expect(EditorCtrl.campaign).toBeNull();
+                        });
+                    });
+
+                    describe('if the MR is part of a campaign', function() {
+                        beforeEach(function() {
+                            EditorService.state.campaign = cinema6.db.create('campaign', {
+                                id: 'cam-9ca56c92960d7d',
+                                advertiser: cinema6.db.create('advertiser', {
+                                    id: 'a-194f90241797ed'
+                                })
+                            });
+
+                            EditorCtrl.initWithModel({});
+                        });
+
+                        it('should be the campaign', function() {
+                            expect(EditorCtrl.campaign).toBe(EditorService.state.campaign);
+                        });
                     });
                 });
 
@@ -531,6 +558,16 @@
                         it('should be false', function() {
                             expect(EditorCtrl.canEditCard(card)).toBe(false);
                         });
+
+                        describe('if it is a wildcard', function() {
+                            beforeEach(function() {
+                                MiniReelService.setCardType(card, 'wildcard');
+                            });
+
+                            it('should be true', function() {
+                                expect(EditorCtrl.canEditCard(card)).toBe(true);
+                            });
+                        });
                     });
                 });
 
@@ -627,18 +664,8 @@
                         EditorCtrl.newCard(3);
                     });
 
-                    xit('should transition to the MR:NewCard state', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('MR:NewCard', null, {
-                            insertAt: 3
-                        });
-                    });
-
-                    it('should create a new videoBallot card', function() {
-                        expect(MiniReelService.createCard).toHaveBeenCalledWith('videoBallot');
-                    });
-
-                    it('should transition to the editor.editCard state with the card and the insertionIndex', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('MR:EditCard', [lastCreatedCard], {
+                    it('should go to the NewCard state', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor.NewCard', null, {
                             insertAt: 3
                         });
                     });
@@ -930,6 +957,66 @@
 
                         it('should resolve the promise', function() {
                             expect(success).toHaveBeenCalledWith(cModel);
+                        });
+                    });
+                });
+
+                describe('returnToCampaign()', function() {
+                    var success, failure,
+                        saveDeferred;
+
+                    beforeEach(function() {
+                        success = jasmine.createSpy('success()');
+                        failure = jasmine.createSpy('failure()');
+
+                        saveDeferred = $q.defer();
+
+                        EditorCtrl.campaign = cinema6.db.create('campaign', {
+                            id: 'cam-6cf12193448f16',
+                            links: {},
+                            logos: {},
+                            cards: [],
+                            miniReels: []
+                        });
+
+                        spyOn(EditorCtrl, 'save').and.returnValue(saveDeferred.promise);
+
+                        $scope.$apply(function() {
+                            EditorCtrl.returnToCampaign().then(success, failure);
+                        });
+                    });
+
+                    it('should save the MiniReel', function() {
+                        expect(EditorCtrl.save).toHaveBeenCalled();
+                    });
+
+                    describe('when the save completes', function() {
+                        var goToDeferred;
+
+                        beforeEach(function() {
+                            goToDeferred = $q.defer();
+
+                            spyOn(c6State, 'goTo').and.returnValue(goToDeferred.promise);
+
+                            $scope.$apply(function() {
+                                saveDeferred.resolve(cModel);
+                            });
+                        });
+
+                        it('should go to the "MR:Campaign.Creatives" state', function() {
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.Creatives', [EditorCtrl.campaign, null]);
+                        });
+
+                        describe('when the state transition completes', function() {
+                            beforeEach(function() {
+                                $scope.$apply(function() {
+                                    goToDeferred.resolve(c6State.get('MR:Campaign.Creatives'));
+                                });
+                            });
+
+                            it('should resolve to the campaign', function() {
+                                expect(success).toHaveBeenCalledWith(EditorCtrl.campaign);
+                            });
                         });
                     });
                 });

@@ -1,0 +1,19 @@
+{
+    "adtechId": "12345678",
+    "name": "The Bar (1)",
+    "categories": ["food"],
+    "advertiserId": "a-282824b8bb40a2",
+    "customerId": "cus-71e725f8bf33d5",
+    "logos": {
+        "square": "square.png"
+    },
+    "links": {},
+    "miniReels": [],
+    "cards": [],
+    "staticCardMap": {},
+    "miniReelGroups": [],
+    "created": "2014-12-02T17:32:49.228Z",
+    "user": "u-35b096c999711b",
+    "org": "o-e4e8b0f244bafc",
+    "lastUpdated": "2014-12-02T18:03:02.517Z"
+}

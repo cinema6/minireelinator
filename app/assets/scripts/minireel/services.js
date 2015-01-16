@@ -219,6 +219,123 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
         }])
 
+        .factory('paginatedDbList', ['scopePromise','cinema6',
+        function                    ( scopePromise , cinema6 ) {
+            function extend() {
+                var objects = Array.prototype.slice.call(arguments);
+
+                return objects.reduce(function(result, object) {
+                    return Object.keys(object).reduce(function(result, key) {
+                        result[key] = object[key];
+                        return result;
+                    }, result);
+                }, {});
+            }
+
+            function value(val) {
+                return function() {
+                    return val;
+                };
+            }
+
+            function copyProps(props, from, to) {
+                props.forEach(function(prop) {
+                    to[prop] = from[prop];
+                });
+
+                return to;
+            }
+
+            function PaginatedList(type, query, limit, page) {
+                this.type = type;
+                this.query = extend(query);
+                this.limit = limit;
+
+                this.goTo(page);
+            }
+            PaginatedList.prototype = {
+                ensureResolution: function() {
+                    return this.items.ensureResolution()
+                        .then(value(this));
+                },
+
+                update: function(query, limit) {
+                    this.query = extend(query);
+                    this.limit = limit;
+
+                    return this.goTo(1);
+                },
+                goTo: function(page) {
+                    var list = this,
+                        limit = this.limit,
+                        previousItems = this.items || {
+                            value: [],
+                            page: {},
+                            selected: []
+                        };
+
+                    this.page = page;
+
+                    this.items = scopePromise(cinema6.db.findAll(this.type, extend(this.query, {
+                        limit: this.limit,
+                        skip: (this.page - 1) * this.limit
+                    })), previousItems.value);
+                    copyProps(['page', 'selected'], previousItems, this.items);
+
+                    this.items.ensureResolution()
+                        .then(function(items) {
+                            var info = items.value.meta.items;
+
+                            items.page = {
+                                current: ((info.start - 1) / limit) + 1,
+                                total: Math.ceil(info.total / limit)
+                            };
+                            list.selectNone();
+                        });
+
+                    return this;
+                },
+                next: function() {
+                    return this.goTo(this.page + 1);
+                },
+                prev: function() {
+                    return this.goTo(Math.max(this.page - 1, 1));
+                },
+                refresh: function() {
+                    return this.goTo(this.page);
+                },
+
+                selectAll: function(_predicate) {
+                    var predicate = _predicate || value(true);
+
+                    /* jshint boss:true */
+                    return (this.items.selected = this.items.value.map(function() {
+                        return !!predicate.apply(null, arguments);
+                    }));
+                },
+                selectNone: function() {
+                    return this.selectAll(value(false));
+                },
+                getSelected: function() {
+                    return this.items.value.filter(function(item, index) {
+                        return this[index];
+                    }, this.items.selected);
+                },
+                areAllSelected: function(predicate) {
+                    return this.items.value
+                        .filter(predicate || value(true))
+                        .map(function(item) {
+                            return this.items.selected[this.items.value.indexOf(item)];
+                        }, this)
+                        .indexOf(false) < 0;
+                }
+            };
+
+            return function(type, query, limit, page) {
+                return new PaginatedList(type, query, limit, page || 1);
+            };
+        }])
+
         .factory('scopePromise', ['$q',
         function                 ( $q ) {
             function ScopedPromise(promise, initialValue) {
@@ -510,10 +627,31 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             }
 
             /**
+             * This method synchronizes a Card with the vote service. It will create/update
+             * elections as necessary.
+             */
+            this.syncCard = function(card) {
+                var ballot = card.ballot;
+
+                if (!ballot || ballot.choices.length < 1 || !!ballot.election) {
+                    return $q.when(card);
+                }
+
+                return cinema6.db.create('election', (function() {
+                    var data = { ballot: {} };
+                    data.ballot[card.id] = card.ballot.choices.map(function() { return 0; });
+                    return data;
+                }())).save().then(function(election) {
+                    card.ballot.election = election.id;
+                    return card;
+                });
+            };
+
+            /**
              * This method synchronizes a MiniReel with the vote service. It will create/update
              * elections as necessary.
              */
-            this.sync = function(minireel) {
+            this.syncMiniReel = function(minireel) {
                 function getItems(minireel) {
                     var deck = minireel.data.deck;
 
@@ -804,6 +942,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return new ThumbModel(_private.fetchDailyMotionThumbs(videoid));
                         case 'yahoo':
                         case 'aol':
+                        case 'rumble':
                             return new ThumbModel(_private.fetchOpenGraphThumbs(service, videoid));
                         default:
                             return new ThumbModel($q.when({
@@ -883,6 +1022,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     return 'http://on.aol.com/video/' + id;
                 case 'yahoo':
                     return 'https://screen.yahoo.com/' + id + '.html';
+                case 'rumble':
+                    return 'https://rumble.com/' + id + '.html';
 
                 }
             };
@@ -890,7 +1031,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             this.dataFromUrl = function(url) {
                 var parsed = c6UrlParser(url),
                     service = (parsed.hostname.match(
-                        /youtube|dailymotion|vimeo|aol|yahoo/
+                        /youtube|dailymotion|vimeo|aol|yahoo|rumble/
                     ) || [])[0],
                     id,
                     idFetchers = {
@@ -917,20 +1058,24 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         yahoo: function(url) {
                             return (url.pathname
                                 .match(/[^/]+(?=(\.html))/) || [null])[0];
+                        },
+                        rumble: function(url) {
+                            return (url.pathname
+                                .match(/[^/]+(?=(\.html))/) || [null])[0];
                         }
                     };
 
                 function params(search) {
-                    var pairs = search.split('&'),
-                        object = {};
+                    return search.split('&')
+                        .map(function(pair) {
+                            return pair.split('=')
+                                .map(decodeURIComponent);
+                        })
+                        .reduce(function(params, pair) {
+                            params[pair[0]] = pair[1];
 
-                    forEach(pairs, function(pair) {
-                        pair = pair.split('=');
-
-                        object[pair[0]] = pair[1];
-                    });
-
-                    return object;
+                            return params;
+                        }, {});
                 }
 
                 if (!service) { return null; }
@@ -943,6 +1088,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     service: service,
                     id: id
                 };
+            };
+
+            this.embedIdFromVideoId = function(service, videoid) {
+                switch (service) {
+                case 'rumble':
+                    return videoid.match(/^[^-]+/)[0]
+                        .replace(/^v/, '8.');
+
+                default:
+                    return videoid;
+                }
             };
 
             this.embedCodeFromData = function(service, id) {
@@ -1180,6 +1336,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'youtube':
                         case 'vimeo':
                         case 'dailymotion':
+                        case 'rumble':
                         case 'adUnit':
                         case 'embedded':
                             return 'video' + ((card.modules.indexOf('ballot') > -1) ?
@@ -1221,6 +1378,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     return 'Text';
                                 case 'displayAd':
                                     return 'Display Ad';
+                                case 'wildcard':
+                                    return 'Wildcard Placeholder';
 
                                 default:
                                     return null;
@@ -1247,7 +1406,15 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     },
                     placementId: copy(null),
                     templateUrl: copy(null),
-                    sponsored: copy(false),
+                    sponsored: function(card) {
+                        switch (this.type) {
+                        case 'wildcard':
+                            return true;
+
+                        default:
+                            return card.sponsored || false;
+                        }
+                    },
                     campaign: copy({
                         campaignId: null,
                         advertiserId: null,
@@ -1292,6 +1459,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return data.skip;
                         }
                     },
+                    controls: copy(true),
                     autoplay: copy(null),
                     autoadvance: copy(null),
                     survey: function(data, key, card) {
@@ -1302,7 +1470,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         var type = card.type;
 
                         return data.service ||
-                            (type.search(/^(youtube|dailymotion|vimeo|adUnit)$/) > -1 ?
+                            (type.search(/^(youtube|dailymotion|vimeo|adUnit|rumble)$/) > -1 ?
                                 type : null);
                     },
                     videoid: function(data, key, card) {
@@ -1312,6 +1480,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 vast: data.vast,
                                 vpaid: data.vpaid
                             });
+                        case 'rumble':
+                            return data.siteid || null;
                         default:
                             return data.videoid || null;
                         }
@@ -1355,7 +1525,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     displayAd: {
                         size: value('300x250')
                     },
-                    recap: {}
+                    recap: {},
+                    wildcard: {}
                 };
 
                 /******************************************************\
@@ -1458,7 +1629,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             }
 
             function enableModule(card, module) {
-                var modules = card.modules;
+                var modules = card.modules || [];
 
                 if (modules.indexOf(module) > -1) { return; }
 
@@ -1466,6 +1637,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             }
 
             function disableModule(card, module) {
+                if (!card.modules) { return; }
+
                 card.modules = card.modules.filter(function(cardModule) {
                     return cardModule !== module;
                 });
@@ -1524,7 +1697,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             this.publish = function(minireel) {
                 function saveElection(minireel) {
-                    return VoteService.sync(minireel);
+                    return VoteService.syncMiniReel(minireel);
                 }
 
                 return saveElection(minireel)
@@ -1546,6 +1719,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             this.erase = function(minireel) {
                 return minireel.erase();
+            };
+
+            this.convertCardForEditor = function(card) {
+                return makeCard(card);
             };
 
             this.convertForEditor = function(minireel, target) {
@@ -1577,9 +1754,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         filter(function(card) {
                             return card.type !== 'ad';
                         })
-                        .map(function(card) {
-                            return makeCard(card);
-                        }),
+                        .map(this.convertCardForEditor),
                     ads: minireel.data.deck
                         .reduce(function(ads, card, index) {
                             if (card.ad) {
@@ -1630,6 +1805,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     splash: null
                                 },
                                 params: {},
+                                links: {},
                                 deck: [self.createCard('recap')]
                             }
                         });
@@ -1640,9 +1816,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         title = minireel.data.title;
 
                     delete minireel.id;
+                    delete minireel.data.election;
                     minireel.data.title = toCopy ? (title + ' (copy)') : null;
                     minireel.status = 'pending';
                     minireel.access = 'public';
+                    minireel.data.deck.forEach(function(card) {
+                        card.id = generateId('rc');
+
+                        if (card.ballot) {
+                            delete card.ballot.election;
+                        }
+                    });
 
                     return minireel;
                 }
@@ -1651,7 +1835,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     .then(createMinireel);
             };
 
-            this.convertCard = function(card, _minireel) {
+            this.convertCardForPlayer = function(card, _minireel) {
                 var dataTemplates, cardBases, cardType, dataType,
                     org = portal.cModel.org,
                     minireel = _minireel || {
@@ -1675,14 +1859,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                     case 'youtube':
                         return 'YouTube';
-                    case 'vimeo':
-                        return 'Vimeo';
                     case 'dailymotion':
                         return 'DailyMotion';
                     case 'aol':
                         return 'AOL On';
                     case 'yahoo':
                         return 'Yahoo! Screen';
+                    case 'adUnit':
+                        return undefined;
+                    default:
+                        return (source || undefined) &&
+                            source.charAt(0).toUpperCase() + source.slice(1);
                     }
                 }
 
@@ -1738,6 +1925,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     youtube: {
                         hideSource: hideSourceValue(),
                         autoplay: copy(null),
+                        controls: copy(),
                         autoadvance: copy(null),
                         skip: skipValue(),
                         modestbranding: value(0),
@@ -1758,6 +1946,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     dailymotion: {
                         hideSource: hideSourceValue(),
                         autoplay: copy(null),
+                        controls: copy(),
                         autoadvance: copy(null),
                         skip: skipValue(),
                         start: trimmer(),
@@ -1765,9 +1954,24 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         related: value(0),
                         videoid: copy(null)
                     },
+                    rumble: {
+                        hideSource: hideSourceValue(),
+                        autoplay: copy(null),
+                        autoadvance: copy(null),
+                        skip: skipValue(),
+                        start: trimmer(),
+                        end: trimmer(),
+                        siteid: function(data) {
+                            return data.videoid;
+                        },
+                        videoid: function(data) {
+                            return VideoService.embedIdFromVideoId('rumble', data.videoid);
+                        }
+                    },
                     adUnit: {
                         hideSource: hideSourceValue(),
                         autoplay: copy(null),
+                        controls: copy(),
                         autoadvance: copy(null),
                         skip: skipValue(),
                         vast: function(data) {
@@ -1948,6 +2152,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 sponsor: minireel.data.params.sponsor
                             };
                         }
+                    },
+                    wildcard: {
+                        id: copy(),
+                        type: value('wildcard')
                     }
                 };
 
@@ -1975,7 +2183,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             this.convertForPlayer = function(minireel, target) {
                 var deck = minireel.data.deck,
                     convertedDeck = deck.map(function(card) {
-                        return self.convertCard(card, minireel);
+                        return self.convertCardForPlayer(card, minireel);
                     });
 
                 forEach(minireel.data.ads, function(card, _index) {

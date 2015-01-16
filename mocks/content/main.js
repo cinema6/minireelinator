@@ -14,13 +14,17 @@ module.exports = function(http) {
         withDefaults = fn.withDefaults,
         mapObject = fn.mapObject;
 
-    function experiencePath(id) {
-        return path.resolve(__dirname, './experiences/' + id + '.json');
+    function objectPath(type, id) {
+        return path.resolve(__dirname, './' + type + '/' + id + '.json');
     }
+
+    /***********************************************************************************************
+     * Experience Endpoints
+     **********************************************************************************************/
 
     http.whenGET('/api/content/experience/**', function(request) {
         var id = idFromPath(request.pathname),
-            experience = grunt.file.readJSON(experiencePath(id));
+            experience = grunt.file.readJSON(objectPath('experiences', id));
 
         if (experience) {
             this.respond(200, extend(experience, { id: id }));
@@ -92,7 +96,7 @@ module.exports = function(http) {
 
     http.whenPUT('/api/content/experience/**', function(request) {
         var id = idFromPath(request.pathname),
-            filePath = experiencePath(id),
+            filePath = objectPath('experiences', id),
             current = grunt.file.readJSON(filePath),
             newExperience = extend(current, request.body, {
                 lastUpdated: (new Date()).toISOString()
@@ -116,14 +120,99 @@ module.exports = function(http) {
                 lastUpdated: currentTime
             });
 
-        grunt.file.write(experiencePath(id), JSON.stringify(experience, null, '    '));
+        grunt.file.write(objectPath('experiences', id), JSON.stringify(experience, null, '    '));
 
         this.respond(201, extend(experience, { id: id }));
     });
 
     http.whenDELETE('/api/content/experience/**', function(request) {
-        grunt.file.delete(experiencePath(idFromPath(request.pathname)));
+        grunt.file.delete(objectPath('experiences', idFromPath(request.pathname)));
 
         this.respond(204, '');
+    });
+
+    /***********************************************************************************************
+     * Card Endpoints
+     **********************************************************************************************/
+
+    http.whenGET('/api/content/cards', function(request) {
+        this.respond(200, grunt.file.expand(path.resolve(__dirname, './cards/*.json'))
+            .map(function(path) {
+                var id = path.match(/[^\/]+(?=\.json)/)[0];
+
+                return extend(grunt.file.readJSON(path), { id: id });
+            }).filter(function(card) {
+                return Object.keys(request.query)
+                    .every(function(key) {
+                        return request.query[key] === card[key];
+                    });
+            }));
+    });
+
+    http.whenGET('/api/content/card/**', function(request) {
+        var id = idFromPath(request.pathname),
+            filePath = objectPath('cards', id),
+            card = grunt.file.exists(filePath) ? grunt.file.readJSON(filePath) : null;
+
+        if (card) {
+            this.respond(200, extend(card, { id: id }));
+        } else {
+            this.respond(404, 'NOT FOUND');
+        }
+    });
+
+    http.whenPOST('/api/content/card', function(request) {
+        var id = genId('rc'),
+            user = require('../auth/user_cache').user,
+            currentTime = (new Date()).toISOString(),
+            card = extend(request.body, {
+                created: currentTime,
+                user: user.id,
+                org: user.org,
+                lastUpdated: currentTime
+            });
+
+        grunt.file.write(objectPath('cards', id), JSON.stringify(card, null, '    '));
+
+        this.respond(201, extend(card, { id: id }));
+    });
+
+    http.whenPUT('/api/content/card/**', function(request) {
+        var id = idFromPath(request.pathname),
+            filePath = objectPath('cards', id),
+            current = grunt.file.readJSON(filePath),
+            card = extend(current, request.body, {
+                lastUpdated: (new Date()).toISOString()
+            });
+
+        grunt.file.write(filePath, JSON.stringify(card, null, '    '));
+
+        this.respond(200, extend(card, {
+            id: id
+        }));
+    });
+
+    http.whenDELETE('/api/content/card/**', function(request) {
+        grunt.file.delete(objectPath('cards', idFromPath(request.pathname)));
+
+        this.respond(204, '');
+    });
+
+    /***********************************************************************************************
+     * Category Endpoints
+     **********************************************************************************************/
+
+    http.whenGET('/api/content/categories', function(request) {
+        this.respond(200, grunt.file.expand(path.resolve(__dirname, './categories/*.json'))
+            .map(function(path) {
+                var id = path.match(/[^\/]+(?=\.json)/)[0];
+
+                return extend(grunt.file.readJSON(path), { id: id });
+            }).filter(function(card) {
+                return Object.keys(request.query)
+                    .every(function(key) {
+                        return request.query[key] === card[key];
+                    });
+            }));
     });
 };

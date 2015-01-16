@@ -1,12 +1,14 @@
 (function() {
     'use strict';
 
-    define(['minireel/services'], function(servicesModule) {
+    define(['app'], function(appModule) {
         describe('VoteService', function() {
             var VoteService,
                 cinema6,
+                c6State,
                 $q,
-                $rootScope;
+                $rootScope,
+                MiniReelService;
 
             var minireel;
 
@@ -208,14 +210,18 @@
                 };
                 /* jshint quotmark:single */
 
-                module(servicesModule.name);
+                module(appModule.name);
 
                 inject(function($injector) {
                     VoteService = $injector.get('VoteService');
                     cinema6 = $injector.get('cinema6');
+                    c6State = $injector.get('c6State');
                     $q = $injector.get('$q');
                     $rootScope = $injector.get('$rootScope');
+                    MiniReelService = $injector.get('MiniReelService');
                 });
+
+                c6State.get('Portal').cModel = {};
             });
 
             it('should exist', function() {
@@ -223,7 +229,161 @@
             });
 
             describe('methods', function() {
-                describe('sync(minireel)', function() {
+                describe('syncCard(card)', function() {
+                    var success, failure,
+                        editorCard, playerCard,
+                        election, saveDeferred;
+
+                    beforeEach(function() {
+                        var create = cinema6.db.create;
+
+                        success = jasmine.createSpy('success()');
+                        failure = jasmine.createSpy('failure()');
+
+                        saveDeferred = $q.defer();
+
+                        spyOn(cinema6.db, 'create').and.callFake(function() {
+                            election = create.apply(cinema6.db, arguments);
+
+                            spyOn(election, 'save').and.returnValue(saveDeferred.promise);
+
+                            return election;
+                        });
+
+                        editorCard = (function() {
+                            var card = MiniReelService.createCard('video');
+
+                            card.title = 'My Card';
+                            card.note = 'The best card ever!';
+                            card.sponsored = true;
+                            card.data.service = 'youtube';
+                            card.data.videoid = '2eydh8392r';
+
+                            return card;
+                        }());
+                    });
+
+                    describe('if the card has not ballot', function() {
+                        beforeEach(function() {
+                            playerCard = MiniReelService.convertCardForPlayer(editorCard);
+
+                            $rootScope.$apply(function() {
+                                VoteService.syncCard(playerCard).then(success, failure);
+                            });
+                        });
+
+                        it('should resolve to the card', function() {
+                            expect(success).toHaveBeenCalledWith(playerCard);
+                        });
+                    });
+
+                    describe('if the card has a ballot', function() {
+                        beforeEach(function() {
+                            editorCard.data.survey = {
+                                election: null,
+                                prompt: null,
+                                choices: []
+                            };
+                        });
+
+                        describe('if the user has not populated the ballot', function() {
+                            beforeEach(function() {
+                                $rootScope.$apply(function() {
+                                    playerCard = MiniReelService.convertCardForPlayer(editorCard);
+
+                                    VoteService.syncCard(playerCard).then(success, failure);
+                                });
+                            });
+
+                            it('should not create an election', function() {
+                                expect(cinema6.db.create).not.toHaveBeenCalledWith('election', jasmine.any(Object));
+                            });
+
+                            it('should resolve to the card', function() {
+                                expect(success).toHaveBeenCalledWith(playerCard);
+                            });
+                        });
+
+                        describe('if the user has populated the ballot', function() {
+                            beforeEach(function() {
+                                editorCard.data.survey.prompt = 'IS IT FRIDAY?';
+                                editorCard.data.survey.choices = ['YES', 'NO'];
+                            });
+
+                            describe('if the election has not be initialized', function() {
+                                beforeEach(function() {
+                                    playerCard = MiniReelService.convertCardForPlayer(editorCard);
+
+                                    $rootScope.$apply(function() {
+                                        VoteService.syncCard(playerCard).then(success, failure);
+                                    });
+                                });
+
+                                it('should create an election for the card', function() {
+                                    expect(cinema6.db.create).toHaveBeenCalledWith('election', (function() {
+                                        var data = { ballot: {} };
+
+                                        data.ballot[playerCard.id] = [0, 0];
+
+                                        return data;
+                                    }()));
+                                });
+
+                                it('should save the election', function() {
+                                    expect(election.save).toHaveBeenCalled();
+                                });
+
+                                describe('when the election has been saved', function() {
+                                    beforeEach(function() {
+                                        $rootScope.$apply(function() {
+                                            election.id = 'el-be99e1a4b671be';
+                                            saveDeferred.resolve(election);
+                                        });
+                                    });
+
+                                    it('should give the card\'s ballot a reference to the election id', function() {
+                                        expect(playerCard.ballot.election).toBe(election.id);
+                                    });
+
+                                    it('should resolve to the card', function() {
+                                        expect(success).toHaveBeenCalledWith(playerCard);
+                                    });
+                                });
+                            });
+
+                            describe('if the election has been initialized', function() {
+                                var election;
+
+                                beforeEach(function() {
+                                    editorCard.data.survey.election = 'el-f7e0bfc9e4d065';
+
+                                    playerCard = MiniReelService.convertCardForPlayer(editorCard);
+
+                                    election = cinema6.db.push('election', editorCard.data.survey.election, (function() {
+                                        var data = { ballot: {} };
+                                        data.ballot[playerCard.id] = [67, 22];
+                                        return data;
+                                    }()));
+
+                                    $rootScope.$apply(function() {
+                                        VoteService.syncCard(playerCard).then(success, failure);
+                                    });
+                                });
+
+                                it('should not create a new election', function() {
+                                    expect(cinema6.db.create).not.toHaveBeenCalledWith('election', jasmine.any(Object));
+                                });
+
+                                it('should resolve to the card', function() {
+                                    expect(success).toHaveBeenCalledWith(playerCard);
+                                });
+                            });
+                        });
+                    });
+
+                });
+
+                describe('syncMiniReel(minireel)', function() {
                     var success, failure,
                         elections, saveDeferreds;
 
@@ -248,7 +408,7 @@
                     describe('if no elections have been initialized', function() {
                         beforeEach(function() {
                             $rootScope.$apply(function() {
-                                VoteService.sync(minireel).then(success, failure);
+                                VoteService.syncMiniReel(minireel).then(success, failure);
                             });
                         });
 
@@ -372,7 +532,7 @@
                             });
 
                             $rootScope.$apply(function() {
-                                VoteService.sync(minireel).then(success, failure);
+                                VoteService.syncMiniReel(minireel).then(success, failure);
                             });
                         });
 
@@ -426,7 +586,7 @@
                             });
 
                             $rootScope.$apply(function() {
-                                VoteService.sync(minireel).then(success, failure);
+                                VoteService.syncMiniReel(minireel).then(success, failure);
                             });
                         });
 

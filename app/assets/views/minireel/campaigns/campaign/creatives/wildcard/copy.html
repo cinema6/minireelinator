@@ -1,0 +1,20 @@
+<div class="modalBody__group modalBody__group--sideTabs mrEdit__copyTab">
+    <form>
+        <label class="forms__pair clearfix">
+            <span class="forms__name">
+                Slide Title <strong class="typo--danger">*</strong>
+            </span>
+            <span class="forms__inputHolder">
+                <input ng-model="card.title" type="text" class="forms__textField forms__textField--block">
+                <span class="typo--guidance typo--warning">({{card.title.length || 0}} of 100 max characters recommended)</span>
+            </span>
+        </label>
+        <label class="forms__pair clearfix mrEdit__slideCopy">
+            <span class="forms__name">Slide Copy </span>
+            <span class="forms__inputHolder">
+                <textarea ng-model="card.note" class="forms__textField forms__textarea"></textarea>
+            </span>
+        </label>
+    </form>
+    <p class="modalBody__fineprint typo--danger"><strong>*</strong> Indicates required field.</p>
+</div>

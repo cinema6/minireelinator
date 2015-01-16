@@ -312,7 +312,7 @@ define(['app','minireel/mixins/VideoCardController'], function(appModule, VideoC
                 });
             });
 
-            describe('skip', function() {
+            describe('skipTime', function() {
                 describe('getting', function() {
                     describe('if card.data.skip === "delay"', function() {
                         beforeEach(function() {
@@ -320,7 +320,7 @@ define(['app','minireel/mixins/VideoCardController'], function(appModule, VideoC
                         });
 
                         it('should be the numerical delayed skip value', function() {
-                            expect(SponsorCardVideoCtrl.skip).toBe(MiniReelService.convertCard(card).data.skip);
+                            expect(SponsorCardVideoCtrl.skipTime).toBe(MiniReelService.convertCardForPlayer(card).data.skip);
                         });
                     });
 
@@ -329,7 +329,7 @@ define(['app','minireel/mixins/VideoCardController'], function(appModule, VideoC
                             [1, 5, 7, 6, 4].forEach(function(number) {
                                 card.data.skip = number;
 
-                                expect(SponsorCardVideoCtrl.skip).toBe(number);
+                                expect(SponsorCardVideoCtrl.skipTime).toBe(number);
                             });
                         });
                     });
@@ -338,9 +338,61 @@ define(['app','minireel/mixins/VideoCardController'], function(appModule, VideoC
                 describe('setting', function() {
                     it('should proxy to card.data.skip', function() {
                         [1, 3, 2, 6, 10].forEach(function(number) {
-                            SponsorCardVideoCtrl.skip = number;
+                            SponsorCardVideoCtrl.skipTime = number;
 
                             expect(card.data.skip).toBe(number);
+                        });
+                    });
+                });
+            });
+
+            describe('mustWatchInEntirety', function() {
+                describe('getting', function() {
+                    describe('if card.data.skip === "never"', function() {
+                        beforeEach(function() {
+                            card.data.skip = 'never';
+                        });
+
+                        it('should be true', function() {
+                            expect(SponsorCardVideoCtrl.mustWatchInEntirety).toBe(true);
+                        });
+                    });
+
+                    ['anytime', 'delay', 3, 6, 1].forEach(function(value) {
+                        describe('if card.data.skip === ' + value, function() {
+                            beforeEach(function() {
+                                card.data.skip = value;
+                            });
+
+                            it('should be false', function() {
+                                expect(SponsorCardVideoCtrl.mustWatchInEntirety).toBe(false);
+                            });
+                        });
+                    });
+                });
+
+                describe('setting', function() {
+                    describe('to true', function() {
+                        beforeEach(function() {
+                            card.data.skip = 'delay';
+
+                            SponsorCardVideoCtrl.mustWatchInEntirety = true;
+                        });
+
+                        it('should set card.data.skip to "never"', function() {
+                            expect(card.data.skip).toBe('never');
+                        });
+                    });
+
+                    describe('to false', function() {
+                        beforeEach(function() {
+                            card.data.skip = 'never';
+
+                            SponsorCardVideoCtrl.mustWatchInEntirety = false;
+                        });
+
+                        it('should set card.data.skip to "delay"', function() {
+                            expect(card.data.skip).toBe('delay');
                         });
                     });
                 });

@@ -11,7 +11,7 @@ module.exports = function(http) {
     var userId = 'u-35b096c999711b';
 
     function userPath(id) {
-        return path.resolve(__dirname, '../user/users/' + id + '.json');
+        return path.resolve(__dirname, '../account/users/' + id + '.json');
     }
 
     http.whenPOST('/api/auth/login', function(request) {

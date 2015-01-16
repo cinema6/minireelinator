@@ -1,24 +1,24 @@
 <c6-drag-space class="table__group" controller-as="DragCtrl" id="drag-space">
     <c6-alias model="EditorCtrl.model.data.deck" as="deck">
-        <button class="btn tableNav__btn tableNav__btn--prev" title="Previous" type="button">
+        <button class="btn tableNav__btn tableNav__btn--prev" title="Previous" type="button" ng-click="CardTableCtrl.scroll('left')">
             <span class="btn__label faa fa-chevron-left">
                 <span class="ir">Previous</span>
             </span>
         </button>
-        <button class="btn tableNav__btn tableNav__btn--next" title="Next" type="button">
+        <button class="btn tableNav__btn tableNav__btn--next" title="Next" type="button" ng-click="CardTableCtrl.scroll('right')">
             <span class="btn__label faa fa-chevron-right">
                 <span class="ir">Next</span>
             </span>
         </button>
         <div class="table__left-zone" id="scroll-left" c6-drag-zone>&nbsp;</div>
         <ul id="card-scroller" class="card__list" c6-bind-scroll="CardTableCtrl.position">
-            <li class="card__list-item">
+            <li class="card__list-item js-card-list-item">
                 <div id="drop-zone-0" c6-drag-zone class="card__drop-zone">&nbsp;</div><!--
                 --><div class="new__container" ng-hide="DragCtrl.currentDrags.length" ng-if="deck.length > 1">
                     <button ng-click="EditorCtrl.newCard(0, $event)" class="new__button ui__add c6studioSprite--alpha"><span class="ir">Add Here</span></button>
                 </div>
             </li>
-            <li class="card__list-item" render-deck="deck">
+            <li class="card__list-item js-card-list-item" render-deck="deck">
                 <div id="new-slide" class="card__container card--createNew" ng-if="$index === (EditorCtrl.lastEditableIndex + 1)">
                     <h4 class="card__type">&nbsp;</h4>
                     <div class="card__item">
@@ -68,49 +68,31 @@
     <c6-alias model="EditorCtrl.model.data.deck" as="deck">
 </c6-drag-space>
 
-<div class="pageMap__group">
-    <div class="pageMap__scrollBox">
-        <div class="pageMap__scroller">
-            <div class="pageMap__scrollBar">&nbsp;</div>
-        </div>
-        <ul class="pageMap__list">
-            <li class="pageMap__item">
+<card-table-paginator
+    deck="EditorCtrl.model.data.deck"
+    on-scroll="CardTableCtrl.scrollTo(position)"
+    scroller-view-ratio="CardTableCtrl.scrollerViewRatio"
+    scroller-view-position="CardTableCtrl.scrollerViewPosition">
+        <ul id="paginator-list" class="pageMap__list">
+            <li style="width:25px;background-color:#fff;text-align:center;" ng-repeat="card in EditorCtrl.model.data.deck" class="pageMap__item" ng-if="($index !== EditorCtrl.model.data.deck.length - 1)" card-table-paginator-item>
                 <button class="btnInvis pageMap__page"
-                ng-class="{'pageMap__page--error' : true}">
-                    <span class="btn__label">1</span>
+                ng-class="{'pageMap__page--error' : EditorCtrl.errorForCard(card)}"
+                ng-click="CardTableCtrl.scrollToCard(card)">
+                    <span class="btn__label">{{$index + 1}}</span>
                 </button>
             </li>
-            <li class="pageMap__item">
+            <li style="width:25px;background-color:#fff;text-align:center;" class="pageMap__item">
                 <button class="btnInvis pageMap__page"
-                ng-class="{'pageMap__page--error' : false}">
-                    <span class="btn__label">2</span>
+                ng-click="CardTableCtrl.scrollToCard(EditorCtrl.model.data.deck[EditorCtrl.model.data.deck.length - 1])">
+                    <span class="btn__label">+</span>
                 </button>
             </li>
-            <li class="pageMap__item">
+            <li style="width:25px;background-color:#fff;text-align:center;" class="pageMap__item">
                 <button class="btnInvis pageMap__page"
-                ng-class="{'pageMap__page--error' : false}">
-                    <span class="btn__label">3</span>
-                </button>
-            </li>
-            <li class="pageMap__item">
-                <button class="btnInvis pageMap__page"
-                ng-class="{'pageMap__page--error' : false}">
-                    <span class="btn__label">4</span>
-                </button>
-            </li>
-            <li class="pageMap__item">
-                <button class="btnInvis pageMap__page"
-                ng-class="{'pageMap__page--error' : false}">
-                    <span class="btn__label">5</span>
-                </button>
-            </li>
-
-            <li class="pageMap__item">
-                <button class="btnInvis pageMap__page"
-                ng-class="{'pageMap__page--error' : false}">
-                    <span class="btn__label">6</span>
+                ng-class="{'pageMap__page--error' : EditorCtrl.errorForCard(EditorCtrl.model.data.deck[EditorCtrl.model.data.deck.length - 1])}"
+                ng-click="CardTableCtrl.scrollToCard(EditorCtrl.model.data.deck[EditorCtrl.model.data.deck.length - 1])">
+                    <span class="btn__label">{{EditorCtrl.model.data.deck.length}}</span>
                 </button>
             </li>
         </ul>
-    </div>
-</div>
+</card-table-paginator>

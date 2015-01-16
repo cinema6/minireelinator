@@ -1,7 +1,9 @@
 define (['angular','c6_state','./editor','./mixins/MiniReelListController',
-'./mixins/WizardController','./mixins/VideoCardController','./mixins/LinksController'],
+         './mixins/WizardController','./mixins/VideoCardController','./mixins/LinksController',
+         './mixins/PaginatedListState'],
 function( angular , c6State  , editor   , MiniReelListController          ,
-WizardController           , VideoCardController          , LinksController          ) {
+          WizardController          , VideoCardController          , LinksController          ,
+          PaginatedListState          ) {
     'use strict';
 
     var noop = angular.noop,
@@ -26,22 +28,16 @@ WizardController           , VideoCardController          , LinksController     
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('MR:Sponsor.Manager', ['$location','c6State','EditorService',
-            function                                    ( $location , c6State , EditorService ) {
+                                                         '$injector',
+            function                                    ( $location , c6State , EditorService ,
+                                                          $injector ) {
                 var miniReel = c6State.get('MiniReel');
+
+                $injector.invoke(PaginatedListState, this);
 
                 this.templateUrl = 'views/minireel/sponsor/manager.html';
                 this.controller = 'SponsorManagerController';
                 this.controllerAs = 'SponsorManagerCtrl';
-
-                this.queryParams = {
-                    filter: '=',
-                    page: '=',
-                    limit: '='
-                };
-
-                this.filter = null;
-                this.page = parseInt($location.search().page) || 1;
-                this.limit = parseInt($location.search().limit) || 50;
 
                 this.title = function() {
                     return 'Cinema6 Sponsorship Manager';
@@ -567,9 +563,17 @@ WizardController           , VideoCardController          , LinksController     
                         this.model.data.skip = bool ? 'anytime' : 'delay';
                     }
                 },
-                skip: {
+                mustWatchInEntirety: {
                     get: function() {
-                        return MiniReelService.convertCard(this.model).data.skip;
+                        return this.model.data.skip === 'never';
+                    },
+                    set: function(bool) {
+                        this.model.data.skip = bool ? 'never' : 'delay';
+                    }
+                },
+                skipTime: {
+                    get: function() {
+                        return MiniReelService.convertCardForPlayer(this.model).data.skip;
                     },
                     set: function(value) {
                         this.model.data.skip = value;

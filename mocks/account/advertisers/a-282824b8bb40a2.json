@@ -1,0 +1,11 @@
+{
+    "adtechId": "12345678",
+    "name": "Diageo",
+    "defaultLinks": {
+        "Facebook": "https://www.facebook.com/pages/Diageo/108265212535624",
+        "Twitter": "https://twitter.com/Diageo_News"
+    },
+    "defaultLogos": {
+        "square": "http://i.imgur.com/YbBIFZv.png"
+    }
+}

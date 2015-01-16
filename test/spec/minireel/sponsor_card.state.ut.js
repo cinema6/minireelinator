@@ -97,7 +97,7 @@ define(['app','minireel/services'], function(appModule, servicesModule) {
                         }
                     };
                     minireel.data.deck = minireel.data.deck.map(function(card) {
-                        return MiniReelService.convertCard(card, minireel);
+                        return MiniReelService.convertCardForPlayer(card, minireel);
                     });
                     card = minireel.data.deck[1];
 

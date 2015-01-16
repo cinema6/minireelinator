@@ -1,9 +1,9 @@
 define( ['angular','c6uilib','c6_state','minireel/services','minireel/tracker',
          'minireel/c6_drag','minireel/card_table','minireel/editor','minireel/manager',
-         'minireel/ad_manager','minireel/sponsor','c6_defines','cryptojs'],
+         'minireel/ad_manager','minireel/sponsor','minireel/campaign','c6_defines','cryptojs'],
 function( angular , c6uilib , c6State  , services          , tracker          ,
           c6Drag           , cardTable           , editor          , manager          ,
-          adManager           , sponsor          , c6Defines  , cryptojs ) {
+          adManager           , sponsor          , campaign          , c6Defines  , cryptojs ) {
     /* jshint -W106 */
     'use strict';
 
@@ -14,7 +14,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
     return angular.module('c6.app.minireel', [
         c6uilib.name, c6State.name, c6Drag.name,
         services.name, tracker.name, cardTable.name, editor.name,
-        manager.name, adManager.name, sponsor.name
+        manager.name, adManager.name, sponsor.name, campaign.name
     ])
         .config(['$sceDelegateProvider','$compileProvider',
         function( $sceDelegateProvider , $compileProvider ) {
@@ -64,12 +64,12 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                             this.route('/', 'MR:Splash.Source');
                             this.route('/', 'MR:Splash.Image');
                         });
+                        this.route('/card/new', 'MR:Editor.NewCard');
                         this.route('/card/:cardId', 'MR:EditCard', function() {
                             this.state('MR:EditCard.Copy');
                             this.state('MR:EditCard.Video');
                             this.state('MR:EditCard.Ballot');
                         });
-                        this.route('/card/new', 'MR:Editor.NewCard');
                     });
                 });
 
@@ -108,6 +108,90 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                                 this.state('MR:Placement.Standalone');
                             });
                             this.state('MR:SponsorCard.Position');
+                        });
+                    });
+                });
+
+                this.route('/campaigns', 'MR:CampaignTab', function() {
+                    this.state('MR:Campaigns', function() {
+                        this.route('/new', 'MR:Campaigns.New');
+                    });
+
+                    this.route('/:campaignId', 'MR:Campaign', function() {
+                        this.route('/general', 'MR:Campaign.General');
+                        this.route('/assets', 'MR:Campaign.Assets');
+                        this.route('/creatives', 'MR:Campaign.Creatives', function() {
+                            this.route('/minireel/new', 'MR:Creatives.NewMiniReel', function() {
+                                this.state('MR:Creatives.NewMiniReel.General');
+                                this.state('MR:Creatives.NewMiniReel.Type');
+                                this.state('MR:Creatives.NewMiniReel.Playback');
+                            });
+
+                            this.route('/card/new', 'MR:NewWildcard', function() {
+                                this.state('MR:Wildcard', 'MR:New:Wildcard', function() {
+                                    this.state('MR:Wildcard.Copy', 'MR:New:Wildcard.Copy');
+                                    this.state('MR:Wildcard.Video', 'MR:New:Wildcard.Video');
+                                    this.state('MR:Wildcard.Survey', 'MR:New:Wildcard.Survey');
+                                    this.state('MR:Wildcard.Branding', 'MR:New:Wildcard.Branding');
+                                    this.state('MR:Wildcard.Links', 'MR:New:Wildcard.Links');
+                                    this.state(
+                                        'MR:Wildcard.Advertising',
+                                        'MR:New:Wildcard.Advertising'
+                                    );
+                                });
+                            });
+
+                            this.route('/card/:cardId', 'MR:EditWildcard', function() {
+                                this.state('MR:Wildcard', 'MR:Edit:Wildcard', function() {
+                                    this.state('MR:Wildcard.Copy', 'MR:Edit:Wildcard.Copy');
+                                    this.state('MR:Wildcard.Video', 'MR:Edit:Wildcard.Video');
+                                    this.state('MR:Wildcard.Survey', 'MR:Edit:Wildcard.Survey');
+                                    this.state('MR:Wildcard.Branding', 'MR:Edit:Wildcard.Branding');
+                                    this.state('MR:Wildcard.Links', 'MR:Edit:Wildcard.Links');
+                                    this.state(
+                                        'MR:Wildcard.Advertising',
+                                        'MR:Edit:Wildcard.Advertising'
+                                    );
+                                });
+                            });
+                        });
+                        this.route('/placements', 'MR:Campaign.Placements', function() {
+                            this.route('/minireel/:minireelId', 'MR:Placements.MiniReel');
+                        });
+                        this.route('/minireel-groups', 'MR:Campaign.MiniReelGroups', function() {
+                            this.route('/new', 'MR:NewMiniReelGroup', function() {
+                                this.state('MR:MiniReelGroup', 'MR:New:MiniReelGroup', function() {
+                                    this.state(
+                                        'MR:MiniReelGroup.General',
+                                        'MR:New:MiniReelGroup.General'
+                                    );
+                                    this.state(
+                                        'MR:MiniReelGroup.Cards',
+                                        'MR:New:MiniReelGroup.Cards'
+                                    );
+                                    this.state(
+                                        'MR:MiniReelGroup.MiniReels',
+                                        'MR:New:MiniReelGroup.MiniReels'
+                                    );
+                                });
+                            });
+
+                            this.route('/edit/:index', 'MR:EditMiniReelGroup', function() {
+                                this.state('MR:MiniReelGroup', 'MR:Edit:MiniReelGroup', function() {
+                                    this.state(
+                                        'MR:MiniReelGroup.General',
+                                        'MR:Edit:MiniReelGroup.General'
+                                    );
+                                    this.state(
+                                        'MR:MiniReelGroup.Cards',
+                                        'MR:Edit:MiniReelGroup.Cards'
+                                    );
+                                    this.state(
+                                        'MR:MiniReelGroup.MiniReels',
+                                        'MR:Edit:MiniReelGroup.MiniReels'
+                                    );
+                                });
+                            });
                         });
                     });
                 });
@@ -318,6 +402,19 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                 }
 
                 return number.toString();
+            };
+        }])
+
+        .filter('embedid', ['VideoService',
+        function           ( VideoService ) {
+            var embedIdFromVideoId = VideoService.embedIdFromVideoId;
+
+            function reverse(array) {
+                return Array.prototype.reverse.call(array);
+            }
+
+            return function() {
+                return embedIdFromVideoId.apply(null, reverse(arguments));
             };
         }])
 
@@ -570,6 +667,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
             var minireelState = c6State.get('MiniReel'),
                 categories = minireelState.cModel.data.modes,
                 c6EmbedSrc = minireelState.cModel.data.c6EmbedSrc,
+                soloPlayerUrl = minireelState.cModel.data.soloPlayerUrl,
                 orgSettings = SettingsService.getReadOnly('MR::org');
 
             var allFormats = {
@@ -580,6 +678,10 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                 shortcode: {
                     name: 'Wordpress Shortcode',
                     value: 'shortcode'
+                },
+                iframe: {
+                    name: 'IFrame',
+                    value: 'iframe'
                 }
             };
 
@@ -660,6 +762,16 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                         return formatEmbed(
                             '<script src="' + c6EmbedSrc + '" |data-{attr}="{value}"|></script>',
                             data
+                        );
+                    case 'iframe':
+                        return formatEmbed(
+                            '<iframe |{attr}="{value}"|></iframe>',
+                            {
+                                src: soloPlayerUrl + '?id=' + minireel.id,
+                                frameborder: '0',
+                                width: explicitDimensions ? this.size.width : '100%',
+                                height: explicitDimensions ? this.size.height : '100%'
+                            }
                         );
                     }
                 }

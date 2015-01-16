@@ -6,6 +6,7 @@ define(['app'], function(appModule) {
             $scope,
             $controller,
             MiniReelService,
+            PortalCtrl,
             EditorCtrl,
             EditCardCtrl,
             EditCardVideoCtrl;
@@ -20,6 +21,13 @@ define(['app'], function(appModule) {
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
+                    PortalCtrl = $scope.PortalCtrl = $controller('PortalController', {
+                        $scope: $scope
+                    });
+                    PortalCtrl.model = {
+                        permissions: {}
+                    };
+
                     EditorCtrl = $scope.EditorCtrl = $controller('EditorController', {
                         $scope: $scope,
                         $log: {

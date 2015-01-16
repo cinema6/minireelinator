@@ -1,0 +1,96 @@
+<main c6-alias="CampaignsCtrl.model.items.value as campaigns">
+<header class="pageHeader container">
+    <div class="pageHeader__titleBar clearfix">
+        <h1 class="pageTitle">Campaigns</h1>
+        <a c6-sref="MR:Campaigns.New" title="New Campaign" class="btnAction btnAction--primary btnAction--hasIcon" >
+            <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M9,0C4,0,0,4,0,9c0,5,4,9,9,9s9-4,9-9C18,4,14,0,9,0z M9,16c-3.9,0-7-3.1-7-7
+                    c0-3.9,3.1-7,7-7s7,3.1,7,7C16,12.9,12.9,16,9,16z M10,5H8v3H5v2h3v3h2v-3h3V8h-3V5z"/>
+            </svg>
+            <span class="btn__label">New Campaign</span>
+        </a>
+    </div>
+</header>
+
+<section class="container miniReels__group">
+    <header class="tableHeader__group clearfix">
+        <paginator-controls page="CampaignsCtrl.model.page" limit="CampaignsCtrl.limit" limits="CampaignsCtrl.limits" total="CampaignsCtrl.model.items.page.total"></paginator-controls>
+        <nav class="selectorActions__group">
+            <div class="selectorActions__selector">
+                <label class="checkbox--inline selectorActions__selectorCheckBox">
+                    <input type="checkbox" ng-model="CampaignsCtrl.allAreSelected" class="checkbox__input">
+                    <span class="btn__label faa">&nbsp;</span>
+                </label>
+                <button ng-click="CampaignsCtrl.dropDowns.select.toggle()" c6-click-outside="CampaignsCtrl.dropDowns.select.hide()" class="btn faa fa-caret-down ui__clickDrop">&nbsp;</button>
+                <div ng-show="CampaignsCtrl.dropDowns.select.shown" class="pager__itemsPerPage ui__clickDropMenu">
+                    <button class="ui__clickDropBtn" type="button" 
+                    title="Select All" 
+                    ng-show="!CampaignsCtrl.allAreSelected" 
+                    ng-click="CampaignsCtrl.model.selectAll()">
+                        Select All
+                    </button>
+                    <button class="ui__clickDropBtn" type="button" 
+                    title="Select None" 
+                    ng-show="CampaignsCtrl.model.getSelected().length > 0"
+                    ng-click="CampaignsCtrl.model.selectNone()">
+                        Select None
+                    </button>
+                </div>
+            </div>
+            <div class="btnGroup__animator">
+                <div class="btnGroup clearfix" 
+                ng-show="CampaignsCtrl.model.getSelected().length > 0">
+                    <button class="btn btn--primary" type="button" title="Delete" ng-click="CampaignsCtrl.remove(CampaignsCtrl.model.getSelected())">
+                        <span class="btn__label">Delete</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="tableBody__group">
+        <ul class="miniReels__list grid">
+            <li class="miniReels__item grid__item" ng-show="!campaigns.length">
+                <article class="miniReels__welcomeMsg">
+                    <p><a c6-sref="MR:Campaigns.New" class="btnAction btnAction--primary">Create Campaign</a></p>
+                </article>
+            </li>
+
+            <li class="miniReels__item grid__item" ng-repeat="$this in campaigns track by $this.id">
+                <article class="miniReel__group clearfix">
+                    <div class="miniReel__selector">
+                        <label class="checkbox--inline">
+                            <input type="checkbox" ng-model="CampaignsCtrl.model.items.selected[$index]" class="checkbox__input">
+                            <span class="btn__label faa">&nbsp;</span>
+                        </label>
+                    </div>
+                    <div class="miniReel__titleBox">
+                        <h1 class="miniReel__title">
+                            <a c6-sref="MR:Campaign" c6-models="[$this]" c6-params="{}" class="miniReel__titleLink" title="Edit This Campaign: {{$this.name}}">
+                                {{$this.name}}
+                            </a>
+                        </h1>
+                    </div>
+                    <div class="miniReel__status">
+                        <strong>{{$this.advertiser.name}}</strong> 
+                        - <span class="miniReel__date">{{$this.created | date:'M/d/yyyy'}}</span>
+                        <p class="miniReel__count">{{$this.cards.length}} cards, {{$this.miniReels.length}} MiniReels</p>
+                    </div>
+                    <div class="miniReel__stats">
+                        <p class="miniReel__views">Targeting {{CampaignsCtrl.targetMiniReelsOf($this).length}} MiniReels</p>
+                    </div>
+                </article>
+            </li>
+        </ul>
+    </div>
+    <footer class="tableFooter__group">
+        <paginator-controls page="CampaignsCtrl.model.page" limit="CampaignsCtrl.limit" limits="CampaignsCtrl.limits" total="CampaignsCtrl.model.items.page.total"></paginator-controls>
+        <p class="tableFooter__displayText" c6-alias="CampaignsCtrl.model.items.value.meta.items as items">
+            <span ng-show="campaigns.length">Displaying <strong>{{items.start}}-{{items.end}}</strong> of {{items.total}} Campaigns</span>
+            <span ng-show="!campaigns.length">0 Campaigns</span>
+        </p>
+    </footer>
+</section>
+</main>
+<c6-view></c6-view>
