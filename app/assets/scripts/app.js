@@ -506,12 +506,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                                                   'MiniReelService',
             function                             ( config , $http , $q , cinema6 ,
                                                    MiniReelService ) {
-                var adapter = this,
-                    adtechIdCache = {
-                        miniReels: {},
-                        cards: {},
-                        targetMiniReels: {}
-                    };
+                var adapter = this;
 
                 function url(end) {
                     return config.apiBase + '/' + end;
@@ -523,55 +518,42 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     }));
                 }
 
-                function cacheAdtechId(type, data) {
-                    adtechIdCache[type][data.id] = data.adtechId;
-                }
-
                 function undecorateCampaign(campaign) {
-                    return extend(
-                        campaign,
-                        ['miniReels', 'cards', 'targetMiniReels']
-                        .reduce(function(result, prop) {
-                            result[prop] = campaign[prop].map(function(item) {
-                                return {
-                                    id: item.id,
-                                    adtechId: adtechIdCache[prop][item.id]
-                                };
+                    return extend(campaign, {
+                        advertiser: undefined,
+                        advertiserId: campaign.advertiser.id,
+
+                        customer: undefined,
+                        customerId: campaign.customer.id,
+
+                        cards: campaign.cards.map(pick('id')),
+                        miniReels: campaign.miniReels.map(pick('id')),
+
+                        staticCardMap: (function() {
+                            function hasWildcard(entry) {
+                                return !!entry.wildcard;
+                            }
+
+                            return campaign.staticCardMap.filter(function(entry) {
+                                return entry.cards.some(hasWildcard);
+                            }).reduce(function(result, entry) {
+                                result[entry.minireel.id] = entry.cards
+                                    .filter(hasWildcard)
+                                    .reduce(function(result, entry) {
+                                        result[entry.placeholder.id] = entry.wildcard.id;
+                                        return result;
+                                    }, {});
+                                return result;
+                            }, {});
+                        }()),
+
+                        miniReelGroups: campaign.miniReelGroups.map(function(group) {
+                            return extend(group, {
+                                miniReels: group.miniReels.map(pick('id')),
+                                cards: group.cards.map(pick('id'))
                             });
-                            return result;
-                        }, {
-                            advertiser: undefined,
-                            advertiserId: campaign.advertiser.id,
-
-                            customer: undefined,
-                            customerId: campaign.customer.id,
-
-                            staticCardMap: (function() {
-                                function hasWildcard(entry) {
-                                    return !!entry.wildcard;
-                                }
-
-                                return campaign.staticCardMap.filter(function(entry) {
-                                    return entry.cards.some(hasWildcard);
-                                }).reduce(function(result, entry) {
-                                    result[entry.minireel.id] = entry.cards
-                                        .filter(hasWildcard)
-                                        .reduce(function(result, entry) {
-                                            result[entry.placeholder.id] = entry.wildcard.id;
-                                            return result;
-                                        }, {});
-                                    return result;
-                                }, {});
-                            }()),
-
-                            miniReelGroups: campaign.miniReelGroups.map(function(group) {
-                                return extend(group, {
-                                    miniReels: group.miniReels.map(pick('id')),
-                                    cards: group.cards.map(pick('id'))
-                                });
-                            })
                         })
-                    );
+                    });
                 }
 
                 this.decorateCampaign = function(campaign) {
@@ -584,25 +566,13 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         };
                     }
 
-                    ['miniReels', 'cards', 'targetMiniReels']
-                        .forEach(function(prop) {
-                            campaign[prop].forEach(function(data) {
-                                cacheAdtechId(prop, data);
-                            });
-                        });
-
                     return $q.all({
                         customer: getDbModel('customer')(campaign.customerId),
                         advertiser: getDbModel('advertiser')(campaign.advertiserId),
-                        miniReels: $q.all(
-                            campaign.miniReels.map(pick('id')).map(getDbModel('experience'))
-                        ),
-                        cards: $q.all(
-                            campaign.cards.map(pick('id')).map(getDbModel('card'))
-                        ),
-                        targetMiniReels: $q.all(
-                            campaign.targetMiniReels.map(pick('id')).map(getDbModel('experience'))
-                        ),
+
+                        miniReels: $q.all(campaign.miniReels.map(getDbModel('experience'))),
+                        cards: $q.all(campaign.cards.map(getDbModel('card'))),
+
                         staticCardMap: $q.all(Object.keys(staticCardMap).map(function(minireelId) {
                             var map = staticCardMap[minireelId],
                                 findMiniReel = getDbModel('experience')(minireelId);
