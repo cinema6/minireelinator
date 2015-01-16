@@ -486,7 +486,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
                 this.model = function() {
                     var campaign = CampaignState.cModel,
-                        card = cinema6.db.create('card', MiniReelService.createCard('videoBallot'));
+                        card = cinema6.db.create('card', MiniReelService.createCard('video'));
 
                     return deepExtend(card, {
                         id: undefined,

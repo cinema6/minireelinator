@@ -350,7 +350,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             }]);
 
             $provide.constant('CardAdapter', ['config','$http','$q','MiniReelService',
-            function                         ( config , $http , $q , MiniReelService ) {
+                                              'VoteService',
+            function                         ( config , $http , $q , MiniReelService ,
+                                               VoteService ) {
                 var convertCardForEditor = MiniReelService.convertCardForEditor,
                     convertCardForPlayer = MiniReelService.convertCardForPlayer;
 
@@ -385,8 +387,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
 
                 this.create = function(type, data) {
-                    return $http.post(url('card'), convertCardForPlayer(data))
-                        .then(pick('data'))
+                    return VoteService.syncCard(convertCardForPlayer(data))
+                        .then(function(data) {
+                            return $http.post(url('card'), data).then(pick('data'));
+                        })
                         .then(MiniReelService.convertCardForEditor)
                         .then(putInArray);
                 };
@@ -397,8 +401,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
 
                 this.update = function(type, card) {
-                    return $http.put(url('card/' + card.id), convertCardForPlayer(card))
-                        .then(pick('data'))
+                    return VoteService.syncCard(convertCardForPlayer(card))
+                        .then(function(card) {
+                            return $http.put(url('card/' + card.id), card).then(pick('data'));
+                        })
                         .then(convertCardForEditor)
                         .then(putInArray);
                 };
