@@ -397,7 +397,7 @@ function( angular , c6uilib , services          , c6Drag           ) {
 
                     function dropStart() {
                         var scrollBoxRect = getScrollBoxRect(),
-                            currLeft = parseInt($scroller.css('left'));
+                            currLeft = parseFloat($scroller.css('left'));
 
                         $scroller.css({
                             top: '',

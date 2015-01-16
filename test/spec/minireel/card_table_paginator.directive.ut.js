@@ -68,7 +68,12 @@
                     }
                 };
 
-                paginator = $('<card-table-paginator deck="EditorCtrl.model.data.deck" on-scroll="scrollSpy(position)" scroller-view-position="scrollerViewPosition" scroller-view-ratio="scrollerViewRatio"><ul id="paginator-list" style="display:inline-block;list-style:none;margin:0;padding:0;"><li card-table-paginator-item ng-repeat="card in EditorCtrl.model.data.deck" style="width:20px;display:inline-block;margin:0;padding:0;">{{$index}}</li><li style="width:20px;display:inline-block;margin:0;padding:0;">+</li></ul></card-table-paginator>');
+                paginator = $(['<card-table-paginator deck="EditorCtrl.model.data.deck" on-scroll="scrollSpy(position)" ',
+                    'scroller-view-position="scrollerViewPosition" scroller-view-ratio="scrollerViewRatio">',
+                    '<ul id="paginator-list" style="display:inline-block;list-style:none;margin:0;padding:0;">',
+                    '<li card-table-paginator-item ng-repeat="card in EditorCtrl.model.data.deck" ',
+                    'style="width:20px;display:inline-block;margin:0 5px 0 0;padding:0;">{{$index}}</li>',
+                    '<li style="width:20px;display:inline-block;margin:0;padding:0;">+</li></ul></card-table-paginator>'].join(''));
                 $('body').append(paginator);
 
                 $scope.$apply(function() {
@@ -85,8 +90,8 @@
             describe('$watchers', function() {
                 describe('ready', function() {
                     it('should set scope variables when true', function() {
-                        expect(scope.scrollBoxWidth).toBe(100);
-                        expect(scope.scrollerWidth).toBe(25);
+                        expect(scope.scrollBoxWidth).toBe(120);
+                        expect(scope.scrollerWidth).toBe(30);
                     });
                 });
 
@@ -96,8 +101,8 @@
                             scope.scrollerViewRatio = 0.5;
                         });
 
-                        expect(scope.scrollBoxWidth).toBe(100);
-                        expect(scope.scrollerWidth).toBe(50);
+                        expect(scope.scrollBoxWidth).toBe(120);
+                        expect(scope.scrollerWidth).toBe(60);
                     });
                 });
 
@@ -107,13 +112,13 @@
                             scope.scrollerViewPosition = 0.25;
                         });
 
-                        expect(paginator.find('#paginator-scroller')[0].style.left).toBe('25px');
+                        expect(paginator.find('#paginator-scroller')[0].style.left).toBe('30px');
 
                         $scope.$apply(function() {
                             scope.scrollerViewPosition = 0.5;
                         });
 
-                        expect(paginator.find('#paginator-scroller')[0].style.left).toBe('50px');
+                        expect(paginator.find('#paginator-scroller')[0].style.left).toBe('60px');
                     });
                 });
             });
@@ -169,7 +174,7 @@
                     scroller.refresh();
 
                     finger.placeOn($scroller);
-                    finger.drag(10, 10);
+                    finger.drag(12, 10);
                     $scope.$apply();
                     expect($scope.scrollSpy).toHaveBeenCalledWith(0.1);
                 });
