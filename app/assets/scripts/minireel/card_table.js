@@ -325,13 +325,163 @@ function( angular , c6uilib , services          , c6Drag           ) {
             };
         }])
 
-        .directive('cardTable', [function() {
+        .directive('cardTablePaginatorItem', [function() {
+            return {
+                restrict: 'A',
+                require: '^cardTablePaginator',
+                link: function(scope, $element, attrs, controller) {
+                    controller.itemReady();
+                }
+            };
+        }])
+
+        .controller('CardTablePaginatorController', ['$scope',
+        function                                    ( $scope ) {
+            var buttonCounter = 0;
+
+            $scope.ready = false;
+
+            this.itemReady = function() {
+                buttonCounter++;
+
+                if (buttonCounter === $scope.deck.length - 1) {
+                    $scope.ready = true;
+                }
+            };
+        }])
+
+        .directive('cardTablePaginator', [function() {
+            return {
+                restrict: 'E',
+                templateUrl: 'views/minireel/directives/card_table_paginator.html',
+                controller: 'CardTablePaginatorController',
+                controllerAs: 'CardTablePaginatorCtrl',
+                transclude: true,
+                scope: {
+                    deck: '=',
+                    onScroll: '&',
+                    scrollerViewRatio: '=',
+                    scrollerViewPosition: '='
+                },
+                link: function(scope, $element) {
+                    var $list = $element.find('#paginator-list'),
+                        $scrollBox = $element.find('#paginator-scroll-box'),
+                        $scroller = $element.find('#paginator-scroller'),
+                        scroller = $scroller.data('cDrag'),
+                        buttonWidthWithMargin = 0,
+                        margin = 0;
+
+                    function getScrollBoxRect() {
+                        return $scrollBox[0].getBoundingClientRect();
+                    }
+
+                    function beforeMove(marker, event) {
+                        var scrollBoxRect = getScrollBoxRect(),
+                            desired = event.desired,
+                            position = Math.min(
+                                    Math.max(
+                                        desired.left,
+                                        scrollBoxRect.left
+                                    ),
+                                    scrollBoxRect.right - scroller.display.width
+                                ),
+                            positionRatio = (position - scrollBoxRect.left) /
+                                scrollBoxRect.width;
+
+                        event.preventDefault();
+
+                        scope.onScroll({ position: positionRatio });
+
+                        $scroller.css({ left: position + 'px' });
+                    }
+
+                    function dropStart() {
+                        var scrollBoxRect = getScrollBoxRect(),
+                            currLeft = parseFloat($scroller.css('left'));
+
+                        $scroller.css({
+                            top: '',
+                            left: Math.min(
+                                    currLeft - scrollBoxRect.left,
+                                    scrollBoxRect.width - scroller.display.width
+                                ) + 'px'
+                        });
+                    }
+
+                    scroller.on('beforeMove', beforeMove)
+                        .on('dropStart', dropStart);
+
+                    scope.$watch('ready', function(ready) {
+                        if (ready) {
+                            var buttons = $list.find('li'),
+                                listWidth = $list.width();
+
+                            buttonWidthWithMargin = buttons[1].getBoundingClientRect().left -
+                                buttons[0].getBoundingClientRect().left;
+                            margin = buttonWidthWithMargin - buttons.width();
+                            scope.scrollBoxWidth = listWidth;
+                            scope.scrollerWidth = listWidth * scope.scrollerViewRatio;
+                        }
+                    });
+
+                    scope.$watch('scrollerViewRatio', function(ratio) {
+                        if (!scope.ready) { return; }
+
+                        var scrollBoxWidth = buttonWidthWithMargin - margin;
+
+                        scope.deck.forEach(function() {
+                            scrollBoxWidth += buttonWidthWithMargin;
+                        });
+
+                        scope.scrollBoxWidth = scrollBoxWidth;
+                        scope.scrollerWidth = scrollBoxWidth * ratio;
+                    });
+
+                    scope.$watch('scrollerViewPosition', function(position) {
+                        if (!scope.ready) { return; }
+
+                        $scroller.css({ left: scope.scrollBoxWidth * position + 'px' });
+                    });
+                }
+            };
+        }])
+
+        .directive('cardTable', ['$window','c6Debounce',
+        function                ( $window , c6Debounce ) {
             return {
                 restrict: 'E',
                 templateUrl: 'views/minireel/directives/card_table.html',
                 controller: 'CardTableController',
                 controllerAs: 'CardTableCtrl',
-                scope: true
+                scope: true,
+                link: function(scope, $element, attrs, controller) {
+                    var $$window = angular.element($window),
+                        $cardScroller = $element.find('#card-scroller'),
+                        setDimensions = c6Debounce(function() {
+                            var $items = $cardScroller.find('.js-card-list-item'),
+                                firstButtonWidth = $items[0].clientWidth,
+                                cardWidth = $items[1].clientWidth,
+                                lastCardWidth = $items[$items.length - 1].clientWidth,
+                                fullWidth = (cardWidth * (controller.deck.length - 1)) +
+                                    lastCardWidth;
+
+                            controller.setScrollerFullWidth(fullWidth);
+                            controller.setFirstButtonWidth(firstButtonWidth);
+                            controller.setScrollerRect($cardScroller[0].getBoundingClientRect());
+                        }, 250);
+
+                    setDimensions();
+                    $$window.on('resize', setDimensions);
+                    $element.on('$destroy', function() {
+                        $$window.off('resize', setDimensions);
+                    });
+
+                    scope.$watchCollection('EditorCtrl.model.data.deck', function(deck, oldDeck) {
+                        if (deck.length !== oldDeck.length) {
+                            setDimensions();
+                        }
+                    });
+                }
             };
         }])
 
@@ -429,10 +579,120 @@ function( angular , c6uilib , services          , c6Drag           ) {
 
                 forEach(DragCtrl.draggables, addCard);
                 DragCtrl.on('draggableAdded', addCard);
+
+                return DragCtrl;
+            }
+
+            function initPagination(DragCtrl) {
+                function animateScroll(targetPosition) {
+                    var direction = targetPosition > self.position.x ? 1 : -1,
+                        interval = $interval(function() {
+                            if (Math.abs(targetPosition - self.position.x) < 100) {
+                                self.position.x = targetPosition;
+                                $interval.cancel(interval);
+                            } else {
+                                self.position.x += 100 * direction;
+                            }
+                        }, 17);
+                }
+
+                function getAltDirection(direction) {
+                    return direction === 'right' ? 'left' : 'right';
+                }
+
+                function isOverlapping(card, direction) {
+                    return (card.display.left < self.scrollerRect[direction]) &&
+                        (card.display.right > self.scrollerRect[direction]);
+                }
+
+                function isCloser(card, closest, direction) {
+                    var altDirection = getAltDirection(direction);
+
+                    return (Math.abs(card.display[altDirection] - self.scrollerRect[direction])) <
+                        (Math.abs(closest.display[altDirection] - self.scrollerRect[direction]));
+                }
+
+                self.scroll = function(direction) {
+                    var altDirection = getAltDirection(direction),
+                        overlappingCard,
+                        closestCard;
+
+                    DragCtrl.refresh();
+
+                    angular.forEach(DragCtrl.draggables, function(card) {
+                        if (isOverlapping(card, direction)) {
+                            overlappingCard = card;
+                        }
+
+                        closestCard = closestCard ? (
+                                isCloser(card, closestCard, direction) ?
+                                card :
+                                closestCard
+                            ) :
+                            card;
+                    });
+
+                    animateScroll(Math.max(
+                        0, Math.min(
+                            (self.scrollerFullWidth +
+                            self.firstButtonWidth -
+                            self.scrollerRect.width),
+                            self.position.x -
+                            self.scrollerRect[altDirection] + (
+                                    direction === 'right' ?
+                                    -(self.firstButtonWidth) :
+                                    self.firstButtonWidth
+                                ) + (
+                                    overlappingCard ?
+                                    overlappingCard.display[altDirection] :
+                                    closestCard.display[altDirection]
+                                )
+                        )
+                    ));
+                };
+
+                self.scrollTo = function(position) {
+                    self.position.x = self.scrollerFullWidth * position;
+                    $scope.$digest();
+                };
+
+                self.scrollToCard = function(card) {
+                    var draggable = DragCtrl.draggables[card.id];
+
+                    DragCtrl.refresh();
+
+                    animateScroll(Math.min(self.position.x -
+                        self.scrollerRect.left -
+                        self.firstButtonWidth +
+                        draggable.display.left,
+                        self.scrollerFullWidth +
+                        self.firstButtonWidth -
+                        self.scrollerRect.width));
+                };
+
+                Object.defineProperties(self, {
+                    scrollerViewRatio: {
+                        get: function() {
+                            var percent = (self.scrollerRect.width - self.firstButtonWidth) /
+                                self.scrollerFullWidth;
+
+                            return Math.min(percent, 1);
+                        }
+                    },
+                    scrollerViewPosition: {
+                        get: function() {
+                            return self.position.x / self.scrollerFullWidth;
+                        }
+                    }
+                });
             }
 
             this.position = { x: 0 };
             this.enableDrop = true;
+            this.scrollerRect = { width: 1 };
+            this.firstButtonWidth = 1;
+            this.scrollerFullWidth = 1;
+            this.deck = EditorCtrl.model.data.deck;
 
             this.getThumbs = function(card) {
                 var data = card.data;
@@ -440,7 +700,20 @@ function( angular , c6uilib , services          , c6Drag           ) {
                 return VideoThumbnailService.getThumbsFor(data.service, data.videoid);
             };
 
+            this.setScrollerFullWidth = function(width) {
+                self.scrollerFullWidth = width;
+            };
+
+            this.setScrollerRect = function(rect) {
+                self.scrollerRect = rect;
+            };
+
+            this.setFirstButtonWidth = function(width) {
+                self.firstButtonWidth = width;
+            };
+
             getDragCtrl()
-                .then(handleDragEvents);
+                .then(handleDragEvents)
+                .then(initPagination);
         }]);
 });

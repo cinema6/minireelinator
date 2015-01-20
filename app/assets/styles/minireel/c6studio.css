@@ -380,6 +380,7 @@
     }
 
     .table__group {
+        border-top:2px solid #626262;
         position: relative; background:#eee;
     }
         .table__left-zone {
@@ -393,9 +394,54 @@
             top: 0; right: 0;
         }
 
+
+        .tableNav__btn,
+        .tableNav__btn:focus,
+        .tableNav__btn:disabled {
+            width:3em; height:100%;
+            position: absolute;
+            z-index: 5;
+            top:0;
+            background:#fff;
+            margin:0; padding:0;
+            opacity:1;
+            border-radius:0;
+            box-sizing:border-box;
+            border-bottom:0;
+            border-top:0;
+        }
+            .tableNav__btn:disabled .faa:after {
+                opacity:0.25;
+            }
+            .tableNav__btn--prev,
+            .tableNav__btn--prev:focus,
+            .tableNav__btn--prev:disabled,
+            .tableNav__btn--prev:disabled:hover {
+                left:0;
+                border-left:0;
+                border-bottom:0;
+                border-top:0;
+            }
+            .tableNav__btn--next,
+            .tableNav__btn--next:focus,
+            .tableNav__btn--next:disabled,
+            .tableNav__btn--next:disabled:hover {
+                right:0;
+                border-right:0;
+                border-bottom:0;
+                border-top:0;
+            }
+            .tableNav__btn:hover {
+                background:#eaf7ff;
+                border-color:#2398db;
+            }
+            .tableNav__btn:hover .faa:after {
+                color:#2398db;
+            }
+
     .card__container {
         display: inline-block;
-        width: 13.5em; margin:3em 0 0 0;
+        width: 13.5em; margin:2.5em 0 0 0;
         vertical-align: top;
     }
         .card__container--dragging {
@@ -408,9 +454,9 @@
         
     .card__drop-zone {
         display: inline-block;
-        width: 2px; height:21.25rem;
+        width: 2px; height:21.75rem;
         vertical-align: top;
-        margin: 3em 5px 0;
+        margin: 2.5em 5px 0;
         border:0;
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
@@ -436,7 +482,7 @@
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
-        margin:0; padding:0 1.5em 1.6875em 1.5em;
+        margin:0 3em; padding:0 0 1em 0;
     }
         .card__list-item {
             display: inline-block;
@@ -568,9 +614,9 @@
             display: none !important;
         }
         .new__button, .no__button {
-            margin: auto; border:0; padding:0;
+            margin:0; border:0; padding:0;
             font-size:1em;
-            position: absolute; top:0; bottom:0; left:0; right:0;
+            position: absolute; top:53%; bottom:0; left:0; right:0;
             cursor:pointer;
         }
             .new__button:hover {
@@ -898,6 +944,71 @@
                     .coverUploader__helpTips li {
                         margin:0.5em 0;
                     }
+
+
+
+/*  ======================================================
+    page map styles
+    ====================================================== */
+    .pageMap__group {
+        background:#444;
+        height:3.75em;
+        width:100%;
+        overflow: hidden;
+    }
+
+    .pageMap__scrollBox {
+        position:relative;
+        height:100%;
+        margin:0 auto;
+    }
+
+    .pageMap__scroller {
+        position: absolute;
+        top:0; left:0;
+        height:3.75em;
+        cursor:move;
+        min-width:1.25em;
+    }
+        .pageMap__scrollBar {
+            height:1.75em; width:100%;
+            border:0.25em solid #2398db;
+            border-left:0; border-right:0;
+            margin-top:0.75em;
+        }
+
+    .pageMap__list {
+        height:1.25rem;
+        position: absolute; z-index: 2;
+        top:1.25rem;
+        font-size:0;
+        text-align: center;
+    }
+        .pageMap__item {
+            font-size:1rem;
+            line-height: 1;
+            display: inline-block;
+            margin:0 4px 0 0;
+        }
+            .pageMap__item:last-child {
+                margin:0;
+            }
+            .pageMap__page {
+                height:1.25em; min-width:1.25em;
+                padding:0 0.25em;
+                background:#fff;
+                color:#626262;
+                text-align: center;
+            }
+                .pageMap__page--error {
+                    background:#dc4141;
+                    color:#fff;
+                }
+                .pageMap__page .btn__label {
+                    font-size:0.75em; 
+                    line-height: 1;
+                    display: block;
+                }
 
 
 /*  ======================================================

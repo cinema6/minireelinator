@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.8.0.rc1]*
+  * [FEATURE]: studio editor nav updated with left/right buttons and pageMap styles
+
 ## v1.7.0 (December 22, 2014)
 * *[v1.7.0.rc1]*
   * [FEATURE]: Added ability to make sponsored cards completely
