@@ -55,15 +55,17 @@ function( angular , c6State  , c6uilib ) {
                     }));
                 };
                 this.enter = function() {
-                    var experience = this.cModel[0];
-
-                    if (experience.appUri === 'mini-reel-maker') {
-                        c6State.goTo('MiniReel', [experience], null, true);
-                    } else {
-                        c6State.goTo('Error', [
-                            'You do not have any supported experiences!'
-                        ], null, true);
+                    var experiences = this.cModel;
+                    for(var i=0;i<experiences.length;i++) {
+                        var experience = experiences[i];
+                        if (experience.appUri === 'mini-reel-maker') {
+                            c6State.goTo('MiniReel', [experience], null, true);
+                            return;
+                        }
                     }
+                    c6State.goTo('Error', [
+                        'You do not have any supported experiences!'
+                    ], null, true);
                 };
             }]);
         }]);
