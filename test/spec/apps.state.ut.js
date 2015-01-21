@@ -83,6 +83,12 @@ define(['app'], function(appModule) {
                         appUri: 'mini-reel-maker'
                     }
                 ];
+                apps.cModel2 = [
+                    {},
+                    {
+                        appUri: 'mini-reel-maker'
+                    }
+                ];
                 $rootScope.$apply(function() {
                     apps.enter();
                 });
@@ -90,6 +96,10 @@ define(['app'], function(appModule) {
 
             it('should transition to the MiniReel state', function() {
                 expect(c6State.goTo).toHaveBeenCalledWith('MiniReel', [apps.cModel[0]], null, true);
+            });
+
+            it('should transition to the MiniReel state if "mini-reel-maker" is any element in apps.cModel', function() {
+                expect(c6State.goTo).toHaveBeenCalledWith('MiniReel', [apps.cModel2[1]], null, true);
             });
 
             it('should go to the error state if the minireel\'s uri is not "mini-reel-maker"', function() {

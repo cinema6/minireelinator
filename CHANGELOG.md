@@ -1,6 +1,7 @@
 # MiniReelinator
 
 * *[v1.8.0.rc1]*
+  * Logic to find "minireelinator" experience more robust
   * [FEATURE]: studio editor nav updated with left/right buttons and pageMap styles
 
 ## v1.7.0 (December 22, 2014)
@@ -132,7 +133,7 @@
 * *[v1.0.0.rc2]*
   * [FEATURE]: Added "Apply" button to video search options
   * [FEATURE]: Updated slide editor text to hint at video search
-  * [FEATURE]: added --focus styles to swap z-index hierarchy between 
+  * [FEATURE]: added --focus styles to swap z-index hierarchy between
     video search panel and slide modals
   * [FEATURE]: added styles for video search results while dragging
 * *[/v1.0.0.rc2]*
@@ -238,7 +239,7 @@
 * *[Beta17.rc3]
   * [FEATURE]: Preview links - mobile view styles added
 * *[/Beta17.rc3]
-  
+
 * *[Beta17.rc2]*
   * [FIX]: Fix for an issue that could cause a MiniReel not to load on
     the preview page in staging on FireFox
