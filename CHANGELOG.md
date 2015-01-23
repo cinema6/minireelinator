@@ -1,8 +1,10 @@
 # MiniReelinator
 
+## v1.8.0 (January 23, 2014)
 * *[v1.8.0.rc1]*
   * Logic to find "minireelinator" experience more robust
   * [FEATURE]: studio editor nav updated with left/right buttons and pageMap styles
+* *[/v1.8.0.rc1]*
 
 ## v1.7.0 (December 22, 2014)
 * *[v1.7.0.rc1]*
