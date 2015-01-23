@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## v1.8.0 (January 23, 2014)
+* *[v1.8.0.rc2]*
+  * [FIX]: Fix for an issue that caused unit tests not to pass when
+    running on Jenkins
+* *[/v1.8.0.rc2]*
+
 * *[v1.8.0.rc1]*
   * Logic to find "minireelinator" experience more robust
   * [FEATURE]: studio editor nav updated with left/right buttons and pageMap styles
