@@ -1033,6 +1033,22 @@
                                         expect(posts.title).toHaveBeenCalledWith(posts.myModel);
                                         expect(posts.cTitle).toBe('My App: Posts');
                                     });
+
+                                    describe('if afterModel() rejects', function() {
+                                        beforeEach(function() {
+                                            $rootScope.$apply(function() {
+                                                posts.afterModelDeferred.reject('I FAILED');
+                                            });
+                                        });
+
+                                        it('should set the model back to null', function() {
+                                            expect(posts.cModel).toBeNull();
+                                        });
+
+                                        it('should reject the promise', function() {
+                                            expect(failure).toHaveBeenCalledWith('I FAILED');
+                                        });
+                                    });
                                 });
                             });
 

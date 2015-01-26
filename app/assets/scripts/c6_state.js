@@ -1003,7 +1003,11 @@ function( angular , c6uilib ) {
                             return setupTemplate(state)
                                 .then(beforeModel)
                                 .then(model)
-                                .then(afterModel);
+                                .then(afterModel)
+                                .catch(function() {
+                                    state.cModel = null;
+                                    return $q.reject.apply($q, arguments);
+                                });
                         };
                     })).then(function fulfill() {
                         return states;
