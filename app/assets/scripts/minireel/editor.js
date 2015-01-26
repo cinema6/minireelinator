@@ -1521,12 +1521,12 @@ VideoCardController           ) {
                     return MiniReelService.createCard('videoBallot');
                 };
 
-                this.afterModel = function(card) {
+                this.afterModel = function(card, params) {
                     var user = PortalState.cModel;
 
                     if (!!user.permissions.campaigns) { return $q.when(true); }
 
-                    c6State.goTo('MR:EditCard', [card], null, true);
+                    c6State.goTo('MR:EditCard', [card], params, true);
 
                     return $q.reject(new Error('User does not have access to campaigns.'));
                 };
