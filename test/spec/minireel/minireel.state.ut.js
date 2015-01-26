@@ -48,7 +48,9 @@ define (['app'], function(appModule) {
             portal = c6State.get('Portal');
             minireel = c6State.get('MiniReel');
             apps = c6State.get('Apps');
-            apps.cModel = [minireelExp];
+            apps.cModel = {
+                'mini-reel-maker': minireelExp
+            };
             portal.cModel = user;
         });
 

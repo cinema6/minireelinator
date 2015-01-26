@@ -70,40 +70,36 @@ define(['app'], function(appModule) {
                 });
             });
 
-            it('should resolve to an array of experiences', function() {
-                expect(success).toHaveBeenCalledWith([minireel, other]);
+            it('should resolve to an object of experiences', function() {
+                expect(success).toHaveBeenCalledWith({
+                    'mini-reel-maker': minireel,
+                    'some-other': other
+                });
             });
         });
 
         describe('enter()', function() {
             beforeEach(function() {
                 spyOn(c6State, 'goTo');
-                apps.cModel = [
-                    {
+                apps.cModel = {
+                    proshop: {
+                        appUri: 'proshop'
+                    },
+                    'mini-reel-maker': {
                         appUri: 'mini-reel-maker'
                     }
-                ];
-                apps.cModel2 = [
-                    {},
-                    {
-                        appUri: 'mini-reel-maker'
-                    }
-                ];
+                };
                 $rootScope.$apply(function() {
                     apps.enter();
                 });
             });
 
             it('should transition to the MiniReel state', function() {
-                expect(c6State.goTo).toHaveBeenCalledWith('MiniReel', [apps.cModel[0]], null, true);
-            });
-
-            it('should transition to the MiniReel state if "mini-reel-maker" is any element in apps.cModel', function() {
-                expect(c6State.goTo).toHaveBeenCalledWith('MiniReel', [apps.cModel2[1]], null, true);
+                expect(c6State.goTo).toHaveBeenCalledWith('MiniReel', [apps.cModel['mini-reel-maker']], null, true);
             });
 
             it('should go to the error state if the minireel\'s uri is not "mini-reel-maker"', function() {
-                apps.cModel[0].appUri = 'foo';
+                delete apps.cModel['mini-reel-maker'];
                 apps.enter();
 
                 expect(c6State.goTo).toHaveBeenCalledWith('Error', [jasmine.any(String)], null, true);
