@@ -52,17 +52,21 @@ function( angular , c6State  , c6uilib ) {
 
                     return $q.all(applications.map(function(id) {
                         return cinema6.db.find('experience', id);
-                    }));
+                    })).then(function(experiences) {
+                        return experiences.reduce(function(result, experience) {
+                            result[experience.appUri] = experience;
+                            return result;
+                        }, {});
+                    });
                 };
                 this.enter = function() {
-                    var experiences = this.cModel;
-                    for(var i=0;i<experiences.length;i++) {
-                        var experience = experiences[i];
-                        if (experience.appUri === 'mini-reel-maker') {
-                            c6State.goTo('MiniReel', [experience], null, true);
-                            return;
-                        }
+                    var experiences = this.cModel,
+                        minireel = experiences['mini-reel-maker'];
+
+                    if (minireel) {
+                        return c6State.goTo('MiniReel', [minireel], null, true);
                     }
+
                     c6State.goTo('Error', [
                         'You do not have any supported experiences!'
                     ], null, true);

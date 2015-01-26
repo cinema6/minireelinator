@@ -1,5 +1,11 @@
 # MiniReelinator
 
+## v1.8.1 (January 23, 2014)
+* *[v1.8.1.rc1]*
+  * [FIX]: Fix for an issue that could break adding new cards to a
+    MiniReel from the studio
+* *[/v1.8.1.rc1]*
+
 ## v1.8.0 (January 23, 2014)
 * *[v1.8.0.rc2]*
   * [FIX]: Fix for an issue that caused unit tests not to pass when

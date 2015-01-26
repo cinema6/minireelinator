@@ -526,7 +526,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                 };
 
                 this.model = function() {
-                    return this.cParent.cModel[0];
+                    return this.cParent.cModel['mini-reel-maker'];
                 };
                 this.afterModel = function() {
                     var user = c6State.get('Portal').cModel;
