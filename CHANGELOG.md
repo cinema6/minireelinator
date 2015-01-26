@@ -1,6 +1,13 @@
 # MiniReelinator
 
 ## v1.8.1 (January 26, 2014)
+* *[v1.8.1.rc2]*
+  * [FIX]: Fix for an issue that caused all new cards to be placed in the
+    first position
+  * [FIX]: Fix for an issue that caused creating a new card to actually
+    start editing the last new card to be created
+* *[/v1.8.1.rc2]*
+
 * *[v1.8.1.rc1]*
   * [FIX]: Fix for an issue that could break adding new cards to a
     MiniReel from the studio

@@ -78,12 +78,14 @@
                         delete user.permissions.campaigns;
 
                         $rootScope.$apply(function() {
-                            NewCardState.afterModel(MiniReelService.createCard('videoBallot')).then(success, failure);
+                            NewCardState.afterModel(MiniReelService.createCard('videoBallot'), {
+                                insertAt: 2
+                            }).then(success, failure);
                         });
                     });
 
                     it('should go to the edit card state', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('MR:EditCard', [card], null, true);
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:EditCard', [card], { insertAt: 2 }, true);
                     });
 
                     it('should reject the transition', function() {
