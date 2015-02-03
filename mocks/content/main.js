@@ -34,7 +34,7 @@ module.exports = function(http) {
     });
 
     http.whenGET('/api/content/experiences', function(request) {
-        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text']),
+        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text', 'sponsored']),
             page = withDefaults(mapObject(pluck(request.query, ['limit', 'skip']), parseFloat), {
                 limit: Infinity,
                 skip: 0
@@ -56,6 +56,10 @@ module.exports = function(http) {
                     var text = request.query.text || experience.data.title;
 
                     return experience.data.title.toLowerCase().indexOf(text.toLowerCase()) > -1;
+                })
+                .filter(function(experience) {
+                    return !('sponsored' in request.query) ||
+                        ('campaignId' in experience).toString() === request.query.sponsored;
                 }),
             experiences = allExperiences
                 .filter(function(experience, index) {

@@ -11,6 +11,7 @@ define(function() {
         this.search = function() {
             return (this.result = scopePromise(cinema6.db.findAll('experience', {
                 org: PortalCtrl.model.org.id,
+                sponsored: false,
                 text: this.query
             }))).promise;
         };
