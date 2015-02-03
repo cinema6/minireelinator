@@ -1773,7 +1773,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     }
                 });
 
-                if (!model.categoryList) { model.categoryList = []; }
+                if (!model.categories) { model.categories = []; }
 
                 return model;
             };
@@ -1791,7 +1791,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             type: 'minireel',
                             org: org.id,
                             appUri: 'rumble',
-                            categoryList: [],
+                            categories: [],
                             data: {
                                 title: null,
                                 mode: orgSettings.minireelDefaults.mode,

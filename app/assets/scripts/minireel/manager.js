@@ -262,7 +262,7 @@ function( angular , c6uilib , c6State  , services   ,
                 this.mode = MiniReelService.modeDataOf(minireel, modes);
                 this.autoplay = minireel.data.autoplay;
                 this.title = minireel.data.title;
-                this.categoryList = minireel.categoryList.slice();
+                this.categories = minireel.categories.slice();
             };
 
             this.isAsFarAs = function(tab) {
@@ -287,9 +287,9 @@ function( angular , c6uilib , c6State  , services   ,
                 });
 
                 data.mode = this.mode.value;
-                minireel.categoryList.length = 0;
-                minireel.categoryList.push.apply(minireel.categoryList, this.categoryList);
-                minireel.data.params.categoryList = this.categoryList;
+                minireel.categories.length = 0;
+                minireel.categories.push.apply(minireel.categories, this.categories);
+                minireel.data.params.categories = this.categories;
 
                 (minireel.id ? $q.when(minireel) :
                     minireel.save())

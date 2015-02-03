@@ -26,7 +26,7 @@
 
             beforeEach(function() {
                 minireel = {
-                    categoryList: ['food', 'camping'],
+                    categories: ['food', 'camping'],
                     data: {
                         title: 'Awesome Videos, Brah!',
                         mode: 'full',
@@ -422,10 +422,10 @@
                     });
                 });
 
-                describe('categoryList', function() {
-                    it('should be a copy of the minireel\'s categoryList', function() {
-                        expect(NewCtrl.categoryList).toEqual(minireel.categoryList);
-                        expect(NewCtrl.categoryList).not.toBe(minireel.categoryList);
+                describe('categories', function() {
+                    it('should be a copy of the minireel\'s categories', function() {
+                        expect(NewCtrl.categories).toEqual(minireel.categories);
+                        expect(NewCtrl.categories).not.toBe(minireel.categories);
                     });
                 });
 
@@ -456,11 +456,11 @@
                 describe('save()', function() {
                     var saveDeferred,
                         compiledMinireel,
-                        categoryList;
+                        categories;
 
                     beforeEach(function() {
                         saveDeferred = $q.defer();
-                        categoryList = minireel.categoryList;
+                        categories = minireel.categories;
 
                         compiledMinireel = {
                             data: {
@@ -473,7 +473,7 @@
                         NewCtrl.mode = modes[0].modes[0];
                         NewCtrl.autoplay = true;
                         NewCtrl.title = 'Sweet!';
-                        NewCtrl.categoryList = ['foo', 'bar'];
+                        NewCtrl.categories = ['foo', 'bar'];
 
                         minireel.save.and.returnValue(saveDeferred.promise);
 
@@ -490,10 +490,10 @@
                         expect(minireel.data.mode).toBe(NewCtrl.mode.value);
                     });
 
-                    it('should copy the categoryList items to the minireel', function() {
-                        expect(minireel.categoryList).toEqual(NewCtrl.categoryList);
-                        expect(minireel.categoryList).toBe(categoryList);
-                        expect(minireel.data.params.categoryList).toBe(NewCtrl.categoryList);
+                    it('should copy the categories items to the minireel', function() {
+                        expect(minireel.categories).toEqual(NewCtrl.categories);
+                        expect(minireel.categories).toBe(categories);
+                        expect(minireel.data.params.categories).toBe(NewCtrl.categories);
                     });
 
                     it('should save the minireel', function() {
