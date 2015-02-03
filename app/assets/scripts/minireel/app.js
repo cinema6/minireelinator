@@ -498,6 +498,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                     var org = c6State.get('Portal').cModel.org,
                         scopedPromise = scopePromise(cinema6.db.findAll('experience', {
                             type: 'minireel',
+                            sponsored: false,
                             org: org.id,
                             sort: 'lastUpdated,-1',
                             status: (filter === 'all') ? null : filter,

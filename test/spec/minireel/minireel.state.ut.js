@@ -189,6 +189,7 @@ define (['app'], function(appModule) {
                 it('should find experiences of all statuses', function() {
                     expect(cinema6.db.findAll).toHaveBeenCalledWith('experience', {
                         type: 'minireel',
+                        sponsored: false,
                         org: portal.cModel.org.id,
                         sort: 'lastUpdated,-1',
                         status: null,
@@ -209,6 +210,7 @@ define (['app'], function(appModule) {
                     it('should find experiences with the specified status', function() {
                         expect(cinema6.db.findAll).toHaveBeenCalledWith('experience', {
                             type: 'minireel',
+                            sponsored: false,
                             org: portal.cModel.org.id,
                             sort: 'lastUpdated,-1',
                             status: status,
