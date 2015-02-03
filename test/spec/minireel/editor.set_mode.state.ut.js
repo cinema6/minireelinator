@@ -34,6 +34,10 @@
                 function equalStates(state1, state2) {
                     ['controller', 'controllerAs', 'templateUrl', 'model', 'updateControllerModel']
                         .forEach(function(prop) {
+                            if (state2[prop] instanceof Function) {
+                                return expect(state1[prop].toString()).toBe(state2[prop].toString());
+                            }
+
                             expect(state1[prop]).toEqual(state2[prop]);
                         });
                 }

@@ -167,8 +167,15 @@ function( angular , c6uilib , c6State  , services   ,
                     this.templateUrl = 'views/minireel/manager/new/general.html';
                 }])
 
-                .state('MR:New.Category', [function() {
+                .state('MR:New.Category', ['cinema6',
+                function                  ( cinema6 ) {
                     this.templateUrl = 'views/minireel/manager/new/category.html';
+                    this.controller = 'GenericController';
+                    this.controllerAs = 'NewCategoryCtrl';
+
+                    this.model = function() {
+                        return cinema6.db.findAll('category');
+                    };
                 }])
 
                 .state('MR:New.Mode', [function() {
@@ -204,7 +211,7 @@ function( angular , c6uilib , c6State  , services   ,
             }
 
             function incrementTabVisits(state) {
-                tabBySref(state.cName).visits++;
+                (tabBySref(state.cName) || {}).visits++;
             }
 
             this.modes = modes.reduce(function(array, mode) {
@@ -221,12 +228,13 @@ function( angular , c6uilib , c6State  , services   ,
                     return 'MR:Settings.';
                 }
             }());
-            this.tabs = user.type === 'ContentProvider' ?
-                [] :
-                [
+            this.tabs = [new Tab('MiniReel Category', this.baseState + 'Category')];
+            if (user.type !== 'ContentProvider') {
+                this.tabs.push(
                     new Tab('MiniReel Type', this.baseState + 'Mode'),
                     new Tab('Continuous Play', this.baseState + 'Autoplay')
-                ];
+                );
+            }
             if (this.baseState === 'MR:New.') {
                 this.tabs.unshift(new Tab('MiniReel Title', 'MR:New.General', true));
 
@@ -254,6 +262,7 @@ function( angular , c6uilib , c6State  , services   ,
                 this.mode = MiniReelService.modeDataOf(minireel, modes);
                 this.autoplay = minireel.data.autoplay;
                 this.title = minireel.data.title;
+                this.categoryList = minireel.categoryList.slice();
             };
 
             this.isAsFarAs = function(tab) {
@@ -278,6 +287,9 @@ function( angular , c6uilib , c6State  , services   ,
                 });
 
                 data.mode = this.mode.value;
+                minireel.categoryList.length = 0;
+                minireel.categoryList.push.apply(minireel.categoryList, this.categoryList);
+                minireel.data.params.categoryList = this.categoryList;
 
                 (minireel.id ? $q.when(minireel) :
                     minireel.save())
