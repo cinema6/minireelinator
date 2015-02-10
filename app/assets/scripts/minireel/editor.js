@@ -890,8 +890,15 @@ VideoCardController           ) {
                     };
                 }])
 
-                .state('MR:Settings.Category', [function() {
+                .state('MR:Settings.Category', ['cinema6',
+                function                       ( cinema6 ) {
                     this.templateUrl = 'views/minireel/manager/new/category.html';
+                    this.controller = 'GenericController';
+                    this.controllerAs = 'NewCategoryCtrl';
+
+                    this.model = function() {
+                        return cinema6.db.findAll('category');
+                    };
                 }])
 
                 .state('MR:Settings.Mode', [function() {

@@ -82,7 +82,7 @@ define(['app'], function(appModule) {
             it('should add campaign data to the MiniReel', function() {
                 expect(minireel).toEqual(jasmine.objectContaining({
                     campaignId: campaign.cModel.id,
-                    categoryList: campaign.cModel.categories,
+                    categories: campaign.cModel.categories,
                     data: jasmine.objectContaining({
                         collateral: jasmine.objectContaining({
                             logo: campaign.cModel.logos.square
@@ -99,7 +99,7 @@ define(['app'], function(appModule) {
                 expect(minireel.data).toEqual(jasmine.objectContaining({
                     deck: []
                 }));
-                expect(minireel.categoryList).not.toBe(campaign.cModel.categories);
+                expect(minireel.categories).not.toBe(campaign.cModel.categories);
             });
         });
     });

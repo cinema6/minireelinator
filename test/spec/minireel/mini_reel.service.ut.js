@@ -102,6 +102,7 @@
                     theme: 'ed-videos',
                     status: 'pending',
                     access: 'public',
+                    categories: ['foo', 'bar'],
                     data: {
                         title: 'My MiniReel',
                         mode: 'lightbox',
@@ -1238,6 +1239,20 @@
                             });
                         });
 
+                        describe('if it is missing a categories', function() {
+                            beforeEach(function() {
+                                delete minireel.categories;
+
+                                $rootScope.$apply(function() {
+                                    result = MiniReelService.convertForEditor(minireel);
+                                });
+                            });
+
+                            it('should create a default one', function() {
+                                expect(result.categories).toEqual([]);
+                            });
+                        });
+
                         it('should support copying onto a provided object', function() {
                             var object = {
                                     invalidProp: 'blah',
@@ -1259,6 +1274,7 @@
                                 theme: 'ed-videos',
                                 status: 'pending',
                                 access: 'public',
+                                categories: ['foo', 'bar'],
                                 _type: 'experience',
                                 _erased: false,
                                 data: jasmine.any(Object)
@@ -1756,6 +1772,7 @@
                                     theme: 'ed-videos',
                                     status: 'pending',
                                     access: 'public',
+                                    categories: ['foo', 'bar'],
                                     data: jasmine.any(Object)
                                 });
 
@@ -1799,6 +1816,7 @@
                                     type: 'minireel',
                                     org: 'o-17593d7a2bf294',
                                     appUri: 'rumble',
+                                    categories: [],
                                     data: {
                                         title: null,
                                         mode: 'lightbox-ads',

@@ -1,25 +1,21 @@
-<div class="modalBody__group modal__editor clearfix">
-    <ul class="wizard__group">
-        <li ng-repeat="$this in NewCtrl.modes" class="wizard__choice">
-            <input id="category-{{$this.value}}" type="radio" 
-                name="minireel-category" ng-value="$this"
-                class="modal__radioBtn" ng-model="NewCtrl.category" />
-            <label class="wizard__hitarea" for="category-{{$this.value}}"><span class="ir">Lightbox</span></label>
-            <div class="wizard__diagram sprite--fff diagram__{{$this.value}}">&nbsp;</div>
-            <div class="wizard__copy">
-                <h2 class="wizard__title">{{$this.name}} <span class="typo--context">*</span></h2>
-                <p class="wizard__p">{{$this.description}}</p>
-            </div>
-        </li>
-    </ul>
-</div>
-<div class="modal__fineprint typo--context">
-    ! Making changes on this tab may affect settings on other tabs. <br>
-    * These changes affect desktop experiences only.
+<div class="modalBody__group modalBody__group--sideTabs mrConfigure__general">
+    <form>
+        <label class="forms__pair forms__pair--spacer clearfix" c6-alias="NewCategoryCtrl.model as categories">
+            <span class="forms__name forms__name--extended" > Categories:</span>
+            <span class="forms__inputHolder--med">
+                <select multiple ng-model="NewCtrl.categories" 
+                class="selector__multiSelect"
+                ng-options="category.name as category.label for category in categories"></select>
+                <p class="typo--warning" style="font-size:0.875em;">Use 'Ctl/Cmd' or 'Shift' to select multiple items</p>
+            </span>
+        </label>
+    </form>
+    <p class="modalBody__fineprint typo--danger"><strong>*</strong> Indicates required field.</p>
 </div>
 <footer class="modalFooter__group">
     <button ng-show="NewCtrl.currentTab !== NewCtrl.tabs[0]" ng-click="NewCtrl.prevTab()" class="btnAction btnAction--first" title="Previous Step">Prev Step</button>
-    <button ng-show="NewCtrl.currentTab === NewCtrl.tabs[0]" class="btnAction" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
-    <button class="btnAction btnAction--primary btnAction--last" type="button" ng-click="NewCtrl.nextTab()" title="Next Step">Next Step</button>
+    <button ng-show="NewCtrl.currentTab === NewCtrl.tabs[0]" class="btnAction btnAction--first" c6-sref="{{NewCtrl.returnState}}" title="Cancel">Cancel</button>
+    <button ng-show="!!NewCtrl.tabs[NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1]" ng-click="NewCtrl.nextTab()" class="btnAction btnAction--primary btnAction--last" type="button" title="Next Step">Next Step</button>
+    <button ng-show="!NewCtrl.tabs[NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1]" ng-click="NewCtrl.save()" class="btnAction btnAction--success btnAction--last" type="button" title="Done!" ng-disabled="!NewCtrl.title">I&rsquo;m Done!</button>
     <p class="modalFooter__guideText">Step {{NewCtrl.tabs.indexOf(NewCtrl.currentTab) + 1}} of {{NewCtrl.tabs.length}}</p>
 </footer>

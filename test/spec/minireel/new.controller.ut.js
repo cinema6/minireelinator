@@ -26,12 +26,14 @@
 
             beforeEach(function() {
                 minireel = {
+                    categories: ['food', 'camping'],
                     data: {
                         title: 'Awesome Videos, Brah!',
                         mode: 'full',
                         autoplay: false,
                         displayAdSource: 'cinema6',
                         videoAdSource: 'cinema6',
+                        params: {},
                         deck: [
                             {
                                 displayAdSource: 'cinema6',
@@ -131,6 +133,14 @@
 
             describe('events', function() {
                 describe('c6State:stateChange', function() {
+                    describe('if called with a state name that is not a tab', function() {
+                        it('should do nothing', function() {
+                            expect(function() {
+                                c6State.emit('stateChange', { cName: 'New' });
+                            }).not.toThrow();
+                        });
+                    });
+
                     [0, 1, 2].forEach(function(index) {
                         describe('with the state of the tab at index: ' + index, function() {
                             var tab,
@@ -274,6 +284,13 @@
                                 }),
                                 jasmine.objectContaining({
                                     name: jasmine.any(String),
+                                    sref: 'MR:New.Category',
+                                    visits: 0,
+                                    required: false,
+                                    requiredVisits: 0
+                                }),
+                                jasmine.objectContaining({
+                                    name: jasmine.any(String),
                                     sref: 'MR:New.Mode',
                                     visits: 0,
                                     required: false,
@@ -298,7 +315,7 @@
                                 });
                             });
 
-                            it('should have one tab', function() {
+                            it('should have two tabs', function() {
                                 expect(NewCtrl.tabs).toEqual([
                                     jasmine.objectContaining({
                                         name: jasmine.any(String),
@@ -306,7 +323,14 @@
                                         visits: 0,
                                         required: true,
                                         requiredVisits: 1
-                                    })
+                                    }),
+                                    jasmine.objectContaining({
+                                        name: jasmine.any(String),
+                                        sref: 'MR:New.Category',
+                                        visits: 0,
+                                        required: false,
+                                        requiredVisits: 0
+                                    }),
                                 ]);
                             });
                         });
@@ -320,8 +344,15 @@
                             });
                         });
 
-                        it('should have two tabs', function() {
+                        it('should have three tabs', function() {
                             expect(NewCtrl.tabs).toEqual([
+                                jasmine.objectContaining({
+                                    name: jasmine.any(String),
+                                    sref: 'MR:Settings.Category',
+                                    visits: 0,
+                                    required: false,
+                                    requiredVisits: 0
+                                }),
                                 jasmine.objectContaining({
                                     name: jasmine.any(String),
                                     sref: 'MR:Settings.Mode',
@@ -353,11 +384,15 @@
                             });
 
                             it('should have one tab', function() {
-                                expect(NewCtrl.tabs).toEqual([]);
-                            });
-
-                            it('should also go back to the baseState', function() {
-                                expect(c6State.goTo).toHaveBeenCalledWith(state.cParent.cName, null, null, true);
+                                expect(NewCtrl.tabs).toEqual([
+                                    jasmine.objectContaining({
+                                        name: jasmine.any(String),
+                                        sref: 'MR:Settings.Category',
+                                        visits: 0,
+                                        required: false,
+                                        requiredVisits: 0
+                                    })
+                                ]);
                             });
                         });
                     });
@@ -387,6 +422,13 @@
                     });
                 });
 
+                describe('categories', function() {
+                    it('should be a copy of the minireel\'s categories', function() {
+                        expect(NewCtrl.categories).toEqual(minireel.categories);
+                        expect(NewCtrl.categories).not.toBe(minireel.categories);
+                    });
+                });
+
                 describe('currentTab', function() {
                     describe('if there is no tab for the current state', function() {
                         beforeEach(function() {
@@ -413,10 +455,12 @@
             describe('methods', function() {
                 describe('save()', function() {
                     var saveDeferred,
-                        compiledMinireel;
+                        compiledMinireel,
+                        categories;
 
                     beforeEach(function() {
                         saveDeferred = $q.defer();
+                        categories = minireel.categories;
 
                         compiledMinireel = {
                             data: {
@@ -429,6 +473,7 @@
                         NewCtrl.mode = modes[0].modes[0];
                         NewCtrl.autoplay = true;
                         NewCtrl.title = 'Sweet!';
+                        NewCtrl.categories = ['foo', 'bar'];
 
                         minireel.save.and.returnValue(saveDeferred.promise);
 
@@ -443,6 +488,12 @@
 
                     it('should copy the mode to the minreel', function() {
                         expect(minireel.data.mode).toBe(NewCtrl.mode.value);
+                    });
+
+                    it('should copy the categories items to the minireel', function() {
+                        expect(minireel.categories).toEqual(NewCtrl.categories);
+                        expect(minireel.categories).toBe(categories);
+                        expect(minireel.data.params.categories).toBe(NewCtrl.categories);
                     });
 
                     it('should save the minireel', function() {
@@ -531,7 +582,7 @@
 
                             NewCtrl.prevTab();
 
-                            expect(c6State.goTo).toHaveBeenCalledWith(NewCtrl.tabs[0].sref);
+                            expect(c6State.goTo).toHaveBeenCalledWith(NewCtrl.tabs[1].sref);
                         });
                     });
 
@@ -661,7 +712,7 @@
                         });
 
                         it('should bump up the requiredVisits of the autoplay tab', function() {
-                            expect(NewCtrl.tabs[2].requiredVisits).toBe(NewCtrl.tabs[2].visits + 1);
+                            expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits + 1);
                         });
                     });
 
@@ -681,7 +732,7 @@
                                 });
 
                                 it('should bump up the requiredVisits of the autoplay tab', function() {
-                                    expect(NewCtrl.tabs[2].requiredVisits).toBe(NewCtrl.tabs[2].visits + 1);
+                                    expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits + 1);
                                 });
                             });
                         });
@@ -692,14 +743,14 @@
                             $scope.$apply(function() {
                                 NewCtrl.mode = modes[0].modes[0];
                             });
-                            NewCtrl.tabs[2].requiredVisits = NewCtrl.tabs[2].visits;
+                            NewCtrl.tabs[3].requiredVisits = NewCtrl.tabs[3].visits;
                             $scope.$apply(function() {
                                 NewCtrl.mode = modes[0].modes[1];
                             });
                         });
 
                         it('should not bump up the requiredVisits of the autoplay tab', function() {
-                            expect(NewCtrl.tabs[2].requiredVisits).toBe(NewCtrl.tabs[2].visits);
+                            expect(NewCtrl.tabs[3].requiredVisits).toBe(NewCtrl.tabs[3].visits);
                         });
                     });
                 });

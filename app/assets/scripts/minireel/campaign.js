@@ -383,7 +383,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         .then(function addCampaignData(minireel) {
                             return deepExtend(minireel, {
                                 campaignId: campaign.id,
-                                categoryList: campaign.categories,
+                                categories: campaign.categories,
                                 data: {
                                     links: campaign.links,
                                     collateral: {

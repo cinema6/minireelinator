@@ -52,6 +52,10 @@
                 Type: <a c6-sref="MR:Settings.Mode" class="miniReel__type" title="AutoPlay MiniReel"><strong>{{EditorCtrl.prettyMode}}</strong></a> 
                 <span class="typo--faded">&nbsp;|&nbsp;</span>
             </span>
+            <span ng-if="PortalCtrl.model.type === 'ContentProvider'">
+                <a c6-sref="MR:Settings.Category" class="miniReel__type" title="AutoPlay MiniReel"><strong>Edit Categories</strong></a> 
+                <span class="typo--faded">&nbsp;|&nbsp;</span>
+            </span>
             <span ng-show="minireel.status === 'pending'">
                 <strong>Private</strong>, Created {{minireel.created | date:'M/d/yyyy' }}
             </span>
