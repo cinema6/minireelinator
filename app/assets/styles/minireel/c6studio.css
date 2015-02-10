@@ -153,6 +153,12 @@
                     font-size:0.875rem;
                 }   
             }
+            .selector__multiSelect {
+                width:18.75em; height:18.75em;
+            }
+                .selector__multiSelect option {
+                    padding:0.5em 0.75em;
+                }
     .pager__group {
         float:right;
     }

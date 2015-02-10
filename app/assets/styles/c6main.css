@@ -960,6 +960,10 @@
             float:left;
             width:20em;
         }
+        .forms__inputHolder--med {
+            float:left;
+            width:30em;
+        }
     .forms__textField {
         border:1px solid #ddd;
         padding:0 0.5em;
