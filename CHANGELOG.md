@@ -1,5 +1,10 @@
 # MiniReelinator
 
+## v1.9.0 (February 17, 2015)
+* *[v1.9.0.rc1]*
+  * [FEATURE]: Added Campaign manager (for managing wildcard campaigns.)
+* *[/v1.9.0.rc1]*
+
 ## v1.8.1 (January 26, 2014)
 * *[v1.8.1.rc2]*
   * [FIX]: Fix for an issue that caused all new cards to be placed in the

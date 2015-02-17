@@ -88,6 +88,26 @@
 
             require(tests, $window.__karma__.start);
         });
-
     };
 }(window));
+(function() {
+    'use strict';
+
+    var addEventListener = window.addEventListener;
+    var listeners = [];
+
+    beforeEach(function() {
+        spyOn(window, 'addEventListener').and.callFake(function() {
+            listeners.push(arguments);
+            return addEventListener.apply(window, arguments);
+        });
+    });
+
+    afterEach(function() {
+        var args;
+
+        while ((args = listeners.shift())) {
+            window.removeEventListener.apply(window, args);
+        }
+    });
+}());
