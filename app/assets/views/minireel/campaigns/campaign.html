@@ -1,7 +1,35 @@
-<div class="container page__group--padded" c6-alias="CampaignCtrl.model as campaign">
-    <header class="pageHeader clearfix">
-        <h1 class="pageTitle">{{campaign.name}}</h1>
+<div class="container" c6-alias="CampaignCtrl.model as campaign">
+
+    <header class="pageHeader pageHeader--editor">
+        <div class="pageHeader__titleBar clearfix">
+            <h1 class="pageTitle pageTitle--campaignTitle">
+                {{campaign.name}}
+            </h1>
+            <button ng-click="CampaignCtrl.save()"
+            ng-disabled="CampaignCtrl.isClean"
+            class="btnAction btnAction--success btnAction--hasFaIcon"
+            type="button" title="Save">
+                <span class="btn__label fab fa-floppy-o">&nbsp; Save Changes</span>
+            </button>
+        </div>
+        <div class="metaData__group bottomSpacer">
+            <span>
+                Created {{campaign.created | date:'M/d/yyyy'}}
+                <span class="typo--faded">&nbsp;|&nbsp;</span>
+            </span>
+            <span>
+                <span>Advertiser: <strong>{{campaign.advertiser.name}}</strong></span>
+                <span class="typo--faded">&nbsp;|&nbsp;</span>
+            </span>
+            <span>
+                {{campaign.cards.length}} cards, {{campaign.miniReels.length}} MiniReels
+            </span>
+        </div>
     </header>
+
+
+
+
     <nav class="pageTabs__group clearfix">
         <ul class="sideTabs__list">
             <li class="sideTabs__item">
@@ -34,13 +62,4 @@
 
     <c6-view class="mainContent__group"></c6-view>
 
-    <footer style="display: block;">
-        <button ng-click="CampaignCtrl.save()"
-            ng-disabled="CampaignCtrl.isClean"
-            class="btnAction btnAction--success btnAction--last"
-            type="button"
-            title="Save">
-            Save
-        </button>
-    </footer>
 </div>

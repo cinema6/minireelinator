@@ -138,6 +138,9 @@
         .fa-bars:before {
             content: '\f0c9';
         }
+        .fa-floppy-o:before {
+            content: '\f0c7';
+        }
 
 /*  ======================================================
     Helper classes
@@ -175,6 +178,12 @@
     .twoCol {
         float:left;
         width:50%;
+    }
+    .bottomSpacer {
+        margin-bottom:2rem;
+    }
+    .topSpacer {
+        margin-top:2rem;
     }
     youtube-player, vimeo-player, dailymotion-player, rumble-player, .vidFrame {
         display: block;
@@ -825,6 +834,10 @@
     .forms__title {
         font-size:1.5em;
     }
+    .forms__title--divider {
+        border-bottom:2px solid #ddd;
+        margin-top:2rem;
+    }
     .forms__introText {
         margin:-0.3125em 0 1.5em 0;
     }
@@ -960,10 +973,21 @@
             float:left;
             width:20em;
         }
+            .forms__inputHolder--maxShort {
+                max-width:20em;
+            }
         .forms__inputHolder--med {
             float:left;
             width:30em;
         }
+            .forms__inputHolder--maxMed {
+                max-width:30em;
+            }
+        .forms__inputHolder--fluid {
+            float:left;
+            width:calc(100% - 10em);
+        }
+
     .forms__textField {
         border:1px solid #ddd;
         padding:0 0.5em;
