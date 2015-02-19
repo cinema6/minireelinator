@@ -1,4 +1,4 @@
-define(['minireel/campaign', 'minireel/mixins/WizardController'], function(campaignModule, WizardController) {
+define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardController) {
     'use strict';
 
     describe('CreativesNewMiniReelController', function() {
@@ -7,6 +7,7 @@ define(['minireel/campaign', 'minireel/mixins/WizardController'], function(campa
             $q,
             cinema6,
             c6State,
+            MiniReelService,
             $scope,
             CampaignCtrl,
             CampaignCreativesCtrl,
@@ -17,7 +18,7 @@ define(['minireel/campaign', 'minireel/mixins/WizardController'], function(campa
             campaign;
 
         beforeEach(function() {
-            module(campaignModule.name);
+            module(appModule.name);
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
@@ -25,6 +26,7 @@ define(['minireel/campaign', 'minireel/mixins/WizardController'], function(campa
                 $q = $injector.get('$q');
                 cinema6 = $injector.get('cinema6');
                 c6State = $injector.get('c6State');
+                MiniReelService = $injector.get('MiniReelService');
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
@@ -93,36 +95,37 @@ define(['minireel/campaign', 'minireel/mixins/WizardController'], function(campa
 
         describe('methods', function() {
             describe('confirm()', function() {
-                var saveDeferred,
+                var publishDeferred,
                     success, failure;
 
                 beforeEach(function() {
-                    saveDeferred = $q.defer();
+                    publishDeferred = $q.defer();
 
                     success = jasmine.createSpy('success()');
                     failure = jasmine.createSpy('failure()');
 
-                    spyOn(minireel, 'save').and.returnValue(saveDeferred.promise);
+                    spyOn(MiniReelService, 'publish').and.returnValue(publishDeferred.promise);
 
                     $scope.$apply(function() {
                         CreativesNewMiniReelCtrl.confirm().then(success, failure);
                     });
                 });
 
-                it('should save the minireel', function() {
-                    expect(minireel.save).toHaveBeenCalledWith();
+                it('should publish the minireel', function() {
+                    expect(MiniReelService.publish).toHaveBeenCalledWith(minireel);
                 });
 
-                describe('when the minireel has been saved', function() {
+                describe('when the minireel has been published', function() {
+                    var saveDeferred;
+
                     beforeEach(function() {
+                        saveDeferred = $q.defer();
+                        spyOn(CampaignCtrl, 'save').and.returnValue(saveDeferred.promise);
                         spyOn(CampaignCreativesCtrl, 'add').and.callThrough();
-                        spyOn(c6State, 'goTo').and.callFake(function(stateName) {
-                            return $q.when(c6State.get(stateName));
-                        });
 
                         $scope.$apply(function() {
                             minireel.id = 'e-c8feedca3a1567';
-                            saveDeferred.resolve(minireel);
+                            publishDeferred.resolve(minireel);
                         });
                     });
 
@@ -130,14 +133,30 @@ define(['minireel/campaign', 'minireel/mixins/WizardController'], function(campa
                         expect(CampaignCreativesCtrl.add).toHaveBeenCalledWith(minireel);
                     });
 
-                    it('should go to the editor with that minireel loaded', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [minireel], {
-                            campaign: campaign.id
-                        });
+                    it('should save the campaign', function() {
+                        expect(CampaignCtrl.save).toHaveBeenCalled();
                     });
 
-                    it('should resolve to the minireel', function() {
-                        expect(success).toHaveBeenCalledWith(minireel);
+                    describe('after the campaign has been saved', function() {
+                        beforeEach(function() {
+                            spyOn(c6State, 'goTo').and.callFake(function(stateName) {
+                                return $q.when(c6State.get(stateName));
+                            });
+
+                            $scope.$apply(function() {
+                                saveDeferred.resolve(campaign);
+                            });
+                        });
+
+                        it('should go to the editor with that minireel loaded', function() {
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [minireel], {
+                                campaign: campaign.id
+                            });
+                        });
+
+                        it('should resolve to the minireel', function() {
+                            expect(success).toHaveBeenCalledWith(minireel);
+                        });
                     });
                 });
             });
