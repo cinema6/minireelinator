@@ -116,11 +116,12 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                 });
 
                 describe('when the minireel has been published', function() {
+                    var saveDeferred;
+
                     beforeEach(function() {
+                        saveDeferred = $q.defer();
+                        spyOn(CampaignCtrl, 'save').and.returnValue(saveDeferred.promise);
                         spyOn(CampaignCreativesCtrl, 'add').and.callThrough();
-                        spyOn(c6State, 'goTo').and.callFake(function(stateName) {
-                            return $q.when(c6State.get(stateName));
-                        });
 
                         $scope.$apply(function() {
                             minireel.id = 'e-c8feedca3a1567';
@@ -132,14 +133,30 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                         expect(CampaignCreativesCtrl.add).toHaveBeenCalledWith(minireel);
                     });
 
-                    it('should go to the editor with that minireel loaded', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [minireel], {
-                            campaign: campaign.id
-                        });
+                    it('should save the campaign', function() {
+                        expect(CampaignCtrl.save).toHaveBeenCalled();
                     });
 
-                    it('should resolve to the minireel', function() {
-                        expect(success).toHaveBeenCalledWith(minireel);
+                    describe('after the campaign has been saved', function() {
+                        beforeEach(function() {
+                            spyOn(c6State, 'goTo').and.callFake(function(stateName) {
+                                return $q.when(c6State.get(stateName));
+                            });
+
+                            $scope.$apply(function() {
+                                saveDeferred.resolve(campaign);
+                            });
+                        });
+
+                        it('should go to the editor with that minireel loaded', function() {
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [minireel], {
+                                campaign: campaign.id
+                            });
+                        });
+
+                        it('should resolve to the minireel', function() {
+                            expect(success).toHaveBeenCalledWith(minireel);
+                        });
                     });
                 });
             });

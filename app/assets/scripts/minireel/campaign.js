@@ -429,6 +429,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         return CampaignCreativesCtrl.add(minireel);
                     })
                     .then(function(minireel) {
+                        return CampaignCtrl.save().then(function() { return minireel; });
+                    })
+                    .then(function(minireel) {
                         return c6State.goTo('MR:Editor', [minireel], {
                             campaign: CampaignCtrl.model.id
                         }).then(function() {
