@@ -179,10 +179,11 @@ define(['app'], function(appModule) {
         });
 
         describe('create(type, data)', function() {
-            var card, electionCard, response;
+            var card, ballot, response;
 
             beforeEach(function() {
                 card = {
+                    campaignId: 'cam-ebed4b6bdff117',
                     title: 'wiuhfu4rrf4',
                     note: 'ksjd skdjfh sdkfh',
                     type: 'video',
@@ -193,18 +194,20 @@ define(['app'], function(appModule) {
                     }
                 };
 
-                electionCard = extend(MiniReelService.convertCardForPlayer(card), {
+                ballot = {
                     ballot: {
                         prompt: 'Hello!',
                         choices: ['Hello', 'Goodbye']
                     }
+                };
+
+                spyOn(VoteService, 'syncCard').and.callFake(function(data) {
+                    return $q.when(extend(data, ballot));
                 });
 
-                spyOn(VoteService, 'syncCard').and.returnValue($q.when(electionCard));
+                response = extend(MiniReelService.convertCardForPlayer(card), ballot, { id: 'rc-8a868fb3d0d9b8', campaignId: 'cam-ebed4b6bdff117' });
 
-                response = extend(electionCard, { id: 'rc-8a868fb3d0d9b8' });
-
-                $httpBackend.expectPOST('/api/content/card', electionCard)
+                $httpBackend.expectPOST('/api/content/card', extend(MiniReelService.convertCardForPlayer(card), ballot, { campaignId: card.campaignId }))
                     .respond(201, response);
 
                 adapter.create('card', card).then(success, failure);
@@ -213,7 +216,7 @@ define(['app'], function(appModule) {
             });
 
             it('should respond with the response in an array', function() {
-                expect(success).toHaveBeenCalledWith([MiniReelService.convertCardForEditor(response)]);
+                expect(success).toHaveBeenCalledWith([extend(MiniReelService.convertCardForEditor(response), { campaignId: card.campaignId })]);
             });
         });
 

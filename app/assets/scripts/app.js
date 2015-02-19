@@ -387,12 +387,15 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
 
                 this.create = function(type, data) {
-                    return VoteService.syncCard(convertCardForPlayer(data))
-                        .then(function(data) {
-                            return $http.post(url('card'), data).then(pick('data'));
-                        })
-                        .then(MiniReelService.convertCardForEditor)
-                        .then(putInArray);
+                    return VoteService.syncCard(extend(convertCardForPlayer(data), {
+                        campaignId: data.campaignId
+                    })).then(function(data) {
+                        return $http.post(url('card'), data).then(pick('data'));
+                    })
+                    .then(function(data) {
+                        return extend(convertCardForEditor(data), { campaignId: data.campaignId });
+                    })
+                    .then(putInArray);
                 };
 
                 this.erase = function(type, card) {
