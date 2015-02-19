@@ -3,6 +3,7 @@
 ## v1.9.0 (February 17, 2015)
 * *[v1.9.0.rc2]*
   * [FIX]: Fix for an issue that caused campaigns to not be saveable
+  * [FIX]: Styles added for campaign manager
 
 * *[v1.9.0.rc1]*
   * [FEATURE]: Added Campaign manager (for managing wildcard campaigns.)
