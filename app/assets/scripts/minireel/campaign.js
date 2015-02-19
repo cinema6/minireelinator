@@ -400,7 +400,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         }])
 
         .controller('CreativesNewMiniReelController', ['$injector','$scope','c6State',
-        function                                      ( $injector , $scope , c6State ) {
+                                                       'MiniReelService',
+        function                                      ( $injector , $scope , c6State ,
+                                                        MiniReelService ) {
             var CampaignCreativesCtrl = $scope.CampaignCreativesCtrl,
                 CampaignCtrl = $scope.CampaignCtrl;
 
@@ -422,7 +424,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             ];
 
             this.confirm = function() {
-                return this.model.save()
+                return MiniReelService.publish(this.model)
                     .then(function(minireel) {
                         return CampaignCreativesCtrl.add(minireel);
                     })

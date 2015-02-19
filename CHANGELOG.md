@@ -3,6 +3,7 @@
 ## v1.9.0 (February 19, 2015)
 * *[v1.9.0.rc3]*
   * [FIX]: Fix for an issue that caused cards to not be creatable
+  * [FIX]: Fix for an issue that made sponsored MiniReels unpublishable
 
 * *[v1.9.0.rc2]*
   * [FIX]: Fix for an issue that caused campaigns to not be saveable
