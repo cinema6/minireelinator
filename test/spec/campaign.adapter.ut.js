@@ -585,7 +585,7 @@ define(['app'], function(appModule) {
 
                 spyOn(adapter, 'decorateCampaign').and.returnValue($q.when(response));
 
-                $httpBackend.expectPUT('/api/campaign/' + campaign.id, rawCampaign)
+                $httpBackend.expectPUT('/api/campaign/' + campaign.id, without(['created'], rawCampaign))
                     .respond(200, response);
 
                 adapter.update('campaign', campaign).then(success, failure);

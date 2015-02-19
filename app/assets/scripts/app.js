@@ -538,6 +538,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 function undecorateCampaign(campaign) {
                     return extend(campaign, {
+                        created: undefined,
+
                         advertiser: undefined,
                         advertiserId: campaign.advertiser.id,
 
