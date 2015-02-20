@@ -1379,7 +1379,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 case 'displayAd':
                                     return 'Display Ad';
                                 case 'wildcard':
-                                    return 'Wildcard Placeholder';
+                                    return 'Sponsored Card Placeholder';
 
                                 default:
                                     return null;

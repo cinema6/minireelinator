@@ -1,6 +1,6 @@
 <div class="pageBody__group pageBody__group--sideTabs">
     <h1 class="forms__title forms__title--divider" style="margin-top:0;">Placements</h1>
-
+    <p>Use this tool to place a Sponsored Card into a MiniReel.</p>
     <section class="twoCol">
         <strong>Search for MiniReels</strong>
         <form ng-submit="CampaignPlacementsCtrl.search()">
@@ -16,8 +16,9 @@
             <span ng-show="minireels.length < 1">Your search yielded no results. Try again!</span>
             <ul>
                 <li ng-repeat="minireel in minireels | filter:CampaignPlacementsCtrl.isNotAlreadyTargeted">
-                    {{minireel.data.title}}
-                    <button class="btn btn--success" ng-click="CampaignPlacementsCtrl.add(minireel)" ng-disabled="CampaignPlacementsCtrl.availableSlotsIn(minireel) < 1">Add</button>
+                    <strong>{{minireel.data.title}}</strong>
+                    <span class="typo--warning" ng-show="CampaignPlacementsCtrl.availableSlotsIn(minireel) < 1">This MiniReel does not have any Sponsored Card Placement slots.</span>
+                    <button class="btn btn--success" ng-click="CampaignPlacementsCtrl.add(minireel)" ng-show="CampaignPlacementsCtrl.availableSlotsIn(minireel)">Add</button>
                 </li>
             </ul>
         </div>
