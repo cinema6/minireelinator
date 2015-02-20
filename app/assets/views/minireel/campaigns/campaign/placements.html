@@ -17,8 +17,8 @@
             <ul>
                 <li ng-repeat="minireel in minireels | filter:CampaignPlacementsCtrl.isNotAlreadyTargeted">
                     <strong>{{minireel.data.title}}</strong>
-                    <span class="typo--warning" ng-show="CampaignPlacementsCtrl.availableSlotsIn(minireel) < 1">This MiniReel does not have any Sponsored Card Placement slots.</span>
-                    <button class="btn btn--success" ng-click="CampaignPlacementsCtrl.add(minireel)" ng-show="CampaignPlacementsCtrl.availableSlotsIn(minireel)">Add</button>
+                    <span class="typo--warning" ng-show="CampaignPlacementsCtrl.availableSlotsIn(minireel) < 1">No Sponsored Card Placement slots.</span>
+                    <button class="btn btn--success" ng-click="CampaignPlacementsCtrl.add(minireel)" ng-show="CampaignPlacementsCtrl.availableSlotsIn(minireel)">Use</button>
                 </li>
             </ul>
         </div>
