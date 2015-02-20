@@ -3,6 +3,7 @@
 ## v1.9.0 (February 19, 2015)
 * *[v1.9.0.rc4]*
   * Sort categories alphabetically
+  * Remove ability to create/view/edit a campaign's sponsored MiniReels
 
 * *[v1.9.0.rc3]*
   * [FIX]: Fix for an issue that caused cards to not be creatable
