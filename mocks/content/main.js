@@ -207,16 +207,37 @@ module.exports = function(http) {
      **********************************************************************************************/
 
     http.whenGET('/api/content/categories', function(request) {
+        var filters = pluckExcept(request.query, ['sort']);
+        var sort = (request.query.sort || null) && request.query.sort.split(',');
+
         this.respond(200, grunt.file.expand(path.resolve(__dirname, './categories/*.json'))
             .map(function(path) {
                 var id = path.match(/[^\/]+(?=\.json)/)[0];
 
                 return extend(grunt.file.readJSON(path), { id: id });
-            }).filter(function(card) {
-                return Object.keys(request.query)
+            }).filter(function(category) {
+                return Object.keys(filters)
                     .every(function(key) {
-                        return request.query[key] === card[key];
+                        return filters[key] === category[key];
                     });
+            }).sort(function(a, b) {
+                var prop, directionInt,
+                    aProp, bProp;
+
+                if (!sort) { return 0; }
+
+                prop = sort[0];
+                directionInt = parseInt(sort[1]);
+                aProp = a[prop];
+                bProp = b[prop];
+
+                if (aProp < bProp) {
+                    return directionInt * -1;
+                } else if (bProp < aProp) {
+                    return directionInt;
+                }
+
+                return 0;
             }));
     });
 };
