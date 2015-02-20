@@ -415,17 +415,21 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
             $provide.constant('CategoryAdapter', ['config','$http','$q',
             function                             ( config , $http , $q ) {
+                function makeQuery(obj) {
+                    return extend({ sort: 'label,1' }, obj);
+                }
+
                 function url() {
                     return config.apiBase + '/content/categories';
                 }
 
                 this.findAll = function() {
-                    return $http.get(url())
+                    return $http.get(url(), { params: makeQuery() })
                         .then(pick('data'));
                 };
 
                 this.findQuery = function(type, query) {
-                    return $http.get(url(), { params: query })
+                    return $http.get(url(), { params: makeQuery(query) })
                         .then(pick('data'), function(response) {
                             return response.status === 404 ?
                                 [] : $q.reject(response);

@@ -52,7 +52,7 @@ define(['app'], function(appModule) {
                     }
                 ];
 
-                $httpBackend.expectGET('/api/content/categories')
+                $httpBackend.expectGET('/api/content/categories?sort=label,1')
                     .respond(200, categories);
 
                 adapter.findAll('category').then(success, failure);
@@ -78,7 +78,7 @@ define(['app'], function(appModule) {
                     }
                 ];
 
-                $httpBackend.expectGET('/api/content/categories?org=o-d7bc3ce57c382e')
+                $httpBackend.expectGET('/api/content/categories?org=o-d7bc3ce57c382e&sort=label,1')
                     .respond(200, categories);
 
                 adapter.findQuery('category', {
@@ -96,7 +96,7 @@ define(['app'], function(appModule) {
                 beforeEach(function() {
                     success.calls.reset();
 
-                    $httpBackend.expectGET('/api/content/categories?user=u-f883319c615f6e')
+                    $httpBackend.expectGET('/api/content/categories?sort=label,1&user=u-f883319c615f6e')
                         .respond(404, 'NOT FOUND');
 
                     adapter.findQuery('category', {
@@ -117,7 +117,7 @@ define(['app'], function(appModule) {
                         success.calls.reset();
                         failure.calls.reset();
 
-                        $httpBackend.expectGET('/api/content/categories?org=o-cd71edda8cf41c')
+                        $httpBackend.expectGET('/api/content/categories?org=o-cd71edda8cf41c&sort=label,1')
                             .respond(status, 'IT FAILED');
 
                         adapter.findQuery('category', {
