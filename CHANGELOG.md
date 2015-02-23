@@ -1,6 +1,10 @@
 # MiniReelinator
 
-## v1.9.0 (February 20, 2015)
+
+## v1.9.0
+* *[v1.9.0.rc5]*
+  * More updates to campaign manager ui
+
 * *[v1.9.0.rc4]*
   * Sort categories alphabetically
   * Remove ability to create/view/edit a campaign's sponsored MiniReels
