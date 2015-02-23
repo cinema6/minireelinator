@@ -141,6 +141,9 @@
         .fa-floppy-o:before {
             content: '\f0c7';
         }
+        .fa-arrow-right:before {
+            content: '\f061';
+        }
 
 /*  ======================================================
     Helper classes
@@ -551,6 +554,10 @@
                 width:10em;
                 text-align: left;
             }
+                .miniReel__status--wide .ui__clickDropBtn {
+                    width:20em;
+                    font-size:1em;
+                }
                 .twoCol .ui__clickDropBtn,
                 .ui__clickDropBtn--full {
                     width:100%;

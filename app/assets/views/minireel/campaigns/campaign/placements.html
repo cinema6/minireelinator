@@ -13,12 +13,41 @@
             </label>
         </form>
         <div ng-if="CampaignPlacementsCtrl.result" c6-alias="CampaignPlacementsCtrl.result.value as minireels">
-            <span ng-show="minireels.length < 1">Your search yielded no results. Try again!</span>
+            <!--<span ng-show="minireels.length < 1">Your search yielded no results. Try again!</span>
             <ul>
                 <li ng-repeat="minireel in minireels | filter:CampaignPlacementsCtrl.isNotAlreadyTargeted">
                     <strong>{{minireel.data.title}}</strong>
-                    <span class="typo--warning" ng-show="CampaignPlacementsCtrl.availableSlotsIn(minireel) < 1">No Sponsored Card Placement slots.</span>
+                    <span class="typo--warning typo--guidance" ng-show="CampaignPlacementsCtrl.availableSlotsIn(minireel) < 1">No Sponsored Card slots.</span>
+                    
                     <button class="btn btn--success" ng-click="CampaignPlacementsCtrl.add(minireel)" ng-show="CampaignPlacementsCtrl.availableSlotsIn(minireel)">Use</button>
+                </li>
+            </ul>-->
+        
+            <span ng-show="minireels.length < 1">Your search yielded no results. Try again!</span>
+            <ul class="miniReels__list grid" style="margin-right:1em;">
+
+                <li class="miniReels__item miniReels__item--mini grid__item" 
+                ng-repeat="minireel in minireels | filter:CampaignPlacementsCtrl.isNotAlreadyTargeted">
+                    <article class="miniReel__group clearfix">
+                        <div class="miniReel__imgBox">
+                            <div class="miniReel__img" 
+                            c6-bg-img="{{minireel.data.collateral.splash}}">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="miniReel__titleBox">
+                            <h1 class="miniReel__title">
+                                {{minireel.data.title}}
+                            </h1>
+                            <p class="miniReel__metaData">
+                                by <span class="miniReel__author" c6-alias="minireel.user as author">{{author.firstName}} {{author.lastName}}</span>
+                            </p>
+                        </div>
+                        <div class="miniReel__status--mini">
+                            <span class="typo--warning typo--guidance" ng-show="CampaignPlacementsCtrl.availableSlotsIn(minireel) < 1">No Sponsored Card slots.</span>
+                            <button class="btn btn--success" ng-click="CampaignPlacementsCtrl.add(minireel)" ng-show="CampaignPlacementsCtrl.availableSlotsIn(minireel)">Use <span class="fab fa-arrow-right">&nbsp;</span></button>
+                        </div>
+                    </article>
                 </li>
             </ul>
         </div>

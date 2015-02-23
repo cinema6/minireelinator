@@ -1,20 +1,25 @@
 <div class="modalBody__group modalBody__group--sideTabs mrEdit__videoTab">
     <div class="clearfix">
+        <p>Please select the sponsored cards you want to add into this grouping.</p>
         <div class="twoCol">
-            <strong>Campaign's Cards</strong>
-            <ul>
-                <li ng-repeat="card in MiniReelGroupCardsCtrl.campaignCards | filter:MiniReelGroupCardsCtrl.isNotBeingTargeted">
-                    {{card.title}}
-                    <button class="btn btn--success" ng-click="MiniReelGroupCardsCtrl.add(card)">Add</button>
+            <h1 class="card__title" style="margin-right:1em; padding-bottom:0.25em; border-bottom:2px solid #ddd;">Cards in this Campaign</h1>
+            <ul style="margin-right:1em;">
+                <li ng-repeat="card in MiniReelGroupCardsCtrl.campaignCards | filter:MiniReelGroupCardsCtrl.isNotBeingTargeted"
+                class="clearfix">
+                    <h1 class="card__title" style="float:left; width:75%;">{{card.title}}</h1>
+                    <button class="btn btn--success" ng-click="MiniReelGroupCardsCtrl.add(card)"
+                    style="margin:0.375em 0 0 0; float:right; font-size:0.875em;">Add <span class="fab fa-arrow-right">&nbsp;</span></button>
                 </li>
             </ul>
         </div>
         <div class="twoCol">
-            <strong>{{group.label}}'s Cards</strong>
+            <h1 class="card__title" style="padding-bottom:0.25em; border-bottom:2px solid #ddd;">Cards in this Group</h1>
+
             <ul>
-                <li ng-repeat="card in MiniReelGroupCardsCtrl.model">
-                    {{card.title}}
-                    <button class="btn btn--danger" ng-click="MiniReelGroupCardsCtrl.remove(card)">Remove</button>
+                <li ng-repeat="card in MiniReelGroupCardsCtrl.model" class="clearfix">
+                    <h1 class="card__title" style="float:left; width:74%;">{{card.title}}</h1>
+                    <button class="btn btn--danger" ng-click="MiniReelGroupCardsCtrl.remove(card)"
+                    style="margin:0.375em 0 0 0; float:right; font-size:0.875em;">Remove</button>
                 </li>
             </ul>
         </div>
