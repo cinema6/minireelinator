@@ -75,7 +75,7 @@
                     <div class="miniReel__status">
                         <strong>{{$this.advertiser.name}}</strong> 
                         - <span class="miniReel__date">{{$this.created | date:'M/d/yyyy'}}</span>
-                        <p class="miniReel__count">{{$this.cards.length}} cards, {{$this.miniReels.length}} MiniReels</p>
+                        <p class="miniReel__count">{{$this.cards.length}} Sponsored Cards <span ng-if="false">, {{$this.miniReels.length}} MiniReels</span></p>
                     </div>
                     <div class="miniReel__stats">
                         <p class="miniReel__views">Targeting {{CampaignsCtrl.targetMiniReelsOf($this).length}} MiniReels</p>
