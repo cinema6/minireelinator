@@ -387,12 +387,15 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
 
                 this.create = function(type, data) {
-                    return VoteService.syncCard(convertCardForPlayer(data))
-                        .then(function(data) {
-                            return $http.post(url('card'), data).then(pick('data'));
-                        })
-                        .then(MiniReelService.convertCardForEditor)
-                        .then(putInArray);
+                    return VoteService.syncCard(extend(convertCardForPlayer(data), {
+                        campaignId: data.campaignId
+                    })).then(function(data) {
+                        return $http.post(url('card'), data).then(pick('data'));
+                    })
+                    .then(function(data) {
+                        return extend(convertCardForEditor(data), { campaignId: data.campaignId });
+                    })
+                    .then(putInArray);
                 };
 
                 this.erase = function(type, card) {
@@ -412,17 +415,21 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
             $provide.constant('CategoryAdapter', ['config','$http','$q',
             function                             ( config , $http , $q ) {
+                function makeQuery(obj) {
+                    return extend({ sort: 'label,1' }, obj);
+                }
+
                 function url() {
                     return config.apiBase + '/content/categories';
                 }
 
                 this.findAll = function() {
-                    return $http.get(url())
+                    return $http.get(url(), { params: makeQuery() })
                         .then(pick('data'));
                 };
 
                 this.findQuery = function(type, query) {
-                    return $http.get(url(), { params: query })
+                    return $http.get(url(), { params: makeQuery(query) })
                         .then(pick('data'), function(response) {
                             return response.status === 404 ?
                                 [] : $q.reject(response);

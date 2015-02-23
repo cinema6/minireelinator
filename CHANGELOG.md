@@ -1,9 +1,24 @@
 # MiniReelinator
 
-## v1.9.0 (February 17, 2015)
+## v1.9.0 (February 20, 2015)
+* *[v1.9.0.rc4]*
+  * Sort categories alphabetically
+  * Remove ability to create/view/edit a campaign's sponsored MiniReels
+  * Changed some language in the campaign manager in an attempt to
+    improve clarity
+* *[/v1.9.0.rc4]*
+
+* *[v1.9.0.rc3]*
+  * [FIX]: Fix for an issue that caused cards to not be creatable
+  * [FIX]: Fix for an issue that made sponsored MiniReels unpublishable
+  * [FIX]: Fix for an issue that made campaigns unsaveable after
+    creating a sponsored minireel
+* *[/v1.9.0.rc3]*
+
 * *[v1.9.0.rc2]*
   * [FIX]: Fix for an issue that caused campaigns to not be saveable
   * [FIX]: Styles added for campaign manager
+* *[/v1.9.0.rc2]*
 
 * *[v1.9.0.rc1]*
   * [FEATURE]: Added Campaign manager (for managing wildcard campaigns.)
