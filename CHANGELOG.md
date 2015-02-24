@@ -4,6 +4,7 @@
 ## v1.9.0
 * *[v1.9.0.rc5]*
   * More updates to campaign manager ui
+  * Added reporting ID for sponsored card videos, to be used in reports
 
 * *[v1.9.0.rc4]*
   * Sort categories alphabetically

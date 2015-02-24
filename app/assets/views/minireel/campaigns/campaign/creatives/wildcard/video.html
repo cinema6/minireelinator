@@ -1,3 +1,14 @@
+<style type="text/css">
+    .sponsoredCard__preview .videoPlayer {
+        height:14em;
+    }
+    .form__label {
+        font-size:0.9375em; line-height: 1.2;
+        font-weight:bold;
+        display: block;
+        margin:0 0 0.5em 0;
+    }
+</style>
 <div class="modalBody__group modalBody__group--sideTabs mrEdit__videoTab">
     <form>
         <div class="clearfix">
@@ -39,20 +50,20 @@
             <div ng-switch-when="adUnit" class="clearfix">
                 <div class="twoCol">
                     <label class="forms__pair clearfix">
-                        <span class="forms__name">
+                        <span class="forms__name" style="width:4rem;">
                             VPAID
                         </span>
-                        <span class="forms__inputHolder forms__inputHolder--short">
+                        <span class="forms__inputHolder forms__inputHolder--short" style="width:18em;">
                             <input type="text" ng-model="WildcardVideoCtrl.vpaidTag" c6-autoselect ng-focus="WildcardVideoCtrl.adPreviewType = 'vpaid'" class="forms__textField forms__textField--block">
                         </span>
                     </label>
                 </div>
                 <div class="twoCol">
                     <label class="forms__pair forms__pair--spacer clearfix">
-                        <span class="forms__name">
+                        <span class="forms__name" style="width:4rem;">
                             VAST
                         </span>
-                        <span class="forms__inputHolder forms__inputHolder--short">
+                        <span class="forms__inputHolder forms__inputHolder--short" style="width:18em;">
                             <input type="text" ng-model="WildcardVideoCtrl.vastTag" c6-autoselect ng-focus="WildcardVideoCtrl.adPreviewType = 'vast'" class="forms__textField forms__textField--block">
                         </span>
                     </label>
@@ -105,6 +116,7 @@
                 videoid="{{card.data.videoid}}"
                 start="card.data.start"
                 end="card.data.end"
+                class="sponsoredCard__preview"
                 style="display: block;">
             </video-preview>
         </div>
@@ -140,12 +152,19 @@
             </label>
             <label for="showControls">Show video controls?</label>
             <p>
-                <strong>Do you want this video to start playing automatically?</strong>
+                <span class="form__label">Do you want this video to start playing automatically?</span>
                 <c6-dropdown options="WildcardVideoCtrl.autoplayOptions" value="card.data.autoplay"></c6-dropdown>
             </p>
 
-            <strong>Do you want the MiniReel to advance to the next slide when this video is over?</strong>
-            <c6-dropdown options="WildcardVideoCtrl.autoadvanceOptions" value="card.data.autoadvance"></c6-dropdown>
+            <p>
+                <span class="form__label">Do you want the MiniReel to advance to the next slide when this video is over?</span>
+                <c6-dropdown options="WildcardVideoCtrl.autoadvanceOptions" value="card.data.autoadvance"></c6-dropdown>
+            </p>
+
+            <p>
+                <span class="form__label">Reporting ID for this Video</span>
+                <input type="text" class="forms__textField forms__textField--block" style="width:95%;">
+            </p>
         </div>
     </form>
 </div>
