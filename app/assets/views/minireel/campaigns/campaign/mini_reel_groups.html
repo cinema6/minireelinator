@@ -1,7 +1,7 @@
 <form class="pageBody__group pageBody__group--sideTabs">
     <header class="pageHeader">
         <div class="pageHeader__titleBar clearfix">
-            <h1 class="pageTitle"><strong>Dynamic Card Insertion</strong></h1>
+            <h1 class="pageTitle"><strong>Dynamic MiniReel Groups</strong></h1>
             <button title="New Group" class="btnAction btnAction--primary btnAction--hasIcon" c6-sref="MR:NewMiniReelGroup">
                 <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                      viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
@@ -27,14 +27,14 @@
                             <span class="fab fa-trash">&nbsp;</span>
                         </button>
                     </div>
-                    <div class="miniReel__titleBox">
+                    <div class="miniReel__titleBox" style="margin-left:3em; width:40%;">
                         <h1 class="miniReel__title">
                             <a c6-sref="MR:EditMiniReelGroup" c6-models="[group]" class="miniReel__titleLink" title="Edit This MiniReel Group: {{group.label}}">
                                 {{group.label}}
                             </a>
                         </h1>
                     </div>
-                    <div class="miniReel__status">
+                    <div class="miniReel__status" style="width:35%;">
                         <p class="miniReel__count"><strong>{{group.cards.length}} cards</strong> targeting <strong>{{group.miniReels.length}} MiniReels</strong></p>
                     </div>
                 </article>

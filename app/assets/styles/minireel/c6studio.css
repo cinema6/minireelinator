@@ -196,10 +196,10 @@
     }
     .miniReel__group {
         padding:0.75em 0 0.6875em;
-        position: relative;   
+        position: relative;
         min-height:3em;
     }
-        .miniReel__selector { 
+        .miniReel__selector {
             position: absolute;
         }
             .miniReel__selector .checkbox__input {
@@ -216,11 +216,19 @@
                 background:50% 50% / cover no-repeat;
                 cursor:pointer;
             }
+
+            .miniReels__item--mini .miniReel__imgBox {
+                left:0;
+            }
         .miniReel__titleBox {
             float:left;
             margin:0 1.5em 0 8.25em;
             width:36%;
         }
+            .miniReels__item--mini .miniReel__titleBox {
+                margin:0 0 0 4.5em;
+                width:60%;
+            }
             .miniReel__titleBox--adManager {
                 width:33%;
             }
@@ -263,6 +271,14 @@
             .miniReel__count {
                 line-height: 1;
                 margin:0.125rem 0 0 0; 
+            }
+
+            .miniReel__status--mini {
+                float:right;
+                font-size:1em;
+                margin:0;
+                width:23%;
+                line-height:1.2;
             }
         .miniReel__stats {
             margin:0.5rem 0.75rem 0 0;

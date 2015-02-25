@@ -1,6 +1,7 @@
 <div class="modalBody__group modalBody__group--sideTabs mrEdit__videoTab">
     <div class="clearfix">
         <form class="twoCol" ng-submit="MiniReelGroupMiniReelsCtrl.search()">
+            <h1 class="card__title" style="margin:0 1em 1em 0; padding-bottom:0.25em; border-bottom:2px solid #ddd;">Which MiniReels do you want for this Group?</h1>
             <label class="clearfix">
                 <span class="forms__inputHolder forms__inputHolder--short">
                     <input type="text" class="forms__textField forms__textField--block" placeholder="Search by Title" ng-model="MiniReelGroupMiniReelsCtrl.query">
@@ -8,20 +9,60 @@
             </label>
             <div ng-if="MiniReelGroupMiniReelsCtrl.result" c6-alias="MiniReelGroupMiniReelsCtrl.result.value as minireels">
                 <span ng-show="minireels.length < 1">Your search yielded no results. Try again!</span>
-                <ul>
-                    <li ng-repeat="minireel in minireels | filter:MiniReelGroupMiniReelsCtrl.isNotBeingTargeted">
-                        {{minireel.data.title}}
-                        <input type="button" value="Add" class="btn btn--success" ng-click="MiniReelGroupMiniReelsCtrl.add(minireel)"></input>
+
+                <ul class="miniReels__list grid" style="margin-right:1em; max-height:23em; overflow-y:auto;">
+                    <li class="miniReels__item miniReels__item--mini grid__item" 
+                    ng-repeat="minireel in minireels | filter:MiniReelGroupMiniReelsCtrl.isNotBeingTargeted">
+                        <article class="miniReel__group clearfix">
+                            <div class="miniReel__imgBox">
+                                <div class="miniReel__img" 
+                                c6-bg-img="{{minireel.data.collateral.splash}}">
+                                    &nbsp;
+                                </div>
+                            </div>
+                            <div class="miniReel__titleBox" style="width:50%;">
+                                <h1 class="miniReel__title">
+                                    {{minireel.data.title}}
+                                </h1>
+                                <p class="miniReel__metaData">
+                                    by <span class="miniReel__author" c6-alias="minireel.user as author">{{author.firstName}} {{author.lastName}}</span>
+                                </p>
+                            </div>
+                            <div class="miniReel__status--mini" style="width:26%;">
+                                <span ng-if="!MiniReelGroupMiniReelsCtrl.hasWildcardSlots(minireel)" class="typo--warning typo--guidance">No Sponsored Card slots.</span>
+                                <button ng-if="MiniReelGroupMiniReelsCtrl.hasWildcardSlots(minireel)" class="btn btn--success" style="font-size:0.875em;" ng-click="MiniReelGroupMiniReelsCtrl.add(minireel)">Add <span class="fab fa-arrow-right">&nbsp;</span></button>
+                            </div>
+                        </article>
                     </li>
                 </ul>
             </div>
         </form>
         <div class="twoCol">
-            <strong>{{group.label}}'s MiniReels</strong>
-            <ul>
-                <li ng-repeat="minireel in MiniReelGroupMiniReelsCtrl.model">
-                    {{minireel.data.title}}
-                    <button class="btn btn--danger" ng-click="MiniReelGroupMiniReelsCtrl.remove(minireel)">Remove</button>
+            <h1 class="card__title" style="margin:0 0 1em 0; padding-bottom:0.25em; border-bottom:2px solid #ddd;">MiniReels currently in this Group</h1>
+
+            <ul class="miniReels__list grid">
+                <li class="miniReels__item miniReels__item--mini grid__item" 
+                ng-repeat="minireel in MiniReelGroupMiniReelsCtrl.model">
+                    <article class="miniReel__group clearfix">
+                        <div class="miniReel__imgBox">
+                            <div class="miniReel__img" 
+                            c6-bg-img="{{minireel.data.collateral.splash}}">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="miniReel__titleBox" style="width:52%;">
+                            <h1 class="miniReel__title">
+                                {{minireel.data.title}}
+                            </h1>
+                            <p class="miniReel__metaData">
+                                by <span class="miniReel__author" c6-alias="minireel.user as author">{{author.firstName}} {{author.lastName}}</span>
+                            </p>
+                        </div>
+                        <div class="miniReel__status--mini" style="width:26%;">
+                            <button class="btn btn--danger" style="font-size:0.875em;" 
+                            ng-click="MiniReelGroupMiniReelsCtrl.remove(minireel)">Remove</button>
+                        </div>
+                    </article>
                 </li>
             </ul>
         </div>

@@ -23,7 +23,7 @@
                 <span class="typo--faded">&nbsp;|&nbsp;</span>
             </span>
             <span>
-                {{campaign.cards.length}} cards, {{campaign.miniReels.length}} MiniReels
+                {{campaign.cards.length}} Sponsored Cards <span ng-if="false">, {{campaign.miniReels.length}} MiniReels</span>
             </span>
         </div>
     </header>
@@ -44,18 +44,18 @@
                 </a>
             </li>
             <li class="sideTabs__item">
-                <a c6-sref="MR:Campaign.Creatives" class="sideTabs__tab" title="Creatives">
-                    Creatives
+                <a c6-sref="MR:Campaign.Creatives" class="sideTabs__tab" title="Sponsored Cards">
+                    Sponsored Cards
                 </a>
             </li>
             <li class="sideTabs__item">
-                <a c6-sref="MR:Campaign.Placements" class="sideTabs__tab" title="Static Placements">
-                    Static Insertion
+                <a c6-sref="MR:Campaign.Placements" class="sideTabs__tab" title="Sponsored Card Placements">
+                    Placements
                 </a>
             </li>
             <li class="sideTabs__item">
                 <a c6-sref="MR:Campaign.MiniReelGroups" class="sideTabs__tab" title="Dynamic Placements">
-                    Dynamic Insertion
+                    Dynamic Groups
                 </a>
             </li>
         </ul>

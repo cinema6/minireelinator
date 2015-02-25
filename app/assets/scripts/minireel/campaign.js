@@ -1196,5 +1196,11 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             this.isNotBeingTargeted = function(minireel) {
                 return MiniReelGroupMiniReelsCtrl.model.indexOf(minireel) < 0;
             };
+
+            this.hasWildcardSlots = function(minireel) {
+                return minireel.data.deck.some(function(card) {
+                    return card.type === 'wildcard';
+                });
+            };
         }]);
 });

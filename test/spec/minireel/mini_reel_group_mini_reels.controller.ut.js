@@ -1,10 +1,11 @@
-define(['minireel/app', 'minireel/mixins/MiniReelSearchController'], function(appModule, MiniReelSearchController) {
+define(['app', 'minireel/mixins/MiniReelSearchController'], function(appModule, MiniReelSearchController) {
     'use strict';
 
     describe('MiniReelGroupMiniReelsController', function() {
         var $rootScope,
             $controller,
             cinema6,
+            MiniReelService,
             $scope,
             CampaignCtrl,
             MiniReelGroupMiniReelsCtrl;
@@ -18,6 +19,11 @@ define(['minireel/app', 'minireel/mixins/MiniReelSearchController'], function(ap
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
                 cinema6 = $injector.get('cinema6');
+                MiniReelService = $injector.get('MiniReelService');
+
+                $injector.get('c6State').get('Portal').cModel = {
+                    org: {}
+                };
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
@@ -105,7 +111,51 @@ define(['minireel/app', 'minireel/mixins/MiniReelSearchController'], function(ap
                 });
             });
 
-            describe('isNotBeingTargeted', function() {
+            describe('hasWildcardSlots(minireel)', function() {
+                var minireel;
+
+                describe('if a minireel has a wildcard', function() {
+                    beforeEach(function() {
+                        minireel = cinema6.db.create('experience', {
+                            data: {
+                                deck: ['text', 'video', 'wildcard', 'video'].map(function(type) {
+                                    var card = MiniReelService.createCard(type);
+                                    card.data.service = 'youtube';
+                                    card.data.videoid = 'abc';
+
+                                    return MiniReelService.convertCardForPlayer(card);
+                                })
+                            }
+                        });
+                    });
+
+                    it('should return true', function() {
+                        expect(MiniReelGroupMiniReelsCtrl.hasWildcardSlots(minireel)).toBe(true);
+                    });
+                });
+
+                describe('if a minireel has no wildcard', function() {
+                    beforeEach(function() {
+                        minireel = cinema6.db.create('experience', {
+                            data: {
+                                deck: ['text', 'video', 'video', 'video'].map(function(type) {
+                                    var card = MiniReelService.createCard(type);
+                                    card.data.service = 'youtube';
+                                    card.data.videoid = 'abc';
+
+                                    return MiniReelService.convertCardForPlayer(card);
+                                })
+                            }
+                        });
+                    });
+
+                    it('should return false', function() {
+                        expect(MiniReelGroupMiniReelsCtrl.hasWildcardSlots(minireel)).toBe(false);
+                    });
+                });
+            });
+
+            describe('isNotBeingTargeted()', function() {
                 var isNotBeingTargeted;
                 var notTargeted;
 

@@ -15,12 +15,10 @@
             <ul class="miniReels__list grid">
                 <li class="miniReels__item grid__item" ng-repeat="item in entry.cards track by item.placeholder.id">
                     <article class="miniReel__group clearfix">
-                        <div class="miniReel__titleBox">
-                            <h1 class="miniReel__title">
-                                Placeholder {{$index + 1}}
-                            </h1>
+                        <div class="miniReel__titleBox" style="margin:0.25em 1em 0 2em; width:30%;">
+                            Sponsored Card Slot #{{$index + 1}}
                         </div>
-                        <div class="miniReel__status">
+                        <div class="miniReel__status miniReel__status--wide" style="margin:0; width:64%;">
                             <c6-dropdown options="PlacementsMiniReelCtrl.cardOptions" value="item.wildcard"></c6-dropdown>
                         </div>
                     </article>
