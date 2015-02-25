@@ -1,5 +1,8 @@
 <style type="text/css">
-    .sponsoredCard__preview .videoPlayer {
+    .sponsoredCard__preview .videoPlayer,
+    .sponsoredCard__preview youtube-player, .sponsoredCard__preview vimeo-player, 
+    .sponsoredCard__preview dailymotion-player, .sponsoredCard__preview rumble-player, 
+    .sponsoredCard__preview .vidFrame {
         height:14em;
     }
     .form__label {
@@ -131,11 +134,8 @@
             <div ng-if="!WildcardVideoCtrl.canSkip">
                 <div ng-if="!WildcardVideoCtrl.mustWatchInEntirety">
                     <label>
-                        Skip after <input type="number" ng-model="WildcardVideoCtrl.skipTime" /> Seconds
+                        Skip after <input type="number" style="border:1px solid #ccc; width:5em;" ng-model="WildcardVideoCtrl.skipTime" /> Seconds
                     </label>
-                    <br />
-                    <em>or</em>
-                    <br />
                 </div>
                 <label class="checkbox--inline">
                     <input id="neverSkip" type="checkbox" ng-model="WildcardVideoCtrl.mustWatchInEntirety" ng-disabled="!card.data.service" class="checkbox__input">
@@ -145,12 +145,13 @@
                     Must watch entire video
                 </label>
             </div>
-            <br />
-            <label class="checkbox--inline">
-                <input id="showControls" type="checkbox" ng-model="card.data.controls" ng-disabled="!card.data.service" class="checkbox__input">
-                <span class="btn__label faa">&nbsp;</span>
-            </label>
-            <label for="showControls">Show video controls?</label>
+            <div>
+                <label class="checkbox--inline">
+                    <input id="showControls" type="checkbox" ng-model="card.data.controls" ng-disabled="!card.data.service" class="checkbox__input">
+                    <span class="btn__label faa">&nbsp;</span>
+                </label>
+                <label for="showControls">Show video controls?</label>
+            </div>
             <p>
                 <span class="form__label">Do you want this video to start playing automatically?</span>
                 <c6-dropdown options="WildcardVideoCtrl.autoplayOptions" value="card.data.autoplay"></c6-dropdown>
