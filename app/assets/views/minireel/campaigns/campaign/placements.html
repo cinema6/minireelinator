@@ -13,16 +13,6 @@
             </label>
         </form>
         <div ng-if="CampaignPlacementsCtrl.result" c6-alias="CampaignPlacementsCtrl.result.value as minireels">
-            <!--<span ng-show="minireels.length < 1">Your search yielded no results. Try again!</span>
-            <ul>
-                <li ng-repeat="minireel in minireels | filter:CampaignPlacementsCtrl.isNotAlreadyTargeted">
-                    <strong>{{minireel.data.title}}</strong>
-                    <span class="typo--warning typo--guidance" ng-show="CampaignPlacementsCtrl.availableSlotsIn(minireel) < 1">No Sponsored Card slots.</span>
-                    
-                    <button class="btn btn--success" ng-click="CampaignPlacementsCtrl.add(minireel)" ng-show="CampaignPlacementsCtrl.availableSlotsIn(minireel)">Use</button>
-                </li>
-            </ul>-->
-        
             <span ng-show="minireels.length < 1">Your search yielded no results. Try again!</span>
             <ul class="miniReels__list grid" style="margin-right:1em;">
 
