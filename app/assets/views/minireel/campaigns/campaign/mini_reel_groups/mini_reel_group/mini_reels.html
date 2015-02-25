@@ -29,8 +29,8 @@
                                 </p>
                             </div>
                             <div class="miniReel__status--mini" style="width:26%;">
-                                <span class="typo--warning typo--guidance">No Sponsored Card slots.</span>
-                                <button class="btn btn--success" style="font-size:0.875em;" ng-click="MiniReelGroupMiniReelsCtrl.add(minireel)">Add <span class="fab fa-arrow-right">&nbsp;</span></button>
+                                <span ng-if="!MiniReelGroupMiniReelsCtrl.hasWildcardSlots(minireel)" class="typo--warning typo--guidance">No Sponsored Card slots.</span>
+                                <button ng-if="MiniReelGroupMiniReelsCtrl.hasWildcardSlots(minireel)" class="btn btn--success" style="font-size:0.875em;" ng-click="MiniReelGroupMiniReelsCtrl.add(minireel)">Add <span class="fab fa-arrow-right">&nbsp;</span></button>
                             </div>
                         </article>
                     </li>
