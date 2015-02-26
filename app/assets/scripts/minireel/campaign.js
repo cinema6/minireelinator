@@ -212,12 +212,25 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 }, {});
             }
 
+            function trimEmptyPlaceholders(staticCardMap) {
+                return staticCardMap.map(function(entry) {
+                    return extend(entry, {
+                        cards: entry.cards.filter(function(item) {
+                            return !!item.wildcard;
+                        })
+                    });
+                });
+            }
+
             Object.defineProperties(this, {
                 isClean: {
                     get: function() {
+                        var model = this.model.pojoify();
+
                         return equals(
-                            extend(this.model.pojoify(), {
-                                links: createModelLinks(this.links)
+                            extend(model, {
+                                links: createModelLinks(this.links),
+                                staticCardMap: trimEmptyPlaceholders(model.staticCardMap)
                             }),
                             this.cleanModel
                         );
@@ -256,6 +269,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
             this.save = function() {
                 this.model.links = createModelLinks(this.links);
+                trimEmptyPlaceholders(this.model.staticCardMap);
 
                 return this.model.save().then(function(campaign) {
                     CampaignCtrl.cleanModel = campaign.pojoify();
