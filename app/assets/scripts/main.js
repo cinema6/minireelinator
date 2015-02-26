@@ -13,8 +13,8 @@
             cryptojs: 'https://lib.cinema6.com/cryptojs/v3.1.2/sha1',
             angular: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular.min',
             ngAnimate: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular-animate.min',
-            c6uilib: 'https://lib.cinema6.com/c6ui/v3.6.4-0-gd66a635/c6uilib.min',
-            c6log: 'https://lib.cinema6.com/c6ui/v3.6.4-0-gd66a635/c6log.min'
+            c6uilib: 'https://lib.cinema6.com/c6ui/v3.7.0-0-gfe2d995/c6uilib.min',
+            c6log: 'https://lib.cinema6.com/c6ui/v3.7.0-0-gfe2d995/c6log.min'
         },
         shim: {
             modernizr: {

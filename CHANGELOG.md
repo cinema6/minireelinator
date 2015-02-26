@@ -1,6 +1,12 @@
 # MiniReelinator
 
-## v1.9.0 (February 25, 2015)
+## v1.9.0 (February 26, 2015)
+* *[v1.9.0.rc6]*
+  * [FIX]: Fix for an issue that could cause a campaign to enter a
+    broken state after its MiniReel groups have been saved to the
+    server
+* *[/v1.9.0.rc6]*
+
 * *[v1.9.0.rc5]*
   * More updates to campaign manager ui
   * Added reporting ID for sponsored card videos, to be used in reports
