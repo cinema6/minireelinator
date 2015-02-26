@@ -7,6 +7,7 @@
     not filled
   * Re-enable ability to create and manage sponsored MiniReels in a
     campaign
+* *[/v1.9.0.rc7]*
 
 * *[v1.9.0.rc6]*
   * [FIX]: Fix for an issue that could cause a campaign to enter a
