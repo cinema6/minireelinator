@@ -5,6 +5,8 @@
   * [FIX]: Fix for an issue that caused a campaign not to be marked as
     saved when on the placements tab if all of a placement's slots were
     not filled
+  * Re-enable ability to create and manage sponsored MiniReels in a
+    campaign
 
 * *[v1.9.0.rc6]*
   * [FIX]: Fix for an issue that could cause a campaign to enter a
