@@ -31,7 +31,21 @@ define(['minireel/campaign'], function(campaignModule) {
                     },
                     miniReels: [],
                     cards: [],
-                    targetMiniReels: []
+                    staticCardMap: [
+                        {
+                            cards: [
+                                {
+                                    placeholder: {},
+                                    wildcard: {}
+                                },
+                                {
+                                    placeholder: {},
+                                    wildcard: {}
+                                }
+                            ],
+                            minireel: {}
+                        }
+                    ]
                 });
 
                 $scope = $rootScope.$new();
@@ -63,6 +77,16 @@ define(['minireel/campaign'], function(campaignModule) {
 
             describe('isClean', function() {
                 describe('if the model has not been changed', function() {
+                    it('should be true', function() {
+                        expect(CampaignCtrl.isClean).toBe(true);
+                    });
+                });
+
+                describe('if there is an item in the staticCardMap without a wildcard', function() {
+                    beforeEach(function() {
+                        campaign.staticCardMap[0].cards.push({ placeholder: {}, wildcard: null });
+                    });
+
                     it('should be true', function() {
                         expect(CampaignCtrl.isClean).toBe(true);
                     });
@@ -204,6 +228,7 @@ define(['minireel/campaign'], function(campaignModule) {
 
             describe('save()', function() {
                 var success, failure,
+                    emptyPlaceholder,
                     saveDeferred;
 
                 beforeEach(function() {
@@ -239,7 +264,13 @@ define(['minireel/campaign'], function(campaignModule) {
                         }
                     ];
 
+                    emptyPlaceholder = {
+                        wildcard: null,
+                        placeholder: {}
+                    };
+
                     campaign.cards.push({}, {});
+                    campaign.staticCardMap[0].cards.push(emptyPlaceholder);
 
                     spyOn(campaign, 'save').and.returnValue(saveDeferred.promise);
 
@@ -253,6 +284,11 @@ define(['minireel/campaign'], function(campaignModule) {
                         'Website': 'mysite.com',
                         'YouTube': 'yt.com'
                     });
+                });
+
+                it('should remove any unfilled placeholders from the static card map', function() {
+                    expect(campaign.staticCardMap[0].cards).not.toContain(emptyPlaceholder);
+                    expect(campaign.staticCardMap[0].cards.length).not.toBe(0);
                 });
 
                 it('should save the campaign', function() {
@@ -271,6 +307,8 @@ define(['minireel/campaign'], function(campaignModule) {
                     it('should update the cleanModel', function() {
                         expect(CampaignCtrl.cleanModel).toEqual(campaign.pojoify());
                     });
+
+
 
                     it('should resolve to the campaign', function() {
                         expect(success).toHaveBeenCalledWith(campaign);

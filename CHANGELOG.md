@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## v1.9.0 (February 26, 2015)
+* *[v1.9.0.rc7]*
+  * [FIX]: Fix for an issue that caused a campaign not to be marked as
+    saved when on the placements tab if all of a placement's slots were
+    not filled
+
 * *[v1.9.0.rc6]*
   * [FIX]: Fix for an issue that could cause a campaign to enter a
     broken state after its MiniReel groups have been saved to the
