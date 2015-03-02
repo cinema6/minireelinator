@@ -1,7 +1,7 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    describe('MR:Creatives.NewMiniReel state', function() {
+    describe('MR:Campaign.NewMiniReel state', function() {
         var $rootScope,
             $q,
             cinema6,
@@ -21,7 +21,7 @@ define(['app'], function(appModule) {
                 MiniReelService = $injector.get('MiniReelService');
 
                 campaign = c6State.get('MR:Campaign');
-                creativesNewMiniReel = c6State.get('MR:Creatives.NewMiniReel');
+                creativesNewMiniReel = c6State.get('MR:Campaign.NewMiniReel');
             });
 
             campaign.cModel = cinema6.db.create('campaign', {

@@ -762,7 +762,7 @@ VideoCardController           ) {
                 var campaign = this.campaign;
 
                 return this.save().then(function() {
-                    return c6State.goTo('MR:Campaign.Creatives', [campaign, null]);
+                    return c6State.goTo('MR:Campaign.MiniReels', [campaign, null]);
                 }).then(function() {
                     return campaign;
                 });

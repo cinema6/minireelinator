@@ -1,7 +1,7 @@
 define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardController) {
     'use strict';
 
-    describe('CreativesNewMiniReelController', function() {
+    describe('CampaignNewMiniReelController', function() {
         var $rootScope,
             $controller,
             $q,
@@ -10,8 +10,8 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
             MiniReelService,
             $scope,
             CampaignCtrl,
-            CampaignCreativesCtrl,
-            CreativesNewMiniReelCtrl;
+            CampaignMiniReelsCtrl,
+            CampaignNewMiniReelCtrl;
 
 
         var minireel,
@@ -43,14 +43,14 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                         cards: []
                     }));
 
-                    CampaignCreativesCtrl = $scope.CampaignCreativesCtrl = $controller('CampaignCreativesController', {
+                    CampaignMiniReelsCtrl = $scope.CampaignMiniReelsCtrl = $controller('CampaignMiniReelsController', {
                         $scope: $scope
                     });
 
-                    CreativesNewMiniReelCtrl = $scope.CreativesNewMiniReelCtrl = $controller('CreativesNewMiniReelController', {
+                    CampaignNewMiniReelCtrl = $scope.CampaignNewMiniReelCtrl = $controller('CampaignNewMiniReelController', {
                         $scope: $scope
                     });
-                    minireel = CreativesNewMiniReelCtrl.model = cinema6.db.create('experience', {
+                    minireel = CampaignNewMiniReelCtrl.model = cinema6.db.create('experience', {
                         data: {
                             collateral: {
                                 splash: null
@@ -65,28 +65,28 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
         });
 
         it('should exist', function() {
-            expect(CreativesNewMiniReelCtrl).toEqual(jasmine.any(Object));
+            expect(CampaignNewMiniReelCtrl).toEqual(jasmine.any(Object));
         });
 
         it('should inherit from the WizardController', inject(function($injector) {
-            expect(Object.keys(CreativesNewMiniReelCtrl)).toEqual(jasmine.objectContaining(Object.keys($injector.instantiate(WizardController))));
+            expect(Object.keys(CampaignNewMiniReelCtrl)).toEqual(jasmine.objectContaining(Object.keys($injector.instantiate(WizardController))));
         }));
 
         describe('properties', function() {
             describe('tabs', function() {
                 it('should be an array of tabs to display in the sidebar', function() {
-                    expect(CreativesNewMiniReelCtrl.tabs).toEqual([
+                    expect(CampaignNewMiniReelCtrl.tabs).toEqual([
                         {
                             name: 'General',
-                            sref: 'MR:Creatives.NewMiniReel.General'
+                            sref: 'MR:Campaign.NewMiniReel.General'
                         },
                         {
                             name: 'MiniReel Type',
-                            sref: 'MR:Creatives.NewMiniReel.Type'
+                            sref: 'MR:Campaign.NewMiniReel.Type'
                         },
                         {
                             name: 'Playback Settings',
-                            sref: 'MR:Creatives.NewMiniReel.Playback'
+                            sref: 'MR:Campaign.NewMiniReel.Playback'
                         }
                     ]);
                 });
@@ -107,7 +107,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     spyOn(MiniReelService, 'publish').and.returnValue(publishDeferred.promise);
 
                     $scope.$apply(function() {
-                        CreativesNewMiniReelCtrl.confirm().then(success, failure);
+                        CampaignNewMiniReelCtrl.confirm().then(success, failure);
                     });
                 });
 
@@ -121,7 +121,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     beforeEach(function() {
                         saveDeferred = $q.defer();
                         spyOn(CampaignCtrl, 'save').and.returnValue(saveDeferred.promise);
-                        spyOn(CampaignCreativesCtrl, 'add').and.callThrough();
+                        spyOn(CampaignMiniReelsCtrl, 'add').and.callThrough();
 
                         $scope.$apply(function() {
                             minireel.id = 'e-c8feedca3a1567';
@@ -130,7 +130,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     });
 
                     it('should add the minireel to the campaign', function() {
-                        expect(CampaignCreativesCtrl.add).toHaveBeenCalledWith(minireel);
+                        expect(CampaignMiniReelsCtrl.add).toHaveBeenCalledWith(minireel);
                     });
 
                     it('should save the campaign', function() {

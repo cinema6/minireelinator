@@ -1,7 +1,7 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    describe('MR:Creatives.NewMiniReel.Type state', function() {
+    describe('MR:Campaign.NewMiniReel.Type state', function() {
         var c6State,
             miniReel,
             creativesNewMiniReelType;
@@ -54,7 +54,7 @@ define(['app'], function(appModule) {
                 miniReel = c6State.get('MiniReel');
                 miniReel.cModel = appConfig;
 
-                creativesNewMiniReelType = c6State.get('MR:Creatives.NewMiniReel.Type');
+                creativesNewMiniReelType = c6State.get('MR:Campaign.NewMiniReel.Type');
             });
         });
 

@@ -1,7 +1,7 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    describe('MR:Creatives.NewMiniReel.General state', function() {
+    describe('MR:Campaign.NewMiniReel.General state', function() {
         var $rootScope,
             $q,
             cinema6,
@@ -17,7 +17,7 @@ define(['app'], function(appModule) {
                 cinema6 = $injector.get('cinema6');
                 c6State = $injector.get('c6State');
 
-                creativesNewMiniReelGeneral = c6State.get('MR:Creatives.NewMiniReel.General');
+                creativesNewMiniReelGeneral = c6State.get('MR:Campaign.NewMiniReel.General');
             });
         });
 

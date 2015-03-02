@@ -1,0 +1,54 @@
+<form class="pageBody__group pageBody__group--sideTabs">
+    <header class="pageHeader">
+        <div class="pageHeader__titleBar clearfix">
+            <h1 class="pageTitle"><strong>Sponsored Cards</strong></h1>
+            <button c6-sref="MR:New:Wildcard" title="New Card" class="btnAction btnAction--primary btnAction--hasIcon" >
+                <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                     viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                    <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M9,0C4,0,0,4,0,9c0,5,4,9,9,9s9-4,9-9C18,4,14,0,9,0z M9,16c-3.9,0-7-3.1-7-7
+                        c0-3.9,3.1-7,7-7s7,3.1,7,7C16,12.9,12.9,16,9,16z M10,5H8v3H5v2h3v3h2v-3h3V8h-3V5z"/>
+                </svg>
+                <span class="btn__label">New Card</span>
+            </a>
+        </div>
+    </header>
+    <div class="tableBody__group">
+        <ul class="miniReels__list grid" c6-alias="campaign.cards as cards">
+            <li class="miniReels__item grid__item" ng-show="!cards.length">
+                <article class="miniReels__welcomeMsg">
+                    <p>There are no cards associated with this campaign.</p>
+                </article>
+            </li>
+
+            <li class="miniReels__item grid__item" ng-repeat="$this in cards track by $this.id">
+                <article class="miniReel__group clearfix">
+                    <div class="miniReel__selector">
+                        <button class="btnInvis ui__iconHolder18" ng-click="CampaignCardsCtrl.remove($this)">
+                            <span class="fab fa-trash">&nbsp;</span>
+                        </button>
+                    </div>
+                    <div class="miniReel__imgBox">
+                        <a c6-sref="MR:Edit:Wildcard" c6-models="[$this, null]"
+                        c6-params="{}">
+                            <div class="miniReel__img"
+                            title="Edit This MiniReel: {{$this.title}}" 
+                            c6-bg-img="{{$this.thumb}}">
+                                &nbsp;
+                            </div>
+                        </a>
+                    </div>
+                    <div class="miniReel__titleBox">
+                        <h1 class="miniReel__title">
+                            <a class="miniReel__titleLink" c6-sref="MR:Edit:Wildcard"
+                            c6-models="[$this, null]"
+                            title="Edit This Card: {{$this.title}}">
+                                {{$this.title}}
+                            </a>
+                        </h1>
+                    </div>
+                </article>
+            </li>
+        </ul>
+    </div>
+</form>
+<c6-view></c6-view>

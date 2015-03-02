@@ -329,66 +329,48 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Campaign.Creatives', [function() {
-                this.templateUrl = 'views/minireel/campaigns/campaign/creatives.html';
-                this.controller = 'CampaignCreativesController';
-                this.controllerAs = 'CampaignCreativesCtrl';
+            c6StateProvider.state('MR:Campaign.MiniReels', [function() {
+                this.templateUrl = 'views/minireel/campaigns/campaign/mini_reels.html';
+                this.controller = 'CampaignMiniReelsController';
+                this.controllerAs = 'CampaignMiniReelsCtrl';
             }]);
         }])
 
-        .controller('CampaignCreativesController', ['$scope',
+        .controller('CampaignMiniReelsController', ['$scope',
         function                                   ( $scope ) {
             var CampaignCtrl = $scope.CampaignCtrl,
                 campaign = CampaignCtrl.model;
 
-            function removeFromArray(array, item) {
-                var index = array.indexOf(item);
+            this.remove = function(minireel) {
+                var miniReels = campaign.miniReels;
+                var index = miniReels.indexOf(minireel);
 
                 if (index < 0) {
                     return null;
                 }
 
-                array.splice(index, 1);
-                return item;
-            }
-
-            this.remove = function(item) {
-                function removeItemFrom(array) {
-                    return removeFromArray(array, item);
-                }
-
-                [campaign.miniReels, campaign.cards].forEach(removeItemFrom);
+                miniReels.splice(index, 1);
+                return minireel;
             };
 
-            this.add = function(item) {
-                var collection = [
-                    {
-                        matcher: (/^e-/),
-                        value: campaign.miniReels
-                    },
-                    {
-                        matcher: (/^rc-/),
-                        value: campaign.cards
-                    }
-                ].reduce(function(value, collection) {
-                    return collection.matcher.test(item.id) ? collection.value : value;
-                }, null);
+            this.add = function(minireel) {
+                var miniReels = campaign.miniReels;
 
-                if (collection.indexOf(item) > -1) { return item; }
+                if (miniReels.indexOf(minireel) > -1) { return minireel; }
 
-                return collection[collection.push(item) - 1];
+                return miniReels[miniReels.push(minireel) - 1];
             };
         }])
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Creatives.NewMiniReel', ['c6State','MiniReelService',
-            function                                          ( c6State , MiniReelService ) {
+            c6StateProvider.state('MR:Campaign.NewMiniReel', ['c6State','MiniReelService',
+            function                                         ( c6State , MiniReelService ) {
                 var CampaignState = c6State.get('MR:Campaign');
 
-                this.templateUrl = 'views/minireel/campaigns/campaign/creatives/new_mini_reel.html';
-                this.controller = 'CreativesNewMiniReelController';
-                this.controllerAs = 'CreativesNewMiniReelCtrl';
+                this.templateUrl = 'views/minireel/campaigns/campaign/mini_reels/new.html';
+                this.controller = 'CampaignNewMiniReelController';
+                this.controllerAs = 'CampaignNewMiniReelCtrl';
 
                 this.model = function() {
                     var campaign = CampaignState.cModel;
@@ -413,11 +395,11 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CreativesNewMiniReelController', ['$injector','$scope','c6State',
+        .controller('CampaignNewMiniReelController', ['$injector','$scope','c6State',
                                                        'MiniReelService',
         function                                      ( $injector , $scope , c6State ,
                                                         MiniReelService ) {
-            var CampaignCreativesCtrl = $scope.CampaignCreativesCtrl,
+            var CampaignMiniReelsCtrl = $scope.CampaignMiniReelsCtrl,
                 CampaignCtrl = $scope.CampaignCtrl;
 
             $injector.invoke(WizardController, this);
@@ -425,22 +407,22 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             this.tabs = [
                 {
                     name: 'General',
-                    sref: 'MR:Creatives.NewMiniReel.General'
+                    sref: 'MR:Campaign.NewMiniReel.General'
                 },
                 {
                     name: 'MiniReel Type',
-                    sref: 'MR:Creatives.NewMiniReel.Type'
+                    sref: 'MR:Campaign.NewMiniReel.Type'
                 },
                 {
                     name: 'Playback Settings',
-                    sref: 'MR:Creatives.NewMiniReel.Playback'
+                    sref: 'MR:Campaign.NewMiniReel.Playback'
                 }
             ];
 
             this.confirm = function() {
                 return MiniReelService.publish(this.model)
                     .then(function(minireel) {
-                        return CampaignCreativesCtrl.add(minireel);
+                        return CampaignMiniReelsCtrl.add(minireel);
                     })
                     .then(function(minireel) {
                         return CampaignCtrl.save().then(function() { return minireel; });
@@ -457,12 +439,12 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Creatives.NewMiniReel.General', ['cinema6','$q',
-            function                                                  ( cinema6 , $q ) {
+            c6StateProvider.state('MR:Campaign.NewMiniReel.General', ['cinema6','$q',
+            function                                                 ( cinema6 , $q ) {
                 this.templateUrl =
-                    'views/minireel/campaigns/campaign/creatives/new_mini_reel/general.html';
+                    'views/minireel/campaigns/campaign/mini_reels/new/general.html';
                 this.controller = 'GenericController';
-                this.controllerAs = 'CreativesNewMiniReelGeneralCtrl';
+                this.controllerAs = 'CampaignNewMiniReelGeneralCtrl';
 
                 this.model = function() {
                     return $q.all({
@@ -474,14 +456,14 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Creatives.NewMiniReel.Type', ['c6State',
-            function                                               ( c6State ) {
+            c6StateProvider.state('MR:Campaign.NewMiniReel.Type', ['c6State',
+            function                                              ( c6State ) {
                 var MiniReelState = c6State.get('MiniReel');
 
                 this.templateUrl =
-                    'views/minireel/campaigns/campaign/creatives/new_mini_reel/type.html';
+                    'views/minireel/campaigns/campaign/mini_reels/new/type.html';
                 this.controller = 'GenericController';
-                this.controllerAs = 'CreativesNewMiniReelTypeCtrl';
+                this.controllerAs = 'CampaignNewMiniReelTypeCtrl';
 
                 this.model = function() {
                     var modes = MiniReelState.cModel.data.modes;
@@ -500,10 +482,46 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Creatives.NewMiniReel.Playback', [function() {
+            c6StateProvider.state('MR:Campaign.NewMiniReel.Playback', [function() {
                 this.templateUrl =
-                    'views/minireel/campaigns/campaign/creatives/new_mini_reel/playback.html';
+                    'views/minireel/campaigns/campaign/mini_reels/new/playback.html';
             }]);
+        }])
+
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Campaign.Cards', [function() {
+                this.templateUrl = 'views/minireel/campaigns/campaign/cards.html';
+                this.controller = 'CampaignCardsController';
+                this.controllerAs = 'CampaignCardsCtrl';
+            }]);
+        }])
+
+        .controller('CampaignCardsController', ['$scope',
+        function                                   ( $scope ) {
+            var CampaignCtrl = $scope.CampaignCtrl,
+                campaign = CampaignCtrl.model;
+
+            this.remove = function(card) {
+                var cards = campaign.cards;
+                var index = cards.indexOf(card);
+
+                if (index < 0) {
+                    return null;
+                }
+
+                cards.splice(index, 1);
+                return card;
+            };
+
+            this.add = function(card) {
+                var cards = campaign.cards;
+
+                if (cards.indexOf(card) > -1) { return card; }
+
+                return cards[cards.push(card) - 1];
+            };
         }])
 
         .config(['c6StateProvider',
@@ -559,7 +577,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('MR:Wildcard', [function() {
-                this.templateUrl = 'views/minireel/campaigns/campaign/creatives/wildcard.html';
+                this.templateUrl = 'views/minireel/campaigns/campaign/cards/wildcard.html';
                 this.controller = 'WildcardController';
                 this.controllerAs = 'WildcardCtrl';
 
@@ -581,7 +599,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .controller('WildcardController', ['$injector','$scope','c6State','cState',
         function                          ( $injector , $scope , c6State , cState ) {
-            var CampaignCreativesCtrl = $scope.CampaignCreativesCtrl;
+            var CampaignCardsCtrl = $scope.CampaignCardsCtrl;
 
             $injector.invoke(WizardController, this);
 
@@ -616,9 +634,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
             this.save = function() {
                 return cState.updateCard().then(function(card) {
-                    return CampaignCreativesCtrl.add(card);
+                    return CampaignCardsCtrl.add(card);
                 }).then(function(card) {
-                    return c6State.goTo('MR:Campaign.Creatives')
+                    return c6State.goTo('MR:Campaign.Cards')
                         .then(function() { return card; });
                 });
             };
@@ -627,7 +645,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('MR:Wildcard.Copy', [function() {
-                this.templateUrl = 'views/minireel/campaigns/campaign/creatives/wildcard/copy.html';
+                this.templateUrl = 'views/minireel/campaigns/campaign/cards/wildcard/copy.html';
             }]);
         }])
 
@@ -635,7 +653,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         function( c6StateProvider ) {
             c6StateProvider.state('MR:Wildcard.Video', [function() {
                 this.templateUrl =
-                    'views/minireel/campaigns/campaign/creatives/wildcard/video.html';
+                    'views/minireel/campaigns/campaign/cards/wildcard/video.html';
                 this.controller = 'WildcardVideoController';
                 this.controllerAs = 'WildcardVideoCtrl';
 
@@ -753,7 +771,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         function( c6StateProvider ) {
             c6StateProvider.state('MR:Wildcard.Survey', [function() {
                 this.templateUrl =
-                    'views/minireel/campaigns/campaign/creatives/wildcard/survey.html';
+                    'views/minireel/campaigns/campaign/cards/wildcard/survey.html';
                 this.controller = 'WildcardSurveyController';
                 this.controllerAs = 'WildcardSurveyCtrl';
             }]);
@@ -784,7 +802,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         function( c6StateProvider ) {
             c6StateProvider.state('MR:Wildcard.Branding', [function() {
                 this.templateUrl =
-                    'views/minireel/campaigns/campaign/creatives/wildcard/branding.html';
+                    'views/minireel/campaigns/campaign/cards/wildcard/branding.html';
                 this.controller = 'WildcardBrandingController';
                 this.controllerAs = 'WildcardBrandingCtrl';
             }]);
@@ -817,7 +835,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         function( c6StateProvider ) {
             c6StateProvider.state('MR:Wildcard.Links', [function() {
                 this.templateUrl =
-                    'views/minireel/campaigns/campaign/creatives/wildcard/links.html';
+                    'views/minireel/campaigns/campaign/cards/wildcard/links.html';
                 this.controller = 'WildcardLinksController';
                 this.controllerAs = 'WildcardLinksCtrl';
 
@@ -838,7 +856,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         function( c6StateProvider ) {
             c6StateProvider.state('MR:Wildcard.Advertising', [function() {
                 this.templateUrl =
-                    'views/minireel/campaigns/campaign/creatives/wildcard/advertising.html';
+                    'views/minireel/campaigns/campaign/cards/wildcard/advertising.html';
             }]);
         }])
 
