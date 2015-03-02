@@ -1,9 +1,9 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    describe('MR:Creatives.NewMiniReel.Playback state', function() {
+    describe('MR:Campaign.Cards state', function() {
         var c6State,
-            creativesNewMiniReelPlayback;
+            campaignCreatives;
 
         beforeEach(function() {
             module(appModule.name);
@@ -11,12 +11,12 @@ define(['app'], function(appModule) {
             inject(function($injector) {
                 c6State = $injector.get('c6State');
 
-                creativesNewMiniReelPlayback = c6State.get('MR:Creatives.NewMiniReel.Playback');
+                campaignCreatives = c6State.get('MR:Campaign.Cards');
             });
         });
 
         it('should exist', function() {
-            expect(creativesNewMiniReelPlayback).toEqual(jasmine.any(Object));
+            expect(campaignCreatives).toEqual(jasmine.any(Object));
         });
     });
 });

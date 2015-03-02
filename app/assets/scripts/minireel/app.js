@@ -120,14 +120,8 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                     this.route('/:campaignId', 'MR:Campaign', function() {
                         this.route('/general', 'MR:Campaign.General');
                         this.route('/assets', 'MR:Campaign.Assets');
-                        this.route('/creatives', 'MR:Campaign.Creatives', function() {
-                            this.route('/minireel/new', 'MR:Creatives.NewMiniReel', function() {
-                                this.state('MR:Creatives.NewMiniReel.General');
-                                this.state('MR:Creatives.NewMiniReel.Type');
-                                this.state('MR:Creatives.NewMiniReel.Playback');
-                            });
-
-                            this.route('/card/new', 'MR:NewWildcard', function() {
+                        this.route('/cards', 'MR:Campaign.Cards', function() {
+                            this.route('/new', 'MR:NewWildcard', function() {
                                 this.state('MR:Wildcard', 'MR:New:Wildcard', function() {
                                     this.state('MR:Wildcard.Copy', 'MR:New:Wildcard.Copy');
                                     this.state('MR:Wildcard.Video', 'MR:New:Wildcard.Video');
@@ -141,7 +135,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                                 });
                             });
 
-                            this.route('/card/:cardId', 'MR:EditWildcard', function() {
+                            this.route('/:cardId', 'MR:EditWildcard', function() {
                                 this.state('MR:Wildcard', 'MR:Edit:Wildcard', function() {
                                     this.state('MR:Wildcard.Copy', 'MR:Edit:Wildcard.Copy');
                                     this.state('MR:Wildcard.Video', 'MR:Edit:Wildcard.Video');
@@ -153,6 +147,13 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                                         'MR:Edit:Wildcard.Advertising'
                                     );
                                 });
+                            });
+                        });
+                        this.route('/minireels', 'MR:Campaign.MiniReels', function() {
+                            this.route('/new', 'MR:Campaign.NewMiniReel', function() {
+                                this.state('MR:Campaign.NewMiniReel.General');
+                                this.state('MR:Campaign.NewMiniReel.Type');
+                                this.state('MR:Campaign.NewMiniReel.Playback');
                             });
                         });
                         this.route('/placements', 'MR:Campaign.Placements', function() {

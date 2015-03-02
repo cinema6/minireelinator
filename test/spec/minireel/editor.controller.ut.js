@@ -1003,14 +1003,14 @@
                             });
                         });
 
-                        it('should go to the "MR:Campaign.Creatives" state', function() {
-                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.Creatives', [EditorCtrl.campaign, null]);
+                        it('should go to the "MR:Campaign.MiniReels" state', function() {
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.MiniReels', [EditorCtrl.campaign, null]);
                         });
 
                         describe('when the state transition completes', function() {
                             beforeEach(function() {
                                 $scope.$apply(function() {
-                                    goToDeferred.resolve(c6State.get('MR:Campaign.Creatives'));
+                                    goToDeferred.resolve(c6State.get('MR:Campaign.MiniReels'));
                                 });
                             });
 

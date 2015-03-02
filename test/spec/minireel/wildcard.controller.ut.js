@@ -11,7 +11,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
             $scope,
             WildcardState,
             CampaignCtrl,
-            CampaignCreativesCtrl,
+            CampaignCardsCtrl,
             WildcardCtrl;
 
         var campaign, card;
@@ -45,7 +45,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                         miniReels: []
                     })));
 
-                    CampaignCreativesCtrl = $scope.CampaignCreativesCtrl = $controller('CampaignCreativesController', {
+                    CampaignCardsCtrl = $scope.CampaignCardsCtrl = $controller('CampaignCardsController', {
                         $scope: $scope
                     });
 
@@ -114,7 +114,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
 
                     updateCardDeferred = $q.defer();
 
-                    spyOn(CampaignCreativesCtrl, 'add').and.callThrough();
+                    spyOn(CampaignCardsCtrl, 'add').and.callThrough();
                     spyOn(WildcardState, 'updateCard').and.returnValue(updateCardDeferred.promise);
 
                     $scope.$apply(function() {
@@ -141,17 +141,17 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     });
 
                     it('should add the card to the campaign', function() {
-                        expect(CampaignCreativesCtrl.add).toHaveBeenCalledWith(card);
+                        expect(CampaignCardsCtrl.add).toHaveBeenCalledWith(card);
                     });
 
-                    it('should go to the "MR:Campaign.Creatives" state', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.Creatives');
+                    it('should go to the "MR:Campaign.Cards" state', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.Cards');
                     });
 
                     describe('after the state transition', function() {
                         beforeEach(function() {
                             $scope.$apply(function() {
-                                goToDeferred.resolve(c6State.get('MR:Campaign.Creatives'));
+                                goToDeferred.resolve(c6State.get('MR:Campaign.Cards'));
                             });
                         });
 

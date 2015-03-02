@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.9.0 (February 26, 2015)
+* *[v1.9.0.rc8]*
+  * Split Creatives tab into separate Sponsored Cards and Sponsored
+    MiniReels tabs
+
 * *[v1.9.0.rc7]*
   * [FIX]: Fix for an issue that caused a campaign not to be marked as
     saved when on the placements tab if all of a placement's slots were
