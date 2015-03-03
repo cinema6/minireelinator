@@ -1,9 +1,10 @@
 # MiniReelinator
 
-## v1.9.0 (February 26, 2015)
+## v1.9.0 (March 3, 2015)
 * *[v1.9.0.rc8]*
   * Split Creatives tab into separate Sponsored Cards and Sponsored
     MiniReels tabs
+* *[/v1.9.0.rc8]*
 
 * *[v1.9.0.rc7]*
   * [FIX]: Fix for an issue that caused a campaign not to be marked as
