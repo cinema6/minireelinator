@@ -226,6 +226,46 @@ define(['minireel/campaign'], function(campaignModule) {
                 });
             });
 
+            describe('updateLinks()', function() {
+                beforeEach(function() {
+                    CampaignCtrl.links = [
+                        {
+                            name: 'Action',
+                            href: null
+                        },
+                        {
+                            name: 'Website',
+                            href: 'mysite.com'
+                        },
+                        {
+                            name: 'Facebook',
+                            href: ''
+                        },
+                        {
+                            name: 'Twitter',
+                            href: null
+                        },
+                        {
+                            name: 'YouTube',
+                            href: 'yt.com'
+                        },
+                        {
+                            name: 'Pinterest',
+                            href: null
+                        }
+                    ];
+
+                    CampaignCtrl.updateLinks();
+                });
+
+                it('should update the campaign\'s links', function() {
+                    expect(campaign.links).toEqual({
+                        'Website': 'mysite.com',
+                        'YouTube': 'yt.com'
+                    });
+                });
+            });
+
             describe('save()', function() {
                 var success, failure,
                     emptyPlaceholder,
