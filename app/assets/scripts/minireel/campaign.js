@@ -267,8 +267,12 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.links = this.links.concat([link]);
             };
 
-            this.save = function() {
+            this.updateLinks = function() {
                 this.model.links = createModelLinks(this.links);
+            };
+
+            this.save = function() {
+                this.updateLinks();
                 trimEmptyPlaceholders(this.model.staticCardMap);
 
                 return this.model.save().then(function(campaign) {
@@ -325,6 +329,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
                 this.newLink = new Link();
             };
+
+            $scope.$on('$destroy', function() { CampaignCtrl.updateLinks(); });
         }])
 
         .config(['c6StateProvider',

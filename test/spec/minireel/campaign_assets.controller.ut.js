@@ -81,5 +81,19 @@ define(['minireel/campaign'], function(campaignModule) {
                 });
             });
         });
+
+        describe('events', function() {
+            describe('$scope:$destroy', function() {
+                beforeEach(function() {
+                    spyOn(CampaignCtrl, 'updateLinks');
+
+                    $scope.$emit('$destroy');
+                });
+
+                it('should update the links', function() {
+                    expect(CampaignCtrl.updateLinks).toHaveBeenCalled();
+                });
+            });
+        });
     });
 });
