@@ -7,6 +7,8 @@
   * [FEATURE]: Add support for setting an end date on a sponored
     Card/MiniReel
   * [FEATURE]: Add support for setting a name on a sponored Card/MiniReel
+  * [FEATURE]: Add support for showing a sponsored MiniReel/Card's state
+    in the campaign manager
 
 * *[v1.9.0.rc8]*
   * Split Creatives tab into separate Sponsored Cards and Sponsored
