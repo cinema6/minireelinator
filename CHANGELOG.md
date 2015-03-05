@@ -6,6 +6,7 @@
     not to copy the links from a campaign until the campaign was saved
   * [FEATURE]: Add support for setting an end date on a sponored
     Card/MiniReel
+  * [FEATURE]: Add support for setting a name on a sponored Card/MiniReel
 
 * *[v1.9.0.rc8]*
   * Split Creatives tab into separate Sponsored Cards and Sponsored
