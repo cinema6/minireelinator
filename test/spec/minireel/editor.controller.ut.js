@@ -963,13 +963,14 @@
 
                 describe('returnToCampaign()', function() {
                     var success, failure,
-                        saveDeferred;
+                        saveDeferred, campaignSaveDeferred;
 
                     beforeEach(function() {
                         success = jasmine.createSpy('success()');
                         failure = jasmine.createSpy('failure()');
 
                         saveDeferred = $q.defer();
+                        campaignSaveDeferred = $q.defer();
 
                         EditorCtrl.campaign = cinema6.db.create('campaign', {
                             id: 'cam-6cf12193448f16',
@@ -980,14 +981,16 @@
                         });
 
                         spyOn(EditorCtrl, 'save').and.returnValue(saveDeferred.promise);
+                        spyOn(EditorCtrl.campaign, 'save').and.returnValue(campaignSaveDeferred.promise);
 
                         $scope.$apply(function() {
                             EditorCtrl.returnToCampaign().then(success, failure);
                         });
                     });
 
-                    it('should save the MiniReel', function() {
+                    it('should save the MiniReel and campaign', function() {
                         expect(EditorCtrl.save).toHaveBeenCalled();
+                        expect(EditorCtrl.campaign.save).toHaveBeenCalled();
                     });
 
                     describe('when the save completes', function() {
@@ -1000,6 +1003,10 @@
 
                             $scope.$apply(function() {
                                 saveDeferred.resolve(cModel);
+                            });
+                            expect(c6State.goTo).not.toHaveBeenCalled();
+                            $scope.$apply(function() {
+                                campaignSaveDeferred.resolve(EditorCtrl.campaign);
                             });
                         });
 

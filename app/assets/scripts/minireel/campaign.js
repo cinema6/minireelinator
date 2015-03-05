@@ -415,7 +415,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                                                        'MiniReelService',
         function                                      ( $injector , $scope , c6State ,
                                                         MiniReelService ) {
-            var CampaignMiniReelsCtrl = $scope.CampaignMiniReelsCtrl,
+            var CampaignNewMiniReelCtrl = this,
+                CampaignMiniReelsCtrl = $scope.CampaignMiniReelsCtrl,
                 CampaignCtrl = $scope.CampaignCtrl;
 
             $injector.invoke(WizardController, this);
@@ -435,10 +436,14 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 }
             ];
 
+            this.endDate = null;
+
             this.confirm = function() {
                 return MiniReelService.publish(this.model)
                     .then(function(minireel) {
-                        return CampaignMiniReelsCtrl.add(minireel);
+                        return CampaignMiniReelsCtrl.add(minireel, {
+                            endDate: CampaignNewMiniReelCtrl.endDate
+                        });
                     })
                     .then(function(minireel) {
                         return CampaignCtrl.save().then(function() { return minireel; });

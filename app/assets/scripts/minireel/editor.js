@@ -761,7 +761,7 @@ VideoCardController           ) {
             this.returnToCampaign = function() {
                 var campaign = this.campaign;
 
-                return this.save().then(function() {
+                return $q.all([this.save(), campaign.save()]).then(function() {
                     return c6State.goTo('MR:Campaign.MiniReels', [campaign, null]);
                 }).then(function() {
                     return campaign;
@@ -907,6 +907,10 @@ VideoCardController           ) {
 
                 .state('MR:Settings.Autoplay', [function() {
                     this.templateUrl = 'views/minireel/manager/new/autoplay.html';
+                }])
+
+                .state('MR:Settings.Campaign', [function() {
+                    this.templateUrl = 'views/minireel/manager/new/campaign.html';
                 }]);
         }])
 

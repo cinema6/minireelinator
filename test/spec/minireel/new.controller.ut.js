@@ -11,6 +11,7 @@
                 EditorService,
                 PortalCtrl,
                 MiniReelCtrl,
+                EditorCtrl,
                 NewCtrl;
 
             var modes,
@@ -338,6 +339,19 @@
 
                     describe('on the "MR:Editor.Settings" state', function() {
                         beforeEach(function() {
+                            minireel.id = 'e-a504768b03e225';
+
+                            EditorCtrl = $scope.EditorCtrl = $controller('EditorController', {
+                                $scope: $scope,
+                                $log: {
+                                    log: function() {},
+                                    info: function() {},
+                                    error: function() {},
+                                    warn: function() {},
+                                    context: function() { return this; }
+                                }
+                            });
+                            EditorCtrl.model = minireel;
                             NewCtrl = $controller('NewController', {
                                 $scope: $scope,
                                 cState: c6State.get('MR:Editor.Settings')
@@ -368,6 +382,42 @@
                                     requiredVisits: 0
                                 })
                             ]);
+                        });
+
+                        describe('if the minireel has an associated campaign', function() {
+                            beforeEach(function() {
+                                EditorCtrl.campaign = {
+                                    miniReels: [
+                                        {
+                                            id: 'e-2335ed96a190bf',
+                                            endDate: new Date()
+                                        },
+                                        {
+                                            id: minireel.id,
+                                            endDate: new Date()
+                                        },
+                                        {
+                                            id: 'e-839c5c45590348',
+                                            endDate: new Date()
+                                        }
+                                    ]
+                                };
+
+                                NewCtrl = $controller('NewController', {
+                                    $scope: $scope,
+                                    cState: c6State.get('MR:Editor.Settings')
+                                });
+                            });
+
+                            it('should have four tabs', function() {
+                                expect(NewCtrl.tabs[3]).toEqual(jasmine.objectContaining({
+                                    name: jasmine.any(String),
+                                    sref: 'MR:Settings.Campaign',
+                                    visits: 0,
+                                    required: false,
+                                    requiredVisits: 0
+                                }));
+                            });
                         });
 
                         describe('if the user is a ContentProvider', function() {
@@ -426,6 +476,58 @@
                     it('should be a copy of the minireel\'s categories', function() {
                         expect(NewCtrl.categories).toEqual(minireel.categories);
                         expect(NewCtrl.categories).not.toBe(minireel.categories);
+                    });
+                });
+
+                describe('endDate', function() {
+                    describe('if there is no campaign', function() {
+                        it('should be undefined', function() {
+                            expect(NewCtrl.endDate).toBeUndefined();
+                        });
+                    });
+
+                    describe('if there is a campaign', function() {
+                        beforeEach(function() {
+                            EditorCtrl = $scope.EditorCtrl = $controller('EditorController', {
+                                $scope: $scope,
+                                $log: {
+                                    log: function() {},
+                                    info: function() {},
+                                    error: function() {},
+                                    warn: function() {},
+                                    context: function() { return this; }
+                                }
+                            });
+                            EditorCtrl.model = minireel;
+                            minireel.id = 'e-6f655005cc2b15';
+
+                            EditorCtrl.campaign = {
+                                miniReels: [
+                                    {
+                                        id: 'e-2335ed96a190bf',
+                                        endDate: new Date()
+                                    },
+                                    {
+                                        id: minireel.id,
+                                        endDate: new Date()
+                                    },
+                                    {
+                                        id: 'e-839c5c45590348',
+                                        endDate: new Date()
+                                    }
+                                ]
+                            };
+
+                            NewCtrl = $scope.NewCtrl = $controller('NewController', {
+                                $scope: $scope,
+                                cState: c6State.get('MR:Editor.Settings')
+                            });
+                            NewCtrl.initWithModel(minireel);
+                        });
+
+                        it('should be the campaign\'s end date for the MiniReel', function() {
+                            expect(NewCtrl.endDate).toBe(EditorCtrl.campaign.miniReels[1].endDate);
+                        });
                     });
                 });
 
@@ -494,6 +596,53 @@
                         expect(minireel.categories).toEqual(NewCtrl.categories);
                         expect(minireel.categories).toBe(categories);
                         expect(minireel.data.params.categories).toBe(NewCtrl.categories);
+                    });
+
+                    describe('if the minireel has a campaign', function() {
+                        beforeEach(function() {
+                            EditorCtrl = $scope.EditorCtrl = $controller('EditorController', {
+                                $scope: $scope,
+                                $log: {
+                                    log: function() {},
+                                    info: function() {},
+                                    error: function() {},
+                                    warn: function() {},
+                                    context: function() { return this; }
+                                }
+                            });
+                            EditorCtrl.model = minireel;
+                            minireel.id = 'e-6f655005cc2b15';
+
+                            EditorCtrl.campaign = {
+                                miniReels: [
+                                    {
+                                        id: 'e-2335ed96a190bf',
+                                        endDate: new Date()
+                                    },
+                                    {
+                                        id: minireel.id,
+                                        endDate: new Date()
+                                    },
+                                    {
+                                        id: 'e-839c5c45590348',
+                                        endDate: new Date()
+                                    }
+                                ]
+                            };
+
+                            NewCtrl = $scope.NewCtrl = $controller('NewController', {
+                                $scope: $scope,
+                                cState: c6State.get('MR:Editor.Settings')
+                            });
+                            NewCtrl.initWithModel(minireel);
+                            NewCtrl.endDate = new Date();
+
+                            NewCtrl.save();
+                        });
+
+                        it('should copy the endDate to the campaign', function() {
+                            expect(EditorCtrl.campaign.miniReels[1].endDate).toBe(NewCtrl.endDate);
+                        });
                     });
 
                     it('should save the minireel', function() {

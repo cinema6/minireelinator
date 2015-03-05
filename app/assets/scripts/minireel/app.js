@@ -59,6 +59,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                             this.state('MR:Settings.Category');
                             this.state('MR:Settings.Mode');
                             this.state('MR:Settings.Autoplay');
+                            this.state('MR:Settings.Campaign');
                         });
                         this.route('/splash', 'MR:Editor.Splash', function() {
                             this.route('/', 'MR:Splash.Source');

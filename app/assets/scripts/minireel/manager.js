@@ -192,9 +192,12 @@ function( angular , c6uilib , c6State  , services   ,
             var self = this,
                 PortalCtrl = $scope.PortalCtrl,
                 MiniReelCtrl = $scope.MiniReelCtrl,
+                EditorCtrl = $scope.EditorCtrl,
                 stateName = cState.cName,
                 user = PortalCtrl.model,
-                modes = MiniReelCtrl.model.data.modes;
+                modes = MiniReelCtrl.model.data.modes,
+                campaign = EditorCtrl && EditorCtrl.campaign,
+                campaignMetaData = null;
 
             function Tab(name, sref, required) {
                 this.name = name;
@@ -248,6 +251,9 @@ function( angular , c6uilib , c6State  , services   ,
                     }
                 });
             }
+            if (campaign) {
+                this.tabs.push(new Tab('Campaign', 'MR:Settings.Campaign'));
+            }
             Object.defineProperties(this, {
                 currentTab: {
                     configurable: true,
@@ -258,11 +264,16 @@ function( angular , c6uilib , c6State  , services   ,
             });
 
             this.initWithModel = function(minireel) {
+                campaignMetaData = campaign && campaign.miniReels.reduce(function(result, item) {
+                    return item.id === minireel.id ? item : result;
+                }, undefined);
+
                 this.model = minireel;
                 this.mode = MiniReelService.modeDataOf(minireel, modes);
                 this.autoplay = minireel.data.autoplay;
                 this.title = minireel.data.title;
                 this.categories = minireel.categories.slice();
+                this.endDate = campaignMetaData && campaignMetaData.endDate;
             };
 
             this.isAsFarAs = function(tab) {
@@ -290,6 +301,10 @@ function( angular , c6uilib , c6State  , services   ,
                 minireel.categories.length = 0;
                 minireel.categories.push.apply(minireel.categories, this.categories);
                 minireel.data.params.categories = this.categories;
+
+                if (campaignMetaData) {
+                    campaignMetaData.endDate = this.endDate;
+                }
 
                 (minireel.id ? $q.when(minireel) :
                     minireel.save())
