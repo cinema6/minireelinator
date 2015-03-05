@@ -1,5 +1,7 @@
-define(['app'], function(appModule) {
+define(['app', 'angular'], function(appModule, angular) {
     'use strict';
+
+    var copy = angular.copy;
 
     function extend() {
         var objects = Array.prototype.slice.call(arguments);
@@ -61,7 +63,7 @@ define(['app'], function(appModule) {
 
         describe('decorateCampaign(campaign)', function() {
             var campaign,
-                advertiserId, customerId, miniReelIds, cardIds,
+                advertiserId, customerId, sponsoredMiniReels, sponsoredCards,
                 minireels, cards, advertisers, customers;
 
             beforeEach(function() {
@@ -69,8 +71,26 @@ define(['app'], function(appModule) {
                     id: 'c-c66191ccc3eb37',
                     advertiserId: 'a-3f7cf5012b15b4',
                     customerId: 'cus-5156b33a6f834c',
-                    miniReels: ['e-18306aa3d27d54', 'e-f3b45211f2d9b7'],
-                    cards: ['rc-223a31e4d985c4','rc-06f6db8ba1877f'],
+                    miniReels: [
+                        {
+                            endDate: '2015-03-04T19:54:09.397Z',
+                            id: 'e-18306aa3d27d54'
+                        },
+                        {
+                            endDate: null,
+                            id: 'e-f3b45211f2d9b7'
+                        }
+                    ],
+                    cards: [
+                        {
+                            endDate: null,
+                            id: 'rc-223a31e4d985c4'
+                        },
+                        {
+                            endDate: '2015-03-04T19:54:26.806Z',
+                            id: 'rc-06f6db8ba1877f'
+                        }
+                    ],
                     staticCardMap: {
                         'e-d43686a9835df1': {
                             'rc-72ba2dff0fdebf': 'rc-223a31e4d985c4',
@@ -96,8 +116,8 @@ define(['app'], function(appModule) {
 
                 advertiserId = campaign.advertiserId;
                 customerId = campaign.customerId;
-                miniReelIds = campaign.miniReels.slice();
-                cardIds = campaign.cards.slice();
+                sponsoredMiniReels = campaign.miniReels.slice().map(function(item) { return copy(item); });
+                sponsoredCards = campaign.cards.slice().map(function(item) { return copy(item); });
 
                 advertisers = {
                     'a-3f7cf5012b15b4': {
@@ -189,11 +209,19 @@ define(['app'], function(appModule) {
             it('should decorate references to cards and minireels with actual objects', function() {
                 expect(campaign.advertiser).toBe(advertisers[advertiserId]);
                 expect(campaign.customer).toBe(customers[customerId]);
-                expect(campaign.miniReels).toEqual(miniReelIds.map(function(id) {
-                    return minireels[id];
+                expect(campaign.miniReels).toEqual(sponsoredMiniReels.map(function(data) {
+                    return {
+                        endDate: data.endDate && new Date(data.endDate),
+                        item: minireels[data.id],
+                        id: data.id
+                    };
                 }));
-                expect(campaign.cards).toEqual(cardIds.map(function(id) {
-                    return cards[id];
+                expect(campaign.cards).toEqual(sponsoredCards.map(function(data) {
+                    return {
+                        endDate: data.endDate && new Date(data.endDate),
+                        item: cards[data.id],
+                        id: data.id
+                    };
                 }));
             });
 
@@ -417,25 +445,38 @@ define(['app'], function(appModule) {
                     },
                     miniReels: [
                         {
+                            endDate: new Date().toISOString(),
                             id: 'e-eedf5ac16a340c',
-                            title: 'My MiniReel',
-                            data: {
-                                deck: []
+                            item: {
+                                id: 'e-eedf5ac16a340c',
+                                title: 'My MiniReel',
+                                data: {
+                                    deck: []
+                                }
                             }
                         }
                     ],
                     cards: [
                         {
+                            endDate: null,
                             id: 'rc-e7d87387399afb',
-                            type: 'vimeo',
-                            data: {
-                                autoplay: true
+                            item: {
+                                id: 'rc-e7d87387399afb',
+                                type: 'vimeo',
+                                endDate: null,
+                                data: {
+                                    autoplay: true
+                                }
                             }
                         },
                         {
+                            endDate: new Date().toISOString(),
                             id: 'rc-eba4ebd9796e24',
-                            type: 'youtube',
-                            data: {}
+                            item: {
+                                id: 'rc-eba4ebd9796e24',
+                                type: 'youtube',
+                                data: {}
+                            }
                         }
                     ],
                     staticCardMap: [],
@@ -445,11 +486,17 @@ define(['app'], function(appModule) {
                 postData = without(['advertiser', 'customer'], extend(campaign, {
                     advertiserId: campaign.advertiser.id,
                     customerId: campaign.customer.id,
-                    miniReels: campaign.miniReels.map(function(minireel) {
-                        return minireel.id;
+                    miniReels: campaign.miniReels.map(function(data) {
+                        return {
+                            endDate: data.endDate,
+                            id: data.id
+                        };
                     }),
-                    cards: campaign.cards.map(function(card) {
-                        return card.id;
+                    cards: campaign.cards.map(function(data) {
+                        return {
+                            endDate: data.endDate,
+                            id: data.id
+                        };
                     }),
                     staticCardMap: {}
                 }));
@@ -508,8 +555,18 @@ define(['app'], function(appModule) {
                     created: '2014-12-01T23:26:46.182Z',
                     advertiserId: 'a-6d54ea5400aa8e',
                     customerId: 'cus-1e061e7a787603',
-                    miniReels: ['e-5b984daae2786c'],
-                    cards: ['rc-ddc10b88e25b44'],
+                    miniReels: [
+                        {
+                            endDate: new Date().toISOString(),
+                            id: 'e-5b984daae2786c'
+                        }
+                    ],
+                    cards: [
+                        {
+                            endDate: new Date().toISOString(),
+                            id: 'rc-ddc10b88e25b44'
+                        }
+                    ],
                     staticCardMap: {
                         'e-50a82df1192d11': {
                             'rc-7bd45eb26582e5': 'rc-789f23554ad597',
@@ -551,7 +608,7 @@ define(['app'], function(appModule) {
                 });
 
                 $rootScope.$apply(function() {
-                    adapter.decorateCampaign(extend(rawCampaign)).then(function(_campaign) {
+                    adapter.decorateCampaign(copy(rawCampaign)).then(function(_campaign) {
                         campaign = _campaign;
                     });
                 });

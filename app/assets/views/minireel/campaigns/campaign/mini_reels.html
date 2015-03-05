@@ -20,19 +20,19 @@
                 </article>
             </li>
 
-            <li class="miniReels__item grid__item" ng-repeat="$this in minireels track by $this.id">
-                <article class="miniReel__group clearfix">
+            <li class="miniReels__item grid__item" ng-repeat="data in minireels track by data.id">
+                <article c6-alias="data.item as minireel" class="miniReel__group clearfix">
                     <div class="miniReel__selector">
-                        <button class="btnInvis ui__iconHolder18" ng-click="CampaignMiniReelsCtrl.remove($this)">
+                        <button class="btnInvis ui__iconHolder18" ng-click="CampaignMiniReelsCtrl.remove(minireel)">
                             <span class="fab fa-trash">&nbsp;</span>
                         </button>
                     </div>
                     <div class="miniReel__imgBox">
-                        <a c6-sref="MR:Editor" c6-models="[$this]"
+                        <a c6-sref="MR:Editor" c6-models="[minireel]"
                         c6-params="{ campaign: campaign.id }">
                             <div class="miniReel__img"
-                            title="Edit This MiniReel: {{$this.data.title}}" 
-                            c6-bg-img="{{$this.data.collateral.splash}}">
+                            title="Edit This MiniReel: {{minireel.data.title}}" 
+                            c6-bg-img="{{minireel.data.collateral.splash}}">
                                 &nbsp;
                             </div>
                         </a>
@@ -40,25 +40,25 @@
                     <div class="miniReel__titleBox">
                         <h1 class="miniReel__title">
                             <a class="miniReel__titleLink" 
-                            c6-sref="MR:Editor" c6-models="[$this]" 
+                            c6-sref="MR:Editor" c6-models="[minireel]" 
                             c6-params="{ campaign: campaign.id }"
-                            title="Edit This MiniReel: {{$this.data.title}}">
-                                {{$this.data.title}}
+                            title="Edit This MiniReel: {{minireel.data.title}}">
+                                {{minireel.data.title}}
                             </a>
                         </h1>
                         <p class="miniReel__metaData">
-                            by <span class="miniReel__author" c6-alias="$this.user as author">{{author.firstName}} {{author.lastName}}</span>
+                            by <span class="miniReel__author" c6-alias="minireel.user as author">{{author.firstName}} {{author.lastName}}</span>
                         </p>
                     </div>
                     <div class="miniReel__status">
-                        <strong ng-show="$this.status === 'active'" class="miniReel__statusText--{{$this.status}}">
+                        <strong ng-show="minireel.status === 'active'" class="miniReel__statusText--{{minireel.status}}">
                             Published
                         </strong>
-                        <strong ng-show="$this.status === 'pending'" class="miniReel__statusText--{{$this.status}}">
+                        <strong ng-show="minireel.status === 'pending'" class="miniReel__statusText--{{minireel.status}}">
                             Private
                         </strong> 
-                        - <span class="miniReel__date">{{$this.lastUpdated | date:'M/d/yyyy'}}</span>
-                        <p class="miniReel__count">{{$this.data.deck.length}} slides</p>
+                        - <span class="miniReel__date">{{minireel.lastUpdated | date:'M/d/yyyy'}}</span>
+                        <p class="miniReel__count">{{minireel.data.deck.length}} slides</p>
                     </div>
                 </article>
             </li>

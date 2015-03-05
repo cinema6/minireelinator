@@ -348,23 +348,33 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 campaign = CampaignCtrl.model;
 
             this.remove = function(minireel) {
-                var miniReels = campaign.miniReels;
-                var index = miniReels.indexOf(minireel);
+                var items = campaign.miniReels;
+                var minireels = items.map(function(item) {
+                    return item.item;
+                });
+                var index = minireels.indexOf(minireel);
 
                 if (index < 0) {
                     return null;
                 }
 
-                miniReels.splice(index, 1);
+                items.splice(index, 1);
                 return minireel;
             };
 
-            this.add = function(minireel) {
-                var miniReels = campaign.miniReels;
+            this.add = function(minireel, data) {
+                var items = campaign.miniReels;
+                var minireels = items.map(function(item) {
+                    return item.item;
+                });
 
-                if (miniReels.indexOf(minireel) > -1) { return minireel; }
+                if (minireels.indexOf(minireel) > -1) { return minireel; }
 
-                return miniReels[miniReels.push(minireel) - 1];
+                items.push(extend({
+                    id: minireel.id,
+                    item: minireel
+                }, data));
+                return minireel;
             };
         }])
 
@@ -510,23 +520,37 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 campaign = CampaignCtrl.model;
 
             this.remove = function(card) {
-                var cards = campaign.cards;
+                var items = campaign.cards;
+                var cards = items.map(function(data) {
+                    return data.item;
+                });
                 var index = cards.indexOf(card);
 
                 if (index < 0) {
                     return null;
                 }
 
-                cards.splice(index, 1);
+                items.splice(index, 1);
                 return card;
             };
 
-            this.add = function(card) {
-                var cards = campaign.cards;
+            this.add = function(card, data) {
+                var items = campaign.cards;
+                var cards = items.map(function(data) {
+                    return data.item;
+                });
+                var item = items[cards.indexOf(card)];
 
-                if (cards.indexOf(card) > -1) { return card; }
+                if (item) {
+                    extend(item, data);
+                    return card;
+                }
 
-                return cards[cards.push(card) - 1];
+                items.push(extend({
+                    id: card.id,
+                    item: card
+                }, data));
+                return card;
             };
         }])
 
