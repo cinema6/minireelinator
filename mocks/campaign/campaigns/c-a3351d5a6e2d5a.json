@@ -22,7 +22,8 @@
     "cards": [
         {
             "id": "rc-5ff4ca42a5f6fd",
-            "endDate": "1991-06-26T00:00:00.000Z"
+            "endDate": "1990-06-26T00:00:00.000Z",
+            "state": "active"
         }
     ],
     "staticCardMap": {},
