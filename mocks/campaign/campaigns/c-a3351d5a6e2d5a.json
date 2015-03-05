@@ -9,11 +9,19 @@
     },
     "links": {},
     "miniReels": [
-        "e-80fcd03196b3d2",
-        "e-220f09b2398217"
+        {
+            "id": "e-80fcd03196b3d2",
+            "endDate": "1995-06-27T00:00:00.000Z"
+        },
+        {
+            "id": "e-220f09b2398217"
+        }
     ],
     "cards": [
-        "rc-5ff4ca42a5f6fd"
+        {
+            "id": "rc-5ff4ca42a5f6fd",
+            "endDate": "1991-06-26T00:00:00.000Z"
+        }
     ],
     "staticCardMap": {},
     "miniReelGroups": [],

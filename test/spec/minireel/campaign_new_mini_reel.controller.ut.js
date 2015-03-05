@@ -91,6 +91,12 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     ]);
                 });
             });
+
+            describe('endDate', function() {
+                it('should be null', function() {
+                    expect(CampaignNewMiniReelCtrl.endDate).toBeNull();
+                });
+            });
         });
 
         describe('methods', function() {
@@ -123,6 +129,8 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                         spyOn(CampaignCtrl, 'save').and.returnValue(saveDeferred.promise);
                         spyOn(CampaignMiniReelsCtrl, 'add').and.callThrough();
 
+                        CampaignNewMiniReelCtrl.endDate = new Date();
+
                         $scope.$apply(function() {
                             minireel.id = 'e-c8feedca3a1567';
                             publishDeferred.resolve(minireel);
@@ -130,7 +138,9 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     });
 
                     it('should add the minireel to the campaign', function() {
-                        expect(CampaignMiniReelsCtrl.add).toHaveBeenCalledWith(minireel);
+                        expect(CampaignMiniReelsCtrl.add).toHaveBeenCalledWith(minireel, {
+                            endDate: CampaignNewMiniReelCtrl.endDate
+                        });
                     });
 
                     it('should save the campaign', function() {

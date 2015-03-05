@@ -31,6 +31,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                 card = WildcardState.card = cinema6.db.create('card', MiniReelService.createCard('videoBallot'));
                 delete card.id;
                 WildcardState.cModel = card.pojoify();
+                WildcardState.metaData = {};
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
@@ -53,7 +54,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                         $scope: $scope,
                         cState: WildcardState
                     });
-                    WildcardCtrl.model = WildcardState.cModel;
+                    WildcardCtrl.initWithModel(WildcardState.cModel);
                 });
             });
         });
@@ -69,6 +70,18 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
         }));
 
         describe('properties', function() {
+            describe('model', function() {
+                it('should be the state\'s model', function() {
+                    expect(WildcardCtrl.model).toBe(WildcardState.cModel);
+                });
+            });
+
+            describe('campaignData', function() {
+                it('should be its state\'s metaData', function() {
+                    expect(WildcardCtrl.campaignData).toBe(WildcardState.metaData);
+                });
+            });
+
             describe('tabs', function() {
                 it('should be a list of tabs', function() {
                     expect(WildcardCtrl.tabs).toEqual([
@@ -117,6 +130,10 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     spyOn(CampaignCardsCtrl, 'add').and.callThrough();
                     spyOn(WildcardState, 'updateCard').and.returnValue(updateCardDeferred.promise);
 
+                    WildcardCtrl.campaignData = {
+                        endDate: new Date()
+                    };
+
                     $scope.$apply(function() {
                         WildcardCtrl.save().then(success, failure);
                     });
@@ -141,7 +158,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     });
 
                     it('should add the card to the campaign', function() {
-                        expect(CampaignCardsCtrl.add).toHaveBeenCalledWith(card);
+                        expect(CampaignCardsCtrl.add).toHaveBeenCalledWith(card, WildcardCtrl.campaignData);
                     });
 
                     it('should go to the "MR:Campaign.Cards" state', function() {

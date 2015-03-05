@@ -49,17 +49,21 @@ define(['minireel/campaign'], function(campaignModule) {
 
             beforeEach(function() {
                 campaign.miniReels.push.apply(campaign.miniReels, ['e-f8f1341c77fb57', 'e-095e8df1cdd0c1', 'e-11e1cc3b9efa7f'].map(function(id) {
-                    return cinema6.db.create('experience', {
+                    return {
                         id: id,
-                        data: {
-                            deck: []
-                        }
-                    });
+                        endDate: new Date(),
+                        item: cinema6.db.create('experience', {
+                            id: id,
+                            data: {
+                                deck: []
+                            }
+                        })
+                    };
                 }));
 
                 minireel = campaign.miniReels[2];
 
-                CampaignMiniReelsCtrl.remove(minireel);
+                CampaignMiniReelsCtrl.remove(minireel.item);
             });
 
             it('should remove the minireel', function() {
@@ -71,6 +75,7 @@ define(['minireel/campaign'], function(campaignModule) {
         describe('add(item)', function() {
             var result;
             var minireel;
+            var date;
 
             beforeEach(function() {
                 campaign.miniReels.push.apply(campaign.miniReels, ['e-f8f1341c77fb57', 'e-095e8df1cdd0c1', 'e-11e1cc3b9efa7f'].map(function(id) {
@@ -89,11 +94,19 @@ define(['minireel/campaign'], function(campaignModule) {
                     }
                 });
 
-                result = CampaignMiniReelsCtrl.add(minireel);
+                date = new Date();
+
+                result = CampaignMiniReelsCtrl.add(minireel, {
+                    endDate: date
+                });
             });
 
             it('should add the minireel to the campaign', function() {
-                expect(campaign.miniReels[3]).toBe(minireel);
+                expect(campaign.miniReels[3]).toEqual({
+                    id: minireel.id,
+                    endDate: date,
+                    item: minireel
+                });
             });
 
             it('should return the minireel', function() {
@@ -110,7 +123,6 @@ define(['minireel/campaign'], function(campaignModule) {
                 });
 
                 it('should not add the minireel again', function() {
-                    expect(campaign.miniReels[3]).toBe(minireel);
                     expect(campaign.miniReels[4]).not.toBeDefined();
                 });
             });

@@ -543,6 +543,12 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     }));
                 }
 
+                function makeCreativeWrapper(data) {
+                    return extend(data, {
+                        item: undefined
+                    });
+                }
+
                 function undecorateCampaign(campaign) {
                     return extend(campaign, {
                         created: undefined,
@@ -553,8 +559,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         customer: undefined,
                         customerId: campaign.customer.id,
 
-                        cards: campaign.cards.map(pick('id')),
-                        miniReels: campaign.miniReels.map(pick('id')),
+                        cards: campaign.cards.map(makeCreativeWrapper),
+                        miniReels: campaign.miniReels.map(makeCreativeWrapper),
 
                         staticCardMap: (function() {
                             function hasWildcard(entry) {
@@ -593,12 +599,27 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         };
                     }
 
+                    function parseWrapper(data) {
+                        return extend(data, {
+                            endDate: data.endDate && new Date(data.endDate)
+                        });
+                    }
+
                     return $q.all({
                         customer: getDbModel('customer')(campaign.customerId),
                         advertiser: getDbModel('advertiser')(campaign.advertiserId),
 
-                        miniReels: $q.all(campaign.miniReels.map(getDbModel('experience'))),
-                        cards: $q.all(campaign.cards.map(getDbModel('card'))),
+                        miniReels: $q.all(campaign.miniReels.map(function(data) {
+                            return $q.all(extend(parseWrapper(data), {
+                                item: getDbModel('experience')(data.id)
+                            }));
+                        })),
+
+                        cards: $q.all(campaign.cards.map(function(data) {
+                            return $q.all(extend(parseWrapper(data), {
+                                item: getDbModel('card')(data.id)
+                            }));
+                        })),
 
                         staticCardMap: $q.all(Object.keys(staticCardMap).map(function(minireelId) {
                             var map = staticCardMap[minireelId],

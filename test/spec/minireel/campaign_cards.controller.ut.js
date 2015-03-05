@@ -46,36 +46,45 @@ define(['minireel/campaign'], function(campaignModule) {
 
         describe('remove(item)', function() {
             var card;
+            var data;
 
             beforeEach(function() {
                 campaign.cards.push.apply(campaign.cards, ['rc-69f8ae2e995e0d', 'rc-fe5d81d4ad982f', 'rc-9555f364197617'].map(function(id) {
-                    return cinema6.db.create('card', {
+                    return {
                         id: id,
-                        data: {}
-                    });
+                        item: cinema6.db.create('card', {
+                            id: id,
+                            data: {}
+                        })
+                    };
                 }));
 
-                card = campaign.cards[1];
+                data = campaign.cards[1];
+                card = data.item;
 
                 CampaignCardsCtrl.remove(card);
             });
 
             it('should remove the card', function() {
                 expect(campaign.cards.length).toBe(2);
-                expect(campaign.cards).not.toContain(card);
+                expect(campaign.cards).not.toContain(data);
             });
         });
 
         describe('add(item)', function() {
             var result;
             var card;
+            var data;
 
             beforeEach(function() {
                 campaign.cards.push.apply(campaign.cards, ['rc-69f8ae2e995e0d', 'rc-fe5d81d4ad982f', 'rc-9555f364197617'].map(function(id) {
-                    return cinema6.db.create('card', {
+                    return {
                         id: id,
-                        data: {}
-                    });
+                        item: cinema6.db.create('card', {
+                            id: id,
+                            data: {}
+                        })
+                    };
                 }));
 
                 card = cinema6.db.create('card', {
@@ -83,11 +92,19 @@ define(['minireel/campaign'], function(campaignModule) {
                     data: {}
                 });
 
-                result = CampaignCardsCtrl.add(card);
+                data = {
+                    endDate: new Date()
+                };
+
+                result = CampaignCardsCtrl.add(card, data);
             });
 
             it('should add the card to the campaign', function() {
-                expect(campaign.cards[3]).toBe(card);
+                expect(campaign.cards[3]).toEqual({
+                    id: card.id,
+                    item: card,
+                    endDate: data.endDate
+                });
             });
 
             it('should return the card', function() {
@@ -95,8 +112,14 @@ define(['minireel/campaign'], function(campaignModule) {
             });
 
             describe('if called with a card that is already added', function() {
+                var newDate;
+
                 beforeEach(function() {
-                    result = CampaignCardsCtrl.add(card);
+                    newDate = new Date(0);
+
+                    result = CampaignCardsCtrl.add(card, {
+                        endDate: newDate
+                    });
                 });
 
                 it('should return the card', function() {
@@ -104,8 +127,15 @@ define(['minireel/campaign'], function(campaignModule) {
                 });
 
                 it('should not add the minireel again', function() {
-                    expect(campaign.cards[3]).toBe(card);
                     expect(campaign.cards[4]).not.toBeDefined();
+                });
+
+                it('should udpate the item', function() {
+                    expect(campaign.cards[3]).toEqual({
+                        id: card.id,
+                        item: card,
+                        endDate: newDate
+                    });
                 });
             });
         });

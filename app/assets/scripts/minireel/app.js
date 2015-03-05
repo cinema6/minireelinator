@@ -59,6 +59,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                             this.state('MR:Settings.Category');
                             this.state('MR:Settings.Mode');
                             this.state('MR:Settings.Autoplay');
+                            this.state('MR:Settings.Campaign');
                         });
                         this.route('/splash', 'MR:Editor.Splash', function() {
                             this.route('/', 'MR:Splash.Source');
@@ -302,6 +303,42 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                             'An <input type="file">\'s value cannot be set via data-binding.'
                         );
                     };
+                }
+            };
+        }])
+
+        .directive('input', [function() {
+            return {
+                restrict: 'E',
+                require: '?ngModel',
+                link: function(scope, $element, attrs, ctrl) {
+                    if (attrs.type !== 'date') { return; }
+
+                    ctrl.$parsers.push(function(value) {
+                        var date = new Date(value);
+
+                        if (!value) {
+                            ctrl.$setValidity('valid', true);
+                            return null;
+                        }
+
+                        if (!(/^\d\d\d\d-\d\d-\d\d$/).test(value) || isNaN(date.getTime())) {
+                            ctrl.$setValidity('valid', false);
+                            return undefined;
+                        }
+
+                        ctrl.$setValidity('valid', true);
+                        return new Date(value);
+                    });
+
+                    ctrl.$formatters.push(function(date) {
+                        if (!date) { return; }
+                        if (!(date instanceof Date) || isNaN(date.getTime())) {
+                            throw new Error('[' + date + '] is not a valid Date.');
+                        }
+
+                        return date.toISOString().match(/^\d\d\d\d-\d\d-\d\d/)[0];
+                    });
                 }
             };
         }])

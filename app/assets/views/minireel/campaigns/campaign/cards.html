@@ -20,19 +20,19 @@
                 </article>
             </li>
 
-            <li class="miniReels__item grid__item" ng-repeat="$this in cards track by $this.id">
-                <article class="miniReel__group clearfix">
+            <li class="miniReels__item grid__item" ng-repeat="data in cards track by data.id">
+                <article c6-alias="data.item as card" class="miniReel__group clearfix">
                     <div class="miniReel__selector">
-                        <button class="btnInvis ui__iconHolder18" ng-click="CampaignCardsCtrl.remove($this)">
+                        <button class="btnInvis ui__iconHolder18" ng-click="CampaignCardsCtrl.remove(card)">
                             <span class="fab fa-trash">&nbsp;</span>
                         </button>
                     </div>
                     <div class="miniReel__imgBox">
-                        <a c6-sref="MR:Edit:Wildcard" c6-models="[$this, null]"
+                        <a c6-sref="MR:Edit:Wildcard" c6-models="[card, null]"
                         c6-params="{}">
                             <div class="miniReel__img"
-                            title="Edit This MiniReel: {{$this.title}}" 
-                            c6-bg-img="{{$this.thumb}}">
+                            title="Edit This MiniReel: {{card.title}}" 
+                            c6-bg-img="{{card.thumb}}">
                                 &nbsp;
                             </div>
                         </a>
@@ -40,11 +40,15 @@
                     <div class="miniReel__titleBox">
                         <h1 class="miniReel__title">
                             <a class="miniReel__titleLink" c6-sref="MR:Edit:Wildcard"
-                            c6-models="[$this, null]"
-                            title="Edit This Card: {{$this.title}}">
-                                {{$this.title}}
+                            c6-models="[card, null]"
+                            title="Edit This Card: {{card.title}}">
+                                {{card.title}}
                             </a>
                         </h1>
+                    </div>
+
+                    <div class="miniReel__stats">
+                        <p ng-if="data.endDate" class="miniReel__views"><strong>End Date:</strong> {{data.endDate | date:'M/d/yyyy'}}</p>
                     </div>
                 </article>
             </li>

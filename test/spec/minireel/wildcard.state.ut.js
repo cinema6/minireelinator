@@ -63,6 +63,18 @@ define(['app'], function(appModule) {
                 });
             });
 
+            describe('afterModel()', function() {
+                beforeEach(function() {
+                    wildcard.cParent.metaData = {};
+
+                    wildcard.afterModel();
+                });
+
+                it('should copy its parent\'s metaData', function() {
+                    expect(wildcard.metaData).toBe(wildcard.cParent.metaData);
+                });
+            });
+
             describe('updateCard()', function() {
                 var saveDeferred,
                     success, failure;
