@@ -46,6 +46,10 @@
                             </a>
                         </h1>
                     </div>
+
+                    <div class="miniReel__stats">
+                        <p ng-if="data.endDate" class="miniReel__views"><strong>End Date:</strong> {{data.endDate | date:'M/d/yyyy'}}</p>
+                    </div>
                 </article>
             </li>
         </ul>

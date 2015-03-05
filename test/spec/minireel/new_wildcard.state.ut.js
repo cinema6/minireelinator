@@ -104,6 +104,18 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
             });
         });
 
+        describe('afterModel()', function() {
+            beforeEach(function() {
+                newWildcard.afterModel();
+            });
+
+            it('should set a metaData property', function() {
+                expect(newWildcard.metaData).toEqual({
+                    endDate: null
+                });
+            });
+        });
+
         describe('enter()', function() {
             beforeEach(function() {
                 spyOn(c6State, 'goTo');

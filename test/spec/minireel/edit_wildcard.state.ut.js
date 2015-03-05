@@ -6,6 +6,7 @@ define(['app'], function(appModule) {
             c6State,
             cinema6,
             MiniReelService,
+            CampaignState,
             editWildcard;
 
         beforeEach(function() {
@@ -17,6 +18,7 @@ define(['app'], function(appModule) {
                 cinema6 = $injector.get('cinema6');
                 MiniReelService = $injector.get('MiniReelService');
 
+                CampaignState = c6State.get('MR:Campaign');
                 editWildcard = c6State.get('MR:EditWildcard');
             });
         });
@@ -52,6 +54,40 @@ define(['app'], function(appModule) {
 
             it('should return the card based on the id', function() {
                 expect(success).toHaveBeenCalledWith(card);
+            });
+        });
+
+        describe('afterModel()', function() {
+            var card;
+
+            beforeEach(function() {
+                card = cinema6.db.create('card', MiniReelService.createCard('video'));
+
+                CampaignState.cModel = cinema6.db.create('campaign', {
+                    cards: [
+                        {
+                            id: 'rc-f4970a95123ea9',
+                            endDate: new Date()
+                        },
+                        {
+                            id: card.id,
+                            endDate: new Date()
+                        },
+                        {
+                            id: 'rc-7ff198e3585ea4',
+                            endDate: new Date()
+                        }
+                    ]
+                });
+
+                editWildcard.afterModel(card);
+            });
+
+            it('should set the metaData property based on the campaign', function() {
+                expect(editWildcard.metaData).toEqual({
+                    endDate: CampaignState.cModel.cards[1].endDate
+                });
+                expect(editWildcard.metaData.endDate).toBe(CampaignState.cModel.cards[1].endDate);
             });
         });
 
