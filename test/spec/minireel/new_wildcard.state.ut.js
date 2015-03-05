@@ -111,7 +111,8 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
 
             it('should set a metaData property', function() {
                 expect(newWildcard.metaData).toEqual({
-                    endDate: null
+                    endDate: null,
+                    name: null
                 });
             });
         });

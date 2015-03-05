@@ -593,7 +593,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
                 this.afterModel = function() {
                     this.metaData = {
-                        endDate: null
+                        endDate: null,
+                        name: null
                     };
                 };
 
@@ -618,7 +619,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     }, null);
 
                     this.metaData = {
-                        endDate: item.endDate
+                        endDate: item.endDate,
+                        name: item.name
                     };
                 };
 
