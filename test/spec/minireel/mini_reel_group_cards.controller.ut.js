@@ -28,7 +28,11 @@ define(['app'], function(appModule) {
                     });
                     CampaignCtrl.initWithModel(cinema6.db.create('campaign', {
                         links: {},
-                        cards: []
+                        cards: [
+                            { item: cinema6.db.create('card') },
+                            { item: cinema6.db.create('card') },
+                            { item: cinema6.db.create('card') }
+                        ]
                     }));
                     campaignCards = CampaignCtrl.model.cards;
 
@@ -47,7 +51,9 @@ define(['app'], function(appModule) {
         describe('properties', function() {
             describe('campaignCards', function() {
                 it('should be the campaign\'s cards', function() {
-                    expect(MiniReelGroupCardsCtrl.campaignCards).toBe(CampaignCtrl.model.cards);
+                    expect(MiniReelGroupCardsCtrl.campaignCards).toEqual(CampaignCtrl.model.cards.map(function(data) {
+                        return data.item;
+                    }));
                 });
             });
         });

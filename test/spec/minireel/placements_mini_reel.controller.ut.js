@@ -33,15 +33,21 @@ define(['angular', 'app'], function(angular, appModule) {
                     CampaignCtrl.initWithModel(campaign = cinema6.db.create('campaign', {
                         links: {},
                         cards: [
-                            cinema6.db.create('card', extend(MiniReelService.createCard('video'), {
-                                title: 'The Coolest Card'
-                            })),
-                            cinema6.db.create('card', extend(MiniReelService.createCard('video'), {
-                                title: 'The Funniest Card'
-                            })),
-                            cinema6.db.create('card', extend(MiniReelService.createCard('video'), {
-                                title: 'My Favorite Card'
-                            }))
+                            {
+                                item: cinema6.db.create('card', extend(MiniReelService.createCard('video'), {
+                                    title: 'The Coolest Card'
+                                }))
+                            },
+                            {
+                                item: cinema6.db.create('card', extend(MiniReelService.createCard('video'), {
+                                    title: 'The Funniest Card'
+                                }))
+                            },
+                            {
+                                item: cinema6.db.create('card', extend(MiniReelService.createCard('video'), {
+                                    title: 'My Favorite Card'
+                                }))
+                            }
                         ]
                     }));
 
@@ -112,9 +118,9 @@ define(['angular', 'app'], function(angular, appModule) {
                 it('should be a map of card titles to card objects', function() {
                     expect(PlacementsMiniReelCtrl.cardOptions).toEqual({
                         'None': null,
-                        'The Coolest Card': campaign.cards[0],
-                        'The Funniest Card': campaign.cards[1],
-                        'My Favorite Card': campaign.cards[2]
+                        'The Coolest Card': campaign.cards[0].item,
+                        'The Funniest Card': campaign.cards[1].item,
+                        'My Favorite Card': campaign.cards[2].item
                     });
                 });
             });

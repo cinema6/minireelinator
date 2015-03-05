@@ -1063,7 +1063,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             var CampaignCtrl = $scope.CampaignCtrl,
                 cards = CampaignCtrl.model.cards;
 
-            this.cardOptions = cards.reduce(function(cardOptions, card) {
+            this.cardOptions = cards.reduce(function(cardOptions, data) {
+                var card = data.item;
+
                 cardOptions[card.title] = card;
                 return cardOptions;
             }, { 'None': null });
@@ -1244,7 +1246,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 CampaignCtrl = $scope.CampaignCtrl,
                 campaign = CampaignCtrl.model;
 
-            this.campaignCards = campaign.cards;
+            this.campaignCards = campaign.cards.map(function(data) {
+                return data.item;
+            });
 
             this.add = function(card) {
                 return this.model.push(card);
