@@ -33,7 +33,7 @@ define(['app'], function(appModule) {
 
             it('should return a new minireel group with a label indicating which number group this would be', function() {
                 expect(result).toEqual({
-                    label: 'Group 3',
+                    name: 'Group 3',
                     miniReels: [],
                     cards: []
                 });

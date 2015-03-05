@@ -1125,7 +1125,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     var groups = CampaignMiniReelGroupsState.cModel;
 
                     return {
-                        label: 'Group ' + (groups.length + 1),
+                        name: 'Group ' + (groups.length + 1),
                         miniReels: [],
                         cards: []
                     };
