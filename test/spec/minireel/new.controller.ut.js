@@ -531,6 +531,59 @@
                     });
                 });
 
+                describe('name', function() {
+                    describe('if there is no campaign', function() {
+                        it('should be undefined', function() {
+                            expect(NewCtrl.name).toBeUndefined();
+                        });
+                    });
+
+                    describe('if there is a campaign', function() {
+                        beforeEach(function() {
+                            EditorCtrl = $scope.EditorCtrl = $controller('EditorController', {
+                                $scope: $scope,
+                                $log: {
+                                    log: function() {},
+                                    info: function() {},
+                                    error: function() {},
+                                    warn: function() {},
+                                    context: function() { return this; }
+                                }
+                            });
+                            EditorCtrl.model = minireel;
+                            minireel.id = 'e-6f655005cc2b15';
+
+                            EditorCtrl.campaign = {
+                                miniReels: [
+                                    {
+                                        id: 'e-2335ed96a190bf',
+                                        endDate: new Date()
+                                    },
+                                    {
+                                        id: minireel.id,
+                                        endDate: new Date(),
+                                        name: 'My Name'
+                                    },
+                                    {
+                                        id: 'e-839c5c45590348',
+                                        endDate: new Date()
+                                    }
+                                ]
+                            };
+
+                            NewCtrl = $scope.NewCtrl = $controller('NewController', {
+                                $scope: $scope,
+                                cState: c6State.get('MR:Editor.Settings')
+                            });
+                            NewCtrl.initWithModel(minireel);
+                        });
+
+                        it('should be the campaign\'s end date for the MiniReel', function() {
+                            expect(NewCtrl.name).toBe(EditorCtrl.campaign.miniReels[1].name);
+                        });
+                    });
+                });
+
                 describe('currentTab', function() {
                     describe('if there is no tab for the current state', function() {
                         beforeEach(function() {
@@ -636,12 +689,17 @@
                             });
                             NewCtrl.initWithModel(minireel);
                             NewCtrl.endDate = new Date();
+                            NewCtrl.name = 'Foo-Bar';
 
                             NewCtrl.save();
                         });
 
                         it('should copy the endDate to the campaign', function() {
                             expect(EditorCtrl.campaign.miniReels[1].endDate).toBe(NewCtrl.endDate);
+                        });
+
+                        it('should copy the name to the campaign', function() {
+                            expect(EditorCtrl.campaign.miniReels[1].name).toBe(NewCtrl.name);
                         });
                     });
 

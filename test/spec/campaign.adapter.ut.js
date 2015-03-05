@@ -102,12 +102,12 @@ define(['app', 'angular'], function(appModule, angular) {
                     },
                     miniReelGroups: [
                         {
-                            label: 'My Favorite Group',
+                            name: 'My Favorite Group',
                             miniReels: ['e-18306aa3d27d54', 'e-d43686a9835df1', 'e-91705e579c27cc'],
                             cards: ['rc-223a31e4d985c4', 'rc-06f6db8ba1877f']
                         },
                         {
-                            label: 'My Other Favorite Group',
+                            name: 'My Other Favorite Group',
                             miniReels: ['e-f3b45211f2d9b7', 'e-d43686a9835df1'],
                             cards: ['rc-223a31e4d985c4']
                         }
@@ -255,12 +255,12 @@ define(['app', 'angular'], function(appModule, angular) {
             it('should convert the miniReelGroups into an object with actual instances', function() {
                 expect(campaign.miniReelGroups).toEqual([
                     {
-                        label: 'My Favorite Group',
+                        name: 'My Favorite Group',
                         miniReels: [minireels['e-18306aa3d27d54'], minireels['e-d43686a9835df1'], minireels['e-91705e579c27cc']],
                         cards: [cards['rc-223a31e4d985c4'], cards['rc-06f6db8ba1877f']]
                     },
                     {
-                        label: 'My Other Favorite Group',
+                        name: 'My Other Favorite Group',
                         miniReels: [minireels['e-f3b45211f2d9b7'], minireels['e-d43686a9835df1']],
                         cards: [cards['rc-223a31e4d985c4']]
                     }
@@ -581,12 +581,12 @@ define(['app', 'angular'], function(appModule, angular) {
                     },
                     miniReelGroups: [
                         {
-                            label: 'My Favorite Group',
+                            name: 'My Favorite Group',
                             miniReels: ['e-e06b2c4c0f3f3a', 'e-c0bb634aeb9d09'],
                             cards: ['rc-219c8b95e584b2']
                         },
                         {
-                            label: 'My Other Favorite Group',
+                            name: 'My Other Favorite Group',
                             miniReels: ['e-49c349d99d7ae0', 'e-c0bb634aeb9d09', 'e-e849f8df3a8939', 'e-5dfb9da8b5b1d4'],
                             cards: ['rc-219c8b95e584b2', 'rc-87f4d923c3a844']
                         }

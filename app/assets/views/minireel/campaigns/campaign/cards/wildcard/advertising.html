@@ -5,14 +5,23 @@
 
         <label class="forms__pair clearfix">
             <span class="forms__name">
-                Display ID <strong class="typo--danger">*</strong>
+                Name
+            </span>
+            <span class="forms__inputHolder">
+                <input type="text" class="forms__textField forms__textField--block" ng-model="WildcardCtrl.campaignData.name">
+            </span>
+        </label>
+
+        <label class="forms__pair clearfix">
+            <span class="forms__name">
+                Display ID
             </span>
             <span class="forms__inputHolder">
                 <input type="text" class="forms__textField forms__textField--block" ng-model="card.placementId">
             </span>
         </label>
 
-        <label class="forms__pair forms__pair--spacer clearfix">
+        <label class="forms__pair clearfix">
             <span class="forms__name">
                 Min. View Time <strong class="typo--danger">*</strong>
             </span>
@@ -23,7 +32,7 @@
 
         <label class="forms__pair forms__pair--spacer clearfix">
             <span class="forms__name">
-                End Date <strong class="typo--danger">*</strong>
+                End Date
             </span>
             <span class="forms__inputHolder">
                 <input type="date" class="forms__textField forms__textField--block" ng-model="WildcardCtrl.campaignData.endDate">

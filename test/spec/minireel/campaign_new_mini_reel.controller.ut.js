@@ -97,6 +97,12 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     expect(CampaignNewMiniReelCtrl.endDate).toBeNull();
                 });
             });
+
+            describe('name', function() {
+                it('should be null', function() {
+                    expect(CampaignNewMiniReelCtrl.name).toBeNull();
+                });
+            });
         });
 
         describe('methods', function() {
@@ -130,6 +136,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                         spyOn(CampaignMiniReelsCtrl, 'add').and.callThrough();
 
                         CampaignNewMiniReelCtrl.endDate = new Date();
+                        CampaignNewMiniReelCtrl.name = 'My Campaign';
 
                         $scope.$apply(function() {
                             minireel.id = 'e-c8feedca3a1567';
@@ -139,7 +146,8 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
 
                     it('should add the minireel to the campaign', function() {
                         expect(CampaignMiniReelsCtrl.add).toHaveBeenCalledWith(minireel, {
-                            endDate: CampaignNewMiniReelCtrl.endDate
+                            endDate: CampaignNewMiniReelCtrl.endDate,
+                            name: CampaignNewMiniReelCtrl.name
                         });
                     });
 

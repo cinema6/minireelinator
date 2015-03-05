@@ -437,12 +437,14 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             ];
 
             this.endDate = null;
+            this.name = null;
 
             this.confirm = function() {
                 return MiniReelService.publish(this.model)
                     .then(function(minireel) {
                         return CampaignMiniReelsCtrl.add(minireel, {
-                            endDate: CampaignNewMiniReelCtrl.endDate
+                            endDate: CampaignNewMiniReelCtrl.endDate,
+                            name: CampaignNewMiniReelCtrl.name
                         });
                     })
                     .then(function(minireel) {
@@ -591,7 +593,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
                 this.afterModel = function() {
                     this.metaData = {
-                        endDate: null
+                        endDate: null,
+                        name: null
                     };
                 };
 
@@ -616,7 +619,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     }, null);
 
                     this.metaData = {
-                        endDate: item.endDate
+                        endDate: item.endDate,
+                        name: item.name
                     };
                 };
 
@@ -1059,7 +1063,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             var CampaignCtrl = $scope.CampaignCtrl,
                 cards = CampaignCtrl.model.cards;
 
-            this.cardOptions = cards.reduce(function(cardOptions, card) {
+            this.cardOptions = cards.reduce(function(cardOptions, data) {
+                var card = data.item;
+
                 cardOptions[card.title] = card;
                 return cardOptions;
             }, { 'None': null });
@@ -1121,7 +1127,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     var groups = CampaignMiniReelGroupsState.cModel;
 
                     return {
-                        label: 'Group ' + (groups.length + 1),
+                        name: 'Group ' + (groups.length + 1),
                         miniReels: [],
                         cards: []
                     };
@@ -1240,7 +1246,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 CampaignCtrl = $scope.CampaignCtrl,
                 campaign = CampaignCtrl.model;
 
-            this.campaignCards = campaign.cards;
+            this.campaignCards = campaign.cards.map(function(data) {
+                return data.item;
+            });
 
             this.add = function(card) {
                 return this.model.push(card);

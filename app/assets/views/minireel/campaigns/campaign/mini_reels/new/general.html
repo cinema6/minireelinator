@@ -19,6 +19,13 @@
                 <span ng-show="form.endDate.$error.valid">Invalid date.</span>
             </span>
         </label>
+
+        <label class="forms__pair forms__pair--spacer clearfix" c6-alias="CampaignNewMiniReelGeneralCtrl.model.categories as categories">
+            <span class="forms__name forms__name--extended" >Name: </span>
+            <span class="forms__inputHolder--short">
+                <input type="text" ng-model="CampaignNewMiniReelCtrl.name" />
+            </span>
+        </label>
     </form>
     <p class="modalBody__fineprint typo--danger"><strong>*</strong> Indicates required field.</p>
 </div>
