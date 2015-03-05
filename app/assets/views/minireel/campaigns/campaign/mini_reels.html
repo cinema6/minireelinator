@@ -51,14 +51,38 @@
                             by <span class="miniReel__author" c6-alias="minireel.user as author">{{author.firstName}} {{author.lastName}}</span>
                         </p>
                     </div>
-                    <div class="miniReel__status">
-                        <strong ng-show="minireel.status === 'active'" class="miniReel__statusText--{{minireel.status}}">
-                            Published
+                    <div class="miniReel__status" ng-switch="data.state">
+                        <strong ng-switch-when="updating" class="miniReel__statusText--updating">
+                            Updating
                         </strong>
-                        <strong ng-show="minireel.status === 'pending'" class="miniReel__statusText--{{minireel.status}}">
-                            Private
-                        </strong> 
-                        - <span class="miniReel__date">{{minireel.lastUpdated | date:'M/d/yyyy'}}</span>
+                        <strong ng-switch-when="error" class="miniReel__statusText--error">
+                            Error
+                        </strong>
+                        <strong ng-switch-when="active" class="miniReel__statusText--active">
+                            Active
+                        </strong>
+                        <strong ng-switch-when="expired" class="miniReel__statusText--expired">
+                            Expired
+                        </strong>
+                        <strong ng-switch-when="outOfMoney" class="miniReel__statusText--outOfMoney">
+                            Out of Money
+                        </strong>
+                        <strong ng-switch-when="deleted" class="miniReel__statusText--deleted">
+                            Deleted
+                        </strong>
+                        <strong ng-switch-when="hold" class="miniReel__statusText--hold">
+                            Hold
+                        </strong>
+                        <strong ng-switch-when="validated" class="miniReel__statusText--validated">
+                            Validated
+                        </strong>
+                        <strong ng-switch-when="entered" class="miniReel__statusText--entered">
+                            Entered
+                        </strong>
+                        <strong ng-switch-when="reserved" class="miniReel__statusText--reserved">
+                            Reserved
+                        </strong>
+                        <span ng-show="data.state">- </span><span class="miniReel__date">{{minireel.lastUpdated | date:'M/d/yyyy'}}</span>
                         <p class="miniReel__count">{{minireel.data.deck.length}} slides</p>
                     </div>
                     <div class="miniReel__stats">

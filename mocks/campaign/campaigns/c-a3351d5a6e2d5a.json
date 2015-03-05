@@ -11,10 +11,12 @@
     "miniReels": [
         {
             "id": "e-80fcd03196b3d2",
-            "endDate": "1995-06-27T00:00:00.000Z"
+            "endDate": "1995-06-27T00:00:00.000Z",
+            "state": "active"
         },
         {
-            "id": "e-220f09b2398217"
+            "id": "e-220f09b2398217",
+            "state": "hold"
         }
     ],
     "cards": [
