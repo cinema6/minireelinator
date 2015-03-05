@@ -437,12 +437,14 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             ];
 
             this.endDate = null;
+            this.name = null;
 
             this.confirm = function() {
                 return MiniReelService.publish(this.model)
                     .then(function(minireel) {
                         return CampaignMiniReelsCtrl.add(minireel, {
-                            endDate: CampaignNewMiniReelCtrl.endDate
+                            endDate: CampaignNewMiniReelCtrl.endDate,
+                            name: CampaignNewMiniReelCtrl.name
                         });
                     })
                     .then(function(minireel) {

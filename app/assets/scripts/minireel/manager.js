@@ -274,6 +274,7 @@ function( angular , c6uilib , c6State  , services   ,
                 this.title = minireel.data.title;
                 this.categories = minireel.categories.slice();
                 this.endDate = campaignMetaData && campaignMetaData.endDate;
+                this.name = campaignMetaData && campaignMetaData.name;
             };
 
             this.isAsFarAs = function(tab) {
@@ -304,6 +305,7 @@ function( angular , c6uilib , c6State  , services   ,
 
                 if (campaignMetaData) {
                     campaignMetaData.endDate = this.endDate;
+                    campaignMetaData.name = this.name;
                 }
 
                 (minireel.id ? $q.when(minireel) :

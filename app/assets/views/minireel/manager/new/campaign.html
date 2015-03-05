@@ -7,6 +7,13 @@
                 <span ng-show="form.endDate.$error.valid">Invalid date.</span>
             </span>
         </label>
+
+        <label class="forms__pair forms__pair--spacer clearfix">
+            <span class="forms__name forms__name--extended" >Name: </span>
+            <span class="forms__inputHolder--short">
+                <input type="text" ng-model="NewCtrl.name" />
+            </span>
+        </label>
     </form>
     <p class="modalBody__fineprint typo--warning">
         <strong>!</strong> These changes affect desktop experiences only.
