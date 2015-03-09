@@ -1,6 +1,6 @@
 # MiniReelinator
 
-## v1.9.0 (March 3, 2015)
+## v1.9.0 (March 9, 2015)
 * *[v1.9.0.rc9]*
   * [FIX]: Fix for an issue that caused a new Sponsored Card/MiniReel
     not to copy the links from a campaign until the campaign was saved
@@ -9,6 +9,7 @@
   * [FEATURE]: Add support for setting a name on a sponored Card/MiniReel
   * [FEATURE]: Add support for showing a sponsored MiniReel/Card's state
     in the campaign manager
+* *[/v1.9.0.rc9]*
 
 * *[v1.9.0.rc8]*
   * Split Creatives tab into separate Sponsored Cards and Sponsored
