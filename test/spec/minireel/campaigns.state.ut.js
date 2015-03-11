@@ -4,6 +4,7 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
     describe('MR:Campaigns state', function() {
         var c6State,
             paginatedDbList,
+            portal,
             campaigns;
 
         var dbList,
@@ -28,6 +29,12 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                 c6State = $injector.get('c6State');
                 paginatedDbList = $injector.get('paginatedDbList');
 
+                portal = c6State.get('Portal');
+                portal.cModel = {
+                    org: {
+                        id: 'o-123456'
+                    }
+                };
                 campaigns = c6State.get('MR:Campaigns');
             });
         });
@@ -55,7 +62,8 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
 
             it('should be for a list of campaigns', function() {
                 expect(paginatedDbList).toHaveBeenCalledWith('campaign', {
-                    sort: 'lastUpdated,-1'
+                    sort: 'lastUpdated,-1',
+                    org: 'o-123456'
                 }, campaigns.limit, campaigns.page);
             });
         });

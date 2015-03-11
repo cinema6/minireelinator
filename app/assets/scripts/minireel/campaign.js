@@ -48,8 +48,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Campaigns', ['$injector','paginatedDbList',
-            function                              ( $injector , paginatedDbList ) {
+            c6StateProvider.state('MR:Campaigns', ['$injector','paginatedDbList','c6State',
+            function                              ( $injector , paginatedDbList , c6State ) {
+                var PortalState = c6State.get('Portal');
+
                 $injector.invoke(PaginatedListState, this);
 
                 this.templateUrl = 'views/minireel/campaigns.html';
@@ -61,7 +63,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 };
                 this.model = function() {
                     return paginatedDbList('campaign', {
-                        sort: 'lastUpdated,-1'
+                        sort: 'lastUpdated,-1',
+                        org: PortalState.cModel.org.id
                     }, this.limit, this.page).ensureResolution();
                 };
             }]);
