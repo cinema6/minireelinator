@@ -11,6 +11,7 @@ define(['angular', 'app'], function(angular, appModule) {
             MiniReelService,
             $scope,
             CampaignCtrl,
+            CampaignPlacementsCtrl,
             PlacementsMiniReelCtrl;
 
         var campaign, entry;
@@ -50,6 +51,10 @@ define(['angular', 'app'], function(angular, appModule) {
                             }
                         ]
                     }));
+
+                    CampaignPlacementsCtrl = $scope.CampaignPlacementsCtrl = {
+                        remove: jasmine.createSpy('CampaignPlacementsCtrl.remove()')
+                    };
 
                     PlacementsMiniReelCtrl = $scope.PlacementsMiniReelCtrl = $controller('PlacementsMiniReelController', {
                         $scope: $scope
@@ -153,6 +158,24 @@ define(['angular', 'app'], function(angular, appModule) {
                         expect(item.placeholder).toBe(copyItem.placeholder);
                         expect(item.wildcard).toBe(copyItem.wildcard);
                     });
+                });
+
+                it('should go to the "MR:Campaign.Placements" state', function() {
+                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.Placements');
+                });
+            });
+
+            describe('cancel()', function() {
+                beforeEach(function() {
+                    spyOn(c6State, 'goTo');
+
+                    $scope.$apply(function() {
+                        PlacementsMiniReelCtrl.cancel();
+                    });
+                });
+
+                it('should call CampaignPlacementsCtrl.remove() with the original minireel', function() {
+                    expect(CampaignPlacementsCtrl.remove).toHaveBeenCalledWith(entry.minireel);
                 });
 
                 it('should go to the "MR:Campaign.Placements" state', function() {

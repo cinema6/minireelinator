@@ -1064,6 +1064,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         .controller('PlacementsMiniReelController', ['$scope','c6State',
         function                                    ( $scope , c6State ) {
             var CampaignCtrl = $scope.CampaignCtrl,
+                CampaignPlacementsCtrl = $scope.CampaignPlacementsCtrl,
                 cards = CampaignCtrl.model.cards;
 
             this.cardOptions = cards.reduce(function(cardOptions, data) {
@@ -1081,6 +1082,12 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 });
 
                 this.original = entry;
+            };
+
+            this.cancel = function() {
+                CampaignPlacementsCtrl.remove(this.original.minireel);
+
+                return c6State.goTo('MR:Campaign.Placements');
             };
 
             this.confirm = function() {
