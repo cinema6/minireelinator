@@ -947,8 +947,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignPlacementsController', ['$scope','c6State','$injector','cState',
-        function                                    ( $scope , c6State , $injector , cState ) {
+        .controller('CampaignPlacementsController', ['$scope','c6State','$injector','cState','MiniReelService',
+        function                                    ( $scope , c6State , $injector , cState , MiniReelService ) {
             var CampaignPlacementsCtrl = this;
 
             function overwrite(array, newArray) {
@@ -1028,6 +1028,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 return CampaignPlacementsCtrl.model.map(function(entry) {
                     return entry.minireel;
                 }).indexOf(minireel) < 0;
+            };
+
+            this.previewUrlOf = function(minireel) {
+                return MiniReelService.previewUrlOf(minireel);
             };
 
             $scope.$on('CampaignCtrl:campaignDidSave', function() {
