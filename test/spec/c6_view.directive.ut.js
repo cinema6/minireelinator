@@ -45,8 +45,7 @@
 
                 expect(c6State._registerView).toHaveBeenCalledWith(jasmine.objectContaining({
                     id: null,
-                    parent: null,
-                    render: jasmine.any(Function)
+                    parent: null
                 }));
             });
 
@@ -66,8 +65,7 @@
 
                 expect(c6State._registerView).toHaveBeenCalledWith(jasmine.objectContaining({
                     id: 'child',
-                    parent: parent,
-                    render: jasmine.any(Function)
+                    parent: parent
                 }));
             });
 
