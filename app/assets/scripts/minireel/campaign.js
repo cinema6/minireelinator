@@ -116,6 +116,20 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
+            c6StateProvider.state('MR:Campaign.Embed', [function() {
+                this.templateUrl = 'views/minireel/campaigns/campaign/embed.html';
+                this.controller = 'CampaignEmbedController';
+                this.controllerAs = 'CampaignEmbedCtrl';
+            }]);
+        }])
+
+        .controller('CampaignEmbedController', ['cState',
+        function(cState) {
+            this.parentState = cState.cParent.cName;
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
             c6StateProvider.state('MR:Campaigns.New', ['$q','cinema6',
             function                                 ( $q , cinema6 ) {
                 this.templateUrl = 'views/minireel/campaigns/new.html';
@@ -345,8 +359,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignMiniReelsController', ['$scope',
-        function                                   ( $scope ) {
+        .controller('CampaignMiniReelsController', ['$scope','$window','MiniReelService',
+        function                                   ( $scope , $window , MiniReelService ) {
             var CampaignCtrl = $scope.CampaignCtrl,
                 campaign = CampaignCtrl.model;
 
@@ -378,6 +392,19 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     item: minireel
                 }, data));
                 return minireel;
+            };
+
+            this.previewUrlOf = function(minireel) {
+                return MiniReelService.previewUrlOf(minireel);
+            };
+
+            this.previewMiniReel = function(minireel) {
+                var url = MiniReelService.previewUrlOf(minireel),
+                    id = CampaignCtrl.model.id;
+
+                CampaignCtrl.save().then(function() {
+                    $window.open(url + '&campaign=' + id);
+                });
             };
         }])
 
@@ -947,9 +974,12 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignPlacementsController', ['$scope','c6State','$injector','cState','MiniReelService',
-        function                                    ( $scope , c6State , $injector , cState , MiniReelService ) {
-            var CampaignPlacementsCtrl = this;
+        .controller('CampaignPlacementsController', ['$scope','$injector','$window',
+                                                     'c6State','cState','MiniReelService',
+        function                                    ( $scope , $injector , $window ,
+                                                      c6State , cState , MiniReelService ) {
+            var CampaignPlacementsCtrl = this,
+                CampaignCtrl = $scope.CampaignCtrl;
 
             function overwrite(array, newArray) {
                 array.length = 0;
@@ -999,13 +1029,23 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 }));
             };
 
-            this.add = function(minireel) {
-                return c6State.goTo('MR:Placements.MiniReel', [
-                    this.model[this.model.push({
-                        minireel: minireel,
-                        cards: createCardEntries(minireel)
-                    }) - 1]
-                ]);
+            this.add = function(placement) {
+                var exists = this.model.filter(function(existing) {
+                    if (placement.minireel.id === existing.minireel.id) {
+                        /* jshint boss:true */
+                        return (existing.cards = placement.cards);
+                    }
+                    return false;
+                }).length;
+
+                return exists ? this.model : this.model.push(placement);
+            };
+
+            this.use = function(minireel) {
+                return c6State.goTo('MR:Placements.MiniReel', [{
+                    minireel: minireel,
+                    cards: createCardEntries(minireel)
+                }]);
             };
 
             this.remove = function(minireel) {
@@ -1032,6 +1072,15 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
             this.previewUrlOf = function(minireel) {
                 return MiniReelService.previewUrlOf(minireel);
+            };
+
+            this.previewMiniReel = function(minireel) {
+                var url = MiniReelService.previewUrlOf(minireel),
+                    id = CampaignCtrl.model.id;
+
+                CampaignCtrl.save().then(function() {
+                    $window.open(url + '&campaign=' + id);
+                });
             };
 
             $scope.$on('CampaignCtrl:campaignDidSave', function() {
@@ -1088,16 +1137,18 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.original = entry;
             };
 
-            this.cancel = function() {
-                CampaignPlacementsCtrl.remove(this.original.minireel);
-
-                return c6State.goTo('MR:Campaign.Placements');
+            this.valid = function() {
+                return this.model.cards.some(function(card) {
+                    return !!card.wildcard;
+                });
             };
 
             this.confirm = function() {
                 extend(this.original, {
                     cards: this.model.cards
                 });
+
+                CampaignPlacementsCtrl.add(this.original);
 
                 return c6State.goTo('MR:Campaign.Placements');
             };
