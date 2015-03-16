@@ -156,11 +156,19 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                                 this.state('MR:Campaign.NewMiniReel.Type');
                                 this.state('MR:Campaign.NewMiniReel.Playback');
                             });
-                            this.route('/embed/:id', 'MR:Campaign.Embed', 'MR:Campaign.MiniReels.Embed');
+                            this.route(
+                                '/embed/:id',
+                                'MR:Campaign.Embed',
+                                'MR:Campaign.MiniReels.Embed'
+                            );
                         });
                         this.route('/placements', 'MR:Campaign.Placements', function() {
                             this.route('/minireel/:minireelId', 'MR:Placements.MiniReel');
-                            this.route('/embed/:id', 'MR:Campaign.Embed', 'MR:Campaign.Placements.Embed');
+                            this.route(
+                                '/embed/:id',
+                                'MR:Campaign.Embed',
+                                'MR:Campaign.Placements.Embed'
+                            );
                         });
                         this.route('/minireel-groups', 'MR:Campaign.MiniReelGroups', function() {
                             this.route('/new', 'MR:NewMiniReelGroup', function() {
