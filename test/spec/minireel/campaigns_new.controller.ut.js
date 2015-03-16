@@ -71,6 +71,16 @@ define(['app'], function(appModule) {
 
                         return items;
                     }())));
+                    $scope.MiniReelCtrl = {
+                        model: {
+                            data: {
+                                blacklists: {
+                                    customers: [],
+                                    advertisers: []
+                                }
+                            }
+                        }
+                    };
                     CampaignsCtrl = $scope.CampaignsCtrl = $controller('CampaignsController', {
                         $scope: $scope,
                         cState: c6State.get('MR:Campaigns')
@@ -111,6 +121,19 @@ define(['app'], function(appModule) {
                         howto: customers[2]
                     });
                 });
+
+                describe('when customers are blacklisted', function() {
+                    it('should not show them as options', function() {
+                        $scope.MiniReelCtrl.model.data.blacklists.customers = ['a-a057764cb53d45','a-676edfc8aee43c'];
+
+                        CampaignsNewCtrl.initWithModel(model, model);
+
+                        expect(CampaignsNewCtrl.customerOptions).toEqual({
+                            'None': null,
+                            education: customers[1]
+                        });
+                    });
+                });
             });
 
             describe('advertiserOptions', function() {
@@ -137,12 +160,15 @@ define(['app'], function(appModule) {
                                 id: 'cus-eacd637506f15c',
                                 advertisers: [
                                     {
+                                        id: '1',
                                         name: 'Diageo'
                                     },
                                     {
+                                        id: '2',
                                         name: 'Activision'
                                     },
                                     {
+                                        id: '3',
                                         name: 'Ubisoft'
                                     }
                                 ]
@@ -156,6 +182,17 @@ define(['app'], function(appModule) {
                             Diageo: customer.advertisers[0],
                             Activision: customer.advertisers[1],
                             Ubisoft: customer.advertisers[2]
+                        });
+                    });
+
+                    describe('when advertisers are blacklisted', function() {
+                        it('should not show them as options', function() {
+                            $scope.MiniReelCtrl.model.data.blacklists.advertisers = ['1','3'];
+
+                            expect(CampaignsNewCtrl.advertiserOptions).toEqual({
+                                None: null,
+                                Activision: customer.advertisers[1]
+                            });
                         });
                     });
                 });

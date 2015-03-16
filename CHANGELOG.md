@@ -9,6 +9,7 @@
   * [FIX]: Only show campaigns belonging to the logged in User's Org
   * [FEATURE]: Add preview and embed code buttons next to Placements
   * [FEATURE]: Add preview and embed code buttons next to Sponsored MiniReels
+  * Filter out Customers and Advertisers that should not be used for Campaigns
 
 * *[v1.9.0.rc9]*
   * [FIX]: Fix for an issue that caused a new Sponsored Card/MiniReel
