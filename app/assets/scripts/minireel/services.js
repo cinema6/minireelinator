@@ -1487,8 +1487,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         }
                     },
                     start: trimmer(),
-                    end: trimmer(),
-                    reportingId: copy(null)
+                    end: trimmer()
                 };
 
                 // dataTemplates: configuration for the "data" section of
@@ -1936,8 +1935,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         rel: value(0),
                         start: trimmer(),
                         end: trimmer(),
-                        videoid: copy(null),
-                        reportingId: copy(null)
+                        videoid: copy(null)
                     },
                     vimeo: {
                         hideSource: hideSourceValue(),
@@ -1946,8 +1944,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         skip: skipValue(),
                         start: trimmer(),
                         end: trimmer(),
-                        videoid: copy(null),
-                        reportingId: copy(null)
+                        videoid: copy(null)
                     },
                     dailymotion: {
                         hideSource: hideSourceValue(),
@@ -1958,8 +1955,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         start: trimmer(),
                         end: trimmer(),
                         related: value(0),
-                        videoid: copy(null),
-                        reportingId: copy(null)
+                        videoid: copy(null)
                     },
                     rumble: {
                         hideSource: hideSourceValue(),
@@ -1973,8 +1969,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         },
                         videoid: function(data) {
                             return VideoService.embedIdFromVideoId('rumble', data.videoid);
-                        },
-                        reportingId: copy(null)
+                        }
                     },
                     adUnit: {
                         hideSource: hideSourceValue(),
@@ -1987,8 +1982,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         },
                         vpaid: function(data) {
                             return (fromJson(data.videoid) || {}).vpaid;
-                        },
-                        reportingId: copy(null)
+                        }
                     },
                     embedded: {
                         hideSource: hideSourceValue(),
@@ -2001,8 +1995,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         videoid: copy(null),
                         code: function(data) {
                             return VideoService.embedCodeFromData(data.service, data.videoid);
-                        },
-                        reportingId: copy(null)
+                        }
                     },
                     ad: {
                         autoplay: copy(true),

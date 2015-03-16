@@ -189,8 +189,7 @@
                                     start: 10,
                                     end: 40,
                                     rel: 0,
-                                    modestbranding: 0,
-                                    reportingId: '98bd724f78b0ba'
+                                    modestbranding: 0
                                 }
                             },
                             {
@@ -220,8 +219,7 @@
                                 },
                                 data: {
                                     skip: 25,
-                                    videoid: '48hfrei49',
-                                    reportingId: 'cf4f0831c3926c'
+                                    videoid: '48hfrei49'
                                 }
                             },
                             {
@@ -265,8 +263,7 @@
                                     controls: true,
                                     skip: false,
                                     videoid: 'vfu85f5',
-                                    related: 0,
-                                    reportingId: '1725208072175c'
+                                    related: 0
                                 }
                             },
                             {
@@ -471,8 +468,7 @@
                                     skip: true,
                                     controls: true,
                                     vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
-                                    vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
-                                    reportingId: '053cdba5b830a8'
+                                    vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
                                 }
                             },
                             (function() {
@@ -497,8 +493,7 @@
                                     data: {
                                         skip: true,
                                         service: 'yahoo',
-                                        videoid: 'teen-tries-drain-pond-lost-221030513',
-                                        reportingId: '4373089b236367'
+                                        videoid: 'teen-tries-drain-pond-lost-221030513'
                                     }
                                 };
 
@@ -557,8 +552,7 @@
                                     modules: [],
                                     data: {
                                         skip: true,
-                                        siteid: 'v2z8ro-willie-perfoming-at-school-talent-show',
-                                        reportingId: '98bd724f78b0ba'
+                                        siteid: 'v2z8ro-willie-perfoming-at-school-talent-show'
                                     }
                                 };
 
@@ -674,8 +668,7 @@
                                     service: null,
                                     videoid: null,
                                     start: null,
-                                    end: null,
-                                    reportingId: null
+                                    end: null
                                 }
                             });
 
@@ -732,7 +725,6 @@
                                     videoid: null,
                                     start: null,
                                     end: null,
-                                    reportingId: null,
                                     ballot: {
                                         prompt: null,
                                         choices: []
@@ -1360,8 +1352,7 @@
                                     service: 'youtube',
                                     videoid: '47tfg8734',
                                     start: 10,
-                                    end: 40,
-                                    reportingId: '98bd724f78b0ba'
+                                    end: 40
                                 }
                             });
 
@@ -1395,7 +1386,6 @@
                                     videoid: '48hfrei49',
                                     start: null,
                                     end: null,
-                                    reportingId: 'cf4f0831c3926c',
                                     ballot: {
                                         prompt: 'Was it ugly?',
                                         choices: [
@@ -1436,7 +1426,6 @@
                                     videoid: 'vfu85f5',
                                     start: undefined,
                                     end: undefined,
-                                    reportingId: '1725208072175c',
                                     ballot: {
                                         prompt: 'How smart was it?',
                                         choices: [
@@ -1495,8 +1484,7 @@
                                     service: 'youtube',
                                     videoid: 'fn4378r4d',
                                     start: 0,
-                                    end: 40,
-                                    reportingId: null
+                                    end: 40
                                 }
                             });
 
@@ -1532,8 +1520,7 @@
                                         vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
                                     }),
                                     start: null,
-                                    end: null,
-                                    reportingId: '053cdba5b830a8'
+                                    end: null
                                 }
                             });
 
@@ -1566,8 +1553,7 @@
                                     service: 'yahoo',
                                     videoid: 'teen-tries-drain-pond-lost-221030513',
                                     start: null,
-                                    end: null,
-                                    reportingId: '4373089b236367'
+                                    end: null
                                 }
                             });
 
@@ -1600,8 +1586,7 @@
                                     service: 'aol',
                                     videoid: 'arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876',
                                     start: null,
-                                    end: null,
-                                    reportingId: null
+                                    end: null
                                 }
                             });
 
@@ -1634,8 +1619,7 @@
                                     service: 'rumble',
                                     videoid: 'v2z8ro-willie-perfoming-at-school-talent-show',
                                     start: null,
-                                    end: null,
-                                    reportingId: '98bd724f78b0ba'
+                                    end: null
                                 }
                             });
                         });
