@@ -98,6 +98,10 @@
                 "value": "publisher-cinema6",
                 "description": "Try calling Publisher ad tag first, but fall back to Cinema6 ad server"
             }
-        ]
+        ],
+        "blacklists": {
+            "customers": ["cus-93f875djh67df6"],
+            "advertisers": ["a-127sju4hvb5v62"]
+        }
     }
 }
