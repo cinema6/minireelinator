@@ -161,11 +161,17 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .controller('CampaignsNewController', ['$scope','c6State','c6Computed',
         function                              ( $scope , c6State , c6Computed ) {
-            var c = c6Computed($scope);
+            var c = c6Computed($scope),
+                MiniReelCtrl = $scope.MiniReelCtrl;
 
-            function optionsByName(items) {
+            function optionsByName(items, type) {
                 return items.reduce(function(result, item) {
-                    result[item.name] = item;
+                    var blacklist = MiniReelCtrl.model.data.blacklists[type];
+
+                    if (blacklist.indexOf(item.id) === -1) {
+                        result[item.name] = item;
+                    }
+
                     return result;
                 }, { None: null });
             }
@@ -173,14 +179,14 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             c(this, 'advertiserOptions', function() {
                 var customer = this.model.customer;
 
-                return optionsByName(customer && customer.advertisers || []);
+                return optionsByName(customer && customer.advertisers || [], 'advertisers');
             }, ['CampaignsNewCtrl.model.customer']);
 
             this.initWithModel = function(model) {
                 this.model = model.campaign;
                 this.customers = model.customers;
 
-                this.customerOptions = optionsByName(this.customers);
+                this.customerOptions = optionsByName(this.customers, 'customers');
             };
 
             this.save = function() {
