@@ -257,6 +257,16 @@
                                 expect(EmbedCodeCtrl.code).toMatch(/height="200px"/);
                             });
                         });
+
+                        describe('if there is a campaign', function() {
+                            it('should add it as a query param', function() {
+                                $scope.campaign = {
+                                    id: 'c-123'
+                                };
+
+                                expect(EmbedCodeCtrl.code).toMatch(/&campaign=c-123/);
+                            });
+                        });
                     });
 
                     describe('if the format is "shortcode"', function() {
@@ -326,6 +336,16 @@
                                 expect(EmbedCodeCtrl.code).toMatch(/ width="100%" height="300px"/);
                             });
                         });
+
+                        describe('if there is a campaign', function() {
+                            it('should include a campaign parameter', function() {
+                                $scope.campaign = {
+                                    id: 'c-123'
+                                };
+
+                                expect(EmbedCodeCtrl.code).toMatch(/ campaign="c-123"/);
+                            });
+                        });
                     });
 
                     describe('if the format is "script"', function() {
@@ -393,6 +413,16 @@
                                 EmbedCodeCtrl.size.width = '100%';
 
                                 expect(EmbedCodeCtrl.code).toMatch(/ data-width="100%" data-height="300px"/);
+                            });
+                        });
+
+                        describe('if there is a campaign', function() {
+                            it('should include a campaign parameter', function() {
+                                $scope.campaign = {
+                                    id: 'c-123'
+                                };
+
+                                expect(EmbedCodeCtrl.code).toMatch(/ data-campaign="c-123"/);
                             });
                         });
                     });

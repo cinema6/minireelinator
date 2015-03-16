@@ -72,7 +72,8 @@ define(['app'], function(appModule) {
                         {
                             id: card.id,
                             endDate: new Date(),
-                            name: 'wazzup'
+                            name: 'wazzup',
+                            reportingId: '12345'
                         },
                         {
                             id: 'rc-7ff198e3585ea4',
@@ -87,7 +88,8 @@ define(['app'], function(appModule) {
             it('should set the metaData property based on the campaign', function() {
                 expect(editWildcard.metaData).toEqual({
                     endDate: CampaignState.cModel.cards[1].endDate,
-                    name: CampaignState.cModel.cards[1].name
+                    name: CampaignState.cModel.cards[1].name,
+                    reportingId: CampaignState.cModel.cards[1].reportingId
                 });
                 expect(editWildcard.metaData.endDate).toBe(CampaignState.cModel.cards[1].endDate);
             });

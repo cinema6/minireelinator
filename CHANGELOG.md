@@ -1,6 +1,15 @@
 # MiniReelinator
 
 ## v1.9.0 (March 9, 2015)
+* *[v1.9.0.rc10]*
+  * Change where the reporting ID for a sponsored card is stored
+  * Temporarily hide the Dynamic Groups tab in the Campaign Manager
+  * [FIX]: Fix for an issue where canceling a static card Placement caused
+    the minireel to be added anyway
+  * [FIX]: Only show campaigns belonging to the logged in User's Org
+  * [FEATURE]: Add preview and embed code buttons next to Placements
+  * [FEATURE]: Add preview and embed code buttons next to Sponsored MiniReels
+
 * *[v1.9.0.rc9]*
   * [FIX]: Fix for an issue that caused a new Sponsored Card/MiniReel
     not to copy the links from a campaign until the campaign was saved

@@ -1,0 +1,18 @@
+<div class="modal__group">
+    <header class="modalHeader__group">
+        <h1 class="modal__title">MiniReel Embed Code</h1>
+        <button class="modal__closeBtn btnInvis" c6-sref="{{CampaignEmbedCtrl.parentState}}"><span class="ir">Close</span>
+            <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M16.5,0L9,7.5L1.5,0L0,1.5L7.5,9L0,16.5L1.5,18L9,10.5l7.5,7.5l1.5-1.5L10.5,9
+                L18,1.5L16.5,0z"/>
+            </svg>
+        </button>
+    </header>
+    <div class="modalBody__group embedCopy__group">
+        <p class="embedCopy__instructions">To embed this MiniReel into your website, copy &amp; paste the code below.</p>
+
+        <embed-code campaign="CampaignCtrl.model" minireel="CampaignEmbedCtrl.model" splash-src="{{CampaignEmbedCtrl.model.data.collateral.splash}}" class="clearfix" readonly></embed-code>
+    </div>
+</div>
+<div class="modal__overlay">&nbsp;</div>

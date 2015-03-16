@@ -93,7 +93,8 @@ define(['minireel/campaign'], function(campaignModule) {
                 });
 
                 data = {
-                    endDate: new Date()
+                    endDate: new Date(),
+                    reportingId: '12345'
                 };
 
                 result = CampaignCardsCtrl.add(card, data);
@@ -103,7 +104,8 @@ define(['minireel/campaign'], function(campaignModule) {
                 expect(campaign.cards[3]).toEqual({
                     id: card.id,
                     item: card,
-                    endDate: data.endDate
+                    endDate: data.endDate,
+                    reportingId: '12345'
                 });
             });
 
@@ -118,7 +120,8 @@ define(['minireel/campaign'], function(campaignModule) {
                     newDate = new Date(0);
 
                     result = CampaignCardsCtrl.add(card, {
-                        endDate: newDate
+                        endDate: newDate,
+                        reportingId: '999999'
                     });
                 });
 
@@ -134,7 +137,8 @@ define(['minireel/campaign'], function(campaignModule) {
                     expect(campaign.cards[3]).toEqual({
                         id: card.id,
                         item: card,
-                        endDate: newDate
+                        endDate: newDate,
+                        reportingId: '999999'
                     });
                 });
             });

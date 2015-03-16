@@ -11,6 +11,7 @@ define(['angular', 'app'], function(angular, appModule) {
             MiniReelService,
             $scope,
             CampaignCtrl,
+            CampaignPlacementsCtrl,
             PlacementsMiniReelCtrl;
 
         var campaign, entry;
@@ -50,6 +51,11 @@ define(['angular', 'app'], function(angular, appModule) {
                             }
                         ]
                     }));
+
+                    CampaignPlacementsCtrl = $scope.CampaignPlacementsCtrl = {
+                        remove: jasmine.createSpy('CampaignPlacementsCtrl.remove()'),
+                        add: jasmine.createSpy('CampaignPlacementsCtrl.add()')
+                    };
 
                     PlacementsMiniReelCtrl = $scope.PlacementsMiniReelCtrl = $controller('PlacementsMiniReelController', {
                         $scope: $scope
@@ -155,8 +161,28 @@ define(['angular', 'app'], function(angular, appModule) {
                     });
                 });
 
+                it('should add the placement object to the CampaignPlacementCtrl', function() {
+                    expect(CampaignPlacementsCtrl.add).toHaveBeenCalledWith(entry);
+                });
+
                 it('should go to the "MR:Campaign.Placements" state', function() {
                     expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.Placements');
+                });
+            });
+
+            describe('valid()', function() {
+                it('should be true if there at least one card has a wildcard, false if not', function() {
+                    expect(PlacementsMiniReelCtrl.valid()).toBe(true);
+
+                    PlacementsMiniReelCtrl.model.cards.forEach(function(card) {
+                        card.wildcard = null;
+                    });
+
+                    expect(PlacementsMiniReelCtrl.valid()).toBe(false);
+
+                    PlacementsMiniReelCtrl.model.cards[0].wildcard = {id: 'newWildcard'};
+
+                    expect(PlacementsMiniReelCtrl.valid()).toBe(true);
                 });
             });
         });

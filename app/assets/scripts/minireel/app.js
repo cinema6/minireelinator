@@ -156,9 +156,19 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                                 this.state('MR:Campaign.NewMiniReel.Type');
                                 this.state('MR:Campaign.NewMiniReel.Playback');
                             });
+                            this.route(
+                                '/embed/:id',
+                                'MR:Campaign.Embed',
+                                'MR:Campaign.MiniReels.Embed'
+                            );
                         });
                         this.route('/placements', 'MR:Campaign.Placements', function() {
                             this.route('/minireel/:minireelId', 'MR:Placements.MiniReel');
+                            this.route(
+                                '/embed/:id',
+                                'MR:Campaign.Embed',
+                                'MR:Campaign.Placements.Embed'
+                            );
                         });
                         this.route('/minireel-groups', 'MR:Campaign.MiniReelGroups', function() {
                             this.route('/new', 'MR:NewMiniReelGroup', function() {
@@ -693,6 +703,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                 controller: 'EmbedCodeController',
                 controllerAs: 'Ctrl',
                 scope: {
+                    campaign: '=',
                     minireel: '=',
                     splashSrc: '@'
                 }
@@ -777,6 +788,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
             Object.defineProperty(this, 'code', {
                 get: function() {
                     var minireel = $scope.minireel,
+                        campaign = $scope.campaign,
                         splash = minireel.data.splash,
                         isInline = MiniReelService.modeCategoryOf(minireel, categories)
                             .value === 'inline',
@@ -787,7 +799,8 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                         'splash': splash.theme + ':' + splash.ratio.replace('-', '/'),
                         'width': explicitDimensions ? this.size.width : false,
                         'height': explicitDimensions ? this.size.height : false,
-                        'preload': isInline
+                        'preload': isInline,
+                        'campaign': campaign ? campaign.id : false
                     };
 
                     switch (this.format) {
@@ -806,7 +819,8 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                         return formatEmbed(
                             '<iframe |{attr}="{value}"|></iframe>',
                             {
-                                src: soloPlayerUrl + '?id=' + minireel.id,
+                                src: soloPlayerUrl + '?id=' + minireel.id +
+                                    (campaign ? '&campaign=' + campaign.id : ''),
                                 frameborder: '0',
                                 width: explicitDimensions ? this.size.width : '100%',
                                 height: explicitDimensions ? this.size.height : '100%'
