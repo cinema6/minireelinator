@@ -53,7 +53,8 @@ define(['angular', 'app'], function(angular, appModule) {
                     }));
 
                     CampaignPlacementsCtrl = $scope.CampaignPlacementsCtrl = {
-                        remove: jasmine.createSpy('CampaignPlacementsCtrl.remove()')
+                        remove: jasmine.createSpy('CampaignPlacementsCtrl.remove()'),
+                        add: jasmine.createSpy('CampaignPlacementsCtrl.add()')
                     };
 
                     PlacementsMiniReelCtrl = $scope.PlacementsMiniReelCtrl = $controller('PlacementsMiniReelController', {
@@ -160,26 +161,28 @@ define(['angular', 'app'], function(angular, appModule) {
                     });
                 });
 
+                it('should add the placement object to the CampaignPlacementCtrl', function() {
+                    expect(CampaignPlacementsCtrl.add).toHaveBeenCalledWith(entry);
+                });
+
                 it('should go to the "MR:Campaign.Placements" state', function() {
                     expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.Placements');
                 });
             });
 
-            describe('cancel()', function() {
-                beforeEach(function() {
-                    spyOn(c6State, 'goTo');
+            describe('valid()', function() {
+                it('should be true if there at least one card has a wildcard, false if not', function() {
+                    expect(PlacementsMiniReelCtrl.valid()).toBe(true);
 
-                    $scope.$apply(function() {
-                        PlacementsMiniReelCtrl.cancel();
+                    PlacementsMiniReelCtrl.model.cards.forEach(function(card) {
+                        card.wildcard = null;
                     });
-                });
 
-                it('should call CampaignPlacementsCtrl.remove() with the original minireel', function() {
-                    expect(CampaignPlacementsCtrl.remove).toHaveBeenCalledWith(entry.minireel);
-                });
+                    expect(PlacementsMiniReelCtrl.valid()).toBe(false);
 
-                it('should go to the "MR:Campaign.Placements" state', function() {
-                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.Placements');
+                    PlacementsMiniReelCtrl.model.cards[0].wildcard = {id: 'newWildcard'};
+
+                    expect(PlacementsMiniReelCtrl.valid()).toBe(true);
                 });
             });
         });

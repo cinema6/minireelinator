@@ -1,4 +1,4 @@
-define(['minireel/campaign'], function(campaignModule) {
+define(['app'], function(appModule) {
     'use strict';
 
     describe('CampaignMiniReelsController', function() {
@@ -6,18 +6,24 @@ define(['minireel/campaign'], function(campaignModule) {
             $controller,
             cinema6,
             $scope,
+            $q,
+            $window,
+            MiniReelService,
             CampaignCtrl,
             CampaignMiniReelsCtrl;
 
         var campaign;
 
         beforeEach(function() {
-            module(campaignModule.name);
+            module(appModule.name);
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
                 cinema6 = $injector.get('cinema6');
+                $q = $injector.get('$q');
+                $window = $injector.get('$window');
+                MiniReelService = $injector.get('MiniReelService');
 
                 campaign = cinema6.db.create('campaign', {
                     id: 'cam-74070a860d121e',
@@ -125,6 +131,61 @@ define(['minireel/campaign'], function(campaignModule) {
                 it('should not add the minireel again', function() {
                     expect(campaign.miniReels[4]).not.toBeDefined();
                 });
+            });
+        });
+
+        describe('previewUrlOf(minireel)', function() {
+            it('should call the MiniReelService for the url', function() {
+                var minireel = cinema6.db.create('experience', {
+                    id: 'e-5480ecc1063d7e',
+                    data: {
+                        deck: []
+                    }
+                });
+
+                spyOn(MiniReelService, 'previewUrlOf');
+
+                CampaignMiniReelsCtrl.previewUrlOf(minireel);
+
+                expect(MiniReelService.previewUrlOf).toHaveBeenCalledWith(minireel);
+            });
+        });
+
+        describe('previewMiniReel(minireel)', function() {
+            var minireel;
+
+            beforeEach(function() {
+                minireel = cinema6.db.create('experience', {
+                    id: 'e-5480ecc1063d7e',
+                    data: {
+                        deck: []
+                    }
+                });
+
+                spyOn(CampaignCtrl, 'save');
+                CampaignCtrl.save.deferred = $q.defer();
+                CampaignCtrl.save.and.returnValue(CampaignCtrl.save.deferred.promise);
+
+                spyOn(MiniReelService, 'previewUrlOf').and.returnValue('http://cinema6.com?id=e-123');
+                spyOn($window, 'open');
+
+                CampaignMiniReelsCtrl.previewMiniReel(minireel);
+            });
+
+            it('should get the url form the MiniReelService', function() {
+                expect(MiniReelService.previewUrlOf).toHaveBeenCalledWith(minireel);
+            });
+
+            it('should save the Campaign', function() {
+                expect(CampaignCtrl.save).toHaveBeenCalled();
+            });
+
+            it('should open a new tab with the campaign id as a query parameter', function() {
+                $scope.$apply(function() {
+                    CampaignCtrl.save.deferred.resolve();
+                });
+
+                expect($window.open).toHaveBeenCalledWith('http://cinema6.com?id=e-123&campaign=cam-74070a860d121e');
             });
         });
     });

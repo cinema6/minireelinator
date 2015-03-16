@@ -11,7 +11,9 @@ define(['app'], function(appModule) {
             scopePromise,
             ScopedPromise,
             $scope,
+            $window,
             CampaignPlacementsState,
+            CampaignCtrl,
             PortalCtrl,
             CampaignPlacementsCtrl;
 
@@ -26,6 +28,7 @@ define(['app'], function(appModule) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
                 $q = $injector.get('$q');
+                $window = $injector.get('$window');
                 c6State = $injector.get('c6State');
                 cinema6 = $injector.get('cinema6');
                 MiniReelService = $injector.get('MiniReelService');
@@ -51,6 +54,15 @@ define(['app'], function(appModule) {
                             id: 'o-af832d9d946478'
                         }
                     };
+
+                    $scope.CampaignCtrl = CampaignCtrl = {
+                        save: jasmine.createSpy('CampaignCtrl.save()'),
+                        model: {
+                            id: 'c-12345'
+                        }
+                    };
+                    CampaignCtrl.save.deferred = $q.defer();
+                    CampaignCtrl.save.and.returnValue(CampaignCtrl.save.deferred.promise);
 
                     $scope.CampaignPlacementsCtrl = CampaignPlacementsCtrl = $controller('CampaignPlacementsController', {
                         $scope: $scope,
@@ -171,7 +183,106 @@ define(['app'], function(appModule) {
                 });
             });
 
-            describe('add(minireel)', function() {
+            describe('add(placement)', function() {
+                var minireel,
+                    placementModel;
+
+                beforeEach(function() {
+                    minireel = cinema6.db.create('expeience', {
+                        id: 'e-2af4cc821a6b04',
+                        data: {
+                            deck: [
+                                {
+                                    id: 'rc-92df6f0e4b361c',
+                                    type: 'video'
+                                },
+                                {
+                                    id: 'rc-c2a9655f75e245',
+                                    type: 'videoBallot'
+                                },
+                                {
+                                    id: 'rc-a1688bb26326ec',
+                                    type: 'wildcard'
+                                },
+                                {
+                                    id: 'rc-f94b6351eaefe5',
+                                    type: 'wildcard'
+                                },
+                                {
+                                    id: 'rc-653a9712dbb6ca',
+                                    type: 'recap'
+                                }
+                            ]
+                        }
+                    });
+
+                    placementModel = {
+                        minireel: minireel,
+                        cards: [
+                            {
+                                placeholder: minireel.data.deck[2],
+                                wildcard: null
+                            },
+                            {
+                                placeholder: minireel.data.deck[3],
+                                wildcard: null
+                            }
+                        ]
+                    };
+
+                    spyOn(c6State, 'goTo');
+                });
+
+                describe('if the minireel already exists in the staticCardMap', function() {
+                    describe('if there are changes to the cards', function() {
+                        it('should add those changes to the model', function() {
+                            CampaignPlacementsCtrl.add(placementModel);
+
+                            expect(staticCardMap.length).toBe(2);
+                            expect(staticCardMap[1].cards[0].wildcard).toBe(null);
+
+                            placementModel.cards[0].wildcard = {
+                                id: 'rc-17e31bd5abcd54',
+                                type: 'video',
+                                data: {}
+                            };
+
+                            CampaignPlacementsCtrl.add(placementModel);
+
+                            expect(staticCardMap.length).toBe(2);
+                            expect(staticCardMap[1].cards[0].wildcard).toEqual({
+                                id: 'rc-17e31bd5abcd54',
+                                type: 'video',
+                                data: {}
+                            });
+                        });
+                    });
+                });
+
+                describe('if the minireel does not exit in the staticCardMap', function() {
+                    it('should add the placement object to the static card map', function() {
+                        var placementModel = {
+                            minireel: minireel,
+                            cards: [
+                                {
+                                    placeholder: minireel.data.deck[2],
+                                    wildcard: null
+                                },
+                                {
+                                    placeholder: minireel.data.deck[3],
+                                    wildcard: null
+                                }
+                            ]
+                        };
+
+                        CampaignPlacementsCtrl.add(placementModel);
+
+                        expect(staticCardMap[staticCardMap.length - 1]).toBe(placementModel);
+                    });
+                });
+            });
+
+            describe('use(minireel)', function() {
                 var minireel;
 
                 beforeEach(function() {
@@ -205,12 +316,11 @@ define(['app'], function(appModule) {
 
                     spyOn(c6State, 'goTo');
 
-                    CampaignPlacementsCtrl.add(minireel);
+                    CampaignPlacementsCtrl.use(minireel);
                 });
 
-                it('should add the minireel to the staticCardMap', function() {
-                    expect(staticCardMap.length).not.toBe(1);
-                    expect(staticCardMap[1]).toEqual({
+                it('should go to the "MR:Placements.MiniReel" state', function() {
+                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Placements.MiniReel', [{
                         minireel: minireel,
                         cards: [
                             {
@@ -222,11 +332,7 @@ define(['app'], function(appModule) {
                                 wildcard: null
                             }
                         ]
-                    });
-                });
-
-                it('should go to the "MR:Placements.MiniReel" state', function() {
-                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Placements.MiniReel', [staticCardMap[1]]);
+                    }]);
                 });
             });
 
@@ -339,6 +445,46 @@ define(['app'], function(appModule) {
                             expect(isNotAlreadyTargeted(entry.minireel)).toBe(false);
                         });
                     });
+                });
+            });
+
+            describe('previewUrlOf(minireel)', function() {
+                it('should call the MiniReelService for the url', function() {
+                    var minireel = staticCardMap[0].minireel;
+
+                    spyOn(MiniReelService, 'previewUrlOf');
+
+                    CampaignPlacementsCtrl.previewUrlOf(minireel);
+
+                    expect(MiniReelService.previewUrlOf).toHaveBeenCalledWith(minireel);
+                });
+            });
+
+            describe('previewMiniReel(minireel)', function() {
+                var minireel;
+
+                beforeEach(function() {
+                    minireel = staticCardMap[0].minireel;
+
+                    spyOn(MiniReelService, 'previewUrlOf').and.returnValue('http://cinema6.com?id=e-123');
+                    spyOn($window, 'open');
+                    CampaignPlacementsCtrl.previewMiniReel(minireel);
+                });
+
+                it('should get the url form the MiniReelService', function() {
+                    expect(MiniReelService.previewUrlOf).toHaveBeenCalledWith(minireel);
+                });
+
+                it('should save the Campaign', function() {
+                    expect(CampaignCtrl.save).toHaveBeenCalled();
+                });
+
+                it('should open a new tab with the campaign id as a query parameter', function() {
+                    $scope.$apply(function() {
+                        CampaignCtrl.save.deferred.resolve();
+                    });
+
+                    expect($window.open).toHaveBeenCalledWith('http://cinema6.com?id=e-123&campaign=c-12345');
                 });
             });
         });
