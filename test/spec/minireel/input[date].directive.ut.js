@@ -1,7 +1,7 @@
 define(['minireel/app', 'jquery'], function(appModule, $) {
     'use strict';
 
-    fdescribe('<input type="date" />', function() {
+    describe('<input type="date" />', function() {
         var $rootScope,
             $compile,
             $scope,
