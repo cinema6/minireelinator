@@ -365,11 +365,9 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                             throw new Error('[' + date + '] is not a valid Date.');
                         }
 
-                        var localTime = new Date(date);
-
-                        return localTime.getFullYear() +
-                            '-' + pad(localTime.getMonth() + 1) +
-                            '-' + pad(localTime.getDate());
+                        return date.getFullYear() +
+                            '-' + pad(date.getMonth() + 1) +
+                            '-' + pad(date.getDate());
                     });
                 }
             };

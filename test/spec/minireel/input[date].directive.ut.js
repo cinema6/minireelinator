@@ -1,12 +1,14 @@
 define(['minireel/app', 'jquery'], function(appModule, $) {
     'use strict';
 
-    describe('<input type="date" />', function() {
+    fdescribe('<input type="date" />', function() {
         var $rootScope,
             $compile,
             $scope,
             $form,
             $input;
+
+        var TzDate;
 
         function compileForm(_$input) {
             $form = $('<form name="form"></form>');
@@ -23,6 +25,7 @@ define(['minireel/app', 'jquery'], function(appModule, $) {
         beforeEach(function() {
             module(appModule.name);
 
+            TzDate = angular.mock.TzDate;
             spyOn(Date.prototype, 'getTimezoneOffset').and.returnValue(360);
 
             inject(function($injector) {
@@ -132,13 +135,27 @@ define(['minireel/app', 'jquery'], function(appModule, $) {
         });
 
         describe('when the model changes', function() {
+            // var _Date;
+
             beforeEach(function() {
+                // _Date = window.Date;
+
+                // window.Date = function(date) {
+                //     return new TzDate(-6, date);
+                // };
+                // window.Date.prototype = _Date.prototype;
+
                 $scope.$apply(function() {
-                    $scope.date = new Date('1990-06-26T03:00:00.000Z');
+                    $scope.date = new TzDate(-6,'1990-06-26T03:00:00.000Z');
                 });
             });
 
+            afterEach(function() {
+                // window.Date = _Date;
+            });
+
             it('should update the input and properly handle timezone differnce form UTC', function() {
+                // console.log($scope.date);
                 expect($input.val()).toBe('1990-06-25');
             });
 
