@@ -324,8 +324,26 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                 link: function(scope, $element, attrs, ctrl) {
                     if (attrs.type !== 'date') { return; }
 
+                    function pad(num) {
+                        var norm = Math.abs(Math.floor(num));
+                        return (norm < 10 ? '0' : '') + norm;
+                    }
+
+                    function formatDate(date, time) {
+                        var now = new Date(date),
+                            tzo = -now.getTimezoneOffset(),
+                            dif = tzo >= 0 ? '+' : '-';
+
+                        return date +
+                            'T' + time +
+                            ':' + pad(0) +
+                            dif + pad(tzo / 60) +
+                            ':' + pad(tzo % 60);
+                    }
+
                     ctrl.$parsers.push(function(value) {
-                        var date = new Date(value);
+                        var date = new Date(value),
+                            time = attrs.time || '00:00';
 
                         if (!value) {
                             ctrl.$setValidity('valid', true);
@@ -338,7 +356,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                         }
 
                         ctrl.$setValidity('valid', true);
-                        return new Date(value);
+                        return new Date(formatDate(value, time));
                     });
 
                     ctrl.$formatters.push(function(date) {
@@ -347,7 +365,11 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                             throw new Error('[' + date + '] is not a valid Date.');
                         }
 
-                        return date.toISOString().match(/^\d\d\d\d-\d\d-\d\d/)[0];
+                        var localTime = new Date(date);
+
+                        return localTime.getFullYear() +
+                            '-' + pad(localTime.getMonth() + 1) +
+                            '-' + pad(localTime.getDate());
                     });
                 }
             };
