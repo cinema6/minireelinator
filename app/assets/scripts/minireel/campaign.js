@@ -448,6 +448,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 CampaignMiniReelsCtrl = $scope.CampaignMiniReelsCtrl,
                 CampaignCtrl = $scope.CampaignCtrl;
 
+            var now = new Date().getTime();
+
             $injector.invoke(WizardController, this);
 
             this.tabs = [
@@ -467,6 +469,17 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
             this.endDate = null;
             this.name = null;
+
+            Object.defineProperties(this, {
+                validDate: {
+                    get: function() {
+                        var endDate = this.endDate;
+
+                        return (endDate === null) ||
+                            (endDate && endDate instanceof Date && endDate > now);
+                    }
+                }
+            });
 
             this.confirm = function() {
                 return MiniReelService.publish(this.model)
@@ -693,6 +706,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             var WildcardCtrl = this,
                 CampaignCardsCtrl = $scope.CampaignCardsCtrl;
 
+            var now = new Date().getTime();
+
             $injector.invoke(WizardController, this);
 
             this.tabs = [
@@ -723,6 +738,17 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     sref: 'MR:Wildcard.Advertising'
                 }
             ];
+
+            Object.defineProperties(this, {
+                validDate: {
+                    get: function() {
+                        var endDate = this.campaignData.endDate;
+
+                        return (endDate === null) ||
+                            (endDate && endDate instanceof Date && endDate > now);
+                    }
+                }
+            });
 
             this.initWithModel = function(card) {
                 this.model = card;

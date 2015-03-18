@@ -38,6 +38,7 @@
         <button class="btnAction btnAction--primary btnAction--last"
             c6-sref="{{CampaignNewMiniReelCtrl.tabs[CampaignNewMiniReelCtrl.tabs.indexOf(CampaignNewMiniReelCtrl.currentTab) + 1].sref}}"
             type="button"
+            ng-disabled="!CampaignNewMiniReelCtrl.validDate"
             ng-show="((CampaignNewMiniReelCtrl.tabs.indexOf(CampaignNewMiniReelCtrl.currentTab) + 1) || 1) < CampaignNewMiniReelCtrl.tabs.length"
             title="Next Step">
             Next Step
@@ -45,6 +46,7 @@
         <button ng-click="CampaignNewMiniReelCtrl.confirm()"
             class="btnAction btnAction--success btnAction--last"
             type="button"
+            ng-disabled="!CampaignNewMiniReelCtrl.validDate"
             ng-show="(CampaignNewMiniReelCtrl.tabs.indexOf(CampaignNewMiniReelCtrl.currentTab) + 1) === CampaignNewMiniReelCtrl.tabs.length"
             title="Confirm">
             Confirm

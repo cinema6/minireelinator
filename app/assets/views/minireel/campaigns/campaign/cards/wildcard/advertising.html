@@ -37,6 +37,7 @@
             <span class="forms__inputHolder">
                 <input type="date" time="23:59" class="forms__textField forms__textField--block" ng-model="WildcardCtrl.campaignData.endDate">
             </span>
+            <span ng-show="!WildcardCtrl.validDate" style="padding-left:9em;">Invalid date.</span>
         </label>
     </form>
 </div>
