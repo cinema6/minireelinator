@@ -10,6 +10,7 @@
   * [FEATURE]: Add preview and embed code buttons next to Placements
   * [FEATURE]: Add preview and embed code buttons next to Sponsored MiniReels
   * Filter out Customers and Advertisers that should not be used for Campaigns
+  * Convert local dates/times to UTC in Campaign Manager
 
 * *[v1.9.0.rc9]*
   * [FIX]: Fix for an issue that caused a new Sponsored Card/MiniReel

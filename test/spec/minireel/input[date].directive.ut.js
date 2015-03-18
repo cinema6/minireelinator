@@ -8,22 +8,31 @@ define(['minireel/app', 'jquery'], function(appModule, $) {
             $form,
             $input;
 
+        var TzDate;
+
+        function compileForm(_$input) {
+            $form = $('<form name="form"></form>');
+            $input = _$input;
+
+            $form.append($input);
+
+            $scope = $rootScope.$new();
+            $scope.$apply(function() {
+                $compile($form)($scope);
+            });
+        }
+
         beforeEach(function() {
             module(appModule.name);
+
+            TzDate = angular.mock.TzDate;
+            spyOn(Date.prototype, 'getTimezoneOffset').and.returnValue(360);
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 $compile = $injector.get('$compile');
 
-                $form = $('<form name="form"></form>');
-                $input = $('<input name="date" type="date" ng-model="date" />');
-
-                $form.append($input);
-
-                $scope = $rootScope.$new();
-                $scope.$apply(function() {
-                    $compile($form)($scope);
-                });
+                compileForm($('<input name="date" type="date" ng-model="date" />'));
             });
         });
 
@@ -44,6 +53,30 @@ define(['minireel/app', 'jquery'], function(appModule, $) {
             });
         });
 
+        describe('if the time attribute is defined', function() {
+            it('should properly handle timezone difference from UTC', function() {
+                compileForm($('<input name="date" type="date" time="23:59" ng-model="date" />'));
+
+                $input.val('2015-02-05');
+                $input.trigger('change');
+
+                expect($scope.date).toEqual(new Date('2015-02-06T05:59:00.000Z'));
+                expect($scope.form.date.$error.valid).toBe(false);
+            });
+        });
+
+        describe('if the time attribute is not defined', function() {
+            it('should default to midnight, 00:00, and properly handle timezone difference from UTC', function() {
+                compileForm($('<input name="date" type="date" ng-model="date" />'));
+
+                $input.val('2015-02-05');
+                $input.trigger('change');
+
+                expect($scope.date).toEqual(new Date('2015-02-05T06:00:00.000Z'));
+                expect($scope.form.date.$error.valid).toBe(false);
+            });
+        });
+
         describe('when the input value changes', function() {
             beforeEach(function() {
                 $input.val('2015-02-05');
@@ -51,7 +84,7 @@ define(['minireel/app', 'jquery'], function(appModule, $) {
             });
 
             it('should data-bind from the input to the model', function() {
-                expect($scope.date).toEqual(new Date('2015-02-05'));
+                expect($scope.date).toEqual(new Date('2015-02-05T06:00:00.000Z'));
                 expect($scope.form.date.$error.valid).toBe(false);
             });
 
@@ -103,13 +136,15 @@ define(['minireel/app', 'jquery'], function(appModule, $) {
 
         describe('when the model changes', function() {
             beforeEach(function() {
+                Date.prototype.getTimezoneOffset.and.callThrough();
+
                 $scope.$apply(function() {
-                    $scope.date = new Date('2013-03-14');
+                    $scope.date = new TzDate(6,'1990-06-26T05:00:00.000Z');
                 });
             });
 
-            it('should update the input', function() {
-                expect($input.val()).toBe('2013-03-14');
+            it('should update the input and properly handle timezone differnce form UTC', function() {
+                expect($input.val()).toBe('1990-06-25');
             });
 
             describe('if changed to something falsy', function() {
