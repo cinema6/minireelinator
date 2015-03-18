@@ -24,7 +24,7 @@
                     </div>
                 </li>
 
-                <li class="wizard__choice wizard__choice--textOnly">
+                <li ng-hide="!!EditorCtrl.model.campaignId" class="wizard__choice wizard__choice--textOnly">
                     <input id="cardType_ad" type="radio" 
                         name="minireel-category" value="wildcard"
                         class="modal__radioBtn" ng-model="NewCardCtrl.type" />
