@@ -1,6 +1,6 @@
 # MiniReelinator
 
-## v1.9.0 (March 9, 2015)
+## v1.9.0 (March 18, 2015)
 * *[v1.9.0.rc10]*
   * Change where the reporting ID for a sponsored card is stored
   * Temporarily hide the Dynamic Groups tab in the Campaign Manager
@@ -11,6 +11,7 @@
   * [FEATURE]: Add preview and embed code buttons next to Sponsored MiniReels
   * Filter out Customers and Advertisers that should not be used for Campaigns
   * Convert local dates/times to UTC in Campaign Manager
+* *[/v1.9.0.rc10]*
 
 * *[v1.9.0.rc9]*
   * [FIX]: Fix for an issue that caused a new Sponsored Card/MiniReel
