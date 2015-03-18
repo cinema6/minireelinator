@@ -401,16 +401,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             };
 
             this.previewUrlOf = function(minireel) {
-                return MiniReelService.previewUrlOf(minireel);
-            };
-
-            this.previewMiniReel = function(minireel) {
-                var url = MiniReelService.previewUrlOf(minireel),
-                    id = CampaignCtrl.model.id;
-
-                CampaignCtrl.save().then(function() {
-                    $window.open(url + '&campaign=' + id);
-                });
+                if (!minireel) { return; }
+                return MiniReelService.previewUrlOf(minireel) +
+                    '&campaign=' + CampaignCtrl.model.id;
             };
         }])
 
@@ -1079,16 +1072,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             };
 
             this.previewUrlOf = function(minireel) {
-                return MiniReelService.previewUrlOf(minireel);
-            };
-
-            this.previewMiniReel = function(minireel) {
-                var url = MiniReelService.previewUrlOf(minireel),
-                    id = CampaignCtrl.model.id;
-
-                CampaignCtrl.save().then(function() {
-                    $window.open(url + '&campaign=' + id);
-                });
+                if (!minireel) { return; }
+                return MiniReelService.previewUrlOf(minireel) +
+                    '&campaign=' + CampaignCtrl.model.id;
             };
 
             $scope.$on('CampaignCtrl:campaignDidSave', function() {
