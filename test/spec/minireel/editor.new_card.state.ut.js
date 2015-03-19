@@ -9,6 +9,7 @@
                 c6State,
                 MiniReelService,
                 PortalState,
+                EditorState,
                 NewCardState;
 
             var user,
@@ -41,6 +42,11 @@
                 PortalState = c6State.get('Portal');
                 user = PortalState.cModel = {
                     permissions: {}
+                };
+
+                EditorState = c6State.get('MR:Editor');
+                EditorState.cModel = {
+                    campaignId: null
                 };
 
                 NewCardState = c6State.get('MR:Editor.NewCard');
@@ -104,6 +110,21 @@
 
                     it('should succeed with true', function() {
                         expect(success).toHaveBeenCalledWith(true);
+                    });
+                });
+
+                describe('if the user has campaign permissions and the minireel is sponsored', function() {
+                    it('should go to the edit card state', function() {
+                        user.permissions.campaigns = {};
+                        EditorState.cModel.campaignId = '123';
+
+                        $rootScope.$apply(function() {
+                            NewCardState.afterModel(MiniReelService.createCard('videoBallot'), {
+                                insertAt: 2
+                            }).then(success, failure);
+                        });
+
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:EditCard', [card], { insertAt: 2 }, true);
                     });
                 });
             });

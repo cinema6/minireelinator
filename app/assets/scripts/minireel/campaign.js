@@ -222,8 +222,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignController', ['$scope','ConfirmDialogService',
-        function                          ( $scope , ConfirmDialogService ) {
+        .controller('CampaignController', ['$scope','$q','ConfirmDialogService',
+        function                          ( $scope , $q , ConfirmDialogService ) {
             var CampaignCtrl = this;
 
             function createModelLinks(uiLinks) {
@@ -253,6 +253,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         return ConfirmDialogService.close();
                     }
                 });
+
+                return $q.reject(err);
             }
 
             Object.defineProperties(this, {
@@ -313,7 +315,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     $scope.$broadcast('CampaignCtrl:campaignDidSave');
 
                     return campaign;
-                }, handleError);
+                })
+                .catch(handleError);
             };
         }])
 

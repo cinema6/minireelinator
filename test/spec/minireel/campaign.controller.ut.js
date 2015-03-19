@@ -351,8 +351,6 @@ define(['app'], function(appModule) {
                         expect(CampaignCtrl.cleanModel).toEqual(campaign.pojoify());
                     });
 
-
-
                     it('should resolve to the campaign', function() {
                         expect(success).toHaveBeenCalledWith(campaign);
                     });
@@ -363,13 +361,19 @@ define(['app'], function(appModule) {
                 });
 
                 describe('when campaign cannot be saved', function() {
-                    it('should show a dialog', function() {
+                    beforeEach(function() {
                         spyOn(ConfirmDialogService, 'display');
                         $scope.$apply(function() {
                             saveDeferred.reject('Bad request');
                         });
+                    });
 
+                    it('should show a dialog', function() {
                         expect(ConfirmDialogService.display).toHaveBeenCalled();
+                    });
+
+                    it('should reject the save', function() {
+                        expect(failure).toHaveBeenCalledWith('Bad request');
                     });
                 });
             });
