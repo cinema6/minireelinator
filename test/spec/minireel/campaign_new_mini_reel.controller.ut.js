@@ -103,6 +103,34 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     expect(CampaignNewMiniReelCtrl.name).toBeNull();
                 });
             });
+
+            describe('validDate', function() {
+                it('should be true if endDate is null', function() {
+                    CampaignNewMiniReelCtrl.endDate = null;
+                    expect(CampaignNewMiniReelCtrl.validDate).toBe(true);
+                });
+
+                it('should false if endDate is undefined', function() {
+                    CampaignNewMiniReelCtrl.endDate = void 0;
+                    expect(CampaignNewMiniReelCtrl.validDate).toBeFalsy();
+                });
+
+                it('should be true if the endDate is in the future', function() {
+                    var now = new Date(),
+                        tomorrow = new Date(now.getTime() + 24 * 60 *60 * 1000);
+
+                    CampaignNewMiniReelCtrl.endDate = tomorrow;
+                    expect(CampaignNewMiniReelCtrl.validDate).toBe(true);
+                });
+
+                it('should be false if the endDate is in the past', function() {
+                    var now = new Date(),
+                        yesterday = new Date(now.getTime() - 24 * 60 *60 * 1000);
+
+                    CampaignNewMiniReelCtrl.endDate = yesterday;
+                    expect(CampaignNewMiniReelCtrl.validDate).toBeFalsy();
+                });
+            });
         });
 
         describe('methods', function() {
