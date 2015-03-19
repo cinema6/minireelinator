@@ -774,6 +774,8 @@ VideoCardController           ) {
                             return c6State.goTo('MR:Campaign.MiniReels', [campaign, null]);
                         }
                     });
+
+                    return $q.reject(err);
                 });
 
             };
