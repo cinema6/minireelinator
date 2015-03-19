@@ -765,6 +765,15 @@ VideoCardController           ) {
                     return c6State.goTo('MR:Campaign.MiniReels', [campaign, null]);
                 }).then(function() {
                     return campaign;
+                }).catch(function(err) {
+                    ConfirmDialogService.display({
+                        prompt: 'There was a problem saving the campaign. ' + err.data,
+                        affirm: 'OK',
+                        onAffirm: function() {
+                            ConfirmDialogService.close();
+                            return c6State.goTo('MR:Campaign.MiniReels', [campaign, null]);
+                        }
+                    });
                 });
 
             };

@@ -222,8 +222,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignController', ['$scope',
-        function                          ( $scope ) {
+        .controller('CampaignController', ['$scope','ConfirmDialogService',
+        function                          ( $scope , ConfirmDialogService ) {
             var CampaignCtrl = this;
 
             function createModelLinks(uiLinks) {
@@ -242,6 +242,16 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             return !!item.wildcard;
                         })
                     });
+                });
+            }
+
+            function handleError(err) {
+                ConfirmDialogService.display({
+                    prompt: 'There was a problem saving the campaign. ' + err.data,
+                    affirm: 'OK',
+                    onAffirm: function() {
+                        return ConfirmDialogService.close();
+                    }
                 });
             }
 
@@ -303,7 +313,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     $scope.$broadcast('CampaignCtrl:campaignDidSave');
 
                     return campaign;
-                });
+                }, handleError);
             };
         }])
 
