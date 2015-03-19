@@ -11,7 +11,6 @@ define(['app'], function(appModule) {
             scopePromise,
             ScopedPromise,
             $scope,
-            $window,
             CampaignPlacementsState,
             CampaignCtrl,
             PortalCtrl,
@@ -28,7 +27,6 @@ define(['app'], function(appModule) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
                 $q = $injector.get('$q');
-                $window = $injector.get('$window');
                 c6State = $injector.get('c6State');
                 cinema6 = $injector.get('cinema6');
                 MiniReelService = $injector.get('MiniReelService');
@@ -56,13 +54,10 @@ define(['app'], function(appModule) {
                     };
 
                     $scope.CampaignCtrl = CampaignCtrl = {
-                        save: jasmine.createSpy('CampaignCtrl.save()'),
                         model: {
                             id: 'c-12345'
                         }
                     };
-                    CampaignCtrl.save.deferred = $q.defer();
-                    CampaignCtrl.save.and.returnValue(CampaignCtrl.save.deferred.promise);
 
                     $scope.CampaignPlacementsCtrl = CampaignPlacementsCtrl = $controller('CampaignPlacementsController', {
                         $scope: $scope,
@@ -449,42 +444,22 @@ define(['app'], function(appModule) {
             });
 
             describe('previewUrlOf(minireel)', function() {
+                var minireel;
+
+                beforeEach(function() {
+                    spyOn(MiniReelService, 'previewUrlOf').and.returnValue('http://cinema6.com?id=e-123');
+
+                    minireel = staticCardMap[0].minireel;
+                });
+
                 it('should call the MiniReelService for the url', function() {
-                    var minireel = staticCardMap[0].minireel;
-
-                    spyOn(MiniReelService, 'previewUrlOf');
-
                     CampaignPlacementsCtrl.previewUrlOf(minireel);
 
                     expect(MiniReelService.previewUrlOf).toHaveBeenCalledWith(minireel);
                 });
-            });
 
-            describe('previewMiniReel(minireel)', function() {
-                var minireel;
-
-                beforeEach(function() {
-                    minireel = staticCardMap[0].minireel;
-
-                    spyOn(MiniReelService, 'previewUrlOf').and.returnValue('http://cinema6.com?id=e-123');
-                    spyOn($window, 'open');
-                    CampaignPlacementsCtrl.previewMiniReel(minireel);
-                });
-
-                it('should get the url form the MiniReelService', function() {
-                    expect(MiniReelService.previewUrlOf).toHaveBeenCalledWith(minireel);
-                });
-
-                it('should save the Campaign', function() {
-                    expect(CampaignCtrl.save).toHaveBeenCalled();
-                });
-
-                it('should open a new tab with the campaign id as a query parameter', function() {
-                    $scope.$apply(function() {
-                        CampaignCtrl.save.deferred.resolve();
-                    });
-
-                    expect($window.open).toHaveBeenCalledWith('http://cinema6.com?id=e-123&campaign=c-12345');
+                it('should append the campaign param', function() {
+                    expect(CampaignPlacementsCtrl.previewUrlOf(minireel)).toEqual('http://cinema6.com?id=e-123&campaign=c-12345')
                 });
             });
         });

@@ -1,6 +1,14 @@
 # MiniReelinator
 
 ## v1.9.0 (March 18, 2015)
+* *[v1.9.0.rc11]*
+  * Hide placeholder video type in Sponsored MiniReel editor
+  * Change Placement and Sponsored MiniReel preview buttons to be simple links
+  * Update c6ui to v3.7.1
+  * [FEATURE]: Disable Next Step, Confirm and Save buttons when end dates
+    are set in the past
+  * [FEATURE]: Add error dialogs to alert failures in saving campaigns
+
 * *[v1.9.0.rc10]*
   * Change where the reporting ID for a sponsored card is stored
   * Temporarily hide the Dynamic Groups tab in the Campaign Manager

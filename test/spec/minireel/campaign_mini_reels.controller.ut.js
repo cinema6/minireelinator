@@ -6,8 +6,6 @@ define(['app'], function(appModule) {
             $controller,
             cinema6,
             $scope,
-            $q,
-            $window,
             MiniReelService,
             CampaignCtrl,
             CampaignMiniReelsCtrl;
@@ -21,8 +19,6 @@ define(['app'], function(appModule) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
                 cinema6 = $injector.get('cinema6');
-                $q = $injector.get('$q');
-                $window = $injector.get('$window');
                 MiniReelService = $injector.get('MiniReelService');
 
                 campaign = cinema6.db.create('campaign', {
@@ -135,23 +131,6 @@ define(['app'], function(appModule) {
         });
 
         describe('previewUrlOf(minireel)', function() {
-            it('should call the MiniReelService for the url', function() {
-                var minireel = cinema6.db.create('experience', {
-                    id: 'e-5480ecc1063d7e',
-                    data: {
-                        deck: []
-                    }
-                });
-
-                spyOn(MiniReelService, 'previewUrlOf');
-
-                CampaignMiniReelsCtrl.previewUrlOf(minireel);
-
-                expect(MiniReelService.previewUrlOf).toHaveBeenCalledWith(minireel);
-            });
-        });
-
-        describe('previewMiniReel(minireel)', function() {
             var minireel;
 
             beforeEach(function() {
@@ -162,30 +141,17 @@ define(['app'], function(appModule) {
                     }
                 });
 
-                spyOn(CampaignCtrl, 'save');
-                CampaignCtrl.save.deferred = $q.defer();
-                CampaignCtrl.save.and.returnValue(CampaignCtrl.save.deferred.promise);
-
                 spyOn(MiniReelService, 'previewUrlOf').and.returnValue('http://cinema6.com?id=e-123');
-                spyOn($window, 'open');
-
-                CampaignMiniReelsCtrl.previewMiniReel(minireel);
             });
 
-            it('should get the url form the MiniReelService', function() {
+            it('should call the MiniReelService for the url', function() {
+                CampaignMiniReelsCtrl.previewUrlOf(minireel);
+
                 expect(MiniReelService.previewUrlOf).toHaveBeenCalledWith(minireel);
             });
 
-            it('should save the Campaign', function() {
-                expect(CampaignCtrl.save).toHaveBeenCalled();
-            });
-
-            it('should open a new tab with the campaign id as a query parameter', function() {
-                $scope.$apply(function() {
-                    CampaignCtrl.save.deferred.resolve();
-                });
-
-                expect($window.open).toHaveBeenCalledWith('http://cinema6.com?id=e-123&campaign=cam-74070a860d121e');
+            it('should append the campaign param to the url', function() {
+                expect(CampaignMiniReelsCtrl.previewUrlOf(minireel)).toEqual('http://cinema6.com?id=e-123&campaign=cam-74070a860d121e')
             });
         });
     });

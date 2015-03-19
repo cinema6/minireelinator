@@ -765,6 +765,15 @@ VideoCardController           ) {
                     return c6State.goTo('MR:Campaign.MiniReels', [campaign, null]);
                 }).then(function() {
                     return campaign;
+                }).catch(function(err) {
+                    ConfirmDialogService.display({
+                        prompt: 'There was a problem saving the campaign. ' + err.data,
+                        affirm: 'OK',
+                        onAffirm: function() {
+                            ConfirmDialogService.close();
+                            return c6State.goTo('MR:Campaign.MiniReels', [campaign, null]);
+                        }
+                    });
                 });
 
             };
@@ -1518,7 +1527,8 @@ VideoCardController           ) {
         function( c6StateProvider ) {
             c6StateProvider.state('MR:Editor.NewCard', ['MiniReelService','c6State','$q',
             function                                   ( MiniReelService , c6State , $q ) {
-                var PortalState = c6State.get('Portal');
+                var PortalState = c6State.get('Portal'),
+                    EditorState = c6State.get('MR:Editor');
 
                 this.controller = 'NewCardController';
                 this.controllerAs = 'NewCardCtrl';
@@ -1533,9 +1543,10 @@ VideoCardController           ) {
                 };
 
                 this.afterModel = function(card, params) {
-                    var user = PortalState.cModel;
+                    var user = PortalState.cModel,
+                        campaign = EditorState.cModel.campaignId;
 
-                    if (!!user.permissions.campaigns) { return $q.when(true); }
+                    if (!!user.permissions.campaigns && !campaign) { return $q.when(true); }
 
                     c6State.goTo('MR:EditCard', [card], params, true);
 

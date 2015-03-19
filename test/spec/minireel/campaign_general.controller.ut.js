@@ -1,4 +1,4 @@
-define(['minireel/campaign'], function(campaignModule) {
+define(['app'], function(appModule) {
     'use strict';
 
     describe('CampaignGeneralController', function() {
@@ -13,7 +13,7 @@ define(['minireel/campaign'], function(campaignModule) {
             categories;
 
         beforeEach(function() {
-            module(campaignModule.name);
+            module(appModule.name);
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');

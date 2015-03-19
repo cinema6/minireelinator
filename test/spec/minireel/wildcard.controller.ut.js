@@ -114,6 +114,34 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     ]);
                 });
             });
+
+            describe('validDate', function() {
+                it('should be true if endDate is null', function() {
+                    WildcardCtrl.campaignData.endDate = null;
+                    expect(WildcardCtrl.validDate).toBe(true);
+                });
+
+                it('should false if endDate is undefined', function() {
+                    WildcardCtrl.campaignData.endDate = void 0;
+                    expect(WildcardCtrl.validDate).toBeFalsy();
+                });
+
+                it('should be true if the endDate is in the future', function() {
+                    var now = new Date(),
+                        tomorrow = new Date(now.getTime() + 24 * 60 *60 * 1000);
+
+                    WildcardCtrl.campaignData.endDate = tomorrow;
+                    expect(WildcardCtrl.validDate).toBe(true);
+                });
+
+                it('should be false if the endDate is in the past', function() {
+                    var now = new Date(),
+                        yesterday = new Date(now.getTime() - 24 * 60 *60 * 1000);
+
+                    WildcardCtrl.campaignData.endDate = yesterday;
+                    expect(WildcardCtrl.validDate).toBeFalsy();
+                });
+            });
         });
 
         describe('methods', function() {

@@ -111,7 +111,31 @@ module.exports = function(http) {
             current = grunt.file.readJSON(filePath),
             campaign = extend(current, request.body, {
                 lastUpdated: (new Date()).toISOString()
-            });
+            }),
+            badDate = false;
+
+        function handleDate(obj) {
+            var now = new Date(),
+                endDateTime;
+
+            if (obj.endDate) {
+                endDateTime = new Date(obj.endDate).getTime();
+                if (endDateTime < now.getTime()) {
+                    badDate = true;
+                }
+            } else {
+                now.setYear(now.getFullYear() + 1);
+                obj.endDate = now.toISOString();
+            }
+        }
+
+        campaign.miniReels.forEach(handleDate);
+        campaign.cards.forEach(handleDate);
+
+        if (badDate) {
+            this.respond(400, 'BAD REQUEST');
+            return;
+        }
 
         grunt.file.write(filePath, JSON.stringify(campaign, null, '    '));
 

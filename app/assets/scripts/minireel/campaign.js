@@ -222,8 +222,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignController', ['$scope',
-        function                          ( $scope ) {
+        .controller('CampaignController', ['$scope','$q','ConfirmDialogService',
+        function                          ( $scope , $q , ConfirmDialogService ) {
             var CampaignCtrl = this;
 
             function createModelLinks(uiLinks) {
@@ -243,6 +243,18 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         })
                     });
                 });
+            }
+
+            function handleError(err) {
+                ConfirmDialogService.display({
+                    prompt: 'There was a problem saving the campaign. ' + err.data,
+                    affirm: 'OK',
+                    onAffirm: function() {
+                        return ConfirmDialogService.close();
+                    }
+                });
+
+                return $q.reject(err);
             }
 
             Object.defineProperties(this, {
@@ -303,7 +315,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     $scope.$broadcast('CampaignCtrl:campaignDidSave');
 
                     return campaign;
-                });
+                })
+                .catch(handleError);
             };
         }])
 
@@ -401,16 +414,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             };
 
             this.previewUrlOf = function(minireel) {
-                return MiniReelService.previewUrlOf(minireel);
-            };
-
-            this.previewMiniReel = function(minireel) {
-                var url = MiniReelService.previewUrlOf(minireel),
-                    id = CampaignCtrl.model.id;
-
-                CampaignCtrl.save().then(function() {
-                    $window.open(url + '&campaign=' + id);
-                });
+                if (!minireel) { return; }
+                return MiniReelService.previewUrlOf(minireel) +
+                    '&campaign=' + CampaignCtrl.model.id;
             };
         }])
 
@@ -455,6 +461,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 CampaignMiniReelsCtrl = $scope.CampaignMiniReelsCtrl,
                 CampaignCtrl = $scope.CampaignCtrl;
 
+            var now = new Date().getTime();
+
             $injector.invoke(WizardController, this);
 
             this.tabs = [
@@ -474,6 +482,17 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
             this.endDate = null;
             this.name = null;
+
+            Object.defineProperties(this, {
+                validDate: {
+                    get: function() {
+                        var endDate = this.endDate;
+
+                        return (endDate === null) ||
+                            (endDate && endDate instanceof Date && endDate > now);
+                    }
+                }
+            });
 
             this.confirm = function() {
                 return MiniReelService.publish(this.model)
@@ -700,6 +719,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             var WildcardCtrl = this,
                 CampaignCardsCtrl = $scope.CampaignCardsCtrl;
 
+            var now = new Date().getTime();
+
             $injector.invoke(WizardController, this);
 
             this.tabs = [
@@ -730,6 +751,17 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     sref: 'MR:Wildcard.Advertising'
                 }
             ];
+
+            Object.defineProperties(this, {
+                validDate: {
+                    get: function() {
+                        var endDate = this.campaignData.endDate;
+
+                        return (endDate === null) ||
+                            (endDate && endDate instanceof Date && endDate > now);
+                    }
+                }
+            });
 
             this.initWithModel = function(card) {
                 this.model = card;
@@ -1079,16 +1111,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             };
 
             this.previewUrlOf = function(minireel) {
-                return MiniReelService.previewUrlOf(minireel);
-            };
-
-            this.previewMiniReel = function(minireel) {
-                var url = MiniReelService.previewUrlOf(minireel),
-                    id = CampaignCtrl.model.id;
-
-                CampaignCtrl.save().then(function() {
-                    $window.open(url + '&campaign=' + id);
-                });
+                if (!minireel) { return; }
+                return MiniReelService.previewUrlOf(minireel) +
+                    '&campaign=' + CampaignCtrl.model.id;
             };
 
             $scope.$on('CampaignCtrl:campaignDidSave', function() {

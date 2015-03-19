@@ -1026,6 +1026,28 @@
                             });
                         });
                     });
+
+                    describe('when the save returns an error', function() {
+                        beforeEach(function() {
+                            spyOn(c6State, 'goTo');
+
+                            $scope.$apply(function() {
+                                saveDeferred.resolve(cModel);
+                            });
+                            $scope.$apply(function() {
+                                campaignSaveDeferred.reject('Bad request');
+                            });
+                        });
+                        it('should show a dialog', function() {
+                            expect(ConfirmDialogService.display).toHaveBeenCalled();
+                        });
+
+                        it('should go back to the campaign manager when confirmed', function() {
+                            ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
+
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.MiniReels', [EditorCtrl.campaign, null]);
+                        });
+                    });
                 });
 
                 describe('backToDashboard()', function() {

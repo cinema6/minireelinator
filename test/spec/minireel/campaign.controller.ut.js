@@ -1,4 +1,4 @@
-define(['minireel/campaign'], function(campaignModule) {
+define(['app'], function(appModule) {
     'use strict';
 
     describe('CampaignController', function() {
@@ -7,18 +7,20 @@ define(['minireel/campaign'], function(campaignModule) {
             $q,
             cinema6,
             $scope,
+            ConfirmDialogService,
             CampaignCtrl;
 
         var campaign;
 
         beforeEach(function() {
-            module(campaignModule.name);
+            module(appModule.name);
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
                 $q = $injector.get('$q');
                 cinema6 = $injector.get('cinema6');
+                ConfirmDialogService = $injector.get('ConfirmDialogService');
 
                 campaign = cinema6.db.create('campaign', {
                     id: 'e-48eec2c6b81060',
@@ -51,7 +53,8 @@ define(['minireel/campaign'], function(campaignModule) {
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
                     CampaignCtrl = $controller('CampaignController', {
-                        $scope: $scope
+                        $scope: $scope,
+                        ConfirmDialogService: ConfirmDialogService
                     });
                     CampaignCtrl.initWithModel(campaign);
                 });
@@ -348,14 +351,29 @@ define(['minireel/campaign'], function(campaignModule) {
                         expect(CampaignCtrl.cleanModel).toEqual(campaign.pojoify());
                     });
 
-
-
                     it('should resolve to the campaign', function() {
                         expect(success).toHaveBeenCalledWith(campaign);
                     });
 
                     it('should $broadcast the "CampaignCtrl:campaignDidSave" event', function() {
                         expect($scope.$broadcast).toHaveBeenCalledWith('CampaignCtrl:campaignDidSave');
+                    });
+                });
+
+                describe('when campaign cannot be saved', function() {
+                    beforeEach(function() {
+                        spyOn(ConfirmDialogService, 'display');
+                        $scope.$apply(function() {
+                            saveDeferred.reject('Bad request');
+                        });
+                    });
+
+                    it('should show a dialog', function() {
+                        expect(ConfirmDialogService.display).toHaveBeenCalled();
+                    });
+
+                    it('should reject the save', function() {
+                        expect(failure).toHaveBeenCalledWith('Bad request');
                     });
                 });
             });
