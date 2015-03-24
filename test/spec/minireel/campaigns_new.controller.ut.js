@@ -31,6 +31,7 @@ define(['app'], function(appModule) {
                     categories: [],
                     minViewTime: -1,
                     advertiser: null,
+                    advertiserName: null,
                     customer: null,
                     logos: {
                         square: null
@@ -87,7 +88,7 @@ define(['app'], function(appModule) {
                     });
                     CampaignsCtrl.model = paginatedDbList('campaign', {});
 
-                    CampaignsNewCtrl = $controller('CampaignsNewController', {
+                    CampaignsNewCtrl = $scope.CampaignsNewCtrl = $controller('CampaignsNewController', {
                         $scope: $scope
                     });
                     CampaignsNewCtrl.initWithModel(model, model);
@@ -251,6 +252,18 @@ define(['app'], function(appModule) {
 
                 it('should go to the MR:Campaign state', function() {
                     expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign', [campaign]);
+                });
+            });
+        });
+
+        describe('$watch', function() {
+            describe('model.advertiser', function() {
+                it('should set the advertiser name', function() {
+                    $scope.$apply(function() {
+                        $scope.CampaignsNewCtrl.model.advertiser = {id: '123', name: 'Diageo'};
+                    });
+
+                    expect(CampaignsNewCtrl.model.advertiserName).toEqual('Diageo');
                 });
             });
         });

@@ -26,6 +26,11 @@
                 <span class="forms__name--title">Please select an advertiser <strong class="typo--danger">*</strong></span>
                 <c6-dropdown options="CampaignsNewCtrl.advertiserOptions" value="campaign.advertiser"></c6-dropdown>
             </label>
+
+            <label ng-if="!!campaign.customer && !!campaign.advertiser">
+                <span class="forms__name--title">Advertiser Name </span>
+                <input type="text" class="forms__textField forms__textField--title" ng-model="campaign.advertiserName">
+            </label>
         </form>
         <p class="modalBody__fineprint typo--danger"><strong>*</strong> Indicates required field.</p>
     </div>

@@ -78,6 +78,7 @@ define(['app', 'c6uilib'], function(appModule, c6uilib) {
                     categories: [],
                     minViewTime: -1,
                     advertiser: null,
+                    advertiserName: null,
                     customer: null,
                     logos: {
                         square: null

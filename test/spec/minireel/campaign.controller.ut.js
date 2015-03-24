@@ -47,7 +47,8 @@ define(['app'], function(appModule) {
                             ],
                             minireel: {}
                         }
-                    ]
+                    ],
+                    advertiserName: 'Diageo'
                 });
 
                 $scope = $rootScope.$new();

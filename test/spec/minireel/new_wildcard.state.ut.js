@@ -69,6 +69,7 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                         id: 'cam-52fb2554b038bf',
                         name: 'Microsoft'
                     }),
+                    advertiserName: 'Custom Name',
                     minViewTime: 15
                 });
                 cinema6.db.create.calls.reset();
@@ -92,7 +93,7 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     }),
                     links: jasmine.objectContaining(campaign.cModel.links),
                     params: jasmine.objectContaining({
-                        sponsor: campaign.cModel.advertiser.name
+                        sponsor: campaign.cModel.advertiserName
                     }),
                     campaign: jasmine.objectContaining({
                         minViewTime: campaign.cModel.minViewTime
