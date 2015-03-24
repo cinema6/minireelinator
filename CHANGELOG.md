@@ -1,7 +1,9 @@
 # MiniReelinator
 
-* *[v1.9.0.rc1]*
+## v1.9.1 (March 24, 2015)
+* *[v1.9.1.rc1]*
   * [FEATURE]: Allow for a custom advertiser name for a Campaign
+* *[/v1.9.1.rc1]*
 
 ## v1.9.0 (March 19, 2015)
 * *[v1.9.0.rc11]*
