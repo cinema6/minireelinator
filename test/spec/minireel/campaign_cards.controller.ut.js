@@ -23,7 +23,8 @@ define(['app'], function(appModule) {
                     id: 'cam-74070a860d121e',
                     links: {},
                     miniReels: [],
-                    cards: []
+                    cards: [],
+                    advertiserName: 'Diageo'
                 });
 
                 $scope = $rootScope.$new();

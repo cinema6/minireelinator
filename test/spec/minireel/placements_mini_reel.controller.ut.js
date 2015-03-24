@@ -49,7 +49,8 @@ define(['angular', 'app'], function(angular, appModule) {
                                     title: 'My Favorite Card'
                                 }))
                             }
-                        ]
+                        ],
+                        advertiserName: 'Diageo'
                     }));
 
                     CampaignPlacementsCtrl = $scope.CampaignPlacementsCtrl = {

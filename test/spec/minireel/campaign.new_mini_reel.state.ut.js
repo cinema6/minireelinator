@@ -37,7 +37,8 @@ define(['app'], function(appModule) {
                 advertiser: {
                     id: 'a-b8ab2ceb807ca4',
                     name: 'Diageo'
-                }
+                },
+                advertiserName: 'Custom Name'
             });
         });
 
@@ -89,7 +90,7 @@ define(['app'], function(appModule) {
                         }),
                         links: jasmine.objectContaining(campaign.cModel.links),
                         params: jasmine.objectContaining({
-                            sponsor: campaign.cModel.advertiser.name
+                            sponsor: campaign.cModel.advertiserName
                         })
                     })
                 }));
