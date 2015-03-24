@@ -1259,9 +1259,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
         }])
 
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
-                                     'SettingsService','VideoService',
+                                     'SettingsService','VideoService','VideoThumbnailService',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
-                                      SettingsService , VideoService ) {
+                                      SettingsService , VideoService , VideoThumbnailService ) {
             var ngCopy = angular.copy;
 
             var self = this,
@@ -1938,6 +1938,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     };
                 }
 
+                function thumbsValue() {
+                    return function(data) {
+                        var thumbs = VideoThumbnailService.getThumbsFor(data.service, data.videoid);
+
+                        return {
+                            small: thumbs.small,
+                            large: thumbs.large
+                        };
+                    };
+                }
+
                 dataTemplates = {
                     youtube: {
                         hideSource: hideSourceValue(),
@@ -1950,7 +1961,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         start: trimmer(),
                         end: trimmer(),
                         videoid: copy(null),
-                        href: hrefValue()
+                        href: hrefValue(),
+                        thumbs: thumbsValue()
                     },
                     vimeo: {
                         hideSource: hideSourceValue(),
@@ -1960,7 +1972,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         start: trimmer(),
                         end: trimmer(),
                         videoid: copy(null),
-                        href: hrefValue()
+                        href: hrefValue(),
+                        thumbs: thumbsValue()
                     },
                     dailymotion: {
                         hideSource: hideSourceValue(),
@@ -1972,7 +1985,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         end: trimmer(),
                         related: value(0),
                         videoid: copy(null),
-                        href: hrefValue()
+                        href: hrefValue(),
+                        thumbs: thumbsValue()
                     },
                     rumble: {
                         hideSource: hideSourceValue(),
@@ -1987,7 +2001,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         videoid: function(data) {
                             return VideoService.embedIdFromVideoId('rumble', data.videoid);
                         },
-                        href: hrefValue()
+                        href: hrefValue(),
+                        thumbs: thumbsValue()
                     },
                     adUnit: {
                         hideSource: hideSourceValue(),
@@ -2000,7 +2015,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         },
                         vpaid: function(data) {
                             return (fromJson(data.videoid) || {}).vpaid;
-                        }
+                        },
+                        thumbs: value(null)
                     },
                     embedded: {
                         hideSource: hideSourceValue(),
@@ -2014,7 +2030,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         code: function(data) {
                             return VideoService.embedCodeFromData(data.service, data.videoid);
                         },
-                        href: hrefValue()
+                        href: hrefValue(),
+                        thumbs: thumbsValue()
                     },
                     ad: {
                         autoplay: copy(true),
@@ -2181,25 +2198,31 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     }
                 };
 
-                cardType = getCardType(card);
-                dataType = getDataType(card);
+                function createCard() {
+                    cardType = getCardType(card);
+                    dataType = getDataType(card);
 
-                forEach(cardBases[cardType], function(fn, key) {
-                    var value = fn(card, key, card);
+                    forEach(cardBases[cardType], function(fn, key) {
+                        var value = fn(card, key, card);
 
-                    if (isDefined(value)) {
-                        newCard[key] = fn(card, key, card);
-                    }
-                });
+                        if (isDefined(value)) {
+                            newCard[key] = fn(card, key, card);
+                        }
+                    });
 
-                forEach(dataTemplates[dataType], function(fn, key) {
-                    var value = fn((card.data || {}), key, card);
-                    if(isDefined(value) && value !== null) {
-                        newCard.data[key] = value;
-                    }
-                });
+                    forEach(dataTemplates[dataType], function(fn, key) {
+                        var value = fn((card.data || {}), key, card);
+                        if(isDefined(value) && value !== null) {
+                            newCard.data[key] = value;
+                        }
+                    });
 
-                return $q.when(newCard);
+                    return newCard;
+                }
+
+                return VideoThumbnailService.getThumbsFor(card.data.service, card.data.videoid)
+                    .ensureFulfillment()
+                    .then(createCard);
             };
 
             this.convertForPlayer = function(minireel, target) {

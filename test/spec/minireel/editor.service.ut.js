@@ -87,6 +87,14 @@
                     _private = EditorService._private;
                 });
 
+                spyOn(VideoThumbnailService, 'getThumbsFor').and.returnValue({
+                    small: null,
+                    large: null,
+                    ensureFulfillment: function() {
+                        return $q.when(this);
+                    }
+                });
+
                 SettingsService.register('MR::user', {
                     minireelDefaults: {
                         splash: {
@@ -298,7 +306,7 @@
                                     }
                                 };
 
-                                spyOn(VideoThumbnailService, 'getThumbsFor')
+                                VideoThumbnailService.getThumbsFor
                                     .and.callFake(function(service, videoid) {
                                         return thumbs[service][videoid] || new ThumbModel();
                                     });

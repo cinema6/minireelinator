@@ -190,7 +190,11 @@
                                     end: 40,
                                     rel: 0,
                                     modestbranding: 0,
-                                    href: 'https://www.youtube.com/watch?v=47tfg8734'
+                                    href: 'https://www.youtube.com/watch?v=47tfg8734',
+                                    thumbs: {
+                                        small: 'images.youtube.com/video/47tfg8734/small.jpg',
+                                        large: 'images.youtube.com/video/47tfg8734/large.jpg'
+                                    }
                                 }
                             },
                             {
@@ -221,7 +225,11 @@
                                 data: {
                                     skip: 25,
                                     videoid: '48hfrei49',
-                                    href: 'http://vimeo.com/48hfrei49'
+                                    href: 'http://vimeo.com/48hfrei49',
+                                    thumbs: {
+                                        small: 'images.vimeo.com/video/48hfrei49/small.jpg',
+                                        large: 'images.vimeo.com/video/48hfrei49/large.jpg'
+                                    }
                                 }
                             },
                             {
@@ -266,7 +274,11 @@
                                     skip: false,
                                     videoid: 'vfu85f5',
                                     related: 0,
-                                    href: 'http://www.dailymotion.com/video/vfu85f5'
+                                    href: 'http://www.dailymotion.com/video/vfu85f5',
+                                    thumbs: {
+                                        small: 'images.dailymotion.com/video/vfu85f5/small.jpg',
+                                        large: 'images.dailymotion.com/video/vfu85f5/large.jpg'
+                                    }
                                 }
                             },
                             {
@@ -318,7 +330,11 @@
                                     end: 40,
                                     rel: 0,
                                     modestbranding: 0,
-                                    href: 'https://www.youtube.com/watch?v=fn4378r4d'
+                                    href: 'https://www.youtube.com/watch?v=fn4378r4d',
+                                    thumbs: {
+                                        small: 'images.youtube.com/video/fn4378r4d/small.jpg',
+                                        large: 'images.youtube.com/video/fn4378r4d/large.jpg'
+                                    }
                                 }
                             },
                             {
@@ -498,7 +514,11 @@
                                         skip: true,
                                         service: 'yahoo',
                                         videoid: 'teen-tries-drain-pond-lost-221030513',
-                                        href: 'https://screen.yahoo.com/teen-tries-drain-pond-lost-221030513.html'
+                                        href: 'https://screen.yahoo.com/teen-tries-drain-pond-lost-221030513.html',
+                                        thumbs: {
+                                            small: 'images.yahoo.com/video/teen-tries-drain-pond-lost-221030513/small.jpg',
+                                            large: 'images.yahoo.com/video/teen-tries-drain-pond-lost-221030513/large.jpg'
+                                        }
                                     }
                                 };
 
@@ -529,7 +549,11 @@
                                         skip: true,
                                         service: 'aol',
                                         videoid: 'arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876',
-                                        href: 'http://on.aol.com/video/arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876'
+                                        href: 'http://on.aol.com/video/arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876',
+                                        thumbs: {
+                                            small: 'images.aol.com/video/arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876/small.jpg',
+                                            large: 'images.aol.com/video/arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876/large.jpg'
+                                        }
                                     }
                                 };
 
@@ -559,7 +583,11 @@
                                     data: {
                                         skip: true,
                                         siteid: 'v2z8ro-willie-perfoming-at-school-talent-show',
-                                        href: 'https://rumble.com/v2z8ro-willie-perfoming-at-school-talent-show.html'
+                                        href: 'https://rumble.com/v2z8ro-willie-perfoming-at-school-talent-show.html',
+                                        thumbs: {
+                                            small: 'images.rumble.com/video/v2z8ro-willie-perfoming-at-school-talent-show/small.jpg',
+                                            large: 'images.rumble.com/video/v2z8ro-willie-perfoming-at-school-talent-show/large.jpg'
+                                        }
                                     }
                                 };
 
@@ -1913,10 +1941,35 @@
                     describe('convertForPlayer(minireel)', function() {
                         var convertedSpy;
                         var resultSpy;
+                        var thumbCache;
+
+                        function MockThumb(small, large) {
+                            var thumb = this;
+
+                            this.small = null;
+                            this.large = null;
+
+                            this.ensureFulfillment = function() {
+                                thumb.small = small;
+                                thumb.large = large;
+                                return $q.when(this);
+                            };
+                        }
 
                         beforeEach(function() {
                             convertedSpy = jasmine.createSpy('convertedSpy()');
                             resultSpy = jasmine.createSpy('resultSpy()');
+
+                            thumbCache = {};
+
+                            spyOn(VideoThumbnailService, 'getThumbsFor').and.callFake(function(service, videoid) {
+                                var id = service + ':' + videoid;
+
+                                return thumbCache[id] || (thumbCache[id] = new MockThumb(
+                                    'images.' + service + '.com/video/' + videoid + '/small.jpg',
+                                    'images.' + service + '.com/video/' + videoid + '/large.jpg'
+                                ));
+                            });
                         });
 
                         it('should convert back to the player format', function() {
