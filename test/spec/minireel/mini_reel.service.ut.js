@@ -189,7 +189,8 @@
                                     start: 10,
                                     end: 40,
                                     rel: 0,
-                                    modestbranding: 0
+                                    modestbranding: 0,
+                                    href: 'https://www.youtube.com/watch?v=47tfg8734'
                                 }
                             },
                             {
@@ -219,7 +220,8 @@
                                 },
                                 data: {
                                     skip: 25,
-                                    videoid: '48hfrei49'
+                                    videoid: '48hfrei49',
+                                    href: 'http://vimeo.com/48hfrei49'
                                 }
                             },
                             {
@@ -263,7 +265,8 @@
                                     controls: true,
                                     skip: false,
                                     videoid: 'vfu85f5',
-                                    related: 0
+                                    related: 0,
+                                    href: 'http://www.dailymotion.com/video/vfu85f5'
                                 }
                             },
                             {
@@ -314,7 +317,8 @@
                                     start: 0,
                                     end: 40,
                                     rel: 0,
-                                    modestbranding: 0
+                                    modestbranding: 0,
+                                    href: 'https://www.youtube.com/watch?v=fn4378r4d'
                                 }
                             },
                             {
@@ -493,7 +497,8 @@
                                     data: {
                                         skip: true,
                                         service: 'yahoo',
-                                        videoid: 'teen-tries-drain-pond-lost-221030513'
+                                        videoid: 'teen-tries-drain-pond-lost-221030513',
+                                        href: 'https://screen.yahoo.com/teen-tries-drain-pond-lost-221030513.html'
                                     }
                                 };
 
@@ -524,6 +529,7 @@
                                         skip: true,
                                         service: 'aol',
                                         videoid: 'arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876',
+                                        href: 'http://on.aol.com/video/arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876'
                                     }
                                 };
 
@@ -552,7 +558,8 @@
                                     modules: [],
                                     data: {
                                         skip: true,
-                                        siteid: 'v2z8ro-willie-perfoming-at-school-talent-show'
+                                        siteid: 'v2z8ro-willie-perfoming-at-school-talent-show',
+                                        href: 'https://rumble.com/v2z8ro-willie-perfoming-at-school-talent-show.html'
                                     }
                                 };
 
