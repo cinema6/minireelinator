@@ -86,7 +86,7 @@
                     success = jasmine.createSpy('success()');
                     failure = jasmine.createSpy('failure()');
 
-                    spyOn(EditorService, 'open').and.returnValue(editorMinireel);
+                    spyOn(EditorService, 'open').and.returnValue($q.when(editorMinireel));
 
                     $rootScope.$apply(function() {
                         EditorState.afterModel(minireel, {}).then(success, failure);

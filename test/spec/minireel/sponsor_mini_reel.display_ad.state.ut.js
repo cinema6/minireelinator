@@ -2,7 +2,8 @@ define(['app'], function(appModule) {
     'use strict';
 
     describe('MR:SponsorMiniReel.DisplayAd state', function() {
-        var c6State,
+        var $rootScope,
+            c6State,
             SettingsService,
             EditorService,
             sponsorMiniReel,
@@ -14,6 +15,7 @@ define(['app'], function(appModule) {
             module(appModule.name);
 
             inject(function($injector) {
+                $rootScope = $injector.get('$rootScope');
                 c6State = $injector.get('c6State');
                 SettingsService = $injector.get('SettingsService');
                 EditorService = $injector.get('EditorService');
@@ -52,7 +54,11 @@ define(['app'], function(appModule) {
                     ]
                 }
             };
-            minireel = EditorService.open(sponsorMiniReel.cModel);
+            $rootScope.$apply(function() {
+                EditorService.open(sponsorMiniReel.cModel).then(function(_minireel_) {
+                    minireel = _minireel_;
+                });
+            });
 
             sponsorMiniReelDisplayAd = c6State.get('MR:SponsorMiniReel.DisplayAd');
         });

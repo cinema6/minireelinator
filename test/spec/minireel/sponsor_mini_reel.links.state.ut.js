@@ -2,7 +2,8 @@ define(['app'], function(appModule) {
     'use strict';
 
     describe('MR:SponsorMiniReel.Links state', function() {
-        var c6State,
+        var $rootScope,
+            c6State,
             SettingsService,
             EditorService,
             sponsorMiniReel,
@@ -12,6 +13,7 @@ define(['app'], function(appModule) {
             module(appModule.name);
 
             inject(function($injector) {
+                $rootScope = $injector.get('$rootScope');
                 c6State = $injector.get('c6State');
                 SettingsService = $injector.get('SettingsService');
                 EditorService = $injector.get('EditorService');
@@ -51,7 +53,10 @@ define(['app'], function(appModule) {
                 }, {
                     localSync: false
                 });
-                EditorService.open(sponsorMiniReel.cModel).data.links = {
+                $rootScope.$apply(function() {
+                    EditorService.open(sponsorMiniReel.cModel);
+                });
+                EditorService.state.minireel.data.links = {
                     'Action': 'action.html',
                     'Website': 'website.html',
                     'My Custom Thang': 'blegh.html',

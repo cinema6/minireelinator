@@ -1722,60 +1722,68 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
 
             this.convertCardForEditor = function(card) {
-                return makeCard(card);
+                return $q.when(makeCard(card));
             };
 
             this.convertForEditor = function(minireel, target) {
-                var model = target || {};
-
-                // Make sure the target is empty
-                forEach(target, function(value, key) {
-                    delete target[key];
-                });
-
-                model.data = {
-                    title: minireel.data.title,
-                    mode: minireel.data.mode,
-                    branding: minireel.data.branding,
-                    autoplay: minireel.data.autoplay,
-                    autoadvance: minireel.data.autoadvance,
-                    election: minireel.data.election,
-                    adConfig: minireel.data.adConfig,
-                    sponsored: minireel.data.sponsored || false,
-                    links: minireel.data.links || {},
-                    params: minireel.data.params || {},
-                    placementId: minireel.data.placementId,
-                    campaign: minireel.data.campaign || {},
-                    collateral: minireel.data.collateral ||
-                        { splash: null },
-                    splash: minireel.data.splash ||
-                        { ratio: '3-2', source: 'generated', theme: 'img-text-overlay' },
-                    deck: minireel.data.deck.
+                function convertDeck(minireel) {
+                    return $q.all(minireel.data.deck.
                         filter(function(card) {
                             return card.type !== 'ad';
                         })
-                        .map(this.convertCardForEditor),
-                    ads: minireel.data.deck
-                        .reduce(function(ads, card, index) {
-                            if (card.ad) {
-                                ads[index] = card;
-                            }
+                        .map(self.convertCardForEditor));
+                }
 
-                            return ads;
-                        }, {})
-                };
+                function convertMinireel(deck) {
+                    var model = target || {};
 
-                // Loop through the experience and copy everything but
-                // the "data" object.
-                forEach(minireel, function(value, key) {
-                    if (key !== 'data' && !isFunction(value)) {
-                        model[key] = value;
-                    }
-                });
+                    // Make sure the target is empty
+                    forEach(target, function(value, key) {
+                        delete target[key];
+                    });
 
-                if (!model.categories) { model.categories = []; }
+                    model.data = {
+                        title: minireel.data.title,
+                        mode: minireel.data.mode,
+                        branding: minireel.data.branding,
+                        autoplay: minireel.data.autoplay,
+                        autoadvance: minireel.data.autoadvance,
+                        election: minireel.data.election,
+                        adConfig: minireel.data.adConfig,
+                        sponsored: minireel.data.sponsored || false,
+                        links: minireel.data.links || {},
+                        params: minireel.data.params || {},
+                        placementId: minireel.data.placementId,
+                        campaign: minireel.data.campaign || {},
+                        collateral: minireel.data.collateral ||
+                            { splash: null },
+                        splash: minireel.data.splash ||
+                            { ratio: '3-2', source: 'generated', theme: 'img-text-overlay' },
+                        deck: deck,
+                        ads: minireel.data.deck
+                            .reduce(function(ads, card, index) {
+                                if (card.ad) {
+                                    ads[index] = card;
+                                }
 
-                return model;
+                                return ads;
+                            }, {})
+                    };
+
+                    // Loop through the experience and copy everything but
+                    // the "data" object.
+                    forEach(minireel, function(value, key) {
+                        if (key !== 'data' && !isFunction(value)) {
+                            model[key] = value;
+                        }
+                    });
+
+                    if (!model.categories) { model.categories = []; }
+
+                    return model;
+                }
+
+                return convertDeck(minireel).then(convertMinireel);
             };
 
             this.create = function(toCopy) {
@@ -2191,39 +2199,57 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     }
                 });
 
-                return newCard;
+                return $q.when(newCard);
             };
 
             this.convertForPlayer = function(minireel, target) {
-                var deck = minireel.data.deck,
-                    convertedDeck = deck.map(function(card) {
+                function convertDeck(minireel) {
+                    return $q.all(minireel.data.deck.map(function(card) {
                         return self.convertCardForPlayer(card, minireel);
+                    }));
+                }
+
+                function convertMinireel(deck) {
+                    forEach(minireel.data.ads, function(card, _index) {
+                        var index = parseInt(_index);
+
+                        deck.splice(index, 0, card);
                     });
 
-                forEach(minireel.data.ads, function(card, _index) {
-                    var index = parseInt(_index);
+                    target = target || {};
 
-                    convertedDeck.splice(index, 0, card);
-                });
+                    forEach(minireel, function(value, key) {
+                        if (key !== 'data') {
+                            target[key] = value;
+                        } else {
+                            target[key] = {};
+                        }
+                    });
+                    forEach(minireel.data, function(value, key) {
+                        if (key === 'ads') { return; }
 
-                target = target || {};
+                        target.data[key] = value;
+                    });
 
-                forEach(minireel, function(value, key) {
-                    if (key !== 'data') {
-                        target[key] = value;
-                    } else {
-                        target[key] = {};
-                    }
-                });
-                forEach(minireel.data, function(value, key) {
-                    if (key === 'ads') { return; }
+                    target.data.deck = deck;
 
-                    target.data[key] = value;
-                });
+                    return target;
+                }
 
-                target.data.deck = convertedDeck;
+                return convertDeck(minireel).then(convertMinireel);
+            };
 
-                return target;
+            this.getSkipValue = function(skipString) {
+                switch (skipString) {
+                case 'anytime':
+                    return true;
+                case 'never':
+                    return false;
+                case 'delay':
+                    return 6;
+                default:
+                    return skipString;
+                }
             };
         }]);
 });

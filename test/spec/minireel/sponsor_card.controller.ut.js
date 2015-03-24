@@ -417,9 +417,9 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
                         spyOn(EditorService, 'open').and.callFake(function(mr) {
                             if (db.indexOf(mr) < 0) { throw new Error('Invalid MR.'); }
 
-                            return (openMr = px.reduce(function(result, px) {
+                            return $q.when((openMr = px.reduce(function(result, px) {
                                 return px.id === mr.id ? px : result;
-                            }, null));
+                            }, null)));
                         });
                         spyOn(EditorService, 'close').and.callFake(function() {
                             openMr = null;
@@ -451,7 +451,7 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
                             };
                             proxy = copy(minireel);
 
-                            EditorService.open.and.returnValue(proxy);
+                            EditorService.open.and.returnValue($q.when(proxy));
 
                             SponsorCardCtrl.placements.length = 0;
                             SponsorCardCtrl.place(minireel, 0);

@@ -56,7 +56,11 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                     localSync: false
                 });
 
-                proxy = EditorService.open(minireel);
+                $rootScope.$apply(function() {
+                    EditorService.open(minireel).then(function(_proxy_) {
+                        proxy = _proxy_;
+                    });
+                });
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {

@@ -201,50 +201,50 @@ VideoCardController           ) {
 
             _private.syncToMinireel = function(minireel, editorMinireel, proxy) {
                 copy(proxy.data, editorMinireel.data);
-                MiniReelService.convertForPlayer(editorMinireel, minireel);
-
-                return minireel;
+                return MiniReelService.convertForPlayer(editorMinireel, minireel);
             };
 
             _private.syncToProxy = function(proxy, editorMinireel, minireel) {
-                var cards,
-                    // Card props that should be copied to the proxy
-                    cardCopyProps = [
-                        'data.ballot.election',
-                        'data.survey.election'
-                    ],
-                    // MiniReel.data props that should be copied to the proxy
-                    dataCopyProps = [
-                        'election'
-                    ];
+                // Card props that should be copied to the proxy
+                var cardCopyProps = [
+                    'data.ballot.election',
+                    'data.survey.election'
+                ];
+                // MiniReel.data props that should be copied to the proxy
+                var dataCopyProps = [
+                    'election'
+                ];
 
-                MiniReelService.convertForEditor(minireel, editorMinireel);
-                cards = keyBy('id', editorMinireel.data.deck);
+                function sync(editorMinireel) {
+                    var cards = keyBy('id', editorMinireel.data.deck);
 
-                // Copy new MiniReel props to the proxy
-                forEach(editorMinireel, function(value, key) {
-                    if (proxy.hasOwnProperty(key)) { return; }
+                    // Copy new MiniReel props to the proxy
+                    forEach(editorMinireel, function(value, key) {
+                        if (proxy.hasOwnProperty(key)) { return; }
 
-                    return readOnly(editorMinireel, key, proxy);
-                });
-                // Delete deleted MiniReel props from the proxy
-                forEach(proxy, function(value, key) {
-                    if (editorMinireel.hasOwnProperty(key)) { return; }
-
-                    delete proxy[key];
-                });
-                // Copy necessary MiniReel.data props to the proxy
-                forEach(dataCopyProps, function(prop) {
-                    attemptCopy(editorMinireel.data, proxy.data, prop);
-                });
-                // Copy necessary card props to the proxy
-                forEach(proxy.data.deck, function(proxyCard) {
-                    cardCopyProps.forEach(function(prop) {
-                        attemptCopy(cards[proxyCard.id], proxyCard, prop);
+                        return readOnly(editorMinireel, key, proxy);
                     });
-                });
+                    // Delete deleted MiniReel props from the proxy
+                    forEach(proxy, function(value, key) {
+                        if (editorMinireel.hasOwnProperty(key)) { return; }
 
-                return proxy;
+                        delete proxy[key];
+                    });
+                    // Copy necessary MiniReel.data props to the proxy
+                    forEach(dataCopyProps, function(prop) {
+                        attemptCopy(editorMinireel.data, proxy.data, prop);
+                    });
+                    // Copy necessary card props to the proxy
+                    forEach(proxy.data.deck, function(proxyCard) {
+                        cardCopyProps.forEach(function(prop) {
+                            attemptCopy(cards[proxyCard.id], proxyCard, prop);
+                        });
+                    });
+
+                    return proxy;
+                }
+
+                return MiniReelService.convertForEditor(minireel, editorMinireel).then(sync);
             };
 
             this.state = {};
@@ -277,39 +277,42 @@ VideoCardController           ) {
             });
 
             this.open = function(minireel, campaign) {
-                var editorMinireel = MiniReelService.convertForEditor(minireel),
-                    proxy = {},
-                    data = copy(editorMinireel.data);
+                function createProxy(editorMinireel) {
+                    var proxy = {};
+                    var data = copy(editorMinireel.data);
 
-                forEach(editorMinireel, function(value, key) {
-                    if (key === 'data') {
-                        Object.defineProperty(proxy, key, {
-                            enumerable: true,
-                            get: function() {
-                                return data;
-                            }
-                        });
-                        return;
-                    }
+                    forEach(editorMinireel, function(value, key) {
+                        if (key === 'data') {
+                            Object.defineProperty(proxy, key, {
+                                enumerable: true,
+                                get: function() {
+                                    return data;
+                                }
+                            });
+                            return;
+                        }
 
-                    return readOnly(editorMinireel, key, proxy);
-                });
+                        return readOnly(editorMinireel, key, proxy);
+                    });
 
-                SettingsService
-                    .createBinding(proxy.data.splash, 'ratio',
-                        'MR::user.minireelDefaults.splash.ratio')
-                    .createBinding(proxy.data.splash, 'theme',
-                        'MR::user.minireelDefaults.splash.theme');
-                proxy.data.splash.ratio = minireel.data.splash.ratio;
-                proxy.data.splash.theme = minireel.data.splash.theme;
+                    SettingsService
+                        .createBinding(proxy.data.splash, 'ratio',
+                            'MR::user.minireelDefaults.splash.ratio')
+                        .createBinding(proxy.data.splash, 'theme',
+                            'MR::user.minireelDefaults.splash.theme');
+                    proxy.data.splash.ratio = minireel.data.splash.ratio;
+                    proxy.data.splash.theme = minireel.data.splash.theme;
+
+                    _private.editorMinireel = editorMinireel;
+                    _private.proxy = proxy;
+
+                    return proxy;
+                }
 
                 _private.minireel = minireel;
-                _private.editorMinireel = editorMinireel;
-                _private.proxy = proxy;
-
                 _private.campaign = campaign || null;
 
-                return proxy;
+                return MiniReelService.convertForEditor(minireel).then(createProxy);
             };
 
             this.close = function() {
@@ -353,8 +356,9 @@ VideoCardController           ) {
                 }
 
                 return performPresync()
-                    .then(function enablePreview() {
-                        return MiniReelService.enablePreview(syncToMinireel());
+                    .then(syncToMinireel)
+                    .then(function enablePreview(minireel) {
+                        return MiniReelService.enablePreview(minireel);
                     })
                     .then(syncToProxy);
             }, this);
@@ -365,8 +369,9 @@ VideoCardController           ) {
                 }
 
                 return performPresync()
-                    .then(function enablePreview() {
-                        return MiniReelService.disablePreview(syncToMinireel());
+                    .then(syncToMinireel)
+                    .then(function enablePreview(minireel) {
+                        return MiniReelService.disablePreview(minireel);
                     })
                     .then(syncToProxy);
             }, this);
@@ -379,8 +384,9 @@ VideoCardController           ) {
                 }
 
                 return performPresync()
-                    .then(function publish() {
-                        return MiniReelService.publish(syncToMinireel());
+                    .then(syncToMinireel)
+                    .then(function publish(minireel) {
+                        return MiniReelService.publish(minireel);
                     })
                     .then(syncToProxy);
             }, this);
@@ -393,8 +399,9 @@ VideoCardController           ) {
                 }
 
                 return performPresync()
-                    .then(function unpublish() {
-                        return MiniReelService.unpublish(syncToMinireel());
+                    .then(syncToMinireel)
+                    .then(function unpublish(minireel) {
+                        return MiniReelService.unpublish(minireel);
                     })
                     .then(syncToProxy);
             }, this);
@@ -1588,17 +1595,33 @@ VideoCardController           ) {
         }])
 
         .controller('PreviewController',['$scope','MiniReelService','postMessage','c6BrowserInfo',
-        function                        ( $scope , MiniReelService , postMessage , c6BrowserInfo ) {
+                                         '$q',
+        function                        ( $scope , MiniReelService , postMessage , c6BrowserInfo ,
+                                          $q ) {
             var self = this,
                 profile,
                 card,
                 toClean = [],
-                experience = {
+                latestExperience = {
                     data: {
                         mode: 'full',
                         autoplay: false
                     }
-                };
+                },
+                experiencePromise = $q.when(latestExperience);
+
+            function getExperience() {
+                return experiencePromise;
+            }
+
+            function setExperience(promise) {
+                promise.then(function(experience) {
+                    latestExperience = experience;
+                });
+
+                experiencePromise = promise;
+                return promise;
+            }
 
             this.active = false;
             // set a default device mode
@@ -1607,7 +1630,7 @@ VideoCardController           ) {
             Object.defineProperty(this, 'playerSrc', {
                 get: function() {
                     var mode = this.device !== 'phone' ?
-                        experience.data.mode : 'mobile';
+                        latestExperience.data.mode : 'mobile';
 
                     return ('/apps/rumble' + (c6Defines.kLocal ?
                         ('/app/index.html?kCollateralUrl=' +
@@ -1615,7 +1638,7 @@ VideoCardController           ) {
                             '&kDebug=true&kDevMode=true') :
                         ('/' + mode + '.html' +
                     '?kCollateralUrl=' + encodeURIComponent('/collateral'))) +
-                    '&autoplay=' + encodeURIComponent(experience.data.autoplay) +
+                    '&autoplay=' + encodeURIComponent(latestExperience.data.autoplay) +
                     '&kDevice=' + encodeURIComponent(this.device) +
                     '&kMode=' + encodeURIComponent(mode) +
                     '&kEnvUrlRoot=');
@@ -1639,24 +1662,27 @@ VideoCardController           ) {
                 /* jshint boss:false */
 
                 // convert the MRinator experience to a MRplayer experience
-                experience = MiniReelService.convertForPlayer(exp);
+                setExperience(MiniReelService.convertForPlayer(exp)).then(function(experience) {
 
-                // add the converted experience to the session for comparing later
-                session.experience = copy(experience);
+                    // add the converted experience to the session for comparing later
+                    session.experience = copy(experience);
+                });
 
                 // add the listener for 'handshake' request
                 // we aren't using once() cuz the MR player
                 // will be calling for this every time we change modes
                 session.on('handshake', function(data, respond) {
-                    respond({
-                        success: true,
-                        appData: {
-                            // this will send the most updated experience
-                            // whenever the MR player is (re)loaded
-                            experience: experience,
-                            profile: profile,
-                            version: 1
-                        }
+                    getExperience().then(function(experience) {
+                        respond({
+                            success: true,
+                            appData: {
+                                // this will send the most updated experience
+                                // whenever the MR player is (re)loaded
+                                experience: experience,
+                                profile: profile,
+                                version: 1
+                            }
+                        });
                     });
                 });
 
@@ -1671,7 +1697,6 @@ VideoCardController           ) {
                     })
                     .on('fullscreenMode', function(bool) {
                         self.fullscreen = bool;
-                        $scope.$digest();
                     })
                     .on('open', function() {
                         self.active = true;
@@ -1696,24 +1721,28 @@ VideoCardController           ) {
                         // it may have a newCard to go to
 
                         // we convert the experience
-                        experience = MiniReelService.convertForPlayer(exp);
+                        setExperience(MiniReelService.convertForPlayer(exp))
+                        .then(function(experience) {
+                            // if it's been changed or we're previewing a specific card
+                            // then we ping the player
+                            // and send the updated experience
+                            // the MRplayer is listening in the RumbleCtrl
+                            // and will update the deck
+                            if(!equals(experience, session.experience)) {
+                                session.ping('mrPreview:updateExperience', experience);
+                            }
 
-                        // if it's been changed or we're previewing a specific card
-                        // then we ping the player
-                        // and send the updated experience
-                        // the MRplayer is listening in the RumbleCtrl
-                        // and will update the deck
-                        if(!equals(experience, session.experience)) {
-                            session.ping('mrPreview:updateExperience', experience);
-                        }
-
-                        if(newCard) {
-                            card = MiniReelService.convertCardForPlayer(newCard, experience);
-                            session.ping('mrPreview:jumpToCard', card);
-                        } else {
-                            card = null;
-                            session.ping('mrPreview:reset');
-                        }
+                            if(newCard) {
+                                MiniReelService.convertCardForPlayer(newCard, experience)
+                                    .then(function(playerCard) {
+                                        card = playerCard;
+                                        session.ping('mrPreview:jumpToCard', card);
+                                    });
+                            } else {
+                                card = null;
+                                session.ping('mrPreview:reset');
+                            }
+                        });
                     })
                 );
 
@@ -1722,7 +1751,7 @@ VideoCardController           ) {
                     // when the mode (full, light, etc) changes.
                     // we need to convert and save the updated
                     // experience, this will trigger a refresh automatically
-                    experience = MiniReelService.convertForPlayer(exp);
+                    setExperience(MiniReelService.convertForPlayer(exp));
                 }));
 
                 toClean.push($scope.$on('mrPreview:reset', function() {

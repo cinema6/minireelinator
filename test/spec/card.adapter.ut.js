@@ -15,6 +15,7 @@ define(['app'], function(appModule) {
     describe('CardAdapter', function() {
         var CardAdapter,
             adapter,
+            $rootScope,
             $httpBackend,
             $q,
             c6State,
@@ -32,6 +33,7 @@ define(['app'], function(appModule) {
 
             inject(function($injector) {
                 CardAdapter = $injector.get('CardAdapter');
+                $rootScope = $injector.get('$rootScope');
                 $httpBackend = $injector.get('$httpBackend');
                 $q = $injector.get('$q');
                 c6State = $injector.get('c6State');
@@ -56,6 +58,7 @@ define(['app'], function(appModule) {
 
         describe('findAll(type)', function() {
             var cards;
+            var editorCards;
 
             beforeEach(function() {
                 cards = [
@@ -69,6 +72,11 @@ define(['app'], function(appModule) {
                         id: 'rc-f2588964d79d29'
                     }
                 ];
+                $rootScope.$apply(function() {
+                    $q.all(cards.map(MiniReelService.convertCardForEditor)).then(function(_editorCards_) {
+                        editorCards = _editorCards_;
+                    });
+                });
 
                 $httpBackend.expectGET('/api/content/cards')
                     .respond(200, cards);
@@ -79,12 +87,12 @@ define(['app'], function(appModule) {
             });
 
             it('should resolve to the cards in the editor format', function() {
-                expect(success).toHaveBeenCalledWith(cards.map(MiniReelService.convertCardForEditor));
+                expect(success).toHaveBeenCalledWith(editorCards);
             });
         });
 
         describe('find(type, id)', function() {
-            var id, card;
+            var id, card, editorCard;
 
             beforeEach(function() {
                 id = 'rc-cf4d6380ccc14e';
@@ -93,6 +101,11 @@ define(['app'], function(appModule) {
                     id: id,
                     data: {}
                 };
+                $rootScope.$apply(function() {
+                    MiniReelService.convertCardForEditor(card).then(function(_editorCard_) {
+                        editorCard = _editorCard_;
+                    });
+                });
 
                 $httpBackend.expectGET('/api/content/card/' + id)
                     .respond(200, card);
@@ -103,12 +116,12 @@ define(['app'], function(appModule) {
             });
 
             it('should respond with the card wrapped in an array', function() {
-                expect(success).toHaveBeenCalledWith([MiniReelService.convertCardForEditor(card)]);
+                expect(success).toHaveBeenCalledWith([editorCard]);
             });
         });
 
         describe('findQuery(type, query)', function() {
-            var cards;
+            var cards, editorCards;
 
             beforeEach(function() {
                 cards = [
@@ -119,6 +132,11 @@ define(['app'], function(appModule) {
                         id: 'rc-f42a924b9b5276'
                     }
                 ];
+                $rootScope.$apply(function() {
+                    $q.all(cards.map(MiniReelService.convertCardForEditor)).then(function(_editorCards_) {
+                        editorCards = _editorCards_;
+                    });
+                });
 
                 $httpBackend.expectGET('/api/content/cards?org=o-8aeaa7d66bdb4c&sort=created,-1')
                     .respond(200, cards);
@@ -132,7 +150,7 @@ define(['app'], function(appModule) {
             });
 
             it('should resolve to the cards', function() {
-                expect(success).toHaveBeenCalledWith(cards.map(MiniReelService.convertCardForEditor));
+                expect(success).toHaveBeenCalledWith(editorCards);
             });
 
             describe('if there is a 404', function() {
@@ -180,6 +198,7 @@ define(['app'], function(appModule) {
 
         describe('create(type, data)', function() {
             var card, ballot, response;
+            var playerCard, editorCard;
 
             beforeEach(function() {
                 card = {
@@ -205,9 +224,20 @@ define(['app'], function(appModule) {
                     return $q.when(extend(data, ballot));
                 });
 
-                response = extend(MiniReelService.convertCardForPlayer(card), ballot, { id: 'rc-8a868fb3d0d9b8', campaignId: 'cam-ebed4b6bdff117' });
+                $rootScope.$apply(function() {
+                    MiniReelService.convertCardForPlayer(card).then(function(_playerCard_) {
+                        playerCard = _playerCard_;
+                    });
+                });
 
-                $httpBackend.expectPOST('/api/content/card', extend(MiniReelService.convertCardForPlayer(card), ballot, { campaignId: card.campaignId }))
+                response = extend(playerCard, ballot, { id: 'rc-8a868fb3d0d9b8', campaignId: 'cam-ebed4b6bdff117' });
+                $rootScope.$apply(function() {
+                    MiniReelService.convertCardForEditor(response).then(function(_editorCard_) {
+                        editorCard = _editorCard_;
+                    });
+                });
+
+                $httpBackend.expectPOST('/api/content/card', extend(playerCard, ballot, { campaignId: card.campaignId }))
                     .respond(201, response);
 
                 adapter.create('card', card).then(success, failure);
@@ -216,7 +246,7 @@ define(['app'], function(appModule) {
             });
 
             it('should respond with the response in an array', function() {
-                expect(success).toHaveBeenCalledWith([extend(MiniReelService.convertCardForEditor(response), { campaignId: card.campaignId })]);
+                expect(success).toHaveBeenCalledWith([extend(editorCard, { campaignId: card.campaignId })]);
             });
         });
 
@@ -246,7 +276,7 @@ define(['app'], function(appModule) {
         });
 
         describe('update(type, model)', function() {
-            var id, card, electionCard, response;
+            var id, card, electionCard, playerCard, editorCard, response;
 
             beforeEach(function() {
                 id = 'rc-8780863cdbbff5';
@@ -261,8 +291,13 @@ define(['app'], function(appModule) {
                         autoadvance: true
                     }
                 };
+                $rootScope.$apply(function() {
+                    MiniReelService.convertCardForPlayer(card).then(function(_playerCard_) {
+                        playerCard = _playerCard_;
+                    });
+                });
 
-                electionCard = extend(MiniReelService.convertCardForPlayer(card), {
+                electionCard = extend(playerCard, {
                     ballot: {
                         prompt: 'Will it update?',
                         choices: ['Yes', 'No']
@@ -272,6 +307,11 @@ define(['app'], function(appModule) {
                 spyOn(VoteService, 'syncCard').and.returnValue($q.when(electionCard));
 
                 response = extend(electionCard, { lastUpdated: (new Date()).toISOString() });
+                $rootScope.$apply(function() {
+                    MiniReelService.convertCardForEditor(response).then(function(_editorCard_) {
+                        editorCard = _editorCard_;
+                    });
+                });
 
                 $httpBackend.expectPUT('/api/content/card/' + id, electionCard)
                     .respond(200, response);
@@ -281,8 +321,12 @@ define(['app'], function(appModule) {
                 $httpBackend.flush();
             });
 
+            it('should sync with the vote service', function() {
+                expect(VoteService.syncCard).toHaveBeenCalledWith(playerCard);
+            });
+
             it('should respond with the result in an array', function() {
-                expect(success).toHaveBeenCalledWith([MiniReelService.convertCardForEditor(response)]);
+                expect(success).toHaveBeenCalledWith([editorCard]);
             });
         });
     });
