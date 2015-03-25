@@ -265,7 +265,11 @@
 
                     describe('if the card has not ballot', function() {
                         beforeEach(function() {
-                            playerCard = MiniReelService.convertCardForPlayer(editorCard);
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertCardForPlayer(editorCard).then(function(_playerCard_) {
+                                    playerCard = _playerCard_;
+                                });
+                            });
 
                             $rootScope.$apply(function() {
                                 VoteService.syncCard(playerCard).then(success, failure);
@@ -289,8 +293,12 @@
                         describe('if the user has not populated the ballot', function() {
                             beforeEach(function() {
                                 $rootScope.$apply(function() {
-                                    playerCard = MiniReelService.convertCardForPlayer(editorCard);
+                                    MiniReelService.convertCardForPlayer(editorCard).then(function(_playerCard_) {
+                                        playerCard = _playerCard_;
+                                    });
+                                });
 
+                                $rootScope.$apply(function() {
                                     VoteService.syncCard(playerCard).then(success, failure);
                                 });
                             });
@@ -312,7 +320,11 @@
 
                             describe('if the election has not be initialized', function() {
                                 beforeEach(function() {
-                                    playerCard = MiniReelService.convertCardForPlayer(editorCard);
+                                    $rootScope.$apply(function() {
+                                        MiniReelService.convertCardForPlayer(editorCard).then(function(_playerCard_) {
+                                            playerCard = _playerCard_;
+                                        });
+                                    });
 
                                     $rootScope.$apply(function() {
                                         VoteService.syncCard(playerCard).then(success, failure);
@@ -357,7 +369,11 @@
                                 beforeEach(function() {
                                     editorCard.data.survey.election = 'el-f7e0bfc9e4d065';
 
-                                    playerCard = MiniReelService.convertCardForPlayer(editorCard);
+                                    $rootScope.$apply(function() {
+                                        MiniReelService.convertCardForPlayer(editorCard).then(function(_playerCard_) {
+                                            playerCard = _playerCard_;
+                                        });
+                                    });
 
                                     election = cinema6.db.push('election', editorCard.data.survey.election, (function() {
                                         var data = { ballot: {} };

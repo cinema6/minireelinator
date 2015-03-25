@@ -320,7 +320,7 @@ define(['app','minireel/mixins/VideoCardController'], function(appModule, VideoC
                         });
 
                         it('should be the numerical delayed skip value', function() {
-                            expect(SponsorCardVideoCtrl.skipTime).toBe(MiniReelService.convertCardForPlayer(card).data.skip);
+                            expect(SponsorCardVideoCtrl.skipTime).toBe(MiniReelService.getSkipValue(card.data.skip));
                         });
                     });
 

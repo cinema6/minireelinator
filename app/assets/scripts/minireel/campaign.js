@@ -902,7 +902,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 },
                 skipTime: {
                     get: function() {
-                        return MiniReelService.convertCardForPlayer(this.model).data.skip;
+                        return MiniReelService.getSkipValue(this.model.data.skip);
                     },
                     set: function(value) {
                         this.model.data.skip = value;

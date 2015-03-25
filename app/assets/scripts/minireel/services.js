@@ -1259,9 +1259,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
         }])
 
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
-                                     'SettingsService','VideoService',
+                                     'SettingsService','VideoService','VideoThumbnailService',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
-                                      SettingsService , VideoService ) {
+                                      SettingsService , VideoService , VideoThumbnailService ) {
             var ngCopy = angular.copy;
 
             var self = this,
@@ -1722,60 +1722,68 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
 
             this.convertCardForEditor = function(card) {
-                return makeCard(card);
+                return $q.when(makeCard(card));
             };
 
             this.convertForEditor = function(minireel, target) {
-                var model = target || {};
-
-                // Make sure the target is empty
-                forEach(target, function(value, key) {
-                    delete target[key];
-                });
-
-                model.data = {
-                    title: minireel.data.title,
-                    mode: minireel.data.mode,
-                    branding: minireel.data.branding,
-                    autoplay: minireel.data.autoplay,
-                    autoadvance: minireel.data.autoadvance,
-                    election: minireel.data.election,
-                    adConfig: minireel.data.adConfig,
-                    sponsored: minireel.data.sponsored || false,
-                    links: minireel.data.links || {},
-                    params: minireel.data.params || {},
-                    placementId: minireel.data.placementId,
-                    campaign: minireel.data.campaign || {},
-                    collateral: minireel.data.collateral ||
-                        { splash: null },
-                    splash: minireel.data.splash ||
-                        { ratio: '3-2', source: 'generated', theme: 'img-text-overlay' },
-                    deck: minireel.data.deck.
+                function convertDeck(minireel) {
+                    return $q.all(minireel.data.deck.
                         filter(function(card) {
                             return card.type !== 'ad';
                         })
-                        .map(this.convertCardForEditor),
-                    ads: minireel.data.deck
-                        .reduce(function(ads, card, index) {
-                            if (card.ad) {
-                                ads[index] = card;
-                            }
+                        .map(self.convertCardForEditor));
+                }
 
-                            return ads;
-                        }, {})
-                };
+                function convertMinireel(deck) {
+                    var model = target || {};
 
-                // Loop through the experience and copy everything but
-                // the "data" object.
-                forEach(minireel, function(value, key) {
-                    if (key !== 'data' && !isFunction(value)) {
-                        model[key] = value;
-                    }
-                });
+                    // Make sure the target is empty
+                    forEach(target, function(value, key) {
+                        delete target[key];
+                    });
 
-                if (!model.categories) { model.categories = []; }
+                    model.data = {
+                        title: minireel.data.title,
+                        mode: minireel.data.mode,
+                        branding: minireel.data.branding,
+                        autoplay: minireel.data.autoplay,
+                        autoadvance: minireel.data.autoadvance,
+                        election: minireel.data.election,
+                        adConfig: minireel.data.adConfig,
+                        sponsored: minireel.data.sponsored || false,
+                        links: minireel.data.links || {},
+                        params: minireel.data.params || {},
+                        placementId: minireel.data.placementId,
+                        campaign: minireel.data.campaign || {},
+                        collateral: minireel.data.collateral ||
+                            { splash: null },
+                        splash: minireel.data.splash ||
+                            { ratio: '3-2', source: 'generated', theme: 'img-text-overlay' },
+                        deck: deck,
+                        ads: minireel.data.deck
+                            .reduce(function(ads, card, index) {
+                                if (card.ad) {
+                                    ads[index] = card;
+                                }
 
-                return model;
+                                return ads;
+                            }, {})
+                    };
+
+                    // Loop through the experience and copy everything but
+                    // the "data" object.
+                    forEach(minireel, function(value, key) {
+                        if (key !== 'data' && !isFunction(value)) {
+                            model[key] = value;
+                        }
+                    });
+
+                    if (!model.categories) { model.categories = []; }
+
+                    return model;
+                }
+
+                return convertDeck(minireel).then(convertMinireel);
             };
 
             this.create = function(toCopy) {
@@ -1924,6 +1932,23 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     };
                 }
 
+                function hrefValue() {
+                    return function(data) {
+                        return VideoService.urlFromData(data.service, data.videoid);
+                    };
+                }
+
+                function thumbsValue() {
+                    return function(data) {
+                        var thumbs = VideoThumbnailService.getThumbsFor(data.service, data.videoid);
+
+                        return {
+                            small: thumbs.small,
+                            large: thumbs.large
+                        };
+                    };
+                }
+
                 dataTemplates = {
                     youtube: {
                         hideSource: hideSourceValue(),
@@ -1935,7 +1960,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         rel: value(0),
                         start: trimmer(),
                         end: trimmer(),
-                        videoid: copy(null)
+                        videoid: copy(null),
+                        href: hrefValue(),
+                        thumbs: thumbsValue()
                     },
                     vimeo: {
                         hideSource: hideSourceValue(),
@@ -1944,7 +1971,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         skip: skipValue(),
                         start: trimmer(),
                         end: trimmer(),
-                        videoid: copy(null)
+                        videoid: copy(null),
+                        href: hrefValue(),
+                        thumbs: thumbsValue()
                     },
                     dailymotion: {
                         hideSource: hideSourceValue(),
@@ -1955,7 +1984,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         start: trimmer(),
                         end: trimmer(),
                         related: value(0),
-                        videoid: copy(null)
+                        videoid: copy(null),
+                        href: hrefValue(),
+                        thumbs: thumbsValue()
                     },
                     rumble: {
                         hideSource: hideSourceValue(),
@@ -1969,7 +2000,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         },
                         videoid: function(data) {
                             return VideoService.embedIdFromVideoId('rumble', data.videoid);
-                        }
+                        },
+                        href: hrefValue(),
+                        thumbs: thumbsValue()
                     },
                     adUnit: {
                         hideSource: hideSourceValue(),
@@ -1982,7 +2015,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         },
                         vpaid: function(data) {
                             return (fromJson(data.videoid) || {}).vpaid;
-                        }
+                        },
+                        thumbs: value(null)
                     },
                     embedded: {
                         hideSource: hideSourceValue(),
@@ -1995,7 +2029,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         videoid: copy(null),
                         code: function(data) {
                             return VideoService.embedCodeFromData(data.service, data.videoid);
-                        }
+                        },
+                        href: hrefValue(),
+                        thumbs: thumbsValue()
                     },
                     ad: {
                         autoplay: copy(true),
@@ -2162,57 +2198,81 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     }
                 };
 
-                cardType = getCardType(card);
-                dataType = getDataType(card);
+                function createCard() {
+                    cardType = getCardType(card);
+                    dataType = getDataType(card);
 
-                forEach(cardBases[cardType], function(fn, key) {
-                    var value = fn(card, key, card);
+                    forEach(cardBases[cardType], function(fn, key) {
+                        var value = fn(card, key, card);
 
-                    if (isDefined(value)) {
-                        newCard[key] = fn(card, key, card);
-                    }
-                });
+                        if (isDefined(value)) {
+                            newCard[key] = fn(card, key, card);
+                        }
+                    });
 
-                forEach(dataTemplates[dataType], function(fn, key) {
-                    var value = fn((card.data || {}), key, card);
-                    if(isDefined(value) && value !== null) {
-                        newCard.data[key] = value;
-                    }
-                });
+                    forEach(dataTemplates[dataType], function(fn, key) {
+                        var value = fn((card.data || {}), key, card);
+                        if(isDefined(value) && value !== null) {
+                            newCard.data[key] = value;
+                        }
+                    });
 
-                return newCard;
+                    return newCard;
+                }
+
+                return VideoThumbnailService.getThumbsFor(card.data.service, card.data.videoid)
+                    .ensureFulfillment()
+                    .then(createCard);
             };
 
             this.convertForPlayer = function(minireel, target) {
-                var deck = minireel.data.deck,
-                    convertedDeck = deck.map(function(card) {
+                function convertDeck(minireel) {
+                    return $q.all(minireel.data.deck.map(function(card) {
                         return self.convertCardForPlayer(card, minireel);
+                    }));
+                }
+
+                function convertMinireel(deck) {
+                    forEach(minireel.data.ads, function(card, _index) {
+                        var index = parseInt(_index);
+
+                        deck.splice(index, 0, card);
                     });
 
-                forEach(minireel.data.ads, function(card, _index) {
-                    var index = parseInt(_index);
+                    target = target || {};
 
-                    convertedDeck.splice(index, 0, card);
-                });
+                    forEach(minireel, function(value, key) {
+                        if (key !== 'data') {
+                            target[key] = value;
+                        } else {
+                            target[key] = {};
+                        }
+                    });
+                    forEach(minireel.data, function(value, key) {
+                        if (key === 'ads') { return; }
 
-                target = target || {};
+                        target.data[key] = value;
+                    });
 
-                forEach(minireel, function(value, key) {
-                    if (key !== 'data') {
-                        target[key] = value;
-                    } else {
-                        target[key] = {};
-                    }
-                });
-                forEach(minireel.data, function(value, key) {
-                    if (key === 'ads') { return; }
+                    target.data.deck = deck;
 
-                    target.data[key] = value;
-                });
+                    return target;
+                }
 
-                target.data.deck = convertedDeck;
+                return convertDeck(minireel).then(convertMinireel);
+            };
 
-                return target;
+            this.getSkipValue = function(skipString) {
+                switch (skipString) {
+                case 'anytime':
+                    return true;
+                case 'never':
+                    return false;
+                case 'delay':
+                    return 6;
+                default:
+                    return skipString;
+                }
             };
         }]);
 });

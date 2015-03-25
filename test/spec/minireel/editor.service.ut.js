@@ -35,9 +35,13 @@
 
                         $delegate.convertForEditor = jasmine.createSpy('MiniReelService.convertForEditor()')
                             .and.callFake(function() {
-                                editorMinireel = originals.convertForEditor.apply($delegate, arguments);
+                                var promise = originals.convertForEditor.apply($delegate, arguments);
 
-                                return editorMinireel;
+                                promise.then(function(minireel) {
+                                    editorMinireel = minireel;
+                                });
+
+                                return promise;
                             });
 
                         return $delegate;
@@ -81,6 +85,14 @@
 
                     EditorService = $injector.get('EditorService');
                     _private = EditorService._private;
+                });
+
+                spyOn(VideoThumbnailService, 'getThumbsFor').and.returnValue({
+                    small: null,
+                    large: null,
+                    ensureFulfillment: function() {
+                        return $q.when(this);
+                    }
                 });
 
                 SettingsService.register('MR::user', {
@@ -214,7 +226,9 @@
                             spyOn(CollateralService, 'generateCollage').and.returnValue(generateCollageDeferred.promise);
 
                             $rootScope.$apply(function() {
-                                proxy = EditorService.open(minireel);
+                                EditorService.open(minireel).then(function(_proxy_) {
+                                    proxy = _proxy_;
+                                });
                             });
 
                             $rootScope.$apply(function() {
@@ -292,7 +306,7 @@
                                     }
                                 };
 
-                                spyOn(VideoThumbnailService, 'getThumbsFor')
+                                VideoThumbnailService.getThumbsFor
                                     .and.callFake(function(service, videoid) {
                                         return thumbs[service][videoid] || new ThumbModel();
                                     });
@@ -428,13 +442,21 @@
                         beforeEach(function() {
                             spyOn(MiniReelService, 'convertForPlayer').and.callThrough();
 
-                            proxy = EditorService.open(minireel);
-                            editorMinireel = _private.editorMinireel;
+                            $rootScope.$apply(function() {
+                                EditorService.open(minireel).then(function(_proxy_) {
+                                    proxy = _proxy_;
+                                    editorMinireel = _private.editorMinireel;
+                                });
+                            });
 
                             proxy.data.title = 'This is New!';
                             proxy.data.mode = 'lightbox-ads';
 
-                            result = _private.syncToMinireel(minireel, editorMinireel, proxy);
+                            $rootScope.$apply(function() {
+                                _private.syncToMinireel(minireel, editorMinireel, proxy).then(function(_result_) {
+                                    result = _result_;
+                                });
+                            });
                         });
 
                         it('should return the minireel', function() {
@@ -457,8 +479,12 @@
                             result;
 
                         beforeEach(function() {
-                            proxy = EditorService.open(minireel);
-                            editorMinireel = _private.editorMinireel;
+                            $rootScope.$apply(function() {
+                                EditorService.open(minireel).then(function(_proxy_) {
+                                    proxy = _proxy_;
+                                    editorMinireel = _private.editorMinireel;
+                                });
+                            });
 
                             nowISO = new Date().toISOString();
 
@@ -472,7 +498,11 @@
 
                             MiniReelService.convertForEditor.calls.reset();
 
-                            result = _private.syncToProxy(proxy, editorMinireel, minireel);
+                            $rootScope.$apply(function() {
+                                _private.syncToProxy(proxy, editorMinireel, minireel).then(function(_result_) {
+                                    result = _result_;
+                                });
+                            });
                         });
 
                         it('should return the proxy', function() {
@@ -524,8 +554,12 @@
                                 var proxy, editorMinireel;
 
                                 beforeEach(function() {
-                                    proxy = EditorService.open(minireel);
-                                    editorMinireel = _private.editorMinireel;
+                                    $rootScope.$apply(function() {
+                                        EditorService.open(minireel).then(function(_proxy_) {
+                                            proxy = _proxy_;
+                                            editorMinireel = _private.editorMinireel;
+                                        });
+                                    });
                                 });
 
                                 it('should be true if the editorMinireel and proxy are not the same', function() {
@@ -610,13 +644,17 @@
 
                 describe('methods', function() {
                     describe('open(minireel)', function() {
+                        var success;
                         var proxy;
 
                         beforeEach(function() {
+                            success = jasmine.createSpy('success()');
                             spyOn(SettingsService, 'createBinding').and.callThrough();
+
                             $rootScope.$apply(function() {
-                                proxy = EditorService.open(minireel);
+                                EditorService.open(minireel).then(success);
                             });
+                            proxy = success.calls.mostRecent().args[0];
                         });
 
                         it('should save a reference to the minireel', function() {
@@ -700,7 +738,9 @@
                                 spyOn(_private, 'performPresync').and.returnValue($q.when());
 
                                 $rootScope.$apply(function() {
-                                    proxy = EditorService.open(minireel);
+                                    EditorService.open(minireel).then(function(_proxy_) {
+                                        proxy = _proxy_;
+                                    });
                                 });
 
                                 $rootScope.$apply(function() {
@@ -786,7 +826,9 @@
                                 spyOn(_private, 'performPresync').and.returnValue($q.when());
 
                                 $rootScope.$apply(function() {
-                                    proxy = EditorService.open(minireel);
+                                    EditorService.open(minireel).then(function(_proxy_) {
+                                        proxy = _proxy_;
+                                    });
                                 });
 
                                 $rootScope.$apply(function() {
@@ -870,7 +912,9 @@
                                 spyOn(_private, 'performPresync').and.returnValue($q.when());
 
                                 $rootScope.$apply(function() {
-                                    proxy = EditorService.open(minireel);
+                                    EditorService.open(minireel).then(function(_proxy_) {
+                                        proxy = _proxy_;
+                                    });
                                 });
 
                                 $rootScope.$apply(function() {
@@ -958,7 +1002,9 @@
                                 spyOn(_private, 'syncToProxy').and.callThrough();
 
                                 $rootScope.$apply(function() {
-                                    proxy = EditorService.open(minireel);
+                                    EditorService.open(minireel).then(function(_proxy_) {
+                                        proxy = _proxy_;
+                                    });
                                 });
 
                                 $rootScope.$apply(function() {
@@ -1085,7 +1131,11 @@
 
                         beforeEach(function() {
                             success = jasmine.createSpy('success');
-                            proxy = EditorService.open(minireel);
+                            $rootScope.$apply(function() {
+                                EditorService.open(minireel).then(function(_proxy_) {
+                                    proxy = _proxy_;
+                                });
+                            });
                         });
 
                         it('should call all of the functions at the start of a sync', function() {
@@ -1196,7 +1246,9 @@
                                 spyOn(_private, 'performPresync').and.returnValue($q.when());
 
                                 $rootScope.$apply(function() {
-                                    proxy = EditorService.open(minireel);
+                                    EditorService.open(minireel).then(function(_proxy_) {
+                                        proxy = _proxy_;
+                                    });
                                 });
 
                                 proxy.data.title = 'Here is a New Title!';
@@ -1277,7 +1329,9 @@
                                 minireel.status = 'active';
 
                                 $rootScope.$apply(function() {
-                                    proxy = EditorService.open(minireel);
+                                    EditorService.open(minireel).then(function(_proxy_) {
+                                        proxy = _proxy_;
+                                    });
                                 });
 
                                 proxy.data.title = 'Here is a New Title!';

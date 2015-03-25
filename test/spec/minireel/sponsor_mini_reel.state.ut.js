@@ -2,7 +2,8 @@ define(['app'], function(appModule) {
     'use strict';
 
     describe('MR:SponsorMiniReel', function() {
-        var c6State,
+        var $rootScope,
+            c6State,
             cinema6,
             $q,
             SettingsService,
@@ -13,6 +14,7 @@ define(['app'], function(appModule) {
             module(appModule.name);
 
             inject(function($injector) {
+                $rootScope = $injector.get('$rootScope');
                 c6State = $injector.get('c6State');
                 cinema6 = $injector.get('cinema6');
                 $q = $injector.get('$q');
@@ -50,6 +52,7 @@ define(['app'], function(appModule) {
 
         describe('afterModel(model)', function() {
             var minireel;
+            var result;
 
             beforeEach(function() {
                 minireel = {
@@ -81,16 +84,22 @@ define(['app'], function(appModule) {
 
                 spyOn(EditorService, 'open').and.callThrough();
 
-                sponsorMiniReel.afterModel(minireel);
+                result = sponsorMiniReel.afterModel(minireel);
             });
 
             it('should open the minireel', function() {
                 expect(EditorService.open).toHaveBeenCalledWith(minireel);
             });
 
+            it('should return a promise', function() {
+                expect(result.then).toEqual(jasmine.any(Function));
+            });
+
             describe('if a minireel is already open', function() {
                 beforeEach(function() {
-                    EditorService.open(minireel);
+                    $rootScope.$apply(function() {
+                        EditorService.open(minireel);
+                    });
 
                     EditorService.open.calls.reset();
                 });

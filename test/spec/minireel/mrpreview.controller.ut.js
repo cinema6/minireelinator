@@ -4,6 +4,7 @@
     define(['app','c6_defines'], function(appModule, c6Defines) {
         describe('PreviewController', function() {
             var $rootScope,
+                $q,
                 $scope,
                 $controller,
                 c6UrlMaker,
@@ -43,6 +44,7 @@
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
+                    $q = $injector.get('$q');
                     $controller = $injector.get('$controller');
                     MiniReelService = $injector.get('MiniReelService');
                     postMessage = $injector.get('postMessage');
@@ -140,8 +142,10 @@
                                 c6Defines.kLocal = false;
                                 c6Defines.kCollateralUrl = '/collateral';
 
-                                spyOn(MiniReelService, 'convertForPlayer').and.returnValue(experience);
-                                $scope.$emit('mrPreview:initExperience', experience, session);
+                                spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(experience));
+                                $scope.$apply(function() {
+                                    $scope.$emit('mrPreview:initExperience', experience, session);
+                                });
                             });
 
                             it('should load in the correct page based on the mode', function() {
@@ -149,11 +153,15 @@
                                 expect(PreviewController.playerSrc).toBe('/apps/rumble/full.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=full&kEnvUrlRoot=');
 
                                 experience.data.mode = 'lightbox';
-                                $scope.$emit('mrPreview:updateExperience', experience);
+                                $scope.$apply(function() {
+                                    $scope.$emit('mrPreview:updateExperience', experience);
+                                });
                                 expect(PreviewController.playerSrc).toBe('/apps/rumble/lightbox.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=lightbox&kEnvUrlRoot=');
 
                                 PreviewController.device = 'phone';
-                                $scope.$emit('mrPreview:updateExperience', experience);
+                                $scope.$apply(function() {
+                                    $scope.$emit('mrPreview:updateExperience', experience);
+                                });
                                 expect(PreviewController.playerSrc).toBe('/apps/rumble/mobile.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=phone&kMode=mobile&kEnvUrlRoot=');
                             });
                         });
@@ -180,8 +188,10 @@
                         });
 
                         it('should pass the current mode and device', function() {
-                            spyOn(MiniReelService, 'convertForPlayer').and.returnValue(experience);
-                            $scope.$emit('mrPreview:initExperience', experience, session);
+                            spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(experience));
+                            $scope.$apply(function() {
+                                $scope.$emit('mrPreview:initExperience', experience, session);
+                            });
 
                             expect(PreviewController.playerSrc).toBe('/apps/rumble/light.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=light&kEnvUrlRoot=');
 
@@ -189,7 +199,9 @@
                             $scope.$apply(function() {
                                 PreviewController.device = 'phone';
                             });
-                            $scope.$emit('mrPreview:updateExperience', experience);
+                            $scope.$apply(function() {
+                                $scope.$emit('mrPreview:updateExperience', experience);
+                            });
 
                             expect(PreviewController.playerSrc).toBe('/apps/rumble/mobile.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=phone&kMode=mobile&kEnvUrlRoot=');
                         });
@@ -216,8 +228,10 @@
                         });
 
                         it('should pass the current mode and device', function() {
-                            spyOn(MiniReelService, 'convertForPlayer').and.returnValue(experience);
-                            $scope.$emit('mrPreview:initExperience', experience, session);
+                            spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(experience));
+                            $scope.$apply(function() {
+                                $scope.$emit('mrPreview:initExperience', experience, session);
+                            });
 
                             expect(PreviewController.playerSrc).toBe('/apps/rumble/light.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=light&kEnvUrlRoot=');
 
@@ -225,7 +239,9 @@
                             $scope.$apply(function() {
                                 PreviewController.device = 'phone';
                             });
-                            $scope.$emit('mrPreview:updateExperience', experience);
+                            $scope.$apply(function() {
+                                $scope.$emit('mrPreview:updateExperience', experience);
+                            });
 
                             expect(PreviewController.playerSrc).toBe('/apps/rumble/mobile.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=phone&kMode=mobile&kEnvUrlRoot=');
                         });
@@ -237,14 +253,20 @@
                         expect(PreviewController.fullscreen).toBe(false);
                     });
                     it('should do stuff', function() {
-                        spyOn(MiniReelService, 'convertForPlayer').and.returnValue(experience);
-                        $scope.$emit('mrPreview:initExperience', experience, session);
+                        spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(experience));
+                        $scope.$apply(function() {
+                            $scope.$emit('mrPreview:initExperience', experience, session);
+                        });
 
-                        session.emit('fullscreenMode', true);
+                        $scope.$apply(function() {
+                            session.emit('fullscreenMode', true);
+                        });
 
                         expect(PreviewController.fullscreen).toBe(true);
 
-                        session.emit('fullscreenMode', false);
+                        $scope.$apply(function() {
+                            session.emit('fullscreenMode', false);
+                        });
 
                         expect(PreviewController.fullscreen).toBe(false);
                     });
@@ -281,11 +303,15 @@
                     });
 
                     it('should emit mrPreview:closePreview if previewing a card', function() {
-                        spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue(experience.data.deck[0]);
-                        $scope.$emit('mrPreview:updateExperience', experience, {});
+                        spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue($q.when(experience.data.deck[0]));
+                        $scope.$apply(function() {
+                            $scope.$emit('mrPreview:updateExperience', experience, {});
+                        });
                         spyOn($scope, '$emit');
 
-                        session.emit('close');
+                        $scope.$apply(function() {
+                            session.emit('close');
+                        });
 
                         expect($scope.$emit).toHaveBeenCalledWith('mrPreview:closePreview');
                     });
@@ -298,9 +324,13 @@
                         $scope.$emit('mrPreview:splashClick');
                         expect(PreviewController.active).toBe(false);
 
-                        spyOn(MiniReelService, 'convertForPlayer').and.returnValue(experience);
-                        $scope.$emit('mrPreview:initExperience', experience, session);
-                        $scope.$emit('mrPreview:splashClick');
+                        spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(experience));
+                        $scope.$apply(function() {
+                            $scope.$emit('mrPreview:initExperience', experience, session);
+                        });
+                        $scope.$apply(function() {
+                            $scope.$emit('mrPreview:splashClick');
+                        });
                     });
 
                     it('should set "active" to true', function() {
@@ -312,8 +342,10 @@
                     var dataSentToPlayer;
 
                     beforeEach(function() {
-                        spyOn(MiniReelService, 'convertForPlayer').and.returnValue(experience);
-                        $scope.$emit('mrPreview:initExperience', experience, session);
+                        spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(experience));
+                        $scope.$apply(function() {
+                            $scope.$emit('mrPreview:initExperience', experience, session);
+                        });
                     });
 
                     it('should convert the experience and add it to the session', function() {
@@ -328,7 +360,9 @@
 
                     describe('handshake request', function() {
                         it('should respond with appData for the player', function() {
-                            session.emit('handshake', {}, responseCallback);
+                            $scope.$apply(function() {
+                                session.emit('handshake', {}, responseCallback);
+                            });
 
                             dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
 
@@ -362,16 +396,20 @@
                             id: 'new'
                         };
 
-                        spyOn(MiniReelService, 'convertForPlayer').and.returnValue(experience);
-                        spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue(newCard);
+                        spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(experience));
+                        spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue($q.when(newCard));
 
-                        $scope.$emit('mrPreview:initExperience', experience, session);
+                        $scope.$apply(function() {
+                            $scope.$emit('mrPreview:initExperience', experience, session);
+                        });
                     });
 
                     it('should convert the experience', function() {
                         experience.data.deck.push(newCard);
 
-                        $scope.$emit('mrPreview:updateExperience', experience);
+                        $scope.$apply(function() {
+                            $scope.$emit('mrPreview:updateExperience', experience);
+                        });
                         expect(MiniReelService.convertForPlayer).toHaveBeenCalled();
                     });
 
@@ -380,28 +418,34 @@
                             experience.data.deck.push(newCard);
                             experience.data.autoplay = true;
 
-                            $scope.$emit('mrPreview:updateExperience', experience, newCard);
+                            $scope.$apply(function() {
+                                $scope.$emit('mrPreview:updateExperience', experience, newCard);
+                            });
 
                             expect(experience).not.toEqual(session.experience);
                             expect(PreviewController.playerSrc).toContain('autoplay=true');
-                            expect(session.ping.calls.argsFor(0)[0]).toBe('mrPreview:updateExperience');
+                            expect(session.ping).toHaveBeenCalledWith('mrPreview:updateExperience', jasmine.any(Object));
                         });
                     });
 
                     describe('when there\'s a card to jump to', function() {
                         it('should convert the card and tell the player to jump to the card', function() {
-                            $scope.$emit('mrPreview:updateExperience', experience, newCard);
+                            $scope.$apply(function() {
+                                $scope.$emit('mrPreview:updateExperience', experience, newCard);
+                            });
 
                             expect(MiniReelService.convertCardForPlayer).toHaveBeenCalled();
-                            expect(session.ping.calls.argsFor(0)[0]).toBe('mrPreview:jumpToCard');
+                            expect(session.ping).toHaveBeenCalledWith('mrPreview:jumpToCard', newCard);
                         });
                     });
 
                     describe('when there\'s no card to jump to', function() {
                         it('should tell the player to reset', function() {
-                            $scope.$emit('mrPreview:updateExperience', experience);
+                            $scope.$apply(function() {
+                                $scope.$emit('mrPreview:updateExperience', experience);
+                            });
 
-                            expect(session.ping.calls.argsFor(0)[0]).toBe('mrPreview:reset');
+                            expect(session.ping).toHaveBeenCalledWith('mrPreview:reset');
                         });
                     });
                 });
@@ -409,25 +453,37 @@
                 describe('mrPreview:reset', function() {
                     beforeEach(function() {
                         PreviewController.active = true;
-                        spyOn(MiniReelService, 'convertForPlayer').and.returnValue(experience);
-                        $scope.$emit('mrPreview:initExperience', experience, session);
+                        spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(experience));
+                        $scope.$apply(function() {
+                            $scope.$emit('mrPreview:initExperience', experience, session);
+                        });
                     });
                     it('should tell the player to reset', function() {
-                        $scope.$emit('mrPreview:reset');
-                        expect(session.ping.calls.argsFor(0)[0]).toBe('mrPreview:reset');
+                        $scope.$apply(function() {
+                            $scope.$emit('mrPreview:reset');
+                        });
+                        expect(session.ping).toHaveBeenCalledWith('mrPreview:reset');
                     });
 
                     it('should set active to false', function() {
-                        $scope.$emit('mrPreview:reset');
+                        $scope.$apply(function() {
+                            $scope.$emit('mrPreview:reset');
+                        });
                         expect(PreviewController.active).toBe(false);
                     });
 
                     describe('if a card has been previewed then reset it', function() {
                         it('should reset it so no card is returned', function() {
-                            spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue({id: '1'});
-                            $scope.$emit('mrPreview:updateExperience', experience, {id: '1'});
-                            $scope.$emit('mrPreview:reset');
-                            session.emit('mrPreview:getCard', {}, responseCallback);
+                            spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue($q.when({id: '1'}));
+                            $scope.$apply(function() {
+                                $scope.$emit('mrPreview:updateExperience', experience, {id: '1'});
+                            });
+                            $scope.$apply(function() {
+                                $scope.$emit('mrPreview:reset');
+                            });
+                            $scope.$apply(function() {
+                                session.emit('mrPreview:getCard', {}, responseCallback);
+                            });
 
                             var dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
 
@@ -466,19 +522,25 @@
                         spyOn(MiniReelService, 'convertForPlayer').and.callFake(function() {
                             if((emitCount === 0) && $scope.$emit.calls.argsFor(0)[0] === 'mrPreview:initExperience') {
                                 emitCount++;
-                                return experience;
+                                return $q.when(experience);
                             } else if($scope.$emit.calls.argsFor(1)[0] === 'mrPreview:updateMode') {
-                                return updatedExperience;
+                                return $q.when(updatedExperience);
                             }
                         });
-                        $scope.$emit('mrPreview:initExperience', experience, session);
+                        $scope.$apply(function() {
+                            $scope.$emit('mrPreview:initExperience', experience, session);
+                        });
                         expect(PreviewController.playerSrc).toContain('kMode=light');
-                        
-                        $scope.$emit('mrPreview:updateMode', updatedExperience);
+
+                        $scope.$apply(function() {
+                            $scope.$emit('mrPreview:updateMode', updatedExperience);
+                        });
                         expect(PreviewController.playerSrc).toContain('kMode=lightbox');
                         expect(PreviewController.playerSrc).toContain('autoplay=true');
 
-                        session.emit('handshake', {}, responseCallback);
+                        $scope.$apply(function() {
+                            session.emit('handshake', {}, responseCallback);
+                        });
 
                         dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
 
@@ -499,7 +561,9 @@
                     beforeEach(function() {
                         set(undefined);
 
-                        $scope.$emit('mrPreview:initExperience', experience, session);
+                        $scope.$apply(function() {
+                            $scope.$emit('mrPreview:initExperience', experience, session);
+                        });
                         spyOn($scope, '$broadcast').and.callThrough();
                     });
 
@@ -565,14 +629,18 @@
                             spyOn(MiniReelService, 'convertForPlayer').and.callFake(function() {
                                 if((emitCount === 0) && $scope.$emit.calls.argsFor(0)[0] === 'mrPreview:initExperience') {
                                     emitCount++;
-                                    return experience;
+                                    return $q.when(experience);
                                 } else if($scope.$emit.calls.argsFor(1)[0] === 'mrPreview:updateExperience') {
-                                    return updatedExperience;
+                                    return $q.when(updatedExperience);
                                 }
                             });
 
-                            $scope.$emit('mrPreview:initExperience', experience, session);
-                            $scope.$emit('mrPreview:updateExperience', updatedExperience);
+                            $scope.$apply(function() {
+                                $scope.$emit('mrPreview:initExperience', experience, session);
+                            });
+                            $scope.$apply(function() {
+                                $scope.$emit('mrPreview:updateExperience', updatedExperience);
+                            });
 
                             PreviewController.active = true;
 
@@ -598,14 +666,18 @@
                         });
 
                         it('should send an updated profile to the player after it reloads', function() {
-                            session.emit('handshake', {}, responseCallback);
+                            $scope.$apply(function() {
+                                session.emit('handshake', {}, responseCallback);
+                            });
 
                             dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
 
                             expect(dataSentToPlayer.appData.profile.device).toBe('phone');
                         });
                         it('should send an updated experience to the player after it reloads', function() {
-                            session.emit('handshake', {}, responseCallback);
+                            $scope.$apply(function() {
+                                session.emit('handshake', {}, responseCallback);
+                            });
 
                             dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
 
@@ -615,7 +687,9 @@
 
                         describe('if set to phone', function() {
                             beforeEach(function() {
-                                session.emit('handshake', {}, responseCallback);
+                                $scope.$apply(function() {
+                                    session.emit('handshake', {}, responseCallback);
+                                });
                                 dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
                             });
 
@@ -630,7 +704,9 @@
                                 $scope.$apply(function() {
                                     PreviewController.device = 'foo';
                                 });
-                                session.emit('handshake', {}, responseCallback);
+                                $scope.$apply(function() {
+                                    session.emit('handshake', {}, responseCallback);
+                                });
                                 dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
                             });
 

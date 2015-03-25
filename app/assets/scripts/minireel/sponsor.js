@@ -82,7 +82,7 @@ function( angular , c6State  , editor   , MiniReelListController          ,
                         EditorService.state.minireel.id === model.id;
 
                     if (!alreadyOpen) {
-                        EditorService.open(model);
+                        return EditorService.open(model);
                     }
                 };
             }]);
@@ -308,7 +308,10 @@ function( angular , c6State  , editor   , MiniReelListController          ,
 
                     return cinema6.db.find('experience', minireelId)
                         .then(function(minireel) {
-                            return getCard(EditorService.open(minireel));
+                            return EditorService.open(minireel);
+                        })
+                        .then(function(minireel) {
+                            return getCard(minireel);
                         });
                 };
             }]);
@@ -424,11 +427,13 @@ function( angular , c6State  , editor   , MiniReelListController          ,
 
                         placements.forEach(function(placement) {
                             promise = promise.then(function() {
-                                var proxy = EditorService.open(placement.minireel);
-
-                                proxy.data.deck.splice(placement.index, 0, card);
-
-                                return EditorService.sync()
+                                return EditorService.open(placement.minireel)
+                                    .then(function(proxy) {
+                                        proxy.data.deck.splice(placement.index, 0, card);
+                                    })
+                                    .then(function() {
+                                        return EditorService.sync();
+                                    })
                                     .then(function close() {
                                         return EditorService.close();
                                     });
@@ -573,7 +578,7 @@ function( angular , c6State  , editor   , MiniReelListController          ,
                 },
                 skipTime: {
                     get: function() {
-                        return MiniReelService.convertCardForPlayer(this.model).data.skip;
+                        return MiniReelService.getSkipValue(this.model.data.skip);
                     },
                     set: function(value) {
                         this.model.data.skip = value;
@@ -733,7 +738,11 @@ function( angular , c6State  , editor   , MiniReelListController          ,
                 this.controllerAs = 'PlacementMiniReelCtrl';
 
                 this.afterModel = function(model) {
-                    this.cModel = EditorService.open(model);
+                    var state = this;
+
+                    return EditorService.open(model).then(function(minireel) {
+                        state.cModel = minireel;
+                    });
                 };
             }]);
         }])

@@ -97,7 +97,15 @@ define(['app','minireel/services'], function(appModule, servicesModule) {
                         }
                     };
                     minireel.data.deck = minireel.data.deck.map(function(card) {
-                        return MiniReelService.convertCardForPlayer(card, minireel);
+                        var result;
+
+                        $rootScope.$apply(function() {
+                            MiniReelService.convertCardForPlayer(card).then(function(_result_) {
+                                result = _result_;
+                            });
+                        });
+
+                        return result;
                     });
                     card = minireel.data.deck[1];
 
@@ -142,7 +150,9 @@ define(['app','minireel/services'], function(appModule, servicesModule) {
 
                 describe('if there is a MiniReel open', function() {
                     beforeEach(function() {
-                        EditorService.open(minireel);
+                        $rootScope.$apply(function() {
+                            EditorService.open(minireel);
+                        });
                         card = EditorService.state.minireel.data.deck[1];
 
                         success.calls.reset();

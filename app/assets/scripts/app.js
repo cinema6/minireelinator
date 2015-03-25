@@ -361,7 +361,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 }
 
                 function convertCardsForEditor(cards) {
-                    return cards.map(MiniReelService.convertCardForEditor);
+                    return $q.all(cards.map(MiniReelService.convertCardForEditor));
                 }
 
                 this.findAll = function() {
@@ -387,13 +387,18 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
 
                 this.create = function(type, data) {
-                    return VoteService.syncCard(extend(convertCardForPlayer(data), {
-                        campaignId: data.campaignId
-                    })).then(function(data) {
+                    return convertCardForPlayer(data).then(function(playerData) {
+                        return VoteService.syncCard(extend(playerData, {
+                            campaignId: data.campaignId
+                        }));
+                    }).then(function(data) {
                         return $http.post(url('card'), data).then(pick('data'));
                     })
                     .then(function(data) {
-                        return extend(convertCardForEditor(data), { campaignId: data.campaignId });
+                        return convertCardForEditor(data);
+                    })
+                    .then(function(editorData) {
+                        return extend(editorData, { campaignId: data.campaignId });
                     })
                     .then(putInArray);
                 };
@@ -404,12 +409,13 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
 
                 this.update = function(type, card) {
-                    return VoteService.syncCard(convertCardForPlayer(card))
-                        .then(function(card) {
-                            return $http.put(url('card/' + card.id), card).then(pick('data'));
-                        })
-                        .then(convertCardForEditor)
-                        .then(putInArray);
+                    return convertCardForPlayer(card).then(function(playerCard) {
+                        return VoteService.syncCard(playerCard);
+                    }).then(function(card) {
+                        return $http.put(url('card/' + card.id), card).then(pick('data'));
+                    })
+                    .then(convertCardForEditor)
+                    .then(putInArray);
                 };
             }]);
 

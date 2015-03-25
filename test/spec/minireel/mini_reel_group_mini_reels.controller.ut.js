@@ -120,11 +120,18 @@ define(['app', 'minireel/mixins/MiniReelSearchController'], function(appModule, 
                         minireel = cinema6.db.create('experience', {
                             data: {
                                 deck: ['text', 'video', 'wildcard', 'video'].map(function(type) {
+                                    var playerCard;
                                     var card = MiniReelService.createCard(type);
                                     card.data.service = 'youtube';
                                     card.data.videoid = 'abc';
 
-                                    return MiniReelService.convertCardForPlayer(card);
+                                    $scope.$apply(function() {
+                                        MiniReelService.convertCardForPlayer(card).then(function(_playerCard_) {
+                                            playerCard = _playerCard_;
+                                        });
+                                    });
+
+                                    return playerCard;
                                 })
                             }
                         });
@@ -140,11 +147,18 @@ define(['app', 'minireel/mixins/MiniReelSearchController'], function(appModule, 
                         minireel = cinema6.db.create('experience', {
                             data: {
                                 deck: ['text', 'video', 'video', 'video'].map(function(type) {
+                                    var playerCard;
                                     var card = MiniReelService.createCard(type);
                                     card.data.service = 'youtube';
                                     card.data.videoid = 'abc';
 
-                                    return MiniReelService.convertCardForPlayer(card);
+                                    $scope.$apply(function() {
+                                        MiniReelService.convertCardForPlayer(card).then(function(_playerCard_) {
+                                            playerCard = _playerCard_;
+                                        });
+                                    });
+
+                                    return playerCard;
                                 })
                             }
                         });

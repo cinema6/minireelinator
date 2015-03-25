@@ -189,7 +189,12 @@
                                     start: 10,
                                     end: 40,
                                     rel: 0,
-                                    modestbranding: 0
+                                    modestbranding: 0,
+                                    href: 'https://www.youtube.com/watch?v=47tfg8734',
+                                    thumbs: {
+                                        small: 'images.youtube.com/video/47tfg8734/small.jpg',
+                                        large: 'images.youtube.com/video/47tfg8734/large.jpg'
+                                    }
                                 }
                             },
                             {
@@ -219,7 +224,12 @@
                                 },
                                 data: {
                                     skip: 25,
-                                    videoid: '48hfrei49'
+                                    videoid: '48hfrei49',
+                                    href: 'http://vimeo.com/48hfrei49',
+                                    thumbs: {
+                                        small: 'images.vimeo.com/video/48hfrei49/small.jpg',
+                                        large: 'images.vimeo.com/video/48hfrei49/large.jpg'
+                                    }
                                 }
                             },
                             {
@@ -263,7 +273,12 @@
                                     controls: true,
                                     skip: false,
                                     videoid: 'vfu85f5',
-                                    related: 0
+                                    related: 0,
+                                    href: 'http://www.dailymotion.com/video/vfu85f5',
+                                    thumbs: {
+                                        small: 'images.dailymotion.com/video/vfu85f5/small.jpg',
+                                        large: 'images.dailymotion.com/video/vfu85f5/large.jpg'
+                                    }
                                 }
                             },
                             {
@@ -314,7 +329,12 @@
                                     start: 0,
                                     end: 40,
                                     rel: 0,
-                                    modestbranding: 0
+                                    modestbranding: 0,
+                                    href: 'https://www.youtube.com/watch?v=fn4378r4d',
+                                    thumbs: {
+                                        small: 'images.youtube.com/video/fn4378r4d/small.jpg',
+                                        large: 'images.youtube.com/video/fn4378r4d/large.jpg'
+                                    }
                                 }
                             },
                             {
@@ -493,7 +513,12 @@
                                     data: {
                                         skip: true,
                                         service: 'yahoo',
-                                        videoid: 'teen-tries-drain-pond-lost-221030513'
+                                        videoid: 'teen-tries-drain-pond-lost-221030513',
+                                        href: 'https://screen.yahoo.com/teen-tries-drain-pond-lost-221030513.html',
+                                        thumbs: {
+                                            small: 'images.yahoo.com/video/teen-tries-drain-pond-lost-221030513/small.jpg',
+                                            large: 'images.yahoo.com/video/teen-tries-drain-pond-lost-221030513/large.jpg'
+                                        }
                                     }
                                 };
 
@@ -524,6 +549,11 @@
                                         skip: true,
                                         service: 'aol',
                                         videoid: 'arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876',
+                                        href: 'http://on.aol.com/video/arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876',
+                                        thumbs: {
+                                            small: 'images.aol.com/video/arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876/small.jpg',
+                                            large: 'images.aol.com/video/arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876/large.jpg'
+                                        }
                                     }
                                 };
 
@@ -552,7 +582,12 @@
                                     modules: [],
                                     data: {
                                         skip: true,
-                                        siteid: 'v2z8ro-willie-perfoming-at-school-talent-show'
+                                        siteid: 'v2z8ro-willie-perfoming-at-school-talent-show',
+                                        href: 'https://rumble.com/v2z8ro-willie-perfoming-at-school-talent-show.html',
+                                        thumbs: {
+                                            small: 'images.rumble.com/video/v2z8ro-willie-perfoming-at-school-talent-show/small.jpg',
+                                            large: 'images.rumble.com/video/v2z8ro-willie-perfoming-at-school-talent-show/large.jpg'
+                                        }
                                     }
                                 };
 
@@ -1188,10 +1223,16 @@
                     });
 
                     describe('convertCardForEditor(card)', function() {
-                        var editorMR;
+                        var spy,
+                            editorMR;
 
                         beforeEach(function() {
-                            editorMR = MiniReelService.convertForEditor(minireel);
+                            spy = jasmine.createSpy('spy()');
+
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertForEditor(minireel).then(spy);
+                            });
+                            editorMR = spy.calls.mostRecent().args[0];
                         });
 
                         it('should convert cards for the editor individually', function() {
@@ -1199,20 +1240,29 @@
                                 return card.type !== 'ad';
                             }).forEach(function(card, index) {
                                 var editorCard = editorMR.data.deck[index];
+                                var spy = jasmine.createSpy('spy()');
+                                var result;
+                                $rootScope.$apply(function() {
+                                    MiniReelService.convertCardForEditor(card).then(spy);
+                                });
+                                result = spy.calls.mostRecent().args[0];
 
-                                expect(MiniReelService.convertCardForEditor(card)).toEqual(editorCard);
+                                expect(result).toEqual(editorCard);
                             });
                         });
                     });
 
                     describe('convertForEditor(minireel)', function() {
-                        var result,
+                        var spy,
+                            result,
                             deck;
 
                         beforeEach(function() {
+                            spy = jasmine.createSpy('spy()');
                             $rootScope.$apply(function() {
-                                result = MiniReelService.convertForEditor(minireel);
+                                MiniReelService.convertForEditor(minireel).then(spy);
                             });
+                            result = spy.calls.mostRecent().args[0];
 
                             deck = result.data.deck;
                         });
@@ -1223,8 +1273,9 @@
                                 delete minireel.data.splash;
 
                                 $rootScope.$apply(function() {
-                                    result = MiniReelService.convertForEditor(minireel);
+                                    MiniReelService.convertForEditor(minireel).then(spy);
                                 });
+                                result = spy.calls.mostRecent().args[0];
                             });
 
                             it('should create default ones', function() {
@@ -1244,8 +1295,9 @@
                                 delete minireel.categories;
 
                                 $rootScope.$apply(function() {
-                                    result = MiniReelService.convertForEditor(minireel);
+                                    MiniReelService.convertForEditor(minireel).then(spy);
                                 });
+                                result = spy.calls.mostRecent().args[0];
                             });
 
                             it('should create a default one', function() {
@@ -1255,10 +1307,13 @@
 
                         it('should support copying onto a provided object', function() {
                             var object = {
-                                    invalidProp: 'blah',
-                                    foo: 'bar'
-                                },
-                                copied = MiniReelService.convertForEditor(minireel, object);
+                                invalidProp: 'blah',
+                                foo: 'bar'
+                            };
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertForEditor(minireel, object).then(spy);
+                            });
+                            var copied = spy.calls.mostRecent().args[0];
 
                             expect(copied).toBe(object);
                             expect(copied).toEqual(result);
@@ -1884,14 +1939,52 @@
                     });
 
                     describe('convertForPlayer(minireel)', function() {
+                        var convertedSpy;
+                        var resultSpy;
+                        var thumbCache;
+
+                        function MockThumb(small, large) {
+                            var thumb = this;
+
+                            this.small = null;
+                            this.large = null;
+
+                            this.ensureFulfillment = function() {
+                                thumb.small = small;
+                                thumb.large = large;
+                                return $q.when(this);
+                            };
+                        }
+
+                        beforeEach(function() {
+                            convertedSpy = jasmine.createSpy('convertedSpy()');
+                            resultSpy = jasmine.createSpy('resultSpy()');
+
+                            thumbCache = {};
+
+                            spyOn(VideoThumbnailService, 'getThumbsFor').and.callFake(function(service, videoid) {
+                                var id = service + ':' + videoid;
+
+                                return thumbCache[id] || (thumbCache[id] = new MockThumb(
+                                    'images.' + service + '.com/video/' + videoid + '/small.jpg',
+                                    'images.' + service + '.com/video/' + videoid + '/large.jpg'
+                                ));
+                            });
+                        });
+
                         it('should convert back to the player format', function() {
                             var converted,
                                 result;
 
                             $rootScope.$apply(function() {
-                                converted = MiniReelService.convertForEditor(minireel);
+                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
                             });
-                            result = MiniReelService.convertForPlayer(converted);
+                            converted = convertedSpy.calls.mostRecent().args[0];
+
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertForPlayer(converted).then(resultSpy);
+                            });
+                            result = resultSpy.calls.mostRecent().args[0];
 
                             expect(Object.keys(result.data).length).toBe(Object.keys(minireel.data).length);
 
@@ -1914,10 +2007,14 @@
                             minireel.data.adConfig.display.enabled = true;
 
                             $rootScope.$apply(function() {
-                                converted = MiniReelService.convertForEditor(minireel);
+                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
                             });
+                            converted = convertedSpy.calls.mostRecent().args[0];
 
-                            result = MiniReelService.convertForPlayer(converted);
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertForPlayer(converted).then(resultSpy);
+                            });
+                            result = resultSpy.calls.mostRecent().args[0];
 
                             result.data.deck.forEach(function(card) {
                                 if (!(/adUnit|text|links|displayAd|wildcard/).test(card.type)) {
@@ -1930,10 +2027,14 @@
                             minireel.data.adConfig.display.enabled = false;
 
                             $rootScope.$apply(function() {
-                                converted = MiniReelService.convertForEditor(minireel);
+                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
                             });
+                            converted = convertedSpy.calls.mostRecent().args[0];
 
-                            result = MiniReelService.convertForPlayer(converted);
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertForPlayer(converted).then(resultSpy);
+                            });
+                            result = resultSpy.calls.mostRecent().args[0];
 
                             result.data.deck.forEach(function(card) {
                                 if ((!card.placementId && !(/ad|links/).test(card.type)) ||
@@ -1953,10 +2054,14 @@
                             };
 
                             $rootScope.$apply(function() {
-                                converted = MiniReelService.convertForEditor(minireel);
+                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
                             });
+                            converted = convertedSpy.calls.mostRecent().args[0];
 
-                            result = MiniReelService.convertForPlayer(converted);
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertForPlayer(converted).then(resultSpy);
+                            });
+                            result = resultSpy.calls.mostRecent().args[0];
 
                             result.data.deck.forEach(function(card) {
                                 if (!(/adUnit|text|links|displayAd|wildcard/).test(card.type)) {
@@ -1973,10 +2078,14 @@
                             };
 
                             $rootScope.$apply(function() {
-                                converted = MiniReelService.convertForEditor(minireel);
+                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
                             });
+                            converted = convertedSpy.calls.mostRecent().args[0];
 
-                            result = MiniReelService.convertForPlayer(converted);
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertForPlayer(converted).then(resultSpy);
+                            });
+                            result = resultSpy.calls.mostRecent().args[0];
 
                             result.data.deck.forEach(function(card) {
                                 if ((!card.placementId && !(/ad|links/).test(card.type)) ||
@@ -2023,20 +2132,28 @@
                             ];
 
                             $rootScope.$apply(function() {
-                                converted = MiniReelService.convertForEditor(minireel);
+                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
                             });
+                            converted = convertedSpy.calls.mostRecent().args[0];
 
-                            result = MiniReelService.convertForPlayer(converted);
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertForPlayer(converted).then(resultSpy);
+                            });
+                            result = resultSpy.calls.mostRecent().args[0];
 
                             expect(result.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
 
                             minireel.data.deck[0].placementId = 12345;
 
                             $rootScope.$apply(function() {
-                                converted = MiniReelService.convertForEditor(minireel);
+                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
                             });
+                            converted = convertedSpy.calls.mostRecent().args[0];
 
-                            result = MiniReelService.convertForPlayer(converted);
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertForPlayer(converted).then(resultSpy);
+                            });
+                            result = resultSpy.calls.mostRecent().args[0];
 
                             expect(result.data.deck[0].modules.indexOf('displayAd')).toBe(0);
                         });
@@ -2070,30 +2187,42 @@
                             ];
 
                             $rootScope.$apply(function() {
-                                converted = MiniReelService.convertForEditor(minireel);
+                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
                             });
+                            converted = convertedSpy.calls.mostRecent().args[0];
 
-                            result = MiniReelService.convertForPlayer(converted);
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertForPlayer(converted).then(resultSpy);
+                            });
+                            result = resultSpy.calls.mostRecent().args[0];
 
                             expect(result.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
 
                             minireel.data.deck[0].placementId = 12345;
 
                             $rootScope.$apply(function() {
-                                converted = MiniReelService.convertForEditor(minireel);
+                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
                             });
+                            converted = convertedSpy.calls.mostRecent().args[0];
 
-                            result = MiniReelService.convertForPlayer(converted);
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertForPlayer(converted).then(resultSpy);
+                            });
+                            result = resultSpy.calls.mostRecent().args[0];
 
                             expect(result.data.deck[0].modules.indexOf('displayAd')).toBe(0);
 
                             minireel.data.adConfig.display.enabled = false;
 
                             $rootScope.$apply(function() {
-                                converted = MiniReelService.convertForEditor(minireel);
+                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
                             });
+                            converted = convertedSpy.calls.mostRecent().args[0];
 
-                            result = MiniReelService.convertForPlayer(converted);
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertForPlayer(converted).then(resultSpy);
+                            });
+                            result = resultSpy.calls.mostRecent().args[0];
 
                             expect(result.data.deck[0].modules.indexOf('displayAd')).toBe(0);
                         });
@@ -2103,11 +2232,15 @@
                                 result;
 
                             $rootScope.$apply(function() {
-                                converted = MiniReelService.convertForEditor(minireel);
+                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
                             });
+                            converted = convertedSpy.calls.mostRecent().args[0];
                             converted.data.deck[1].title = 'New Title';
 
-                            result = MiniReelService.convertForPlayer(converted, minireel);
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertForPlayer(converted, minireel).then(resultSpy);
+                            });
+                            result = resultSpy.calls.mostRecent().args[0];
 
                             expect(result).toBe(minireel);
                             expect(result.data).not.toBe(converted.data);
@@ -2118,8 +2251,9 @@
                             var converted;
 
                             $rootScope.$apply(function() {
-                                converted = MiniReelService.convertForEditor(minireel);
+                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
                             });
+                            converted = convertedSpy.calls.mostRecent().args[0];
 
                             converted.data.deck[10].data.videoid = null;
 
@@ -2129,26 +2263,42 @@
                         });
 
                         it('should give a sponosred card the "ad" param', function() {
-                            var converted,
+                            var converted, result,
                                 card = MiniReelService.createCard('video');
 
                             card.sponsored = true;
 
                             $rootScope.$apply(function() {
-                                converted = MiniReelService.convertForEditor(minireel);
+                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
                             });
+                            converted = convertedSpy.calls.mostRecent().args[0];
 
                             converted.data.deck = [card];
 
-                            expect(MiniReelService.convertForPlayer(converted).data.deck[0].params.ad).toBe(true);
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertForPlayer(converted).then(resultSpy);
+                            });
+                            result = resultSpy.calls.mostRecent().args[0];
+
+                            expect(result.data.deck[0].params.ad).toBe(true);
                         });
 
                         it('should give the video in a single-video minireel the "post" module', function() {
-                            var converted = MiniReelService.convertForEditor(minireel);
+                            var result;
+
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
+                            });
+                            var converted = convertedSpy.calls.mostRecent().args[0];
 
                             converted.data.deck = [MiniReelService.createCard('video')];
 
-                            expect(MiniReelService.convertForPlayer(converted).data.deck[0].modules).toContain('post');
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertForPlayer(converted).then(resultSpy);
+                            });
+                            result = resultSpy.calls.mostRecent().args[0];
+
+                            expect(result.data.deck[0].modules).toContain('post');
                         });
                     });
 
@@ -2433,6 +2583,32 @@
 
                             minireel.data.deck.forEach(function(card) {
                                 expect(card.modules.indexOf('displayAd')).toBe(0);
+                            });
+                        });
+                    });
+
+                    describe('getSkipValue(skipString)', function() {
+                        describe('if passed "anytime"', function() {
+                            it('should return true', function() {
+                                expect(MiniReelService.getSkipValue('anytime')).toBe(true);
+                            });
+                        });
+
+                        describe('if passed "never"', function() {
+                            it('should return false', function() {
+                                expect(MiniReelService.getSkipValue('never')).toBe(false);
+                            });
+                        });
+
+                        describe('if passed "delay"', function() {
+                            it('should return 6', function() {
+                                expect(MiniReelService.getSkipValue('delay')).toBe(6);
+                            });
+                        });
+
+                        describe('if passed something else', function() {
+                            it('should return the value', function() {
+                                expect(MiniReelService.getSkipValue(10)).toBe(10);
                             });
                         });
                     });
