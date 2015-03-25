@@ -1,6 +1,9 @@
 # MiniReelinator
 
 ## v1.10.0 (March 25, 2015)
+* *[v1.10.0.rc2]*
+  * Enable controls on YouTube and DailyMotion video in search panel
+
 * *[v1.10.0.rc1]*
   * Made necessary changes for MiniReel Player 2.0 to work properly
   * Add MOAT checkbox to Wildcard Video settings editor
