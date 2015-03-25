@@ -725,6 +725,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         .controller('WildcardController', ['$injector','$scope','c6State','cState',
         function                          ( $injector , $scope , c6State , cState ) {
             var WildcardCtrl = this,
+                CampaignCtrl = $scope.CampaignCtrl,
                 CampaignCardsCtrl = $scope.CampaignCardsCtrl;
 
             var now = new Date().getTime();
@@ -768,15 +769,32 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         return (endDate === null) ||
                             (endDate && endDate instanceof Date && endDate > now);
                     }
+                },
+                validReportingId: {
+                    get: function() {
+                        var moat = this.enableMoat,
+                            hasId = !!this.campaignData.reportingId;
+
+                        return !moat || (moat && hasId);
+                    }
                 }
             });
 
             this.initWithModel = function(card) {
                 this.model = card;
                 this.campaignData = cState.metaData;
+                this.enableMoat = !!card.data.moat;
             };
 
             this.save = function() {
+                if (this.enableMoat) {
+                    this.model.data.moat = {
+                        campaign: CampaignCtrl.model.name,
+                        advertiser: CampaignCtrl.model.advertiserName,
+                        creative: this.campaignData.reportingId
+                    };
+                }
+
                 return cState.updateCard().then(function(card) {
                     return CampaignCardsCtrl.add(card, WildcardCtrl.campaignData);
                 }).then(function(card) {
