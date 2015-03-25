@@ -194,6 +194,11 @@
                                     thumbs: {
                                         small: 'images.youtube.com/video/47tfg8734/small.jpg',
                                         large: 'images.youtube.com/video/47tfg8734/large.jpg'
+                                    },
+                                    moat: {
+                                        campaign: 'Turtle Campaign',
+                                        advertiser: 'Turtles, Inc.',
+                                        creative: 'turtle_power'
                                     }
                                 }
                             },
@@ -488,7 +493,12 @@
                                     skip: true,
                                     controls: true,
                                     vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
-                                    vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
+                                    vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
+                                    moat: {
+                                        campaign: 'Turtle Campaign',
+                                        advertiser: 'Turtles, Inc.',
+                                        creative: 'turtle_power'
+                                    }
                                 }
                             },
                             (function() {
@@ -703,7 +713,8 @@
                                     service: null,
                                     videoid: null,
                                     start: null,
-                                    end: null
+                                    end: null,
+                                    moat: null
                                 }
                             });
 
@@ -763,7 +774,8 @@
                                     ballot: {
                                         prompt: null,
                                         choices: []
-                                    }
+                                    },
+                                    moat: null
                                 }
                             });
 
@@ -1407,7 +1419,12 @@
                                     service: 'youtube',
                                     videoid: '47tfg8734',
                                     start: 10,
-                                    end: 40
+                                    end: 40,
+                                    moat: {
+                                        campaign: 'Turtle Campaign',
+                                        advertiser: 'Turtles, Inc.',
+                                        creative: 'turtle_power'
+                                    }
                                 }
                             });
 
@@ -1447,7 +1464,8 @@
                                             'Really Ugly',
                                             'Not That Ugly'
                                         ]
-                                    }
+                                    },
+                                    moat: null
                                 }
                             });
 
@@ -1487,7 +1505,8 @@
                                             'Really Smart',
                                             'Pretty Stupid'
                                         ]
-                                    }
+                                    },
+                                    moat: null
                                 }
                             });
 
@@ -1539,7 +1558,8 @@
                                     service: 'youtube',
                                     videoid: 'fn4378r4d',
                                     start: 0,
-                                    end: 40
+                                    end: 40,
+                                    moat: null
                                 }
                             });
 
@@ -1575,7 +1595,12 @@
                                         vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
                                     }),
                                     start: null,
-                                    end: null
+                                    end: null,
+                                    moat: {
+                                        campaign: 'Turtle Campaign',
+                                        advertiser: 'Turtles, Inc.',
+                                        creative: 'turtle_power'
+                                    }
                                 }
                             });
 
@@ -1608,7 +1633,8 @@
                                     service: 'yahoo',
                                     videoid: 'teen-tries-drain-pond-lost-221030513',
                                     start: null,
-                                    end: null
+                                    end: null,
+                                    moat: null
                                 }
                             });
 
@@ -1641,7 +1667,8 @@
                                     service: 'aol',
                                     videoid: 'arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876',
                                     start: null,
-                                    end: null
+                                    end: null,
+                                    moat: null
                                 }
                             });
 
@@ -1674,7 +1701,8 @@
                                     service: 'rumble',
                                     videoid: 'v2z8ro-willie-perfoming-at-school-talent-show',
                                     start: null,
-                                    end: null
+                                    end: null,
+                                    moat: null
                                 }
                             });
                         });

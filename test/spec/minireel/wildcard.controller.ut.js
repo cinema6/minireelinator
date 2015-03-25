@@ -44,7 +44,8 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                         logos: {},
                         cards: [],
                         miniReels: [],
-                        advertiserName: 'Diageo'
+                        advertiserName: 'Diageo',
+                        name: 'My Campaign'
                     })));
 
                     CampaignCardsCtrl = $scope.CampaignCardsCtrl = $controller('CampaignCardsController', {
@@ -143,6 +144,32 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     expect(WildcardCtrl.validDate).toBeFalsy();
                 });
             });
+
+            describe('validReportingId', function() {
+                describe('when MOAT is not enabled', function() {
+                    it('should be true', function() {
+                        WildcardCtrl.enableMoat = false;
+                        expect(WildcardCtrl.validReportingId).toBe(true);
+                    });
+                });
+
+                describe('when MOAT is enabled', function() {
+                    describe('when reportingId is not set', function() {
+                        it('should be false', function() {
+                            WildcardCtrl.enableMoat = true;
+                            expect(WildcardCtrl.validReportingId).toBe(false);
+                        });
+                    });
+
+                    describe('when reportingId is set', function() {
+                        it('should be true', function() {
+                            WildcardCtrl.enableMoat = true;
+                            WildcardCtrl.campaignData.reportingId = 'some_id';
+                            expect(WildcardCtrl.validReportingId).toBe(true);
+                        });
+                    });
+                });
+            });
         });
 
         describe('methods', function() {
@@ -203,6 +230,35 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
 
                         it('should resolve to the card', function() {
                             expect(success).toHaveBeenCalledWith(card);
+                        });
+                    });
+                });
+
+                describe('when MOAT is enabled', function() {
+                    it('should add a MOAT object to the data property of the card', function() {
+                        spyOn(card, '_update').and.returnValue({save:function(){return $q.defer().promise;}});
+                        WildcardState.updateCard.and.callThrough();
+
+                        WildcardCtrl.enableMoat = true;
+
+                        WildcardCtrl.campaignData = {
+                            reportingId: 'some_id'
+                        };
+
+                        $scope.$apply(function() {
+                            WildcardCtrl.save();
+                        });
+
+                        expect(WildcardCtrl.model.data.moat).toEqual({
+                            campaign: CampaignCtrl.model.name,
+                            advertiser: CampaignCtrl.model.advertiserName,
+                            creative: 'some_id'
+                        });
+
+                        expect(card._update.calls.mostRecent().args[0].data.moat).toEqual({
+                            campaign: CampaignCtrl.model.name,
+                            advertiser: CampaignCtrl.model.advertiserName,
+                            creative: 'some_id'
                         });
                     });
                 });
