@@ -2,6 +2,7 @@
 
 * *[v1.10.0.rc1]*
   * Made necessary changes for MiniReel Player 2.0 to work properly
+  * Add MOAT checkbox to Wildacrd Video settings editor
 
 ## v1.9.1 (March 24, 2015)
 * *[v1.9.1.rc1]*
