@@ -73,7 +73,7 @@
                         </h1>
                     </div>
                     <div class="miniReel__status">
-                        <strong>{{$this.advertiser.name}}</strong> 
+                        <strong>{{$this.brand || $this.advertiser.name}}</strong> 
                         - <span class="miniReel__date">{{$this.created | date:'M/d/yyyy'}}</span>
                         <p class="miniReel__count">{{$this.cards.length}} Sponsored Cards <span ng-if="false">, {{$this.miniReels.length}} MiniReels</span></p>
                     </div>
