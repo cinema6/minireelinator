@@ -3,6 +3,7 @@
 ## v1.10.0 (March 25, 2015)
 * *[v1.10.0.rc2]*
   * Enable controls on YouTube and DailyMotion video in search panel
+  * [FIX]: Fix cancel button on error dialog in Campaign Manager
 
 * *[v1.10.0.rc1]*
   * Made necessary changes for MiniReel Player 2.0 to work properly
