@@ -41,7 +41,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                         },
                         miniReels: [],
                         cards: [],
-                        advertiserName: 'Diageo'
+                        brand: 'Diageo'
                     }));
 
                     CampaignMiniReelsCtrl = $scope.CampaignMiniReelsCtrl = $controller('CampaignMiniReelsController', {

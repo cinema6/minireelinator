@@ -143,7 +143,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             categories: [],
                             minViewTime: -1,
                             advertiser: null,
-                            advertiserName: null,
+                            brand: null,
                             customer: null,
                             logos: {
                                 square: null
@@ -162,8 +162,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .controller('CampaignsNewController', ['$scope','c6State','c6Computed',
         function                              ( $scope , c6State , c6Computed ) {
-            var self = this,
-                c = c6Computed($scope),
+            var c = c6Computed($scope),
                 MiniReelCtrl = $scope.MiniReelCtrl;
 
             function optionsByName(items, type) {
@@ -196,7 +195,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
                 deepExtend(this.model, {
                     links: advertiser.defaultLinks,
-                    logos: advertiser.defaultLogos
+                    logos: advertiser.defaultLogos,
+                    brand: advertiser.name
                 });
 
                 return this.model.save()
@@ -204,11 +204,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         return c6State.goTo('MR:Campaign', [campaign]);
                     });
             };
-
-            $scope.$watch('CampaignsNewCtrl.model.advertiser', function(advertiser) {
-                if (!advertiser) { return; }
-                self.model.advertiserName = advertiser.name;
-            });
         }])
 
         .config(['c6StateProvider',
@@ -284,7 +279,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             });
 
             this.initWithModel = function(campaign) {
-                campaign.advertiserName = campaign.advertiserName || campaign.advertiser.name;
+                campaign.brand = campaign.brand || campaign.advertiser.name;
                 this.model = campaign;
                 this.cleanModel = campaign.pojoify();
 
@@ -455,7 +450,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                                         logo: campaign.logos.square
                                     },
                                     params: {
-                                        sponsor: campaign.advertiserName
+                                        sponsor: campaign.brand
                                     }
                                 }
                             });
@@ -646,7 +641,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         },
                         links: campaign.links,
                         params: {
-                            sponsor: campaign.advertiserName
+                            sponsor: campaign.brand
                         },
                         campaign: {
                             minViewTime: campaign.minViewTime
@@ -784,6 +779,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             });
 
             this.initWithModel = function(card) {
+                card.params.sponsor = card.params.sponsor || CampaignCtrl.model.brand;
                 this.model = card;
                 this.campaignData = cState.metaData;
                 this.enableMoat = !!card.data.moat;
@@ -793,7 +789,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 if (this.enableMoat) {
                     this.model.data.moat = {
                         campaign: CampaignCtrl.model.name,
-                        advertiser: CampaignCtrl.model.advertiserName,
+                        advertiser: this.model.params.sponsor,
                         creative: this.campaignData.reportingId
                     };
                 }

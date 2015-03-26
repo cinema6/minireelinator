@@ -22,7 +22,7 @@ define(['app'], function(appModule) {
                 campaign = cinema6.db.create('campaign', {
                     logos: {},
                     links: {},
-                    advertiserName: 'Diageo'
+                    brand: 'Diageo'
                 });
 
                 $scope = $rootScope.$new();

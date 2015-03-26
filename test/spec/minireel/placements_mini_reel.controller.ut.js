@@ -50,7 +50,7 @@ define(['angular', 'app'], function(angular, appModule) {
                                 }))
                             }
                         ],
-                        advertiserName: 'Diageo'
+                        brand: 'Diageo'
                     }));
 
                     CampaignPlacementsCtrl = $scope.CampaignPlacementsCtrl = {
