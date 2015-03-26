@@ -12,12 +12,12 @@ define(['app'], function(appModule) {
                 inject(function($injector) {
                     c6State = $injector.get('c6State');
 
-                    creativesNewMiniReelPlayback = c6State.get(stateName);
+                    creativesMiniReelPlayback = c6State.get(stateName);
                 });
             });
 
             it('should exist', function() {
-                expect(creativesNewMiniReelPlayback).toEqual(jasmine.any(Object));
+                expect(creativesMiniReelPlayback).toEqual(jasmine.any(Object));
             });
         });
     });
