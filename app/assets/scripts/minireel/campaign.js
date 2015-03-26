@@ -563,13 +563,14 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 miniReel.data.params.sponsor = miniReel.data.params.sponsor || CampaignCtrl.model.brand;
                 this.model = miniReel;
                 this.campaignData = cState.metaData;
-                this.enableMoat = !!miniReel.data.moat;
+                // TO DO: add MOAT tracking to Sponsored MiniReels
+                // this.enableMoat = !!miniReel.data.moat;
             };
 
             Object.defineProperties(this, {
                 validDate: {
                     get: function() {
-                        var endDate = (this.campaignData && this.campaignData.endDate) || null;
+                        var endDate = (this.campaignData && this.campaignData.endDate);
 
                         return (endDate === null) ||
                             (endDate && endDate instanceof Date && endDate > now);

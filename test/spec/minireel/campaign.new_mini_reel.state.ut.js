@@ -103,5 +103,25 @@ define(['app'], function(appModule) {
                 expect(minireel.categories).not.toBe(campaign.cModel.categories);
             });
         });
+
+        describe('afterModel()', function() {
+            it('should set a MetaData property', function() {
+                creativesNewMiniReel.afterModel();
+
+                expect(creativesNewMiniReel.metaData).toEqual({
+                    endDate: null,
+                    name: null
+                });
+            });
+        });
+
+        describe('enter()', function() {
+            it('should go to MR:New:Campaign.MiniReel state', function() {
+                spyOn(c6State, 'goTo');
+                creativesNewMiniReel.enter();
+
+                expect(c6State.goTo).toHaveBeenCalledWith('MR:New:Campaign.MiniReel', null, null, true);
+            });
+        });
     });
 });
