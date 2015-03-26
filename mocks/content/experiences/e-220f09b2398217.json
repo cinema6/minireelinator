@@ -15,6 +15,7 @@
         "title": "The 15 Most Amazing GoPro Videos Ever Recorded",
         "mode": "light",
         "branding": "elitedaily",
+        "params": {},
         "splash": {
             "source": "specified",
             "ratio": "6-5",
