@@ -152,9 +152,18 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                         });
                         this.route('/minireels', 'MR:Campaign.MiniReels', function() {
                             this.route('/new', 'MR:Campaign.NewMiniReel', function() {
-                                this.state('MR:Campaign.NewMiniReel.General');
-                                this.state('MR:Campaign.NewMiniReel.Type');
-                                this.state('MR:Campaign.NewMiniReel.Playback');
+                                this.state('MR:Campaign.MiniReel', 'MR:New:Campaign.MiniReel', function() {
+                                    this.state('MR:Campaign.MiniReel.General', 'MR:New:Campaign.MiniReel.General');
+                                    this.state('MR:Campaign.MiniReel.Type', 'MR:New:Campaign.MiniReel.Type');
+                                    this.state('MR:Campaign.MiniReel.Playback', 'MR:New:Campaign.MiniReel.Playback');
+                                });
+                            });
+                            this.route('/:minireelId', 'MR:Campaign.EditMiniReel', function() {
+                                this.state('MR:Campaign.MiniReel', 'MR:Edit:Campaign.MiniReel', function() {
+                                    this.state('MR:Campaign.MiniReel.General', 'MR:Edit:Campaign.MiniReel.General');
+                                    this.state('MR:Campaign.MiniReel.Type', 'MR:Edit:Campaign.MiniReel.Type');
+                                    this.state('MR:Campaign.MiniReel.Playback', 'MR:Edit:Campaign.MiniReel.Playback');
+                                });
                             });
                             this.route(
                                 '/embed/:id',
