@@ -475,8 +475,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         function( c6StateProvider ) {
             c6StateProvider.state('MR:Campaign.EditMiniReel', ['c6State','cinema6',
             function                                          ( c6State , cinema6 ) {
-                var CampaignState = c6State.get('MR:Campaign');
-
                 this.model = function(params) {
                     return cinema6.db.find('experience', params.minireelId);
                 };
@@ -525,8 +523,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     if (this.minireel.id) {
                         return this.minireel._update(this.cModel).save();
                     } else {
-                        this.minireel._update(this.cModel);
-                        return MiniReelService.publish(this.minireel)
+                        return MiniReelService.publish(this.minireel._update(this.cModel));
                     }
                 };
             }]);
@@ -560,7 +557,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             ];
 
             this.initWithModel = function(miniReel) {
-                miniReel.data.params.sponsor = miniReel.data.params.sponsor || CampaignCtrl.model.brand;
+                miniReel.data.params.sponsor = miniReel.data.params.sponsor ||
+                    CampaignCtrl.model.brand;
                 this.model = miniReel;
                 this.campaignData = cState.metaData;
                 // TO DO: add MOAT tracking to Sponsored MiniReels
