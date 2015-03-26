@@ -779,6 +779,10 @@ VideoCardController           ) {
                         onAffirm: function() {
                             ConfirmDialogService.close();
                             return c6State.goTo('MR:Campaign.MiniReels', [campaign, null]);
+                        },
+                        onCancel: function() {
+                            ConfirmDialogService.close();
+                            return c6State.goTo('MR:Campaign.MiniReels', [campaign, null]);
                         }
                     });
 

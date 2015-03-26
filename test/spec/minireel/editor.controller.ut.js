@@ -1048,6 +1048,12 @@
                             expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.MiniReels', [EditorCtrl.campaign, null]);
                         });
 
+                        it('should go back to the campaign manager when canceled', function() {
+                            ConfirmDialogService.display.calls.mostRecent().args[0].onCancel();
+
+                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.MiniReels', [EditorCtrl.campaign, null]);
+                        });
+
                         it('should reject the promise', function() {
                             expect(failure).toHaveBeenCalledWith('Bad request');
                         });

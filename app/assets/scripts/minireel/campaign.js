@@ -258,6 +258,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     affirm: 'OK',
                     onAffirm: function() {
                         return ConfirmDialogService.close();
+                    },
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
                     }
                 });
 
