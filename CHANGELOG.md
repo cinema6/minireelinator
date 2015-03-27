@@ -1,6 +1,9 @@
 # MiniReelinator
 
 ## v1.10.0 (March 27, 2015)
+* *[v1.10.0.rc3]*
+  * Replaced "Settings" with icon on Sponsored MR screen in Camp Mgr.
+
 * *[v1.10.0.rc2]*
   * Enable controls on YouTube and DailyMotion video in search panel
   * [FIX]: Fix cancel button on error dialog in Campaign Manager
