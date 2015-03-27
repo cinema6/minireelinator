@@ -1,6 +1,6 @@
-<div class="modal__group" c6-alias="CampaignNewMiniReelCtrl.model as minireel">
+<div class="modal__group" c6-alias="CampaignMiniReelCtrl.model as minireel">
     <header class="modalHeader__group">
-        <h1 class="modal__title">New MiniReel</h1>
+        <h1 class="modal__title">{{minireel.data.title}}</h1>
         <button class="modal__closeBtn btnInvis" c6-sref="MR:Campaign.MiniReels"><span class="ir">Close</span>
             <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                  viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
@@ -12,7 +12,7 @@
 
     <nav class="modalTabs__group clearfix">
         <ul class="sideTabs__list">
-            <li ng-repeat="tab in CampaignNewMiniReelCtrl.tabs" class="sideTabs__item">
+            <li ng-repeat="tab in CampaignMiniReelCtrl.tabs" class="sideTabs__item">
                 <a c6-sref="{{tab.sref}}" class="sideTabs__tab" title="{{tab.title}}">
                     {{tab.name}}
                     <strong ng-show="tab.required">*</strong>
@@ -25,33 +25,33 @@
     <footer class="modalFooter__group">
         <button class="btnAction btnAction--first btnAction--danger"
             c6-sref="MR:Campaign.MiniReels"
-            ng-show="CampaignNewMiniReelCtrl.tabs.indexOf(CampaignNewMiniReelCtrl.currentTab) < 1"
+            ng-show="CampaignMiniReelCtrl.tabs.indexOf(CampaignMiniReelCtrl.currentTab) < 1"
             title="Cancel">
             Cancel
         </button>
         <button class="btnAction btnAction--first"
-            c6-sref="{{CampaignNewMiniReelCtrl.tabs[CampaignNewMiniReelCtrl.tabs.indexOf(CampaignNewMiniReelCtrl.currentTab) - 1].sref}}"
-            ng-show="CampaignNewMiniReelCtrl.tabs.indexOf(CampaignNewMiniReelCtrl.currentTab) > 0"
+            c6-sref="{{CampaignMiniReelCtrl.tabs[CampaignMiniReelCtrl.tabs.indexOf(CampaignMiniReelCtrl.currentTab) - 1].sref}}"
+            ng-show="CampaignMiniReelCtrl.tabs.indexOf(CampaignMiniReelCtrl.currentTab) > 0"
             title="Previous">
             Previous Step
         </button>
         <button class="btnAction btnAction--primary btnAction--last"
-            c6-sref="{{CampaignNewMiniReelCtrl.tabs[CampaignNewMiniReelCtrl.tabs.indexOf(CampaignNewMiniReelCtrl.currentTab) + 1].sref}}"
+            c6-sref="{{CampaignMiniReelCtrl.tabs[CampaignMiniReelCtrl.tabs.indexOf(CampaignMiniReelCtrl.currentTab) + 1].sref}}"
             type="button"
-            ng-disabled="!CampaignNewMiniReelCtrl.validDate"
-            ng-show="((CampaignNewMiniReelCtrl.tabs.indexOf(CampaignNewMiniReelCtrl.currentTab) + 1) || 1) < CampaignNewMiniReelCtrl.tabs.length"
+            ng-disabled="!CampaignMiniReelCtrl.validDate"
+            ng-show="((CampaignMiniReelCtrl.tabs.indexOf(CampaignMiniReelCtrl.currentTab) + 1) || 1) < CampaignMiniReelCtrl.tabs.length"
             title="Next Step">
             Next Step
         </button>
-        <button ng-click="CampaignNewMiniReelCtrl.confirm()"
+        <button ng-click="CampaignMiniReelCtrl.confirm()"
             class="btnAction btnAction--success btnAction--last"
             type="button"
-            ng-disabled="!CampaignNewMiniReelCtrl.validDate"
-            ng-show="(CampaignNewMiniReelCtrl.tabs.indexOf(CampaignNewMiniReelCtrl.currentTab) + 1) === CampaignNewMiniReelCtrl.tabs.length"
-            title="Confirm">
-            Confirm
+            ng-disabled="!CampaignMiniReelCtrl.validDate"
+            ng-show="(CampaignMiniReelCtrl.tabs.indexOf(CampaignMiniReelCtrl.currentTab) + 1) === CampaignMiniReelCtrl.tabs.length"
+            title="Save">
+            Save
         </button>
-        <p class="modalFooter__guideText">Step {{(CampaignNewMiniReelCtrl.tabs.indexOf(CampaignNewMiniReelCtrl.currentTab) + 1) || 1}} of {{CampaignNewMiniReelCtrl.tabs.length}}</p>
+        <p class="modalFooter__guideText">Step {{(CampaignMiniReelCtrl.tabs.indexOf(CampaignMiniReelCtrl.currentTab) + 1) || 1}} of {{CampaignMiniReelCtrl.tabs.length}}</p>
     </footer>
 </div>
 <div class="modal__overlay">&nbsp;</div>

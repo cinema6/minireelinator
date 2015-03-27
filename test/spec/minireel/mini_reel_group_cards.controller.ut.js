@@ -33,7 +33,7 @@ define(['app'], function(appModule) {
                             { item: cinema6.db.create('card') },
                             { item: cinema6.db.create('card') }
                         ],
-                        advertiserName: 'Diageo'
+                        brand: 'Diageo'
                     }));
                     campaignCards = CampaignCtrl.model.cards;
 

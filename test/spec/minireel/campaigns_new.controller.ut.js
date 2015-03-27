@@ -31,7 +31,7 @@ define(['app'], function(appModule) {
                     categories: [],
                     minViewTime: -1,
                     advertiser: null,
-                    advertiserName: null,
+                    brand: null,
                     customer: null,
                     logos: {
                         square: null
@@ -215,7 +215,8 @@ define(['app'], function(appModule) {
                     },
                     defaultLogos: {
                         square: 'http://i.imgur.com/YbBIFZv.png'
-                    }
+                    },
+                    name: 'Diageo'
                 });
 
                 saveDeffered = $q.defer();
@@ -233,7 +234,8 @@ define(['app'], function(appModule) {
                     links: jasmine.objectContaining(advertiser.defaultLinks),
                     logos: jasmine.objectContaining(advertiser.defaultLogos),
                     miniReels: [],
-                    cards: []
+                    cards: [],
+                    brand: advertiser.name
                 }));
             });
 
@@ -252,18 +254,6 @@ define(['app'], function(appModule) {
 
                 it('should go to the MR:Campaign state', function() {
                     expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign', [campaign]);
-                });
-            });
-        });
-
-        describe('$watch', function() {
-            describe('model.advertiser', function() {
-                it('should set the advertiser name', function() {
-                    $scope.$apply(function() {
-                        $scope.CampaignsNewCtrl.model.advertiser = {id: '123', name: 'Diageo'};
-                    });
-
-                    expect(CampaignsNewCtrl.model.advertiserName).toEqual('Diageo');
                 });
             });
         });

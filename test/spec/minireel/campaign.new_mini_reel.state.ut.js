@@ -38,7 +38,7 @@ define(['app'], function(appModule) {
                     id: 'a-b8ab2ceb807ca4',
                     name: 'Diageo'
                 },
-                advertiserName: 'Custom Name'
+                brand: 'Custom Name'
             });
         });
 
@@ -90,7 +90,7 @@ define(['app'], function(appModule) {
                         }),
                         links: jasmine.objectContaining(campaign.cModel.links),
                         params: jasmine.objectContaining({
-                            sponsor: campaign.cModel.advertiserName
+                            sponsor: campaign.cModel.brand
                         })
                     })
                 }));
@@ -101,6 +101,26 @@ define(['app'], function(appModule) {
                     deck: []
                 }));
                 expect(minireel.categories).not.toBe(campaign.cModel.categories);
+            });
+        });
+
+        describe('afterModel()', function() {
+            it('should set a MetaData property', function() {
+                creativesNewMiniReel.afterModel();
+
+                expect(creativesNewMiniReel.metaData).toEqual({
+                    endDate: null,
+                    name: null
+                });
+            });
+        });
+
+        describe('enter()', function() {
+            it('should go to MR:New:Campaign.MiniReel state', function() {
+                spyOn(c6State, 'goTo');
+                creativesNewMiniReel.enter();
+
+                expect(c6State.goTo).toHaveBeenCalledWith('MR:New:Campaign.MiniReel', null, null, true);
             });
         });
     });

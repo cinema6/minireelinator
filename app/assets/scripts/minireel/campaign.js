@@ -143,7 +143,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             categories: [],
                             minViewTime: -1,
                             advertiser: null,
-                            advertiserName: null,
+                            brand: null,
                             customer: null,
                             logos: {
                                 square: null
@@ -162,8 +162,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .controller('CampaignsNewController', ['$scope','c6State','c6Computed',
         function                              ( $scope , c6State , c6Computed ) {
-            var self = this,
-                c = c6Computed($scope),
+            var c = c6Computed($scope),
                 MiniReelCtrl = $scope.MiniReelCtrl;
 
             function optionsByName(items, type) {
@@ -196,7 +195,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
                 deepExtend(this.model, {
                     links: advertiser.defaultLinks,
-                    logos: advertiser.defaultLogos
+                    logos: advertiser.defaultLogos,
+                    brand: advertiser.name
                 });
 
                 return this.model.save()
@@ -204,11 +204,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         return c6State.goTo('MR:Campaign', [campaign]);
                     });
             };
-
-            $scope.$watch('CampaignsNewCtrl.model.advertiser', function(advertiser) {
-                if (!advertiser) { return; }
-                self.model.advertiserName = advertiser.name;
-            });
         }])
 
         .config(['c6StateProvider',
@@ -284,7 +279,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             });
 
             this.initWithModel = function(campaign) {
-                campaign.advertiserName = campaign.advertiserName || campaign.advertiser.name;
+                campaign.brand = campaign.brand || campaign.advertiser.name;
                 this.model = campaign;
                 this.cleanModel = campaign.pojoify();
 
@@ -414,8 +409,13 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 var minireels = items.map(function(item) {
                     return item.item;
                 });
+                var index = minireels.indexOf(minireel);
 
-                if (minireels.indexOf(minireel) > -1) { return minireel; }
+                if (index > -1) {
+                    // update an existing minireel with data
+                    extend(items[index], data);
+                    return minireel;
+                }
 
                 items.push(extend({
                     id: minireel.id,
@@ -437,10 +437,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             function                                         ( c6State , MiniReelService ) {
                 var CampaignState = c6State.get('MR:Campaign');
 
-                this.templateUrl = 'views/minireel/campaigns/campaign/mini_reels/new.html';
-                this.controller = 'CampaignNewMiniReelController';
-                this.controllerAs = 'CampaignNewMiniReelCtrl';
-
                 this.model = function() {
                     var campaign = CampaignState.cModel;
 
@@ -455,20 +451,89 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                                         logo: campaign.logos.square
                                     },
                                     params: {
-                                        sponsor: campaign.advertiserName
+                                        sponsor: campaign.brand
                                     }
                                 }
                             });
                         });
                 };
+
+                this.afterModel = function() {
+                    this.metaData = {
+                        endDate: null,
+                        name: null
+                    };
+                };
+
+                this.enter = function() {
+                    return c6State.goTo('MR:New:Campaign.MiniReel', null, null, true);
+                };
             }]);
         }])
 
-        .controller('CampaignNewMiniReelController', ['$injector','$scope','c6State',
-                                                       'MiniReelService',
-        function                                      ( $injector , $scope , c6State ,
-                                                        MiniReelService ) {
-            var CampaignNewMiniReelCtrl = this,
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Campaign.EditMiniReel', ['c6State','cinema6',
+            function                                          ( c6State , cinema6 ) {
+                this.model = function(params) {
+                    return cinema6.db.find('experience', params.minireelId);
+                };
+
+                this.afterModel = function(miniReel) {
+                    var campaign = c6State.get('MR:Campaign').cModel;
+                    var item = campaign.miniReels.reduce(function(result, item) {
+                        return item.id === miniReel.id ? item : result;
+                    }, null);
+
+                    this.metaData = {
+                        endDate: item.endDate,
+                        name: item.name
+                    };
+                };
+
+                this.enter = function() {
+                    return c6State.goTo('MR:Edit:Campaign.MiniReel', null, null, true);
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Campaign.MiniReel', ['c6State','MiniReelService',
+            function                                      ( c6State , MiniReelService ) {
+                this.templateUrl = 'views/minireel/campaigns/campaign/mini_reels/mini_reel.html';
+                this.controller = 'CampaignMiniReelController';
+                this.controllerAs = 'CampaignMiniReelCtrl';
+
+                this.minireel = null;
+
+                this.beforeModel = function() {
+                    this.minireel = this.cParent.cModel;
+                };
+
+                this.model = function() {
+                    return this.minireel.pojoify();
+                };
+
+                this.afterModel = function() {
+                    this.metaData = this.cParent.metaData;
+                };
+
+                this.updateMiniReel = function() {
+                    if (this.minireel.id) {
+                        return this.minireel._update(this.cModel).save();
+                    } else {
+                        return MiniReelService.publish(this.minireel._update(this.cModel));
+                    }
+                };
+            }]);
+        }])
+
+        .controller('CampaignMiniReelController', ['$injector','$scope','c6State',
+                                                   'MiniReelService','cState',
+        function                                  ( $injector , $scope , c6State ,
+                                                    MiniReelService , cState ) {
+            var CampaignMiniReelCtrl = this,
                 CampaignMiniReelsCtrl = $scope.CampaignMiniReelsCtrl,
                 CampaignCtrl = $scope.CampaignCtrl;
 
@@ -479,25 +544,31 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             this.tabs = [
                 {
                     name: 'General',
-                    sref: 'MR:Campaign.NewMiniReel.General'
+                    sref: 'MR:Campaign.MiniReel.General'
                 },
                 {
                     name: 'MiniReel Type',
-                    sref: 'MR:Campaign.NewMiniReel.Type'
+                    sref: 'MR:Campaign.MiniReel.Type'
                 },
                 {
                     name: 'Playback Settings',
-                    sref: 'MR:Campaign.NewMiniReel.Playback'
+                    sref: 'MR:Campaign.MiniReel.Playback'
                 }
             ];
 
-            this.endDate = null;
-            this.name = null;
+            this.initWithModel = function(miniReel) {
+                miniReel.data.params.sponsor = miniReel.data.params.sponsor ||
+                    CampaignCtrl.model.brand;
+                this.model = miniReel;
+                this.campaignData = cState.metaData;
+                // TO DO: add MOAT tracking to Sponsored MiniReels
+                // this.enableMoat = !!miniReel.data.moat;
+            };
 
             Object.defineProperties(this, {
                 validDate: {
                     get: function() {
-                        var endDate = this.endDate;
+                        var endDate = (this.campaignData && this.campaignData.endDate);
 
                         return (endDate === null) ||
                             (endDate && endDate instanceof Date && endDate > now);
@@ -506,17 +577,24 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             });
 
             this.confirm = function() {
-                return MiniReelService.publish(this.model)
+                return cState.updateMiniReel()
                     .then(function(minireel) {
                         return CampaignMiniReelsCtrl.add(minireel, {
-                            endDate: CampaignNewMiniReelCtrl.endDate,
-                            name: CampaignNewMiniReelCtrl.name
+                            endDate: CampaignMiniReelCtrl.campaignData.endDate,
+                            name: CampaignMiniReelCtrl.campaignData.name
                         });
                     })
                     .then(function(minireel) {
                         return CampaignCtrl.save().then(function() { return minireel; });
                     })
                     .then(function(minireel) {
+                        if (cState.cName === 'MR:Edit:Campaign.MiniReel') {
+                            return c6State.goTo('MR:Campaign.MiniReels')
+                                .then(function() {
+                                    return minireel;
+                                });
+                        }
+
                         return c6State.goTo('MR:Editor', [minireel], {
                             campaign: CampaignCtrl.model.id
                         }).then(function() {
@@ -528,12 +606,12 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Campaign.NewMiniReel.General', ['cinema6','$q',
+            c6StateProvider.state('MR:Campaign.MiniReel.General', ['cinema6','$q',
             function                                                 ( cinema6 , $q ) {
                 this.templateUrl =
-                    'views/minireel/campaigns/campaign/mini_reels/new/general.html';
+                    'views/minireel/campaigns/campaign/mini_reels/mini_reel/general.html';
                 this.controller = 'GenericController';
-                this.controllerAs = 'CampaignNewMiniReelGeneralCtrl';
+                this.controllerAs = 'CampaignMiniReelGeneralCtrl';
 
                 this.model = function() {
                     return $q.all({
@@ -545,14 +623,14 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Campaign.NewMiniReel.Type', ['c6State',
+            c6StateProvider.state('MR:Campaign.MiniReel.Type', ['c6State',
             function                                              ( c6State ) {
                 var MiniReelState = c6State.get('MiniReel');
 
                 this.templateUrl =
-                    'views/minireel/campaigns/campaign/mini_reels/new/type.html';
+                    'views/minireel/campaigns/campaign/mini_reels/mini_reel/type.html';
                 this.controller = 'GenericController';
-                this.controllerAs = 'CampaignNewMiniReelTypeCtrl';
+                this.controllerAs = 'CampaignMiniReelTypeCtrl';
 
                 this.model = function() {
                     var modes = MiniReelState.cModel.data.modes;
@@ -571,12 +649,11 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Campaign.NewMiniReel.Playback', [function() {
+            c6StateProvider.state('MR:Campaign.MiniReel.Playback', [function() {
                 this.templateUrl =
-                    'views/minireel/campaigns/campaign/mini_reels/new/playback.html';
+                    'views/minireel/campaigns/campaign/mini_reels/mini_reel/playback.html';
             }]);
         }])
-
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
@@ -646,7 +723,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         },
                         links: campaign.links,
                         params: {
-                            sponsor: campaign.advertiserName
+                            sponsor: campaign.brand
                         },
                         campaign: {
                             minViewTime: campaign.minViewTime
@@ -784,6 +861,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             });
 
             this.initWithModel = function(card) {
+                card.params.sponsor = card.params.sponsor || CampaignCtrl.model.brand;
                 this.model = card;
                 this.campaignData = cState.metaData;
                 this.enableMoat = !!card.data.moat;
@@ -793,7 +871,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 if (this.enableMoat) {
                     this.model.data.moat = {
                         campaign: CampaignCtrl.model.name,
-                        advertiser: CampaignCtrl.model.advertiserName,
+                        advertiser: this.model.params.sponsor,
                         creative: this.campaignData.reportingId
                     };
                 }

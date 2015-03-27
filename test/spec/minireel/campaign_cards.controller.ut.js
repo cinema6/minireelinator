@@ -24,7 +24,7 @@ define(['app'], function(appModule) {
                     links: {},
                     miniReels: [],
                     cards: [],
-                    advertiserName: 'Diageo'
+                    brand: 'Diageo'
                 });
 
                 $scope = $rootScope.$new();

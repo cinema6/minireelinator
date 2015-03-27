@@ -91,6 +91,11 @@
                     <div class="miniReel__quickActions">
                         <div class="quickActions__holder">
                             <a class="quickActions__btn quickActions__btn--play"
+                            c6-sref="MR:Campaign.EditMiniReel" c6-models="[minireel]"
+                            title="Edit Settings" style="margin: .7em -1em;"> <small>Settings</small></a>
+                        </div>
+                        <div class="quickActions__holder">
+                            <a class="quickActions__btn quickActions__btn--play"
                             ng-href="{{CampaignMiniReelsCtrl.previewUrlOf(minireel)}}"
                             ng-show="CampaignMiniReelsCtrl.previewUrlOf(minireel)"
                             title="Preview This MiniReel"

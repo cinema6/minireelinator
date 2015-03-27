@@ -44,7 +44,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                         logos: {},
                         cards: [],
                         miniReels: [],
-                        advertiserName: 'Diageo',
+                        brand: 'Diageo',
                         name: 'My Campaign'
                     })));
 
@@ -75,6 +75,15 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
             describe('model', function() {
                 it('should be the state\'s model', function() {
                     expect(WildcardCtrl.model).toBe(WildcardState.cModel);
+                });
+
+                it('should only use Campaign brand if not set on card', function() {
+                    expect(WildcardCtrl.model.params.sponsor).toBe(CampaignCtrl.model.brand);
+
+                    WildcardState.cModel.params.sponsor = 'Custom';
+                    WildcardCtrl.initWithModel(WildcardState.cModel);
+
+                    expect(WildcardCtrl.model.params.sponsor).toBe('Custom')
                 });
             });
 
@@ -251,13 +260,13 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
 
                         expect(WildcardCtrl.model.data.moat).toEqual({
                             campaign: CampaignCtrl.model.name,
-                            advertiser: CampaignCtrl.model.advertiserName,
+                            advertiser: CampaignCtrl.model.brand,
                             creative: 'some_id'
                         });
 
                         expect(card._update.calls.mostRecent().args[0].data.moat).toEqual({
                             campaign: CampaignCtrl.model.name,
-                            advertiser: CampaignCtrl.model.advertiserName,
+                            advertiser: CampaignCtrl.model.brand,
                             creative: 'some_id'
                         });
                     });

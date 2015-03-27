@@ -33,7 +33,7 @@ define(['app', 'minireel/mixins/MiniReelSearchController'], function(appModule, 
                     CampaignCtrl.initWithModel(campaign = cinema6.db.create('campaign', {
                         links: {},
                         miniReels: [],
-                        advertiserName: 'Diageo'
+                        brand: 'Diageo'
                     }));
 
                     MiniReelGroupMiniReelsCtrl = $scope.MiniReelGroupMiniReelsCtrl = $controller('MiniReelGroupMiniReelsController', {

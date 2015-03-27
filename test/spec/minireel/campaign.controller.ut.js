@@ -48,7 +48,7 @@ define(['app'], function(appModule) {
                             minireel: {}
                         }
                     ],
-                    advertiserName: 'Diageo'
+                    brand: 'Diageo'
                 });
 
                 $scope = $rootScope.$new();
@@ -70,6 +70,17 @@ define(['app'], function(appModule) {
             describe('model', function() {
                 it('should be the campaign', function() {
                     expect(CampaignCtrl.model).toBe(campaign);
+                });
+
+                it('should only use the campaign advertiser name if the brand property is set', function() {
+                    expect(CampaignCtrl.model.brand).toEqual(campaign.brand);
+
+                    delete campaign.brand;
+                    campaign.advertiser = {name: 'Some Advertiser'};
+
+                    CampaignCtrl.initWithModel(campaign);
+
+                    expect(CampaignCtrl.model.brand).toEqual(campaign.advertiser.name);
                 });
             });
 

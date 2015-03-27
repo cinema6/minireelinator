@@ -15,6 +15,7 @@
     "data": {
         "title": "Rumble Video",
         "mode": "light",
+        "params": {},
         "branding": "elitedaily",
         "displayAdSource": "cinema6",
         "videoAdSource": "cinema6",

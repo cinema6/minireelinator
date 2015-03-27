@@ -5,25 +5,32 @@
             <input type="text" class="forms__textField forms__textField--title" ng-model="minireel.data.title">
         </label>
 
-        <label class="forms__pair forms__pair--spacer clearfix" c6-alias="CampaignNewMiniReelGeneralCtrl.model.categories as categories">
+        <label class="forms__pair forms__pair--spacer clearfix" c6-alias="CampaignMiniReelGeneralCtrl.model.categories as categories">
             <span class="forms__name forms__name--extended" > Categories:</span>
             <span class="forms__inputHolder--short">
                 <select multiple ng-model="minireel.categories" ng-options="category.name as category.label for category in categories"></select>
             </span>
         </label>
 
-        <label class="forms__pair forms__pair--spacer clearfix" c6-alias="CampaignNewMiniReelGeneralCtrl.model.categories as categories">
+        <label class="forms__pair forms__pair--spacer clearfix" c6-alias="CampaigniniReelGeneralCtrl.model.categories as categories">
             <span class="forms__name forms__name--extended" >End Date: </span>
             <span class="forms__inputHolder--short">
-                <input type="date" ng-model="CampaignNewMiniReelCtrl.endDate" name="endDate" time="23:59" placeholder="yyyy-mm-dd" />
-                <span ng-show="form.endDate.$error.valid || !CampaignNewMiniReelCtrl.validDate">Invalid date.</span>
+                <input type="date" ng-model="CampaignMiniReelCtrl.campaignData.endDate" name="endDate" time="23:59" placeholder="yyyy-mm-dd" />
+                <span ng-show="form.endDate.$error.valid || !CampaignMiniReelCtrl.validDate">Invalid date.</span>
             </span>
         </label>
 
-        <label class="forms__pair forms__pair--spacer clearfix" c6-alias="CampaignNewMiniReelGeneralCtrl.model.categories as categories">
+        <label class="forms__pair forms__pair--spacer clearfix" c6-alias="CampaignMiniReelGeneralCtrl.model.categories as categories">
             <span class="forms__name forms__name--extended" >Name: </span>
             <span class="forms__inputHolder--short">
-                <input type="text" ng-model="CampaignNewMiniReelCtrl.name" />
+                <input type="text" ng-model="CampaignMiniReelCtrl.campaignData.name" />
+            </span>
+        </label>
+
+        <label class="forms__pair forms__pair--spacer clearfix" c6-alias="CampaignMiniReelGeneralCtrl.model.categories as categories">
+            <span class="forms__name forms__name--extended" >Brand: </span>
+            <span class="forms__inputHolder--short">
+                <input type="text" ng-model="CampaignMiniReelCtrl.model.data.params.sponsor" />
             </span>
         </label>
     </form>

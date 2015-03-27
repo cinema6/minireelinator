@@ -1,18 +1,18 @@
 define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardController) {
     'use strict';
 
-    describe('CampaignNewMiniReelController', function() {
+    describe('CampaignMiniReelController', function() {
         var $rootScope,
             $controller,
             $q,
             cinema6,
             c6State,
+            CampaignMiniReelState,
             MiniReelService,
             $scope,
             CampaignCtrl,
             CampaignMiniReelsCtrl,
-            CampaignNewMiniReelCtrl;
-
+            CampaignMiniReelCtrl;
 
         var minireel,
             campaign;
@@ -28,6 +28,20 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                 c6State = $injector.get('c6State');
                 MiniReelService = $injector.get('MiniReelService');
 
+                CampaignMiniReelState = c6State.get('MR:New:Campaign.MiniReel');
+                minireel = CampaignMiniReelState.minireel = cinema6.db.create('experience', {
+                    data: {
+                        collateral: {
+                            splash: null
+                        },
+                        links: {},
+                        params: {},
+                        deck: []
+                    }
+                });
+                CampaignMiniReelState.cModel = minireel.pojoify();
+                CampaignMiniReelState.metaData = {};
+
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
                     CampaignCtrl = $scope.CampaignCtrl = $controller('CampaignController', {
@@ -41,95 +55,91 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                         },
                         miniReels: [],
                         cards: [],
-                        advertiserName: 'Diageo'
+                        brand: 'Diageo'
                     }));
 
                     CampaignMiniReelsCtrl = $scope.CampaignMiniReelsCtrl = $controller('CampaignMiniReelsController', {
                         $scope: $scope
                     });
 
-                    CampaignNewMiniReelCtrl = $scope.CampaignNewMiniReelCtrl = $controller('CampaignNewMiniReelController', {
-                        $scope: $scope
+                    CampaignMiniReelCtrl = $scope.CampaignMiniReelCtrl = $controller('CampaignMiniReelController', {
+                        $scope: $scope,
+                        cState: CampaignMiniReelState
                     });
-                    minireel = CampaignNewMiniReelCtrl.model = cinema6.db.create('experience', {
-                        data: {
-                            collateral: {
-                                splash: null
-                            },
-                            links: {},
-                            params: {},
-                            deck: []
-                        }
-                    });
+                    CampaignMiniReelCtrl.initWithModel(CampaignMiniReelState.cModel);
                 });
             });
         });
 
         it('should exist', function() {
-            expect(CampaignNewMiniReelCtrl).toEqual(jasmine.any(Object));
+            expect(CampaignMiniReelCtrl).toEqual(jasmine.any(Object));
         });
 
         it('should inherit from the WizardController', inject(function($injector) {
-            expect(Object.keys(CampaignNewMiniReelCtrl)).toEqual(jasmine.objectContaining(Object.keys($injector.instantiate(WizardController))));
+            expect(Object.keys(CampaignMiniReelCtrl)).toEqual(jasmine.objectContaining(Object.keys($injector.instantiate(WizardController))));
         }));
 
         describe('properties', function() {
+            describe('model', function() {
+                it('should be the state\'s model', function() {
+                    expect(CampaignMiniReelCtrl.model).toBe(CampaignMiniReelState.cModel);
+                });
+
+                it('should only use Campaign brand if not set on minireel', function() {
+                    expect(CampaignMiniReelCtrl.model.data.params.sponsor).toBe(CampaignCtrl.model.brand);
+
+                    CampaignMiniReelState.cModel.data.params.sponsor = 'Custom';
+                    CampaignMiniReelCtrl.initWithModel(CampaignMiniReelState.cModel);
+
+                    expect(CampaignMiniReelCtrl.model.data.params.sponsor).toBe('Custom')
+                });
+            });
+
             describe('tabs', function() {
                 it('should be an array of tabs to display in the sidebar', function() {
-                    expect(CampaignNewMiniReelCtrl.tabs).toEqual([
+                    expect(CampaignMiniReelCtrl.tabs).toEqual([
                         {
                             name: 'General',
-                            sref: 'MR:Campaign.NewMiniReel.General'
+                            sref: 'MR:Campaign.MiniReel.General'
                         },
                         {
                             name: 'MiniReel Type',
-                            sref: 'MR:Campaign.NewMiniReel.Type'
+                            sref: 'MR:Campaign.MiniReel.Type'
                         },
                         {
                             name: 'Playback Settings',
-                            sref: 'MR:Campaign.NewMiniReel.Playback'
+                            sref: 'MR:Campaign.MiniReel.Playback'
                         }
                     ]);
                 });
             });
 
-            describe('endDate', function() {
-                it('should be null', function() {
-                    expect(CampaignNewMiniReelCtrl.endDate).toBeNull();
-                });
-            });
-
-            describe('name', function() {
-                it('should be null', function() {
-                    expect(CampaignNewMiniReelCtrl.name).toBeNull();
-                });
-            });
 
             describe('validDate', function() {
                 it('should be true if endDate is null', function() {
-                    CampaignNewMiniReelCtrl.endDate = null;
-                    expect(CampaignNewMiniReelCtrl.validDate).toBe(true);
+                    CampaignMiniReelCtrl.campaignData.endDate = null;
+                    expect(CampaignMiniReelCtrl.validDate).toBe(true);
                 });
 
                 it('should false if endDate is undefined', function() {
-                    CampaignNewMiniReelCtrl.endDate = void 0;
-                    expect(CampaignNewMiniReelCtrl.validDate).toBeFalsy();
+                    CampaignMiniReelCtrl.campaignData.endDate = void 0;
+                    expect(CampaignMiniReelCtrl.validDate).toBeFalsy();
                 });
 
                 it('should be true if the endDate is in the future', function() {
                     var now = new Date(),
                         tomorrow = new Date(now.getTime() + 24 * 60 *60 * 1000);
 
-                    CampaignNewMiniReelCtrl.endDate = tomorrow;
-                    expect(CampaignNewMiniReelCtrl.validDate).toBe(true);
+                    CampaignMiniReelCtrl.campaignData.endDate = tomorrow;
+                    expect(CampaignMiniReelCtrl.validDate).toBe(true);
                 });
 
                 it('should be false if the endDate is in the past', function() {
                     var now = new Date(),
                         yesterday = new Date(now.getTime() - 24 * 60 *60 * 1000);
 
-                    CampaignNewMiniReelCtrl.endDate = yesterday;
-                    expect(CampaignNewMiniReelCtrl.validDate).toBeFalsy();
+                    CampaignMiniReelCtrl.campaignData.endDate = yesterday;
+                    expect(CampaignMiniReelCtrl.validDate).toBeFalsy();
                 });
             });
         });
@@ -148,7 +158,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     spyOn(MiniReelService, 'publish').and.returnValue(publishDeferred.promise);
 
                     $scope.$apply(function() {
-                        CampaignNewMiniReelCtrl.confirm().then(success, failure);
+                        CampaignMiniReelCtrl.confirm().then(success, failure);
                     });
                 });
 
@@ -164,8 +174,8 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                         spyOn(CampaignCtrl, 'save').and.returnValue(saveDeferred.promise);
                         spyOn(CampaignMiniReelsCtrl, 'add').and.callThrough();
 
-                        CampaignNewMiniReelCtrl.endDate = new Date();
-                        CampaignNewMiniReelCtrl.name = 'My Campaign';
+                        CampaignMiniReelCtrl.campaignData.endDate = new Date();
+                        CampaignMiniReelCtrl.campaignData.name = 'My Campaign';
 
                         $scope.$apply(function() {
                             minireel.id = 'e-c8feedca3a1567';
@@ -175,8 +185,8 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
 
                     it('should add the minireel to the campaign', function() {
                         expect(CampaignMiniReelsCtrl.add).toHaveBeenCalledWith(minireel, {
-                            endDate: CampaignNewMiniReelCtrl.endDate,
-                            name: CampaignNewMiniReelCtrl.name
+                            endDate: CampaignMiniReelCtrl.campaignData.endDate,
+                            name: CampaignMiniReelCtrl.campaignData.name
                         });
                     });
 
@@ -189,20 +199,42 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                             spyOn(c6State, 'goTo').and.callFake(function(stateName) {
                                 return $q.when(c6State.get(stateName));
                             });
+                        });
 
-                            $scope.$apply(function() {
-                                saveDeferred.resolve(campaign);
+                        describe('and the minireel is New', function() {
+                            beforeEach(function() {
+                                $scope.$apply(function() {
+                                    saveDeferred.resolve(campaign);
+                                });
+                            });
+
+                            it('should go to the editor with that minireel loaded', function() {
+                                expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [minireel], {
+                                    campaign: campaign.id
+                                });
+                            });
+
+                            it('should resolve to the minireel', function() {
+                                expect(success).toHaveBeenCalledWith(minireel);
                             });
                         });
 
-                        it('should go to the editor with that minireel loaded', function() {
-                            expect(c6State.goTo).toHaveBeenCalledWith('MR:Editor', [minireel], {
-                                campaign: campaign.id
-                            });
-                        });
+                        describe('and the minireel settings are being Edited', function() {
+                            beforeEach(function() {
+                                CampaignMiniReelState.cName = 'MR:Edit:Campaign.MiniReel';
 
-                        it('should resolve to the minireel', function() {
-                            expect(success).toHaveBeenCalledWith(minireel);
+                                $scope.$apply(function() {
+                                    saveDeferred.resolve(campaign);
+                                });
+                            });
+
+                            it('should go back to the list of Sponsored MiniReels', function() {
+                                expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.MiniReels');
+                            });
+
+                            it('should resolve to the minireel', function() {
+                                expect(success).toHaveBeenCalledWith(minireel);
+                            });
                         });
                     });
                 });
