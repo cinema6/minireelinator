@@ -929,10 +929,6 @@ VideoCardController           ) {
 
                 .state('MR:Settings.Autoplay', [function() {
                     this.templateUrl = 'views/minireel/manager/new/autoplay.html';
-                }])
-
-                .state('MR:Settings.Campaign', [function() {
-                    this.templateUrl = 'views/minireel/manager/new/campaign.html';
                 }]);
         }])
 
