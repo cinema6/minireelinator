@@ -2290,6 +2290,73 @@
                             }).not.toThrow();
                         });
 
+                        describe('setting the "ad" param', function() {
+                            it('should be true if the card is sponsored and the ad param is not set', function() {
+                                var converted, result,
+                                    card = MiniReelService.createCard('video');
+
+                                card.sponsored = true;
+
+                                $rootScope.$apply(function() {
+                                    MiniReelService.convertForEditor(minireel).then(convertedSpy);
+                                });
+                                converted = convertedSpy.calls.mostRecent().args[0];
+
+                                converted.data.deck = [card];
+
+                                $rootScope.$apply(function() {
+                                    MiniReelService.convertForPlayer(converted).then(resultSpy);
+                                });
+                                result = resultSpy.calls.mostRecent().args[0];
+
+                                expect(result.data.deck[0].params.ad).toBe(true);
+                            });
+
+                            it('should be true if the ad param is set to true', function() {
+                                var converted, result,
+                                    card = MiniReelService.createCard('video');
+
+                                card.sponsored = true;
+                                card.params.ad = true;
+
+                                $rootScope.$apply(function() {
+                                    MiniReelService.convertForEditor(minireel).then(convertedSpy);
+                                });
+                                converted = convertedSpy.calls.mostRecent().args[0];
+
+                                converted.data.deck = [card];
+
+                                $rootScope.$apply(function() {
+                                    MiniReelService.convertForPlayer(converted).then(resultSpy);
+                                });
+                                result = resultSpy.calls.mostRecent().args[0];
+
+                                expect(result.data.deck[0].params.ad).toBe(true);
+                            });
+
+                            it('should be false if the ad param is set to false', function() {
+                                var converted, result,
+                                    card = MiniReelService.createCard('video');
+
+                                card.sponsored = true;
+                                card.params.ad = false;
+
+                                $rootScope.$apply(function() {
+                                    MiniReelService.convertForEditor(minireel).then(convertedSpy);
+                                });
+                                converted = convertedSpy.calls.mostRecent().args[0];
+
+                                converted.data.deck = [card];
+
+                                $rootScope.$apply(function() {
+                                    MiniReelService.convertForPlayer(converted).then(resultSpy);
+                                });
+                                result = resultSpy.calls.mostRecent().args[0];
+
+                                expect(result.data.deck[0].params.ad).toBe(false);
+                            });
+                        });
+
                         it('should give the video in a single-video minireel the "post" module', function() {
                             var result;
 
