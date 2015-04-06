@@ -85,6 +85,25 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
 
                     expect(WildcardCtrl.model.params.sponsor).toBe('Custom')
                 });
+
+                it('should default params.ad', function() {
+                    expect(WildcardCtrl.model.params.ad).toBe(true);
+
+                    WildcardState.cModel.params.ad = false;
+                    WildcardCtrl.initWithModel(WildcardState.cModel);
+
+                    expect(WildcardCtrl.model.params.ad).toBe(false);
+
+                    WildcardState.cModel.params.ad = true;
+                    WildcardCtrl.initWithModel(WildcardState.cModel);
+
+                    expect(WildcardCtrl.model.params.ad).toBe(true);
+
+                    delete WildcardState.cModel.params.ad;
+                    WildcardCtrl.initWithModel(WildcardState.cModel);
+
+                    expect(WildcardCtrl.model.params.ad).toBe(true);
+                });
             });
 
             describe('campaignData', function() {
