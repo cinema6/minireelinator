@@ -2121,15 +2121,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         campaign: copy(),
                         collateral: copy(),
                         links: copy(),
-                        params: function(card) {
-                            var params = copy({}).apply(this, arguments);
-
-                            if (card.sponsored) {
-                                params.ad = true;
-                            }
-
-                            return params;
-                        }
+                        params: copy()
                     },
                     ad: {
                         id: copy(),

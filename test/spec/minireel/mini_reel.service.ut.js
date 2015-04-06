@@ -2290,27 +2290,6 @@
                             }).not.toThrow();
                         });
 
-                        it('should give a sponosred card the "ad" param', function() {
-                            var converted, result,
-                                card = MiniReelService.createCard('video');
-
-                            card.sponsored = true;
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
-                            });
-                            converted = convertedSpy.calls.mostRecent().args[0];
-
-                            converted.data.deck = [card];
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForPlayer(converted).then(resultSpy);
-                            });
-                            result = resultSpy.calls.mostRecent().args[0];
-
-                            expect(result.data.deck[0].params.ad).toBe(true);
-                        });
-
                         it('should give the video in a single-video minireel the "post" module', function() {
                             var result;
 
