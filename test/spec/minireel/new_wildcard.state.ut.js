@@ -93,7 +93,8 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     }),
                     links: jasmine.objectContaining(campaign.cModel.links),
                     params: jasmine.objectContaining({
-                        sponsor: campaign.cModel.brand
+                        sponsor: campaign.cModel.brand,
+                        ad: true
                     }),
                     campaign: jasmine.objectContaining({
                         minViewTime: campaign.cModel.minViewTime

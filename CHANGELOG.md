@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.11.0.rc1]*
+  * [FEATURE]: Add setting for "Ad" text on thumbnail of sponsored card
+
 ## v1.10.0 (March 27, 2015)
 * *[v1.10.0.rc3]*
   * Replaced "Settings" with icon on Sponsored MR screen in Camp Mgr.

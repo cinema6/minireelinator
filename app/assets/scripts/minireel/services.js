@@ -2125,7 +2125,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             var params = copy({}).apply(this, arguments);
 
                             if (card.sponsored) {
-                                params.ad = true;
+                                params.ad = params.ad !== false;
                             }
 
                             return params;

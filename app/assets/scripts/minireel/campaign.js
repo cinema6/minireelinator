@@ -723,7 +723,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         },
                         links: campaign.links,
                         params: {
-                            sponsor: campaign.brand
+                            sponsor: campaign.brand,
+                            ad: true
                         },
                         campaign: {
                             minViewTime: campaign.minViewTime
@@ -862,6 +863,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
             this.initWithModel = function(card) {
                 card.params.sponsor = card.params.sponsor || CampaignCtrl.model.brand;
+                card.params.ad = card.params.ad !== false;
                 this.model = card;
                 this.campaignData = cState.metaData;
                 this.enableMoat = !!card.data.moat;
