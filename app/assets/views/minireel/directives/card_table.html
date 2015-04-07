@@ -87,7 +87,7 @@
                     <span class="btn__label">+</span>
                 </button>
             </li>
-            <li style="width:25px;background-color:#fff;text-align:center;" class="pageMap__item">
+            <li style="width:25px;background-color:#fff;text-align:center;" class="pageMap__item" card-table-paginator-item>
                 <button class="btnInvis pageMap__page"
                 ng-class="{'pageMap__page--error' : EditorCtrl.errorForCard(EditorCtrl.model.data.deck[EditorCtrl.model.data.deck.length - 1])}"
                 ng-click="CardTableCtrl.scrollToCard(EditorCtrl.model.data.deck[EditorCtrl.model.data.deck.length - 1])">
