@@ -226,7 +226,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .controller('CampaignController', ['$scope','$q','ConfirmDialogService',
         function                          ( $scope , $q , ConfirmDialogService ) {
-            var CampaignCtrl = this;
+            var CampaignCtrl = this,
+                AppCtrl = $scope.AppCtrl;
 
             function createModelLinks(uiLinks) {
                 return uiLinks.filter(function(link) {
@@ -274,6 +275,13 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             }),
                             this.cleanModel
                         );
+                    }
+                },
+                validLogo: {
+                    get: function() {
+                        var logo = this.model.logos.square;
+
+                        return !logo || AppCtrl.validImgSrc.test(logo);
                     }
                 }
             });
@@ -806,6 +814,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         .controller('WildcardController', ['$injector','$scope','c6State','cState',
         function                          ( $injector , $scope , c6State , cState ) {
             var WildcardCtrl = this,
+                AppCtrl = $scope.AppCtrl,
                 CampaignCtrl = $scope.CampaignCtrl,
                 CampaignCardsCtrl = $scope.CampaignCardsCtrl;
 
@@ -857,6 +866,25 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             hasId = !!this.campaignData.reportingId;
 
                         return !moat || (moat && hasId);
+                    }
+                },
+                validLogo: {
+                    get: function() {
+                        var logo = this.model.collateral.logo;
+
+                        return !logo || AppCtrl.validImgSrc.test(logo);
+                    }
+                },
+                validThumb: {
+                    get: function() {
+                        var thumb = this.model.thumb;
+
+                        return !thumb || AppCtrl.validImgSrc.test(thumb);
+                    }
+                },
+                validImageSrcs: {
+                    get: function() {
+                        return this.validThumb && this.validLogo;
                     }
                 }
             });

@@ -39,7 +39,7 @@
             c6-sref="{{WildcardCtrl.tabs[WildcardCtrl.tabs.indexOf(WildcardCtrl.currentTab) + 1].sref}}"
             type="button"
             ng-show="((WildcardCtrl.tabs.indexOf(WildcardCtrl.currentTab) + 1) || 1) < WildcardCtrl.tabs.length"
-            ng-disabled="!WildcardCtrl.validDate || !WildcardCtrl.validReportingId"
+            ng-disabled="!WildcardCtrl.validDate || !WildcardCtrl.validReportingId || !WildcardCtrl.validImageSrcs"
             title="Next Step">
             Next Step
         </button>
@@ -47,7 +47,7 @@
             class="btnAction btnAction--success btnAction--last"
             type="button"
             ng-show="(WildcardCtrl.tabs.indexOf(WildcardCtrl.currentTab) + 1) === WildcardCtrl.tabs.length"
-            ng-disabled="(WildcardCtrl.placements.length < 1 && !WildcardCtrl.minireel) || !WildcardCtrl.validDate || !WildcardCtrl.validReportingId"
+            ng-disabled="(WildcardCtrl.placements.length < 1 && !WildcardCtrl.minireel) || !WildcardCtrl.validDate || !WildcardCtrl.validReportingId || !WildcardCtrl.validImageSrcs"
             title="Save">
             Save
         </button>
