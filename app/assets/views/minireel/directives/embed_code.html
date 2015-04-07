@@ -37,7 +37,7 @@
             <input id="embedFormat_{{format.value}}" name="embed-format" type="radio" ng-model="Ctrl.format" value="{{format.value}}">{{format.name}}</input>
         </label>
     </div>
-    <div>
+    <div ng-show="campaign">
         <input type="checkbox" ng-model="Ctrl.preview">
         For preview purposes only
     </div>
