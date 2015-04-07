@@ -4,6 +4,7 @@
   * [FEATURE]: Add setting for "Ad" text on thumbnail of sponsored card
   * Enable Placeholder Video Type in Sponsored Minireels
   * [FEATURE]: Enable embed codes for "Preview Purposes Only"
+  * [FIX]: Ensure Editor mini-map is centered for MiniReels with no vide cards
 
 ## v1.10.0 (March 27, 2015)
 * *[v1.10.0.rc3]*

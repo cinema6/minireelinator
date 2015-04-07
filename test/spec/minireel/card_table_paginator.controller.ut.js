@@ -45,11 +45,11 @@
 
             describe('methods', function() {
                 describe('itemReady', function() {
-                    it('should increment the button counter until the quantity matches the deck (minus recap card) and then set $scope.ready to true', function() {
+                    it('should increment the button counter until the quantity matches the deck (minus recap card which was already loaded) and then set $scope.ready to true', function() {
                         $scope.deck.forEach(function(el, i, arr) {
-                            var allCardsExceptRecapAreLoaded = i >= arr.length - 2;
+                            var allCardsIncludingRecapAreLoaded = i >= arr.length - 1;
                             PaginatorCtrl.itemReady();
-                            expect($scope.ready).toBe(allCardsExceptRecapAreLoaded);
+                            expect($scope.ready).toBe(allCardsIncludingRecapAreLoaded);
                         });
                     });
                 });
