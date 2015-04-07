@@ -344,7 +344,7 @@ function( angular , c6uilib , services          , c6Drag           ) {
             this.itemReady = function() {
                 buttonCounter++;
 
-                if (buttonCounter === $scope.deck.length - 1) {
+                if (buttonCounter === $scope.deck.length) {
                     $scope.ready = true;
                 }
             };
