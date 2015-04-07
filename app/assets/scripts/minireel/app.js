@@ -853,7 +853,8 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                         'width': explicitDimensions ? this.size.width : false,
                         'height': explicitDimensions ? this.size.height : false,
                         'preload': isInline,
-                        'campaign': campaign ? campaign.id : false
+                        'campaign': campaign ? campaign.id : false,
+                        'preview': this.preview ? 'true' : false
                     };
 
                     switch (this.format) {
@@ -873,7 +874,8 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                             '<iframe |{attr}="{value}"|></iframe>',
                             {
                                 src: soloPlayerUrl + '?id=' + minireel.id +
-                                    (campaign ? '&campaign=' + campaign.id : ''),
+                                    (campaign ? '&campaign=' + campaign.id : '') +
+                                    (this.preview ? '&preview=true' : ''),
                                 frameborder: '0',
                                 width: explicitDimensions ? this.size.width : '100%',
                                 height: explicitDimensions ? this.size.height : '100%'

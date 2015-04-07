@@ -267,6 +267,14 @@
                                 expect(EmbedCodeCtrl.code).toMatch(/&campaign=c-123/);
                             });
                         });
+
+                        describe('if embed is for preview purposes only', function() {
+                            it('should add preview=true param', function() {
+                                EmbedCodeCtrl.preview = true;
+
+                                expect(EmbedCodeCtrl.code).toMatch(/&preview=true/);
+                            });
+                        });
                     });
 
                     describe('if the format is "shortcode"', function() {
@@ -346,6 +354,14 @@
                                 expect(EmbedCodeCtrl.code).toMatch(/ campaign="c-123"/);
                             });
                         });
+
+                        describe('if embed is for preview purposes only', function() {
+                            it('should include a preview="true" param', function() {
+                                EmbedCodeCtrl.preview = true;
+
+                                expect(EmbedCodeCtrl.code).toMatch(/ preview="true"/);
+                            });
+                        });
                     });
 
                     describe('if the format is "script"', function() {
@@ -423,6 +439,14 @@
                                 };
 
                                 expect(EmbedCodeCtrl.code).toMatch(/ data-campaign="c-123"/);
+                            });
+                        });
+
+                        describe('if embed is for preview purposes only', function() {
+                            it('should include a preview=true param', function() {
+                                EmbedCodeCtrl.preview = true;
+
+                                expect(EmbedCodeCtrl.code).toMatch(/ data-preview="true"/);
                             });
                         });
                     });
