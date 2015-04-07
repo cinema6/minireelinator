@@ -2,7 +2,7 @@
     'use strict';
 
     define(['app'], function(appModule) {
-        fdescribe('EmbedCodeController', function() {
+        describe('EmbedCodeController', function() {
             var $rootScope,
                 $scope,
                 $controller,
