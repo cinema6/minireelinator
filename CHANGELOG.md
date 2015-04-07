@@ -3,6 +3,7 @@
 * *[v1.11.0.rc1]*
   * [FEATURE]: Add setting for "Ad" text on thumbnail of sponsored card
   * Enable Placeholder Video Type in Sponsored Minireels
+  * [FEATURE]: Enable embed codes for "Preview Purposes Only"
 
 ## v1.10.0 (March 27, 2015)
 * *[v1.10.0.rc3]*
