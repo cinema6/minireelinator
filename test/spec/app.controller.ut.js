@@ -33,6 +33,28 @@ define(['app', 'version'], function(appModule, version) {
                     expect(AppCtrl.version).toBe(version);
                 });
             });
+
+            describe('validImgSrc', function() {
+                it('should be a regex that matches valid image sources', function() {
+                    expect(AppCtrl.validImgSrc.test('http://example.com/image.jpg')).toBe(true);
+                    expect(AppCtrl.validImgSrc.test('https://example.com/image.jpg')).toBe(true);
+                    expect(AppCtrl.validImgSrc.test('//example.com/image.jpg')).toBe(true);
+
+                    expect(AppCtrl.validImgSrc.test('http://example.com/image')).toBe(false);
+                    expect(AppCtrl.validImgSrc.test('example.com/image.gif')).toBe(false);
+                });
+            });
+
+            describe('validUrl', function() {
+                it('should be a regex that matches valid urls', function() {
+                    expect(AppCtrl.validUrl.test('http://example.com/some-page')).toBe(true);
+                    expect(AppCtrl.validUrl.test('https://example.com/some-page')).toBe(true);
+                    expect(AppCtrl.validUrl.test('//example.com/some-page')).toBe(true);
+
+                    expect(AppCtrl.validUrl.test('http://example.com/image.jpg')).toBe(false);
+                    expect(AppCtrl.validUrl.test('example.com/some-page')).toBe(false);
+                });
+            });
         });
     });
 });
