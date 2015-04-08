@@ -621,6 +621,7 @@
         background:#eee;
         border-bottom:1px solid #ddd;
         position:relative;
+        z-index: 5;
     }
         .modal__closeBtn,
         .modal__closeBtn:focus {
@@ -652,7 +653,9 @@
     }
     .modalBody__group {
         position:absolute; 
-        left:1.5em; right:1.5em; top:3em; bottom:3.75em;
+        left:1.5em; right:0.25em; top:3em; bottom:3.8em;
+        overflow:auto;
+        padding:2em 0.5em 5em 0;
     }
         .modalBody__group--sideTabs {
             left:13.5em;
