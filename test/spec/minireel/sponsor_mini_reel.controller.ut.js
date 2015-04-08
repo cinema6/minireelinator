@@ -21,6 +21,7 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                 data: {
                     sponsored: false,
                     deck: [],
+                    collateral: {},
                     splash: {
                         ratio: '3-2',
                         theme: 'vertical-stack',
@@ -63,6 +64,7 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                 });
 
                 $scope = $rootScope.$new();
+                $scope.AppCtrl = $controller('AppController');
                 $scope.$apply(function() {
                     SponsorMiniReelCtrl = $scope.SponsorMiniReelCtrl = $controller('SponsorMiniReelController', {
                         $scope: $scope,
@@ -172,6 +174,29 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                             setCurrentState(state);
                             expect(SponsorMiniReelCtrl.currentTab).toBeNull(state);
                         });
+                    });
+                });
+            });
+
+            describe('validLogo', function() {
+                describe('if logo url is undefined', function() {
+                    it('should be true', function() {
+                        delete SponsorMiniReelCtrl.model.data.collateral.logo;
+                        expect(SponsorMiniReelCtrl.validLogo).toBe(true);
+                    });
+                });
+
+                describe('if the url is valid', function() {
+                    it('should be true', function() {
+                        SponsorMiniReelCtrl.model.data.collateral.logo = 'http://example.com/image.png';
+                        expect(SponsorMiniReelCtrl.validLogo).toBe(true);
+                    });
+                });
+
+                describe('if the url is not valid', function() {
+                    it('should be false', function() {
+                        SponsorMiniReelCtrl.model.data.collateral.logo = 'example.com/image.png';
+                        expect(SponsorMiniReelCtrl.validLogo).toBe(false);
                     });
                 });
             });

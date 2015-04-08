@@ -24,6 +24,7 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
             card = {
                 id: 'rc-779983f6e2e231',
                 sponsored: true,
+                collateral: {},
                 data: {}
             };
 
@@ -58,6 +59,7 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
                 });
 
                 $scope = $rootScope.$new();
+                $scope.AppCtrl = $controller('AppController');
                 $scope.$apply(function() {
                     SponsorManagerCtrl = $scope.SponsorManagerCtrl = $controller('SponsorManagerController', {
                         $scope: $scope,
@@ -280,6 +282,82 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
             describe('placements', function() {
                 it('should be an array', function() {
                     expect(SponsorCardCtrl.placements).toEqual([]);
+                });
+            });
+
+            describe('validLogo', function() {
+                describe('if logo url is undefined', function() {
+                    it('should be true', function() {
+                        delete SponsorCardCtrl.model.collateral.logo;
+                        expect(SponsorCardCtrl.validLogo).toBe(true);
+                    });
+                });
+
+                describe('if the url is valid', function() {
+                    it('should be true', function() {
+                        SponsorCardCtrl.model.collateral.logo = 'http://example.com/image.png';
+                        expect(SponsorCardCtrl.validLogo).toBe(true);
+                    });
+                });
+
+                describe('if the url is not valid', function() {
+                    it('should be false', function() {
+                        SponsorCardCtrl.model.collateral.logo = 'example.com/image.png';
+                        expect(SponsorCardCtrl.validLogo).toBe(false);
+                    });
+                });
+            });
+
+            describe('validThumb', function() {
+                describe('if thumb url is undefined', function() {
+                    it('should be true', function() {
+                        delete SponsorCardCtrl.model.thumb;
+                        expect(SponsorCardCtrl.validThumb).toBe(true);
+                    });
+                });
+
+                describe('if the thumb is valid', function() {
+                    it('should be true', function() {
+                        SponsorCardCtrl.model.thumb = 'http://example.com/image.png';
+                        expect(SponsorCardCtrl.validThumb).toBe(true);
+                    });
+                });
+
+                describe('if the thumb is not valid', function() {
+                    it('should be false', function() {
+                        SponsorCardCtrl.model.thumb = 'example.com/image.png';
+                        expect(SponsorCardCtrl.validThumb).toBe(false);
+                    });
+                });
+            });
+
+            describe('validImageSrcs', function() {
+                describe('if all image urls are undefined', function() {
+                    it('should be true', function() {
+                        delete SponsorCardCtrl.model.thumb;
+                        delete SponsorCardCtrl.model.collateral.logo;
+                        expect(SponsorCardCtrl.validImageSrcs).toBe(true);
+                    });
+                });
+
+                describe('if all image urls are valid', function() {
+                    it('should be true', function() {
+                        SponsorCardCtrl.model.thumb = 'http://example.com/image.png';
+                        SponsorCardCtrl.model.collateral.logo = 'http://example.com/image.png';
+                        expect(SponsorCardCtrl.validImageSrcs).toBe(true);
+                    });
+                });
+
+                describe('if any of the image urls are not valid', function() {
+                    it('should be false', function() {
+                        SponsorCardCtrl.model.thumb = 'example.com/image.png';
+                        SponsorCardCtrl.model.collateral.logo = 'http://example.com/image.png';
+                        expect(SponsorCardCtrl.validImageSrcs).toBe(false);
+
+                        SponsorCardCtrl.model.thumb = 'http://example.com/image.png';
+                        SponsorCardCtrl.model.collateral.logo = 'example.com/image.png';
+                        expect(SponsorCardCtrl.validImageSrcs).toBe(false);
+                    });
                 });
             });
         });
