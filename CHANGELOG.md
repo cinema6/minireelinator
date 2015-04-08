@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## v1.11.0 (April 8, 2015)
+* *[v1.11.0.rc2]*
+  * [FIX]: Show Sponsored MiniReels in Placements tab of Campaign Manager
+  * [FEATURE]: Enable campaign parameter in Editor embed codes
+* *[/v1.11.0.rc2]*
+
 * *[v1.11.0.rc1]*
   * [FEATURE]: Add setting for "Ad" text on thumbnail of sponsored card
   * Enable Placeholder Video Type in Sponsored Minireels

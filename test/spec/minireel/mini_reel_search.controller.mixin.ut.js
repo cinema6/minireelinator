@@ -78,7 +78,6 @@ define(['minireel/mixins/MiniReelSearchController', 'app'], function(MiniReelSea
                 it('should query for experiences', function() {
                     expect(cinema6.db.findAll).toHaveBeenCalledWith('experience', {
                         org: PortalCtrl.model.org.id,
-                        sponsored: false,
                         text: MiniReelSearchCtrl.query
                     });
                 });

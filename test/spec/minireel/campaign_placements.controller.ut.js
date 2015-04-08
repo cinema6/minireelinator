@@ -163,7 +163,6 @@ define(['app'], function(appModule) {
                 it('should query for experiences', function() {
                     expect(cinema6.db.findAll).toHaveBeenCalledWith('experience', {
                         org: PortalCtrl.model.org.id,
-                        sponsored: false,
                         text: CampaignPlacementsCtrl.query
                     });
                 });
