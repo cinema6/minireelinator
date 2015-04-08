@@ -42,6 +42,7 @@
             c6-sref="{{SponsorMiniReelCtrl.tabs[SponsorMiniReelCtrl.tabs.indexOf(SponsorMiniReelCtrl.currentTab) + 1].sref}}"
             type="button"
             ng-show="((SponsorMiniReelCtrl.tabs.indexOf(SponsorMiniReelCtrl.currentTab) + 1) || 1) < SponsorMiniReelCtrl.tabs.length"
+            ng-disabled="!SponsorMiniReelCtrl.validLogo"
             title="Next Step">
             Next Step
         </button>
@@ -49,6 +50,7 @@
             class="btnAction btnAction--success btnAction--last"
             type="button"
             ng-show="(SponsorMiniReelCtrl.tabs.indexOf(SponsorMiniReelCtrl.currentTab) + 1) === SponsorMiniReelCtrl.tabs.length"
+            ng-disabled="!SponsorMiniReelCtrl.validLogo"
             title="Save">
             Save
         </button>

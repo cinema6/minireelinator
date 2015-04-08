@@ -52,6 +52,7 @@ define(['app'], function(appModule) {
                 });
 
                 $scope = $rootScope.$new();
+                $scope.AppCtrl = $controller('AppController');
                 $scope.$apply(function() {
                     CampaignCtrl = $controller('CampaignController', {
                         $scope: $scope,
@@ -126,6 +127,29 @@ define(['app'], function(appModule) {
                         it('should be false', function() {
                             expect(CampaignCtrl.isClean).toBe(false);
                         });
+                    });
+                });
+            });
+
+            describe('validLogo', function() {
+                describe('if logo url is undefined', function() {
+                    it('should be true', function() {
+                        delete campaign.logos.square;
+                        expect(CampaignCtrl.validLogo).toBe(true);
+                    });
+                });
+
+                describe('if the url is valid', function() {
+                    it('should be true', function() {
+                        campaign.logos.square = 'http://example.com/image.png';
+                        expect(CampaignCtrl.validLogo).toBe(true);
+                    });
+                });
+
+                describe('if the url is not valid', function() {
+                    it('should be false', function() {
+                        campaign.logos.square = 'example.com/image.png';
+                        expect(CampaignCtrl.validLogo).toBe(false);
                     });
                 });
             });

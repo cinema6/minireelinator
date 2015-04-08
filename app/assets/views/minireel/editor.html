@@ -60,7 +60,7 @@
                 <strong>Private</strong>, Created {{minireel.created | date:'M/d/yyyy' }}
             </span>
             <span ng-show="minireel.status === 'active'">
-                <strong class="typo--success">Published</strong> {{minireel.lastPublished | date:'M/d/yyyy' }}
+                <strong class="typo--success">Published</strong> {{minireel.lastStatusChange | date:'M/d/yyyy' }}
             </span>
             <span class="typo--faded">&nbsp;|&nbsp;</span>
             {{minireel.data.deck.length}} Slides

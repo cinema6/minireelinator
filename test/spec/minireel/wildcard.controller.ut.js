@@ -34,6 +34,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                 WildcardState.metaData = {};
 
                 $scope = $rootScope.$new();
+                $scope.AppCtrl = $controller('AppController');
                 $scope.$apply(function() {
                     CampaignCtrl = $scope.CampaignCtrl = $controller('CampaignController', {
                         $scope: $scope
@@ -195,6 +196,82 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                             WildcardCtrl.campaignData.reportingId = 'some_id';
                             expect(WildcardCtrl.validReportingId).toBe(true);
                         });
+                    });
+                });
+            });
+
+            describe('validLogo', function() {
+                describe('if logo url is undefined', function() {
+                    it('should be true', function() {
+                        delete WildcardCtrl.model.collateral.logo;
+                        expect(WildcardCtrl.validLogo).toBe(true);
+                    });
+                });
+
+                describe('if the url is valid', function() {
+                    it('should be true', function() {
+                        WildcardCtrl.model.collateral.logo = 'http://example.com/image.png';
+                        expect(WildcardCtrl.validLogo).toBe(true);
+                    });
+                });
+
+                describe('if the url is not valid', function() {
+                    it('should be false', function() {
+                        WildcardCtrl.model.collateral.logo = 'example.com/image.png';
+                        expect(WildcardCtrl.validLogo).toBe(false);
+                    });
+                });
+            });
+
+            describe('validThumb', function() {
+                describe('if thumb url is undefined', function() {
+                    it('should be true', function() {
+                        delete WildcardCtrl.model.thumb;
+                        expect(WildcardCtrl.validThumb).toBe(true);
+                    });
+                });
+
+                describe('if the thumb is valid', function() {
+                    it('should be true', function() {
+                        WildcardCtrl.model.thumb = 'http://example.com/image.png';
+                        expect(WildcardCtrl.validThumb).toBe(true);
+                    });
+                });
+
+                describe('if the thumb is not valid', function() {
+                    it('should be false', function() {
+                        WildcardCtrl.model.thumb = 'example.com/image.png';
+                        expect(WildcardCtrl.validThumb).toBe(false);
+                    });
+                });
+            });
+
+            describe('validImageSrcs', function() {
+                describe('if all image urls are undefined', function() {
+                    it('should be true', function() {
+                        delete WildcardCtrl.model.thumb;
+                        delete WildcardCtrl.model.collateral.logo;
+                        expect(WildcardCtrl.validImageSrcs).toBe(true);
+                    });
+                });
+
+                describe('if all image urls are valid', function() {
+                    it('should be true', function() {
+                        WildcardCtrl.model.thumb = 'http://example.com/image.png';
+                        WildcardCtrl.model.collateral.logo = 'http://example.com/image.png';
+                        expect(WildcardCtrl.validImageSrcs).toBe(true);
+                    });
+                });
+
+                describe('if any of the image urls are not valid', function() {
+                    it('should be false', function() {
+                        WildcardCtrl.model.thumb = 'example.com/image.png';
+                        WildcardCtrl.model.collateral.logo = 'http://example.com/image.png';
+                        expect(WildcardCtrl.validImageSrcs).toBe(false);
+
+                        WildcardCtrl.model.thumb = 'http://example.com/image.png';
+                        WildcardCtrl.model.collateral.logo = 'example.com/image.png';
+                        expect(WildcardCtrl.validImageSrcs).toBe(false);
                     });
                 });
             });

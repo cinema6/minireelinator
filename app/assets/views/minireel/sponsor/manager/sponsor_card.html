@@ -39,6 +39,7 @@
             c6-sref="{{SponsorCardCtrl.tabs[SponsorCardCtrl.tabs.indexOf(SponsorCardCtrl.currentTab) + 1].sref}}"
             type="button"
             ng-show="((SponsorCardCtrl.tabs.indexOf(SponsorCardCtrl.currentTab) + 1) || 1) < SponsorCardCtrl.tabs.length"
+            ng-disabled="!SponsorCardCtrl.validImageSrcs"
             title="Next Step">
             Next Step
         </button>
@@ -46,7 +47,7 @@
             class="btnAction btnAction--success btnAction--last"
             type="button"
             ng-show="(SponsorCardCtrl.tabs.indexOf(SponsorCardCtrl.currentTab) + 1) === SponsorCardCtrl.tabs.length"
-            ng-disabled="SponsorCardCtrl.placements.length < 1 && !SponsorCardCtrl.minireel"
+            ng-disabled="(SponsorCardCtrl.placements.length < 1 && !SponsorCardCtrl.minireel) || !SponsorCardCtrl.validImageSrcs"
             title="Save">
             Save
         </button>

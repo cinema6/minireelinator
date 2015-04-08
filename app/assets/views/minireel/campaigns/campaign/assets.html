@@ -4,7 +4,7 @@
     <label class="forms__pair forms__pair--spacer clearfix">
         <span class="forms__name" > Square:</span>
         <span class="forms__inputHolder forms__inputHolder--fluid 
-        forms__inputHolder--maxMed">
+        forms__inputHolder--maxMed" ng-class="{ c6__error: !CampaignCtrl.validLogo }">
             <input class="forms__textField forms__textField--padded forms__textField--block" ng-model="campaign.logos.square" type="text"></input>
         </span>
     </label>

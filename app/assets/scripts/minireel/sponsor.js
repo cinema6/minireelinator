@@ -93,7 +93,8 @@ function( angular , c6State  , editor   , MiniReelListController          ,
         function                                 ( $scope , EditorService , c6State , c6Computed ,
                                                    $timeout , cState , $injector ) {
             var self = this,
-                c = c6Computed($scope);
+                c = c6Computed($scope),
+                AppCtrl = $scope.AppCtrl;
 
             function redirectToFirstTab() {
                 return $timeout(noop).then(function() {
@@ -145,6 +146,16 @@ function( angular , c6State  , editor   , MiniReelListController          ,
                         }
                     ];
             }, ['SponsorMiniReelCtrl.model.data.sponsored']);
+
+            Object.defineProperties(this, {
+                validLogo: {
+                    get: function() {
+                        var logo = this.model.data.collateral.logo;
+
+                        return !logo || AppCtrl.validImgSrc.test(logo);
+                    }
+                }
+            });
 
             this.initWithModel = function() {
                 this.model = EditorService.state.minireel;
@@ -322,9 +333,32 @@ function( angular , c6State  , editor   , MiniReelListController          ,
         function                             ( $scope , $injector , $q , cinema6 , EditorService ,
                                                c6State , cState , $location ) {
             var SponsorManagerCtrl = $scope.SponsorManagerCtrl,
+                AppCtrl = $scope.AppCtrl,
                 self = this;
 
             $injector.invoke(WizardController, this);
+
+            Object.defineProperties(this, {
+                validLogo: {
+                    get: function() {
+                        var logo = this.model.collateral.logo;
+
+                        return !logo || AppCtrl.validImgSrc.test(logo);
+                    }
+                },
+                validThumb: {
+                    get: function() {
+                        var thumb = this.model.thumb;
+
+                        return !thumb || AppCtrl.validImgSrc.test(thumb);
+                    }
+                },
+                validImageSrcs: {
+                    get: function() {
+                        return this.validThumb && this.validLogo;
+                    }
+                }
+            });
 
             this.placements = [];
 
