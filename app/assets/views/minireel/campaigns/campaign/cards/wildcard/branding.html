@@ -16,8 +16,10 @@
             <span class="forms__name">
                 Logo URL <strong class="typo--danger">*</strong>
             </span>
-            <span class="forms__inputHolder" ng-class="{c6__error: !WildcardCtrl.validLogo}">
-                <input type="text" class="forms__textField forms__textField--block" ng-model="card.collateral.logo">
+            <span class="forms__inputHolder">
+                <input type="text" class="forms__textField forms__textField--block" 
+                ng-class="{forms__textField--danger: !WildcardCtrl.validLogo}"
+                ng-model="card.collateral.logo">
             </span>
         </label>
 
@@ -34,8 +36,10 @@
             <span class="forms__name">
                 Thumbnail URL
             </span>
-            <span class="forms__inputHolder" ng-class="{c6__error: !WildcardCtrl.validThumb}">
-                <input type="text" class="forms__textField forms__textField--block" ng-model="card.thumb">
+            <span class="forms__inputHolder">
+                <input type="text" class="forms__textField forms__textField--block"
+                ng-class="{forms__textField--danger: !WildcardCtrl.validThumb}"
+                ng-model="card.thumb">
             </span>
         </label>
 
