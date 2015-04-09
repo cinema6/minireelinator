@@ -18,7 +18,7 @@
             </span>
             <span class="forms__inputHolder">
                 <input type="text" class="forms__textField forms__textField--block" 
-                ng-class="{forms__textField--danger: !WildcardCtrl.validLogo}"
+                ng-class="{'forms__textField--danger': !WildcardCtrl.validLogo}"
                 ng-model="card.collateral.logo">
             </span>
         </label>
@@ -38,7 +38,7 @@
             </span>
             <span class="forms__inputHolder">
                 <input type="text" class="forms__textField forms__textField--block"
-                ng-class="{forms__textField--danger: !WildcardCtrl.validThumb}"
+                ng-class="{'forms__textField--danger': !WildcardCtrl.validThumb}"
                 ng-model="card.thumb">
             </span>
         </label>
