@@ -853,15 +853,6 @@
 /*  ======================================================
     custom modal styles
     ====================================================== */
-    .mrConfigure__general,
-    .mrConfigure__autoplay,
-    .mrEdit__copyTab, .mrEdit__videoTab {
-        top:4.375em;
-    }
-    .mrConfigure__mode {
-        top:4.5em;
-    }
-
     .embedCopy__group {
         top:4.1875em;
     }
@@ -877,21 +868,14 @@
         margin:0.875em 0 0 0;
         display: block;
     }
-    .mrEdit__ballotTab {
-        top:4.9375em;
-    }
         .mrEdit__slideQuestion {
             margin:21px 0 14px;
             display: block;
         }
-    .mrSplash__sourceTab,
-    .mrSplash__imageTab {
-        margin:1.5em 0 0 0;
-    }
 
     .mrAdManager__frequency,
     .mrAdManager__videoServer {
-        margin-top:1.375em;
+        /*margin-top:1.375em;*/
     }
         .mrAdManager__frequency .twoCol {
             margin-bottom:1.375em;
