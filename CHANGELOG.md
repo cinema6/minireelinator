@@ -1,6 +1,11 @@
 # MiniReelinator
 
-## v1.11.0 (April 8, 2015)
+## v1.11.0 (April 9, 2015)
+* *[v1.11.0.rc3]*
+  * Display error state on invalid image url inputs
+  * Enable scrolling within modal views
+* *[/v1.11.0.rc3]*
+
 * *[v1.11.0.rc2]*
   * [FIX]: Show Sponsored MiniReels in Placements tab of Campaign Manager
   * [FEATURE]: Enable campaign parameter in Editor embed codes
