@@ -48,6 +48,18 @@ define(['angular', 'app'], function(angular, appModule) {
                                 item: cinema6.db.create('card', extend(MiniReelService.createCard('video'), {
                                     title: 'My Favorite Card'
                                 }))
+                            },
+                            {
+                                item: cinema6.db.create('card', extend(MiniReelService.createCard('video'), {
+                                    title: 'Same Title'
+                                })),
+                                name: 'Diageo Spring 2015'
+                            },
+                            {
+                                item: cinema6.db.create('card', extend(MiniReelService.createCard('video'), {
+                                    title: 'Same Title'
+                                })),
+                                name: 'Diageo Fall 2015'
                             }
                         ],
                         brand: 'Diageo'
@@ -127,7 +139,9 @@ define(['angular', 'app'], function(angular, appModule) {
                         'None': null,
                         'The Coolest Card': campaign.cards[0].item,
                         'The Funniest Card': campaign.cards[1].item,
-                        'My Favorite Card': campaign.cards[2].item
+                        'My Favorite Card': campaign.cards[2].item,
+                        'Same Title (Diageo Spring 2015)': campaign.cards[3].item,
+                        'Same Title (Diageo Fall 2015)': campaign.cards[4].item
                     });
                 });
             });

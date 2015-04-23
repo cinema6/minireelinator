@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.11.1.rc1]*
+  * [FIX]: Fix for an issue where sponsored cards with the same title
+    where not showing as options in the Campaign placements manager
+
 ## v1.11.0 (April 9, 2015)
 * *[v1.11.0.rc3]*
   * Display error state on invalid image url inputs
