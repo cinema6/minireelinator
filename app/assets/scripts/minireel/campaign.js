@@ -1291,9 +1291,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 cards = CampaignCtrl.model.cards;
 
             this.cardOptions = cards.reduce(function(cardOptions, data) {
-                var card = data.item;
+                var card = data.item,
+                    name = data.name;
 
-                cardOptions[card.title] = card;
+                cardOptions[card.title + (name ? ' (' + name + ')' : '')] = card;
                 return cardOptions;
             }, { 'None': null });
 
