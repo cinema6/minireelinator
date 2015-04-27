@@ -12,7 +12,7 @@
             </span>
         </label>
 
-        <label class="forms__pair forms__pair--spacer clearfix" c6-alias="CampaigniniReelGeneralCtrl.model.categories as categories">
+        <label class="forms__pair forms__pair--spacer clearfix">
             <span class="forms__name forms__name--extended" >End Date: </span>
             <span class="forms__inputHolder--short">
                 <input type="date" ng-model="CampaignMiniReelCtrl.campaignData.endDate" name="endDate" time="23:59" placeholder="yyyy-mm-dd" />
@@ -20,17 +20,24 @@
             </span>
         </label>
 
-        <label class="forms__pair forms__pair--spacer clearfix" c6-alias="CampaignMiniReelGeneralCtrl.model.categories as categories">
+        <label class="forms__pair forms__pair--spacer clearfix">
             <span class="forms__name forms__name--extended" >Name: </span>
             <span class="forms__inputHolder--short">
                 <input type="text" ng-model="CampaignMiniReelCtrl.campaignData.name" />
             </span>
         </label>
 
-        <label class="forms__pair forms__pair--spacer clearfix" c6-alias="CampaignMiniReelGeneralCtrl.model.categories as categories">
+        <label class="forms__pair forms__pair--spacer clearfix">
             <span class="forms__name forms__name--extended" >Brand: </span>
             <span class="forms__inputHolder--short">
                 <input type="text" ng-model="CampaignMiniReelCtrl.model.data.params.sponsor" />
+            </span>
+        </label>
+
+        <label class="forms__pair forms__pair--spacer clearfix">
+            <span class="forms__name forms__name--extended" >Branding: </span>
+            <span class="forms__inputHolder--short">
+                <input type="text" ng-model="CampaignMiniReelCtrl.model.data.branding" />
             </span>
         </label>
     </form>

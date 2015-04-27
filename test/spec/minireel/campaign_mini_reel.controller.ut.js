@@ -36,6 +36,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                         },
                         links: {},
                         params: {},
+                        branding: null,
                         deck: []
                     }
                 });
