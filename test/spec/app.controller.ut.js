@@ -39,9 +39,11 @@ define(['app', 'version'], function(appModule, version) {
                     expect(AppCtrl.validImgSrc.test('http://example.com/image.jpg')).toBe(true);
                     expect(AppCtrl.validImgSrc.test('https://example.com/image.jpg')).toBe(true);
                     expect(AppCtrl.validImgSrc.test('//example.com/image.jpg')).toBe(true);
+                    expect(AppCtrl.validImgSrc.test('http://a.b.c.example.com/a/b/c/image.jpg/something.png')).toBe(true);
 
                     expect(AppCtrl.validImgSrc.test('http://example.com/image')).toBe(false);
                     expect(AppCtrl.validImgSrc.test('example.com/image.gif')).toBe(false);
+                    expect(AppCtrl.validImgSrc.test('http://a.b.c.example.com/a/b/c/image.jpg/somethi')).toBe(false);
                 });
             });
 
