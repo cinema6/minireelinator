@@ -1,5 +1,10 @@
 # MiniReelinator
 
+## v1.11.3 (May 1, 2015)
+* *[v1.11.3.rc1]*
+  * [FIX]: Allow more complex image urls
+* *[/v1.11.3.rc1]*
+
 ## v1.11.2 (April 27, 2015)
 * *[v1.11.2.rc1]*
   * [FEATURE]: Allow editing of a Sponsored MiniReel's branding
