@@ -949,8 +949,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
         .controller('AppController', [function() {
             this.version = version;
-            this.validImgSrc =
-            /^(http:\/\/|https:\/\/|\/\/)([\w\-]+\.)+[\w\-]+\/(([\w\-]+(\.)*)+(\/)?)+(\.\w{3,4})$/;
-            this.validUrl = /^(http:\/\/|https:\/\/|\/\/)([\w\-]+\.)+[\w\-]+(\/([\w\-]+(\/)?))$/;
+            this.validImgSrc = /^(http:\/\/|https:\/\/|\/\/)/;
+            this.validUrl = /^(http:\/\/|https:\/\/|\/\/)/;
         }]);
 });
