@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.11.3 (May 1, 2015)
+* *[v1.11.3.rc2]*
+  * [FIX]: Urls are valid if the start with "http://", "https://"" or "//""
+* *[/v1.11.3.rc2]*
+
 * *[v1.11.3.rc1]*
   * [FIX]: Allow more complex image urls
 * *[/v1.11.3.rc1]*
