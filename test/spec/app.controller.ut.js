@@ -41,9 +41,8 @@ define(['app', 'version'], function(appModule, version) {
                     expect(AppCtrl.validImgSrc.test('//example.com/image.jpg')).toBe(true);
                     expect(AppCtrl.validImgSrc.test('http://a.b.c.example.com/a/b/c/image.jpg/something.png')).toBe(true);
 
-                    expect(AppCtrl.validImgSrc.test('http://example.com/image')).toBe(false);
                     expect(AppCtrl.validImgSrc.test('example.com/image.gif')).toBe(false);
-                    expect(AppCtrl.validImgSrc.test('http://a.b.c.example.com/a/b/c/image.jpg/somethi')).toBe(false);
+                    expect(AppCtrl.validImgSrc.test('data:image/jpg;base64,hjdsgfiudhgkjdfdjfkg')).toBe(false);
                 });
             });
 
@@ -53,7 +52,6 @@ define(['app', 'version'], function(appModule, version) {
                     expect(AppCtrl.validUrl.test('https://example.com/some-page')).toBe(true);
                     expect(AppCtrl.validUrl.test('//example.com/some-page')).toBe(true);
 
-                    expect(AppCtrl.validUrl.test('http://example.com/image.jpg')).toBe(false);
                     expect(AppCtrl.validUrl.test('example.com/some-page')).toBe(false);
                 });
             });
