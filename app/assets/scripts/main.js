@@ -14,7 +14,8 @@
             angular: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular.min',
             ngAnimate: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular-animate.min',
             c6uilib: 'https://lib.cinema6.com/c6ui/v3.7.1-0-gc250c59/c6uilib.min',
-            c6log: 'https://lib.cinema6.com/c6ui/v3.7.1-0-gc250c59/c6log.min'
+            c6log: 'https://lib.cinema6.com/c6ui/v3.7.1-0-gc250c59/c6log.min',
+            c6embed: 'https://lib.cinema6.com/c6embed/v1/app.min'
         },
         shim: {
             modernizr: {
@@ -32,6 +33,14 @@
                 deps: ['angular'],
                 init: function(angular) {
                     return angular.module('ngAnimate');
+                }
+            },
+            c6embed: {
+                deps: ['c6_defines'],
+                init: function(c6Defines) {
+                    /* jshint camelcase:false */
+                    window.__c6_ga__ = function() {};
+                    return c6Defines;
                 }
             }
         }

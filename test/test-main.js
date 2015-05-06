@@ -53,6 +53,7 @@
                 ngAnimate: libUrl('angular/v1.2.22-0-g93b0c2d/angular-animate'),
                 c6uilib: libUrl('c6ui/v3.7.1-0-gc250c59/c6uilib'),
                 c6log: libUrl('c6ui/v3.7.1-0-gc250c59/c6log'),
+                c6embed: libUrl('c6embed/v1/app.min'),
                 templates: '/base/.tmp/templates',
                 'helpers/drag': '/base/test/helpers/drag'
             },
@@ -78,6 +79,12 @@
                     deps: ['angular'],
                     init: function(angular) {
                         return angular.module('ngMock');
+                    }
+                },
+                c6embed: {
+                    deps: ['c6_defines'],
+                    init: function(c6Defines) {
+                        return c6Defines;
                     }
                 }
             }

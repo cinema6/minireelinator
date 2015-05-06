@@ -14,6 +14,7 @@ define(function() {
     };
     c6.kApiUrl = '/api';
     c6.kYouTubeDataApiKey = window.YouTubeApiKey || 'AIzaSyCmHsFIiXhjAuHM_piTxSHPsQgvZwueLlk';
+    c6.embeds = [];
 
     if (c6.kDebug) {
         // This URL must include the page's protocol to work in Firefox
