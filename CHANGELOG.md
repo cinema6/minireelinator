@@ -1,5 +1,11 @@
 # MiniReelinator
 
+
+## v1.11.4
+* *[v1.11.4.rc1]*
+  * [FIX]: Fixed CSS rendering issue where modal title bar would appear during preview mode.
+* *[/v1.11.4.rc1]*
+
 ## v1.11.3 (May 1, 2015)
 * *[v1.11.3.rc2]*
   * [FIX]: Urls are valid if the start with "http://", "https://"" or "//""
