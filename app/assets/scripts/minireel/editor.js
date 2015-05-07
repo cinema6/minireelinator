@@ -1792,44 +1792,6 @@ VideoCardController           , c6embed ) {
             };
         }])
 
-        .directive('mrPreview', ['postMessage','$compile',
-        function                ( postMessage , $compile ) {
-            function link(scope, $element) {
-                var $iframe, session;
-
-                scope.$watchCollection('[src, experience]', function(data) {
-                    var src = data[0], experience = data[1];
-
-                    if (!src || !experience) { return; }
-
-                    if (session) {
-                        postMessage.destroySession(session.id);
-                    }
-
-                    // Use an existing frame (but remove it from the DOM) if possible
-                    $iframe = ($iframe && $iframe.remove()) ||
-                        // Create a new frame if we don't already have one
-                        $compile('<iframe></iframe>')(scope);
-
-                    $iframe.prop('src', src);
-
-                    // Back in the DOM it goes!
-                    $element.append($iframe);
-                    session = postMessage.createSession($iframe.prop('contentWindow'));
-                    scope.$emit('mrPreview:initExperience', experience, session);
-                });
-            }
-
-            return {
-                restrict: 'E',
-                scope: {
-                    experience: '=',
-                    src: '@'
-                },
-                link: link
-            };
-        }])
-
         .directive('videoTrimmer', ['c6UrlMaker','$window','c6Debounce','$q',
         function                   ( c6UrlMaker , $window , c6Debounce , $q ) {
             return {
