@@ -1,570 +1,391 @@
-(function() {
+define(['app','angular'], function(appModule, angular) {
     'use strict';
 
-    define(['app','c6_defines'], function(appModule, c6Defines) {
-        describe('PreviewController', function() {
-            var $rootScope,
-                $q,
-                $scope,
-                $controller,
-                c6UrlMaker,
-                PreviewController,
-                MiniReelService,
-                c6EventEmitter,
-                c6BrowserInfo,
-                c6State, portal,
-                postMessage;
+    var copy = angular.copy;
+    var extend = angular.extend;
 
-            var responseCallback,
-                experience,
-                session,
-                playerMeta;
+    describe('PreviewController', function() {
+        var $rootScope,
+            $q,
+            $scope,
+            $controller,
+            c6UrlMaker,
+            PreviewCtrl,
+            MiniReelService,
+            c6EventEmitter,
+            c6BrowserInfo,
+            c6State, portal,
+            postMessage;
 
-            beforeEach(function() {
-                c6BrowserInfo = {
-                    profile: {
-                        flash: true,
-                        autoplay: true,
-                        device: 'desktop'
-                    }
-                };
+        var responseCallback,
+            editorExperience,
+            playerExperience,
+            session,
+            playerMeta;
 
-                module('c6.ui', function($provide) {
-                    $provide.value('c6BrowserInfo',c6BrowserInfo);
-
-                    $provide.decorator('c6UrlMaker', function($delegate) {
-                        return jasmine.createSpy('c6UrlMaker()')
-                            .and.callFake($delegate);
-                    });
-                });
-
-                module(appModule.name, function($provide) {
-                    $provide.value('playerMeta', {});
-                });
-
-                inject(function($injector) {
-                    $rootScope = $injector.get('$rootScope');
-                    $q = $injector.get('$q');
-                    $controller = $injector.get('$controller');
-                    MiniReelService = $injector.get('MiniReelService');
-                    postMessage = $injector.get('postMessage');
-                    c6EventEmitter = $injector.get('c6EventEmitter');
-                    c6UrlMaker = $injector.get('c6UrlMaker');
-                    playerMeta = $injector.get('playerMeta');
-                    c6State = $injector.get('c6State');
-                    portal = c6State.get('Portal');
-                    portal.cModel = {};
-
-                    $scope = $rootScope.$new();
-
-                    PreviewController = $controller('PreviewController', { $scope: $scope });
-                });
-
-                experience = {
-                    id: 'foo',
-                    data: {
-                        mode: 'light',
-                        autoplay: false,
-                        deck: [
-                            {
-                                id: '1',
-                                type: 'video',
-                                data: {}
-                            },
-                            {
-                                id: '2',
-                                type: 'ad',
-                                data: {}
-                            },
-                            {
-                                id: '3',
-                                type: 'video',
-                                data: {}
-                            }
-                        ]
-                    }
-                };
-
-                session = {
-                    ping: jasmine.createSpy('session.ping()')
-                };
-
-                c6EventEmitter(session);
-
-                spyOn(session, 'on').and.callThrough();
-
-                responseCallback = jasmine.createSpy('responseCallback()');
-            });
-
-            describe('initialization', function() {
-                it('should exist', function() {
-                    expect(PreviewController).toEqual(jasmine.any(Object));
-                });
-
-                it('should set the default mode to desktop', function() {
-                    expect(PreviewController.device).toBe('desktop');
-                });
-            });
-
-            describe('properties', function() {
-                function controller() {
-                    $scope = $rootScope.$new();
-                    $scope.$apply(function() {
-                        PreviewController = $controller('PreviewController', { $scope: $scope });
-                    });
-
-                    return PreviewController;
+        beforeEach(function() {
+            c6BrowserInfo = {
+                profile: {
+                    flash: true,
+                    autoplay: true,
+                    device: 'desktop'
                 }
+            };
 
-                describe('active', function() {
-                    it('should be false', function() {
-                        expect(PreviewController.active).toBe(false);
-                    });
-                });
+            module('c6.ui', function($provide) {
+                $provide.value('c6BrowserInfo',c6BrowserInfo);
 
-                describe('playerSrc', function() {
-                    describe('when developing locally', function() {
-                        beforeEach(function() {
-                            c6Defines.kDebug = true;
-                            c6Defines.kEnv = 'dev';
-                            c6Defines.kLocal = true;
-                        });
-
-                        it('should be "/apps/rumble/app/index.html?kCollateralUrl=/collateral&kDebug=true&kDevMode=true"', function() {
-                            expect(PreviewController.playerSrc).toBe('/apps/rumble/app/index.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&kDebug=true&kDevMode=true&autoplay=false&kDevice=desktop&kMode=full&kEnvUrlRoot=');
-                        });
-                    });
-
-                    ['staging', 'production'].forEach(function(env) {
-                        describe('when in ' + env, function() {
-                            beforeEach(function() {
-                                c6Defines.kEnv = env;
-                                c6Defines.kLocal = false;
-                                c6Defines.kCollateralUrl = '/collateral';
-
-                                spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(experience));
-                                $scope.$apply(function() {
-                                    $scope.$emit('mrPreview:initExperience', experience, session);
-                                });
-                            });
-
-                            it('should load in the correct page based on the mode', function() {
-                                experience.data.mode = 'full';
-                                expect(PreviewController.playerSrc).toBe('/apps/rumble/full.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=full&kEnvUrlRoot=');
-
-                                experience.data.mode = 'lightbox';
-                                $scope.$apply(function() {
-                                    $scope.$emit('mrPreview:updateExperience', experience);
-                                });
-                                expect(PreviewController.playerSrc).toBe('/apps/rumble/lightbox.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=lightbox&kEnvUrlRoot=');
-
-                                PreviewController.device = 'phone';
-                                $scope.$apply(function() {
-                                    $scope.$emit('mrPreview:updateExperience', experience);
-                                });
-                                expect(PreviewController.playerSrc).toBe('/apps/rumble/mobile.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=phone&kMode=mobile&kEnvUrlRoot=');
-                            });
-                        });
-                    });
-
-                    describe('in staging', function() {
-                        beforeEach(function() {
-                            c6Defines.kDebug = true;
-                            c6Defines.kEnv = 'staging';
-                            c6Defines.kLocal = false;
-                            c6Defines.kCollateralUrl = '/collateral';
-
-                            c6UrlMaker.and.callFake(function(url, base) {
-                                if (base !== 'app') {
-                                    throw new Error('Must use app base');
-                                }
-
-                                return '/apps/' + url;
-                            });
-                        });
-
-                        it('should be "/apps/rumble?kCollateralUrl=/collateral"', function() {
-                            expect(controller().playerSrc).toBe('/apps/rumble/full.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=full&kEnvUrlRoot=');
-                        });
-
-                        it('should pass the current mode and device', function() {
-                            spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(experience));
-                            $scope.$apply(function() {
-                                $scope.$emit('mrPreview:initExperience', experience, session);
-                            });
-
-                            expect(PreviewController.playerSrc).toBe('/apps/rumble/light.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=light&kEnvUrlRoot=');
-
-                            experience.data.mode = 'lightbox';
-                            $scope.$apply(function() {
-                                PreviewController.device = 'phone';
-                            });
-                            $scope.$apply(function() {
-                                $scope.$emit('mrPreview:updateExperience', experience);
-                            });
-
-                            expect(PreviewController.playerSrc).toBe('/apps/rumble/mobile.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=phone&kMode=mobile&kEnvUrlRoot=');
-                        });
-                    });
-
-                    describe('in production', function() {
-                        beforeEach(function() {
-                            c6Defines.kDebug = false;
-                            c6Defines.kEnv = 'production';
-                            c6Defines.kLocal = false;
-                            c6Defines.kCollateralUrl = '/collateral';
-
-                            c6UrlMaker.and.callFake(function(url, base) {
-                                if (base !== 'app') {
-                                    throw new Error('Must use app base');
-                                }
-
-                                return '/apps/' + url;
-                            });
-                        });
-
-                        it('should be "/apps/rumble?kCollateralUrl=/collateral"', function() {
-                            expect(controller().playerSrc).toBe('/apps/rumble/full.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=full&kEnvUrlRoot=');
-                        });
-
-                        it('should pass the current mode and device', function() {
-                            spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(experience));
-                            $scope.$apply(function() {
-                                $scope.$emit('mrPreview:initExperience', experience, session);
-                            });
-
-                            expect(PreviewController.playerSrc).toBe('/apps/rumble/light.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=desktop&kMode=light&kEnvUrlRoot=');
-
-                            experience.data.mode = 'lightbox';
-                            $scope.$apply(function() {
-                                PreviewController.device = 'phone';
-                            });
-                            $scope.$apply(function() {
-                                $scope.$emit('mrPreview:updateExperience', experience);
-                            });
-
-                            expect(PreviewController.playerSrc).toBe('/apps/rumble/mobile.html?kCollateralUrl=' + encodeURIComponent('/collateral') + '&autoplay=false&kDevice=phone&kMode=mobile&kEnvUrlRoot=');
-                        });
-                    });
-                });
-                
-                describe('fullscreen', function() {
-                    it('should default to false', function() {
-                        expect(PreviewController.fullscreen).toBe(false);
-                    });
-                    it('should do stuff', function() {
-                        spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(experience));
-                        $scope.$apply(function() {
-                            $scope.$emit('mrPreview:initExperience', experience, session);
-                        });
-
-                        $scope.$apply(function() {
-                            session.emit('fullscreenMode', true);
-                        });
-
-                        expect(PreviewController.fullscreen).toBe(true);
-
-                        $scope.$apply(function() {
-                            session.emit('fullscreenMode', false);
-                        });
-
-                        expect(PreviewController.fullscreen).toBe(false);
-                    });
+                $provide.decorator('c6UrlMaker', function($delegate) {
+                    return jasmine.createSpy('c6UrlMaker()')
+                        .and.callFake($delegate);
                 });
             });
 
-            describe('session events', function() {
+            module(appModule.name, function($provide) {
+                $provide.value('playerMeta', {});
+            });
+
+            inject(function($injector) {
+                $rootScope = $injector.get('$rootScope');
+                $q = $injector.get('$q');
+                $controller = $injector.get('$controller');
+                MiniReelService = $injector.get('MiniReelService');
+                postMessage = $injector.get('postMessage');
+                c6EventEmitter = $injector.get('c6EventEmitter');
+                c6UrlMaker = $injector.get('c6UrlMaker');
+                playerMeta = $injector.get('playerMeta');
+                c6State = $injector.get('c6State');
+                portal = c6State.get('Portal');
+                portal.cModel = {};
+
+                $scope = $rootScope.$new();
+
+                PreviewCtrl = $controller('PreviewController', { $scope: $scope });
+            });
+
+            editorExperience = {
+                id: 'foo--editor',
+                data: {
+                    mode: 'light',
+                    autoplay: false,
+                    deck: [
+                        {
+                            id: '1',
+                            type: 'video',
+                            data: {}
+                        },
+                        {
+                            id: '2',
+                            type: 'ad',
+                            data: {}
+                        },
+                        {
+                            id: '3',
+                            type: 'video',
+                            data: {}
+                        }
+                    ]
+                }
+            };
+            playerExperience = extend(copy(editorExperience), {
+                id: 'foo--player'
+            });
+
+            session = {
+                ping: jasmine.createSpy('session.ping()')
+            };
+
+            c6EventEmitter(session);
+
+            spyOn(session, 'on').and.callThrough();
+
+            responseCallback = jasmine.createSpy('responseCallback()');
+        });
+
+        describe('initialization', function() {
+            it('should exist', function() {
+                expect(PreviewCtrl).toEqual(jasmine.any(Object));
+            });
+
+            it('should set the default mode to desktop', function() {
+                expect(PreviewCtrl.device).toBe('desktop');
+            });
+        });
+
+        describe('properties', function() {
+            describe('active', function() {
+                it('should be false', function() {
+                    expect(PreviewCtrl.active).toBe(false);
+                });
+            });
+
+            describe('experience', function() {
+                it('should be null', function() {
+                    expect(PreviewCtrl.experience).toBeNull();
+                });
+            });
+
+            describe('card', function() {
+                it('should be null', function() {
+                    expect(PreviewCtrl.card).toBeNull();
+                });
+            });
+
+            describe('profile', function() {
+                it('should be a copy of the c6BrowserInfo.profile', function() {
+                    expect(PreviewCtrl.profile).toEqual(c6BrowserInfo.profile);
+                    expect(PreviewCtrl.profile).not.toBe(c6BrowserInfo.profile);
+                });
+            });
+
+            describe('device', function() {
+                it('should be "desktop"', function() {
+                    expect(PreviewCtrl.device).toBe('desktop');
+                });
+            });
+        });
+
+        describe('$scope listeners', function() {
+            describe('mrPreview:splashClick', function() {
                 beforeEach(function() {
-                    $scope.$emit('mrPreview:initExperience', experience, session);
+                    $scope.$apply(function() {
+                        $scope.$emit('mrPreview:splashClick');
+                    });
                 });
 
-                describe('open', function() {
+                it('should set "active" to true', function() {
+                    expect(PreviewCtrl.active).toBe(true);
+                });
+            });
+
+            describe('mrPreview:updateExperience', function() {
+                beforeEach(function() {
+                    spyOn(MiniReelService, 'convertForPlayer').and.callFake(function() {
+                        return $q.when(copy(playerExperience));
+                    });
+
+                    $scope.$apply(function() {
+                        $scope.$emit('mrPreview:updateExperience', editorExperience);
+                    });
+                });
+
+                it('should convert the experience for the player', function() {
+                    expect(MiniReelService.convertForPlayer).toHaveBeenCalledWith(editorExperience);
+                });
+
+                it('should make a copy of the experience, disable its ads and make it it\'s experience property', function() {
+                    expect(PreviewCtrl.experience).toEqual(extend(copy(playerExperience), {
+                        data: extend(copy(playerExperience.data), {
+                            adConfig: {
+                                video: {
+                                    firstPlacement: -1,
+                                    frequency: 0
+                                },
+                                display: {}
+                            }
+                        })
+                    }));
+                });
+
+                describe('if the experience changes', function() {
                     beforeEach(function() {
-                        PreviewController.active = false;
-                        session.emit('open');
+                        playerExperience = copy(playerExperience);
+                        playerExperience.data.deck[0].type = 'video';
+
+                        $scope.$apply(function() {
+                            $scope.$emit('mrPreview:updateExperience', editorExperience);
+                        });
+                    });
+
+                    it('should copy the new experience to its experience property', function() {
+                        expect(PreviewCtrl.experience).toEqual(extend(copy(playerExperience), {
+                            data: extend(copy(playerExperience.data), {
+                                adConfig: jasmine.any(Object)
+                            })
+                        }));
+                    });
+                });
+
+                describe('if the experience doesn\'t change', function() {
+                    var previousExperience;
+
+                    beforeEach(function() {
+                        previousExperience = PreviewCtrl.experience;
+                        playerExperience = copy(playerExperience);
+
+                        $scope.$apply(function() {
+                            $scope.$emit('mrPreview:updateExperience', editorExperience);
+                        });
+                    });
+
+                    it('should do nothing', function() {
+                        expect(PreviewCtrl.experience).toBe(previousExperience);
+                    });
+                });
+
+                describe('if a card is also provided', function() {
+                    var card;
+
+                    beforeEach(function() {
+                        card = playerExperience.data.deck[1];
+                        PreviewCtrl.active = false;
+
+                        $scope.$apply(function() {
+                            $scope.$emit('mrPreview:updateExperience', editorExperience, card);
+                        });
+                    });
+
+                    it('should set the card property to the provided card', function() {
+                        expect(PreviewCtrl.card).toBe(card);
                     });
 
                     it('should set active to true', function() {
-                        expect(PreviewController.active).toBe(true);
+                        expect(PreviewCtrl.active).toBe(true);
                     });
                 });
 
-                describe('close', function() {
+                describe('if a card is not provided', function() {
                     beforeEach(function() {
-                        PreviewController.active = true;
-                    });
-
-                    it('should set active to false', function() {
-                        spyOn($scope, '$emit');
-                        session.emit('close');
-
-                        expect(PreviewController.active).toBe(false);
-                        expect($scope.$emit).not.toHaveBeenCalledWith('mrPreview:closePreview');
-                    });
-
-                    it('should emit mrPreview:closePreview if previewing a card', function() {
-                        spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue($q.when(experience.data.deck[0]));
-                        $scope.$apply(function() {
-                            $scope.$emit('mrPreview:updateExperience', experience, {});
-                        });
-                        spyOn($scope, '$emit');
+                        PreviewCtrl.card = playerExperience.data.deck[1];
+                        PreviewCtrl.active = false;
 
                         $scope.$apply(function() {
-                            session.emit('close');
+                            $scope.$emit('mrPreview:updateExperience', editorExperience);
                         });
+                    });
 
-                        expect($scope.$emit).toHaveBeenCalledWith('mrPreview:closePreview');
+                    it('should set the card property to null', function() {
+                        expect(PreviewCtrl.card).toBeNull();
+                    });
+
+                    it('should not set active to true', function() {
+                        expect(PreviewCtrl.active).not.toBe(true);
                     });
                 });
             });
 
-            describe('$scope listeners', function() {
-                describe('mrPreview:splashClick', function() {
-                    beforeEach(function() {
-                        $scope.$emit('mrPreview:splashClick');
-                        expect(PreviewController.active).toBe(false);
+            describe('mrPreview:reset', function() {
+                beforeEach(function() {
+                    PreviewCtrl.active = true;
+                    PreviewCtrl.card = {};
+                    PreviewCtrl.experience = {};
+                    spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(playerExperience));
 
-                        spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(experience));
-                        $scope.$apply(function() {
-                            $scope.$emit('mrPreview:initExperience', experience, session);
-                        });
-                        $scope.$apply(function() {
-                            $scope.$emit('mrPreview:splashClick');
-                        });
-                    });
-
-                    it('should set "active" to true', function() {
-                        expect(PreviewController.active).toBe(true);
+                    $scope.$apply(function() {
+                        $scope.$emit('mrPreview:reset');
                     });
                 });
 
-                describe('mrPreview:initExperience', function() {
-                    var dataSentToPlayer;
-
-                    beforeEach(function() {
-                        spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(experience));
-                        $scope.$apply(function() {
-                            $scope.$emit('mrPreview:initExperience', experience, session);
-                        });
-                    });
-
-                    it('should convert the experience and add it to the session', function() {
-                        expect(MiniReelService.convertForPlayer).toHaveBeenCalled();
-                        expect(session.experience).toEqual(experience);
-                    });
-
-                    it('should register five session listeners', function() {
-                        expect(session.on).toHaveBeenCalledWith(jasmine.any(String), jasmine.any(Function));
-                        expect(session.on.calls.count()).toBe(5);
-                    });
-
-                    describe('handshake request', function() {
-                        it('should respond with appData for the player', function() {
-                            $scope.$apply(function() {
-                                session.emit('handshake', {}, responseCallback);
-                            });
-
-                            dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
-
-                            expect(dataSentToPlayer).toEqual({
-                                success: true,
-                                appData: {
-                                    experience: experience,
-                                    profile: c6BrowserInfo.profile,
-                                    version: 1
-                                }
-                            });
-                        });
-                    });
-
-                    describe('mrPreview:getCard request', function() {
-                        it('should return undefined until a specific card has been selected', function() {
-                            session.emit('mrPreview:getCard', {}, responseCallback);
-
-                            dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
-
-                            expect(dataSentToPlayer).toBe(undefined);
-                        });
-                    });
+                it('should set active to false', function() {
+                    expect(PreviewCtrl.active).toBe(false);
                 });
 
-                describe('mrPreview:updateExperience', function() {
-                    var newCard;
-
-                    beforeEach(function() {
-                        newCard = {
-                            id: 'new'
-                        };
-
-                        spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(experience));
-                        spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue($q.when(newCard));
-
-                        $scope.$apply(function() {
-                            $scope.$emit('mrPreview:initExperience', experience, session);
-                        });
-                    });
-
-                    it('should convert the experience', function() {
-                        experience.data.deck.push(newCard);
-
-                        $scope.$apply(function() {
-                            $scope.$emit('mrPreview:updateExperience', experience);
-                        });
-                        expect(MiniReelService.convertForPlayer).toHaveBeenCalled();
-                    });
-
-                    describe('when the experience has changed', function() {
-                        it('should send the experience to the player', function() {
-                            experience.data.deck.push(newCard);
-                            experience.data.autoplay = true;
-
-                            $scope.$apply(function() {
-                                $scope.$emit('mrPreview:updateExperience', experience, newCard);
-                            });
-
-                            expect(experience).not.toEqual(session.experience);
-                            expect(PreviewController.playerSrc).toContain('autoplay=true');
-                            expect(session.ping).toHaveBeenCalledWith('mrPreview:updateExperience', jasmine.any(Object));
-                        });
-                    });
-
-                    describe('when there\'s a card to jump to', function() {
-                        it('should convert the card and tell the player to jump to the card', function() {
-                            $scope.$apply(function() {
-                                $scope.$emit('mrPreview:updateExperience', experience, newCard);
-                            });
-
-                            expect(MiniReelService.convertCardForPlayer).toHaveBeenCalled();
-                            expect(session.ping).toHaveBeenCalledWith('mrPreview:jumpToCard', newCard);
-                        });
-                    });
-
-                    describe('when there\'s no card to jump to', function() {
-                        it('should tell the player to reset', function() {
-                            $scope.$apply(function() {
-                                $scope.$emit('mrPreview:updateExperience', experience);
-                            });
-
-                            expect(session.ping).toHaveBeenCalledWith('mrPreview:reset');
-                        });
-                    });
+                it('should set the card property back to null', function() {
+                    expect(PreviewCtrl.card).toBeNull();
                 });
 
-                describe('mrPreview:reset', function() {
-                    beforeEach(function() {
-                        PreviewController.active = true;
-                        spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(experience));
-                        $scope.$apply(function() {
-                            $scope.$emit('mrPreview:initExperience', experience, session);
-                        });
-                    });
-                    it('should tell the player to reset', function() {
-                        $scope.$apply(function() {
-                            $scope.$emit('mrPreview:reset');
-                        });
-                        expect(session.ping).toHaveBeenCalledWith('mrPreview:reset');
-                    });
-
-                    it('should set active to false', function() {
-                        $scope.$apply(function() {
-                            $scope.$emit('mrPreview:reset');
-                        });
-                        expect(PreviewController.active).toBe(false);
-                    });
-
-                    describe('if a card has been previewed then reset it', function() {
-                        it('should reset it so no card is returned', function() {
-                            spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue($q.when({id: '1'}));
-                            $scope.$apply(function() {
-                                $scope.$emit('mrPreview:updateExperience', experience, {id: '1'});
-                            });
-                            $scope.$apply(function() {
-                                $scope.$emit('mrPreview:reset');
-                            });
-                            $scope.$apply(function() {
-                                session.emit('mrPreview:getCard', {}, responseCallback);
-                            });
-
-                            var dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
-
-                            expect(dataSentToPlayer).toBe(null);
-                        });
-                    });
-                });
-
-                describe('mrPreview:updateMode', function() {
-                    it('should change the playerSrc, cause a refresh, and send an updated experience', function() {
-                        var dataSentToPlayer,
-                            emitCount = 0,
-                            updatedExperience = {
-                                id: 'foo',
-                                data: {
-                                    mode: 'lightbox',
-                                    autoplay: true,
-                                    deck: [
-                                        {
-                                            id: '1'
-                                        },
-                                        {
-                                            id: '2'
-                                        },
-                                        {
-                                            id: '3'
-                                        },
-                                        {
-                                            id: 'new'
-                                        }
-                                    ]
-                                }
-                            };
-
-                        spyOn($scope, '$emit').and.callThrough();
-                        spyOn(MiniReelService, 'convertForPlayer').and.callFake(function() {
-                            if((emitCount === 0) && $scope.$emit.calls.argsFor(0)[0] === 'mrPreview:initExperience') {
-                                emitCount++;
-                                return $q.when(experience);
-                            } else if($scope.$emit.calls.argsFor(1)[0] === 'mrPreview:updateMode') {
-                                return $q.when(updatedExperience);
-                            }
-                        });
-                        $scope.$apply(function() {
-                            $scope.$emit('mrPreview:initExperience', experience, session);
-                        });
-                        expect(PreviewController.playerSrc).toContain('kMode=light');
-
-                        $scope.$apply(function() {
-                            $scope.$emit('mrPreview:updateMode', updatedExperience);
-                        });
-                        expect(PreviewController.playerSrc).toContain('kMode=lightbox');
-                        expect(PreviewController.playerSrc).toContain('autoplay=true');
-
-                        $scope.$apply(function() {
-                            session.emit('handshake', {}, responseCallback);
-                        });
-
-                        dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
-
-                        expect(dataSentToPlayer.appData.experience).not.toEqual(session.experience);
-                        expect(dataSentToPlayer.appData.experience).toEqual(updatedExperience);
-                    });
+                it('should set the experience property back to null', function() {
+                    expect(PreviewCtrl.experience).toBeNull();
                 });
             });
 
-            describe('$watcher', function() {
-                describe('active', function() {
-                    function set(bool) {
+            describe('mrPreview:updateMode', function() {
+                beforeEach(function() {
+                    spyOn(MiniReelService, 'convertForPlayer').and.returnValue($q.when(playerExperience));
+
+                    $scope.$apply(function() {
+                        $scope.$emit('mrPreview:updateMode', editorExperience);
+                    });
+                });
+
+                it('should convert the experience for the player', function() {
+                    expect(MiniReelService.convertForPlayer).toHaveBeenCalledWith(editorExperience);
+                });
+
+                it('should make a copy of the experience and make it it\'s experience property', function() {
+                    expect(PreviewCtrl.experience).toEqual(extend(copy(playerExperience), {
+                        data: extend(copy(playerExperience.data), {
+                            adConfig: jasmine.any(Object)
+                        })
+                    }));
+                });
+
+                describe('if the experience changes', function() {
+                    beforeEach(function() {
+                        playerExperience = copy(playerExperience);
+                        playerExperience.data.deck[0].type = 'video';
+
                         $scope.$apply(function() {
-                            PreviewController.active = bool;
+                            $scope.$emit('mrPreview:updateMode', editorExperience);
                         });
-                    }
+                    });
+
+                    it('should copy the new experience to its experience property', function() {
+                        expect(PreviewCtrl.experience).toEqual(extend(copy(playerExperience), {
+                            data: extend(copy(playerExperience.data), {
+                                adConfig: jasmine.any(Object)
+                            })
+                        }));
+                    });
+                });
+
+                describe('if the experience doesn\'t change', function() {
+                    var previousExperience;
 
                     beforeEach(function() {
-                        set(undefined);
+                        previousExperience = PreviewCtrl.experience;
+                        playerExperience = copy(playerExperience);
 
                         $scope.$apply(function() {
-                            $scope.$emit('mrPreview:initExperience', experience, session);
+                            $scope.$emit('mrPreview:updateMode', editorExperience);
                         });
-                        spyOn($scope, '$broadcast').and.callThrough();
+                    });
+
+                    it('should do nothing', function() {
+                        expect(PreviewCtrl.experience).toBe(previousExperience);
+                    });
+                });
+            });
+        });
+
+        describe('$watcher', function() {
+            describe('active', function() {
+                function set(bool) {
+                    $scope.$apply(function() {
+                        PreviewCtrl.active = bool;
+                    });
+                }
+
+                beforeEach(function() {
+                    set(undefined);
+
+                    spyOn($scope, '$emit').and.callThrough();
+                    spyOn($scope, '$broadcast').and.callThrough();
+                });
+
+                describe('if true', function() {
+                    beforeEach(function() {
+                        set(true);
+                    });
+
+                    it('should tell the splash page it is being hidden', function() {
+                        expect($scope.$broadcast).toHaveBeenCalledWith('mrPreview:splashHide');
+                    });
+                });
+
+                describe('if false', function() {
+                    beforeEach(function() {
+                        set(false);
+                    });
+
+                    it('should tell the splash page it is being shown', function() {
+                        expect($scope.$broadcast).toHaveBeenCalledWith('mrPreview:splashShow');
+                    });
+                });
+
+                describe('if there is a card', function() {
+                    beforeEach(function() {
+                        PreviewCtrl.card = {};
                     });
 
                     describe('if true', function() {
@@ -572,12 +393,8 @@
                             set(true);
                         });
 
-                        it('should tell the splash page it is being hidden', function() {
-                            expect($scope.$broadcast).toHaveBeenCalledWith('mrPreview:splashHide');
-                        });
-
-                        it('should tell the experience it is being shown', function() {
-                            expect(session.ping).toHaveBeenCalledWith('show');
+                        it('should not $emit anything', function() {
+                            expect($scope.$emit).not.toHaveBeenCalled();
                         });
                     });
 
@@ -586,137 +403,101 @@
                             set(false);
                         });
 
-                        it('should tell the splash page it is being shown', function() {
-                            expect($scope.$broadcast).toHaveBeenCalledWith('mrPreview:splashShow');
-                        });
-
-                        it('should tell the experience it is being hidden', function() {
-                            expect(session.ping).toHaveBeenCalledWith('hide');
+                        it('should $emit "mrPreview:closePreview"', function() {
+                            expect($scope.$emit).toHaveBeenCalledWith('mrPreview:closePreview');
                         });
                     });
                 });
 
-                describe('device', function() {
-                    describe('when the device has been changed', function() {
-                        var dataSentToPlayer, updatedExperience, emitCount;
+                describe('if there is no card', function() {
+                    beforeEach(function() {
+                        PreviewCtrl.card = null;
+                    });
 
+                    describe('if true', function() {
                         beforeEach(function() {
-                            updatedExperience = {
-                                id: 'foo',
-                                data: {
-                                    mode: 'light',
-                                    deck: [
-                                        {
-                                            id: '1'
-                                        },
-                                        {
-                                            id: '2'
-                                        },
-                                        {
-                                            id: '3'
-                                        },
-                                        {
-                                            id: 'new'
-                                        }
-                                    ]
-                                }
-                            };
-
-                            emitCount = 0;
-
-                            spyOn($scope, '$emit').and.callThrough();
-
-                            spyOn(MiniReelService, 'convertForPlayer').and.callFake(function() {
-                                if((emitCount === 0) && $scope.$emit.calls.argsFor(0)[0] === 'mrPreview:initExperience') {
-                                    emitCount++;
-                                    return $q.when(experience);
-                                } else if($scope.$emit.calls.argsFor(1)[0] === 'mrPreview:updateExperience') {
-                                    return $q.when(updatedExperience);
-                                }
-                            });
-
-                            $scope.$apply(function() {
-                                $scope.$emit('mrPreview:initExperience', experience, session);
-                            });
-                            $scope.$apply(function() {
-                                $scope.$emit('mrPreview:updateExperience', updatedExperience);
-                            });
-
-                            PreviewController.active = true;
-
-                            $scope.$apply(function() {
-                                PreviewController.device = 'desktop';
-                            });
-
-                            $scope.$apply(function() {
-                                PreviewController.device = 'phone';
-                            });
+                            set(true);
                         });
 
-                        it('should leave fullscreen', function() {
-                            expect(PreviewController.fullscreen).toBe(false);
+                        it('should not $emit anything', function() {
+                            expect($scope.$emit).not.toHaveBeenCalled();
+                        });
+                    });
+
+                    describe('if false', function() {
+                        beforeEach(function() {
+                            set(false);
                         });
 
-                        it('should set active to false', function() {
-                            expect(PreviewController.active).toBe(false);
+                        it('should not $emit anything', function() {
+                            expect($scope.$emit).not.toHaveBeenCalled();
                         });
+                    });
+                });
+            });
 
-                        it('should cause the playerSrc to change', function() {
-                            expect(PreviewController.playerSrc).toContain('kDevice=phone');
+            describe('device', function() {
+                var currentProfile;
+
+                beforeEach(function() {
+                    $scope.$apply(function() {
+                        currentProfile = PreviewCtrl.profile;
+                    });
+                });
+
+                describe('if set to something the same as the current device', function() {
+                    beforeEach(function() {
+                        currentProfile.device = 'tablet';
+
+                        $scope.$apply(function() {
+                            PreviewCtrl.device = currentProfile.device;
                         });
+                    });
 
-                        it('should send an updated profile to the player after it reloads', function() {
-                            $scope.$apply(function() {
-                                session.emit('handshake', {}, responseCallback);
-                            });
+                    it('should do nothing', function() {
+                        expect(PreviewCtrl.profile).toBe(currentProfile);
+                    });
+                });
 
-                            dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
-
-                            expect(dataSentToPlayer.appData.profile.device).toBe('phone');
+                describe('if set to something that is not the current device', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            PreviewCtrl.device = 'netbook';
                         });
-                        it('should send an updated experience to the player after it reloads', function() {
-                            $scope.$apply(function() {
-                                session.emit('handshake', {}, responseCallback);
-                            });
+                    });
 
-                            dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
+                    it('should update the profile', function() {
+                        expect(PreviewCtrl.profile).not.toBe(currentProfile);
+                        expect(PreviewCtrl.profile).toEqual(extend(copy(currentProfile), {
+                            device: PreviewCtrl.device
+                        }));
+                    });
+                });
 
-                            expect(dataSentToPlayer.appData.experience).not.toEqual(session.experience);
-                            expect(dataSentToPlayer.appData.experience).toEqual(updatedExperience);
+                describe('if set to desktop', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            PreviewCtrl.device = 'desktop';
                         });
+                    });
 
-                        describe('if set to phone', function() {
-                            beforeEach(function() {
-                                $scope.$apply(function() {
-                                    session.emit('handshake', {}, responseCallback);
-                                });
-                                dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
-                            });
+                    it('should make the profile\'s flash setting its true value', function() {
+                        expect(PreviewCtrl.profile.flash).toBe(c6BrowserInfo.profile.flash);
+                    });
+                });
 
-                            it('should set profile.flash to false', function() {
-                                expect(dataSentToPlayer.appData.profile.flash).toBe(false);
-                            });
+                describe('if set to "phone"', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            PreviewCtrl.device = 'phone';
                         });
+                    });
 
-                        describe('if set to something else', function() {
-                            beforeEach(function() {
-                                c6BrowserInfo.profile.flash = false;
-                                $scope.$apply(function() {
-                                    PreviewController.device = 'foo';
-                                });
-                                $scope.$apply(function() {
-                                    session.emit('handshake', {}, responseCallback);
-                                });
-                                dataSentToPlayer = responseCallback.calls.argsFor(0)[0];
-                            });
-
-                            it('should set profile.flash to true', function() {
-                                expect(dataSentToPlayer.appData.profile.flash).toBe(true);
-                            });
-                        });
+                    it('should set flash to false', function() {
+                        expect(PreviewCtrl.profile.flash).toBe(false);
                     });
                 });
             });
         });
     });
-}());
+});
