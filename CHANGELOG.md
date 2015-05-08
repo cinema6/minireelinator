@@ -1,9 +1,9 @@
 # MiniReelinator
 
-
 ## v1.11.4
 * *[v1.11.4.rc1]*
   * [FIX]: Fixed CSS rendering issue where modal title bar would appear during preview mode.
+  * [FEATURE]: Add Click Url and Ad Count Url support to Sponsored Card Manager
 * *[/v1.11.4.rc1]*
 
 ## v1.11.3 (May 1, 2015)
