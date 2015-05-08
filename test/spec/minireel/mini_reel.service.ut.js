@@ -156,7 +156,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -176,7 +178,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -215,7 +219,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -262,7 +268,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -299,7 +307,9 @@
                                 campaign: {
                                     campaignId: 'abc123',
                                     advertiserId: '123abc',
-                                    minViewTime: 15
+                                    minViewTime: 15,
+                                    countUrls: ['http://dumbturtle.com/pixel?s=dumb'],
+                                    clickUrls: ['//dumbturtle.com/anotherpixel?s=sodumb']
                                 },
                                 collateral: {
                                     logo: 'my-awesome-logo.png'
@@ -354,7 +364,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -373,7 +385,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -395,7 +409,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -431,7 +447,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -450,7 +468,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 links: {
@@ -479,7 +499,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -514,7 +536,9 @@
                                     campaign: {
                                         campaignId: null,
                                         advertiserId: null,
-                                        minViewTime: null
+                                        minViewTime: null,
+                                        countUrls: [],
+                                        clickUrls: []
                                     },
                                     collateral: {},
                                     links: {},
@@ -549,7 +573,9 @@
                                     campaign: {
                                         campaignId: null,
                                         advertiserId: null,
-                                        minViewTime: null
+                                        minViewTime: null,
+                                        countUrls: [],
+                                        clickUrls: []
                                     },
                                     collateral: {},
                                     links: {},
@@ -584,7 +610,9 @@
                                     campaign: {
                                         campaignId: null,
                                         advertiserId: null,
-                                        minViewTime: null
+                                        minViewTime: null,
+                                        countUrls: [],
+                                        clickUrls: []
                                     },
                                     collateral: {},
                                     links: {},
@@ -698,7 +726,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -732,7 +762,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -755,7 +787,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -793,7 +827,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -820,7 +856,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -843,7 +881,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -891,7 +931,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -918,7 +960,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -947,7 +991,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1379,7 +1425,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1404,7 +1452,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1442,7 +1492,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1483,7 +1535,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1524,7 +1578,9 @@
                                 campaign: {
                                     campaignId: 'abc123',
                                     advertiserId: '123abc',
-                                    minViewTime: 15
+                                    minViewTime: 15,
+                                    countUrls: ['http://dumbturtle.com/pixel?s=dumb'],
+                                    clickUrls: ['//dumbturtle.com/anotherpixel?s=sodumb']
                                 },
                                 collateral: {
                                     logo: 'my-awesome-logo.png'
@@ -1577,7 +1633,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -1618,7 +1676,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -1652,7 +1712,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -1686,7 +1748,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -1722,7 +1786,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1749,7 +1815,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1774,7 +1842,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 thumb: 'logo.jpg',
@@ -1803,7 +1873,9 @@
                                 campaign: {
                                     campaignId: null,
                                     advertiserId: null,
-                                    minViewTime: null
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -2141,7 +2213,9 @@
                                     campaign: {
                                         campaignId: null,
                                         advertiserId: null,
-                                        minViewTime: null
+                                        minViewTime: null,
+                                        countUrls: [],
+                                        clickUrls: []
                                     },
                                     collateral: {},
                                     links: {},
@@ -2205,7 +2279,9 @@
                                     campaign: {
                                         campaignId: null,
                                         advertiserId: null,
-                                        minViewTime: null
+                                        minViewTime: null,
+                                        countUrls: [],
+                                        clickUrls: []
                                     },
                                     collateral: {},
                                     links: {},

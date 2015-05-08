@@ -1,5 +1,5 @@
 <div class="modalBody__group modalBody__group--sideTabs mrAdManager__videoServer">
-    <form>
+    <form name="advertising">
         <h1 class="forms__name--title">Advertising</h1>
         <p class="forms__introText">What advertising settings would you like this card to have?</p>
 
@@ -30,7 +30,7 @@
             </span>
         </label>
 
-        <label class="forms__pair forms__pair--spacer clearfix">
+        <label class="forms__pair clearfix">
             <span class="forms__name">
                 End Date
             </span>
@@ -38,6 +38,32 @@
                 <input type="date" time="23:59" class="forms__textField forms__textField--block" ng-model="WildcardCtrl.campaignData.endDate">
             </span>
             <span ng-show="!WildcardCtrl.validDate" style="padding-left:9em;">Invalid date.</span>
+        </label>
+
+        <label class="forms__pair clearfix">
+            <span class="forms__name">
+                Ad Count Pixel
+            </span>
+            <span class="forms__inputHolder">
+                <input type="text" class="forms__textField forms__textField--block"
+                name="count_pixel"
+                ng-pattern="AppCtrl.validUrl"
+                ng-model="card.campaign.countUrls[0]"
+                ng-class="{'forms__textField--danger': !advertising.count_pixel.$valid}">
+            </span>
+        </label>
+
+        <label class="forms__pair forms__pair--spacer clearfix">
+            <span class="forms__name">
+                Ad Start Pixel
+            </span>
+            <span class="forms__inputHolder">
+                <input type="text" class="forms__textField forms__textField--block"
+                name="start_pixel"
+                ng-pattern="AppCtrl.validUrl"
+                ng-model="card.campaign.clickUrls[0]"
+                ng-class="{'forms__textField--danger': !advertising.start_pixel.$valid}">
+            </span>
         </label>
     </form>
 </div>

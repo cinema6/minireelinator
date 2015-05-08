@@ -1418,7 +1418,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     campaign: copy({
                         campaignId: null,
                         advertiserId: null,
-                        minViewTime: null
+                        minViewTime: null,
+                        countUrls: [],
+                        clickUrls: []
                     }),
                     collateral: copy({}),
                     thumb: function(card) {
