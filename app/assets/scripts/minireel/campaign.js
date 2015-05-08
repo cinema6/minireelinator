@@ -892,6 +892,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             this.initWithModel = function(card) {
                 card.params.sponsor = card.params.sponsor || CampaignCtrl.model.brand;
                 card.params.ad = card.params.ad !== false;
+                card.campaign.countUrls = card.campaign.countUrls || [];
+                card.campaign.clickUrls = card.campaign.clickUrls || [];
                 this.model = card;
                 this.campaignData = cState.metaData;
                 this.enableMoat = !!card.data.moat;
