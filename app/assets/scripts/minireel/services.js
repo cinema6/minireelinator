@@ -1801,7 +1801,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         {
                             type: 'minireel',
                             org: org.id,
-                            appUri: 'rumble',
+                            appUri: 'mini-reel-player',
                             categories: [],
                             data: {
                                 title: null,

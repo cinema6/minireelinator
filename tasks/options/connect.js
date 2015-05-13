@@ -9,13 +9,23 @@
             proxies: [
                 {
                     context: '/api',
-                    host: '<%= personal.apiHost %>',
-                    changeOrigin: true
+                    port: 80,
+                    https: false,
+                    host: 'staging.cinema6.com',
+                    headers: {
+                        origin : 'http://staging.cinema6.com',
+                        host: 'staging.cinema6.com'
+                    }
                 },
                 {
                     context: '/collateral',
-                    host: '<%= personal.apiHost %>',
-                    changeOrigin: true
+                    port: 80,
+                    https: false,
+                    host: 'staging.cinema6.com',
+                    headers: {
+                        origin : 'http://staging.cinema6.com',
+                        host: 'staging.cinema6.com'
+                    }
                 }
             ],
             options: {

@@ -1970,7 +1970,7 @@
                                 expect(cinema6.db.create).toHaveBeenCalledWith('experience', {
                                     type: 'minireel',
                                     org: 'o-17593d7a2bf294',
-                                    appUri: 'rumble',
+                                    appUri: 'mini-reel-player',
                                     categories: [],
                                     data: {
                                         title: null,

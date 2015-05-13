@@ -746,6 +746,9 @@
                 width:20em; height:auto; min-height:38.875em;
                 margin:-22.1875em 0 0 -11.5em;
             }
+                .preview__container--mobile c6-embed {
+                    height: 33em;
+                }
             .preview__container--desktop {
                 width: 43.75em; height:auto;
                 margin:-22.375em 0 0 -23.375em;
@@ -784,6 +787,10 @@
                 .preview__iframe--inactive>iframe {
                     display:none;
                 }
+            .preview__embedHolder {
+                display: block;
+                position: relative;
+            }
             .preview__splashHolder--inactive {
                 display: none;
             }

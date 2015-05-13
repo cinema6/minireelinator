@@ -1,7 +1,7 @@
 define( ['angular','ngAnimate','minireel/app','account/app','login','portal','c6uilib','c6log',
-         'c6_defines','templates','forgot_password','preview_minireel','ui','version'],
+         'c6_defines','templates','forgot_password','ui','version'],
 function( angular , ngAnimate , minireel     , account     , login , portal , c6uilib , c6log ,
-          c6Defines  , templates , forgotPassword  , previewMiniReel  , ui , version ) {
+          c6Defines  , templates , forgotPassword  , ui , version ) {
     'use strict';
 
     var forEach = angular.forEach,
@@ -20,8 +20,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         c6uilib.name,
         c6log.name,
         portal.name,
-        forgotPassword.name,
-        previewMiniReel.name
+        forgotPassword.name
     ])
         .config(['c6UrlMakerProvider',
         function( c6UrlMakerProvider ) {
