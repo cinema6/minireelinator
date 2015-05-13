@@ -1,10 +1,12 @@
 # MiniReelinator
 
+## v1.12.0 (May 13, 2015)
 * *[v1.12.0.rc1]*
   * Use c6embed to drive the studio preview
   * [FIX]: Fix for an issue that caused broken preroll ads to appear in
     the preview modal
   * Create all new MiniReels as MiniReel Player 2.0 MiniReels
+* *[/v1.12.0.rc1]*
 
 ## v1.11.4 (May 8, 2015)
 * *[v1.11.4.rc2]*
