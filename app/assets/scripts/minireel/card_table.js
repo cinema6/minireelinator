@@ -360,6 +360,7 @@ function( angular , c6uilib , services          , c6Drag           ) {
                 scope: {
                     deck: '=',
                     onScroll: '&',
+                    scrollerFullWidth: '=',
                     scrollerViewRatio: '=',
                     scrollerViewPosition: '='
                 },
@@ -424,23 +425,32 @@ function( angular , c6uilib , services          , c6Drag           ) {
                         }
                     });
 
-                    scope.$watch('scrollerViewRatio', function(ratio) {
+                    scope.$watchCollection(function() {
+                        return [
+                            scope.scrollerFullWidth,
+                            scope.scrollerViewRatio,
+                            scope.scrollerViewPosition
+                        ];
+                    },
+                    function(newColl, oldColl) {
                         if (!scope.ready) { return; }
 
-                        var scrollBoxWidth = buttonWidthWithMargin - margin;
+                        var scrollBoxWidth;
 
-                        scope.deck.forEach(function() {
-                            scrollBoxWidth += buttonWidthWithMargin;
-                        });
+                        if (newColl[0] !== oldColl[0] || newColl[1] !== oldColl[1]) {
+                            scrollBoxWidth = buttonWidthWithMargin - margin;
 
-                        scope.scrollBoxWidth = scrollBoxWidth;
-                        scope.scrollerWidth = scrollBoxWidth * ratio;
-                    });
+                            scope.deck.forEach(function() {
+                                scrollBoxWidth += buttonWidthWithMargin;
+                            });
 
-                    scope.$watch('scrollerViewPosition', function(position) {
-                        if (!scope.ready) { return; }
+                            scope.scrollBoxWidth = scrollBoxWidth;
+                            scope.scrollerWidth = scrollBoxWidth * newColl[1];
+                        }
 
-                        $scroller.css({ left: scope.scrollBoxWidth * position + 'px' });
+                        if (newColl[2] !== oldColl[2]) {
+                            $scroller.css({ left: scope.scrollBoxWidth * newColl[2] + 'px' });
+                        }
                     });
                 }
             };
