@@ -295,8 +295,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             experience.user = user;
                             return experience;
                         })
-                        .catch(function nullify() {
-                            experience.user = null;
+                        .catch(function objectify() {
+                            experience.user = { id: experience.user || null };
                             return experience;
                         });
                 };

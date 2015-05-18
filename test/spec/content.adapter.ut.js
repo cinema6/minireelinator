@@ -78,6 +78,13 @@
                             spy.calls.reset();
                         });
 
+                        experience = {
+                            user: 'u-8da73bf276bb97'
+                        };
+                        user = {
+                            id: 'u-8da73bf276bb97'
+                        };
+
                         cinema6.db.find.and.returnValue($q.reject('NOT AUTHORIZED'));
 
                         $rootScope.$apply(function() {
@@ -89,8 +96,8 @@
                         expect(success).toHaveBeenCalledWith(experience);
                     });
 
-                    it('should set the user to null', function() {
-                        expect(experience.user).toBeNull();
+                    it('should decorate with the minimum required user data', function() {
+                        expect(experience.user).toEqual({id: 'u-8da73bf276bb97'});
                     });
                 });
             });
