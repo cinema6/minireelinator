@@ -26,6 +26,7 @@
                 $scope.scrollSpy = jasmine.createSpy('scrollSpy');
                 $scope.scrollerViewPosition = 0.5;
                 $scope.scrollerViewRatio = 0.25;
+                $scope.scrollerFullWidth = 500;
 
                 $scope.EditorCtrl = {
                     model: {
@@ -69,7 +70,7 @@
                 };
 
                 paginator = $(['<card-table-paginator deck="EditorCtrl.model.data.deck" on-scroll="scrollSpy(position)" ',
-                    'scroller-view-position="scrollerViewPosition" scroller-view-ratio="scrollerViewRatio">',
+                    'scroller-full-width="scrollerFullWidth" scroller-view-position="scrollerViewPosition" scroller-view-ratio="scrollerViewRatio">',
                     '<ul id="paginator-list" style="display:inline-block;list-style:none;margin:0;padding:0;">',
                     '<li card-table-paginator-item ng-repeat="card in EditorCtrl.model.data.deck" ',
                     'style="width:20px;display:inline-block;margin:0 5px 0 0;padding:0;">{{$index}}</li>',
@@ -119,6 +120,21 @@
                         });
 
                         expect(paginator.find('#paginator-scroller')[0].style.left).toBe('60px');
+                    });
+                });
+
+                describe('scrollerFullWidth', function() {
+                    it('should trigger recalculation of scroll box and scroller width', function() {
+                        expect(scope.scrollBoxWidth).toBe(120);
+                        expect(scope.scrollerWidth).toBe(30);
+
+                        $scope.$apply(function() {
+                            scope.scrollerFullWidth = 1000;
+                            scope.deck.push({});
+                        });
+
+                        expect(scope.scrollBoxWidth).toBe(145);
+                        expect(scope.scrollerWidth).toBe(36.25);
                     });
                 });
             });
