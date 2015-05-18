@@ -92,9 +92,28 @@ module.exports = function(http) {
             startPosition = page.skip + 1,
             endPosition = page.skip + Math.min(page.limit, experiences.length);
 
-        this.respond(200, experiences)
+        // save response for /job/asdf1234 to return
+        var savedData = {
+            experiences: experiences,
+            startPosition: startPosition,
+            endPosition: endPosition,
+            total: allExperiences.length
+        };
+
+        grunt.file.write(objectPath('job', 'asdf1234'), JSON.stringify(savedData, null, '    '));
+
+        this.respond(202, {url: '/api/content/job/asdf1234'});
+    });
+
+    http.whenGET('/api/content/job/asdf1234', function(request) {
+        var savedData = grunt.file.readJSON(objectPath('job', 'asdf1234')),
+            contentRange = savedData.startPosition + '-' +
+                savedData.endPosition + '/' +
+                savedData.total;
+
+        this.respond(200, savedData.experiences)
             .setHeaders({
-                'Content-Range': startPosition + '-' + endPosition + '/' + allExperiences.length
+                'Content-Range': contentRange
             });
     });
 
