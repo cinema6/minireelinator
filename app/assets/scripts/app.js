@@ -76,15 +76,19 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             data = response.data,
                             checkAgain;
 
+
                         if (!isRetry && status === 202 && data.url) {
                             $injector.invoke(['$http', function($http) {
                                 checkAgain = $interval(function() {
                                     $http.get(data.url, {retry: true})
                                         .then(function(resp) {
-                                            if (resp.status === 200) {
+                                            if (resp.status !== 202) {
                                                 deferred.resolve(resp);
                                                 $interval.cancel(checkAgain);
                                             }
+                                        }, function(err) {
+                                            deferred.reject(err);
+                                            $interval.cancel(checkAgain);
                                         });
                                 }, 1000);
                             }]);
