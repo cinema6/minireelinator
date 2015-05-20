@@ -90,15 +90,13 @@ module.exports = function(http) {
                     return 0;
                 }),
             startPosition = page.skip + 1,
-            endPosition = page.skip + Math.min(page.limit, experiences.length);
-
-        // save response for /job/asdf1234 to return
-        var savedData = {
-            experiences: experiences,
-            startPosition: startPosition,
-            endPosition: endPosition,
-            total: allExperiences.length
-        };
+            endPosition = page.skip + Math.min(page.limit, experiences.length),
+            savedData = {
+                experiences: experiences,
+                startPosition: startPosition,
+                endPosition: endPosition,
+                total: allExperiences.length
+            };
 
         grunt.file.write(objectPath('job', 'asdf1234'), JSON.stringify(savedData, null, '    '));
 

@@ -230,7 +230,7 @@ define(['app'], function(appModule) {
                         expect(failure).not.toHaveBeenCalled();
                     });
 
-                    it('should fulfill the original promise when the job url responses with a non-202', function() {
+                    it('should fulfill the original promise when the job url responds with a non-202', function() {
                         $httpBackend.expectGET('/api/content/job/asdf1234').respond(200, {id: 'e-123'});
 
                         $interval.flush(4000);
