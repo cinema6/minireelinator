@@ -65,7 +65,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
             }
 
-            $provide.factory('HttpInterceptor', ['$q','$interval','$injector',
+            $provide.factory('Accepted202Interceptor', ['$q','$interval','$injector',
             function                            ( $q , $interval , $injector ) {
                 return {
                     response: function(response) {
@@ -100,7 +100,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     }
                 };
             }]);
-            $httpProvider.interceptors.push('HttpInterceptor');
+            $httpProvider.interceptors.push('Accepted202Interceptor');
 
             $provide.constant('VoteAdapter', ['$http','config','$q',
             function                         ( $http , config , $q ) {

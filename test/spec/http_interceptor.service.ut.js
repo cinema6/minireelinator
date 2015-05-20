@@ -1,14 +1,14 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    describe('HttpInterceptor', function() {
+    describe('Accepted202Interceptor', function() {
         var $rootScope,
             $q,
             $http,
             $interval,
             $httpBackend,
             _$httpProvider_,
-            httpInterceptor;
+            Accepted202Interceptor;
 
         var success, failure;
 
@@ -26,13 +26,13 @@ define(['app'], function(appModule) {
                 $http = $injector.get('$http');
                 $interval = $injector.get('$interval');
                 $httpBackend = $injector.get('$httpBackend');
-                httpInterceptor = $injector.get('HttpInterceptor');
+                Accepted202Interceptor = $injector.get('Accepted202Interceptor');
             });
         });
 
         it('should exist', function() {
-            expect(httpInterceptor).toEqual(jasmine.any(Object));
-            expect(_$httpProvider_.interceptors).toContain('HttpInterceptor');
+            expect(Accepted202Interceptor).toEqual(jasmine.any(Object));
+            expect(_$httpProvider_.interceptors).toContain('Accepted202Interceptor');
         });
 
         describe('response()', function() {
@@ -47,7 +47,7 @@ define(['app'], function(appModule) {
             });
 
             it('should return a promise', function() {
-                expect(httpInterceptor.response(resp).then).toBeDefined();
+                expect(Accepted202Interceptor.response(resp).then).toBeDefined();
             });
 
             describe('when the call is a "retry"', function() {
@@ -56,7 +56,7 @@ define(['app'], function(appModule) {
                     resp.status = 202;
                     resp.data.url = '/api/';
 
-                    httpInterceptor.response(resp)
+                    Accepted202Interceptor.response(resp)
                         .then(success, failure);
 
                     $rootScope.$digest();
@@ -70,7 +70,7 @@ define(['app'], function(appModule) {
                     resp.config.retry = false;
                     resp.status = 202;
 
-                    httpInterceptor.response(resp)
+                    Accepted202Interceptor.response(resp)
                         .then(success, failure);
 
                     $rootScope.$digest();
@@ -85,7 +85,7 @@ define(['app'], function(appModule) {
                     resp.status = 200;
                     resp.data.url = '/api/';
 
-                    httpInterceptor.response(resp)
+                    Accepted202Interceptor.response(resp)
                         .then(success, failure);
 
                     $rootScope.$digest();
@@ -106,7 +106,7 @@ define(['app'], function(appModule) {
 
                     spyOn($http, 'get').and.returnValue(deferred.promise);
 
-                    httpInterceptor.response(resp)
+                    Accepted202Interceptor.response(resp)
                         .then(success, failure);
 
                     $rootScope.$digest();
