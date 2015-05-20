@@ -27,8 +27,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             c6UrlMakerProvider.location(c6Defines.kApiUrl, 'api');
         }])
 
-        .config(['$provide',
-        function( $provide ) {
+        .config(['$provide','$httpProvider',
+        function( $provide , $httpProvider ) {
             function pick(prop) {
                 return function(object) {
                     return object[prop];
@@ -64,6 +64,43 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     return response;
                 };
             }
+
+            $provide.factory('Accepted202Interceptor', ['$q','$interval','$injector',
+            function                            ( $q , $interval , $injector ) {
+                return {
+                    response: function(response) {
+                        var deferred = $q.defer(),
+                            status = response.status,
+                            config = response.config,
+                            isRetry = config.retry,
+                            data = response.data,
+                            checkAgain;
+
+
+                        if (!isRetry && status === 202 && data.url) {
+                            $injector.invoke(['$http', function($http) {
+                                checkAgain = $interval(function() {
+                                    $http.get(data.url, {retry: true})
+                                        .then(function(resp) {
+                                            if (resp.status !== 202) {
+                                                deferred.resolve(resp);
+                                                $interval.cancel(checkAgain);
+                                            }
+                                        }, function(err) {
+                                            deferred.reject(err);
+                                            $interval.cancel(checkAgain);
+                                        });
+                                }, 1000);
+                            }]);
+                        } else {
+                            deferred.resolve(response);
+                        }
+
+                        return deferred.promise;
+                    }
+                };
+            }]);
+            $httpProvider.interceptors.push('Accepted202Interceptor');
 
             $provide.constant('VoteAdapter', ['$http','config','$q',
             function                         ( $http , config , $q ) {
