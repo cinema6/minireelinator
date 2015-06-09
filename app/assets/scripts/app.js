@@ -1,7 +1,7 @@
 define( ['angular','ngAnimate','minireel/app','account/app','login','portal','c6uilib','c6log',
-         'c6_defines','templates','forgot_password','ui','version'],
+         'c6_defines','templates','forgot_password','ui','version','selfie'],
 function( angular , ngAnimate , minireel     , account     , login , portal , c6uilib , c6log ,
-          c6Defines  , templates , forgotPassword  , ui , version ) {
+          c6Defines  , templates , forgotPassword  , ui , version , selfie ) {
     'use strict';
 
     var forEach = angular.forEach,
@@ -20,7 +20,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         c6uilib.name,
         c6log.name,
         portal.name,
-        forgotPassword.name
+        forgotPassword.name,
+        selfie.name
     ])
         .config(['c6UrlMakerProvider',
         function( c6UrlMakerProvider ) {
@@ -952,7 +953,11 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         return 'Cinema6 Dashboard';
                     };
                     this.enter = function() {
-                        c6State.goTo('Portal', null, null, true);
+                        if (/selfie/.test(window.location.href)) {
+                            c6State.goTo('Selfie', null, null, true);
+                        } else {
+                            c6State.goTo('Portal', null, null, true);
+                        }
                     };
                 }])
 
@@ -974,12 +979,23 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     this.route('/account', 'Account');
                 });
 
+                this.state('Selfie', function() {
+                    this.state('SelfieApp');
+                    this.route('/account', 'SelfieAccount');
+                });
+
                 this.state('Login');
 
                 this.route('/password/forgot', 'ForgotPassword');
                 this.route('/password/reset', 'ResetPassword');
 
                 this.route('/preview/minireel', 'PreviewMiniReel');
+
+                // this.state('Selfie', function() {
+                //     this.state('SelfieApp');
+                //     this.route('/campaign', 'Campaigns');
+                //     // this.route('/account', 'Account');
+                // });
             });
         }])
 
