@@ -1,7 +1,7 @@
 define( ['angular','ngAnimate','minireel/app','account/app','login','portal','c6uilib','c6log',
-         'c6_defines','templates','forgot_password','ui','version','selfie'],
+         'c6_defines','templates','forgot_password','ui','version','selfie','selfie/app'],
 function( angular , ngAnimate , minireel     , account     , login , portal , c6uilib , c6log ,
-          c6Defines  , templates , forgotPassword  , ui , version , selfie ) {
+          c6Defines  , templates , forgotPassword  , ui , version , selfieApp , selfie ) {
     'use strict';
 
     var forEach = angular.forEach,
@@ -21,6 +21,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         c6log.name,
         portal.name,
         forgotPassword.name,
+        selfieApp.name,
         selfie.name
     ])
         .config(['c6UrlMakerProvider',
@@ -980,8 +981,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 });
 
                 this.state('Selfie', function() {
-                    this.state('SelfieApp');
-                    this.route('/account', 'SelfieAccount');
+                    this.state('Selfie:Auth');
+
+                    this.route('/app', 'Selfie:App');
+                    this.route('/account', 'Selfie:Account');
                 });
 
                 this.state('Login');
@@ -990,12 +993,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 this.route('/password/reset', 'ResetPassword');
 
                 this.route('/preview/minireel', 'PreviewMiniReel');
-
-                // this.state('Selfie', function() {
-                //     this.state('SelfieApp');
-                //     this.route('/campaign', 'Campaigns');
-                //     // this.route('/account', 'Account');
-                // });
             });
         }])
 

@@ -14,14 +14,12 @@ function( angular , c6State  , c6uilib ) {
                 this.model = function() {
                     return AuthService.checkStatus()
                         .catch(function redirect(reason) {
-                            console.log('Need to Login!')
                             c6State.goTo('Login', null, null, true);
                             return $q.reject(reason);
                         });
                 };
                 this.enter = function() {
-                    console.log('SelfieCtrl.enter()');
-                    c6State.goTo('SelfieApp', null, null, true);
+                    c6State.goTo('Selfie:Auth', null, null, true);
                 };
             }]);
         }])
@@ -29,7 +27,6 @@ function( angular , c6State  , c6uilib ) {
         .controller('SelfieController', ['AuthService','c6State',
         function                        ( AuthService , c6State ) {
             this.initWithModel = function(model) {
-                console.log('SelfieController.initWithModel()');
                 var permissions = model.permissions;
 
                 this.model = model;
@@ -48,12 +45,10 @@ function( angular , c6State  , c6uilib ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('SelfieApp', ['c6State','cinema6','$q',
-            function                           ( c6State , cinema6 , $q ) {
+            c6StateProvider.state('Selfie:Auth', ['c6State','cinema6','$q',
+            function                             ( c6State , cinema6 , $q ) {
                 this.model = function() {
                     var applications = this.cParent.cModel.applications;
-
-                    console.log('SelfieApp.model()');
 
                     return $q.all(applications.map(function(id) {
                         return cinema6.db.find('experience', id);
@@ -68,10 +63,8 @@ function( angular , c6State  , c6uilib ) {
                     var experiences = this.cModel,
                         selfie = experiences['mini-reel-maker'];
 
-                    console.log('SelfieApp.enter()');
-
                     if (selfie) {
-                        return c6State.goTo('Campaigns', [selfie], null, true);
+                        return c6State.goTo('Selfie:App', [selfie], null, true);
                     }
 
                     c6State.goTo('Error', [

@@ -39,7 +39,11 @@ function( angular , c6State  ) {
                 }
 
                 function goToPortal(user) {
-                    c6State.goTo('Portal', [user]);
+                    if (/selfie/.test(window.location.href)) {
+                        c6State.goTo('Selfie', [user]);
+                    } else {
+                        c6State.goTo('Portal', [user]);
+                    }
                     return user;
                 }
 
