@@ -3,9 +3,7 @@ function( angular , c6State  , campaign   ) {
     /* jshint -W106 */
     'use strict';
 
-    return angular.module('c6.app.selfie.app', [
-        c6State.name, campaign.name
-    ])
+    return angular.module('c6.app.selfie.app', [c6State.name, campaign.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.map('Selfie:App', function() {
@@ -25,7 +23,7 @@ function( angular , c6State  , campaign   ) {
                 this.controllerAs = 'SelfieAppCtrl';
 
                 this.model = function() {
-                    return this.cParent.cModel['mini-reel-maker'];
+                    return this.cParent.cModel.selfie;
                 };
                 this.afterModel = function() {
                     // var user = c6State.get('Selfie').cModel;

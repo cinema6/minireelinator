@@ -19,7 +19,7 @@ function( angular , c6State  , c6uilib ) {
                         });
                 };
                 this.enter = function() {
-                    c6State.goTo('Selfie:Auth', null, null, true);
+                    c6State.goTo('Selfie:Apps', null, null, true);
                 };
             }]);
         }])
@@ -45,7 +45,7 @@ function( angular , c6State  , c6uilib ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Auth', ['c6State','cinema6','$q',
+            c6StateProvider.state('Selfie:Apps', ['c6State','cinema6','$q',
             function                             ( c6State , cinema6 , $q ) {
                 this.model = function() {
                     var applications = this.cParent.cModel.applications;
@@ -61,7 +61,7 @@ function( angular , c6State  , c6uilib ) {
                 };
                 this.enter = function() {
                     var experiences = this.cModel,
-                        selfie = experiences['mini-reel-maker'];
+                        selfie = experiences.selfie;
 
                     if (selfie) {
                         return c6State.goTo('Selfie:App', [selfie], null, true);
