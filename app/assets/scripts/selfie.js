@@ -27,8 +27,6 @@ function( angular , c6State  , c6uilib ) {
         .controller('SelfieController', ['AuthService','c6State',
         function                        ( AuthService , c6State ) {
             this.initWithModel = function(model) {
-                var permissions = model.permissions;
-
                 this.model = model;
             };
 

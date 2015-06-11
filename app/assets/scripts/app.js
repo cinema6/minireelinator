@@ -984,7 +984,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     this.route('/apps','Selfie:Apps', function() {
                         this.route('/selfie', 'Selfie:App');
                     });
-                    this.route('/account', 'Selfie:Account');
                 });
 
                 this.state('Login');
