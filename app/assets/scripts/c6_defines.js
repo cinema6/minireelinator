@@ -4,6 +4,7 @@ define(function() {
     var c6 = window.c6 = {};
 
     c6.kLocal = !!window.DEBUG;
+    c6.kSelfie = !!window.SELFIE;
     c6.kDebug = c6.kLocal || window.location.hostname === 'staging.cinema6.com';
     c6.kHasKarma = false;
     c6.kLogFormats = c6.kDebug;
