@@ -30,9 +30,6 @@ function( angular , c6State  , c6uilib ) {
                 var permissions = model.permissions;
 
                 this.model = model;
-
-                this.enableAdManager = !!permissions.orgs.editAdConfig ||
-                    !!permissions.experiences.editAdConfig;
             };
 
             this.logout = function() {
