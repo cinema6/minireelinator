@@ -7,9 +7,15 @@ function( angular , c6State  , campaign   ) {
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.map('Selfie:App', function() {
-                this.route('/campaigns', 'Selfie:Campaigns', function() {
-                    this.route('/new', 'Selfie:Campaigns.New');
-                    this.route('/:campaignId', 'Selfie:Campaign');
+                this.route('/campaigns', 'Selfie:CampaignDashboard', function() {
+                    this.state('Selfie:Campaigns');
+
+                    this.route('/new', 'Selfie:NewCampaign', function() {
+                        this.state('Selfie:Campaign', 'Selfie:New:Campaign');
+                    });
+                    this.route('/:campaignId', 'Selfie:EditCampaign', function() {
+                        this.state('Selfie:Campaign', 'Selfie:Edit:Campaign');
+                    });
                 });
             });
         }])
