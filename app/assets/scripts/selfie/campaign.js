@@ -26,6 +26,16 @@ function( angular , c6State  , PaginatedListState                    ,
     return angular.module('c6.app.selfie.campaign', [c6State.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:CampaignDashboard', ['c6State',
+            function                                          ( c6State ) {
+                this.enter = function() {
+                    c6State.goTo('Selfie:Campaigns');
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Campaigns', ['c6State','$injector','paginatedDbList',
             function                                  ( c6State , $injector , paginatedDbList ) {
                 var SelfieState = c6State.get('Selfie');
@@ -58,12 +68,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Campaigns.New', ['$q','cinema6',
-            function                                      ( $q , cinema6 ) {
-                this.templateUrl = 'views/selfie/campaigns/campaign.html';
-                this.controller = 'SelfieCampaignsNewController';
-                this.controllerAs = 'SelfieCampaignsNewCtrl';
-
+            c6StateProvider.state('Selfie:NewCampaign', ['$q','cinema6','c6State',
+            function                                    ( $q , cinema6 , c6State ) {
                 this.model = function() {
                     return $q.all({
                         campaign: cinema6.db.create('campaign', {
@@ -85,68 +91,96 @@ function( angular , c6State  , PaginatedListState                    ,
                         customers: cinema6.db.findAll('customer')
                     });
                 };
-            }]);
-        }])
 
-        .controller('SelfieCampaignsNewController', ['$scope','c6State','c6Computed',
-        function                                    ( $scope , c6State , c6Computed ) {
-            var c = c6Computed($scope),
-                SelfieCtrl = $scope.SelfieCtrl;
-
-            function optionsByName(items, type) {
-                return items.reduce(function(result, item) {
-                    var blacklist = SelfieCtrl.model.data.blacklists[type];
-
-                    if (blacklist.indexOf(item.id) === -1) {
-                        result[item.name] = item;
-                    }
-
-                    return result;
-                }, { None: null });
-            }
-
-            c(this, 'advertiserOptions', function() {
-                var customer = this.model.customer;
-
-                return optionsByName(customer && customer.advertisers || [], 'advertisers');
-            }, ['SelfieCampaignsNewCtrl.model.customer']);
-
-            this.initWithModel = function(model) {
-                this.model = model.campaign;
-                this.customers = model.customers;
-
-                this.customerOptions = optionsByName(this.customers, 'customers');
-            };
-
-            this.save = function() {
-                var advertiser = this.model.advertiser;
-
-                deepExtend(this.model, {
-                    links: advertiser.defaultLinks,
-                    logos: advertiser.defaultLogos,
-                    brand: advertiser.name
-                });
-
-                return this.model.save()
-                    .then(function(campaign) {
-                        return c6State.goTo('Selfie:Campaign', [campaign]);
-                    });
-            };
-        }])
-
-        .config(['c6StateProvider',
-        function( c6StateProvider ) {
-            c6StateProvider.state('MR:Campaign', ['cinema6',
-            function                             ( cinema6 ) {
-                this.templateUrl = 'views/selfie/campaigns/campaign.html';
-                this.controller = 'SelfieCampaignController';
-                this.controllerAs = 'SelfieCampaignCtrl';
-
-                this.model = function(params) {
-                    return cinema6.db.find('campaign', params.campaignId);
+                this.enter = function() {
+                    return c6State.goTo('Selfie:New:Campaign', null, null, true);
                 };
             }]);
         }])
 
-        .controller('SelfieCampaignController', [function() {}]);
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:EditCampaign', ['cinema6','c6State',
+            function                                     ( cinema6 , c6State ) {
+                this.model = function(params) {
+                    return cinema6.db.find('campaign', params.campaignId);
+                };
+
+                this.enter = function() {
+                    return c6State.goTo('Selfie:Edit:Campaign', null, null, true);
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Campaign', [function() {
+                this.templateUrl = 'views/selfie/campaigns/campaign.html';
+                this.controller = 'SelfieCampaignController';
+                this.controllerAs = 'SelfieCampaignCtrl';
+
+                // the parent is either NewCampaign or EditCampaign
+                // this is just like MR:WildCard + WildcardController
+                // this is a shared state between New and Edit
+
+                this.campaign = null;
+
+                this.beforeModel = function() {
+                    this.campaign = this.cParent.cModel;
+                };
+
+                this.model = function() {
+                    // pojoify the campaign??
+
+                    return this.campaign;
+                    // return cinema6.db.find('campaign', params.campaignId);
+                };
+            }]);
+        }])
+
+        .controller('SelfieCampaignController', ['$scope','c6State','c6Computed',
+        function                                ( $scope , c6State , c6Computed ) {
+            // var c = c6Computed($scope),
+            //     SelfieCtrl = $scope.SelfieCtrl;
+
+            // function optionsByName(items, type) {
+            //     return items.reduce(function(result, item) {
+            //         var blacklist = SelfieCtrl.model.data.blacklists[type];
+
+            //         if (blacklist.indexOf(item.id) === -1) {
+            //             result[item.name] = item;
+            //         }
+
+            //         return result;
+            //     }, { None: null });
+            // }
+
+            // c(this, 'advertiserOptions', function() {
+            //     var customer = this.model.customer;
+
+            //     return optionsByName(customer && customer.advertisers || [], 'advertisers');
+            // }, ['SelfieNewCampaignCtrl.model.customer']);
+
+            // this.initWithModel = function(model) {
+            //     this.model = model.campaign;
+            //     this.customers = model.customers;
+
+            //     this.customerOptions = optionsByName(this.customers, 'customers');
+            // };
+
+            // this.save = function() {
+            //     var advertiser = this.model.advertiser;
+
+            //     deepExtend(this.model, {
+            //         links: advertiser.defaultLinks,
+            //         logos: advertiser.defaultLogos,
+            //         brand: advertiser.name
+            //     });
+
+            //     return this.model.save()
+            //         .then(function(campaign) {
+            //             return c6State.goTo('Selfie:Campaign', [campaign]);
+            //         });
+            // };
+        }]);
 });
