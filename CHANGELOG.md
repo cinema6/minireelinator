@@ -1,11 +1,13 @@
 # MiniReelinator
 
+## v1.12.1 (June 15, 2015)
 * *[v1.12.1.rc1]*
   * [FIX]: Fix for an issue that caused a MiniReel's User to be removed
     if the User cannot be found
   * [FIX]: Fix for an issue that kept the Editor's card table paginator
     from correctly expanding/contracting when adding/removing cards
   * [FEATURE]: Handle 202 responses from the API
+* *[/v1.12.1.rc1]*
 
 ## v1.12.0 (May 13, 2015)
 * *[v1.12.0.rc1]*
