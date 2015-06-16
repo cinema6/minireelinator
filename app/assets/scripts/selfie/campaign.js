@@ -68,19 +68,19 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:NewCampaign', ['$q','cinema6','c6State',
-            function                                    ( $q , cinema6 , c6State ) {
+            c6StateProvider.state('Selfie:NewCampaign', ['$q','cinema6','c6State','MiniReelService',
+            function                                    ( $q , cinema6 , c6State , MiniReelService ) {
                 this.model = function() {
                     return $q.all({
                         campaign: cinema6.db.create('campaign', {
                             name: null,
                             categories: [],
-                            minViewTime: -1,
-                            advertiser: null,
-                            brand: null,
-                            customer: null,
+                            minViewTime: 3,
+                            advertiser: null, // id from user
+                            brand: null, // name of Org
+                            customer: null, // id from user
                             logos: {
-                                square: null
+                                square: null // url from Org
                             },
                             links: {},
                             miniReels: [],
@@ -88,8 +88,7 @@ function( angular , c6State  , PaginatedListState                    ,
                             staticCardMap: [],
                             miniReelGroups: []
                         }),
-                        customers: cinema6.db.findAll('customer')
-                    });
+                        card: cinema6.db.create('card', MiniReelService.createCard('video'));
                 };
 
                 this.enter = function() {
@@ -103,7 +102,27 @@ function( angular , c6State  , PaginatedListState                    ,
             c6StateProvider.state('Selfie:EditCampaign', ['cinema6','c6State',
             function                                     ( cinema6 , c6State ) {
                 this.model = function(params) {
-                    return cinema6.db.find('campaign', params.campaignId);
+                    var deferred = $q.defer(),
+                        model = {};
+
+                    cinema6.db.find('campaign', params.campaignId)
+                        .then(function(campaign) {
+                            model.campaign = campaign;
+
+                            return $q.all(campaign.cards.map(function(card) {
+                                return cinema6.db.find('card', card.id);
+                            }));
+                        })
+                        .then(function(cards) {
+                            model.card = cards[0];
+
+                            deferred.resolve(model);
+                        })
+                        .catch(function(err) {
+                            deferred.reject(err);
+                        });
+
+                    return deferred.promise;
                 };
 
                 this.enter = function() {
@@ -114,7 +133,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Campaign', [function() {
+            c6StateProvider.state('Selfie:Campaign', ['cinema6',
+            function                                 ( cinema6 ) {
                 this.templateUrl = 'views/selfie/campaigns/campaign.html';
                 this.controller = 'SelfieCampaignController';
                 this.controllerAs = 'SelfieCampaignCtrl';
@@ -123,64 +143,128 @@ function( angular , c6State  , PaginatedListState                    ,
                 // this is just like MR:WildCard + WildcardController
                 // this is a shared state between New and Edit
 
+                this.card = null;
                 this.campaign = null;
 
                 this.beforeModel = function() {
-                    this.campaign = this.cParent.cModel;
+                    this.card = this.cParent.cModel.card;
+                    this.campaign = this.cParent.cModel.campaign;
                 };
 
                 this.model = function() {
                     // pojoify the campaign??
 
-                    return this.campaign;
+                    return cinema6.db.findAll('category');
                     // return cinema6.db.find('campaign', params.campaignId);
                 };
             }]);
         }])
 
-        .controller('SelfieCampaignController', ['$scope','c6State','c6Computed',
-        function                                ( $scope , c6State , c6Computed ) {
-            // var c = c6Computed($scope),
-            //     SelfieCtrl = $scope.SelfieCtrl;
+        .controller('SelfieCampaignController', ['$scope','c6State','c6Computed','cState',
+        function                                ( $scope , c6State , c6Computed , cState ) {
+            var AppCtrl = $scope.AppCtrl;
 
-            // function optionsByName(items, type) {
-            //     return items.reduce(function(result, item) {
-            //         var blacklist = SelfieCtrl.model.data.blacklists[type];
+            console.log('CAMPAIGN CTRL');
 
-            //         if (blacklist.indexOf(item.id) === -1) {
-            //             result[item.name] = item;
-            //         }
+            this.initWithModel = function(categories) {
+                var campaign = cState.campaign,
+                    card = cState.card;
 
-            //         return result;
-            //     }, { None: null });
-            // }
+                this.card = card;
+                this.campaign = campaign;
+                this.categories = categories;
+            };
 
-            // c(this, 'advertiserOptions', function() {
-            //     var customer = this.model.customer;
+            Object.defineProperties(this, {
+                validLogo: {
+                    get: function() {
+                        var logo = this.card.collateral.logo;
 
-            //     return optionsByName(customer && customer.advertisers || [], 'advertisers');
-            // }, ['SelfieNewCampaignCtrl.model.customer']);
+                        return !logo || AppCtrl.validImgSrc.test(logo);
+                    }
+                }
+            });
+        }])
 
-            // this.initWithModel = function(model) {
-            //     this.model = model.campaign;
-            //     this.customers = model.customers;
+        .controller('SelfieCampaignGeneralController', ['$scope', function($scope) {
+            var SelfieAppCtrl = $scope.SelfieAppCtrl,
+                SelfieCampaignCtrl = $scope.SelfieCampaignCtrl;
 
-            //     this.customerOptions = optionsByName(this.customers, 'customers');
-            // };
+            console.log('GENERAL CTRL', SelfieAppCtrl);
+        }])
 
-            // this.save = function() {
-            //     var advertiser = this.model.advertiser;
+        .controller('SelfieCampaignLogoController', ['$scope', function($scope) {
+            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl;
 
-            //     deepExtend(this.model, {
-            //         links: advertiser.defaultLinks,
-            //         logos: advertiser.defaultLogos,
-            //         brand: advertiser.name
-            //     });
+            console.log('LOGO CTRL');
+        }])
 
-            //     return this.model.save()
-            //         .then(function(campaign) {
-            //             return c6State.goTo('Selfie:Campaign', [campaign]);
-            //         });
-            // };
+        .controller('SelfieCampaignLinksController', ['$scope', function($scope) {
+            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+                campaign = SelfieCampaignCtrl.model;
+
+            console.log('LINKS CTRL');
+
+            function createModelLinks(uiLinks) {
+                return uiLinks.filter(function(link) {
+                    return !!link.href;
+                }).reduce(function(links, link) {
+                    links[link.name] = link.href;
+                    return links;
+                }, {});
+            }
+
+            this.links = ['Action', 'Website', 'Facebook', 'Twitter', 'YouTube', 'Pinterest']
+                .concat(Object.keys(campaign.links))
+                .filter(function(name, index, names) {
+                    return names.indexOf(name) === index;
+                })
+                .map(function(name) {
+                    var href = campaign.links[name] || null;
+
+                    return {
+                        name: name,
+                        href: href
+                    };
+                });
+
+            function Link() {
+                this.name = 'Untitled';
+                this.href = null;
+            }
+
+            this.newLink = new Link();
+
+            this.addNewLink = function() {
+                this.addLink(this.newLink);
+
+                this.newLink = new Link();
+            };
+
+            this.removeLink = function(link) {
+                this.links = this.links.filter(function(listLink) {
+                    return listLink !== link;
+                });
+            };
+
+            this.addLink = function(link) {
+                this.links = this.links.concat([link]);
+            };
+
+            this.updateLinks = function() {
+                campaign.links = createModelLinks(this.links);
+            };
+        }])
+
+        .controller('SelfieCampaignVideoController', ['$scope', function($scope) {
+            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl;
+
+            console.log('VIDEO CTRL');
+        }])
+
+        .controller('SelfieCampaignPreviewController', ['$scope', function($scope) {
+            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl;
+
+            console.log('PREVIEW CTRL');
         }]);
 });
