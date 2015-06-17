@@ -58,12 +58,38 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieCampaignsController', ['$injector','$scope','cState',
-        function                                 ( $injector , $scope , cState ) {
+        .controller('SelfieCampaignsController', ['$injector','$scope','$q','cState',
+                                                  'ConfirmDialogService',
+        function                                 ( $injector , $scope , $q , cState ,
+                                                   ConfirmDialogService ) {
+            var SelfieCampaignsCtrl = this;
+
             $injector.invoke(PaginatedListController, this, {
                 cState: cState,
                 $scope: $scope
             });
+
+            this.remove = function(campaigns) {
+                ConfirmDialogService.display({
+                    prompt: 'Are you sure you want to delete ' + campaigns.length + ' campaign(s)?',
+                    affirm: 'Delete',
+                    cancel: 'Keep',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: function() {
+                        ConfirmDialogService.close();
+
+
+                        return $q.all(campaigns.map(function(campaign) {
+                            return campaign.erase();
+                        })).then(function() {
+                            return SelfieCampaignsCtrl.model.refresh();
+                        });
+                    }
+                });
+            };
         }])
 
         .config(['c6StateProvider',
@@ -81,9 +107,13 @@ function( angular , c6State  , PaginatedListState                    ,
                             name: null,
                             categories: [],
                             minViewTime: 3,
-                            advertiser: user.advertiserId,
+                            advertiser: {
+                                id: user.advertiserId
+                            },
                             brand: user.org.name,
-                            customer: user.customerId,
+                            customer: {
+                                id: user.customerId
+                            },
                             logos: {
                                 square: user.org.logos && user.org.logos.square ?
                                     user.org.logos.square :
@@ -172,11 +202,21 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.model = function() {
                     return cinema6.db.findAll('category');
                 };
+
+                this.updateCampaign = function() {
+                    return this.campaign.save();
+                };
+
+                this.updateCard = function() {
+                    return this.card.save();
+                }
             }]);
         }])
 
         .controller('SelfieCampaignController', ['$scope','c6State','c6Computed','cState',
         function                                ( $scope , c6State , c6Computed , cState ) {
+
+            var SelfieCampaignCtrl = this;
 
             console.log('CAMPAIGN CTRL');
 
@@ -185,6 +225,23 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.campaign = cState.campaign;
                 this.categories = categories;
             };
+
+            this.save = function() {
+                return SelfieCampaignCtrl.campaign.save()
+                    .then(function(campaign) {
+                        SelfieCampaignCtrl.card.campaignId = campaign.id;
+
+                        return SelfieCampaignCtrl.card.save()
+                            .then(function(card) {
+                                campaign.cards = [{id: card.id}];
+
+                                return campaign.save();
+                            });
+                    })
+                    .catch(function(err) {
+                        console.log('Could not save the Campaign', err);
+                    });
+            };
         }])
 
         .controller('SelfieCampaignGeneralController', [function() {}])
@@ -192,7 +249,6 @@ function( angular , c6State  , PaginatedListState                    ,
         .controller('SelfieCampaignSponsorController', ['$scope', function($scope) {
             var AppCtrl = $scope.AppCtrl,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
-                campaign = SelfieCampaignCtrl.campaign,
                 card = SelfieCampaignCtrl.card;
 
             console.log('SPONSOR CTRL');
