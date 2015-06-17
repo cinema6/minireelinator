@@ -953,6 +953,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     this.title = function() {
                         return 'Cinema6 Dashboard';
                     };
+                    this.name = /selfie/.test(window.location.href) || c6Defines.kSelfie ?
+                        'Selfie' : 'Portal';
                     this.enter = function() {
                         if (/selfie/.test(window.location.href) || c6Defines.kSelfie) {
                             c6State.goTo('Selfie', null, null, true);
