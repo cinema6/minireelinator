@@ -1265,7 +1265,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             var ngCopy = angular.copy;
 
             var self = this,
-                portal = c6State.get('Portal');
+                app = c6State.get('Application'),
+                portal = c6State.get(app.name);
 
             function generateId(prefix) {
                 return prefix + '-' +
