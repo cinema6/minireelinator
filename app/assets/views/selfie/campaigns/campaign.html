@@ -1,11 +1,9 @@
-<div class="container" c6-alias="SelfieCampaignCtrl.model as campaign">
-
-    <h1>Campaign</h1>
+<div class="container" c6-alias="SelfieCampaignCtrl.campaign as campaign" style="padding:20px">
+    <a c6-sref="Selfie:Campaigns">Back to Campaigns</a>
 
     <div ng-include="'views/selfie/campaigns/modules/general.html'"></div>
-    <div ng-include="'views/selfie/campaigns/modules/logo.html'"></div>
-    <div ng-include="'views/selfie/campaigns/modules/links.html'"></div>
-    <div ng-include="'views/selfie/campaigns/modules/video.html'"></div>
-    <div ng-include="'views/selfie/campaigns/modules/preview.html'"></div>
+    <div ng-include="'views/selfie/campaigns/modules/sponsor.html'"></div>
+    <div ng-include="'views/selfie/campaigns/modules/video.html'" class="clearfix"></div>
+    <div ng-include="'views/selfie/campaigns/modules/targeting.html'"></div>
 
 </div>

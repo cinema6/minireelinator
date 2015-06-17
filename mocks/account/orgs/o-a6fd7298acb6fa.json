@@ -4,6 +4,15 @@
     "minAdCount": 2,
     "name": "Selfie Stick, Inc",
     "status": "active",
+    "logos": {
+        "square": "http://logo.com/selfie.jpeg"
+    },
+    "links": {
+        "Website": "http://www.selfie.org/",
+        "Facebook": "https://www.facebook.com/selfie",
+        "Twitter": "https://twitter.com/selfie",
+        "YouTube": "https://www.youtube.com/user/selfie"
+    },
     "waterfalls": {
         "video": [
             "cinema6",
