@@ -217,7 +217,35 @@ function( angular , c6State  , PaginatedListState                    ,
 
             var SelfieCampaignCtrl = this;
 
-            console.log('CAMPAIGN CTRL');
+            function addCardId(card) {
+                SelfieCampaignCtrl.card.id = card.id;
+
+                return card;
+            }
+
+            function addCardToCampaign(card) {
+                SelfieCampaignCtrl.campaign.cards = [{
+                    id: card.id,
+                    endDate: null,
+                    name: null,
+                    reportingId: null
+                }];
+
+                return card;
+            }
+
+            function saveCampaign() {
+                return SelfieCampaignCtrl.campaign.save();
+            }
+
+            function setCampaignId(campaign) {
+                SelfieCampaignCtrl.card.campaignId = campaign.id;
+                SelfieCampaignCtrl.card.campaign.campaignId = campaign.id;
+            }
+
+            function handleError(err) {
+                console.log('Could not save the Campaign', err);
+            }
 
             this.initWithModel = function(categories) {
                 this.card = cState.card;
@@ -226,48 +254,37 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.save = function() {
-                SelfieCampaignCtrl.card.data.moat = {
-                    campaign: SelfieCampaignCtrl.campaign.name,
-                    advertiser: SelfieCampaignCtrl.card.params.sponsor,
-                    creative: SelfieCampaignCtrl.campaign.name
-                };
+                $scope.$broadcast('SelfieCampaignWillSave');
 
                 return cState.updateCard()
-                    .then(function(card) {
-                        SelfieCampaignCtrl.campaign.cards = [{
-                            id: card.id,
-                            endDate: null,
-                            name: null,
-                            reportingId: null
-                        }];
-
-                        return SelfieCampaignCtrl.campaign.save()
-                            .then(function(campaign) {
-                                SelfieCampaignCtrl.card.campaignId = campaign.id;
-
-                                return cState.updateCard();
-                            });
+                    .then(addCardId)
+                    .then(addCardToCampaign)
+                    .then(saveCampaign)
+                    .then(setCampaignId)
+                    .then(function() {
+                        cState.updateCard();
                     })
-                    .catch(function(err) {
-                        console.log('Could not save the Campaign', err);
-                    });
+                    .catch(handleError);
             };
         }])
 
         .controller('SelfieCampaignSponsorController', ['$scope', function($scope) {
-            var AppCtrl = $scope.AppCtrl,
+            var SelfieCampaignSponsorCtrl = this,
+                AppCtrl = $scope.AppCtrl,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 card = SelfieCampaignCtrl.card;
 
-            console.log('SPONSOR CTRL');
-
             function createModelLinks(uiLinks) {
+                var start = card.links.Action ? {
+                    Action: card.links.Action
+                } : {};
+
                 return uiLinks.filter(function(link) {
                     return !!link.href;
                 }).reduce(function(links, link) {
                     links[link.name] = link.href;
                     return links;
-                }, {});
+                }, start);
             }
 
             function Link() {
@@ -320,7 +337,7 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.updateLinks = function() {
-                card.links = createModelLinks(this.links);
+                card.links = createModelLinks(SelfieCampaignSponsorCtrl.links);
             };
 
             this.actionTypeOptions = ['Button', 'Text']
@@ -334,11 +351,13 @@ function( angular , c6State  , PaginatedListState                    ,
                 label: ''
             };
 
-            $scope.$on('$destroy', function() {
-                if (!card.params.action.label) {
-                    card.params.action = null;
-                }
-            });
+            $scope.$on('SelfieCampaignWillSave', this.updateLinks);
+
+            // $scope.$on('$destroy', function() {
+            //     if (!card.params.action.label) {
+            //         card.params.action = null;
+            //     }
+            // });
         }])
 
         .controller('SelfieCampaignVideoController', ['$injector','$scope','VideoService',
@@ -435,8 +454,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
                 }
             });
-
-            console.log('VIDEO CTRL', SelfieCampaignCtrl);
         }])
 
         .controller('SelfieCampaignTargetingController', [function() {}])
