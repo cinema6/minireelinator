@@ -1,40 +1,36 @@
 <h1 class="forms__title forms__title--divider">Video</h1>
 
-<form ng-controller="SelfieCampaignVideoController as SelfieCampaignVideoCtrl">
+<form ng-controller="SelfieCampaignVideoController as SelfieCampaignVideoCtrl" c6-alias="SelfieCampaignCtrl.card as card">
     <div class="clearfix">
-        <div class="twoCol">
-            <label class="radiobox radiobox--hasLabel clearfix"
-            style="margin-bottom:0.25em;">
-                <input type="radio"
-                    ng-value="false"
-                    ng-change="SelfieCampaignCtrl.videoUrl = ''"
-                    ng-model="SelfieCampaignCtrl.isAdUnit"
-                    name="minireel-endcap"
-                    class="radiobox__input"/>
-                <span class="btn__icon faa fab">
-                    &nbsp;
-                </span>
-                <span class="btn__label">
-                    3rd-Party Video
-                </span>
-            </label>
-        </div>
-        <div class="twoCol">
-            <label class="radiobox radiobox--hasLabel clearfix"
-            style="margin-bottom:0.25em;">
-                <input type="radio"
-                    ng-value="true"
-                    ng-model="SelfieCampaignCtrl.isAdUnit"
-                    name="minireel-endcap"
-                    class="radiobox__input"/>
-                <span class="btn__icon faa fab">
-                    &nbsp;
-                </span>
-                <span class="btn__label">
-                    Ad Unit
-                </span>
-            </label>
-        </div>
+        <label class="radiobox radiobox--hasLabel clearfix"
+        style="margin-bottom:0.25em;">
+            <input type="radio"
+                ng-value="false"
+                ng-change="SelfieCampaignVideoCtrl.videoUrl = ''"
+                ng-model="SelfieCampaignVideoCtrl.isAdUnit"
+                name="minireel-endcap"
+                class="radiobox__input"/>
+            <span class="btn__icon faa fab">
+                &nbsp;
+            </span>
+            <span class="btn__label">
+                3rd-Party Video
+            </span>
+        </label>
+        <label class="radiobox radiobox--hasLabel clearfix"
+        style="margin-bottom:0.25em;">
+            <input type="radio"
+                ng-value="true"
+                ng-model="SelfieCampaignVideoCtrl.isAdUnit"
+                name="minireel-endcap"
+                class="radiobox__input"/>
+            <span class="btn__icon faa fab">
+                &nbsp;
+            </span>
+            <span class="btn__label">
+                Ad Unit
+            </span>
+        </label>
     </div>
     <ng-switch on="card.data.service">
         <div ng-switch-when="adUnit" class="clearfix">
@@ -44,7 +40,7 @@
                         VPAID
                     </span>
                     <span class="forms__inputHolder forms__inputHolder--short" style="width:18em;">
-                        <input type="text" ng-model="SelfieCampaignCtrl.vpaidTag" c6-autoselect ng-focus="SelfieCampaignCtrl.adPreviewType = 'vpaid'" class="forms__textField forms__textField--block">
+                        <input type="text" ng-model="SelfieCampaignVideoCtrl.vpaidTag" c6-autoselect ng-focus="SelfieCampaignVideoCtrl.adPreviewType = 'vpaid'" class="forms__textField forms__textField--block">
                     </span>
                 </label>
             </div>
@@ -54,7 +50,7 @@
                         VAST
                     </span>
                     <span class="forms__inputHolder forms__inputHolder--short" style="width:18em;">
-                        <input type="text" ng-model="SelfieCampaignCtrl.vastTag" c6-autoselect ng-focus="SelfieCampaignCtrl.adPreviewType = 'vast'" class="forms__textField forms__textField--block">
+                        <input type="text" ng-model="SelfieCampaignVideoCtrl.vastTag" c6-autoselect ng-focus="SelfieCampaignVideoCtrl.adPreviewType = 'vast'" class="forms__textField forms__textField--block">
                     </span>
                 </label>
             </div>
@@ -63,7 +59,7 @@
                     Page URL
                 </span>
                 <span class="forms__inputHolder">
-                    <input type="text" class="forms__textField forms__textField--block" ng-model="SelfieCampaignCtrl.adPreviewPageUrl">
+                    <input type="text" class="forms__textField forms__textField--block" ng-model="SelfieCampaignVideoCtrl.adPreviewPageUrl">
                 </span>
             </label>
         </div>
@@ -72,7 +68,7 @@
                 Video URL
             </span>
             <span class="forms__inputHolder">
-                <input type="text" class="forms__textField forms__textField--block" ng-model="SelfieCampaignCtrl.videoUrl">
+                <input type="text" class="forms__textField forms__textField--block" ng-model="SelfieCampaignVideoCtrl.videoUrl">
                 <span class="typo--guidance typo--warning">Type in a <strong>URL</strong>.</span>
                 <span class="typo--guidance">Supported sources : 
                     <a href="http://www.youtube.com" title="YouTube" target="_blank">YouTube</a>, 
@@ -85,15 +81,15 @@
     <div class="twoCol" ng-switch="card.data.service"
     style="width:50%; margin:-0.5em 3% 0 0;">
         <div ng-switch-when="adUnit" ng-controller="AdPlayerController as AdPlayerCtrl">
-            <div ng-switch="SelfieCampaignCtrl.adPreviewType">
+            <div ng-switch="SelfieCampaignVideoCtrl.adPreviewType">
                 <vpaid-player ng-switch-when="vpaid"
                     videoid="preview"
-                    ad-tag="{{SelfieCampaignCtrl.adTag}}"
+                    ad-tag="{{SelfieCampaignVideoCtrl.adTag}}"
                     style="height: 250px;">
                 </vpaid-player>
                 <vast-player ng-switch-when="vast"
                     videoid="preview"
-                    ad-tag="{{SelfieCampaignCtrl.adTag}}">
+                    ad-tag="{{SelfieCampaignVideoCtrl.adTag}}">
                 </vast-player>
             </div>
             <div ng-if="!!AdPlayerCtrl.player">

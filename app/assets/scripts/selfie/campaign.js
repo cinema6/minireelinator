@@ -1,13 +1,16 @@
 define( ['angular','c6_state','../minireel/mixins/PaginatedListState',
          '../minireel/mixins/PaginatedListController'],
 function( angular , c6State  , PaginatedListState                    ,
-          PaginatedListController ) {
+          PaginatedListController                    ) {
     /* jshint -W106 */
     'use strict';
 
     var copy = angular.copy,
+        extend = angular.extend,
         forEach = angular.forEach,
-        isObject = angular.isObject;
+        isObject = angular.isObject,
+        fromJson = angular.fromJson,
+        toJson = angular.toJson;
 
     function deepExtend(target, extension) {
         forEach(extension, function(extensionValue, prop) {
@@ -101,16 +104,14 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.model = function() {
                     var user = SelfieState.cModel;
 
-                    console.log(user);
-
                     return cinema6.db.create('campaign', {
                             name: null,
                             categories: [],
                             minViewTime: 3,
+                            brand: user.org.name,
                             advertiser: {
                                 id: user.advertiserId
                             },
-                            brand: user.org.name,
                             customer: {
                                 id: user.customerId
                             },
@@ -120,10 +121,11 @@ function( angular , c6State  , PaginatedListState                    ,
                                     null
                             },
                             links: user.org.links || {},
-                            miniReels: [],
                             cards: [],
+                            miniReels: [],
                             staticCardMap: [],
-                            miniReelGroups: []
+                            miniReelGroups: [],
+                            status: 'new'
                         });
                 };
 
@@ -133,6 +135,9 @@ function( angular , c6State  , PaginatedListState                    ,
                     this.card = deepExtend(card, {
                             id: undefined,
                             campaignId: undefined,
+                            campaign: {
+                                minViewTime: campaign.minViewTime
+                            },
                             sponsored: true,
                             collateral: {
                                 logo: campaign.logos.square
@@ -143,18 +148,16 @@ function( angular , c6State  , PaginatedListState                    ,
                                 ad: true,
                                 action: null
                             },
-                            campaign: {
-                                minViewTime: campaign.minViewTime
-                            },
                             data: {
                                 autoadvance: false,
+                                controls: false,
                                 autoplay: true,
-                                skip: 30
-                            },
-                            moat: {
-                                campaign: campaign.brand,
-                                advertiser: campaign.brand,
-                                creative: campaign.brand
+                                skip: 30,
+                                moat: {
+                                    campaign: campaign.brand,
+                                    advertiser: campaign.brand,
+                                    creative: campaign.brand
+                                }
                             }
                         });
                 };
@@ -195,7 +198,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.campaign = null;
 
                 this.beforeModel = function() {
-                    this.card = this.cParent.card;
+                    this.card = this.cParent.card.pojoify();
                     this.campaign = this.cParent.cModel;
                 };
 
@@ -203,13 +206,9 @@ function( angular , c6State  , PaginatedListState                    ,
                     return cinema6.db.findAll('category');
                 };
 
-                this.updateCampaign = function() {
-                    return this.campaign.save();
-                };
-
                 this.updateCard = function() {
-                    return this.card.save();
-                }
+                    return this.cParent.card._update(this.card).save();
+                };
             }]);
         }])
 
@@ -227,15 +226,26 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.save = function() {
-                return SelfieCampaignCtrl.campaign.save()
-                    .then(function(campaign) {
-                        SelfieCampaignCtrl.card.campaignId = campaign.id;
+                SelfieCampaignCtrl.card.data.moat = {
+                    campaign: SelfieCampaignCtrl.campaign.name,
+                    advertiser: SelfieCampaignCtrl.card.params.sponsor,
+                    creative: SelfieCampaignCtrl.campaign.name
+                };
 
-                        return SelfieCampaignCtrl.card.save()
-                            .then(function(card) {
-                                campaign.cards = [{id: card.id}];
+                return cState.updateCard()
+                    .then(function(card) {
+                        SelfieCampaignCtrl.campaign.cards = [{
+                            id: card.id,
+                            endDate: null,
+                            name: null,
+                            reportingId: null
+                        }];
 
-                                return campaign.save();
+                        return SelfieCampaignCtrl.campaign.save()
+                            .then(function(campaign) {
+                                SelfieCampaignCtrl.card.campaignId = campaign.id;
+
+                                return cState.updateCard();
                             });
                     })
                     .catch(function(err) {
@@ -243,8 +253,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     });
             };
         }])
-
-        .controller('SelfieCampaignGeneralController', [function() {}])
 
         .controller('SelfieCampaignSponsorController', ['$scope', function($scope) {
             var AppCtrl = $scope.AppCtrl,
@@ -333,8 +341,100 @@ function( angular , c6State  , PaginatedListState                    ,
             });
         }])
 
-        .controller('SelfieCampaignVideoController', ['$scope', function($scope) {
-            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl;
+        .controller('SelfieCampaignVideoController', ['$injector','$scope','VideoService',
+        function                                     ( $injector , $scope , VideoService ) {
+            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+                val;
+
+            function getJSONProp(json, prop) {
+                console.log(json, prop);
+                return (fromJson(json) || {})[prop];
+            }
+
+            function setJSONProp(json, prop, value) {
+                var proto = {};
+
+                proto[prop] = value;
+
+                return toJson(extend(fromJson(json) || {}, proto));
+            }
+
+            this.model = SelfieCampaignCtrl.card;
+            this.adPreviewType = 'vpaid';
+            this.adPreviewPageUrl = '';
+
+            Object.defineProperties(this, {
+                videoUrl: {
+                    enumerable: true,
+                    configurable: true,
+                    get: function() {
+                        var service = this.model.data.service,
+                            id = this.model.data.videoid;
+
+                        return VideoService.urlFromData(service, id) || val;
+                    },
+                    set: function(value) {
+                        var info = VideoService.dataFromUrl(value) || {
+                            service: null,
+                            id: null
+                        };
+
+                        val = value;
+
+                        this.model.data.service = info.service;
+                        this.model.data.videoid = info.id;
+                    }
+                },
+                isAdUnit: {
+                    get: function() {
+                        return this.model.data.service === 'adUnit';
+                    },
+                    set: function(bool) {
+                        this.model.data.service = bool ? 'adUnit' : null;
+                    }
+                },
+                vastTag: {
+                    get: function() {
+                        return getJSONProp(this.model.data.videoid, 'vast') || null;
+                    },
+                    set: function(value) {
+                        this.model.data.videoid = setJSONProp(
+                            this.model.data.videoid,
+                            'vast',
+                            value
+                        );
+                    }
+                },
+                vpaidTag: {
+                    get: function() {
+                        return getJSONProp(this.model.data.videoid, 'vpaid') || null;
+                    },
+                    set: function(value) {
+                        this.model.data.videoid = setJSONProp(
+                            this.model.data.videoid,
+                            'vpaid',
+                            value
+                        );
+                    }
+                },
+                adTag: {
+                    get: function() {
+                        var tag = (function() {
+                            switch (this.adPreviewType) {
+                            case 'vast':
+                                return this.vastTag;
+                            case 'vpaid':
+                                return this.vpaidTag;
+                            }
+                        }.call(this));
+
+                        return tag && tag.replace(
+                            '{pageUrl}',
+                            encodeURIComponent(this.adPreviewPageUrl)
+                        );
+                    }
+                }
+            });
 
             console.log('VIDEO CTRL', SelfieCampaignCtrl);
         }])

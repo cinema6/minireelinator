@@ -73,12 +73,11 @@
                         </h1>
                     </div>
                     <div class="miniReel__status">
-                        <strong>{{$this.brand || $this.advertiser.name}}</strong> 
-                        - <span class="miniReel__date">{{$this.created | date:'M/d/yyyy'}}</span>
-                        <p class="miniReel__count">{{$this.cards.length}} Sponsored Cards <span ng-if="false">, {{$this.miniReels.length}} MiniReels</span></p>
+                        <strong>{{$this.accountName || $this.brand}}</strong><br>
+                        <span class="miniReel__date">Created: {{$this.created | date:'M/d/yyyy'}}</span>
                     </div>
                     <div class="miniReel__stats">
-                        <p class="miniReel__views">Targeting {{SelfieCampaignsCtrl.targetMiniReelsOf($this).length}} MiniReels</p>
+                        <p class="miniReel__views">Status: {{$this.status}}</p>
                     </div>
                 </article>
             </li>
