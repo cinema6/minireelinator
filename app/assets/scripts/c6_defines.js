@@ -14,6 +14,7 @@ define(function() {
     };
     c6.kApiUrl = '/api';
     c6.kYouTubeDataApiKey = window.YouTubeApiKey || 'AIzaSyCmHsFIiXhjAuHM_piTxSHPsQgvZwueLlk';
+    c6.kFlickrDataApiKey = window.FlickrApiKey || 'c60c2b10ac89da96a09fe02811db0ea6';
     c6.embeds = [];
 
     if (c6.kDebug) {

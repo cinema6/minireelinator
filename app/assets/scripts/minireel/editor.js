@@ -1,7 +1,7 @@
 define( ['angular','c6uilib','c6_state','minireel/video_search','minireel/services','c6_defines',
 './mixins/VideoCardController','c6embed'],
 function( angular , c6uilib , c6State  , videoSearch           , services          , c6Defines  ,
-VideoCardController           , c6embed ) {
+VideoCardController           , c6embed) {
     'use strict';
 
     var isNumber = angular.isNumber,
@@ -254,7 +254,6 @@ VideoCardController           , c6embed ) {
                     get: function() {
                         var proxy = _private.proxy,
                             editorMinireel = _private.editorMinireel;
-
                         return (proxy || null) && !equals(proxy, editorMinireel);
                     }
                 },
@@ -745,7 +744,6 @@ VideoCardController           , c6embed ) {
 
                         self.dismissDirtyWarning = false;
                         self.bustCache();
-
                         return minireel;
                     });
             };
@@ -1224,7 +1222,7 @@ VideoCardController           , c6embed ) {
                     };
 
                     this.afterModel = function(model) {
-                        var types = ['video', 'videoBallot', 'text'];
+                        var types = ['image', 'video', 'videoBallot', 'text'];
 
                         if (!model || types.indexOf(model.type) < 0 || model.sponsored) {
                             c6State.goTo('MR:Editor', null, {}, true);
@@ -1269,6 +1267,23 @@ VideoCardController           , c6embed ) {
                         }
 
                         return card.data.ballot;
+                    };
+                }])
+
+                .state('MR:EditCard.Image', ['MiniReelService',
+                function                    ( MiniReelService ) {
+                    this.controller = 'EditCardImageController';
+                    this.controllerAs = 'EditCardImageCtrl';
+                    this.templateUrl = 'views/minireel/editor/edit_card/image.html';
+
+                    this.model = function() {
+                        var card = this.cParent.cModel;
+
+                        if (card.type !== 'image') {
+                            MiniReelService.setCardType(card, 'image');
+                        }
+
+                        return card;
                     };
                 }]);
         }])
@@ -1317,6 +1332,7 @@ VideoCardController           , c6embed ) {
                         var model = this.model;
 
                         switch (this.model.type) {
+                        case 'image':
                         case 'video':
                         case 'videoBallot':
                             return ['title'].map(function(prop) {
@@ -1327,11 +1343,15 @@ VideoCardController           , c6embed ) {
                         }
                     }
                 },
-                videoComplete: {
+                cardComplete: {
                     get: function() {
                         var model = this.model;
 
-                        switch (this.model.type) {
+                        switch (model.type) {
+                        case 'image':
+                            return ['service', 'imageid'].map(function(prop) {
+                                return !!model.data[prop];
+                            }).indexOf(false) < 0;
                         case 'video':
                         case 'videoBallot':
                             return ['service', 'videoid'].map(function(prop) {
@@ -1350,14 +1370,14 @@ VideoCardController           , c6embed ) {
                             return copy({
                                 text: EditorCtrl.model.status === 'active' ? 'I\'m Done!' : 'Save',
                                 action: function() { self.save(); },
-                                enabled: this.videoComplete && this.canSave
+                                enabled: this.cardComplete && this.canSave
                             }, primaryButton);
                         }
 
                         return copy({
                             text: 'Next Step',
                             action: function() { c6State.goTo('MR:EditCard.Copy'); },
-                            enabled: this.videoComplete && !EditorCtrl.errorForCard(this.model)
+                            enabled: this.cardComplete && !EditorCtrl.errorForCard(this.model)
                         }, primaryButton);
                     }
                 },
@@ -1407,11 +1427,18 @@ VideoCardController           , c6embed ) {
                         customRequiredText: [
                             'Indicates required field (to include a questionnaire)'
                         ].join('')
+                    },
+                    imageTab = {
+                        name: 'Image Content',
+                        sref: 'MR:EditCard.Image',
+                        required: true
                     };
 
                 this.model = model;
                 this.tabs = (function() {
                     switch (model.type) {
+                    case 'image':
+                        return [imageTab, copyTab];
                     case 'video':
                     case 'videoBallot':
                     case 'text':
@@ -1458,7 +1485,6 @@ VideoCardController           , c6embed ) {
                 } else {
                     deck.splice(this.insertionIndex, 0, this.model);
                 }
-
                 c6State.goTo('MR:Editor', null, {});
             };
 
@@ -1531,6 +1557,54 @@ VideoCardController           , c6embed ) {
 
                 return EditorCtrl.queueSearch(EditCardCtrl.videoUrl);
             };
+        }])
+
+        .controller('EditCardImageController', ['$scope', 'ImageService',
+        function                               ( $scope, ImageService ) {
+
+                var self = this;
+                var _private = {};
+                var val;
+                Object.defineProperties(this, {
+                    imageUrl: {
+                        get: function() {
+                            var data = this.model.data;
+                            if(val) {
+                                return val;
+                            } else if(data.service && data.imageid) {
+                                _private.updateEmbedInfo();
+                                return ImageService.urlFromData(data.service, data.imageid);
+                            } else {
+                                return '';
+                            }
+                        },
+                        set: function(value) {
+                            val = value;
+                            var data = ImageService.dataFromUrl(value);
+                            this.model.data.service = data.service;
+                            this.model.data.imageid = data.imageid;
+                        }
+                    }
+                });
+
+                // Update the embed info on the model
+                _private.updateEmbedInfo = function(service, imageid) {
+                    ImageService.getEmbedInfo(service, imageid)
+                        .then(function(embedInfo) {
+                            for(var key in embedInfo) {
+                                self.model.data[key] = embedInfo[key];
+                            }
+                        });
+                };
+
+                $scope.$watch(function() {
+                    return self.model.data.service + ':' + self.model.data.imageid;
+                }, function() {
+                    _private.updateEmbedInfo(self.model.data.service, self.model.data.imageid);
+                });
+
+                if (window.c6.kHasKarma) { this._private = _private; }
+
         }])
 
         .config(['c6StateProvider',
@@ -2108,5 +2182,42 @@ VideoCardController           , c6embed ) {
                     });
                 }
             };
+        }])
+
+        .directive('imagePreview', ['ImageService',
+        function                     (ImageService) {
+
+            function link($scope, $element) {
+
+                function loadPreview(embedCode) {
+                    var imageEmbed = $element.find('#imageEmbed *');
+                    if(embedCode) {
+                        imageEmbed.html(embedCode);
+                    } else {
+                        imageEmbed.html('');
+                    }
+                }
+
+                $scope.$watch(function() {
+                    return $scope.code;
+                }, function() {
+                    if($scope.code) {
+                        loadPreview($scope.code);
+                    }
+                });
+
+            }
+
+            return {
+                restrict: 'E',
+                templateUrl: 'views/minireel/directives/image_preview.html',
+                scope: {
+                    service: '@',
+                    imageid: '@',
+                    code: '@'
+                },
+                link: link
+            };
         }]);
+
 });

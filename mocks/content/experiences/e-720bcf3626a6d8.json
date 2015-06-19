@@ -1,0 +1,182 @@
+{
+    "type": "minireel",
+    "appUri": "mini-reel-player",
+    "categories": [
+        "gaming"
+    ],
+    "data": {
+        "title": "Image Card Demo",
+        "mode": "light",
+        "autoplay": true,
+        "autoadvance": true,
+        "sponsored": false,
+        "links": {},
+        "params": {
+            "categories": [
+                "gaming"
+            ]
+        },
+        "campaign": {},
+        "collateral": {
+            "splash": null
+        },
+        "splash": {
+            "source": "generated",
+            "ratio": "6-5",
+            "theme": "img-only"
+        },
+        "deck": [
+            {
+                "data": {
+                    "imageid": "18805499226",
+                    "service": "flickr",
+                    "href": "https://farm4.staticflickr.com/3862/18805499226_a936917a1c_k.jpg",
+                    "width": "2048",
+                    "height": 2048,
+                    "thumbs": {
+                        "small": "https://farm4.staticflickr.com/3862/18805499226_349d70621d_t.jpg",
+                        "large": "https://farm4.staticflickr.com/3862/18805499226_349d70621d_m.jpg"
+                    }
+                },
+                "id": "rc-b4cc09fdf6d5ca",
+                "type": "image",
+                "title": "Biological Neural Network",
+                "note": "(Flickr Image Card)",
+                "modules": [],
+                "placementId": null,
+                "templateUrl": null,
+                "sponsored": false,
+                "campaign": {
+                    "campaignId": null,
+                    "advertiserId": null,
+                    "minViewTime": null,
+                    "countUrls": [],
+                    "clickUrls": []
+                },
+                "collateral": {},
+                "links": {},
+                "params": {}
+            },
+            {
+                "data": {
+                    "imageid": "14423389330",
+                    "service": "flickr",
+                    "href": "https://farm4.staticflickr.com/3926/14423389330_33838bda34_h.jpg",
+                    "width": "1600",
+                    "height": 1203,
+                    "thumbs": {
+                        "small": "https://farm4.staticflickr.com/3926/14423389330_054d07a097_t.jpg",
+                        "large": "https://farm4.staticflickr.com/3926/14423389330_054d07a097_m.jpg"
+                    }
+                },
+                "id": "rc-6474d62935e398",
+                "type": "image",
+                "title": "Ocean",
+                "note": "(Flickr Image Card)",
+                "modules": [],
+                "placementId": null,
+                "templateUrl": null,
+                "sponsored": false,
+                "campaign": {
+                    "campaignId": null,
+                    "advertiserId": null,
+                    "minViewTime": null,
+                    "countUrls": [],
+                    "clickUrls": []
+                },
+                "collateral": {},
+                "links": {},
+                "params": {}
+            },
+            {
+                "data": {
+                    "imageid": "477326258",
+                    "service": "getty",
+                    "href": "//embed.gettyimages.com/embed/477326258?et=Jb1Ir_O6R-d9TxS5r22TCQ&sig=Z9_Pm4INTDEfypRWCHR2_Qmu8-hhkedV6TTRJKhyHks=",
+                    "width": "594",
+                    "height": "396",
+                    "thumbs": {
+                        "small": "http://embed-cdn.gettyimages.com/xt/477326258.jpg?v=1&g=fs1|0|DV|33|651&s=1",
+                        "large": "http://embed-cdn.gettyimages.com/xt/477326258.jpg?v=1&g=fs1|0|DV|33|651&s=1"
+                    }
+                },
+                "id": "rc-841b49bd710e6f",
+                "type": "image",
+                "title": "Trump for President",
+                "note": "lol (Getty Image Card)",
+                "modules": [],
+                "placementId": null,
+                "templateUrl": null,
+                "sponsored": false,
+                "campaign": {
+                    "campaignId": null,
+                    "advertiserId": null,
+                    "minViewTime": null,
+                    "countUrls": [],
+                    "clickUrls": []
+                },
+                "collateral": {},
+                "links": {},
+                "params": {}
+            },
+            {
+                "data": {
+                    "imageid": "535657961",
+                    "service": "getty",
+                    "href": "//embed.gettyimages.com/embed/535657961?et=LBUtnT_vSJFMZRdSZtpXVQ&sig=0h2dOvM_iELbyyI2lCm1oHAwhYG4jOO7vvDVVCLe9Ls=",
+                    "width": "507",
+                    "height": "338",
+                    "thumbs": {
+                        "small": "http://embed-cdn.gettyimages.com/xt/535657961.jpg?v=1&g=fs1|0|DV|33|651&s=1",
+                        "large": "http://embed-cdn.gettyimages.com/xt/535657961.jpg?v=1&g=fs1|0|DV|33|651&s=1"
+                    }
+                },
+                "id": "rc-e28b26912b9b10",
+                "type": "image",
+                "title": "Riau Islands - Home of the Dancing Frog",
+                "note": "ribbet... (Getty Image Card)",
+                "modules": [],
+                "placementId": null,
+                "templateUrl": null,
+                "sponsored": false,
+                "campaign": {
+                    "campaignId": null,
+                    "advertiserId": null,
+                    "minViewTime": null,
+                    "countUrls": [],
+                    "clickUrls": []
+                },
+                "collateral": {},
+                "links": {},
+                "params": {}
+            },
+            {
+                "data": {},
+                "id": "rc-e95e3141991c03",
+                "type": "recap",
+                "title": "Recap of Image Card Demo",
+                "note": null,
+                "modules": [],
+                "placementId": null,
+                "templateUrl": null,
+                "sponsored": false,
+                "campaign": {
+                    "campaignId": null,
+                    "advertiserId": null,
+                    "minViewTime": null,
+                    "countUrls": [],
+                    "clickUrls": []
+                },
+                "collateral": {},
+                "links": {},
+                "params": {}
+            }
+        ]
+    },
+    "status": "pending",
+    "access": "public",
+    "created": "2015-06-17T19:08:08.542Z",
+    "user": "u-35b096c999711b",
+    "org": "o-e4e8b0f244bafc",
+    "lastUpdated": "2015-06-19T20:39:13.674Z"
+}

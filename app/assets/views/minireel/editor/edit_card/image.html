@@ -1,0 +1,47 @@
+<div class="modalBody__group modalBody__group--sideTabs mrEdit__imageTab" c6-alias="EditCardCtrl.model as card">
+    <form>
+        <label class="forms__pair clearfix">
+            <span class="forms__name">
+                Image URL
+            </span>
+            <span class="forms__inputHolder">
+                <input type="text" class="forms__textField forms__textField--block" ng-model="EditCardImageCtrl.imageUrl">
+                <span class="typo--guidance typo--warning">Type in a <strong>URL</strong>.</span>
+                <span class="typo--guidance">Supported sources :
+                    <a href="https://www.flickr.com" title="Flickr" target="_blank">Flickr</a>,
+                    <a href="http://www.gettyimages.com" title="GettyImages" target="_blank">GettyImages</a>
+                </span>
+            </span>
+        </label>
+    </form>
+    <!--
+    <div class="videoPlayer__messenger" ng-if="card.data.service === 'aol'">
+        <h3>Oops! There was a problem with your video.</h3>
+        <p>Sorry, but our secure environment prevents us from showing a preview of this video... You can watch it <a ng-href="{{EditCardCtrl.videoUrl}}" target="_blank">here</a>.</p>
+    </div>
+    <div class="videoPlayer__messenger" ng-if="EditCardCtrl.error">
+        <h3>Oops! There was a problem with your video.</h3>
+        <ng-switch on="EditCardCtrl.error.code">
+            <p ng-switch-when="403">Unfortunately, YouTube does not allow the embedding of this video.</p>
+            <p ng-switch-when="404">Unfortunately, this video could not be found.</p>
+            <p ng-switch-default>An unknown error occurred.</p>
+        </ng-switch>
+        <p>Please choose another video for this card.</p>
+    </div>
+    -->
+    <image-preview service="{{card.data.service}}" imageid="{{card.data.imageid}}" code="{{card.data.embedCode}}"></image-preview>
+</div>
+
+<footer class="modalFooter__group">
+    <button class="btnAction btnAction--first"
+    ng-click="EditCardCtrl.negativeButton.action()"
+    type="button" title="{{EditCardCtrl.negativeButton.text}}">
+        {{EditCardCtrl.negativeButton.text}}
+    </button>
+    <button class="btnAction btnAction--primary btnAction--last"
+    ng-click="EditCardCtrl.primaryButton.action()" ng-disabled="!EditCardCtrl.primaryButton.enabled"
+    type="button" title="{{EditCardCtrl.primaryButton.text}}">
+        {{EditCardCtrl.primaryButton.text}}
+    </button>
+    <p class="modalFooter__guideText">Step {{EditCardCtrl.tabs.indexOf(EditCardCtrl.currentTab) + 1}} of {{EditCardCtrl.tabs.length}} : <strong>Required</strong></p>
+</footer>

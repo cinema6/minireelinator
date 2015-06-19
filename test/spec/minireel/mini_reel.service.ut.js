@@ -167,6 +167,37 @@
                                 data: {},
                             },
                             {
+                                id: 'rc-6ce459b2052d07',
+                                type: 'image',
+                                title: 'This is an image card!',
+                                note: 'Wow. What a spectacular card.',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
+                                },
+                                collateral: {},
+                                links: {},
+                                params: {},
+                                modules: [],
+                                data: {
+                                    service: 'flickr',
+                                    imageid: '16767833635',
+                                    href: 'https://farm8.staticflickr.com/7646/16767833635_9459b8ee35.jpg',
+                                    width: '1600',
+                                    height: '1067',
+                                    thumbs: {
+                                        small: 'https://farm8.staticflickr.com/7646/16767833635_9459b8ee35_t.jpg',
+                                        large: 'https://farm8.staticflickr.com/7646/16767833635_9459b8ee35_m.jpg'
+                                    }
+                                }
+                            },
+                            {
                                 id: 'rc-c9cf24e87307ac',
                                 type: 'youtube',
                                 title: 'The Slowest Turtle',
@@ -705,12 +736,48 @@
 
                     describe('createCard(type)', function() {
                         it('should create a new card based on the type provided', function() {
-                            var videoCard = MiniReelService.createCard('video'),
+                            var imageCard = MiniReelService.createCard('image'),
+                                videoCard = MiniReelService.createCard('video'),
                                 videoBallotCard = MiniReelService.createCard('videoBallot'),
                                 adCard = MiniReelService.createCard('ad'),
                                 linksCard = MiniReelService.createCard('links'),
                                 textCard = MiniReelService.createCard('text'),
                                 recapCard = MiniReelService.createCard('recap');
+
+                            expect(imageCard).toEqual({
+                                id: jasmine.any(String),
+                                type: 'image',
+                                title: null,
+                                note: null,
+                                label: 'Image',
+                                ad: false,
+                                view: 'image',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
+                                },
+                                collateral: {},
+                                thumb: null,
+                                links: {},
+                                params: {},
+                                data: {
+                                    service: null,
+                                    imageid: null,
+                                    href: null,
+                                    width: null,
+                                    height: null,
+                                    thumbs: {
+                                        small: null,
+                                        large: null
+                                    }
+                                }
+                            });
 
                             expect(videoCard).toEqual({
                                 id: jasmine.any(String),
@@ -897,6 +964,7 @@
 
                         it('should generate unique IDs for each card', function() {
                             var ids = [
+                                MiniReelService.createCard('image'),
                                 MiniReelService.createCard('video'),
                                 MiniReelService.createCard('videoBallot'),
                                 MiniReelService.createCard('video'),
@@ -1008,13 +1076,17 @@
                         it('should change the type of a card to the specified type', function() {
                             var card = MiniReelService.createCard(),
                                 id = card.id,
-                                videoCard, videoBallotCard, adCard, linksCard, displayAdCard, recapCard, wildcardCard;
+                                imageCard, videoCard, videoBallotCard, adCard, linksCard, displayAdCard, recapCard, wildcardCard;
 
                             function sameId(card) {
                                 card.id = id;
 
                                 return card;
                             }
+
+                            imageCard = MiniReelService.setCardType(card, 'image');
+                            expect(imageCard).toBe(card);
+                            expect(imageCard).toEqual(sameId(MiniReelService.createCard('image')));
 
                             videoCard = MiniReelService.setCardType(card, 'video');
                             expect(videoCard).toBe(card);
@@ -1437,8 +1509,45 @@
                             });
                         });
 
-                        it('should transpile the various video cards into two cards', function() {
+                        it('should transpile the image card', function() {
                             expect(deck[1]).toEqual({
+                                id: 'rc-6ce459b2052d07',
+                                type: 'image',
+                                title: 'This is an image card!',
+                                note: 'Wow. What a spectacular card.',
+                                label: 'Image',
+                                ad: false,
+                                view: 'image',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
+                                },
+                                collateral: {},
+                                thumb: null,
+                                links: {},
+                                params: {},
+                                data: {
+                                    service: 'flickr',
+                                    imageid: '16767833635',
+                                    href: 'https://farm8.staticflickr.com/7646/16767833635_9459b8ee35.jpg',
+                                    width: '1600',
+                                    height: '1067',
+                                    thumbs: {
+                                        small: 'https://farm8.staticflickr.com/7646/16767833635_9459b8ee35_t.jpg',
+                                        large: 'https://farm8.staticflickr.com/7646/16767833635_9459b8ee35_m.jpg'
+                                    }
+                                }
+                            });
+                        });
+
+                        it('should transpile the various video cards into two cards', function() {
+                            expect(deck[2]).toEqual({
                                 id: 'rc-c9cf24e87307ac',
                                 type: 'video',
                                 title: 'The Slowest Turtle',
@@ -1478,7 +1587,7 @@
                                 }
                             });
 
-                            expect(deck[2]).toEqual({
+                            expect(deck[3]).toEqual({
                                 id: 'rc-17721b74ce2584',
                                 type: 'videoBallot',
                                 title: 'The Ugliest Turtle',
@@ -1521,7 +1630,7 @@
                                 }
                             });
 
-                            expect(deck[3]).toEqual({
+                            expect(deck[4]).toEqual({
                                 id: 'rc-61fa9683714e13',
                                 type: 'videoBallot',
                                 title: 'The Smartest Turtle',
@@ -1564,7 +1673,7 @@
                                 }
                             });
 
-                            expect(deck[4]).toEqual({
+                            expect(deck[5]).toEqual({
                                 id: 'rc-d8ebd5461ba524',
                                 type: 'video',
                                 title: 'The Dumbest Turtle',
@@ -1619,7 +1728,7 @@
                                 }
                             });
 
-                            expect(deck[10]).toEqual({
+                            expect(deck[11]).toEqual({
                                 id: 'rc-82a19a12065636',
                                 type: 'video',
                                 title: 'AdUnit Card',
@@ -1662,7 +1771,7 @@
                                 }
                             });
 
-                            expect(deck[11]).toEqual({
+                            expect(deck[12]).toEqual({
                                 id: 'rc-fc6cfb661b7a86',
                                 type: 'video',
                                 title: 'Yahoo! Card',
@@ -1698,7 +1807,7 @@
                                 }
                             });
 
-                            expect(deck[12]).toEqual({
+                            expect(deck[13]).toEqual({
                                 id: 'rc-f51c0386a90a02',
                                 type: 'video',
                                 title: 'AOL Card',
@@ -1734,7 +1843,7 @@
                                 }
                             });
 
-                            expect(deck[13]).toEqual({
+                            expect(deck[14]).toEqual({
                                 id: 'rc-8142d1b5897b32',
                                 type: 'video',
                                 title: 'Rumble Card',
@@ -1772,7 +1881,7 @@
                         });
 
                         it('should transpile the links cards', function() {
-                            expect(deck[7]).toEqual({
+                            expect(deck[8]).toEqual({
                                 id: 'rc-25c1f60b933186',
                                 type: 'links',
                                 title: 'If You Love Turtles',
@@ -1794,14 +1903,14 @@
                                 thumb: null,
                                 links: {},
                                 params: {},
-                                data: minireel.data.deck[8].data
+                                data: minireel.data.deck[9].data
                             });
 
-                            expect(deck[7].data.links).not.toBe(minireel.data.deck[8].data.links);
+                            expect(deck[8].data.links).not.toBe(minireel.data.deck[9].data.links);
                         });
 
                         it('should transpile the recap cards', function() {
-                            expect(deck[8]).toEqual({
+                            expect(deck[9]).toEqual({
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
                                 title: null,
@@ -1828,7 +1937,7 @@
                         });
 
                         it('should transpile the displayAd cards', function() {
-                            expect(deck[9]).toEqual({
+                            expect(deck[10]).toEqual({
                                 id: 'rc-82a19a12065636',
                                 type: 'displayAd',
                                 title: 'By Ubisoft',
@@ -1859,7 +1968,7 @@
                         });
 
                         it('should transpile the wildcards', function() {
-                            expect(deck[14]).toEqual({
+                            expect(deck[15]).toEqual({
                                 id: 'rc-c99a6f4c6b4c54',
                                 type: 'wildcard',
                                 title: null,
@@ -2117,7 +2226,7 @@
                             result = resultSpy.calls.mostRecent().args[0];
 
                             result.data.deck.forEach(function(card) {
-                                if (!(/adUnit|text|links|displayAd|wildcard/).test(card.type)) {
+                                if (!(/adUnit|image|text|links|displayAd|wildcard/).test(card.type)) {
                                     expect(card.modules.indexOf('displayAd')).not.toBe(-1);
                                 } else if (card.type !== 'links') {
                                     expect((card.modules || []).indexOf('displayAd')).toBe(-1);
@@ -2164,7 +2273,7 @@
                             result = resultSpy.calls.mostRecent().args[0];
 
                             result.data.deck.forEach(function(card) {
-                                if (!(/adUnit|text|links|displayAd|wildcard/).test(card.type)) {
+                                if (!(/adUnit|image|text|links|displayAd|wildcard/).test(card.type)) {
                                     expect(card.modules.indexOf('displayAd')).not.toBe(-1);
                                 } else if (card.type !== 'links') {
                                     expect((card.modules || []).indexOf('displayAd')).toBe(-1);

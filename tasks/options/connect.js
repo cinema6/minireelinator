@@ -53,6 +53,7 @@
                                             '(' + function(window) {
                                                 window.DEBUG = true;
                                                 window.YouTubeApiKey = 'AIzaSyAoR0-kvy_fIjYOKk0vMU6F2JIb1aCMd1g';
+                                                window.FlickrApiKey = 'c60c2b10ac89da96a09fe02811db0ea6';
                                             }.toString() + '(window))',
                                             '</script>'
                                         ].join('\n');

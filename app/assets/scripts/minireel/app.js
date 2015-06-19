@@ -70,6 +70,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                             this.state('MR:EditCard.Copy');
                             this.state('MR:EditCard.Video');
                             this.state('MR:EditCard.Ballot');
+                            this.state('MR:EditCard.Image');
                         });
                     });
                 });
