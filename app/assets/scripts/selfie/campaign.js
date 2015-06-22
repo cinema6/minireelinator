@@ -212,8 +212,8 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieCampaignController', ['$scope','c6State','c6Computed','cState',
-        function                                ( $scope , c6State , c6Computed , cState ) {
+        .controller('SelfieCampaignController', ['$scope','$log','c6State','c6Computed','cState',
+        function                                ( $scope , $log , c6State , c6Computed , cState ) {
 
             var SelfieCampaignCtrl = this;
 
@@ -241,10 +241,12 @@ function( angular , c6State  , PaginatedListState                    ,
             function setCampaignId(campaign) {
                 SelfieCampaignCtrl.card.campaignId = campaign.id;
                 SelfieCampaignCtrl.card.campaign.campaignId = campaign.id;
+
+                return campaign;
             }
 
             function handleError(err) {
-                console.log('Could not save the Campaign', err);
+                $log.error('Could not save the Campaign', err);
             }
 
             this.initWithModel = function(categories) {
@@ -256,15 +258,24 @@ function( angular , c6State  , PaginatedListState                    ,
             this.save = function() {
                 $scope.$broadcast('SelfieCampaignWillSave');
 
-                return cState.updateCard()
-                    .then(addCardId)
-                    .then(addCardToCampaign)
-                    .then(saveCampaign)
-                    .then(setCampaignId)
-                    .then(function() {
-                        cState.updateCard();
-                    })
-                    .catch(handleError);
+                if (this.card.id) {
+                    // TODO: determine if card object on campaign model is editable:
+                    // endDate, name, reportingId
+
+                    return cState.updateCard()
+                        .then(saveCampaign)
+                        .catch(handleError);
+                } else {
+                    return cState.updateCard()
+                        .then(addCardId)
+                        .then(addCardToCampaign)
+                        .then(saveCampaign)
+                        .then(setCampaignId)
+                        .then(function() {
+                            cState.updateCard();
+                        })
+                        .catch(handleError);
+                }
             };
         }])
 
@@ -352,12 +363,6 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             $scope.$on('SelfieCampaignWillSave', this.updateLinks);
-
-            // $scope.$on('$destroy', function() {
-            //     if (!card.params.action.label) {
-            //         card.params.action = null;
-            //     }
-            // });
         }])
 
         .controller('SelfieCampaignVideoController', ['$injector','$scope','VideoService',
@@ -366,7 +371,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 val;
 
             function getJSONProp(json, prop) {
-                console.log(json, prop);
                 return (fromJson(json) || {})[prop];
             }
 
@@ -454,9 +458,5 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
                 }
             });
-        }])
-
-        .controller('SelfieCampaignTargetingController', [function() {}])
-
-        .controller('SelfieCampaignPreviewController', [function() {}]);
+        }]);
 });

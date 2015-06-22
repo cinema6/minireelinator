@@ -25,20 +25,13 @@ function( angular , c6State  , campaign   ) {
             c6StateProvider.state('Selfie:App', ['c6State',
             function                            ( c6State ) {
                 this.templateUrl = 'views/selfie/app.html';
-                this.controller = 'SelfieAppController';
-                this.controllerAs = 'SelfieAppCtrl';
 
                 this.model = function() {
                     return this.cParent.cModel.selfie;
-                };
-                this.afterModel = function() {
-                    // var user = c6State.get('Selfie').cModel;
                 };
                 this.enter = function() {
                     c6State.goTo('Selfie:Campaigns', null, null, true);
                 };
             }]);
-        }])
-
-        .controller('SelfieAppController', [function() {}]);
+        }]);
 });

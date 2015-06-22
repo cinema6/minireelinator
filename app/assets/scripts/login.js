@@ -1,5 +1,5 @@
-define( ['angular','c6_state','c6_defines'],
-function( angular , c6State  , c6Defines  ) {
+define( ['angular','c6_state'],
+function( angular , c6State  ) {
     'use strict';
 
     return angular.module('c6.app.login', [c6State.name])
@@ -21,6 +21,8 @@ function( angular , c6State  , c6Defines  ) {
 
         .controller('LoginController', ['$q','AuthService','c6State',
         function                       ( $q , AuthService , c6State ) {
+            var ApplicationState = c6State.get('Application');
+
             this.error = null;
 
             this.submit = function() {
@@ -39,11 +41,8 @@ function( angular , c6State  , c6Defines  ) {
                 }
 
                 function goToPortal(user) {
-                    if (/selfie/.test(window.location.href) || c6Defines.kSelfie) {
-                        c6State.goTo('Selfie', [user]);
-                    } else {
-                        c6State.goTo('Portal', [user]);
-                    }
+                    c6State.goTo(ApplicationState.name, [user]);
+
                     return user;
                 }
 
