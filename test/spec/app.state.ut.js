@@ -14,19 +14,15 @@
                     c6State = $injector.get('c6State');
                     c6Defines = $injector.get('c6Defines');
                 });
-
-                application = c6State.get('Application');
             });
 
             it('should exist', function() {
+                application = c6State.get('Application');
+
                 expect(application).toEqual(jasmine.any(Object));
             });
 
-            describe('enter()', function() {
-                beforeEach(function() {
-                    spyOn(c6State, 'goTo');
-                });
-
+            describe('name', function() {
                 afterEach(function() {
                     c6Defines.kSelfie = false;
                 });
@@ -35,9 +31,9 @@
                     it('should go to Selfie state', function() {
                         spyOn(RegExp.prototype, 'test').and.returnValue(true);
 
-                        application.enter();
+                        application = c6State.get('Application');
 
-                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie', null, null, true);
+                        expect(application.name).toBe('Selfie');
                     });
                 });
 
@@ -45,14 +41,42 @@
                     it('should go to Selfie state', function() {
                         c6Defines.kSelfie = true;
 
+                        application = c6State.get('Application');
+
+                        expect(application.name).toBe('Selfie');
+                    });
+                });
+
+                describe('if this is not Selfie', function() {
+                    it('should go to the portal', function() {
+                        application = c6State.get('Application');
+
+                        expect(application.name).toBe('Portal');
+                    });
+                });
+            });
+
+            describe('enter()', function() {
+                beforeEach(function() {
+                    application = c6State.get('Application');
+
+                    spyOn(c6State, 'goTo');
+                });
+
+                describe('when selfie', function() {
+                    it('should go to Selfie state', function() {
+                        application.name = 'Selfie';
+
                         application.enter();
 
                         expect(c6State.goTo).toHaveBeenCalledWith('Selfie', null, null, true);
                     });
                 });
 
-                describe('if this is not Selfie', function() {
+                describe('when Portal', function() {
                     it('should go to the portal', function() {
+                        application.name = 'Portal';
+
                         application.enter();
 
                         expect(c6State.goTo).toHaveBeenCalledWith('Portal', null, null, true);

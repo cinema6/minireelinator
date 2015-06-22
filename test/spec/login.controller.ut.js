@@ -11,7 +11,8 @@ define(['login', 'app'], function(loginModule, appModule) {
             LoginCtrl,
             c6Defines;
 
-        var model;
+        var model,
+            ApplicationState;
 
         beforeEach(function() {
             model = {
@@ -34,6 +35,8 @@ define(['login', 'app'], function(loginModule, appModule) {
                 $q = $injector.get('$q');
                 c6State = $injector.get('c6State');
                 c6Defines = $injector.get('c6Defines');
+
+                ApplicationState = c6State.get('Application');
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
@@ -144,9 +147,9 @@ define(['login', 'app'], function(loginModule, appModule) {
                             spyOn(c6State, 'goTo').and.returnValue($q.when({}));
                         });
 
-                        describe('when selfie is in the url', function() {
+                        describe('when Application name is Selfie', function() {
                             beforeEach(function() {
-                                spyOn(RegExp.prototype, 'test').and.returnValue(true);
+                                ApplicationState.name = 'Selfie';
 
                                 $scope.$apply(function() {
                                     loginDeferred.resolve(user);
@@ -162,30 +165,10 @@ define(['login', 'app'], function(loginModule, appModule) {
                             });
                         });
 
-                        describe('when selfie is running locally', function() {
+                        describe('when Application name is Portal', function() {
                             beforeEach(function() {
-                                c6Defines.kSelfie = true;
+                                ApplicationState.name = 'Portal';
 
-                                $scope.$apply(function() {
-                                    loginDeferred.resolve(user);
-                                });
-                            });
-
-                            afterEach(function() {
-                                c6Defines.kSelfie = false;
-                            });
-
-                            it('should resolve the promise', function() {
-                                expect(success).toHaveBeenCalledWith(user);
-                            });
-
-                            it('should go to Selfie state', function() {
-                                expect(c6State.goTo).toHaveBeenCalledWith('Selfie', [user]);
-                            });
-                        });
-
-                        describe('if this is not Selfie', function() {
-                            beforeEach(function() {
                                 $scope.$apply(function() {
                                     loginDeferred.resolve(user);
                                 });

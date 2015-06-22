@@ -67,5 +67,97 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 cState: campaigns
             })));
         }));
+
+        describe('methods', function() {
+            describe('remove(campaigns)', function() {
+                var campaigns,
+                    campaign1EraseDeferred, campaign2EraseDeferred,
+                    config;
+
+                beforeEach(function() {
+                    campaign1EraseDeferred = $q.defer();
+                    campaign2EraseDeferred = $q.defer();
+
+                    campaigns = [
+                        {
+                            erase: jasmine.createSpy('erase()').and.returnValue(campaign1EraseDeferred.promise)
+                        },
+                        {
+                            erase: jasmine.createSpy('erase()').and.returnValue(campaign2EraseDeferred.promise)
+                        }
+                    ];
+
+                    spyOn(ConfirmDialogService, 'display');
+
+                    $scope.$apply(function() {
+                        SelfieCampaignsCtrl.remove(campaigns);
+                    });
+
+                    config = ConfirmDialogService.display.calls.mostRecent().args[0];
+                });
+
+                it('should open a confirmation dialog', function() {
+                    expect(ConfirmDialogService.display).toHaveBeenCalledWith({
+                        prompt: jasmine.any(String),
+                        affirm: jasmine.any(String),
+                        cancel: jasmine.any(String),
+                        onCancel: jasmine.any(Function),
+                        onAffirm: jasmine.any(Function)
+                    });
+                });
+
+                describe('if the dialog is canceled', function() {
+                    beforeEach(function() {
+                        spyOn(ConfirmDialogService, 'close');
+
+                        config.onCancel();
+                    });
+
+                    it('should close the dialog', function() {
+                        expect(ConfirmDialogService.close).toHaveBeenCalled();
+                    });
+                });
+
+                describe('if the dialog is affirmed', function() {
+                    beforeEach(function() {
+                        spyOn(ConfirmDialogService, 'close');
+
+                        $scope.$apply(function() {
+                            config.onAffirm();
+                        });
+                    });
+
+                    it('should close the dialog', function() {
+                        expect(ConfirmDialogService.close).toHaveBeenCalled();
+                    });
+
+                    it('should erase all the campaigns', function() {
+                        campaigns.forEach(function(campaign) {
+                            expect(campaign.erase).toHaveBeenCalled();
+                        });
+                    });
+
+                    describe('when the erases are done', function() {
+                        var refreshDeferred;
+
+                        beforeEach(function() {
+                            refreshDeferred = $q.defer();
+
+                            spyOn(model, 'refresh').and.returnValue(refreshDeferred.promise);
+
+                            [campaign1EraseDeferred, campaign2EraseDeferred].forEach(function(deferred) {
+                                $scope.$apply(function() {
+                                    deferred.resolve(null);
+                                });
+                            });
+                        });
+
+                        it('should refresh the list', function() {
+                            expect(model.refresh).toHaveBeenCalled();
+                        });
+                    });
+                });
+            });
+        });
     });
 });

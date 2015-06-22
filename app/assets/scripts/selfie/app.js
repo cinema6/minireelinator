@@ -30,7 +30,7 @@ function( angular , c6State  , campaign   ) {
                     return this.cParent.cModel.selfie;
                 };
                 this.enter = function() {
-                    c6State.goTo('Selfie:Campaigns', null, null, true);
+                    c6State.goTo('Selfie:CampaignDashboard', null, null, true);
                 };
             }]);
         }]);

@@ -56,8 +56,8 @@ define(['app'], function(appModule) {
                 });
             });
 
-            it('should go to the "Selfie:Apps" state', function() {
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Campaigns', null, null, true);
+            it('should go to the "Selfie:CampaignDashboard" state', function() {
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard', null, null, true);
             });
         });
     });
