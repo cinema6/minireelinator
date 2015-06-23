@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.13.0.rc1]*
+  * [FEATURE]: Add Selfie Application
+
 ## v1.12.1 (June 15, 2015)
 * *[v1.12.1.rc1]*
   * [FIX]: Fix for an issue that caused a MiniReel's User to be removed
