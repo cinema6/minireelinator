@@ -1266,7 +1266,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             var self = this,
                 app = c6State.get('Application'),
-                portal = c6State.get(app.name);
+                application = c6State.get(app.name);
 
             function generateId(prefix) {
                 return prefix + '-' +
@@ -1793,7 +1793,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             this.create = function(toCopy) {
                 var userSettings = SettingsService.getReadOnly('MR::user'),
                     orgSettings = SettingsService.getReadOnly('MR::org'),
-                    user = portal.cModel;
+                    user = application.cModel;
 
                 function fetchTemplate(user) {
                     var org = user.org;
@@ -1852,7 +1852,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             this.convertCardForPlayer = function(card, _minireel) {
                 var dataTemplates, cardBases, cardType, dataType,
-                    org = portal.cModel.org,
+                    org = application.cModel.org,
                     minireel = _minireel || {
                         data: {
                             mode: null,

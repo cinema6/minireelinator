@@ -40,7 +40,7 @@ function( angular , c6State  ) {
                     return AuthService.login(model.email, model.password);
                 }
 
-                function goToPortal(user) {
+                function goToApp(user) {
                     c6State.goTo(ApplicationState.name, [user]);
 
                     return user;
@@ -53,7 +53,7 @@ function( angular , c6State  ) {
 
                 return validate(this.model)
                     .then(login)
-                    .then(goToPortal)
+                    .then(goToApp)
                     .catch(writeError);
             };
         }])
