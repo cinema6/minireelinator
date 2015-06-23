@@ -41,16 +41,20 @@ function( editorModule    , c6embed , $      ) {
 
         describe('$watchers', function() {
             var session;
+            var player;
             var sessionReadyDeferred;
 
             beforeEach(function() {
                 spyOn(c6embed, 'loadExperience').and.callFake(function(settings) {
                     sessionReadyDeferred = $q.defer();
                     session = {
-                        ensureReadiness: function() {
-                            return sessionReadyDeferred.promise;
-                        },
                         ping: jasmine.createSpy('session.ping()')
+                    };
+
+                    player = {
+                        getReadySession: function() {
+                            return sessionReadyDeferred.promise;
+                        }
                     };
 
                     settings.state = {
@@ -59,8 +63,8 @@ function( editorModule    , c6embed , $      ) {
                             return settings.state;
                         })
                     };
-                    settings.getSession = function() {
-                        return $q.when(session);
+                    settings.getPlayer = function() {
+                        return $q.when(player);
                     };
                     $(settings.embed).append('<iframe src="about:blank"></iframe>');
                 });
