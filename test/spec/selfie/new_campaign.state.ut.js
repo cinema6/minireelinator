@@ -95,7 +95,7 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
             });
 
             it('should be a new campaign object', function() {
-                expect(result).toEqual(jasmine.objectContaining(dbModel));
+                expect(result).toEqual(dbModel);
             });
         });
 
