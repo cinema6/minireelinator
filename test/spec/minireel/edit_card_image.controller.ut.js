@@ -51,7 +51,6 @@ define(['app'], function(appModule) {
                         $scope: $scope
                     });
                     model = EditCardImageCtrl.model = EditCardCtrl.model;
-
                 });
             });
         });
@@ -60,83 +59,47 @@ define(['app'], function(appModule) {
             expect(EditCardImageCtrl).toEqual(jasmine.any(Object));
         });
 
-
         describe('$watch', function() {
             beforeEach(function() {
+                spyOn(ImageService, 'dataFromUrl').and.returnValue({
+                    service: 'site',
+                    imageid: '123'
+                });
                 spyOn(EditCardImageCtrl._private, 'updateEmbedInfo');
-            });
-
-            it('should watch for service changes', function() {
-                model.data.service = 'flickr';
+                EditCardImageCtrl.imageUrl = 'www.site.com/123';
                 $rootScope.$apply();
-                expect(EditCardImageCtrl._private.updateEmbedInfo).toHaveBeenCalled();
             });
 
-            it('should watch for image id changes', function() {
-                model.data.imageid = 'flickr';
-                $rootScope.$apply();
-                expect(EditCardImageCtrl._private.updateEmbedInfo).toHaveBeenCalled();
+            it('should watch for imageUrl changes', function() {
+                expect(ImageService.dataFromUrl).toHaveBeenCalledWith('www.site.com/123');
             });
-        });
 
-        describe('properties', function() {
-            describe('imageUrl', function() {
-
-                describe('getting', function() {
-                    it('should use the service and imageid to formulate a url for the image', function() {
-                        model.data.service = 'flickr';
-                        model.data.imageid = '16767833635';
-                        expect(EditCardImageCtrl.imageUrl).toBe('https://flic.kr/p/rxHwKV');
-
-                        model.data.service = 'getty';
-                        model.data.imageid = '559333651';
-                        expect(EditCardImageCtrl.imageUrl).toBe('http://gty.im/559333651');
-                    });
+            describe('when imageUrl is null', function() {
+                beforeEach(function() {
+                    spyOn(ImageService, 'urlFromData').and.returnValue('https://flickr.com/p/abc123');
+                    EditCardImageCtrl.imageUrl = null;
+                    model.data = {
+                        service: 'site',
+                        imageid: '123'
+                    };
+                    $rootScope.$apply();
                 });
 
-                describe('setting', function() {
-                    it('should parse the service and imageid', function() {
-                        EditCardImageCtrl.imageUrl = 'https://www.flickr.com/photos/sebanado/16767833635/';
-                        expect(model.data.service).toBe('flickr');
-                        expect(model.data.imageid).toBe('16767833635');
-
-                        EditCardImageCtrl.imageUrl = 'http://www.gettyimages.com/detail/photo/young-woman-sitting-by-the-pool-wearing-hat-royalty-free-image/559333651';
-                        expect(model.data.service).toBe('getty');
-                        expect(model.data.imageid).toBe('559333651');
-                    });
-
-                    it('should not freak out when getting a mangled url', function() {
-                        expect(function() {
-                            EditCardImageCtrl.imageUrl = 'apple.com';
-                        }).not.toThrow();
-                        expect(EditCardImageCtrl.imageUrl).toBe('apple.com');
-                        expect(model.data.service).toBeNull();
-                        expect(model.data.imageid).toBeNull();
-
-                        expect(function() {
-                            EditCardImageCtrl.imageUrl = '84fh439#';
-                        }).not.toThrow();
-                        expect(EditCardImageCtrl.imageUrl).toBe('84fh439#');
-                        expect(model.data.service).toBeNull();
-                        expect(model.data.imageid).toBeNull();
-
-                        expect(function() {
-                            EditCardImageCtrl.imageUrl = 'fli.kr/p/';
-                        }).not.toThrow();
-                        expect(EditCardImageCtrl.imageUrl).toBe('fli.kr/p/');
-                        expect(model.data.service).toBeNull();
-                        expect(model.data.imageid).toBeNull();
-
-                        expect(function() {
-                            EditCardImageCtrl.imageUrl = 'gty.im/';
-                        }).not.toThrow();
-                        expect(EditCardImageCtrl.imageUrl).toBe('gty.im/');
-                        expect(model.data.service).toBeNull();
-                        expect(model.data.imageid).toBeNull();
-                    });
+                it('should set the image url from the model', function() {
+                    expect(ImageService.urlFromData).toHaveBeenCalledWith('site', '123');
+                    expect(EditCardImageCtrl.imageUrl).toEqual('https://flickr.com/p/abc123');
                 });
-
             });
+
+            describe('when imageUrl is not null', function() {
+                it('should update the model', function() {
+                    expect(ImageService.dataFromUrl).toHaveBeenCalledWith('www.site.com/123');
+                    expect(model.data.service).toEqual('site');
+                    expect(model.data.imageid).toEqual('123');
+                    expect(EditCardImageCtrl._private.updateEmbedInfo).toHaveBeenCalledWith('site', '123');
+                });
+            });
+
         });
 
         describe('methods', function(){
@@ -152,28 +115,47 @@ define(['app'], function(appModule) {
                             service: 'site',
                             imageid: '123'
                         };
-                        spyOn(ImageService, 'getEmbedInfo').and.returnValue(
-                            $q.when({
-                                href: 'www.site.com/image.jpg',
-                                width: 200,
-                                height: 100,
-                                embedCode: '<img src=""></img>'
-                            })
-                        );
-                        updateEmbedInfo('site', 123);
-                        $rootScope.$apply();
                     });
 
-                    it('should update the embed info on the model', function() {
-                        expect(model.data.href).toEqual('www.site.com/image.jpg');
-                        expect(model.data.width).toEqual(200);
-                        expect(model.data.height).toEqual(100);
-                        expect(model.data.embedCode).toEqual('<img src=""></img>');
+                    describe('on success', function() {
+                        beforeEach(function() {
+                            spyOn(ImageService, 'getEmbedInfo').and.returnValue(
+                                $q.when({
+                                    href: 'www.site.com/image.jpg',
+                                    width: 200,
+                                    height: 100,
+                                    embedCode: '<img src=""></img>'
+                                })
+                            );
+                            updateEmbedInfo('site', 123);
+                            $rootScope.$apply();
+                        });
+
+                        it('should update the embed info on the model', function() {
+                            expect(model.data.href).toEqual('www.site.com/image.jpg');
+                            expect(model.data.width).toEqual(200);
+                            expect(model.data.height).toEqual(100);
+                            expect(model.data.embedCode).toEqual('<img src=""></img>');
+                        });
+
+                        it('should not erase existing properties on the model', function() {
+                            expect(model.data.service).toEqual('site');
+                            expect(model.data.imageid).toEqual('123');
+                        });
                     });
 
-                    it('should not erase existing properties on the model', function() {
-                        expect(model.data.service).toEqual('site');
-                        expect(model.data.imageid).toEqual('123');
+                    describe('on failure', function() {
+                        beforeEach(function() {
+                            spyOn(ImageService, 'getEmbedInfo').and.returnValue(
+                                $q.reject('error message')
+                            );
+                            updateEmbedInfo('site', 123);
+                            $rootScope.$apply();
+                        });
+
+                        it('should update the error message', function() {
+                            expect(EditCardImageCtrl.error).toEqual('error message');
+                        });
                     });
                 });
             });

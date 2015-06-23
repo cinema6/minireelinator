@@ -956,10 +956,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             if (window.c6.kHasKarma) { this._private = _private; }
         }])
 
-        .service('ImageThumbnailService', ['$q','$cacheFactory','$http','VideoService',
-                                           'OpenGraphService',
-        function                          ( $q , $cacheFactory , $http , VideoService ,
-                                            OpenGraphService ) {
+        .service('ImageThumbnailService', ['$q', '$cacheFactory',
+        function                          ( $q ,  $cacheFactory ) {
             var _private = {},
                 cache = $cacheFactory('ImageThumbnailService:models');
 
@@ -987,8 +985,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             _private.fetchGettyThumbs = function(imageid) {
                 return {
-                    small: 'http://embed-cdn.gettyimages.com/xt/' + imageid + '.jpg?v=1&g=fs1|0|DV|33|651&s=1',
-                    large: 'http://embed-cdn.gettyimages.com/xt/' + imageid + '.jpg?v=1&g=fs1|0|DV|33|651&s=1'
+                    small: 'http://embed-cdn.gettyimages.com/xt/' + imageid +
+                        '.jpg?v=1&g=fs1|0|DV|33|651&s=1',
+                    large: 'http://embed-cdn.gettyimages.com/xt/' + imageid +
+                        '.jpg?v=1&g=fs1|0|DV|33|651&s=1'
                 };
             };
 
@@ -1219,7 +1219,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     result += (index * Math.pow(58, i));
                 }
                 return result;
-            }
+            };
 
             // This function converts a base 10 number to base 58
             _private.encodeBase58 = function(num) {
@@ -1235,12 +1235,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     result = digits[r] + result;
                 } while(n>0);
                 return result;
-            }
+            };
 
-            // This function uses Flickr's API to get the information necessary to construct the image's source url
+            // This function uses Flickr's API to get the information necessary to construct the
+            // image's source url
             _private.getFlickrEmbedInfo = function(imageid) {
                 var flickrKey = c6Defines.kFlickrDataApiKey;
-                var request = 'https://www.flickr.com/services/rest/?method=flickr.photos.getSizes&format=json&api_key=' + flickrKey + '&photo_id=' + imageid + '&jsoncallback=JSON_CALLBACK';
+                var request = 'https://www.flickr.com/services/rest/?' +
+                    'method=flickr.photos.getSizes&' +
+                    'format=json&api_key=' + flickrKey + '&' +
+                    'photo_id=' + imageid + '&' +
+                    'jsoncallback=JSON_CALLBACK';
                 return $http.jsonp(request).
                     then(function(json) {
                         if(json.data.sizes) {
@@ -1269,19 +1274,23 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             }
                         }
                         return $q.reject('There was a problem retrieving the image from Flickr.');
-                    }, function(data) {
+                    }, function() {
                         return $q.reject('There was a problem contacting Flickr.');
                     });
             };
 
-            // This function uses GettyImages' oEmbed API endpoint to fetch the embed code for an image
+            // This function uses GettyImages' oEmbed API endpoint to fetch the embed code for an
+            // image
             _private.getGettyEmbedInfo = function(imageid) {
-                var request = 'http://embed.gettyimages.com/oembed?url=' + encodeURIComponent('http://gty.im/' + imageid);
+                var request = 'http://embed.gettyimages.com/oembed?' +
+                    'url=' + encodeURIComponent('http://gty.im/' + imageid);
                 return $http.get(request).
                     then(function(json) {
                         var embedCode = json.data.html;
                         if(embedCode) {
-                            var src = embedCode.match(/"\/\/embed.gettyimages.com\/embed\/\d+\?\S+"/)[0];
+                            var srcRegex = new RegExp('"\\/\\/embed.gettyimages.com\\/' +
+                                'embed\\/\\d+\\?\\S+"');
+                            var src = embedCode.match(srcRegex)[0];
                             var width = embedCode.match(/width="\d+/)[0];
                             var height = embedCode.match(/height="\d+/)[0];
                             return {
@@ -1290,11 +1299,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 height: height.replace('height="', '')
                             };
                         }
-                        return $q.reject('There was a problem retrieving the image from GettyImages.');
-                    }, function(data) {
+                        return $q.reject('There was a problem retrieving the image from ' +
+                            'GettyImages.');
+                    }, function() {
                         return $q.reject('There was a problem contacting GettyImages.');
                     });
-            }
+            };
 
             // Takes as an argument a url, checks to see if it's of a recognizable form,
             // and returns information that was parsed from it.
@@ -1309,9 +1319,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 }
                             },
                             {
-                                urlFormat: /flic.kr\/p\/[123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ]+(?=\/?)/,
+                                urlFormat: new RegExp('flic.kr\\/p\\/' +
+                                    '[123456789abcdefghijkmnopqrstuvwxyz' +
+                                    'ABCDEFGHJKLMNPQRSTUVWXYZ]+(?=\\/?)'),
                                 idFetcher: function(url) {
-                                    return _private.decodeBase58(url.replace(/flic.kr\/p\//, '')).toString();
+                                    return _private.decodeBase58(
+                                        url.replace(/flic.kr\/p\//, '')
+                                    ).toString();
                                 }
                             }
                         ]
@@ -1319,9 +1333,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     getty: {
                         patterns: [
                             {
-                                urlFormat: /gettyimages.com\/detail\/([a-z]+-)?photo\/[^\/]+\/\d+(?=\/?)/,
+                                urlFormat: new RegExp('gettyimages.com\\/detail\\/([a-z]+-)?' +
+                                    'photo\\/[^\\/]+\\/\\d+(?=\\/?)'),
                                 idFetcher: function(url) {
-                                    return url.replace(/gettyimages.com\/detail\/([a-z]+-)?photo\/[^\/]+\//, '');
+                                    return url.replace(new RegExp('gettyimages.com\\/detail\\/' +
+                                        '([a-z]+-)?photo\\/[^\\/]+\\/'), '');
                                 }
                             },
                             {
@@ -1369,8 +1385,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     href: imageInfo.src,
                                     width: imageInfo.width,
                                     height: imageInfo.height,
-                                    thumbs: imageInfo.thumbs,
-                                    embedCode: '<img src="' + imageInfo.src + '" style="max-width:100%";max-height:100%;></img>'
+                                    thumbs: imageInfo.thumbs
                                 };
                             });
                     case 'getty':
@@ -1379,17 +1394,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 return {
                                     href: iframeInfo.src,
                                     width: iframeInfo.width,
-                                    height: iframeInfo.height,
-                                    embedCode: ([
-                                        '<div class="getty embed image" style="background-color:#fff;display:inline-block;font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;color:#a7a7a7;font-size:11px;width:100%;max-width:509px;">',
-                                        '    <div style="overflow:hidden;position:relative;height:0;padding:66.601179% 0 0 0;width:100%;">',
-                                        '        <iframe src="' + iframeInfo.src + '" width="' + iframeInfo.width + '" height="' + iframeInfo.height + '" scrolling="no" frameborder="0" style="display:inline-block;position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>',
-                                        '    </div>',
-                                        '    <p style="margin:0;"></p>',
-                                        '    <div style="padding:0;margin:0 0 0 10px;text-align:left;"><a href="http://www.gettyimages.com/detail/' + imageid + '" target="_blank" style="color:#a7a7a7;text-decoration:none;font-weight:normal !important;border:none;display:inline-block;">View image</a> | <a href="http://www.gettyimages.com" target="_blank"',
-                                        '        style="color:#a7a7a7;text-decoration:none;font-weight:normal !important;border:none;display:inline-block;">gettyimages.com</a></div>',
-                                        '</div>'
-                                    ].join('\n'))
+                                    height: iframeInfo.height
                                 };
                             });
                     default:
@@ -1541,9 +1546,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
         }])
 
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
-                                     'SettingsService','VideoService','ImageThumbnailService','VideoThumbnailService',
+                                     'SettingsService','VideoService','ImageThumbnailService',
+                                     'VideoThumbnailService',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
-                                      SettingsService , VideoService , ImageThumbnailService, VideoThumbnailService ) {
+                                      SettingsService , VideoService , ImageThumbnailService,
+                                      VideoThumbnailService ) {
             var ngCopy = angular.copy;
 
             var self = this,
@@ -1614,8 +1621,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     id: copy(),
                     type: function(card) {
                         switch(card.type) {
-                        case 'image':
-                            return 'image';
                         case 'youtube':
                         case 'vimeo':
                         case 'dailymotion':
@@ -1676,8 +1681,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     },
                     view: function() {
                         switch (this.type) {
-                        case 'image':
-                            return 'image';
                         case 'video':
                         case 'videoBallot':
                             return 'video';
@@ -1734,19 +1737,19 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             (type.search(/^(flickr)$/) > -1 ?
                                 type : null);
                     },
-                    imageid: function(data, key, card) {
+                    imageid: function(data) {
                         return data.imageid || null;
                     },
-                    href: function(data, key, card) {
+                    href: function(data) {
                         return data.href || null;
                     },
-                    width: function(data, key, card) {
+                    width: function(data) {
                         return data.width || null;
                     },
-                    height: function(data, key, card) {
+                    height: function(data) {
                         return data.height || null;
                     },
-                    thumbs: function(data, key, card) {
+                    thumbs: function(data) {
                         return data.thumbs || {
                             small: null,
                             large: null
@@ -1847,7 +1850,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         size: value('300x250')
                     },
                     recap: {},
-                    wildcard: {},
+                    wildcard: {}
                 };
 
                 /******************************************************\

@@ -1560,51 +1560,44 @@ VideoCardController           , c6embed) {
         }])
 
         .controller('EditCardImageController', ['$scope', 'ImageService',
-        function                               ( $scope, ImageService ) {
+        function                               ( $scope,   ImageService ) {
 
-                var self = this;
-                var _private = {};
-                var val;
-                Object.defineProperties(this, {
-                    imageUrl: {
-                        get: function() {
-                            var data = this.model.data;
-                            if(val) {
-                                return val;
-                            } else if(data.service && data.imageid) {
-                                _private.updateEmbedInfo();
-                                return ImageService.urlFromData(data.service, data.imageid);
-                            } else {
-                                return '';
-                            }
-                        },
-                        set: function(value) {
-                            val = value;
-                            var data = ImageService.dataFromUrl(value);
-                            this.model.data.service = data.service;
-                            this.model.data.imageid = data.imageid;
+            var self = this;
+            var _private = {};
+            this.imageUrl = null;
+
+            // Update the embed info on the model
+            _private.updateEmbedInfo = function(service, imageid) {
+                ImageService.getEmbedInfo(service, imageid)
+                    .then(function(embedInfo) {
+                        for(var key in embedInfo) {
+                            self.model.data[key] = embedInfo[key];
                         }
-                    }
-                });
+                    })
+                    .catch(function(reason) {
+                        self.error = reason;
+                        self.model.data = {};
+                    });
+            };
 
-                // Update the embed info on the model
-                _private.updateEmbedInfo = function(service, imageid) {
-                    ImageService.getEmbedInfo(service, imageid)
-                        .then(function(embedInfo) {
-                            for(var key in embedInfo) {
-                                self.model.data[key] = embedInfo[key];
-                            }
-                        });
-                };
+            $scope.$watch(function() {
+                return self.imageUrl;
+            }, function(imageUrl) {
+                if(imageUrl !== null) {
+                    self.error = null;
+                    var data = ImageService.dataFromUrl(imageUrl);
+                    self.model.data.service = data.service;
+                    self.model.data.imageid = data.imageid;
+                    _private.updateEmbedInfo(data.service, data.imageid);
+                } else {
+                    self.imageUrl = ImageService.urlFromData(
+                        self.model.data.service,
+                        self.model.data.imageid
+                    );
+                }
+            });
 
-                $scope.$watch(function() {
-                    return self.model.data.service + ':' + self.model.data.imageid;
-                }, function() {
-                    _private.updateEmbedInfo(self.model.data.service, self.model.data.imageid);
-                });
-
-                if (window.c6.kHasKarma) { this._private = _private; }
-
+            if (window.c6.kHasKarma) { this._private = _private; }
         }])
 
         .config(['c6StateProvider',
@@ -2184,40 +2177,24 @@ VideoCardController           , c6embed) {
             };
         }])
 
-        .directive('imagePreview', ['ImageService',
-        function                     (ImageService) {
-
-            function link($scope, $element) {
-
-                function loadPreview(embedCode) {
-                    var imageEmbed = $element.find('#imageEmbed *');
-                    if(embedCode) {
-                        imageEmbed.html(embedCode);
-                    } else {
-                        imageEmbed.html('');
-                    }
-                }
-
-                $scope.$watch(function() {
-                    return $scope.code;
-                }, function() {
-                    if($scope.code) {
-                        loadPreview($scope.code);
-                    }
-                });
-
+        .directive('gettyPreview', [ '$sce',
+        function($sce) {
+            function link(scope) {
+                scope.trustSrc = function(src) {
+                    return $sce.trustAsResourceUrl(src);
+                };
             }
 
             return {
                 restrict: 'E',
-                templateUrl: 'views/minireel/directives/image_preview.html',
+                templateUrl: 'views/minireel/directives/getty_preview.html',
                 scope: {
-                    service: '@',
+                    frameSrc: '@',
                     imageid: '@',
-                    code: '@'
+                    frameWidth: '@',
+                    frameHeight: '@'
                 },
                 link: link
             };
         }]);
-
 });

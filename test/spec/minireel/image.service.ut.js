@@ -420,24 +420,12 @@
                             thumbs: {
                                 small: 'www.site.com/small.jpg',
                                 large: 'www.site.com/large.jpg'
-                            },
-                            embedCode: /<img src="\S+"[^>]+><\/img>/
+                            }
                         };
                         embedInfo('flickr', '12345').then(success, failure);
                         $rootScope.$apply();
                         var output = success.calls.mostRecent().args[0];
-                        expect({
-                            href: output.href,
-                            width: output.width,
-                            height: output.height,
-                            thumbs: output.thumbs
-                        }).toEqual({
-                            href: expectedOutput.href,
-                            width: expectedOutput.width,
-                            height: expectedOutput.height,
-                            thumbs: expectedOutput.thumbs
-                        });
-                        expect(output.embedCode).toMatch(expectedOutput.embedCode);
+                        expect(output).toEqual(expectedOutput);
                         expect(failure).not.toHaveBeenCalled();
                     });
 
@@ -452,22 +440,12 @@
                         var expectedOutput = {
                             href: '//site.com/iframe-content',
                             width: '200',
-                            height: '100',
-                            embedCode: /<iframe src="\S+"[^>]+><\/iframe>/
+                            height: '100'
                         };
                         embedInfo('getty', '12345').then(success, failure);
                         $rootScope.$apply();
                         var output = success.calls.mostRecent().args[0];
-                        expect({
-                            href: output.href,
-                            width: output.width,
-                            height: output.height
-                        }).toEqual({
-                            href: expectedOutput.href,
-                            width: expectedOutput.width,
-                            height: expectedOutput.height
-                        });
-                        expect(output.embedCode).toMatch(expectedOutput.embedCode);
+                        expect(output).toEqual(expectedOutput);
                         expect(failure).not.toHaveBeenCalled();
                     });
 

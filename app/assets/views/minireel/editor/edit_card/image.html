@@ -14,22 +14,19 @@
             </span>
         </label>
     </form>
-    <!--
-    <div class="videoPlayer__messenger" ng-if="card.data.service === 'aol'">
-        <h3>Oops! There was a problem with your video.</h3>
-        <p>Sorry, but our secure environment prevents us from showing a preview of this video... You can watch it <a ng-href="{{EditCardCtrl.videoUrl}}" target="_blank">here</a>.</p>
+    <div class="videoPlayer__messenger" ng-if="EditCardImageCtrl.error">
+        <h3>Oops! There was a problem with your image.</h3>
+        <p>{{EditCardImageCtrl.error}}</p>
+        <p>Please choose another image for this card.</p>
     </div>
-    <div class="videoPlayer__messenger" ng-if="EditCardCtrl.error">
-        <h3>Oops! There was a problem with your video.</h3>
-        <ng-switch on="EditCardCtrl.error.code">
-            <p ng-switch-when="403">Unfortunately, YouTube does not allow the embedding of this video.</p>
-            <p ng-switch-when="404">Unfortunately, this video could not be found.</p>
-            <p ng-switch-default>An unknown error occurred.</p>
-        </ng-switch>
-        <p>Please choose another video for this card.</p>
+    <!--<image-preview service="{{card.data.service}}" imageid="{{card.data.imageid}}" code="{{card.data.embedCode}}"></image-preview>-->
+    <div id="imageEmbed" ng-if="!!card.data.href">
+        <div ng-switch="card.data.service" class="embeddedImage embeddedImage--{{service}}">
+            <getty-preview ng-switch-when="getty" frame-src="{{card.data.href}}" frame-width="{{card.data.width}}" frame-height="{{card.data.height}}" imageid="{{card.data.imageid}}"></getty-preview>
+            <img ng-switch-default ng-src={{card.data.href}} style="max-width:100%;max-height:100%;"></img>
+        </div>
     </div>
-    -->
-    <image-preview service="{{card.data.service}}" imageid="{{card.data.imageid}}" code="{{card.data.embedCode}}"></image-preview>
+
 </div>
 
 <footer class="modalFooter__group">

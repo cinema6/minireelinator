@@ -495,8 +495,10 @@ function( angular , c6uilib , services          , c6Drag           ) {
             };
         }])
 
-        .controller('CardTableController', ['$scope','$q','$interval', 'ImageThumbnailService', 'VideoThumbnailService',
-        function                           ( $scope , $q , $interval , ImageThumbnailService, VideoThumbnailService ) {
+        .controller('CardTableController', ['$scope', '$q', '$interval', 'ImageThumbnailService',
+                                            'VideoThumbnailService',
+        function                           ( $scope ,  $q ,  $interval ,  ImageThumbnailService,
+                                             VideoThumbnailService ) {
             var self = this,
                 EditorCtrl = $scope.EditorCtrl,
                 forEach = angular.forEach;
@@ -707,7 +709,7 @@ function( angular , c6uilib , services          , c6Drag           ) {
             this.getThumbs = function(card) {
                 var data = card.data;
 
-                if(card.type === 'image') {
+                if (card.type === 'image') {
                     return ImageThumbnailService.getThumbsFor(data);
                 } else {
                     return VideoThumbnailService.getThumbsFor(data.service, data.videoid);
