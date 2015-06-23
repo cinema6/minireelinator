@@ -383,7 +383,6 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             this.model = SelfieCampaignCtrl.card;
-            this.adPreviewType = 'vpaid';
             this.adPreviewPageUrl = '';
 
             Object.defineProperties(this, {
@@ -428,30 +427,9 @@ function( angular , c6State  , PaginatedListState                    ,
                         );
                     }
                 },
-                vpaidTag: {
-                    get: function() {
-                        return getJSONProp(this.model.data.videoid, 'vpaid') || null;
-                    },
-                    set: function(value) {
-                        this.model.data.videoid = setJSONProp(
-                            this.model.data.videoid,
-                            'vpaid',
-                            value
-                        );
-                    }
-                },
                 adTag: {
                     get: function() {
-                        var tag = (function() {
-                            switch (this.adPreviewType) {
-                            case 'vast':
-                                return this.vastTag;
-                            case 'vpaid':
-                                return this.vpaidTag;
-                            }
-                        }.call(this));
-
-                        return tag && tag.replace(
+                        return this.vastTag && this.vastTag.replace(
                             '{pageUrl}',
                             encodeURIComponent(this.adPreviewPageUrl)
                         );

@@ -36,18 +36,10 @@
         <div ng-switch-when="adUnit" class="clearfix">
             <label class="forms__pair forms__pair--spacer clearfix">
                 <span class="forms__name" style="width:4rem;">
-                    VPAID
-                </span>
-                <span class="forms__inputHolder forms__inputHolder--short" style="width:18em;">
-                    <input type="text" ng-model="SelfieCampaignVideoCtrl.vpaidTag" c6-autoselect ng-focus="SelfieCampaignVideoCtrl.adPreviewType = 'vpaid'" class="forms__textField forms__textField--block">
-                </span>
-            </label>
-            <label class="forms__pair forms__pair--spacer clearfix">
-                <span class="forms__name" style="width:4rem;">
                     VAST
                 </span>
                 <span class="forms__inputHolder forms__inputHolder--short" style="width:18em;">
-                    <input type="text" ng-model="SelfieCampaignVideoCtrl.vastTag" c6-autoselect ng-focus="SelfieCampaignVideoCtrl.adPreviewType = 'vast'" class="forms__textField forms__textField--block">
+                    <input type="text" ng-model="SelfieCampaignVideoCtrl.vastTag" class="forms__textField forms__textField--block">
                 </span>
             </label>
             <label class="forms__pair forms__pair--spacer clearfix">
@@ -77,13 +69,8 @@
     <div ng-switch="card.data.service"
     style="width:50%; margin:1.5em 3% 0 0;">
         <div ng-switch-when="adUnit" ng-controller="AdPlayerController as AdPlayerCtrl">
-            <div ng-switch="SelfieCampaignVideoCtrl.adPreviewType">
-                <vpaid-player ng-switch-when="vpaid"
-                    videoid="preview"
-                    ad-tag="{{SelfieCampaignVideoCtrl.adTag}}"
-                    style="height: 250px;">
-                </vpaid-player>
-                <vast-player ng-switch-when="vast"
+            <div>
+                <vast-player
                     videoid="preview"
                     ad-tag="{{SelfieCampaignVideoCtrl.adTag}}">
                 </vast-player>
