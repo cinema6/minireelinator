@@ -1647,8 +1647,8 @@ VideoCardController           , c6embed ) {
                     }
 
                     if (settings && card && active) {
-                        settings.getSession().then(function(session) {
-                            return session.ensureReadiness();
+                        settings.getPlayer().then(function(player) {
+                            return player.getReadySession();
                         }).then(function(session) {
                             $timeout(function() { session.ping('showCard', card.id); });
                         });

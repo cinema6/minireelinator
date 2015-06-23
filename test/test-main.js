@@ -53,7 +53,7 @@
                 ngAnimate: libUrl('angular/v1.2.22-0-g93b0c2d/angular-animate'),
                 c6uilib: libUrl('c6ui/v3.7.1-0-gc250c59/c6uilib'),
                 c6log: libUrl('c6ui/v3.7.1-0-gc250c59/c6log'),
-                c6embed: libUrl('c6embed/v1/app.min'),
+                c6embed: libUrl('c6embed/v1/app--v2.34.1.rc1-0-g3ec6d59'),
                 templates: '/base/.tmp/templates',
                 'helpers/drag': '/base/test/helpers/drag'
             },
