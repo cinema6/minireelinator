@@ -2113,7 +2113,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return card.data.ballot || card.data.survey || undefined;
                         },
                         thumbs: function(card) {
-                            return (card.thumb || undefined) && {
+                            return (card.thumb || null) && {
                                 small: card.thumb,
                                 large: card.thumb
                             };
