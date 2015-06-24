@@ -53,6 +53,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     return 'Selfie Campaign Manager';
                 };
                 this.model = function() {
+                    // TODO: query by type also
                     return paginatedDbList('campaign', {
                         sort: 'lastUpdated,-1',
                         org: SelfieState.cModel.org.id
@@ -106,45 +107,48 @@ function( angular , c6State  , PaginatedListState                    ,
 
                     return cinema6.db.create('campaign', {
                             name: null,
+                            accountName: user.org.name,
                             categories: [],
-                            minViewTime: 3,
-                            brand: user.org.name,
+                            cards: [],
+                            pricing: {},
+                            // GET RID OF:
                             advertiser: {
-                                id: user.advertiserId
+                                id: user.advertiser.id
                             },
                             customer: {
-                                id: user.customerId
+                                id: user.customer.id
                             },
-                            logos: {
-                                square: user.org.logos && user.org.logos.square ?
-                                    user.org.logos.square :
-                                    null
-                            },
-                            links: user.org.links || {},
-                            cards: [],
-                            miniReels: [],
                             staticCardMap: [],
-                            miniReelGroups: [],
-                            status: 'new'
+                            miniReels: [],
+                            miniReelGroups: []
+                            // END: GET RID OF
                         });
                 };
 
-                this.afterModel = function(campaign) {
-                    var card = cinema6.db.create('card', MiniReelService.createCard('video'));
+                this.afterModel = function() {
+                    var user = SelfieState.cModel,
+                        advertiser = user.advertiser,
+                        card = cinema6.db.create('card', MiniReelService.createCard('video'));
+
+                    // TODO: what values should MOAT use?
+                    // How does thumbnail work??
+                    // Where does 'note' go??
 
                     this.card = deepExtend(card, {
                             id: undefined,
                             campaignId: undefined,
                             campaign: {
-                                minViewTime: campaign.minViewTime
+                                minViewTime: 3
                             },
                             sponsored: true,
                             collateral: {
-                                logo: campaign.logos.square
+                                logo: advertiser.defaultLogos && advertiser.defaultLogos.square ?
+                                    advertiser.defaultLogos.square :
+                                    null
                             },
-                            links: campaign.links,
+                            links: advertiser.defaultLinks || {},
                             params: {
-                                sponsor: campaign.brand,
+                                sponsor: advertiser.name,
                                 ad: true,
                                 action: null
                             },
@@ -154,9 +158,9 @@ function( angular , c6State  , PaginatedListState                    ,
                                 autoplay: true,
                                 skip: 30,
                                 moat: {
-                                    campaign: campaign.brand,
-                                    advertiser: campaign.brand,
-                                    creative: campaign.brand
+                                    campaign: advertiser.name,
+                                    advertiser: advertiser.name,
+                                    creative: advertiser.name
                                 }
                             }
                         });
@@ -217,6 +221,9 @@ function( angular , c6State  , PaginatedListState                    ,
 
             var SelfieCampaignCtrl = this;
 
+            // TODO: need to set up a debounced request to /api/campaigns?name=[name]&user=[user.id]
+            // to check if Campaign Name is unique. This would go in an ng-change on the name input
+
             function addCardId(card) {
                 SelfieCampaignCtrl.card.id = card.id;
 
@@ -259,8 +266,10 @@ function( angular , c6State  , PaginatedListState                    ,
                 $scope.$broadcast('SelfieCampaignWillSave');
 
                 if (this.card.id) {
-                    // TODO: determine if card object on campaign model is editable:
-                    // endDate, name, reportingId
+                    // TODO: save campaign first, then add campaign id to card then save card,
+                    // then save ad card id to campaign, then save campaign again
+                    // NOTE: campaign cards array objects should ONLY have ID prop,
+                    // backend will set the rest of the props
 
                     return cState.updateCard()
                         .then(saveCampaign)

@@ -69,9 +69,19 @@ function( angular , c6State  ) {
             }
 
             function handleAuthSuccess(user) {
-                return cinema6.db.find('org', user.org)
-                    .then(function(org) {
-                        user.org = org;
+                var requests = [cinema6.db.find('org', user.org)];
+
+                if (user.advertiser && user.customer) {
+                    requests.push(cinema6.db.find('advertiser', user.advertiser));
+                    requests.push(cinema6.db.find('customer', user.customer));
+                }
+
+                return $q.all(requests)
+                    .then(function(promises) {
+                        user.org = promises[0];
+                        user.advertiser = promises[1];
+                        user.customer = promises[2];
+
                         return cinema6.db.push('user', user.id, user);
                     });
             }
