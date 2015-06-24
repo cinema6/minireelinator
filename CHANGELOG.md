@@ -2,6 +2,8 @@
 
 * *[v1.13.0.rc1]*
   * [FEATURE]: Add Selfie Application
+  * Allow static placements to be removed implicitly by removing all
+    wildcard entries
 
 ## v1.12.1 (June 15, 2015)
 * *[v1.12.1.rc1]*
