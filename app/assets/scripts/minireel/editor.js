@@ -1565,18 +1565,23 @@ VideoCardController           , c6embed) {
             var self = this;
             var _private = {};
             this.imageUrl = null;
+            this.href = null;
+            this.width = null;
+            this.height = null;
 
-            // Update the embed info on the model
+            // Update the embed info on the controller
             _private.updateEmbedInfo = function(service, imageid) {
                 ImageService.getEmbedInfo(service, imageid)
                     .then(function(embedInfo) {
-                        for(var key in embedInfo) {
-                            self.model.data[key] = embedInfo[key];
-                        }
+                        self.href = embedInfo.href;
+                        self.width = embedInfo.width;
+                        self.height = embedInfo.height;
                     })
                     .catch(function(reason) {
                         self.error = reason;
-                        self.model.data = {};
+                        self.href = null;
+                        self.width = null;
+                        self.height = null;
                     });
             };
 
@@ -1602,8 +1607,8 @@ VideoCardController           , c6embed) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Editor.NewCard', ['MiniReelService','c6State','$q',
-            function                                   ( MiniReelService , c6State , $q ) {
+            c6StateProvider.state('MR:Editor.NewCard', ['MiniReelService', 'c6State', '$q',
+            function                                   ( MiniReelService ,  c6State ,  $q ) {
                 var PortalState = c6State.get('Portal');
 
                 this.controller = 'NewCardController';

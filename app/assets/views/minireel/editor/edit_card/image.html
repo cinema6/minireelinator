@@ -14,16 +14,15 @@
             </span>
         </label>
     </form>
-    <div class="videoPlayer__messenger" ng-if="EditCardImageCtrl.error">
+    <div class="imagePlayer__messenger" ng-if="EditCardImageCtrl.error">
         <h3>Oops! There was a problem with your image.</h3>
         <p>{{EditCardImageCtrl.error}}</p>
         <p>Please choose another image for this card.</p>
     </div>
-    <!--<image-preview service="{{card.data.service}}" imageid="{{card.data.imageid}}" code="{{card.data.embedCode}}"></image-preview>-->
-    <div id="imageEmbed" ng-if="!!card.data.href">
-        <div ng-switch="card.data.service" class="embeddedImage embeddedImage--{{service}}">
-            <getty-preview ng-switch-when="getty" frame-src="{{card.data.href}}" frame-width="{{card.data.width}}" frame-height="{{card.data.height}}" imageid="{{card.data.imageid}}"></getty-preview>
-            <img ng-switch-default ng-src={{card.data.href}} style="max-width:100%;max-height:100%;"></img>
+    <div class="imagePreview">
+        <div ng-switch="card.data.service" class="embeddedImage embeddedImage--{{card.data.service}}" ng-if="!!EditCardImageCtrl.href">
+            <getty-preview ng-switch-when="getty" frame-src="{{EditCardImageCtrl.href}}" frame-width="{{EditCardImageCtrl.width}}" frame-height="{{EditCardImageCtrl.height}}" imageid="{{card.data.imageid}}"></getty-preview>
+            <img ng-switch-default ng-src={{EditCardImageCtrl.href}} style="max-width:100%;max-height:100%;"></img>
         </div>
     </div>
 

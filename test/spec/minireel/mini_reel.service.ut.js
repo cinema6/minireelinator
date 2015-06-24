@@ -9,8 +9,10 @@
             var MiniReelService,
                 VoteService,
                 CollateralService,
+                ImageThumbnailService,
                 VideoThumbnailService,
                 SettingsService,
+                ImageService,
                 VideoService,
                 $rootScope,
                 c6UrlParser,
@@ -50,12 +52,26 @@
                     cinema6 = $injector.get('cinema6');
                     $q = $injector.get('$q');
                     CollateralService = $injector.get('CollateralService');
+                    ImageThumbnailService = $injector.get('ImageThumbnailService');
                     VideoThumbnailService = $injector.get('VideoThumbnailService');
                     SettingsService = $injector.get('SettingsService');
+                    ImageService = $injector.get('ImageService');
                     VideoService = $injector.get('VideoService');
                     c6State = $injector.get('c6State');
                     c6UrlParser = $injector.get('c6UrlParser');
                 });
+
+                spyOn(ImageService._private, 'getFlickrEmbedInfo').and.returnValue(
+                    $q.when({
+                        src: 'https://farm8.staticflickr.com/7646/16767833635_9459b8ee35.jpg',
+                        width: '1600',
+                        height: '1067',
+                        thumbs: {
+                            small: 'https://farm8.staticflickr.com/7646/16767833635_9459b8ee35_t.jpg',
+                            large: 'https://farm8.staticflickr.com/7646/16767833635_9459b8ee35_m.jpg'
+                        }
+                    })
+                );
 
                 SettingsService.register('MR::user', {
                     minireelDefaults: {
@@ -192,8 +208,8 @@
                                     width: '1600',
                                     height: '1067',
                                     thumbs: {
-                                        small: 'https://farm8.staticflickr.com/7646/16767833635_9459b8ee35_t.jpg',
-                                        large: 'https://farm8.staticflickr.com/7646/16767833635_9459b8ee35_m.jpg'
+                                        small: 'images.flickr.com/image/16767833635/small.jpg',
+                                        large: 'images.flickr.com/image/16767833635/large.jpg'
                                     }
                                 }
                             },
@@ -768,14 +784,7 @@
                                 params: {},
                                 data: {
                                     service: null,
-                                    imageid: null,
-                                    href: null,
-                                    width: null,
-                                    height: null,
-                                    thumbs: {
-                                        small: null,
-                                        large: null
-                                    }
+                                    imageid: null
                                 }
                             });
 
@@ -1534,14 +1543,7 @@
                                 params: {},
                                 data: {
                                     service: 'flickr',
-                                    imageid: '16767833635',
-                                    href: 'https://farm8.staticflickr.com/7646/16767833635_9459b8ee35.jpg',
-                                    width: '1600',
-                                    height: '1067',
-                                    thumbs: {
-                                        small: 'https://farm8.staticflickr.com/7646/16767833635_9459b8ee35_t.jpg',
-                                        large: 'https://farm8.staticflickr.com/7646/16767833635_9459b8ee35_m.jpg'
-                                    }
+                                    imageid: '16767833635'
                                 }
                             });
                         });
@@ -2170,6 +2172,16 @@
                             resultSpy = jasmine.createSpy('resultSpy()');
 
                             thumbCache = {};
+
+                            spyOn(ImageThumbnailService, 'getThumbsFor').and.callFake(function(service, imageid) {
+
+                                var id = service + ':' + imageid;
+
+                                return thumbCache[id] || (thumbCache[id] = new MockThumb(
+                                    'images.' + service + '.com/image/' + imageid + '/small.jpg',
+                                    'images.' + service + '.com/image/' + imageid + '/large.jpg'
+                                ));
+                            });
 
                             spyOn(VideoThumbnailService, 'getThumbsFor').and.callFake(function(service, videoid) {
                                 var id = service + ':' + videoid;

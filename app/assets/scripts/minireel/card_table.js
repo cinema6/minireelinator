@@ -710,7 +710,7 @@ function( angular , c6uilib , services          , c6Drag           ) {
                 var data = card.data;
 
                 if (card.type === 'image') {
-                    return ImageThumbnailService.getThumbsFor(data);
+                    return ImageThumbnailService.getThumbsFor(data.service, data.imageid);
                 } else {
                     return VideoThumbnailService.getThumbsFor(data.service, data.videoid);
                 }

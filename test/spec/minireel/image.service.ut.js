@@ -115,11 +115,7 @@
                             var expectedOutput = {
                                 src: 'https://www.someimage.jpg',
                                 width: '123',
-                                height: '456',
-                                thumbs: {
-                                    small: 'www.small_thumb.jpg',
-                                    large: 'www.large_thumb.jpg'
-                                }
+                                height: '456'
                             };
                             fromData(input).then(success, failure);
                             $rootScope.$apply();
@@ -135,7 +131,7 @@
                                     }
                                 })
                             );
-                            var input = 123;
+                            var input = '123';
                             var expectedOutput = 'There was a problem retrieving the image from Flickr.';
                             fromData(input).then(success, failure);
                             $rootScope.$apply();
@@ -145,7 +141,7 @@
 
                         it('should reject the promise if the API request to flickr fails', function() {
                             spyOn($http, 'jsonp').and.returnValue($q.reject());
-                            var input = 123;
+                            var input = '123';
                             var expectedOutput = 'There was a problem contacting Flickr.';
                             fromData(input).then(success, failure);
                             $rootScope.$apply();
@@ -156,10 +152,11 @@
                         it('should use Flickr\'s getSizes endpoint', function() {
                             spyOn($http, 'jsonp').and.returnValue($q.when());
                             c6Defines.kFlickrDataApiKey = 'abc123';
-                            var input = 123;
+                            var input = '123';
                             var expectedOutput = 'https://www.flickr.com/services/rest/?method=flickr.photos.getSizes&format=json&api_key=abc123&photo_id=123&jsoncallback=JSON_CALLBACK';
                             fromData(input);
-                            expect($http.jsonp).toHaveBeenCalledWith(expectedOutput);
+                            var output = $http.jsonp.calls.mostRecent().args[0];
+                            expect(output).toEqual(expectedOutput);
                         });
 
                         it('should reject the promise if no image sizes are available', function() {
@@ -173,7 +170,7 @@
                                     }
                                 })
                             );
-                            var input = 123;
+                            var input = '123';
                             var expectedOutput = 'There was a problem retrieving the image from Flickr.';
                             fromData(input).then(success, failure);
                             $rootScope.$apply();
@@ -181,45 +178,13 @@
                             expect(failure).toHaveBeenCalledWith(expectedOutput);
                         });
 
-                        it('should use the two smallest thumbs if Flickr\'s API doesn\'t return a Thumbnail label', function() {
-                            spyOn($http, 'jsonp').and.returnValue(
-                                $q.when({
-                                    data: {
-                                        sizes: {
-                                            size: [
-                                                {
-                                                    type: 'small square',
-                                                    source: 'www.small_square.jpg',
-                                                    width: 10,
-                                                    height: 10
-                                                },
-                                                {
-                                                    type: 'large square',
-                                                    source: 'www.large_square.jpg',
-                                                    width: 50,
-                                                    height: 50
-                                                }
-                                            ]
-                                        }
-                                    }
-                                })
-                            );
-                            var input = 123;
-                            var expectedOutput = {
-                                src: 'www.large_square.jpg',
-                                width: 50,
-                                height: 50,
-                                thumbs: {
-                                    small: 'www.small_square.jpg',
-                                    large: 'www.large_square.jpg'
-                                }
-                            };
-                            fromData(input).then(success, failure);
-                            $rootScope.$apply();
-                            expect(success).toHaveBeenCalledWith(expectedOutput);
-                            expect(failure).not.toHaveBeenCalled();
+                        it('should tell angular to cache the jsonp requests', function() {
+                            spyOn($http, 'jsonp').and.returnValue($q.when());
+                            var input = '123';
+                            fromData(input);
+                            var config = $http.jsonp.calls.mostRecent().args[1];
+                            expect(config.cache).toBe(true);
                         });
-
                     });
 
                     describe('getGettyEmbedInfo', function() {
@@ -235,7 +200,7 @@
                                     }
                                 })
                             );
-                            var input = 123;
+                            var input = '123';
                             var expectedOutput = {
                                 src: '//embed.gettyimages.com/embed/123?params',
                                 width: '456',
@@ -254,7 +219,7 @@
                                     }
                                 })
                             );
-                            var input = 123;
+                            var input = '123';
                             var expectedOutput = 'There was a problem retrieving the image from GettyImages.';
                             fromData(input).then(success, failure);
                             $rootScope.$apply();
@@ -264,7 +229,7 @@
 
                         it('should reject the promise if the API request to GettyImages fails', function() {
                             spyOn($http, 'get').and.returnValue($q.reject());
-                            var input = 123;
+                            var input = '123';
                             var expectedOutput = 'There was a problem contacting GettyImages.';
                             fromData(input).then(success, failure);
                             $rootScope.$apply();
@@ -274,10 +239,19 @@
 
                         it('should use GettyImages\' oEmbed endpoint', function() {
                             spyOn($http, 'get').and.returnValue($q.when());
-                            var input = 123;
+                            var input = '123';
                             var expectedOutput = 'http://embed.gettyimages.com/oembed?url=http%3A%2F%2Fgty.im%2F123';
                             fromData(input).then(success, failure);
-                            expect($http.get).toHaveBeenCalledWith(expectedOutput);
+                            var output = $http.get.calls.mostRecent().args[0];
+                            expect(output).toEqual(expectedOutput);
+                        });
+
+                        it('should tell angular to cache the get requests', function() {
+                            spyOn($http, 'get').and.returnValue($q.when());
+                            var input = '123';
+                            fromData(input);
+                            var config = $http.get.calls.mostRecent().args[1];
+                            expect(config.cache).toBe(true);
                         });
                     });
                 });
@@ -314,8 +288,8 @@
                         ];
                         var expectedOutput = input.map(function() {
                             return {
-                                imageid: '12345',
-                                service: 'flickr'
+                                service: 'flickr',
+                                imageid: '12345'
                             };
                         });
                         var output = input.map(fromUrl);
@@ -406,21 +380,13 @@
                             $q.when({
                                 src: 'www.site.com/image.jpg',
                                 width: '200',
-                                height: '100',
-                                thumbs: {
-                                    small: 'www.site.com/small.jpg',
-                                    large: 'www.site.com/large.jpg'
-                                }
+                                height: '100'
                             })
                         );
                         var expectedOutput = {
                             href: 'www.site.com/image.jpg',
                             width: '200',
-                            height: '100',
-                            thumbs: {
-                                small: 'www.site.com/small.jpg',
-                                large: 'www.site.com/large.jpg'
-                            }
+                            height: '100'
                         };
                         embedInfo('flickr', '12345').then(success, failure);
                         $rootScope.$apply();
@@ -429,7 +395,7 @@
                         expect(failure).not.toHaveBeenCalled();
                     });
 
-                    it('should construct a getty embed code', function() {
+                    it('should return getty embed info', function() {
                         spyOn(ImageService._private, 'getGettyEmbedInfo').and.returnValue(
                             $q.when({
                                 src: '//site.com/iframe-content',
@@ -456,8 +422,7 @@
                         expect(success).toHaveBeenCalledWith({
                             href: null,
                             width: null,
-                            height: null,
-                            embedCode: null
+                            height: null
                         });
                     });
                 });

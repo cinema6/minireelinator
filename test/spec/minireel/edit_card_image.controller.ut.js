@@ -131,11 +131,10 @@ define(['app'], function(appModule) {
                             $rootScope.$apply();
                         });
 
-                        it('should update the embed info on the model', function() {
-                            expect(model.data.href).toEqual('www.site.com/image.jpg');
-                            expect(model.data.width).toEqual(200);
-                            expect(model.data.height).toEqual(100);
-                            expect(model.data.embedCode).toEqual('<img src=""></img>');
+                        it('should update the embed info on the controller', function() {
+                            expect(EditCardImageCtrl.href).toEqual('www.site.com/image.jpg');
+                            expect(EditCardImageCtrl.width).toEqual(200);
+                            expect(EditCardImageCtrl.height).toEqual(100);
                         });
 
                         it('should not erase existing properties on the model', function() {
@@ -155,6 +154,12 @@ define(['app'], function(appModule) {
 
                         it('should update the error message', function() {
                             expect(EditCardImageCtrl.error).toEqual('error message');
+                        });
+
+                        it('should set properties to null', function() {
+                            expect(EditCardImageCtrl.href).toBeNull();
+                            expect(EditCardImageCtrl.width).toBeNull();
+                            expect(EditCardImageCtrl.height).toBeNull();
                         });
                     });
                 });
