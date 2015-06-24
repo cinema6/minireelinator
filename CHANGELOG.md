@@ -8,6 +8,9 @@
     a campaign/card/etc. but not saved to the server
   * [FIX]: Fix for an issue that caused custom video thumbnails to not
     be removable
+  * [FIX]: Fix for an issue that made a campaign's placement
+    configuration for a MiniReel appear to disappear after
+    adding/removing a sponsored card placeholder to/from that MiniReel
 
 ## v1.12.1 (June 15, 2015)
 * *[v1.12.1.rc1]*

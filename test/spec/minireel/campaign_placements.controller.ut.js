@@ -1,5 +1,7 @@
-define(['app'], function(appModule) {
+define(['app', 'angular'], function(appModule, angular) {
     'use strict';
+
+    var copy = angular.copy;
 
     describe('CampaignPlacementsController', function() {
         var $rootScope,
@@ -93,7 +95,7 @@ define(['app'], function(appModule) {
                                 minireel: minireel,
                                 cards: [
                                     {
-                                        placeholder: minireel.data.deck[3],
+                                        placeholder: copy(minireel.data.deck[3]),
                                         wildcard: myWildcard
                                     }
                                 ]

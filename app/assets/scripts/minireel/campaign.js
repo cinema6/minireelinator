@@ -1201,7 +1201,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             var placeholder = entry.placeholder;
 
                             return find(cards, function(entry) {
-                                return entry.placeholder === placeholder;
+                                return entry.placeholder.id === placeholder.id;
                             }) || entry;
                         })
                     });
