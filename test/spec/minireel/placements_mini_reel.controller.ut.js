@@ -183,20 +183,32 @@ define(['angular', 'app'], function(angular, appModule) {
                 it('should go to the "MR:Campaign.Placements" state', function() {
                     expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign.Placements');
                 });
+
+                describe('if all placements have been removed', function() {
+                    beforeEach(function() {
+                        CampaignPlacementsCtrl.add.calls.reset();
+                        CampaignPlacementsCtrl.remove.calls.reset();
+                        model.cards.forEach(function(card) {
+                            card.wildcard = null;
+                        });
+
+                        $scope.$apply(function() {
+                            PlacementsMiniReelCtrl.confirm();
+                        });
+                    });
+
+                    it('should not add anything', function() {
+                        expect(CampaignPlacementsCtrl.add).not.toHaveBeenCalled();
+                    });
+
+                    it('should remove the placement', function() {
+                        expect(CampaignPlacementsCtrl.remove).toHaveBeenCalledWith(entry.minireel);
+                    });
+                });
             });
 
             describe('valid()', function() {
-                it('should be true if there at least one card has a wildcard, false if not', function() {
-                    expect(PlacementsMiniReelCtrl.valid()).toBe(true);
-
-                    PlacementsMiniReelCtrl.model.cards.forEach(function(card) {
-                        card.wildcard = null;
-                    });
-
-                    expect(PlacementsMiniReelCtrl.valid()).toBe(false);
-
-                    PlacementsMiniReelCtrl.model.cards[0].wildcard = {id: 'newWildcard'};
-
+                it('should return true', function() {
                     expect(PlacementsMiniReelCtrl.valid()).toBe(true);
                 });
             });

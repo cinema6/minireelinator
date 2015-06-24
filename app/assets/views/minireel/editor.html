@@ -23,7 +23,7 @@
         <span class="ui__iconHolder18 fab fa-bell"><span class="ir">Warning!</span></span>
         <p class="pageAlert__msg">
             <strong>Warning!</strong> You have unsaved changes. 
-            Make sure you click <strong>&ldquo;Publish Changes&rdquo;</strong> to update your MiniReel.
+            Make sure you click <strong ng-if="!EditorCtrl.campaign">&ldquo;Publish Changes&rdquo;</strong><strong ng-if="!!EditorCtrl.campaign">&ldquo;Done&rdquo;</strong> to update your MiniReel.
         </p>
         <button ng-click="EditorCtrl.dismissDirtyWarning = true" class="pageAlert__closeBtn btnInvis" title="Dismiss">
             <span class="ui__iconHolder18 fab fa-close">&nbsp;</span>

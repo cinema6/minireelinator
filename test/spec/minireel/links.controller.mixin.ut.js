@@ -166,6 +166,27 @@ define(['angular','minireel/mixins/LinksController'], function(angular, LinksCon
                         href: null
                     }));
                 });
+
+                describe('if a link with the given name already exists', function() {
+                    var initalLength;
+
+                    beforeEach(function() {
+                        initalLength = LinksCtrl.links.length;
+                        LinksCtrl.newLink.name = 'Facebook';
+                        LinksCtrl.newLink.href = 'fb.com';
+                        newLink = LinksCtrl.newLink;
+
+                        LinksCtrl.push();
+                    });
+
+                    it('should not add an item to the list', function() {
+                        expect(LinksCtrl.links.length).toBe(initalLength);
+                    });
+
+                    it('should replace the entry with the existing name', function() {
+                        expect(LinksCtrl.links[2]).toBe(newLink);
+                    });
+                });
             });
 
             describe('remove(link)', function() {
