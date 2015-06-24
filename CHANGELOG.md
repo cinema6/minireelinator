@@ -4,6 +4,8 @@
   * [FEATURE]: Add Selfie Application
   * Allow static placements to be removed implicitly by removing all
     wildcard entries
+  * [FIX]: Fix for an issue that allowed duplicate links to be added to
+    a campaign/card/etc. but not saved to the server
 
 ## v1.12.1 (June 15, 2015)
 * *[v1.12.1.rc1]*

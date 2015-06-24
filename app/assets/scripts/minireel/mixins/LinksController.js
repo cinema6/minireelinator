@@ -4,6 +4,19 @@ function( angular ) {
 
     var copy = angular.copy;
 
+    function findIndex(array, predicate) {
+        var length = array.length;
+        var index = 0;
+
+        for ( ; index < length; index++) {
+            if (predicate(array[index])) {
+                return index;
+            }
+        }
+
+        return -1;
+    }
+
     LinksController.$inject = ['$scope'];
     function LinksController  ( $scope ) {
         var self = this;
@@ -49,7 +62,15 @@ function( angular ) {
         };
 
         this.push = function() {
-            this.links = this.links.concat([this.newLink]);
+            var currentIndex = findIndex(this.links, function(link) {
+                return link.name === self.newLink.name;
+            });
+
+            if (currentIndex < 0) {
+                this.links = this.links.concat([this.newLink]);
+            } else {
+                this.links[currentIndex] = this.newLink;
+            }
 
             /* jshint boss:true */
             return (this.newLink = new Link());
