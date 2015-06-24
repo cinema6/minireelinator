@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## v1.13.0 (June 24, 2015)
 * *[v1.13.0.rc1]*
   * [FEATURE]: Add Selfie Application
   * Allow static placements to be removed implicitly by removing all
@@ -18,6 +19,7 @@
     preview
   * [FIX]: Fix for an issue that caused the Campaign manager not to load
     if a MiniReel used by a campaign for placement was deleted
+* *[/v1.13.0.rc1]*
 
 ## v1.12.1 (June 15, 2015)
 * *[v1.12.1.rc1]*
