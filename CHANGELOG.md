@@ -16,6 +16,8 @@
     editing
   * [FIX]: Fix for an issue that caused VPAID ads not to playback during
     preview
+  * [FIX]: Fix for an issue that caused the Campaign manager not to load
+    if a MiniReel used by a campaign for placement was deleted
 
 ## v1.12.1 (June 15, 2015)
 * *[v1.12.1.rc1]*

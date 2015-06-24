@@ -681,8 +681,12 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                                         wildcard: getDbModel('card')(wildcardId)
                                     });
                                 }))
+                            }).catch(function() {
+                                return null;
                             });
-                        })),
+                        })).then(function(map) {
+                            return map.filter(function(entry) { return !!entry; });
+                        }),
                         miniReelGroups: $q.all(campaign.miniReelGroups.map(function(entry) {
                             return $q.all({
                                 miniReels: $q.all(entry.miniReels.map(getDbModel('experience'))),
