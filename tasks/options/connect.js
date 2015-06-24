@@ -1,6 +1,9 @@
 (function() {
     'use strict';
 
+    var grunt = require('grunt'),
+        selfieServer = /selfie/.test(grunt.cli.tasks[0]);
+
     module.exports = {
         options: {
             hostname: '*'
@@ -47,13 +50,25 @@
                                 {
                                     match: /<!--C6INJECT-->/,
                                     fn: function(match, snippet) {
+                                        var script;
+
+                                        if (selfieServer) {
+                                            script = '(' + function(window) {
+                                                window.DEBUG = true;
+                                                window.SELFIE = true;
+                                                window.YouTubeApiKey = 'AIzaSyAoR0-kvy_fIjYOKk0vMU6F2JIb1aCMd1g';
+                                            }.toString() + '(window))';
+                                        } else {
+                                            script = '(' + function(window) {
+                                                window.DEBUG = true;
+                                                window.YouTubeApiKey = 'AIzaSyAoR0-kvy_fIjYOKk0vMU6F2JIb1aCMd1g';
+                                            }.toString() + '(window))';
+                                        }
+
                                         return [
                                             snippet,
                                             '<script>',
-                                            '(' + function(window) {
-                                                window.DEBUG = true;
-                                                window.YouTubeApiKey = 'AIzaSyAoR0-kvy_fIjYOKk0vMU6F2JIb1aCMd1g';
-                                            }.toString() + '(window))',
+                                            script,
                                             '</script>'
                                         ].join('\n');
                                     }

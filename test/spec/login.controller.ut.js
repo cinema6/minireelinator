@@ -8,9 +8,11 @@ define(['login', 'app'], function(loginModule, appModule) {
             $q,
             c6State,
             AuthService,
-            LoginCtrl;
+            LoginCtrl,
+            c6Defines;
 
-        var model;
+        var model,
+            ApplicationState;
 
         beforeEach(function() {
             model = {
@@ -32,6 +34,9 @@ define(['login', 'app'], function(loginModule, appModule) {
                 AuthService = $injector.get('AuthService');
                 $q = $injector.get('$q');
                 c6State = $injector.get('c6State');
+                c6Defines = $injector.get('c6Defines');
+
+                ApplicationState = c6State.get('Application');
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
@@ -140,18 +145,42 @@ define(['login', 'app'], function(loginModule, appModule) {
                             };
 
                             spyOn(c6State, 'goTo').and.returnValue($q.when({}));
+                        });
 
-                            $scope.$apply(function() {
-                                loginDeferred.resolve(user);
+                        describe('when Application name is Selfie', function() {
+                            beforeEach(function() {
+                                ApplicationState.name = 'Selfie';
+
+                                $scope.$apply(function() {
+                                    loginDeferred.resolve(user);
+                                });
+                            });
+
+                            it('should resolve the promise', function() {
+                                expect(success).toHaveBeenCalledWith(user);
+                            });
+
+                            it('should go to Selfie state', function() {
+                                expect(c6State.goTo).toHaveBeenCalledWith('Selfie', [user]);
                             });
                         });
 
-                        it('should resolve the promise', function() {
-                            expect(success).toHaveBeenCalledWith(user);
-                        });
+                        describe('when Application name is Portal', function() {
+                            beforeEach(function() {
+                                ApplicationState.name = 'Portal';
 
-                        it('should go to the "Portal" state with the user as the model', function() {
-                            expect(c6State.goTo).toHaveBeenCalledWith('Portal', [user]);
+                                $scope.$apply(function() {
+                                    loginDeferred.resolve(user);
+                                });
+                            });
+
+                            it('should resolve the promise', function() {
+                                expect(success).toHaveBeenCalledWith(user);
+                            });
+
+                            it('should go to the portal', function() {
+                                expect(c6State.goTo).toHaveBeenCalledWith('Portal', [user]);
+                            });
                         });
                     });
                 });

@@ -1,0 +1,92 @@
+<h1 class="forms__title forms__title--divider">Video</h1>
+
+<form ng-controller="SelfieCampaignVideoController as SelfieCampaignVideoCtrl" c6-alias="SelfieCampaignCtrl.card as card">
+    <div class="clearfix">
+        <label class="radiobox radiobox--hasLabel clearfix"
+        style="margin-bottom:0.25em;">
+            <input type="radio"
+                ng-value="false"
+                ng-change="SelfieCampaignVideoCtrl.videoUrl = ''"
+                ng-model="SelfieCampaignVideoCtrl.isAdUnit"
+                name="minireel-endcap"
+                class="radiobox__input"/>
+            <span class="btn__icon faa fab">
+                &nbsp;
+            </span>
+            <span class="btn__label">
+                3rd-Party Video
+            </span>
+        </label>
+        <label class="radiobox radiobox--hasLabel clearfix"
+        style="margin-bottom:0.25em;">
+            <input type="radio"
+                ng-value="true"
+                ng-model="SelfieCampaignVideoCtrl.isAdUnit"
+                name="minireel-endcap"
+                class="radiobox__input"/>
+            <span class="btn__icon faa fab">
+                &nbsp;
+            </span>
+            <span class="btn__label">
+                Ad Unit
+            </span>
+        </label>
+    </div>
+    <ng-switch on="card.data.service">
+        <div ng-switch-when="adUnit" class="clearfix">
+            <label class="forms__pair forms__pair--spacer clearfix">
+                <span class="forms__name" style="width:4rem;">
+                    VAST
+                </span>
+                <span class="forms__inputHolder forms__inputHolder--short" style="width:18em;">
+                    <input type="text" ng-model="SelfieCampaignVideoCtrl.vastTag" class="forms__textField forms__textField--block">
+                </span>
+            </label>
+            <label class="forms__pair forms__pair--spacer clearfix">
+                <span class="forms__name">
+                    Page URL
+                </span>
+                <span class="forms__inputHolder--med">
+                    <input type="text" class="forms__textField forms__textField--block" ng-model="SelfieCampaignVideoCtrl.adPreviewPageUrl">
+                </span>
+            </label>
+        </div>
+        <label ng-switch-default class="forms__pair--spacer clearfix">
+            <span class="forms__name">
+                Video URL
+            </span>
+            <span class="forms__inputHolder--med">
+                <input type="text" class="forms__textField forms__textField--block" ng-model="SelfieCampaignVideoCtrl.videoUrl">
+                <span class="typo--guidance typo--warning">Type in a <strong>URL</strong>.</span>
+                <span class="typo--guidance">Supported sources : 
+                    <a href="http://www.youtube.com" title="YouTube" target="_blank">YouTube</a>, 
+                    <a href="http://www.vimeo.com" title="Vimeo" target="_blank">Vimeo</a>,
+                    <a href="http://www.dailymotion.com" title="Daily Motion" target="_blank">Daily Motion</a>
+                </span>
+            </span>
+        </label>
+    </ng-switch>
+    <div ng-switch="card.data.service"
+    style="width:50%; margin:1.5em 3% 0 0;">
+        <div ng-switch-when="adUnit" ng-controller="AdPlayerController as AdPlayerCtrl">
+            <div>
+                <vast-player
+                    videoid="preview"
+                    ad-tag="{{SelfieCampaignVideoCtrl.adTag}}">
+                </vast-player>
+            </div>
+            <div ng-if="!!AdPlayerCtrl.player">
+                <button ng-click="AdPlayerCtrl.player.play()">Play</button>
+                <button ng-click="AdPlayerCtrl.player.pause()">Pause</button>
+                <button ng-click="AdPlayerCtrl.player.reload()">Reload</button>
+            </div>
+        </div>
+        <video-preview ng-switch-default service="{{card.data.service}}"
+            videoid="{{card.data.videoid}}"
+            start="card.data.start"
+            end="card.data.end"
+            class="sponsoredCard__preview"
+            style="display: block;">
+        </video-preview>
+    </div>
+</form>
