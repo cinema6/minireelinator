@@ -11,6 +11,11 @@
   * [FIX]: Fix for an issue that made a campaign's placement
     configuration for a MiniReel appear to disappear after
     adding/removing a sponsored card placeholder to/from that MiniReel
+  * [FIX]: Fix for an issue that caused the Editor to prompt the user to
+    click "Publish Changes" instead of "Done" when they are finished
+    editing
+  * [FIX]: Fix for an issue that caused VPAID ads not to playback during
+    preview
 
 ## v1.12.1 (June 15, 2015)
 * *[v1.12.1.rc1]*
