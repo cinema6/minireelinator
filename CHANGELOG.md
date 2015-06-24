@@ -6,6 +6,8 @@
     wildcard entries
   * [FIX]: Fix for an issue that allowed duplicate links to be added to
     a campaign/card/etc. but not saved to the server
+  * [FIX]: Fix for an issue that caused custom video thumbnails to not
+    be removable
 
 ## v1.12.1 (June 15, 2015)
 * *[v1.12.1.rc1]*
