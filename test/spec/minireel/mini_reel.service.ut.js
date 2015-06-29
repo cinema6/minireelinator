@@ -204,7 +204,8 @@
                                 data: {
                                     service: 'flickr',
                                     imageid: '16767833635',
-                                    href: 'https://farm8.staticflickr.com/7646/16767833635_9459b8ee35.jpg',
+                                    src: 'https://farm8.staticflickr.com/7646/16767833635_9459b8ee35.jpg',
+                                    href: 'http://www.flickr.com/16767833635',
                                     width: '1600',
                                     height: '1067',
                                     thumbs: {
@@ -2172,6 +2173,10 @@
                             resultSpy = jasmine.createSpy('resultSpy()');
 
                             thumbCache = {};
+
+                            spyOn(ImageService, 'urlFromData').and.callFake(function(service, imageid) {
+                                return 'http://www.' + service + '.com/' + imageid;
+                            });
 
                             spyOn(ImageThumbnailService, 'getThumbsFor').and.callFake(function(service, imageid) {
 

@@ -20,9 +20,9 @@
         <p>Please choose another image for this card.</p>
     </div>
     <div class="imagePreview">
-        <div ng-switch="card.data.service" class="embeddedImage embeddedImage--{{card.data.service}}" ng-if="!!EditCardImageCtrl.href">
-            <getty-preview ng-switch-when="getty" frame-src="{{EditCardImageCtrl.href}}" frame-width="{{EditCardImageCtrl.width}}" frame-height="{{EditCardImageCtrl.height}}" imageid="{{card.data.imageid}}"></getty-preview>
-            <img ng-switch-default ng-src={{EditCardImageCtrl.href}} style="max-width:100%;max-height:100%;"></img>
+        <div ng-switch="card.data.service" class="embeddedImage embeddedImage--{{card.data.service}}" ng-if="!!EditCardImageCtrl.src">
+            <getty-preview ng-switch-when="getty" frame-src="{{EditCardImageCtrl.src}}" frame-width="{{EditCardImageCtrl.width}}" frame-height="{{EditCardImageCtrl.height}}" imageid="{{card.data.imageid}}"></getty-preview>
+            <img ng-switch-default ng-src={{EditCardImageCtrl.src}} style="max-width:100%;max-height:100%;"></img>
         </div>
     </div>
 

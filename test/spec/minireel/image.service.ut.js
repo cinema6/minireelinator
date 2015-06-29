@@ -384,7 +384,7 @@
                             })
                         );
                         var expectedOutput = {
-                            href: 'www.site.com/image.jpg',
+                            src: 'www.site.com/image.jpg',
                             width: '200',
                             height: '100'
                         };
@@ -404,7 +404,7 @@
                             })
                         );
                         var expectedOutput = {
-                            href: '//site.com/iframe-content',
+                            src: '//site.com/iframe-content',
                             width: '200',
                             height: '100'
                         };
@@ -420,7 +420,7 @@
                         embedInfo('apple', '12345').then(success, failure);
                         $rootScope.$apply();
                         expect(success).toHaveBeenCalledWith({
-                            href: null,
+                            src: null,
                             width: null,
                             height: null
                         });

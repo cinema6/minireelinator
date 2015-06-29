@@ -1565,7 +1565,7 @@ VideoCardController           , c6embed) {
             var self = this;
             var _private = {};
             this.imageUrl = null;
-            this.href = null;
+            this.src = null;
             this.width = null;
             this.height = null;
 
@@ -1573,13 +1573,13 @@ VideoCardController           , c6embed) {
             _private.updateEmbedInfo = function(service, imageid) {
                 ImageService.getEmbedInfo(service, imageid)
                     .then(function(embedInfo) {
-                        self.href = embedInfo.href;
+                        self.src = embedInfo.src;
                         self.width = embedInfo.width;
                         self.height = embedInfo.height;
                     })
                     .catch(function(reason) {
                         self.error = reason;
-                        self.href = null;
+                        self.src = null;
                         self.width = null;
                         self.height = null;
                     });

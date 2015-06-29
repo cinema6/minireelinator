@@ -121,10 +121,9 @@ define(['app'], function(appModule) {
                         beforeEach(function() {
                             spyOn(ImageService, 'getEmbedInfo').and.returnValue(
                                 $q.when({
-                                    href: 'www.site.com/image.jpg',
+                                    src: 'www.site.com/image.jpg',
                                     width: 200,
-                                    height: 100,
-                                    embedCode: '<img src=""></img>'
+                                    height: 100
                                 })
                             );
                             updateEmbedInfo('site', 123);
@@ -132,7 +131,7 @@ define(['app'], function(appModule) {
                         });
 
                         it('should update the embed info on the controller', function() {
-                            expect(EditCardImageCtrl.href).toEqual('www.site.com/image.jpg');
+                            expect(EditCardImageCtrl.src).toEqual('www.site.com/image.jpg');
                             expect(EditCardImageCtrl.width).toEqual(200);
                             expect(EditCardImageCtrl.height).toEqual(100);
                         });
@@ -157,7 +156,7 @@ define(['app'], function(appModule) {
                         });
 
                         it('should set properties to null', function() {
-                            expect(EditCardImageCtrl.href).toBeNull();
+                            expect(EditCardImageCtrl.src).toBeNull();
                             expect(EditCardImageCtrl.width).toBeNull();
                             expect(EditCardImageCtrl.height).toBeNull();
                         });

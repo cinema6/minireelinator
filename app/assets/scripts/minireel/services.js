@@ -1396,7 +1396,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return _private.getFlickrEmbedInfo(imageid)
                             .then(function(imageInfo) {
                                 return {
-                                    href: imageInfo.src,
+                                    src: imageInfo.src,
                                     width: imageInfo.width,
                                     height: imageInfo.height
                                 };
@@ -1405,14 +1405,14 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return _private.getGettyEmbedInfo(imageid)
                             .then(function(iframeInfo) {
                                 return {
-                                    href: iframeInfo.src,
+                                    src: iframeInfo.src,
                                     width: iframeInfo.width,
                                     height: iframeInfo.height
                                 };
                             });
                     default:
                         return $q.when({
-                            href: null,
+                            src: null,
                             width: null,
                             height: null
                         });
@@ -2294,11 +2294,18 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     };
                 }
 
+                function imageHrefValue() {
+                    return function(data) {
+                        return ImageService.urlFromData(data.service, data.imageid);
+                    };
+                }
+
                 dataTemplates = {
                     image: {
                         imageid: copy(null),
                         service: copy(null),
-                        href: embedValue('href'),
+                        src: embedValue('src'),
+                        href: imageHrefValue(),
                         width: embedValue('width'),
                         height: embedValue('height'),
                         thumbs: imageThumbsValue()
