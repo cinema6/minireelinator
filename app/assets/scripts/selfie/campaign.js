@@ -54,7 +54,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
                 this.model = function() {
                     // TODO: query by type also
-                    return paginatedDbList('campaign', {
+                    return paginatedDbList('selfieCampaign', {
                         sort: 'lastUpdated,-1',
                         org: SelfieState.cModel.org.id
                     }, this.limit, this.page).ensureResolution();
@@ -105,23 +105,12 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.model = function() {
                     var user = SelfieState.cModel;
 
-                    return cinema6.db.create('campaign', {
+                    return cinema6.db.create('selfieCampaign', {
                             name: null,
                             accountName: user.org.name,
                             categories: [],
                             cards: [],
-                            pricing: {},
-                            // GET RID OF:
-                            advertiser: {
-                                id: user.advertiser.id
-                            },
-                            customer: {
-                                id: user.customer.id
-                            },
-                            staticCardMap: [],
-                            miniReels: [],
-                            miniReelGroups: []
-                            // END: GET RID OF
+                            pricing: {}
                         });
                 };
 
@@ -156,12 +145,7 @@ function( angular , c6State  , PaginatedListState                    ,
                                 autoadvance: false,
                                 controls: false,
                                 autoplay: true,
-                                skip: 30,
-                                moat: {
-                                    campaign: advertiser.name,
-                                    advertiser: advertiser.name,
-                                    creative: advertiser.name
-                                }
+                                skip: 30
                             }
                         });
                 };
@@ -177,7 +161,7 @@ function( angular , c6State  , PaginatedListState                    ,
             c6StateProvider.state('Selfie:EditCampaign', ['cinema6','c6State',
             function                                     ( cinema6 , c6State ) {
                 this.model = function(params) {
-                    return cinema6.db.find('campaign', params.campaignId);
+                    return cinema6.db.find('selfieCampaign', params.campaignId);
                 };
 
                 this.afterModel = function(campaign) {
@@ -221,21 +205,9 @@ function( angular , c6State  , PaginatedListState                    ,
 
             var SelfieCampaignCtrl = this;
 
-            // TODO: need to set up a debounced request to /api/campaigns?name=[name]&user=[user.id]
-            // to check if Campaign Name is unique. This would go in an ng-change on the name input
-
-            function addCardId(card) {
-                SelfieCampaignCtrl.card.id = card.id;
-
-                return card;
-            }
-
             function addCardToCampaign(card) {
                 SelfieCampaignCtrl.campaign.cards = [{
-                    id: card.id,
-                    endDate: null,
-                    name: null,
-                    reportingId: null
+                    id: card.id
                 }];
 
                 return card;
@@ -245,9 +217,23 @@ function( angular , c6State  , PaginatedListState                    ,
                 return SelfieCampaignCtrl.campaign.save();
             }
 
-            function setCampaignId(campaign) {
+            function updateCard() {
+                return cState.updateCard();
+            }
+
+            function addCampaignToCard(campaign) {
                 SelfieCampaignCtrl.card.campaignId = campaign.id;
                 SelfieCampaignCtrl.card.campaign.campaignId = campaign.id;
+
+                return campaign;
+            }
+
+            function setMoatValues(campaign) {
+                SelfieCampaignCtrl.card.data.moat = {
+                    campaign: campaign.name,
+                    advertiser: SelfieCampaignCtrl.card.params.sponsor,
+                    creative: campaign.name
+                };
 
                 return campaign;
             }
@@ -266,23 +252,16 @@ function( angular , c6State  , PaginatedListState                    ,
                 $scope.$broadcast('SelfieCampaignWillSave');
 
                 if (this.card.id) {
-                    // TODO: save campaign first, then add campaign id to card then save card,
-                    // then save ad card id to campaign, then save campaign again
-                    // NOTE: campaign cards array objects should ONLY have ID prop,
-                    // backend will set the rest of the props
-
                     return cState.updateCard()
                         .then(saveCampaign)
                         .catch(handleError);
                 } else {
-                    return cState.updateCard()
-                        .then(addCardId)
+                    return saveCampaign()
+                        .then(addCampaignToCard)
+                        .then(setMoatValues)
+                        .then(updateCard)
                         .then(addCardToCampaign)
                         .then(saveCampaign)
-                        .then(setCampaignId)
-                        .then(function() {
-                            cState.updateCard();
-                        })
                         .catch(handleError);
                 }
             };
@@ -358,6 +337,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.updateLinks = function() {
                 card.links = createModelLinks(SelfieCampaignSponsorCtrl.links);
+                card.params.action = card.links.Action ? card.params.action : null;
             };
 
             this.actionTypeOptions = ['Button', 'Text']
@@ -444,6 +424,35 @@ function( angular , c6State  , PaginatedListState                    ,
                         );
                     }
                 }
+            });
+        }])
+
+        .controller('SelfieCampaignPreviewController', ['$scope','MiniReelService','c6BrowserInfo',
+        function                                       ( $scope , MiniReelService , c6BrowserInfo ) {
+            var SelfieCampaignPreviewCtrl = this,
+                SelfieCampaignCtrl = $scope.SelfieCampaignCtrl;
+
+            this.device = 'desktop';
+            this.card = null;
+            this.profile = copy(c6BrowserInfo.profile);
+
+            $scope.$watch(function() {
+                return SelfieCampaignPreviewCtrl.device;
+            }, function(device) {
+                var profile = SelfieCampaignPreviewCtrl.profile;
+
+                if (device === profile.device) { return; }
+
+                SelfieCampaignPreviewCtrl.profile = extend(copy(profile), {
+                    device: device,
+                    flash: device !== 'phone'
+                });
+            });
+
+            $scope.$watchCollection(function() {
+                return SelfieCampaignCtrl.card;
+            }, function(card) {
+                console.log(card, MiniReelService.convertCardForPlayer(card));
             });
         }]);
 });
