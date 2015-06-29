@@ -1201,7 +1201,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             var placeholder = entry.placeholder;
 
                             return find(cards, function(entry) {
-                                return entry.placeholder === placeholder;
+                                return entry.placeholder.id === placeholder.id;
                             }) || entry;
                         })
                     });
@@ -1311,17 +1311,23 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             };
 
             this.valid = function() {
-                return this.model.cards.some(function(card) {
-                    return !!card.wildcard;
-                });
+                return true;
             };
 
             this.confirm = function() {
+                var isEmpty = this.model.cards.every(function(card) {
+                    return !card.wildcard;
+                });
+
                 extend(this.original, {
                     cards: this.model.cards
                 });
 
-                CampaignPlacementsCtrl.add(this.original);
+                if (!isEmpty) {
+                    CampaignPlacementsCtrl.add(this.original);
+                } else {
+                    CampaignPlacementsCtrl.remove(this.original.minireel);
+                }
 
                 return c6State.goTo('MR:Campaign.Placements');
             };

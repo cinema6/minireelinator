@@ -8,7 +8,8 @@ module.exports = function(http) {
     var fn = require('../utils/fn'),
         extend = fn.extend;
 
-    var userId = 'u-35b096c999711b';
+    var userId = 'u-35b096c999711b',
+        selfieUser = 'u-82b0123da9678c';
 
     function userPath(id) {
         return path.resolve(__dirname, '../account/users/' + id + '.json');
@@ -16,7 +17,8 @@ module.exports = function(http) {
 
     http.whenPOST('/api/auth/login', function(request) {
         if ((/\w+@cinema6\.com$/).test(request.body.email)) {
-            var user = grunt.file.readJSON(userPath(userId));
+            var id = /selfie/.test(request.body.email) ? selfieUser : userId,
+                user = grunt.file.readJSON(userPath(id));
 
             this.respond(200, (userCache.user = extend(user, {
                 email: request.body.email,

@@ -1,6 +1,9 @@
 (function() {
     'use strict';
 
+    var grunt = require('grunt'),
+        selfieServer = /selfie/.test(grunt.cli.tasks[0]);
+
     module.exports = {
         options: {
             hostname: '*'
@@ -47,14 +50,26 @@
                                 {
                                     match: /<!--C6INJECT-->/,
                                     fn: function(match, snippet) {
-                                        return [
-                                            snippet,
-                                            '<script>',
-                                            '(' + function(window) {
+                                        var script;
+
+                                        if (selfieServer) {
+                                            script = '(' + function(window) {
+                                                window.DEBUG = true;
+                                                window.SELFIE = true;
+                                                window.YouTubeApiKey = 'AIzaSyAoR0-kvy_fIjYOKk0vMU6F2JIb1aCMd1g';
+                                            }.toString() + '(window))';
+                                        } else {
+                                            script = '(' + function(window) {
                                                 window.DEBUG = true;
                                                 window.YouTubeApiKey = 'AIzaSyAoR0-kvy_fIjYOKk0vMU6F2JIb1aCMd1g';
                                                 window.FlickrApiKey = 'c60c2b10ac89da96a09fe02811db0ea6';
-                                            }.toString() + '(window))',
+                                            }.toString() + '(window))';
+                                        }
+
+                                        return [
+                                            snippet,
+                                            '<script>',
+                                            script,
                                             '</script>'
                                         ].join('\n');
                                     }

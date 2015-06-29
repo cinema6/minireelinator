@@ -1,5 +1,26 @@
 # MiniReelinator
 
+## v1.13.0 (June 24, 2015)
+* *[v1.13.0.rc1]*
+  * [FEATURE]: Add Selfie Application
+  * Allow static placements to be removed implicitly by removing all
+    wildcard entries
+  * [FIX]: Fix for an issue that allowed duplicate links to be added to
+    a campaign/card/etc. but not saved to the server
+  * [FIX]: Fix for an issue that caused custom video thumbnails to not
+    be removable
+  * [FIX]: Fix for an issue that made a campaign's placement
+    configuration for a MiniReel appear to disappear after
+    adding/removing a sponsored card placeholder to/from that MiniReel
+  * [FIX]: Fix for an issue that caused the Editor to prompt the user to
+    click "Publish Changes" instead of "Done" when they are finished
+    editing
+  * [FIX]: Fix for an issue that caused VPAID ads not to playback during
+    preview
+  * [FIX]: Fix for an issue that caused the Campaign manager not to load
+    if a MiniReel used by a campaign for placement was deleted
+* *[/v1.13.0.rc1]*
+
 ## v1.12.1 (June 15, 2015)
 * *[v1.12.1.rc1]*
   * [FIX]: Fix for an issue that caused a MiniReel's User to be removed

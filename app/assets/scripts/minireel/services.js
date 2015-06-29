@@ -1566,7 +1566,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             var ngCopy = angular.copy;
 
             var self = this,
-                portal = c6State.get('Portal');
+                app = c6State.get('Application'),
+                application = c6State.get(app.name);
 
             function generateId(prefix) {
                 return prefix + '-' +
@@ -2102,7 +2103,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             this.create = function(toCopy) {
                 var userSettings = SettingsService.getReadOnly('MR::user'),
                     orgSettings = SettingsService.getReadOnly('MR::org'),
-                    user = portal.cModel;
+                    user = application.cModel;
 
                 function fetchTemplate(user) {
                     var org = user.org;
@@ -2161,7 +2162,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             this.convertCardForPlayer = function(card, _minireel) {
                 var dataTemplates, cardBases, cardType, dataType,
-                    org = portal.cModel.org,
+                    org = application.cModel.org,
                     minireel = _minireel || {
                         data: {
                             mode: null,
@@ -2483,7 +2484,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return card.data.ballot || card.data.survey || undefined;
                         },
                         thumbs: function(card) {
-                            return (card.thumb || undefined) && {
+                            return (card.thumb || null) && {
                                 small: card.thumb,
                                 large: card.thumb
                             };

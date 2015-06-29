@@ -180,7 +180,7 @@
                                 links: {},
                                 params: {},
                                 modules: [],
-                                data: {},
+                                data: {}
                             },
                             {
                                 id: 'rc-6ce459b2052d07',
@@ -230,6 +230,7 @@
                                     countUrls: [],
                                     clickUrls: []
                                 },
+                                thumbs: null,
                                 collateral: {},
                                 links: {},
                                 params: {},
@@ -281,6 +282,7 @@
                                         'Not That Ugly'
                                     ]
                                 },
+                                thumbs: null,
                                 data: {
                                     skip: 25,
                                     videoid: '48hfrei49',
@@ -330,6 +332,7 @@
                                         'Pretty Stupid'
                                     ]
                                 },
+                                thumbs: null,
                                 data: {
                                     controls: true,
                                     skip: false,
@@ -382,6 +385,7 @@
                                         'I Have no Money'
                                     ]
                                 },
+                                thumbs: null,
                                 data: {
                                     hideSource: true,
                                     controls: false,
@@ -416,6 +420,7 @@
                                     countUrls: [],
                                     clickUrls: []
                                 },
+                                thumbs: null,
                                 collateral: {},
                                 links: {},
                                 params: {},
@@ -437,6 +442,7 @@
                                     countUrls: [],
                                     clickUrls: []
                                 },
+                                thumbs: null,
                                 collateral: {},
                                 links: {},
                                 params: {},
@@ -588,6 +594,7 @@
                                         countUrls: [],
                                         clickUrls: []
                                     },
+                                    thumbs: null,
                                     collateral: {},
                                     links: {},
                                     params: {},
@@ -625,6 +632,7 @@
                                         countUrls: [],
                                         clickUrls: []
                                     },
+                                    thumbs: null,
                                     collateral: {},
                                     links: {},
                                     params: {},
@@ -666,6 +674,7 @@
                                     links: {},
                                     params: {},
                                     modules: [],
+                                    thumbs: null,
                                     data: {
                                         skip: true,
                                         siteid: 'v2z8ro-willie-perfoming-at-school-talent-show',
@@ -1086,7 +1095,7 @@
                         it('should change the type of a card to the specified type', function() {
                             var card = MiniReelService.createCard(),
                                 id = card.id,
-                                imageCard, videoCard, videoBallotCard, adCard, linksCard, displayAdCard, recapCard, wildcardCard;
+                                imageCard, videoCard, videoBallotCard, linksCard, displayAdCard, recapCard, wildcardCard;
 
                             function sameId(card) {
                                 card.id = id;

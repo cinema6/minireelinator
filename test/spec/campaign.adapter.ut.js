@@ -96,6 +96,9 @@ define(['app', 'angular'], function(appModule, angular) {
                             'rc-72ba2dff0fdebf': 'rc-223a31e4d985c4',
                             'rc-bd83763f6a7a5a': 'rc-06f6db8ba1877f'
                         },
+                        'e-fb0e54efddc44c': {
+                            'rc-b56a249106d3d8': 'rc-a6ca92dfd09795'
+                        },
                         'e-91705e579c27cc': {
                             'rc-32c5ebb72266ab': 'rc-06f6db8ba1877f'
                         }
@@ -183,18 +186,25 @@ define(['app', 'angular'], function(appModule, angular) {
                 };
 
                 spyOn(cinema6.db, 'find').and.callFake(function(type, id) {
-                    switch (type) {
-                    case 'experience':
-                        return $q.when(minireels[id]);
-                    case 'card':
-                        return $q.when(cards[id]);
-                    case 'advertiser':
-                        return $q.when(advertisers[id]);
-                    case 'customer':
-                        return $q.when(customers[id]);
-                    default:
-                        return $q.reject('NOT FOUND');
-                    }
+                    var object = (function() {
+                        switch (type) {
+                        case 'experience':
+                            return minireels[id];
+                        case 'card':
+                            return cards[id];
+                        case 'advertiser':
+                            return advertisers[id];
+                        case 'customer':
+                            return customers[id];
+                        default:
+                            return undefined;
+                        }
+                    }());
+
+                    return object ? $q.when(object) : $q.reject({
+                        data: '404 NOT FOUND',
+                        code: 404
+                    });
                 });
 
                 $rootScope.$apply(function() {
