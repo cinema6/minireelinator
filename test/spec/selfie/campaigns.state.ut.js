@@ -61,7 +61,7 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
             });
 
             it('should be for a list of campaigns', function() {
-                expect(paginatedDbList).toHaveBeenCalledWith('campaign', {
+                expect(paginatedDbList).toHaveBeenCalledWith('selfieCampaign', {
                     sort: 'lastUpdated,-1',
                     org: 'o-123456'
                 }, campaigns.limit, campaigns.page);
