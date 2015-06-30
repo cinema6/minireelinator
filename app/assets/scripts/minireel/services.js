@@ -956,6 +956,92 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             if (window.c6.kHasKarma) { this._private = _private; }
         }])
 
+        .service('ImageThumbnailService', ['$q', '$cacheFactory', '$http',
+        function                          ( $q ,  $cacheFactory,   $http) {
+            var _private = {},
+                cache = $cacheFactory('ImageThumbnailService:models');
+
+            function ThumbModel(promise) {
+                var self = this;
+
+                this.small = null;
+                this.large = null;
+
+                this.ensureFulfillment = function() {
+                    return promise;
+                };
+
+                promise = promise.then(function setThumbs(thumbs) {
+                    self.small = thumbs.small;
+                    self.large = thumbs.large;
+
+                    return self;
+                });
+            }
+
+            _private.fetchFlickrThumbs = function(imageid) {
+                var flickrKey = c6Defines.kFlickrDataApiKey;
+                var request = 'https://www.flickr.com/services/rest/?' +
+                    'method=flickr.photos.getSizes&' +
+                    'format=json&api_key=' + flickrKey + '&' +
+                    'photo_id=' + imageid + '&' +
+                    'jsoncallback=JSON_CALLBACK';
+                return $http.jsonp(request, {cache: true})
+                    .then(function(json) {
+                        if(json.data.sizes) {
+                            var sizes = json.data.sizes.size;
+                            if(sizes.length > 1) {
+                                var thumbs = {
+                                    small: sizes[0].source,
+                                    large: sizes[1].source
+                                };
+                                for(var i=0;i<sizes.length;i++) {
+                                    if(sizes[i].label === 'Thumbnail') {
+                                        thumbs = {
+                                            small: sizes[i].source,
+                                            large: sizes[i+1].source
+                                        };
+                                        break;
+                                    }
+                                }
+                                return thumbs;
+                            }
+                        }
+                        return $q.reject();
+                    });
+            };
+
+            _private.fetchGettyThumbs = function(imageid) {
+                return {
+                    small: 'http://embed-cdn.gettyimages.com/xt/' + imageid +
+                        '.jpg?v=1&g=fs1|0|DV|33|651&s=1',
+                    large: 'http://embed-cdn.gettyimages.com/xt/' + imageid +
+                        '.jpg?v=1&g=fs1|0|DV|33|651&s=1'
+                };
+            };
+
+            this.getThumbsFor = function(service, imageid) {
+                var key = service + ':' + imageid;
+
+                return cache.get(key) ||
+                    cache.put(key, (function() {
+                        switch (service) {
+                        case 'flickr':
+                            return new ThumbModel(_private.fetchFlickrThumbs(imageid));
+                        case 'getty':
+                            return new ThumbModel($q.when(_private.fetchGettyThumbs(imageid)));
+                        default:
+                            return new ThumbModel($q.when({
+                                small: null,
+                                large: null
+                            }));
+                        }
+                    }()));
+            };
+
+            if (window.c6.kHasKarma) { this._private = _private; }
+        }])
+
         .service('VideoErrorService', ['YouTubeDataService','$q','$cacheFactory',
         function                      ( YouTubeDataService , $q , $cacheFactory ) {
             var cache = $cacheFactory('VideoErrorServiceCache');
@@ -1137,6 +1223,219 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
         }])
 
+        .service('ImageService', ['$http', '$q',
+        function                 ( $http , $q) {
+
+            var _private = {};
+
+            // This function converts a base 58 number to base 10
+            _private.decodeBase58 = function(num) {
+                var digits = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
+                var result = 0;
+                if(!num || !num.length) {
+                    return -1;
+                }
+                for(var i=0;i<num.length;i++) {
+                    var digit = num[num.length - 1 - i];
+                    if(!digit) {
+                        return -1;
+                    }
+                    var index = digits.indexOf(digit);
+                    if(index === -1) {
+                        return -1;
+                    }
+                    result += (index * Math.pow(58, i));
+                }
+                return result;
+            };
+
+            // This function converts a base 10 number to base 58
+            _private.encodeBase58 = function(num) {
+                if(num === null || isNaN(num) || num < 0) {
+                    return -1;
+                }
+                var digits = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
+                var n = num, r = 0;
+                var result = '';
+                do {
+                    r = n % 58;
+                    n = Math.floor(n / 58);
+                    result = digits[r] + result;
+                } while(n>0);
+                return result;
+            };
+
+            // This function uses Flickr's API to get the information necessary to construct the
+            // image's source url
+            _private.getFlickrEmbedInfo = function(imageid) {
+                var flickrKey = c6Defines.kFlickrDataApiKey;
+                var request = 'https://www.flickr.com/services/rest/?' +
+                    'method=flickr.photos.getSizes&' +
+                    'format=json&api_key=' + flickrKey + '&' +
+                    'photo_id=' + imageid + '&' +
+                    'jsoncallback=JSON_CALLBACK';
+                return $http.jsonp(request, {cache: true}).
+                    then(function(json) {
+                        if(json.data.sizes) {
+                            var sizes = json.data.sizes.size;
+                            if(sizes.length > 1) {
+                                var largest = sizes[sizes.length-1];
+                                return {
+                                    src: largest.source,
+                                    width: largest.width,
+                                    height: largest.height
+                                };
+                            }
+                        }
+                        return $q.reject('There was a problem retrieving the image from Flickr.');
+                    }, function() {
+                        return $q.reject('There was a problem contacting Flickr.');
+                    });
+            };
+
+            // This function uses GettyImages' oEmbed API endpoint to fetch the embed code for an
+            // image
+            _private.getGettyEmbedInfo = function(imageid) {
+                var request = 'http://embed.gettyimages.com/oembed?' +
+                    'url=' + encodeURIComponent('http://gty.im/' + imageid);
+                return $http.get(request, {cache: true}).
+                    then(function(json) {
+                        var embedCode = json.data.html;
+                        if(embedCode) {
+                            var srcRegex = new RegExp('"\\/\\/embed.gettyimages.com\\/' +
+                                'embed\\/\\d+\\?\\S+"');
+                            var src = embedCode.match(srcRegex)[0];
+                            var width = embedCode.match(/width="\d+/)[0];
+                            var height = embedCode.match(/height="\d+/)[0];
+                            return {
+                                src: src.substr(1,src.length-2),
+                                width: width.replace('width="', ''),
+                                height: height.replace('height="', '')
+                            };
+                        }
+                        return $q.reject('There was a problem retrieving the image from ' +
+                            'GettyImages.');
+                    }, function() {
+                        return $q.reject('There was a problem contacting GettyImages.');
+                    });
+            };
+
+            // Takes as an argument a url, checks to see if it's of a recognizable form,
+            // and returns information that was parsed from it.
+            this.dataFromUrl = function(url) {
+                var serviceRecognizers = {
+                    flickr: {
+                        patterns: [
+                            {
+                                urlFormat: /flickr.com\/photos\/.+\/\d+(?=\/?)/,
+                                idFetcher: function(url) {
+                                    return url.replace(/flickr.com\/photos\/.+\//, '');
+                                }
+                            },
+                            {
+                                urlFormat: new RegExp('flic.kr\\/p\\/' +
+                                    '[123456789abcdefghijkmnopqrstuvwxyz' +
+                                    'ABCDEFGHJKLMNPQRSTUVWXYZ]+(?=\\/?)'),
+                                idFetcher: function(url) {
+                                    return _private.decodeBase58(
+                                        url.replace(/flic.kr\/p\//, '')
+                                    ).toString();
+                                }
+                            }
+                        ]
+                    },
+                    getty: {
+                        patterns: [
+                            {
+                                urlFormat: new RegExp('gettyimages.com\\/detail\\/([a-z]+-)?' +
+                                    'photo\\/[^\\/]+\\/\\d+(?=\\/?)'),
+                                idFetcher: function(url) {
+                                    return url.replace(new RegExp('gettyimages.com\\/detail\\/' +
+                                        '([a-z]+-)?photo\\/[^\\/]+\\/'), '');
+                                }
+                            },
+                            {
+                                urlFormat: /gty.im\/\d+(?=\/?$)/,
+                                idFetcher: function(url) {
+                                    return url.replace(/gty.im\//, '');
+                                }
+                            }
+                        ]
+                    }
+                };
+
+                // Read the service recognizers json and check for a recognized service
+                // If a recognized service is found, then fetch it's image id
+                var services = Object.keys(serviceRecognizers);
+                for(var i=0;i<services.length;i++) {
+                    var serviceName = services[i];
+                    var service = serviceRecognizers[serviceName];
+                    var patterns = service.patterns;
+                    for(var j=0;j<patterns.length;j++) {
+                        var match = (url.match(patterns[j].urlFormat) || [])[0];
+                        if(match) {
+                            var result = {
+                                service: serviceName,
+                                imageid: patterns[j].idFetcher(match)
+                            };
+                            return result;
+                        }
+                    }
+                }
+                return {
+                    service: null,
+                    imageid: null
+                };
+            };
+
+            // Uses service specific APIs to aquire information that
+            // cannot be obtained simply by parsing the image's URL
+            this.getEmbedInfo = function(service, imageid) {
+                switch(service) {
+                    case 'flickr':
+                        return _private.getFlickrEmbedInfo(imageid)
+                            .then(function(imageInfo) {
+                                return {
+                                    src: imageInfo.src,
+                                    width: imageInfo.width,
+                                    height: imageInfo.height
+                                };
+                            });
+                    case 'getty':
+                        return _private.getGettyEmbedInfo(imageid)
+                            .then(function(iframeInfo) {
+                                return {
+                                    src: iframeInfo.src,
+                                    width: iframeInfo.width,
+                                    height: iframeInfo.height
+                                };
+                            });
+                    default:
+                        return $q.when({
+                            src: null,
+                            width: null,
+                            height: null
+                        });
+                }
+            };
+
+            this.urlFromData = function(service, imageid) {
+                if(!imageid) {
+                    return null;
+                }
+                switch(service) {
+                    case 'flickr':
+                        return 'https://flic.kr/p/' + _private.encodeBase58(parseInt(imageid));
+                    case 'getty':
+                        return 'http://gty.im/' + imageid;
+                    default:
+                        return null;
+                }
+            };
+
+            if (window.c6.kHasKarma) { this._private = _private; }
+        }])
+
         .service('VideoSearchService', ['$http','c6UrlMaker','$q','VideoDataService',
         function                       ( $http , c6UrlMaker , $q , VideoDataService ) {
             function VideoSearchResult(videos, _meta) {
@@ -1259,9 +1558,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
         }])
 
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
-                                     'SettingsService','VideoService','VideoThumbnailService',
+                                     'SettingsService','VideoService','ImageThumbnailService',
+                                     'VideoThumbnailService', 'ImageService',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
-                                      SettingsService , VideoService , VideoThumbnailService ) {
+                                      SettingsService , VideoService , ImageThumbnailService,
+                                      VideoThumbnailService,   ImageService ) {
             var ngCopy = angular.copy;
 
             var self = this,
@@ -1314,7 +1615,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             }
 
             function makeCard(rawData, base) {
-                var template, dataTemplates, videoDataTemplate,
+                var template, dataTemplates, imageDataTemplate, videoDataTemplate,
                     dataTemplate,
                     card = base || {
                         data: {}
@@ -1333,7 +1634,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     id: copy(),
                     type: function(card) {
                         switch(card.type) {
-
                         case 'youtube':
                         case 'vimeo':
                         case 'dailymotion':
@@ -1363,6 +1663,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             card.sponsored ? 'Sponsored' : null,
                             (function() {
                                 switch (this.type) {
+                                case 'image':
+                                    return 'Image';
                                 case 'video':
                                     return 'Video';
                                 case 'videoBallot':
@@ -1438,6 +1740,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     params: copy({})
                 };
 
+                // imageDataTemplate: this is the base template for all
+                // image cards.
+                imageDataTemplate = {
+                    service: copy(null),
+                    imageid: copy(null)
+                };
+
                 // videoDataTemplate: this is the base template for all
                 // video cards.
                 videoDataTemplate = {
@@ -1501,6 +1810,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 // card's data, the current property key and a reference to
                 // the card.
                 dataTemplates = {
+                    image: imageDataTemplate,
                     video: videoDataTemplate,
                     videoBallot: extend(ngCopy(videoDataTemplate), {
                         ballot: function(data, key, card) {
@@ -1890,6 +2200,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 function getCardType(card) {
                     switch (card.type) {
+                    case 'image':
+                        return 'image';
                     case 'video':
                     case 'videoBallot':
                         return 'video';
@@ -1944,16 +2256,61 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 function thumbsValue() {
                     return function(data) {
-                        var thumbs = VideoThumbnailService.getThumbsFor(data.service, data.videoid);
+                        return VideoThumbnailService.getThumbsFor(data.service, data.videoid)
+                            .ensureFulfillment()
+                            .then(function(thumbs) {
+                                return {
+                                    small: thumbs.small,
+                                    large: thumbs.large
+                                };
+                            });
+                    };
+                }
 
-                        return {
-                            small: thumbs.small,
-                            large: thumbs.large
-                        };
+                function imageThumbsValue() {
+                    return function(data) {
+                        return ImageThumbnailService.getThumbsFor(data.service, data.imageid)
+                            .ensureFulfillment()
+                            .then(function(thumbs) {
+                                return {
+                                    small: thumbs.small,
+                                    large: thumbs.large
+                                };
+                            });
+                    };
+                }
+
+                var embedInfo = null;
+                function embedValue(key) {
+                    return function(data) {
+                        if(embedInfo) {
+                            return embedInfo[key];
+                        } else {
+                            return ImageService.getEmbedInfo(data.service, data.imageid)
+                                .then(function(info) {
+                                    embedInfo = info;
+                                    return embedInfo[key];
+                                });
+                        }
+                    };
+                }
+
+                function imageHrefValue() {
+                    return function(data) {
+                        return ImageService.urlFromData(data.service, data.imageid);
                     };
                 }
 
                 dataTemplates = {
+                    image: {
+                        imageid: copy(null),
+                        service: copy(null),
+                        src: embedValue('src'),
+                        href: imageHrefValue(),
+                        width: embedValue('width'),
+                        height: embedValue('height'),
+                        thumbs: imageThumbsValue()
+                    },
                     youtube: {
                         hideSource: hideSourceValue(),
                         autoplay: copy(null),
@@ -2057,6 +2414,20 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 };
 
                 cardBases = {
+                    image: {
+                        id: copy(),
+                        type: value('image'),
+                        title: copy(null),
+                        note: copy(null),
+                        modules: value([]),
+                        placementId: copy(null),
+                        templateUrl: copy(null),
+                        sponsored: copy(false),
+                        campaign: copy(),
+                        collateral: copy(),
+                        links: copy(),
+                        params: copy()
+                    },
                     text: {
                         id: copy(),
                         type: copy(),
@@ -2212,27 +2583,46 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     cardType = getCardType(card);
                     dataType = getDataType(card);
 
-                    forEach(cardBases[cardType], function(fn, key) {
-                        var value = fn(card, key, card);
 
-                        if (isDefined(value)) {
-                            newCard[key] = fn(card, key, card);
+                    function createCardBase() {
+                        var base = cardBases[cardType];
+                        if(!base) {
+                            return [];
                         }
-                    });
+                        return Object.keys(base).map(function(key) {
+                            var fn = base[key];
+                            return $q.when(fn(card, key, card))
+                                .then(function(value) {
+                                    if(isDefined(value)) {
+                                        newCard[key] = value;
+                                    }
+                                });
+                        });
+                    }
 
-                    forEach(dataTemplates[dataType], function(fn, key) {
-                        var value = fn((card.data || {}), key, card);
-                        if(isDefined(value) && value !== null) {
-                            newCard.data[key] = value;
+                    function createCardData() {
+                        var template = dataTemplates[dataType];
+                        if(!template) {
+                            return [];
                         }
-                    });
+                        return Object.keys(template).map(function(key) {
+                            var fn = template[key];
+                            return $q.when(fn((card.data || {}), key, card))
+                                .then(function(value) {
+                                    if(isDefined(value) && value !== null) {
+                                        newCard.data[key] = value;
+                                    }
+                                });
+                        });
+                    }
 
-                    return newCard;
+                    return $q.all(createCardBase().concat(createCardData()))
+                        .then(function() {
+                            return newCard;
+                        });
                 }
 
-                return VideoThumbnailService.getThumbsFor(card.data.service, card.data.videoid)
-                    .ensureFulfillment()
-                    .then(createCard);
+                return createCard();
             };
 
             this.convertForPlayer = function(minireel, target) {
