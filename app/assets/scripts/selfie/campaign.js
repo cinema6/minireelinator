@@ -427,14 +427,50 @@ function( angular , c6State  , PaginatedListState                    ,
             });
         }])
 
-        .controller('SelfieCampaignPreviewController', ['$scope','MiniReelService','c6BrowserInfo',
-        function                                       ( $scope , MiniReelService , c6BrowserInfo ) {
+        .controller('SelfieCampaignPreviewController', ['$scope','cinema6','MiniReelService',
+                                                        'c6BrowserInfo',
+        function                                       ( $scope , cinema6 , MiniReelService ,
+                                                         c6BrowserInfo ) {
             var SelfieCampaignPreviewCtrl = this,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl;
+
+            var experience = cinema6.db.create('experience', {
+                type: 'minireel',
+                appUri: 'mini-reel-player',
+                org: 'o-123',
+                data: {
+                    title: null,
+                    mode: 'light',
+                    autoplay: false,
+                    autoadvance: false,
+                    sponsored: false,
+                    splash: {
+                        source: 'generated',
+                        ratio: '6-5',
+                        theme: 'horizontal-stack'
+                    },
+                    adConfig: {
+                        video: {
+                            firstPlacement: -1,
+                            frequency: 0
+                        },
+                        display: {}
+                    },
+                    collateral: {
+                        splash: null
+                    },
+                    campaign: {},
+                    params: {},
+                    links: {},
+                    deck: []
+                }
+            });
+            experience.id = 'e-123';
 
             this.device = 'desktop';
             this.card = null;
             this.profile = copy(c6BrowserInfo.profile);
+            this.active = true;
 
             $scope.$watch(function() {
                 return SelfieCampaignPreviewCtrl.device;
@@ -452,7 +488,20 @@ function( angular , c6State  , PaginatedListState                    ,
             $scope.$watchCollection(function() {
                 return SelfieCampaignCtrl.card;
             }, function(card) {
-                console.log(card, MiniReelService.convertCardForPlayer(card));
+                MiniReelService.convertCardForPlayer(card)
+                    .then(function(cardForPlayer) {
+                        var newExperience = copy(experience);
+
+                        cardForPlayer.data.autoplay = false;
+                        cardForPlayer.data.skip = true;
+
+                        newExperience.data.deck = [cardForPlayer];
+
+                        SelfieCampaignPreviewCtrl.card = cardForPlayer;
+                        SelfieCampaignPreviewCtrl.experience = newExperience;
+
+                        console.log(JSON.stringify(cardForPlayer), card, experience);
+                    });
             });
         }]);
 });
