@@ -14,7 +14,7 @@
         <form class="modal__editor">
             <ul class="wizard__group">
                 <li class="wizard__choice wizard__choice--textOnly">
-                    <input id="cardType_video" type="radio" 
+                    <input id="cardType_video" type="radio"
                         name="minireel-category" value="videoBallot"
                         class="modal__radioBtn" ng-model="NewCardCtrl.type" />
                     <label class="wizard__hitarea" for="cardType_video"><span class="ir">Video Slide</span></label>
@@ -25,7 +25,18 @@
                 </li>
 
                 <li class="wizard__choice wizard__choice--textOnly">
-                    <input id="cardType_ad" type="radio" 
+                    <input id="cardType_image" type="radio"
+                        name="minireel-category" value="image"
+                        class="modal__radioBtn" ng-model="NewCardCtrl.type" />
+                    <label class="wizard__hitarea" for="cardType_image"><span class="ir">Image Slide</span></label>
+                    <div class="wizard__copy">
+                        <h2 class="wizard__title">Image Slide</h2>
+                        <p class="wizard__p">Image content from the web.</p>
+                    </div>
+                </li>
+
+                <li class="wizard__choice wizard__choice--textOnly">
+                    <input id="cardType_ad" type="radio"
                         name="minireel-category" value="wildcard"
                         class="modal__radioBtn" ng-model="NewCardCtrl.type" />
                     <label class="wizard__hitarea" for="cardType_ad"><span class="ir">Sponsored Card Placeholder</span></label>
@@ -34,6 +45,7 @@
                         <p class="wizard__p">This slide will be replaced with dynamic content at runtime.</p>
                     </div>
                 </li>
+
             </ul>
         </form>
     </div>

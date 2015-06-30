@@ -464,9 +464,9 @@
                     });
                 });
 
-                describe('videoComplete', function() {
-                    function videoComplete() {
-                        return EditCardCtrl.videoComplete;
+                describe('cardComplete', function() {
+                    function cardComplete() {
+                        return EditCardCtrl.cardComplete;
                     }
 
                     describe('on non video cards', function() {
@@ -475,7 +475,7 @@
                         });
 
                         it('should be undefined', function() {
-                            expect(videoComplete()).toBeUndefined();
+                            expect(cardComplete()).toBeUndefined();
                         });
                     });
 
@@ -487,13 +487,13 @@
 
                             it('should be true if the service and videoid are not falsy', function() {
                                 onlyEmpty('service');
-                                expect(videoComplete()).toBe(false);
+                                expect(cardComplete()).toBe(false);
 
                                 onlyEmpty('videoid');
-                                expect(videoComplete()).toBe(false);
+                                expect(cardComplete()).toBe(false);
 
                                 onlyEmpty('foo');
-                                expect(videoComplete()).toBe(true);
+                                expect(cardComplete()).toBe(true);
                             });
                         });
                     });

@@ -1,0 +1,24 @@
+<div class="card__statusIndicator"
+    ng-class="{'card__statusIndicator--error': !!EditorCtrl.errorForCard($this)}"
+    ng-if="EditorCtrl.canEditCard($this)">
+    <span class="btnFill btnFill--primary btn__edit">
+        <span class="btn__label fab fa-pencil-square-o"> Edit</span>
+    </span>
+    <div class="card__statusMsg">
+        <div class="ui__alert c6studioSprite--alpha"><span class="ir">Warning!</span></div>
+        <span class="statusText">{{EditorCtrl.errorForCard($this)}}</span>
+    </div>
+</div>
+<div class="card__imgBox">
+    <div class="card__img"
+        ng-style="{'background-image': 'url(' + (CardTableCtrl.getThumbs($this).large || '') + ')'}">
+        &nbsp;
+    </div>
+</div>
+<div class="card__body">
+    <div class="card__copy">
+        <h1 class="card__title"><span class="card__titleText">{{$this.title}}</span></h1>
+        <p class="card__summary">{{$this.note}}</p>
+    </div>
+    <div class="ui__divider--pause">&hellip;</div>
+</div>
