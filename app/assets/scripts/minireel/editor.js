@@ -1354,9 +1354,7 @@ VideoCardController           , c6embed) {
                             }).indexOf(false) < 0;
                         case 'video':
                         case 'videoBallot':
-                            return ['service', 'videoid'].map(function(prop) {
-                                return !!model.data[prop];
-                            }).indexOf(false) < 0;
+                            return true;
                         default:
                             return undefined;
                         }

@@ -485,12 +485,12 @@
                                 model.type = type;
                             });
 
-                            it('should be true if the service and videoid are not falsy', function() {
+                            it('should be true to make video selection optional', function() {
                                 onlyEmpty('service');
-                                expect(cardComplete()).toBe(false);
+                                expect(cardComplete()).toBe(true);
 
                                 onlyEmpty('videoid');
-                                expect(cardComplete()).toBe(false);
+                                expect(cardComplete()).toBe(true);
 
                                 onlyEmpty('foo');
                                 expect(cardComplete()).toBe(true);
