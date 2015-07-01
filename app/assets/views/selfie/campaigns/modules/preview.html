@@ -1,10 +1,12 @@
-<h1 class="forms__title forms__title--divider">Preview</h1>
+<div class="grid__item three-quarters">
+    <h1 class="forms__title forms__title--divider">Preview</h1>
 
-<div class="preview__iframeHolder" style="padding-bottom:40px;width:800px;" ng-controller="SelfieCampaignPreviewController as SelfieCampaignPreviewCtrl">
-    <c6-embed class="preview__embedHolder"
-        experience="SelfieCampaignPreviewCtrl.experience"
-        profile="SelfieCampaignPreviewCtrl.profile"
-        card="SelfieCampaignPreviewCtrl.card"
-        active="SelfieCampaignPreviewCtrl.active">
-    </c6-embed>
+    <div class="preview__iframeHolder" style="padding-bottom:40px;width:100%;" ng-controller="SelfieCampaignPreviewController as SelfieCampaignPreviewCtrl">
+        <c6-embed class="preview__embedHolder"
+            experience="SelfieCampaignPreviewCtrl.experience"
+            profile="SelfieCampaignPreviewCtrl.profile"
+            card="SelfieCampaignPreviewCtrl.card"
+            active="SelfieCampaignPreviewCtrl.active">
+        </c6-embed>
+    </div>
 </div>

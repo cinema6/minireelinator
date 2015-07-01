@@ -499,8 +499,6 @@ function( angular , c6State  , PaginatedListState                    ,
 
                         SelfieCampaignPreviewCtrl.card = cardForPlayer;
                         SelfieCampaignPreviewCtrl.experience = newExperience;
-
-                        console.log(JSON.stringify(cardForPlayer), card, experience);
                     });
             });
         }]);

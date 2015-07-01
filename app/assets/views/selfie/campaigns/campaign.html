@@ -1,16 +1,18 @@
-<div class="container" c6-alias="SelfieCampaignCtrl.campaign as campaign" style="padding:20px">
-    <a c6-sref="Selfie:Campaigns">Back to Campaigns</a>
+<div class="grid grid--center">
+    <div class="container" c6-alias="SelfieCampaignCtrl.campaign as campaign" style="padding:20px">
+        <a c6-sref="Selfie:Campaigns">Back to Campaigns</a>
 
-    <div ng-include="'views/selfie/campaigns/modules/general.html'"></div>
-    <div ng-include="'views/selfie/campaigns/modules/sponsor.html'"></div>
-    <div ng-include="'views/selfie/campaigns/modules/video.html'" class="clearfix"></div>
-    <div ng-include="'views/selfie/campaigns/modules/targeting.html'"></div>
-    <div ng-include="'views/selfie/campaigns/modules/preview.html'"></div>
+        <div ng-include="'views/selfie/campaigns/modules/general.html'"></div>
+        <div ng-include="'views/selfie/campaigns/modules/sponsor.html'"></div>
+        <div ng-include="'views/selfie/campaigns/modules/video.html'" class="clearfix"></div>
+        <div ng-include="'views/selfie/campaigns/modules/targeting.html'"></div>
+        <div ng-include="'views/selfie/campaigns/modules/preview.html'"></div>
 
-    <button ng-click="SelfieCampaignCtrl.save()"
-    class="btnAction btnAction--success btnAction--hasFaIcon"
-    type="button" title="Save">
-        <span class="btn__label fab fa-floppy-o">&nbsp; Save Changes</span>
-    </button>
+        <button ng-click="SelfieCampaignCtrl.save()"
+        class="btnAction btnAction--success btnAction--hasFaIcon"
+        type="button" title="Save">
+            <span class="btn__label fab fa-floppy-o">&nbsp; Save Changes</span>
+        </button>
 
+    </div>
 </div>
