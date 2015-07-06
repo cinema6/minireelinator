@@ -67,9 +67,13 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
         });
 
         it('should inherit from the WizardController', inject(function($injector) {
-            expect(Object.keys(WildcardCtrl)).toEqual(jasmine.objectContaining(Object.keys($injector.instantiate(WizardController, {
+            var wildKeys = Object.keys(WildcardCtrl);
+            var wizardKeys = Object.keys($injector.instantiate(WizardController, {
                 $scope: $scope
-            }))));
+            }));
+            wizardKeys.forEach(function(key) {
+                expect(wildKeys).toContain(key);
+            });
         }));
 
         describe('properties', function() {
@@ -84,7 +88,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     WildcardState.cModel.params.sponsor = 'Custom';
                     WildcardCtrl.initWithModel(WildcardState.cModel);
 
-                    expect(WildcardCtrl.model.params.sponsor).toBe('Custom')
+                    expect(WildcardCtrl.model.params.sponsor).toBe('Custom');
                 });
 
                 it('should default params.ad', function() {
@@ -131,39 +135,6 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
             describe('campaignData', function() {
                 it('should be its state\'s metaData', function() {
                     expect(WildcardCtrl.campaignData).toBe(WildcardState.metaData);
-                });
-            });
-
-            describe('tabs', function() {
-                it('should be a list of tabs', function() {
-                    expect(WildcardCtrl.tabs).toEqual([
-                        {
-                            name: 'Editorial Content',
-                            sref: 'MR:Wildcard.Copy',
-                            required: true
-                        },
-                        {
-                            name: 'Video Content',
-                            sref: 'MR:Wildcard.Video',
-                            required: true
-                        },
-                        {
-                            name: 'Survey',
-                            sref: 'MR:Wildcard.Survey'
-                        },
-                        {
-                            name: 'Branding',
-                            sref: 'MR:Wildcard.Branding'
-                        },
-                        {
-                            name: 'Links',
-                            sref: 'MR:Wildcard.Links'
-                        },
-                        {
-                            name: 'Advertising',
-                            sref: 'MR:Wildcard.Advertising'
-                        }
-                    ]);
                 });
             });
 
@@ -299,6 +270,58 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
         });
 
         describe('methods', function() {
+            describe('private', function() {
+                describe('tabsForCardType(type)', function() {
+                    it('should return tabs for an article card', function() {
+                        var result = WildcardCtrl._private.tabsForCardType('article');
+                        expect(result).toEqual([
+                            {
+                                name: 'Webpage Content',
+                                sref: 'MR:Wildcard.Article',
+                                required: true
+                            },
+                            {
+                                name: 'Thumbnail Content',
+                                sref: 'MR:Wildcard.Thumbs',
+                                required: true
+                            }
+                        ]);
+                    });
+
+                    it('should return tabs for a video card', function() {
+                        var result = WildcardCtrl._private.tabsForCardType('video');
+                        expect(result).toEqual([
+                            {
+                                name: 'Editorial Content',
+                                sref: 'MR:Wildcard.Copy',
+                                required: true
+                            },
+                            {
+                                name: 'Video Content',
+                                sref: 'MR:Wildcard.Video',
+                                required: true
+                            },
+                            {
+                                name: 'Survey',
+                                sref: 'MR:Wildcard.Survey'
+                            },
+                            {
+                                name: 'Branding',
+                                sref: 'MR:Wildcard.Branding'
+                            },
+                            {
+                                name: 'Links',
+                                sref: 'MR:Wildcard.Links'
+                            },
+                            {
+                                name: 'Advertising',
+                                sref: 'MR:Wildcard.Advertising'
+                            }
+                        ]);
+                    });
+                });
+            });
+
             describe('save()', function() {
                 var success, failure,
                     updateCardDeferred;

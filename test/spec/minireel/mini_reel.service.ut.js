@@ -215,6 +215,31 @@
                                 }
                             },
                             {
+                                id: 'rc-b2d076ce052459',
+                                type: 'article',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
+                                },
+                                collateral: {},
+                                links: {},
+                                params: {},
+                                modules: [],
+                                data: {
+                                    src: 'http://www.cinema6.com',
+                                    thumbs: {
+                                        small: 'images.somewhere.com/large.jpg',
+                                        large: 'images.somewhere.com/large.jpg'
+                                    }
+                                }
+                            },
+                            {
                                 id: 'rc-c9cf24e87307ac',
                                 type: 'youtube',
                                 title: 'The Slowest Turtle',
@@ -1528,6 +1553,36 @@
                             });
                         });
 
+                        it('should transpile the article card', function() {
+                            expect(deck[2]).toEqual({
+                                id: 'rc-b2d076ce052459',
+                                type: 'article',
+                                title: null,
+                                note: null,
+                                label: 'Article',
+                                ad: false,
+                                view: 'article',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
+                                },
+                                collateral: {},
+                                thumb: 'images.somewhere.com/large.jpg',
+                                links: {},
+                                params: {},
+                                data: {
+                                    src: 'http://www.cinema6.com',
+                                    thumbUrl: 'images.somewhere.com/large.jpg'
+                                }
+                            });
+                        });
+
                         it('should transpile the image card', function() {
                             expect(deck[1]).toEqual({
                                 id: 'rc-6ce459b2052d07',
@@ -1559,7 +1614,7 @@
                         });
 
                         it('should transpile the various video cards into two cards', function() {
-                            expect(deck[2]).toEqual({
+                            expect(deck[3]).toEqual({
                                 id: 'rc-c9cf24e87307ac',
                                 type: 'video',
                                 title: 'The Slowest Turtle',
@@ -1599,7 +1654,7 @@
                                 }
                             });
 
-                            expect(deck[3]).toEqual({
+                            expect(deck[4]).toEqual({
                                 id: 'rc-17721b74ce2584',
                                 type: 'videoBallot',
                                 title: 'The Ugliest Turtle',
@@ -1642,7 +1697,7 @@
                                 }
                             });
 
-                            expect(deck[4]).toEqual({
+                            expect(deck[5]).toEqual({
                                 id: 'rc-61fa9683714e13',
                                 type: 'videoBallot',
                                 title: 'The Smartest Turtle',
@@ -1685,7 +1740,7 @@
                                 }
                             });
 
-                            expect(deck[5]).toEqual({
+                            expect(deck[6]).toEqual({
                                 id: 'rc-d8ebd5461ba524',
                                 type: 'video',
                                 title: 'The Dumbest Turtle',
@@ -1740,7 +1795,7 @@
                                 }
                             });
 
-                            expect(deck[11]).toEqual({
+                            expect(deck[12]).toEqual({
                                 id: 'rc-82a19a12065636',
                                 type: 'video',
                                 title: 'AdUnit Card',
@@ -1783,7 +1838,7 @@
                                 }
                             });
 
-                            expect(deck[12]).toEqual({
+                            expect(deck[13]).toEqual({
                                 id: 'rc-fc6cfb661b7a86',
                                 type: 'video',
                                 title: 'Yahoo! Card',
@@ -1819,7 +1874,7 @@
                                 }
                             });
 
-                            expect(deck[13]).toEqual({
+                            expect(deck[14]).toEqual({
                                 id: 'rc-f51c0386a90a02',
                                 type: 'video',
                                 title: 'AOL Card',
@@ -1855,7 +1910,7 @@
                                 }
                             });
 
-                            expect(deck[14]).toEqual({
+                            expect(deck[15]).toEqual({
                                 id: 'rc-8142d1b5897b32',
                                 type: 'video',
                                 title: 'Rumble Card',
@@ -1893,7 +1948,7 @@
                         });
 
                         it('should transpile the links cards', function() {
-                            expect(deck[8]).toEqual({
+                            expect(deck[9]).toEqual({
                                 id: 'rc-25c1f60b933186',
                                 type: 'links',
                                 title: 'If You Love Turtles',
@@ -1915,14 +1970,14 @@
                                 thumb: null,
                                 links: {},
                                 params: {},
-                                data: minireel.data.deck[9].data
+                                data: minireel.data.deck[10].data
                             });
 
-                            expect(deck[8].data.links).not.toBe(minireel.data.deck[9].data.links);
+                            expect(deck[9].data.links).not.toBe(minireel.data.deck[10].data.links);
                         });
 
                         it('should transpile the recap cards', function() {
-                            expect(deck[9]).toEqual({
+                            expect(deck[10]).toEqual({
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
                                 title: null,
@@ -1949,7 +2004,7 @@
                         });
 
                         it('should transpile the displayAd cards', function() {
-                            expect(deck[10]).toEqual({
+                            expect(deck[11]).toEqual({
                                 id: 'rc-82a19a12065636',
                                 type: 'displayAd',
                                 title: 'By Ubisoft',
@@ -1980,7 +2035,7 @@
                         });
 
                         it('should transpile the wildcards', function() {
-                            expect(deck[15]).toEqual({
+                            expect(deck[16]).toEqual({
                                 id: 'rc-c99a6f4c6b4c54',
                                 type: 'wildcard',
                                 title: null,
@@ -2076,7 +2131,7 @@
                                 expect(newModel.status).toBe('pending');
                                 expect(newModel.access).toBe('public');
                                 expect('election' in newModel.data).toBe(false);
-                                expect('election' in newModel.data.deck[5].ballot).toBe(false);
+                                expect('election' in newModel.data.deck[6].ballot).toBe(false);
                             });
                         });
 
@@ -2252,7 +2307,7 @@
                             result = resultSpy.calls.mostRecent().args[0];
 
                             result.data.deck.forEach(function(card) {
-                                if (!(/adUnit|image|text|links|displayAd|wildcard/).test(card.type)) {
+                                if (!(/adUnit|article|image|text|links|displayAd|wildcard/).test(card.type)) {
                                     expect(card.modules.indexOf('displayAd')).not.toBe(-1);
                                 } else if (card.type !== 'links') {
                                     expect((card.modules || []).indexOf('displayAd')).toBe(-1);
@@ -2299,7 +2354,7 @@
                             result = resultSpy.calls.mostRecent().args[0];
 
                             result.data.deck.forEach(function(card) {
-                                if (!(/adUnit|image|text|links|displayAd|wildcard/).test(card.type)) {
+                                if (!(/adUnit|article|image|text|links|displayAd|wildcard/).test(card.type)) {
                                     expect(card.modules.indexOf('displayAd')).not.toBe(-1);
                                 } else if (card.type !== 'links') {
                                     expect((card.modules || []).indexOf('displayAd')).toBe(-1);

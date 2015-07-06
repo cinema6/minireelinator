@@ -52,7 +52,7 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
             expect(newWildcard).toEqual(jasmine.any(Object));
         });
 
-        describe('model()', function() {
+        describe('model(params)', function() {
             var result;
 
             beforeEach(function() {
@@ -74,7 +74,9 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                 });
                 cinema6.db.create.calls.reset();
 
-                result = newWildcard.model();
+                result = newWildcard.model({
+                    type: 'video'
+                });
             });
 
             it('should be a new card', function() {

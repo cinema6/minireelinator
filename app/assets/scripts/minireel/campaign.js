@@ -672,8 +672,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignCardsController', ['$scope',
-        function                                   ( $scope ) {
+        .controller('CampaignCardsController', ['$scope', 'c6State',
+        function                               ( $scope,   c6State ) {
             var CampaignCtrl = $scope.CampaignCtrl,
                 campaign = CampaignCtrl.model;
 
@@ -710,6 +710,12 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 }, data));
                 return card;
             };
+
+            this.newWildcard = function(type) {
+                c6State.goTo('MR:NewWildcard', null, {
+                    type: type
+                });
+            };
         }])
 
         .config(['c6StateProvider',
@@ -718,9 +724,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             function                                ( MiniReelService , cinema6 , c6State ) {
                 var CampaignState = c6State.get('MR:Campaign');
 
-                this.model = function() {
+                this.model = function(params) {
                     var campaign = CampaignState.cModel,
-                        card = cinema6.db.create('card', MiniReelService.createCard('video'));
+                        card = cinema6.db.create('card', MiniReelService.createCard(params.type));
 
                     return deepExtend(card, {
                         id: undefined,
@@ -819,37 +825,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 CampaignCardsCtrl = $scope.CampaignCardsCtrl;
 
             var now = new Date().getTime();
+            var _private = {};
 
             $injector.invoke(WizardController, this);
-
-            this.tabs = [
-                {
-                    name: 'Editorial Content',
-                    sref: 'MR:Wildcard.Copy',
-                    required: true
-                },
-                {
-                    name: 'Video Content',
-                    sref: 'MR:Wildcard.Video',
-                    required: true
-                },
-                {
-                    name: 'Survey',
-                    sref: 'MR:Wildcard.Survey'
-                },
-                {
-                    name: 'Branding',
-                    sref: 'MR:Wildcard.Branding'
-                },
-                {
-                    name: 'Links',
-                    sref: 'MR:Wildcard.Links'
-                },
-                {
-                    name: 'Advertising',
-                    sref: 'MR:Wildcard.Advertising'
-                }
-            ];
 
             Object.defineProperties(this, {
                 validDate: {
@@ -889,6 +867,52 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 }
             });
 
+            _private.tabsForCardType = function(type) {
+                var copyTab = {
+                        name: 'Editorial Content',
+                        sref: 'MR:Wildcard.Copy',
+                        required: true
+                    },
+                    videoTab = {
+                        name: 'Video Content',
+                        sref: 'MR:Wildcard.Video',
+                        required: true
+                    },
+                    surveyTab = {
+                        name: 'Survey',
+                        sref: 'MR:Wildcard.Survey'
+                    },
+                    brandingTab = {
+                        name: 'Branding',
+                        sref: 'MR:Wildcard.Branding'
+                    },
+                    linksTab = {
+                        name: 'Links',
+                        sref: 'MR:Wildcard.Links'
+                    },
+                    advertTab = {
+                        name: 'Advertising',
+                        sref: 'MR:Wildcard.Advertising'
+                    },
+                    articleTab = {
+                        name: 'Webpage Content',
+                        required: true,
+                        sref: 'MR:Wildcard.Article'
+                    },
+                    thumbsTab = {
+                        name: 'Thumbnail Content',
+                        required: true,
+                        sref: 'MR:Wildcard.Thumbs'
+                    };
+                switch(type) {
+                case 'video':
+                    return [copyTab, videoTab, surveyTab,
+                            brandingTab, linksTab, advertTab];
+                case 'article':
+                    return [articleTab, thumbsTab];
+                }
+            };
+
             this.initWithModel = function(card) {
                 card.params.sponsor = card.params.sponsor || CampaignCtrl.model.brand;
                 card.params.ad = card.params.ad !== false;
@@ -897,6 +921,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.model = card;
                 this.campaignData = cState.metaData;
                 this.enableMoat = !!card.data.moat;
+                this.tabs = _private.tabsForCardType(card.type);
             };
 
             this.save = function() {
@@ -915,6 +940,62 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         .then(function() { return card; });
                 });
             };
+
+            if (window.c6.kHasKarma) { this._private = _private; }
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Article', [function() {
+                this.controller = 'WildcardArticleController';
+                this.controllerAs = 'wildcardArticleCtrl';
+                this.templateUrl = 'views/minireel/campaigns/campaign/cards/wildcard/article.html';
+
+                this.model = function() {
+                    return this.cParent.cModel;
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Thumbs', [function() {
+                this.controller = 'GenericController';
+                this.controllerAs = 'wildcardThumbsCtrl';
+                this.templateUrl = 'views/minireel/campaigns/campaign/cards/wildcard/thumbs.html';
+
+                this.model = function() {
+                    return this.cParent.cModel;
+                };
+            }]);
+        }])
+
+        .controller('WildcardArticleController', ['$sce', '$scope',
+        function                                 ( $sce,   $scope ) {
+            var self = this;
+            this.articleUrl = '';
+            this.iframeSrc = null;
+
+            this.initWithModel = function(card) {
+                if(card.data.src) {
+                    self.articleUrl = card.data.src;
+                }
+                this.model = card;
+            };
+
+            $scope.trustSrc = function(src) {
+                return $sce.trustAsResourceUrl(src);
+            };
+
+            $scope.$watch(function() {
+                return self.articleUrl;
+            }, function(articleUrl) {
+                if(self.model && articleUrl!=='') {
+                    var iframeSrc = articleUrl;
+                    self.model.data.src = iframeSrc;
+                    self.iframeSrc = iframeSrc;
+                }
+            });
         }])
 
         .config(['c6StateProvider',

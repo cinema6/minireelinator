@@ -5,6 +5,7 @@ define(['app'], function(appModule) {
         var $rootScope,
             $controller,
             cinema6,
+            c6State,
             $scope,
             CampaignCtrl,
             CampaignCardsCtrl;
@@ -18,6 +19,7 @@ define(['app'], function(appModule) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
                 cinema6 = $injector.get('cinema6');
+                c6State = $injector.get('c6State');
 
                 campaign = cinema6.db.create('campaign', {
                     id: 'cam-74070a860d121e',
@@ -112,6 +114,16 @@ define(['app'], function(appModule) {
 
             it('should return the card', function() {
                 expect(result).toBe(card);
+            });
+
+            describe('newWildcard(type)', function() {
+                it('should go to a the "new wildcard" state', function() {
+                    spyOn(c6State, 'goTo');
+                    CampaignCardsCtrl.newWildcard('video');
+                    expect(c6State.goTo).toHaveBeenCalledWith('MR:NewWildcard', null, {
+                        type: 'video'
+                    });
+                });
             });
 
             describe('if called with a card that is already added', function() {
