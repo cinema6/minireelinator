@@ -3,6 +3,7 @@
 * *[v1.14.0.rc1]*
   * [FIX]: Fix for an issue that prevented text cards from being created.
   * [FEATURE]: Enabled the creation of GettyImages and Flickr image cards.
+  * [FEATURE]: Added webpage card creation to the Campaign manager.
 
 ## v1.13.0 (June 24, 2015)
 * *[v1.13.0.rc1]*
