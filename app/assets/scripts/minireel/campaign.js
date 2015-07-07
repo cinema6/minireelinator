@@ -830,7 +830,21 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             $injector.invoke(WizardController, this);
 
             Object.defineProperties(this, {
+                validArticleModel: {
+                    get: function() {
+                        var validSrc = false,
+                            validThumb = false;
+                        if(WildcardCtrl.model.data.src) {
+                            validSrc = WildcardCtrl.model.data.src !== '';
+                        }
+                        if(WildcardCtrl.model.data.thumbUrl) {
+                            validThumb = WildcardCtrl.model.data.thumbUrl !== '';
+                        }
+                        return validSrc && validThumb;
+                    }
+                },
                 validDate: {
+                    configurable: true,
                     get: function() {
                         var endDate = this.campaignData.endDate;
 
@@ -839,6 +853,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     }
                 },
                 validReportingId: {
+                    configurable: true,
                     get: function() {
                         var moat = this.enableMoat,
                             hasId = !!this.campaignData.reportingId;
@@ -861,8 +876,23 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     }
                 },
                 validImageSrcs: {
+                    configurable: true,
                     get: function() {
                         return this.validThumb && this.validLogo;
+                    }
+                },
+                canSave: {
+                    get: function() {
+                        switch(WildcardCtrl.model.type) {
+                        case 'article':
+                            return WildcardCtrl.validArticleModel;
+                        case 'video':
+                            return (WildcardCtrl.placements.length > 0 ||
+                                   WildcardCtrl.minireel) &&
+                                   WildcardCtrl.validDate &&
+                                   WildcardCtrl.validReportingId &&
+                                   WildcardCtrl.validImageSrcs;
+                        }
                     }
                 }
             });
@@ -970,9 +1000,12 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('WildcardArticleController', ['$sce', '$scope',
-        function                                 ( $sce,   $scope ) {
+        .controller('WildcardArticleController', ['$sce', '$scope', 'c6Debounce',
+                                                  'OpenGraphService',
+        function                                 ( $sce,   $scope,   c6Debounce,
+                                                   OpenGraphService ) {
             var self = this;
+            var _private = { };
             this.articleUrl = '';
             this.iframeSrc = null;
 
@@ -987,15 +1020,29 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 return $sce.trustAsResourceUrl(src);
             };
 
+            _private.updateModel = function() {
+                var iframeSrc = self.articleUrl;
+                self.model.data.src = iframeSrc;
+                self.iframeSrc = iframeSrc;
+                return OpenGraphService.getData(iframeSrc)
+                    .then(function(data) {
+                        if(data.images && data.images.length > 0 && data.images[0].value) {
+                            self.model.data.thumbUrl = data.images[0].value;
+                        }
+                    });
+            };
+
+            _private.updateDebounce = c6Debounce(_private.updateModel, 10);
+
             $scope.$watch(function() {
                 return self.articleUrl;
-            }, function(articleUrl) {
-                if(self.model && articleUrl!=='') {
-                    var iframeSrc = articleUrl;
-                    self.model.data.src = iframeSrc;
-                    self.iframeSrc = iframeSrc;
+            }, function() {
+                if(self.model) {
+                    _private.updateDebounce();
                 }
             });
+
+            if (window.c6.kHasKarma) { this._private = _private; }
         }])
 
         .config(['c6StateProvider',

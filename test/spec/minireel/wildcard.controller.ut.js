@@ -138,6 +138,145 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                 });
             });
 
+            describe('validArticleModel', function() {
+                it('should be true if the src and thumbUrl attributes are not empty strings', function() {
+                    WildcardCtrl.model.data = {
+                        src: 'http://www.cinema6.com',
+                        thumbUrl: 'http://www.cinema6.com/logo'
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(true);
+                });
+
+                it('should be false if either src or thumbUrl are empty strings', function() {
+                    WildcardCtrl.model.data = {
+                        src: '',
+                        thumbUrl: 'http://www.cinema6.com/logo'
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(false);
+                    WildcardCtrl.model.data = {
+                        src: 'http://www.cinema6.com',
+                        thumbUrl: ''
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(false);
+                });
+
+                it('should be false if either src or thumbUrl are null', function() {
+                    WildcardCtrl.model.data = {
+                        src: null,
+                        thumbUrl: 'http://www.cinema6.com/logo'
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(false);
+                    WildcardCtrl.model.data = {
+                        src: 'http://www.cinema6.com',
+                        thumbUrl: null
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(false);
+                });
+
+                it('shoudl be false if either src or thumbUrl are undefined', function() {
+                    WildcardCtrl.model.data = {
+                        src: undefined,
+                        thumbUrl: 'http://www.cinema6.com/logo'
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(false);
+                    WildcardCtrl.model.data = {
+                        src: 'http://www.cinema6.com',
+                        thumbUrl: undefined
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(false);
+                });
+            });
+
+            describe('canSave', function() {
+                describe('for an article card', function() {
+
+                    beforeEach(function() {
+                        WildcardCtrl.model.type = 'article';
+                    });
+
+                    it('should return true if there is a valid article model', function() {
+                        WildcardCtrl.model.data = {
+                            src: 'http://www.cinema6.com',
+                            thumbUrl: 'http://www.cinema6.com/logo'
+                        };
+                        expect(WildcardCtrl.canSave).toBe(true);
+                    });
+
+                    it('should return false if there is not a valid article model', function() {
+                        WildcardCtrl.model.data = { };
+                        expect(WildcardCtrl.canSave).toBe(false);
+                    });
+                });
+
+                describe('for a video card', function() {
+
+                    beforeEach(function() {
+                        var validDate, validReportingId, validImageSrcs;
+                        Object.defineProperties(WildcardCtrl, {
+                            validDate: {
+                                get: function() {
+                                    return validDate;
+                                },
+                                set: function(val) {
+                                    validDate = val;
+                                }
+                            },
+                            validReportingId: {
+                                get: function() {
+                                    return validReportingId;
+                                },
+                                set: function(val) {
+                                    validReportingId = val;
+                                }
+                            },
+                            validImageSrcs: {
+                                get: function() {
+                                    return validImageSrcs;
+                                },
+                                set: function(val) {
+                                    validImageSrcs = val;
+                                }
+                            }
+                        });
+                        WildcardCtrl.model.type = 'video';
+                        WildcardCtrl.placements = ['placement'];
+                        WildcardCtrl.minireel = {};
+                        WildcardCtrl.validDate = true;
+                        WildcardCtrl.validReportingId = true;
+                        WildcardCtrl.validImageSrcs = true;
+                    });
+
+                    it('should return true if there are placements but no minireel', function() {
+                        delete WildcardCtrl.minireel;
+                        expect(WildcardCtrl.canSave).toBe(true);
+                    });
+
+                    it('should return true if there is a minireel but no placements', function() {
+                        WildcardCtrl.placements = [];
+                        expect(WildcardCtrl.canSave).toBe(true);
+                    });
+
+                    it('should return true if everything is valid', function() {
+                        expect(WildcardCtrl.canSave).toBe(true);
+                    });
+
+                    it('should return false if there is an invalid date', function() {
+                        WildcardCtrl.validDate = false;
+                        expect(WildcardCtrl.canSave).toBe(false);
+                    });
+
+                    it('should return false if there is an invalid reporting id', function() {
+                        WildcardCtrl.validReportingId = false;
+                        expect(WildcardCtrl.canSave).toBe(false);
+                    });
+
+                    it('should return false if there are invalid image srcs', function() {
+                        WildcardCtrl.validImageSrcs = false;
+                        expect(WildcardCtrl.canSave).toBe(false);
+                    });
+                });
+            });
+
             describe('validDate', function() {
                 it('should be true if endDate is null', function() {
                     WildcardCtrl.campaignData.endDate = null;
