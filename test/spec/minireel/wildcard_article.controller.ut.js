@@ -10,7 +10,6 @@ define(['app'], function(appModule) {
             MiniReelService,
             c6State, portal,
             WildcardArticleCtrl,
-            OpenGraphService,
             c6Debounce;
 
         var card,
@@ -32,12 +31,10 @@ define(['app'], function(appModule) {
                 $q = $injector.get('$q');
                 MiniReelService = $injector.get('MiniReelService');
                 c6State = $injector.get('c6State');
-                OpenGraphService = $injector.get('OpenGraphService');
                 c6Debounce = $injector.get('c6Debounce');
                 portal = c6State.get('Portal');
                 portal.cModel = {};
 
-                spyOn(OpenGraphService, 'getData').and.returnValue($q.when({}));
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
                     WildcardArticleCtrl = $controller('WildcardArticleController', {
@@ -110,29 +107,6 @@ define(['app'], function(appModule) {
 
                 it('should update the iframeSrc', function() {
                     expect(WildcardArticleCtrl.iframeSrc).toEqual('http://www.cinema6.com');
-                });
-
-                it('should call on the OpenGraphService', function() {
-                    expect(OpenGraphService.getData).toHaveBeenCalledWith('http://www.cinema6.com');
-                });
-
-                it('should update the model if there is a result from the OpenGraphService', function() {
-                    OpenGraphService.getData.and.returnValue($q.when({
-                        images: [
-                            {
-                                value: 'http://www.cinema6.com/logo'
-                            }
-                        ]
-                    }));
-                    WildcardArticleCtrl._private.updateModel('http://www.cinema6.com');
-                    $scope.$apply();
-                    expect(WildcardArticleCtrl.model.data.thumbUrl).toEqual('http://www.cinema6.com/logo');
-                });
-
-                it('should not update the model if there is not a result from the OpenGraphService', function() {
-                    OpenGraphService.getData.and.returnValue($q.when({}));
-                    WildcardArticleCtrl._private.updateModel('http://www.cinema6.com');
-                    expect(WildcardArticleCtrl.model.data.thumbUrl).not.toBeDefined();
                 });
             });
         });

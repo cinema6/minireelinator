@@ -1559,10 +1559,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
                                      'SettingsService','VideoService','ImageThumbnailService',
-                                     'VideoThumbnailService', 'ImageService',
+                                     'VideoThumbnailService', 'ImageService', 'OpenGraphService',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
                                       SettingsService , VideoService , ImageThumbnailService,
-                                      VideoThumbnailService,   ImageService ) {
+                                      VideoThumbnailService,   ImageService,   OpenGraphService ) {
             var ngCopy = angular.copy;
 
             var self = this,
@@ -2299,10 +2299,22 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 function articleThumbsValue() {
                     return function(data) {
-                        return {
-                            small: data.thumbUrl,
-                            large: data.thumbUrl
-                        };
+                        return OpenGraphService.getData(data.src)
+                            .then(function(ogData) {
+                                var thumbUrl = null;
+                                if(ogData.images &&
+                                   ogData.images.length > 0 &&
+                                   ogData.images[0].value) {
+                                    thumbUrl = ogData.images[0].value;
+                                }
+                                return {
+                                    small: thumbUrl,
+                                    large: thumbUrl
+                                };
+                            })
+                            .catch(function() {
+                                return null;
+                            });
                     };
                 }
 

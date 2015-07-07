@@ -826,17 +826,11 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             Object.defineProperties(this, {
                 validArticleModel: {
                     get: function() {
-                        var validSrc = false,
-                            validThumb = false;
+                        var validSrc = false;
                         if(WildcardCtrl.model.data.src) {
                             validSrc = WildcardCtrl.model.data.src !== '';
                         }
-                        if(WildcardCtrl.model.thumb) {
-                            validThumb = WildcardCtrl.model.thumb !== '';
-                        } else if(WildcardCtrl.model.data.thumbUrl) {
-                            validThumb = WildcardCtrl.model.data.thumbUrl !== '';
-                        }
-                        return validSrc && validThumb;
+                        return validSrc;
                     }
                 },
                 validDate: {
@@ -927,7 +921,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     },
                     thumbsTab = {
                         name: 'Thumbnail Content',
-                        required: true,
+                        required: false,
                         sref: 'MR:Wildcard.Thumbs'
                     };
                 switch(type) {
@@ -997,9 +991,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         }])
 
         .controller('WildcardArticleController', ['$sce', '$scope', 'c6Debounce',
-                                                  'OpenGraphService',
-        function                                 ( $sce,   $scope,   c6Debounce,
-                                                   OpenGraphService ) {
+        function                                 ( $sce,   $scope,   c6Debounce ) {
             var self = this;
             var _private = { };
             this.articleUrl = '';
@@ -1020,17 +1012,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 var iframeSrc = self.articleUrl;
                 self.model.data.src = iframeSrc;
                 self.iframeSrc = iframeSrc;
-                return OpenGraphService.getData(iframeSrc)
-                    .then(function(data) {
-                        if(data.images && data.images.length > 0 && data.images[0].value) {
-                            self.model.data.thumbUrl = data.images[0].value;
-                        } else {
-                            self.model.data.thumbUrl = null;
-                        }
-                    })
-                    .catch(function() {
-                        self.model.data.thumbUrl = null;
-                    });
             };
 
             _private.updateDebounce = c6Debounce(_private.updateModel, 250);

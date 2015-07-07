@@ -139,49 +139,30 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
             });
 
             describe('validArticleModel', function() {
-                it('should be true if the src and thumbUrl attributes are not empty strings', function() {
+                it('should be true if the src is not an empty string', function() {
                     WildcardCtrl.model.data = {
-                        src: 'http://www.cinema6.com',
-                        thumbUrl: 'http://www.cinema6.com/logo'
+                        src: 'http://www.cinema6.com'
                     };
                     expect(WildcardCtrl.validArticleModel).toBe(true);
                 });
 
-                it('should be false if either src or thumbUrl are empty strings', function() {
+                it('should be false if the src is an empty string', function() {
                     WildcardCtrl.model.data = {
-                        src: '',
-                        thumbUrl: 'http://www.cinema6.com/logo'
-                    };
-                    expect(WildcardCtrl.validArticleModel).toBe(false);
-                    WildcardCtrl.model.data = {
-                        src: 'http://www.cinema6.com',
-                        thumbUrl: ''
+                        src: ''
                     };
                     expect(WildcardCtrl.validArticleModel).toBe(false);
                 });
 
-                it('should be false if either src or thumbUrl are null', function() {
+                it('should be false if the src is null', function() {
                     WildcardCtrl.model.data = {
-                        src: null,
-                        thumbUrl: 'http://www.cinema6.com/logo'
-                    };
-                    expect(WildcardCtrl.validArticleModel).toBe(false);
-                    WildcardCtrl.model.data = {
-                        src: 'http://www.cinema6.com',
-                        thumbUrl: null
+                        src: null
                     };
                     expect(WildcardCtrl.validArticleModel).toBe(false);
                 });
 
-                it('shoudl be false if either src or thumbUrl are undefined', function() {
+                it('shoudl be false if src is undefined', function() {
                     WildcardCtrl.model.data = {
-                        src: undefined,
-                        thumbUrl: 'http://www.cinema6.com/logo'
-                    };
-                    expect(WildcardCtrl.validArticleModel).toBe(false);
-                    WildcardCtrl.model.data = {
-                        src: 'http://www.cinema6.com',
-                        thumbUrl: undefined
+                        src: undefined
                     };
                     expect(WildcardCtrl.validArticleModel).toBe(false);
                 });
@@ -422,7 +403,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                             {
                                 name: 'Thumbnail Content',
                                 sref: 'MR:Wildcard.Thumbs',
-                                required: true
+                                required: false
                             }
                         ]);
                     });

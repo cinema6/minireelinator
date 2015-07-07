@@ -11,6 +11,7 @@
                 CollateralService,
                 ImageThumbnailService,
                 VideoThumbnailService,
+                OpenGraphService,
                 SettingsService,
                 ImageService,
                 VideoService,
@@ -54,6 +55,7 @@
                     CollateralService = $injector.get('CollateralService');
                     ImageThumbnailService = $injector.get('ImageThumbnailService');
                     VideoThumbnailService = $injector.get('VideoThumbnailService');
+                    OpenGraphService = $injector.get('OpenGraphService');
                     SettingsService = $injector.get('SettingsService');
                     ImageService = $injector.get('ImageService');
                     VideoService = $injector.get('VideoService');
@@ -234,8 +236,8 @@
                                 data: {
                                     src: 'http://www.cinema6.com',
                                     thumbs: {
-                                        small: 'images.somewhere.com/large.jpg',
-                                        large: 'images.somewhere.com/large.jpg'
+                                        small: 'http://www.cinema6.com/og_logo.jpg',
+                                        large: 'http://www.cinema6.com/og_logo.jpg'
                                     }
                                 },
                                 thumbs: {
@@ -1582,7 +1584,7 @@
                                 params: {},
                                 data: {
                                     src: 'http://www.cinema6.com',
-                                    thumbUrl: 'images.somewhere.com/large.jpg'
+                                    thumbUrl: 'http://www.cinema6.com/og_logo.jpg'
                                 }
                             });
                         });
@@ -2263,6 +2265,16 @@
                                     'images.' + service + '.com/video/' + videoid + '/small.jpg',
                                     'images.' + service + '.com/video/' + videoid + '/large.jpg'
                                 ));
+                            });
+
+                            spyOn(OpenGraphService, 'getData').and.callFake(function(articleUrl) {
+                                return $q.when({
+                                    images: [
+                                        {
+                                            value: articleUrl + '/og_logo.jpg'
+                                        }
+                                    ]
+                                });
                             });
                         });
 
