@@ -116,16 +116,6 @@ define(['app'], function(appModule) {
                 expect(result).toBe(card);
             });
 
-            describe('newWildcard(type)', function() {
-                it('should go to a the "new wildcard" state', function() {
-                    spyOn(c6State, 'goTo');
-                    CampaignCardsCtrl.newWildcard('video');
-                    expect(c6State.goTo).toHaveBeenCalledWith('MR:NewWildcard', null, {
-                        type: 'video'
-                    });
-                });
-            });
-
             describe('if called with a card that is already added', function() {
                 var newDate;
 

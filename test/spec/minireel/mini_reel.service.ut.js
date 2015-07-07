@@ -237,6 +237,10 @@
                                         small: 'images.somewhere.com/large.jpg',
                                         large: 'images.somewhere.com/large.jpg'
                                     }
+                                },
+                                thumbs: {
+                                    small: 'images.somewhere.com/user_specified.jpg',
+                                    large: 'images.somewhere.com/user_specified.jpg'
                                 }
                             },
                             {
@@ -1573,7 +1577,7 @@
                                     clickUrls: []
                                 },
                                 collateral: {},
-                                thumb: 'images.somewhere.com/large.jpg',
+                                thumb: 'images.somewhere.com/user_specified.jpg',
                                 links: {},
                                 params: {},
                                 data: {

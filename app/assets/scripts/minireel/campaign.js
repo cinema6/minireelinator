@@ -672,8 +672,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignCardsController', ['$scope', 'c6State',
-        function                               ( $scope,   c6State ) {
+        .controller('CampaignCardsController', ['$scope',
+        function                               ( $scope ) {
             var CampaignCtrl = $scope.CampaignCtrl,
                 campaign = CampaignCtrl.model;
 
@@ -709,12 +709,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     item: card
                 }, data));
                 return card;
-            };
-
-            this.newWildcard = function(type) {
-                c6State.goTo('MR:NewWildcard', null, {
-                    type: type
-                });
             };
         }])
 
@@ -837,7 +831,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         if(WildcardCtrl.model.data.src) {
                             validSrc = WildcardCtrl.model.data.src !== '';
                         }
-                        if(WildcardCtrl.model.data.thumbUrl) {
+                        if(WildcardCtrl.model.thumb) {
+                            validThumb = WildcardCtrl.model.thumb !== '';
+                        } else if(WildcardCtrl.model.data.thumbUrl) {
                             validThumb = WildcardCtrl.model.data.thumbUrl !== '';
                         }
                         return validSrc && validThumb;
@@ -1016,7 +1012,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.model = card;
             };
 
-            $scope.trustSrc = function(src) {
+            this.trustSrc = function(src) {
                 return $sce.trustAsResourceUrl(src);
             };
 
@@ -1028,11 +1024,16 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     .then(function(data) {
                         if(data.images && data.images.length > 0 && data.images[0].value) {
                             self.model.data.thumbUrl = data.images[0].value;
+                        } else {
+                            self.model.data.thumbUrl = null;
                         }
+                    })
+                    .catch(function() {
+                        self.model.data.thumbUrl = null;
                     });
             };
 
-            _private.updateDebounce = c6Debounce(_private.updateModel, 10);
+            _private.updateDebounce = c6Debounce(_private.updateModel, 250);
 
             $scope.$watch(function() {
                 return self.articleUrl;

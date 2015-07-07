@@ -10,16 +10,19 @@ define(['app'], function(appModule) {
             MiniReelService,
             c6State, portal,
             WildcardArticleCtrl,
-            OpenGraphService;
+            OpenGraphService,
+            c6Debounce;
 
-        var card;
+        var card,
+            debounceFunc;
 
         beforeEach(function() {
             module(appModule.name);
 
-            // module(function($provide) {
-            //     $provide.value('c6Debounce', jasmine.createSpy());
-            // });
+            module(function($provide) {
+                debounceFunc = function() { };
+                $provide.value('c6Debounce', jasmine.createSpy().and.returnValue(debounceFunc));
+            });
 
             inject(function(_$injector_) {
                 $injector = _$injector_;
@@ -30,7 +33,7 @@ define(['app'], function(appModule) {
                 MiniReelService = $injector.get('MiniReelService');
                 c6State = $injector.get('c6State');
                 OpenGraphService = $injector.get('OpenGraphService');
-                //c6Debounce = $injector.get('c6Debounce');
+                c6Debounce = $injector.get('c6Debounce');
                 portal = c6State.get('Portal');
                 portal.cModel = {};
 
@@ -60,6 +63,12 @@ define(['app'], function(appModule) {
             describe('iframeSrc', function() {
                 it('should be initialized to null', function() {
                     expect(WildcardArticleCtrl.iframeSrc).toBeNull();
+                });
+            });
+
+            describe('updateDebounce', function() {
+                it('should be defined', function() {
+                    expect(WildcardArticleCtrl._private.updateDebounce).toBeDefined();
                 });
             });
         });

@@ -5,13 +5,13 @@
                 Thumbnail URL <strong class="typo--danger">*</strong>
             </span>
             <span class="forms__inputHolder">
-                <input ng-model="card.data.thumbUrl" type="text" class="forms__textField forms__textField--block">
+                <input ng-model="card.thumb" type="text" class="forms__textField forms__textField--block">
                 <span class="typo--guidance typo--warning">Type in a <strong>URL</strong>.</span>
             </span>
         </label>
     </form>
     <div class="thumbPreview">
-        <img src="{{card.data.thumbUrl}}" ng-if="card.data.thumbUrl"></img>
+        <img src="{{card.thumb || card.data.thumbUrl}}" ng-if="card.thumb || card.data.thumbUrl" style="max-width:100%;max-height:100%;"></img>
     </div>
     <p class="modalBody__fineprint typo--danger"><strong>*</strong> Indicates required field.</p>
 </div>

@@ -2,7 +2,7 @@
     <header class="pageHeader">
         <div class="pageHeader__titleBar clearfix">
             <h1 class="pageTitle"><strong>Sponsored Cards</strong></h1>
-            <button ng-click="CampaignCardsCtrl.newWildcard('video')" title="New Video Card" class="btnAction btnAction--primary btnAction--hasIcon" >
+            <button c6-sref="MR:New:Wildcard" c6-params="{type: 'video'}" title="New Video Card" class="btnAction btnAction--primary btnAction--hasIcon" >
                 <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                      viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
                     <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M9,0C4,0,0,4,0,9c0,5,4,9,9,9s9-4,9-9C18,4,14,0,9,0z M9,16c-3.9,0-7-3.1-7-7
@@ -10,7 +10,7 @@
                 </svg>
                 <span class="btn__label">New Video Card</span>
             </button>
-            <button ng-click="CampaignCardsCtrl.newWildcard('article')" title="New Website Card" class="btnAction btnAction--primary btnAction--hasIcon" >
+            <button c6-sref="MR:New:Wildcard" c6-params="{type: 'article'}" title="New Website Card" class="btnAction btnAction--primary btnAction--hasIcon" >
                 <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                      viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
                     <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M9,0C4,0,0,4,0,9c0,5,4,9,9,9s9-4,9-9C18,4,14,0,9,0z M9,16c-3.9,0-7-3.1-7-7
@@ -40,7 +40,7 @@
                         c6-params="{}">
                             <div class="miniReel__img"
                             title="Edit This MiniReel: {{card.title}}"
-                            c6-bg-img="{{card.thumb}}">
+                            c6-bg-img="{{card.thumb || card.data.thumbUrl}}">
                                 &nbsp;
                             </div>
                         </a>

@@ -1730,14 +1730,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     }),
                     collateral: copy({}),
                     thumb: function(card) {
-                        switch(this.type) {
-                        case 'article':
-                            return (card.data &&
-                                    card.data.thumbs &&
-                                    card.data.thumbs.large) || null;
-                        default:
-                            return (card.thumbs && card.thumbs.large) || null;
-                        }
+                        return (card.thumbs && card.thumbs.large) || null;
                     },
                     links: function(card) {
                         switch (card.type) {
@@ -2461,7 +2454,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         campaign: copy(),
                         collateral: copy(),
                         links: copy(),
-                        params: copy()
+                        params: copy(),
+                        thumbs: function(card) {
+                            return (card.thumb || null) && {
+                                small: card.thumb,
+                                large: card.thumb
+                            };
+                        }
                     },
                     image: {
                         id: copy(),
