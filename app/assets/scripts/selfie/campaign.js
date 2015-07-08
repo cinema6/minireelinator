@@ -273,23 +273,23 @@ function( angular , c6State  , PaginatedListState                    ,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 card = SelfieCampaignCtrl.card;
 
-            function createModelLinks(uiLinks) {
-                var start = card.links.Action ? {
-                    Action: card.links.Action
-                } : {};
+            // function createModelLinks(uiLinks) {
+            //     var start = card.links.Action ? {
+            //         Action: card.links.Action
+            //     } : {};
 
-                return uiLinks.filter(function(link) {
-                    return !!link.href;
-                }).reduce(function(links, link) {
-                    links[link.name] = link.href;
-                    return links;
-                }, start);
-            }
+            //     return uiLinks.filter(function(link) {
+            //         return !!link.href;
+            //     }).reduce(function(links, link) {
+            //         links[link.name] = link.href;
+            //         return links;
+            //     }, start);
+            // }
 
-            function Link() {
-                this.name = 'Untitled';
-                this.href = null;
-            }
+            // function Link() {
+            //     this.name = 'Untitled';
+            //     this.href = null;
+            // }
 
             Object.defineProperties(this, {
                 validLogo: {
@@ -302,54 +302,57 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
             });
 
-            this.newLink = new Link();
+            // this.newLink = new Link();
 
-            this.links = ['Website', 'Facebook', 'Twitter', 'YouTube', 'Pinterest']
-                .concat(Object.keys(card.links))
-                .filter(function(name, index, names) {
-                    return names.indexOf(name) === index &&
-                        name.indexOf('Action') < 0;
-                })
+            this.links = ['Website','Facebook','Twitter','Pinterest','YouTube','Instagram']
                 .map(function(name) {
-                    var href = card.links[name] || null;
+                    var href = card.links[name] || null,
+                        cssClass = name.toLowerCase();
 
                     return {
+                        cssClass: /website/.test(cssClass) ? 'link' : cssClass,
                         name: name,
                         href: href
                     };
                 });
 
-            this.addNewLink = function() {
-                this.addLink(this.newLink);
+            // this.addNewLink = function() {
+            //     this.addLink(this.newLink);
 
-                this.newLink = new Link();
-            };
+            //     this.newLink = new Link();
+            // };
 
-            this.removeLink = function(link) {
-                this.links = this.links.filter(function(listLink) {
-                    return listLink !== link;
-                });
-            };
+            // this.removeLink = function(link) {
+            //     this.links = this.links.filter(function(listLink) {
+            //         return listLink !== link;
+            //     });
+            // };
 
-            this.addLink = function(link) {
-                this.links = this.links.concat([link]);
-            };
+            // this.addLink = function(link) {
+            //     this.links = this.links.concat([link]);
+            // };
 
             this.updateLinks = function() {
-                card.links = createModelLinks(SelfieCampaignSponsorCtrl.links);
-                card.params.action = card.links.Action ? card.params.action : null;
+                // card.links = createModelLinks(SelfieCampaignSponsorCtrl.links);
+
+                SelfieCampaignSponsorCtrl.links.forEach(function(link) {
+                    if (link.href) {
+                        card.links[link.name] = link.href;
+                    }
+                });
+                // card.params.action = card.links.Action ? card.params.action : null;
             };
 
-            this.actionTypeOptions = ['Button', 'Text']
-                .reduce(function(options, label) {
-                    options[label] = label.toLowerCase();
-                    return options;
-                }, {});
+            // this.actionTypeOptions = ['Button', 'Text']
+            //     .reduce(function(options, label) {
+            //         options[label] = label.toLowerCase();
+            //         return options;
+            //     }, {});
 
-            card.params.action = card.params.action || {
-                type: 'button',
-                label: ''
-            };
+            // card.params.action = card.params.action || {
+            //     type: 'button',
+            //     label: ''
+            // };
 
             $scope.$on('SelfieCampaignWillSave', this.updateLinks);
         }])
@@ -425,6 +428,47 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
                 }
             });
+        }])
+
+        .controller('SelfieCampaignTextController', ['$scope',
+        function                                    ( $scope ) {
+            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+                card = SelfieCampaignCtrl.card;
+
+            function updateActionLink() {
+                card.params.action = card.links.Action ? card.params.action : null;
+            }
+
+            // this.actionTypeOptions = ['Button', 'Text']
+            //     .reduce(function(options, label) {
+            //         options[label] = label.toLowerCase();
+            //         return options;
+            //     }, {});
+
+            card.params.action = card.params.action || {
+                type: 'button',
+                label: ''
+            };
+
+            this.actionTypeOptions = ['Button', 'Text']
+                .reduce(function(options, label) {
+                    var type = label.toLowerCase();
+
+                    options[type] = {
+                        name: label,
+                        type: type
+                    };
+
+                    return options;
+                }, {});
+
+            this.actionType = this.actionTypeOptions[card.params.action.type];
+            // this.actionLabel = card.params.action.label;
+
+            // card.params.action = this.actionTypeOptions[card.params.action.type || 'button'];
+
+            $scope.$on('SelfieCampaignWillSave', updateActionLink);
+
         }])
 
         .controller('SelfieCampaignPreviewController', ['$scope','cinema6','MiniReelService',

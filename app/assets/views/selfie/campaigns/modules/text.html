@@ -1,0 +1,111 @@
+<div class="grid__item one-half">
+    <section class="formSection__group" ng-controller="SelfieCampaignTextController as SelfieCampaignTextCtrl" c6-alias="SelfieCampaignCtrl.card as card">
+
+        <h1 class="formSection__title">
+            <span class="formSection__number">
+                <span class="formSection__numberText">3</span>
+            </span>
+            <span class="formSection__titleText tk--hdr">Add Your Text</span>
+        </h1>
+
+        <div class="form__items">
+
+            <fieldset class="form__item">
+                <textarea c6-fill-check class="form__textBox form__textArea form__fillCheck" type="text" id="c6-video-title" ng-model="card.title"></textarea>
+                <label class="form__label" for="c6-video-title">
+                    <i class="fa fa-times ui--error"></i>
+                    Card Title
+                </label>
+                <div class="form__helpBox form__helpBox--right">
+                    <div class="form__helpText">
+                        Title for the card.
+                    </div>
+                </div>
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                    </p>
+                </div>
+            </fieldset>
+
+            <fieldset class="form__item">
+                <textarea c6-fill-check class="form__textBox form__textArea form__fillCheck" type="text" id="c6-video-note" ng-model="card.note"></textarea>
+                <label class="form__label" for="c6-video-note">
+                    <i class="fa fa-times ui--error"></i>
+                    Card Text
+                </label>
+                <div class="form__helpBox form__helpBox--right">
+                    <div class="form__helpText">
+                        Text for the card.
+                    </div>
+                </div>
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                    </p>
+                </div>
+            </fieldset>
+
+            <fieldset class="form__item">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-campaign-label" ng-model="card.params.action.label">
+                <label class="form__label" for="c6-campaign-label">
+                    <i class="fa fa-times ui--error"></i>
+                    Label
+                </label>
+                <div class="form__helpBox form__helpBox--center">
+                    <div class="form__helpText">
+                        Provide a unique identifier for your campaign. This is not displayed within the ad unit and is for internal tracking purposes.
+                    </div>
+                </div>
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                    </p>
+                </div>
+
+            </fieldset>
+
+            <fieldset class="form__item">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-campaign-name" ng-model="card.links.Action">
+                <label class="form__label" for="c6-campaign-name">
+                    <i class="fa fa-times ui--error"></i>
+                    Link
+                </label>
+                <div class="form__helpBox form__helpBox--center">
+                    <div class="form__helpText">
+                        Provide a unique identifier for your campaign. This is not displayed within the ad unit and is for internal tracking purposes.
+                    </div>
+                </div>
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                    </p>
+                </div>
+
+            </fieldset>
+
+            <fieldset class="form__item">
+                <select c6-select-box class="form__selectBox form__selectBox--single" ng-model="SelfieCampaignTextCtrl.actionType" ng-options="value.name for (key, value) in SelfieCampaignTextCtrl.actionTypeOptions"></select>
+                <label class="form__label" for="c6-sponsor-name">   
+                    <i class="fa fa-times ui--error"></i> 
+                    Selector Menu Label
+                </label>
+                <div class="form__helpBox form__helpBox--right">
+                    <div class="form__helpText">
+                        Provide a unique identifier for your campaign. This is not displayed within the ad unit and is for internal tracking purposes.
+                    </div>
+                </div>
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                    </p>
+                </div>
+            </fieldset>
+
+        </div>
+
+        <br><br><br><br>
+
+    </section><!--.formSection__group-->
+
+</div><!--.grid__item-->

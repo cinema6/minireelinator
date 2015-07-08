@@ -8,8 +8,14 @@
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
         <base href="/assets/" />
 
-        <link rel="stylesheet" href="styles/c6main.css">
-        <link rel="stylesheet" href="styles/minireel/c6studio.css">
+        <!-- <link rel="stylesheet" href="styles/c6main.css"> -->
+        <!-- <link rel="stylesheet" href="styles/minireel/c6studio.css"> -->
+        <style>
+            .preview__embedHolder {
+                display: block;
+                position: relative;
+            }
+        </style>
 
         <link rel="stylesheet" ng-if="AppCtrl.branding" ng-href="/collateral/branding/{{AppCtrl.branding}}/styles/splash.css">
         <script type="text/javascript" src="//use.typekit.net/xuz8gem.js"></script>

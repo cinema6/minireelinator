@@ -30,7 +30,7 @@
         margin: 0.75em 0;
     }
     textarea {
-        resize: vertical;
+        resize:none;
     }
     img {
         border:0; max-width:100%;
@@ -286,7 +286,7 @@
             transition: transform 0.3s;
             padding:0 1.25em 0 0;
         }
-            .form__inputText:focus ~ .form__label,
+            .form__textBox:focus ~ .form__label,
             .form__fillCheck--filled ~ .form__label {
                 transform: translate3d(-100%, 0, 0);
                 text-align: right;
@@ -300,7 +300,7 @@
                 top:1.4375em; left:0;
                 padding:0;
             }
-            .form__item--bigInput .form__inputText:focus ~ .form__label,
+            .form__item--bigInput .form__textBox:focus ~ .form__label,
             .form__item--bigInput .form__fillCheck--filled ~ .form__label {
                 transform: translate3d(0, -2.5em, 0);
                 text-align: center;
@@ -311,24 +311,29 @@
             }
 
 
-        
-        .form__inputText {
+    
+
+    /*  input fields classes
+        ================================================ */
+        .form__textBox { 
             border:0;
             padding:0.375rem 0.5rem 0.3125rem;
             border-bottom:2px solid #5c5c5c;
             font-size:1.125em;
             color:#1c1c1c;
             background:none;
-            transition:border 0.3s, background 0.3s;
+            transition:border 0.3s, background 0.3s, height 0.3s;
             width:100%;
             font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
         }
-            .form__inputText:focus {
+        
+            .form__textBox:focus { 
                 border-bottom:2px solid #00c0ff;
                 background:#fff;
             }
 
-            .form__item--bigInput .form__inputText {
+
+            .form__item--bigInput .form__textBox {
                 text-align: center;
                 font-size:1.5em;
                 margin:0.5rem 0 0 0;
@@ -337,25 +342,8 @@
 
 
 
-        .form__selectBox:focus {
-            outline:none;
-        }
-            .form__selectBox--single {
-                width:100%;
-            }
-
-        .form__selectBox option {
-            background:#00c0ff;
-            border:0;
-            color:#fff;
-        }
-            .form__selectBox option:hover {
-                background:#de0073;
-            }
-
-
-
-
+    /*  .form__helpBox classes
+        ================================================ */
         .form__helpBox {
             border-radius:6px;
             background:#fff;
@@ -367,7 +355,7 @@
             opacity:0;
             transition:opacity 0.3s 0.2s;
         }
-            .form__inputText:focus ~ .form__helpBox,
+            .form__textBox:focus ~ .form__helpBox,
             .ui--active ~ .form__helpBox--right {
                 opacity:1;
             }
@@ -395,7 +383,7 @@
                 left:20%; right:20%;
                 margin:1em 0 0 0;
             }
-                .form__inputText:focus ~ .form__helpBox--center {
+                .form__textBox:focus ~ .form__helpBox--center {
                     top:100%;
                 }
 
@@ -418,7 +406,7 @@
                 margin:0 0 0 1.75em;
                 width:46%;
             }
-                .form__inputText:focus ~ .form__helpBox--right,
+                .form__textBox:focus ~ .form__helpBox--right,
                 .ui--active ~ .form__helpBox--right {
                     left:100%;
                     top:-0.75em;
@@ -439,35 +427,38 @@
                     }
 
 
-            .form__errorBox {
-                overflow: hidden;
-                height:0;
-            }
-                .ui--hasError .form__errorBox {
-                    height:auto;
-                }
-            .form__errorMsg {
-                font-size:0.8125em;
-                margin:0;
-                background:#ff1e1e;
-                color:#fff;
-                padding:0.125em 0.75em 0.25em 0.75em;
-                transition: transform 0.3s 0.2s;
-                transform: translate3d(0, -100%, 0);
-            }
-                .ui--hasError .form__errorMsg {
-                    transform: translate3d(0, 0, 0);
-                }
 
-                .form__item--bigInput .form__errorMsg {
-                    text-align: center;
-                }
+    /*  .form__errorBox classes
+        ================================================ */
+        .form__errorBox {
+            overflow: hidden;
+            height:0;
+        }
+            .ui--hasError .form__errorBox {
+                height:auto;
+            }
+        .form__errorMsg {
+            font-size:0.8125em;
+            margin:0;
+            background:#ff1e1e;
+            color:#fff;
+            padding:0.125em 0.75em 0.25em 0.75em;
+            transition: transform 0.3s 0.2s;
+            transform: translate3d(0, -100%, 0);
+        }
+            .ui--hasError .form__errorMsg {
+                transform: translate3d(0, 0, 0);
+            }
+
+            .form__item--bigInput .form__errorMsg {
+                text-align: center;
+            }
                 
 
             
 
 
-        .ui--hasError .form__inputText {
+        .ui--hasError .form__textBox{
             border-color:#ff1e1e;
         }
         .ui--hasError .form__label {
@@ -518,14 +509,18 @@
         }
 
             .select2-container--default .select2-results__option[aria-selected=true] {
-                background-color:#de0073;
-                color:#fff;   
+                background-color:#00a2de;
+                color:#fff;
             }
                 .select2-container--default .select2-results__option[aria-selected=true]:before {
                     content:'\f00c';
                     font:normal normal normal 14px/1 FontAwesome;
                     padding-right:0.5em;
                 }
+
+                    .select2-container--default .select2-results__option[aria-selected=true].select2-results__option--highlighted[aria-selected] {
+                        background-color:#00a2de; 
+                    }
 
             .select2-container--default .select2-results__option--highlighted[aria-selected] {
                 background-color:#00c0ff;
@@ -535,3 +530,22 @@
         .select2-dropdown {
             border:0; border-radius: 0;
         }
+
+
+
+
+    /*  .form__textArea classes
+        ================================================ */
+        .form__textArea {
+            line-height:1.333;
+            height:1.95em;
+            overflow:hidden;
+            resize:none;
+        }
+            .form__textArea:focus {
+                height:4.55em;
+            }
+
+            .form__textArea.form__fillCheck--filled {
+                height:4.55em;
+            }
