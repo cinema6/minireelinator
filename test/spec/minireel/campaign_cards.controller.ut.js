@@ -5,6 +5,7 @@ define(['app'], function(appModule) {
         var $rootScope,
             $controller,
             cinema6,
+            c6State,
             $scope,
             CampaignCtrl,
             CampaignCardsCtrl;
@@ -18,6 +19,7 @@ define(['app'], function(appModule) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
                 cinema6 = $injector.get('cinema6');
+                c6State = $injector.get('c6State');
 
                 campaign = cinema6.db.create('campaign', {
                     id: 'cam-74070a860d121e',

@@ -1559,10 +1559,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
                                      'SettingsService','VideoService','ImageThumbnailService',
-                                     'VideoThumbnailService', 'ImageService',
+                                     'VideoThumbnailService', 'ImageService', 'OpenGraphService',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
                                       SettingsService , VideoService , ImageThumbnailService,
-                                      VideoThumbnailService,   ImageService ) {
+                                      VideoThumbnailService,   ImageService,   OpenGraphService ) {
             var ngCopy = angular.copy;
 
             var self = this,
@@ -1615,7 +1615,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             }
 
             function makeCard(rawData, base) {
-                var template, dataTemplates, imageDataTemplate, videoDataTemplate,
+                var template, dataTemplates, articleDataTemplate,
+                    imageDataTemplate, videoDataTemplate,
                     dataTemplate,
                     card = base || {
                         data: {}
@@ -1663,6 +1664,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             card.sponsored ? 'Sponsored' : null,
                             (function() {
                                 switch (this.type) {
+                                case 'article':
+                                    return 'Article';
                                 case 'image':
                                     return 'Image';
                                 case 'video':
@@ -1740,6 +1743,19 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     params: copy({})
                 };
 
+                // articleDataTemplate: this is the base template for all
+                // article cards.
+                articleDataTemplate = {
+                    src: copy(null),
+                    thumbUrl: function(data) {
+                        if(data.thumbs) {
+                            return data.thumbs.large;
+                        } else {
+                            return null;
+                        }
+                    }
+                };
+
                 // imageDataTemplate: this is the base template for all
                 // image cards.
                 imageDataTemplate = {
@@ -1810,6 +1826,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 // card's data, the current property key and a reference to
                 // the card.
                 dataTemplates = {
+                    article: articleDataTemplate,
                     image: imageDataTemplate,
                     video: videoDataTemplate,
                     videoBallot: extend(ngCopy(videoDataTemplate), {
@@ -2280,6 +2297,28 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     };
                 }
 
+                function articleThumbsValue() {
+                    return function(data) {
+                        return OpenGraphService.getData(data.src)
+                            .then(function(ogData) {
+                                if(ogData.images &&
+                                   ogData.images.length > 0 &&
+                                   ogData.images[0].value) {
+                                    var thumbUrl = ogData.images[0].value;
+                                    return {
+                                        small: thumbUrl,
+                                        large: thumbUrl
+                                    };
+                                } else {
+                                    return null;
+                                }
+                            })
+                            .catch(function() {
+                                return null;
+                            });
+                    };
+                }
+
                 var embedInfo = null;
                 function embedValue(key) {
                     return function(data) {
@@ -2302,6 +2341,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 }
 
                 dataTemplates = {
+                    article: {
+                        src: copy(null),
+                        thumbs: articleThumbsValue()
+                    },
                     image: {
                         imageid: copy(null),
                         service: copy(null),
@@ -2414,6 +2457,25 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 };
 
                 cardBases = {
+                    article: {
+                        id: copy(),
+                        type: value('article'),
+                        title: copy(null),
+                        modules: value([]),
+                        placementId: copy(null),
+                        templateUrl: copy(null),
+                        sponsored: copy(false),
+                        campaign: copy(),
+                        collateral: copy(),
+                        links: copy(),
+                        params: copy(),
+                        thumbs: function(card) {
+                            return (card.thumb || null) && {
+                                small: card.thumb,
+                                large: card.thumb
+                            };
+                        }
+                    },
                     image: {
                         id: copy(),
                         type: value('image'),

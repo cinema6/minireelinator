@@ -47,7 +47,7 @@
             class="btnAction btnAction--success btnAction--last"
             type="button"
             ng-show="(WildcardCtrl.tabs.indexOf(WildcardCtrl.currentTab) + 1) === WildcardCtrl.tabs.length"
-            ng-disabled="(WildcardCtrl.placements.length < 1 && !WildcardCtrl.minireel) || !WildcardCtrl.validDate || !WildcardCtrl.validReportingId || !WildcardCtrl.validImageSrcs"
+            ng-disabled="!WildcardCtrl.canSave"
             title="Save">
             Save
         </button>

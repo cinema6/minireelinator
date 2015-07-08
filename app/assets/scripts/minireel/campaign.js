@@ -673,7 +673,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         }])
 
         .controller('CampaignCardsController', ['$scope',
-        function                                   ( $scope ) {
+        function                               ( $scope ) {
             var CampaignCtrl = $scope.CampaignCtrl,
                 campaign = CampaignCtrl.model;
 
@@ -718,9 +718,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             function                                ( MiniReelService , cinema6 , c6State ) {
                 var CampaignState = c6State.get('MR:Campaign');
 
-                this.model = function() {
+                this.model = function(params) {
                     var campaign = CampaignState.cModel,
-                        card = cinema6.db.create('card', MiniReelService.createCard('video'));
+                        cardType = (params.type === 'article') ? 'article' : 'video',
+                        card = cinema6.db.create('card', MiniReelService.createCard(cardType));
 
                     return deepExtend(card, {
                         id: undefined,
@@ -819,40 +820,29 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 CampaignCardsCtrl = $scope.CampaignCardsCtrl;
 
             var now = new Date().getTime();
+            var _private = {};
 
             $injector.invoke(WizardController, this);
 
-            this.tabs = [
-                {
-                    name: 'Editorial Content',
-                    sref: 'MR:Wildcard.Copy',
-                    required: true
-                },
-                {
-                    name: 'Video Content',
-                    sref: 'MR:Wildcard.Video',
-                    required: true
-                },
-                {
-                    name: 'Survey',
-                    sref: 'MR:Wildcard.Survey'
-                },
-                {
-                    name: 'Branding',
-                    sref: 'MR:Wildcard.Branding'
-                },
-                {
-                    name: 'Links',
-                    sref: 'MR:Wildcard.Links'
-                },
-                {
-                    name: 'Advertising',
-                    sref: 'MR:Wildcard.Advertising'
-                }
-            ];
-
             Object.defineProperties(this, {
+                validArticleModel: {
+                    get: function() {
+                        var validSrc = false,
+                            validTitle = false;
+                        if(!WildcardCtrl.model.data){
+                            return false;
+                        }
+                        if(WildcardCtrl.model.data.src) {
+                            validSrc = WildcardCtrl.model.data.src !== '';
+                        }
+                        if(WildcardCtrl.model.title) {
+                            validTitle = WildcardCtrl.model.title !== '';
+                        }
+                        return validSrc && validTitle;
+                    }
+                },
                 validDate: {
+                    configurable: true,
                     get: function() {
                         var endDate = this.campaignData.endDate;
 
@@ -861,6 +851,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     }
                 },
                 validReportingId: {
+                    configurable: true,
                     get: function() {
                         var moat = this.enableMoat,
                             hasId = !!this.campaignData.reportingId;
@@ -883,11 +874,72 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     }
                 },
                 validImageSrcs: {
+                    configurable: true,
                     get: function() {
                         return this.validThumb && this.validLogo;
                     }
+                },
+                canSave: {
+                    get: function() {
+                        switch(WildcardCtrl.model.type) {
+                        case 'article':
+                            return WildcardCtrl.validArticleModel;
+                        case 'video':
+                            return (WildcardCtrl.placements.length > 0 ||
+                                   WildcardCtrl.minireel) &&
+                                   WildcardCtrl.validDate &&
+                                   WildcardCtrl.validReportingId &&
+                                   WildcardCtrl.validImageSrcs;
+                        }
+                    }
                 }
             });
+
+            _private.tabsForCardType = function(type) {
+                var copyTab = {
+                        name: 'Editorial Content',
+                        sref: 'MR:Wildcard.Copy',
+                        required: true
+                    },
+                    videoTab = {
+                        name: 'Video Content',
+                        sref: 'MR:Wildcard.Video',
+                        required: true
+                    },
+                    surveyTab = {
+                        name: 'Survey',
+                        sref: 'MR:Wildcard.Survey'
+                    },
+                    brandingTab = {
+                        name: 'Branding',
+                        sref: 'MR:Wildcard.Branding'
+                    },
+                    linksTab = {
+                        name: 'Links',
+                        sref: 'MR:Wildcard.Links'
+                    },
+                    advertTab = {
+                        name: 'Advertising',
+                        sref: 'MR:Wildcard.Advertising'
+                    },
+                    articleTab = {
+                        name: 'Webpage Content',
+                        required: true,
+                        sref: 'MR:Wildcard.Article'
+                    },
+                    thumbsTab = {
+                        name: 'Thumbnail Content',
+                        required: false,
+                        sref: 'MR:Wildcard.Thumbs'
+                    };
+                switch(type) {
+                case 'article':
+                    return [articleTab, thumbsTab];
+                default:
+                    return [copyTab, videoTab, surveyTab,
+                            brandingTab, linksTab, advertTab];
+                }
+            };
 
             this.initWithModel = function(card) {
                 card.params.sponsor = card.params.sponsor || CampaignCtrl.model.brand;
@@ -897,6 +949,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.model = card;
                 this.campaignData = cState.metaData;
                 this.enableMoat = !!card.data.moat;
+                this.tabs = _private.tabsForCardType(card.type);
             };
 
             this.save = function() {
@@ -915,6 +968,71 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         .then(function() { return card; });
                 });
             };
+
+            if (window.c6.kHasKarma) { this._private = _private; }
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Article', [function() {
+                this.controller = 'WildcardArticleController';
+                this.controllerAs = 'wildcardArticleCtrl';
+                this.templateUrl = 'views/minireel/campaigns/campaign/cards/wildcard/article.html';
+
+                this.model = function() {
+                    return this.cParent.cModel;
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Thumbs', [function() {
+                this.controller = 'GenericController';
+                this.controllerAs = 'wildcardThumbsCtrl';
+                this.templateUrl = 'views/minireel/campaigns/campaign/cards/wildcard/thumbs.html';
+
+                this.model = function() {
+                    return this.cParent.cModel;
+                };
+            }]);
+        }])
+
+        .controller('WildcardArticleController', ['$sce', '$scope', 'c6Debounce',
+        function                                 ( $sce,   $scope,   c6Debounce ) {
+            var self = this;
+            var _private = { };
+            this.articleUrl = '';
+            this.iframeSrc = null;
+
+            this.initWithModel = function(card) {
+                if(card.data.src) {
+                    self.articleUrl = card.data.src;
+                }
+                this.model = card;
+            };
+
+            this.trustSrc = function(src) {
+                return $sce.trustAsResourceUrl(src);
+            };
+
+            _private.updateModel = function() {
+                var iframeSrc = self.articleUrl;
+                self.model.data.src = iframeSrc;
+                self.iframeSrc = iframeSrc;
+            };
+
+            _private.updateDebounce = c6Debounce(_private.updateModel, 250);
+
+            $scope.$watch(function() {
+                return self.articleUrl;
+            }, function() {
+                if(self.model) {
+                    _private.updateDebounce();
+                }
+            });
+
+            if (window.c6.kHasKarma) { this._private = _private; }
         }])
 
         .config(['c6StateProvider',
