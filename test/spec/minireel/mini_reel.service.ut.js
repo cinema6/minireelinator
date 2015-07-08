@@ -219,6 +219,7 @@
                             {
                                 id: 'rc-b2d076ce052459',
                                 type: 'article',
+                                title: 'This is an article card!',
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,
@@ -1563,7 +1564,7 @@
                             expect(deck[2]).toEqual({
                                 id: 'rc-b2d076ce052459',
                                 type: 'article',
-                                title: null,
+                                title: 'This is an article card!',
                                 note: null,
                                 label: 'Article',
                                 ad: false,

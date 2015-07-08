@@ -2301,16 +2301,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     return function(data) {
                         return OpenGraphService.getData(data.src)
                             .then(function(ogData) {
-                                var thumbUrl = null;
                                 if(ogData.images &&
                                    ogData.images.length > 0 &&
                                    ogData.images[0].value) {
-                                    thumbUrl = ogData.images[0].value;
+                                    var thumbUrl = ogData.images[0].value;
+                                    return {
+                                        small: thumbUrl,
+                                        large: thumbUrl
+                                    };
+                                } else {
+                                    return null;
                                 }
-                                return {
-                                    small: thumbUrl,
-                                    large: thumbUrl
-                                };
                             })
                             .catch(function() {
                                 return null;
@@ -2459,6 +2460,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     article: {
                         id: copy(),
                         type: value('article'),
+                        title: copy(null),
                         modules: value([]),
                         placementId: copy(null),
                         templateUrl: copy(null),

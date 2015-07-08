@@ -720,7 +720,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
                 this.model = function(params) {
                     var campaign = CampaignState.cModel,
-                        card = cinema6.db.create('card', MiniReelService.createCard(params.type));
+                        cardType = (params.type === 'article') ? 'article' : 'video',
+                        card = cinema6.db.create('card', MiniReelService.createCard(cardType));
 
                     return deepExtend(card, {
                         id: undefined,
@@ -826,11 +827,18 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             Object.defineProperties(this, {
                 validArticleModel: {
                     get: function() {
-                        var validSrc = false;
+                        var validSrc = false,
+                            validTitle = false;
+                        if(!WildcardCtrl.model.data){
+                            return false;
+                        }
                         if(WildcardCtrl.model.data.src) {
                             validSrc = WildcardCtrl.model.data.src !== '';
                         }
-                        return validSrc;
+                        if(WildcardCtrl.model.title) {
+                            validTitle = WildcardCtrl.model.title !== '';
+                        }
+                        return validSrc && validTitle;
                     }
                 },
                 validDate: {
@@ -925,11 +933,11 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         sref: 'MR:Wildcard.Thumbs'
                     };
                 switch(type) {
-                case 'video':
-                    return [copyTab, videoTab, surveyTab,
-                            brandingTab, linksTab, advertTab];
                 case 'article':
                     return [articleTab, thumbsTab];
+                default:
+                    return [copyTab, videoTab, surveyTab,
+                            brandingTab, linksTab, advertTab];
                 }
             };
 

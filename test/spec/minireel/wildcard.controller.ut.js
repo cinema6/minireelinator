@@ -139,52 +139,94 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
             });
 
             describe('validArticleModel', function() {
-                it('should be true if the src is not an empty string', function() {
-                    WildcardCtrl.model.data = {
-                        src: 'http://www.cinema6.com'
+                it('should be false if there is no data property', function() {
+                    WildcardCtrl.model = {
+                        title: 'Title'
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(false);
+                });
+
+                it('should be true if src and title are not empty strings', function() {
+                    WildcardCtrl.model = {
+                        title: 'Title',
+                        data: {
+                            src: 'http://www.cinema6.com'
+                        }
                     };
                     expect(WildcardCtrl.validArticleModel).toBe(true);
                 });
 
-                it('should be false if the src is an empty string', function() {
-                    WildcardCtrl.model.data = {
-                        src: ''
+                it('should be false if either the src or title are an empty string', function() {
+                    WildcardCtrl.model = {
+                        title: 'Title',
+                        data: {
+                            src: ''
+                        }
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(false);
+                    WildcardCtrl.model = {
+                        title: '',
+                        data: {
+                            src: 'http://www.cinema6.com'
+                        }
                     };
                     expect(WildcardCtrl.validArticleModel).toBe(false);
                 });
 
-                it('should be false if the src is null', function() {
-                    WildcardCtrl.model.data = {
-                        src: null
+                it('should be false if either the src or title are null', function() {
+                    WildcardCtrl.model = {
+                        title: 'Title',
+                        data: {
+                            src: null
+                        }
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(false);
+                    WildcardCtrl.model = {
+                        title: null,
+                        data: {
+                            src: 'http://www.cinema6.com'
+                        }
                     };
                     expect(WildcardCtrl.validArticleModel).toBe(false);
                 });
 
-                it('shoudl be false if src is undefined', function() {
-                    WildcardCtrl.model.data = {
-                        src: undefined
+                it('should be false if either the src or title are undefined', function() {
+                    WildcardCtrl.model = {
+                        title: 'Title',
+                        data: {
+                            src: undefined
+                        }
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(false);
+                    WildcardCtrl.model = {
+                        title: undefined,
+                        data: {
+                            src: 'http://www.cinema6.com'
+                        }
                     };
                     expect(WildcardCtrl.validArticleModel).toBe(false);
                 });
             });
 
             describe('canSave', function() {
+
                 describe('for an article card', function() {
-
-                    beforeEach(function() {
-                        WildcardCtrl.model.type = 'article';
-                    });
-
                     it('should return true if there is a valid article model', function() {
-                        WildcardCtrl.model.data = {
-                            src: 'http://www.cinema6.com',
-                            thumbUrl: 'http://www.cinema6.com/logo'
+                        WildcardCtrl.model = {
+                            title: 'Cinema6',
+                            type: 'article',
+                            data: {
+                                src: 'http://www.cinema6.com',
+                                thumbUrl: 'http://www.cinema6.com/logo'
+                            }
                         };
                         expect(WildcardCtrl.canSave).toBe(true);
                     });
 
                     it('should return false if there is not a valid article model', function() {
-                        WildcardCtrl.model.data = { };
+                        WildcardCtrl.model = {
+                            type: 'article'
+                        };
                         expect(WildcardCtrl.canSave).toBe(false);
                     });
                 });
