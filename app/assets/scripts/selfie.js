@@ -99,5 +99,46 @@ function( angular , c6State  , c6uilib ) {
                         $document.find('head').append(file);
                     });
             };
+        }])
+
+        .directive('c6FillCheck', [function() {
+            return {
+                restrict: 'A',
+                link: function(scope, $element) {
+                    scope.$watch(function() {
+                        return $element.val();
+                    }, function(newValue, oldVal) {
+                        if (newValue !== oldVal) { return; }
+
+                        if (newValue) {
+                            $element.addClass('form__fillCheck--filled');
+                        } else {
+                            $element.removeClass('form__fillCheck--filled');
+                        }
+                    });
+                }
+            };
+        }])
+
+        .directive('c6SelectBox', [function() {
+            return {
+                restrict: 'A',
+                link: function(scope, $element) {
+                    $element.select2({
+                        minimumResultsForSearch: Infinity
+                    });
+
+                    $element.on('select2:open', function() {
+                        $($element).addClass('form__fillCheck--filled');
+                        $($element).addClass('ui--active');
+                        //$('.form__selectBox--single ~ .form__helpBox' ).addClass('form__helpBox--show');
+                    });
+
+                    $element.on('select2:close', function() {
+                        $($element).removeClass('ui--active');
+                        //$('.form__selectBox--single ~ .form__helpBox' ).removeClass('form__helpBox--show');
+                    });
+                }
+            };
         }]);
 });
