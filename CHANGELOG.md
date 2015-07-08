@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.14.0 (July 8, 2015)
+* *[v.1.14.0.rc2]*
+  * [FEATURE]: Activated image card creation in the wizard
+  * [FIX]: Fix for an error preventing the preview of a webpage card
+
 * *[v1.14.0.rc1]*
   * [FEATURE]: Enabled the creation of GettyImages and Flickr image cards.
   * [FEATURE]: Added webpage card creation to the Campaign manager.

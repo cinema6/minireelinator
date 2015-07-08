@@ -1433,6 +1433,64 @@
                         });
                     });
 
+                    describe('convertCardForPlayer(card, _minireel)', function() {
+                        describe('when passed an article card', function() {
+                            var editorArticleCard;
+
+                            beforeEach(function() {
+                                var card = minireel.data.deck[2];
+                                var spy = jasmine.createSpy('spy()');
+                                $rootScope.$apply(function() {
+                                    MiniReelService.convertCardForEditor(card).then(spy);
+                                });
+                                editorArticleCard = spy.calls.mostRecent().args[0];
+                                spyOn(OpenGraphService, 'getData');
+                            });
+
+                            function convertCardForPlayer(card) {
+                                var spy = jasmine.createSpy('spy()');
+                                $rootScope.$apply(function() {
+                                    MiniReelService.convertCardForPlayer(card).then(spy);
+                                });
+                                return spy.calls.mostRecent().args[0];
+                            }
+
+                            it('should call on the OpenGraphService', function() {
+                                OpenGraphService.getData.and.returnValue($q.when({}));
+                                convertCardForPlayer(editorArticleCard);
+                                expect(OpenGraphService.getData).toHaveBeenCalled();
+                            });
+
+                            describe('when no images are found by the OpenGraphService', function() {
+                                beforeEach(function() {
+                                    OpenGraphService.getData.and.returnValue($q.when({}));
+                                });
+
+                                it('should set data.thumbs to the correct value', function() {
+                                    var result = convertCardForPlayer(editorArticleCard);
+                                    expect(result.data.thumbs).toEqual({
+                                        small: null,
+                                        large: null
+                                    });
+                                });
+                            });
+
+                            describe('when the OpenGraphService returns an error', function() {
+                                beforeEach(function() {
+                                    OpenGraphService.getData.and.returnValue($q.reject({}));
+                                });
+
+                                it('should set data.thumbs to the correct value', function() {
+                                    var result = convertCardForPlayer(editorArticleCard);
+                                    expect(result.data.thumbs).toEqual({
+                                        small: null,
+                                        large: null
+                                    });
+                                });
+                            });
+                        });
+                    });
+
                     describe('convertForEditor(minireel)', function() {
                         var spy,
                             result,
