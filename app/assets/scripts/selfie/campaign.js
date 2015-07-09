@@ -8,9 +8,7 @@ function( angular , c6State  , PaginatedListState                    ,
     var copy = angular.copy,
         extend = angular.extend,
         forEach = angular.forEach,
-        isObject = angular.isObject,
-        fromJson = angular.fromJson,
-        toJson = angular.toJson;
+        isObject = angular.isObject;
 
     function deepExtend(target, extension) {
         forEach(extension, function(extensionValue, prop) {
@@ -223,7 +221,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
             function addCampaignToCard(campaign) {
                 SelfieCampaignCtrl.card.campaignId = campaign.id;
-                SelfieCampaignCtrl.card.campaign.campaignId = campaign.id;
+                // SelfieCampaignCtrl.card.campaign.campaignId = campaign.id;
 
                 return campaign;
             }
@@ -273,24 +271,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 card = SelfieCampaignCtrl.card;
 
-            // function createModelLinks(uiLinks) {
-            //     var start = card.links.Action ? {
-            //         Action: card.links.Action
-            //     } : {};
-
-            //     return uiLinks.filter(function(link) {
-            //         return !!link.href;
-            //     }).reduce(function(links, link) {
-            //         links[link.name] = link.href;
-            //         return links;
-            //     }, start);
-            // }
-
-            // function Link() {
-            //     this.name = 'Untitled';
-            //     this.href = null;
-            // }
-
             Object.defineProperties(this, {
                 validLogo: {
                     get: function() {
@@ -301,8 +281,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
                 }
             });
-
-            // this.newLink = new Link();
 
             this.links = ['Website','Facebook','Twitter','Pinterest','YouTube','Instagram']
                 .map(function(name) {
@@ -316,134 +294,52 @@ function( angular , c6State  , PaginatedListState                    ,
                     };
                 });
 
-            // this.addNewLink = function() {
-            //     this.addLink(this.newLink);
-
-            //     this.newLink = new Link();
-            // };
-
-            // this.removeLink = function(link) {
-            //     this.links = this.links.filter(function(listLink) {
-            //         return listLink !== link;
-            //     });
-            // };
-
-            // this.addLink = function(link) {
-            //     this.links = this.links.concat([link]);
-            // };
-
             this.updateLinks = function() {
-                // card.links = createModelLinks(SelfieCampaignSponsorCtrl.links);
-
                 SelfieCampaignSponsorCtrl.links.forEach(function(link) {
                     if (link.href) {
                         card.links[link.name] = link.href;
                     }
                 });
-                // card.params.action = card.links.Action ? card.params.action : null;
             };
-
-            // this.actionTypeOptions = ['Button', 'Text']
-            //     .reduce(function(options, label) {
-            //         options[label] = label.toLowerCase();
-            //         return options;
-            //     }, {});
-
-            // card.params.action = card.params.action || {
-            //     type: 'button',
-            //     label: ''
-            // };
 
             $scope.$on('SelfieCampaignWillSave', this.updateLinks);
         }])
 
-        .controller('SelfieCampaignVideoController', ['$injector','$scope','VideoService',
-        function                                     ( $injector , $scope , VideoService ) {
+        .controller('SelfieCampaignVideoController', ['$injector','$scope','SelfieVideoService',
+                                                      'c6Debounce',
+        function                                     ( $injector , $scope , SelfieVideoService ,
+                                                       c6Debounce ) {
             var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
-                val;
+                SelfieCampaignVideoCtrl = this,
+                card = SelfieCampaignCtrl.card,
+                service = card.data.service,
+                id = card.data.videoid;
 
-            function getJSONProp(json, prop) {
-                return (fromJson(json) || {})[prop];
-            }
+            this.videoUrl = SelfieVideoService.urlFromData(service, id);
+            this.disableTrimmer = function() { return true; };
 
-            function setJSONProp(json, prop, value) {
-                var proto = {};
+            this.updateUrl = c6Debounce(function() {
+                SelfieVideoService.dataFromUrl(SelfieCampaignVideoCtrl.videoUrl)
+                    .then(function(data) {
+                        card.data.service = data.service;
+                        card.data.videoid = data.id;
+                    });
+            }, 3000);
 
-                proto[prop] = value;
-
-                return toJson(extend(fromJson(json) || {}, proto));
-            }
-
-            this.model = SelfieCampaignCtrl.card;
-            this.adPreviewPageUrl = '';
-
-            Object.defineProperties(this, {
-                videoUrl: {
-                    enumerable: true,
-                    configurable: true,
-                    get: function() {
-                        var service = this.model.data.service,
-                            id = this.model.data.videoid;
-
-                        return VideoService.urlFromData(service, id) || val;
-                    },
-                    set: function(value) {
-                        var info = VideoService.dataFromUrl(value) || {
-                            service: null,
-                            id: null
-                        };
-
-                        val = value;
-
-                        this.model.data.service = info.service;
-                        this.model.data.videoid = info.id;
-                    }
-                },
-                isAdUnit: {
-                    get: function() {
-                        return this.model.data.service === 'adUnit';
-                    },
-                    set: function(bool) {
-                        this.model.data.service = bool ? 'adUnit' : null;
-                    }
-                },
-                vastTag: {
-                    get: function() {
-                        return getJSONProp(this.model.data.videoid, 'vast') || null;
-                    },
-                    set: function(value) {
-                        this.model.data.videoid = setJSONProp(
-                            this.model.data.videoid,
-                            'vast',
-                            value
-                        );
-                    }
-                },
-                adTag: {
-                    get: function() {
-                        return this.vastTag && this.vastTag.replace(
-                            '{pageUrl}',
-                            encodeURIComponent(this.adPreviewPageUrl)
-                        );
-                    }
-                }
-            });
         }])
 
         .controller('SelfieCampaignTextController', ['$scope',
         function                                    ( $scope ) {
             var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+                SelfieCampaignTextCtrl = this,
                 card = SelfieCampaignCtrl.card;
 
             function updateActionLink() {
-                card.params.action = card.links.Action ? card.params.action : null;
+                card.params.action = card.links.Action ? {
+                    type: SelfieCampaignTextCtrl.actionType.type,
+                    label: card.params.action.label
+                } : null;
             }
-
-            // this.actionTypeOptions = ['Button', 'Text']
-            //     .reduce(function(options, label) {
-            //         options[label] = label.toLowerCase();
-            //         return options;
-            //     }, {});
 
             card.params.action = card.params.action || {
                 type: 'button',
@@ -451,21 +347,17 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.actionTypeOptions = ['Button', 'Text']
-                .reduce(function(options, label) {
-                    var type = label.toLowerCase();
-
-                    options[type] = {
-                        name: label,
-                        type: type
+                .map(function(option) {
+                    return {
+                        name: option,
+                        type: option.toLowerCase()
                     };
+                });
 
-                    return options;
-                }, {});
-
-            this.actionType = this.actionTypeOptions[card.params.action.type];
-            // this.actionLabel = card.params.action.label;
-
-            // card.params.action = this.actionTypeOptions[card.params.action.type || 'button'];
+            this.actionType = this.actionTypeOptions
+                .filter(function(option) {
+                    return option.type === card.params.action.type;
+                })[0];
 
             $scope.$on('SelfieCampaignWillSave', updateActionLink);
 
@@ -538,6 +430,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                         cardForPlayer.data.autoplay = false;
                         cardForPlayer.data.skip = true;
+                        cardForPlayer.data.controls = true;
 
                         newExperience.data.deck = [cardForPlayer];
 
