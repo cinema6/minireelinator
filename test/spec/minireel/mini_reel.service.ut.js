@@ -220,6 +220,7 @@
                                 id: 'rc-b2d076ce052459',
                                 type: 'article',
                                 title: 'This is an article card!',
+                                note: null,
                                 placementId: null,
                                 templateUrl: null,
                                 sponsored: false,

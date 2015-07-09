@@ -2467,6 +2467,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         id: copy(),
                         type: value('article'),
                         title: copy(null),
+                        note: value(null),
                         modules: value([]),
                         placementId: copy(null),
                         templateUrl: copy(null),
