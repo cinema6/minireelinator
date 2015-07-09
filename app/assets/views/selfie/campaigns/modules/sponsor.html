@@ -47,7 +47,7 @@
             </fieldset>
 
             <fieldset class="form__item" ng-repeat="link in SelfieCampaignSponsorCtrl.links">
-                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-{{link.name}}">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-{{link.name}}" ng-model="link.href">
                 <label class="form__label" for="c6-sponsor-{{link.name}}">
                     <i class="fa fa-times ui--error"></i>
                     <i class="fa fa-{{link.cssClass}} tk--active"></i> {{link.name}}
