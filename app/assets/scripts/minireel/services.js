@@ -2310,11 +2310,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                         large: thumbUrl
                                     };
                                 } else {
-                                    return null;
+                                    return {
+                                        small: null,
+                                        large: null
+                                    };
                                 }
                             })
                             .catch(function() {
-                                return null;
+                                return {
+                                    small: null,
+                                    large: null
+                                };
                             });
                     };
                 }
