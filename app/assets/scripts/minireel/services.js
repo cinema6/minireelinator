@@ -1013,9 +1013,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             _private.fetchGettyThumbs = function(imageid) {
                 return {
-                    small: 'http://embed-cdn.gettyimages.com/xt/' + imageid +
+                    small: '//embed-cdn.gettyimages.com/xt/' + imageid +
                         '.jpg?v=1&g=fs1|0|DV|33|651&s=1',
-                    large: 'http://embed-cdn.gettyimages.com/xt/' + imageid +
+                    large: '//embed-cdn.gettyimages.com/xt/' + imageid +
                         '.jpg?v=1&g=fs1|0|DV|33|651&s=1'
                 };
             };
@@ -1296,7 +1296,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             // This function uses GettyImages' oEmbed API endpoint to fetch the embed code for an
             // image
             _private.getGettyEmbedInfo = function(imageid) {
-                var request = 'http://embed.gettyimages.com/oembed?' +
+                var request = '//embed.gettyimages.com/oembed?' +
                     'url=' + encodeURIComponent('http://gty.im/' + imageid);
                 return $http.get(request, {cache: true}).
                     then(function(json) {
