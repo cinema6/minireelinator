@@ -10,6 +10,7 @@
             hammer: 'https://lib.cinema6.com/hammer.js/1.1.3-0-gc6a0b6f/hammer.min',
             modernizr: 'https://lib.cinema6.com/modernizr/modernizr.custom.71747',
             youtube: 'lib/youtube',
+            select2: 'lib/select2.min',
             cryptojs: 'https://lib.cinema6.com/cryptojs/v3.1.2/sha1',
             angular: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular.min',
             ngAnimate: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular-animate.min',
