@@ -1,5 +1,25 @@
 # MiniReelinator
 
+## v1.14.0 (July 8, 2015)
+* *[v1.14.0.rc3]*
+  * [FIX]: Fix for an issue causing a card note to be displayed incorrectly.
+* *[/v1.14.0.rc3]*
+
+* *[v1.14.0.rc2]*
+  * [FEATURE]: Activated image card creation in the wizard
+  * [FIX]: Fix for an error preventing the preview of a webpage card
+* *[/v1.14.0.rc2]*
+
+* *[v1.14.0.rc1]*
+  * [FEATURE]: Enabled the creation of GettyImages and Flickr image cards.
+  * [FEATURE]: Added webpage card creation to the Campaign manager.
+* *[/v1.14.0.rc1]*
+
+## v1.13.1 (July 1, 2015)
+* *[v1.13.1.rc1]*
+  * [FIX]: Fix for an issue that prevented text cards from being created.
+* *[/v1.13.1.rc1]*
+
 ## v1.13.0 (June 24, 2015)
 * *[v1.13.0.rc1]*
   * [FEATURE]: Add Selfie Application

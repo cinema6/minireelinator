@@ -1,0 +1,23 @@
+<div class="modalBody__group modalBody__group--sideTabs mrEdit__copyTab" c6-alias="WildcardCtrl.model as card">
+    <form>
+        <label class="forms__pair forms__pair--spacer clearfix">
+            <span class="forms__name">
+                Slide Title <strong class="typo--danger">*</strong>
+            </span>
+            <span class="forms__inputHolder">
+                <input ng-model="card.title" type="text" class="forms__textField forms__textField--block">
+                <span class="typo--guidance typo--warning">({{card.title.length || 0}} of 100 max characters recommended)</span>
+            </span>
+        </label>
+        <label class="forms__pair forms__pair--spacer clearfix">
+            <span class="forms__name">
+                Thumbnail URL
+            </span>
+            <span class="forms__inputHolder">
+                <input ng-model="card.thumb" type="text" class="forms__textField forms__textField--block">
+                <span class="typo--guidance typo--warning">Type in a <strong>URL</strong>.</span>
+            </span>
+        </label>
+    </form>
+    <p class="modalBody__fineprint typo--danger"><strong>*</strong> Indicates required field.</p>
+</div>

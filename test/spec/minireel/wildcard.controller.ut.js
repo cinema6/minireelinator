@@ -67,9 +67,13 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
         });
 
         it('should inherit from the WizardController', inject(function($injector) {
-            expect(Object.keys(WildcardCtrl)).toEqual(jasmine.objectContaining(Object.keys($injector.instantiate(WizardController, {
+            var wildKeys = Object.keys(WildcardCtrl);
+            var wizardKeys = Object.keys($injector.instantiate(WizardController, {
                 $scope: $scope
-            }))));
+            }));
+            wizardKeys.forEach(function(key) {
+                expect(wildKeys).toContain(key);
+            });
         }));
 
         describe('properties', function() {
@@ -84,7 +88,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     WildcardState.cModel.params.sponsor = 'Custom';
                     WildcardCtrl.initWithModel(WildcardState.cModel);
 
-                    expect(WildcardCtrl.model.params.sponsor).toBe('Custom')
+                    expect(WildcardCtrl.model.params.sponsor).toBe('Custom');
                 });
 
                 it('should default params.ad', function() {
@@ -134,36 +138,165 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                 });
             });
 
-            describe('tabs', function() {
-                it('should be a list of tabs', function() {
-                    expect(WildcardCtrl.tabs).toEqual([
-                        {
-                            name: 'Editorial Content',
-                            sref: 'MR:Wildcard.Copy',
-                            required: true
-                        },
-                        {
-                            name: 'Video Content',
-                            sref: 'MR:Wildcard.Video',
-                            required: true
-                        },
-                        {
-                            name: 'Survey',
-                            sref: 'MR:Wildcard.Survey'
-                        },
-                        {
-                            name: 'Branding',
-                            sref: 'MR:Wildcard.Branding'
-                        },
-                        {
-                            name: 'Links',
-                            sref: 'MR:Wildcard.Links'
-                        },
-                        {
-                            name: 'Advertising',
-                            sref: 'MR:Wildcard.Advertising'
+            describe('validArticleModel', function() {
+                it('should be false if there is no data property', function() {
+                    WildcardCtrl.model = {
+                        title: 'Title'
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(false);
+                });
+
+                it('should be true if src and title are not empty strings', function() {
+                    WildcardCtrl.model = {
+                        title: 'Title',
+                        data: {
+                            src: 'http://www.cinema6.com'
                         }
-                    ]);
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(true);
+                });
+
+                it('should be false if either the src or title are an empty string', function() {
+                    WildcardCtrl.model = {
+                        title: 'Title',
+                        data: {
+                            src: ''
+                        }
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(false);
+                    WildcardCtrl.model = {
+                        title: '',
+                        data: {
+                            src: 'http://www.cinema6.com'
+                        }
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(false);
+                });
+
+                it('should be false if either the src or title are null', function() {
+                    WildcardCtrl.model = {
+                        title: 'Title',
+                        data: {
+                            src: null
+                        }
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(false);
+                    WildcardCtrl.model = {
+                        title: null,
+                        data: {
+                            src: 'http://www.cinema6.com'
+                        }
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(false);
+                });
+
+                it('should be false if either the src or title are undefined', function() {
+                    WildcardCtrl.model = {
+                        title: 'Title',
+                        data: {
+                            src: undefined
+                        }
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(false);
+                    WildcardCtrl.model = {
+                        title: undefined,
+                        data: {
+                            src: 'http://www.cinema6.com'
+                        }
+                    };
+                    expect(WildcardCtrl.validArticleModel).toBe(false);
+                });
+            });
+
+            describe('canSave', function() {
+
+                describe('for an article card', function() {
+                    it('should return true if there is a valid article model', function() {
+                        WildcardCtrl.model = {
+                            title: 'Cinema6',
+                            type: 'article',
+                            data: {
+                                src: 'http://www.cinema6.com',
+                                thumbUrl: 'http://www.cinema6.com/logo'
+                            }
+                        };
+                        expect(WildcardCtrl.canSave).toBe(true);
+                    });
+
+                    it('should return false if there is not a valid article model', function() {
+                        WildcardCtrl.model = {
+                            type: 'article'
+                        };
+                        expect(WildcardCtrl.canSave).toBe(false);
+                    });
+                });
+
+                describe('for a video card', function() {
+
+                    beforeEach(function() {
+                        var validDate, validReportingId, validImageSrcs;
+                        Object.defineProperties(WildcardCtrl, {
+                            validDate: {
+                                get: function() {
+                                    return validDate;
+                                },
+                                set: function(val) {
+                                    validDate = val;
+                                }
+                            },
+                            validReportingId: {
+                                get: function() {
+                                    return validReportingId;
+                                },
+                                set: function(val) {
+                                    validReportingId = val;
+                                }
+                            },
+                            validImageSrcs: {
+                                get: function() {
+                                    return validImageSrcs;
+                                },
+                                set: function(val) {
+                                    validImageSrcs = val;
+                                }
+                            }
+                        });
+                        WildcardCtrl.model.type = 'video';
+                        WildcardCtrl.placements = ['placement'];
+                        WildcardCtrl.minireel = {};
+                        WildcardCtrl.validDate = true;
+                        WildcardCtrl.validReportingId = true;
+                        WildcardCtrl.validImageSrcs = true;
+                    });
+
+                    it('should return true if there are placements but no minireel', function() {
+                        delete WildcardCtrl.minireel;
+                        expect(WildcardCtrl.canSave).toBe(true);
+                    });
+
+                    it('should return true if there is a minireel but no placements', function() {
+                        WildcardCtrl.placements = [];
+                        expect(WildcardCtrl.canSave).toBe(true);
+                    });
+
+                    it('should return true if everything is valid', function() {
+                        expect(WildcardCtrl.canSave).toBe(true);
+                    });
+
+                    it('should return false if there is an invalid date', function() {
+                        WildcardCtrl.validDate = false;
+                        expect(WildcardCtrl.canSave).toBe(false);
+                    });
+
+                    it('should return false if there is an invalid reporting id', function() {
+                        WildcardCtrl.validReportingId = false;
+                        expect(WildcardCtrl.canSave).toBe(false);
+                    });
+
+                    it('should return false if there are invalid image srcs', function() {
+                        WildcardCtrl.validImageSrcs = false;
+                        expect(WildcardCtrl.canSave).toBe(false);
+                    });
                 });
             });
 
@@ -299,6 +432,58 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
         });
 
         describe('methods', function() {
+            describe('private', function() {
+                describe('tabsForCardType(type)', function() {
+                    it('should return tabs for an article card', function() {
+                        var result = WildcardCtrl._private.tabsForCardType('article');
+                        expect(result).toEqual([
+                            {
+                                name: 'Webpage Content',
+                                sref: 'MR:Wildcard.Article',
+                                required: true
+                            },
+                            {
+                                name: 'Thumbnail Content',
+                                sref: 'MR:Wildcard.Thumbs',
+                                required: false
+                            }
+                        ]);
+                    });
+
+                    it('should return tabs for a video card', function() {
+                        var result = WildcardCtrl._private.tabsForCardType('video');
+                        expect(result).toEqual([
+                            {
+                                name: 'Editorial Content',
+                                sref: 'MR:Wildcard.Copy',
+                                required: true
+                            },
+                            {
+                                name: 'Video Content',
+                                sref: 'MR:Wildcard.Video',
+                                required: true
+                            },
+                            {
+                                name: 'Survey',
+                                sref: 'MR:Wildcard.Survey'
+                            },
+                            {
+                                name: 'Branding',
+                                sref: 'MR:Wildcard.Branding'
+                            },
+                            {
+                                name: 'Links',
+                                sref: 'MR:Wildcard.Links'
+                            },
+                            {
+                                name: 'Advertising',
+                                sref: 'MR:Wildcard.Advertising'
+                            }
+                        ]);
+                    });
+                });
+            });
+
             describe('save()', function() {
                 var success, failure,
                     updateCardDeferred;
