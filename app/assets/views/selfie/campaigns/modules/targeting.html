@@ -1,16 +1,38 @@
-<div class="grid__item three-quarters">
-    <h1 class="forms__title forms__title--divider">Targeting</h1>
+<div class="grid__item one-half">
+    <section class="formSection__group" c6-alias="SelfieCampaignCtrl.categories as categories">
 
-    <form class="pageBody__group" c6-alias="SelfieCampaignCtrl.categories as categories">
-
-        <label class="forms__pair forms__pair--spacer clearfix">
-            <span class="forms__name forms__name--extended" > Categories:</span>
-            <span class="forms__inputHolder--med">
-                <select multiple ng-model="campaign.categories" 
-                class="selector__multiSelect"
-                ng-options="category.name as category.label for category in categories"></select>
-                <p class="typo--warning" style="font-size:0.875em;">Use 'Ctl/Cmd' or 'Shift' to select multiple items</p>
+        <h1 class="formSection__title">
+            <span class="formSection__number">
+                <span class="formSection__numberText">5</span>
             </span>
-        </label>
-    </form>
-</div>
+            <span class="formSection__titleText tk--hdr">Targeting</span>
+        </h1>
+
+        <div class="form__items">
+
+            <fieldset class="form__item">
+                <select c6-select-box multiple preselected="true" ng-model="campaign.categories" ng-options="category.name as category.label for category in categories" class="form__selectBox form__selectBox--single"></select>
+                <label class="form__label" for="c6-sponsor-name">
+                    <i class="fa fa-times ui--error"></i>
+                    Categories
+                </label>
+                <div class="form__helpBox form__helpBox--right">
+                    <div class="form__helpText">
+                        Use 'Ctl/Cmd' or 'Shift' to select multiple items.
+                    </div>
+                </div>
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                    </p>
+                </div>
+            </fieldset>
+
+        </div>
+
+        <br><br><br><br>
+
+    </section><!--.formSection__group-->
+
+</div><!--.grid__item-->
+
