@@ -140,8 +140,8 @@
                         it('should return the thumbs from the imageid', function() {
                             var input = '12345';
                             var expectedOutput = {
-                                small: 'http://embed-cdn.gettyimages.com/xt/12345.jpg?v=1&g=fs1|0|DV|33|651&s=1',
-                                large: 'http://embed-cdn.gettyimages.com/xt/12345.jpg?v=1&g=fs1|0|DV|33|651&s=1'
+                                small: '//embed-cdn.gettyimages.com/xt/12345.jpg?v=1&g=fs1|0|DV|33|651&s=1',
+                                large: '//embed-cdn.gettyimages.com/xt/12345.jpg?v=1&g=fs1|0|DV|33|651&s=1'
                             };
                             var output = ImageThumbnailService._private.fetchGettyThumbs(input);
                             expect(output).toEqual(expectedOutput);

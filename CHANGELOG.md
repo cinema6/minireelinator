@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.14.0 (July 8, 2015)
+* *[v1.14.0.rc4]*
+  * [FIX]: Fix for an issue causing a GettyImages image preview not to be displayed
+* *[/v1.14.0.rc4]*
+
 * *[v1.14.0.rc3]*
   * [FIX]: Fix for an issue causing a card note to be displayed incorrectly.
 * *[/v1.14.0.rc3]*
