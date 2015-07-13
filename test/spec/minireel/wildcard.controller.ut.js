@@ -34,7 +34,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                 WildcardState.metaData = {};
 
                 $scope = $rootScope.$new();
-                $scope.AppCtrl = $controller('AppController');
+                $scope.AppCtrl = $controller('AppController', { cState:{} });
                 $scope.$apply(function() {
                     CampaignCtrl = $scope.CampaignCtrl = $controller('CampaignController', {
                         $scope: $scope

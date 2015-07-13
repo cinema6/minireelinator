@@ -156,8 +156,7 @@ VideoCardController           , c6embed) {
 
                     return CollateralService.generateCollage({
                         minireel: proxy,
-                        name: 'splash',
-                        cache: proxy.status === 'active'
+                        name: 'splash'
                     }).then(function store(data) {
                         proxy.data.collateral.splash = data.toString();
                     })
@@ -475,8 +474,7 @@ VideoCardController           , c6embed) {
                     CollateralService.generateCollage({
                         minireel: self.model,
                         name: 'splash--temp.jpg',
-                        allRatios: false,
-                        cache: false
+                        allRatios: false
                     }).then(function attach(collage) {
                         self.model.data.collateral.splash = collage.toString();
                         self.bustCache();
@@ -1114,8 +1112,7 @@ VideoCardController           , c6embed) {
                 return CollateralService.generateCollage({
                     minireel: minireel,
                     name: 'splash',
-                    allRatios: !permanent,
-                    cache: false
+                    allRatios: !permanent
                 }).then(function setSplashSrc(data) {
                     copy(data, self.generatedSrcs);
 

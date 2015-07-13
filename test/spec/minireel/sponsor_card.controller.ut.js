@@ -59,7 +59,7 @@ define(['app','minireel/mixins/WizardController','angular'], function(appModule,
                 });
 
                 $scope = $rootScope.$new();
-                $scope.AppCtrl = $controller('AppController');
+                $scope.AppCtrl = $controller('AppController', { cState: {} });
                 $scope.$apply(function() {
                     SponsorManagerCtrl = $scope.SponsorManagerCtrl = $controller('SponsorManagerController', {
                         $scope: $scope,

@@ -396,6 +396,32 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         }
                     };
 
+                    function returnPath(response) {
+                        return response.data[0].path;
+                    }
+
+                    this.uploadFromUri = function(uri) {
+                        return $http.post('/api/collateral/uri', { uri: uri })
+                            .then(returnPath);
+                    };
+
+                    this.uploadFromFile = function(file) {
+                        var promise;
+
+                        function updateProgress(progress) {
+                            promise.progress = progress;
+
+                            return progress;
+                        }
+
+                        file = FileService.open(file);
+
+                        promise = FileService.upload('/api/collateral/files', [ file ])
+                            .then(returnPath, null, updateProgress);
+
+                        return promise;
+                    };
+
                     this.set = function(key, file, experience) {
                         var promise;
 
@@ -415,10 +441,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         }
 
                         file = FileService.open(file);
-                        file.name = key;
 
                         promise = FileService.upload(
-                            '/api/collateral/files/' + experience.id + '?noCache=true',
+                            '/api/collateral/files',
                             [file]
                         ).then(setResult, null, updateProgress);
 
@@ -430,7 +455,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             name = options.name,
                             width = options.width || defaultCollageWidth,
                             allRatios = options.allRatios,
-                            cache = isUndefined(options.cache) ? true : options.cache,
                             ratio = minireel.data.splash.ratio.split('-');
 
                         function fetchThumbs(minireel) {
@@ -451,7 +475,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         }
 
                         function generateCollage(thumbs) {
-                            return $http.post('/api/collateral/splash/' + minireel.id, {
+                            return $http.post('/api/collateral/splash', {
                                 imageSpecs: allRatios ?
                                 ratios.map(function(ratio) {
                                     var ratioData = ratio.split('-');
@@ -472,10 +496,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     }
                                 ],
                                 thumbs: thumbs
-                            }, {
-                                params: cache ? null : {
-                                    noCache: true
-                                }
                             }).then(function returnResult(response) {
                                 return new CollageResult(response.data);
                             });

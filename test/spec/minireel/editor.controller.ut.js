@@ -1516,8 +1516,7 @@
                             expect(CollateralService.generateCollage).toHaveBeenCalledWith({
                                 minireel: cModel,
                                 name: 'splash--temp.jpg',
-                                allRatios: false,
-                                cache: false
+                                allRatios: false
                             });
                         });
 
