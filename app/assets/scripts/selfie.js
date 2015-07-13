@@ -28,17 +28,8 @@ function( angular , c6State  , c6uilib ) {
             }]);
         }])
 
-        .controller('SelfieController', ['AuthService','c6State','CSSLoadingService',
-        function                        ( AuthService , c6State , CSSLoadingService ) {
-
-            CSSLoadingService.load([
-                'http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300ita' +
-                    'lic,400italic,600italic,700italic|Roboto+Condensed:300italic,300',
-                'http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css',
-                'styles/selfie/select2.min.css',
-                'styles/selfie/css-wizardry-grids.css',
-                'styles/selfie/c6selfie__base.css'
-            ]);
+        .controller('SelfieController', ['AuthService','c6State',
+        function                        ( AuthService , c6State ) {
 
             this.initWithModel = function(model) {
                 this.model = model;

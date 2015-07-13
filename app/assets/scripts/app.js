@@ -1096,7 +1096,25 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             });
         }])
 
-        .controller('AppController', [function() {
+        .controller('AppController', ['CSSLoadingService','cState',
+        function                     ( CSSLoadingService , cState ) {
+            var appStyles = {
+                Portal: [
+                    'styles/c6main.css',
+                    'styles/minireel/c6studio.css'
+                ],
+                Selfie: [
+                    'http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300' +
+                        'italic,400italic,600italic,700italic|Roboto+Condensed:300italic,300',
+                    'http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css',
+                    'styles/selfie/select2.min.css',
+                    'styles/selfie/css-wizardry-grids.css',
+                    'styles/selfie/c6selfie__base.css'
+                ]
+            };
+
+            CSSLoadingService.load(appStyles[cState.name]);
+
             this.version = version;
             this.validImgSrc = /^(http:\/\/|https:\/\/|\/\/)/;
             this.validUrl = /^(http:\/\/|https:\/\/|\/\/)/;
