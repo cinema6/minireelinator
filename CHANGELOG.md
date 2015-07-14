@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.14.1.rc1]*
+  * Add a source property to image cards when they are saved.
+
 ## v1.14.0 (July 8, 2015)
 * *[v1.14.0.rc4]*
   * [FIX]: Fix for an issue causing a GettyImages image preview not to be displayed

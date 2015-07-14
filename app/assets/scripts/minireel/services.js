@@ -2207,6 +2207,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return 'AOL On';
                     case 'yahoo':
                         return 'Yahoo! Screen';
+                    case 'flickr':
+                        return 'Flickr';
+                    case 'getty':
+                        return 'gettyimages';
                     case 'adUnit':
                         return undefined;
                     default:
@@ -2358,6 +2362,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         href: imageHrefValue(),
                         width: embedValue('width'),
                         height: embedValue('height'),
+                        source: function(data) {
+                            return camelSource(data.service);
+                        },
                         thumbs: imageThumbsValue()
                     },
                     youtube: {
