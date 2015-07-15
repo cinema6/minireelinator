@@ -28,36 +28,102 @@
                 </div>
             </fieldset>
 
-            <!-- OLD HTML, NEEDS TO BE CONVERTED -->
+            <div ng-if="card.data.service">
 
-            <div ng-switch="card.data.service"
-            style="margin:1.5em 0;">
-                <div ng-switch-when="adUnit" ng-controller="AdPlayerController as AdPlayerCtrl">
-                    <div>
-                        <vast-player
-                            videoid="preview"
-                            ad-tag="{{SelfieCampaignVideoCtrl.videoUrl}}">
-                        </vast-player>
+                <div class="videoPreview__group">
+                    <!-- <iframe class="videoPreview__iframe" src="https://www.youtube.com/embed/UOjY61tlh98?rel=0" frameborder="0" allowfullscreen></iframe> -->
+
+                    <!-- OLD HTML, NEEDS TO BE CONVERTED -->
+
+                    <div ng-switch="card.data.service"
+                    style="position:absolute;width:100%;">
+                        <div ng-switch-when="adUnit" ng-controller="AdPlayerController as AdPlayerCtrl">
+                            <div>
+                                <vast-player
+                                    videoid="preview"
+                                    ad-tag="{{SelfieCampaignVideoCtrl.videoUrl}}">
+                                </vast-player>
+                            </div>
+                            <div ng-if="!!AdPlayerCtrl.player" style="position:relative;top:-35px;left:15px;">
+                                <span ng-click="AdPlayerCtrl.player.play()" style="margin-right:10px;">
+                                    <i class="fa fa-play"></i>
+                                </span>
+                                <span ng-click="AdPlayerCtrl.player.pause()">
+                                    <i class="fa fa-pause"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <video-preview ng-switch-default service="{{card.data.service}}"
+                            disable-trimmer="SelfieCampaignVideoCtrl.disableTrimmer()"
+                            videoid="{{card.data.videoid}}"
+                            start="card.data.start"
+                            end="card.data.end"
+                            class="sponsoredCard__preview"
+                            style="display: block;">
+                        </video-preview>
                     </div>
-                    <div ng-if="!!AdPlayerCtrl.player">
-                        <button ng-click="AdPlayerCtrl.player.play()">Play</button>
-                        <button ng-click="AdPlayerCtrl.player.pause()">Pause</button>
-                        <button ng-click="AdPlayerCtrl.player.reload()">Reload</button>
+
+                    <!-- / END OLD HTML, NEEDS TO BE CONVERTED -->
+
+                </div><!--.videoPreview__group-->
+
+
+                <div ng-if="card.data.service !== 'adUnit'" class="videoDescription__group">
+
+                    <h1 class="videoDescription__title">{{SelfieCampaignVideoCtrl.video.title}} <a class="videoDescription__source">YouTube</a></h1>
+
+                    <div class="videoDescription__metaData">
+
+                        <span class="videoDescription__metaDatum">
+
+                            <span class="videoDescription__metaDatumFa fa fa-clock-o"></span>&nbsp;<span>{{SelfieCampaignVideoCtrl.video.duration | timestamp}}</span>
+
+                        </span>
+
+                        <span class="videoDescription__metaDatum">
+
+                            <span class="videoDescription__metaDatumFa fa fa-eye"></span>&nbsp;<span>{{SelfieCampaignVideoCtrl.video.views | numberify}}</span>
+
+                        </span>
+                    </div><!--videoDescription__metaData-->
+                </div><!--.videoDescription__group-->
+
+                <div class="thumbnail__group grid">
+
+                    <div ng-if="card.data.service !== 'adUnit'" class="grid__item one-half">
+                        <button class="thumbnail__btn" ng-click="SelfieCampaignVideoCtrl.useDefaultThumb = true" ng-class="{ 'thumbnail__btn--selected' : SelfieCampaignVideoCtrl.useDefaultThumb }">
+                            <span class="thumbnail__box">
+                                <span class="thumbnail">
+                                    <img class="thumbnail__img" src="{{SelfieCampaignVideoCtrl.defaultThumb}}">
+                                </span>
+                            </span>
+                            <span class="thumbnail__text">Default thumbnail</span>
+                        </button>
                     </div>
+
+
+                    <div class="grid__item one-half">
+                        <button hidden-input-click="thumbnailUpload" ng-class="{ 'thumbnail__btn--selected' : !SelfieCampaignVideoCtrl.useDefaultThumb }" class="thumbnail__btn thumbnail__customBtn">
+
+                            <span class="thumbnail__uploadBox">
+                                <span class="thumbnail">
+                                    <!-- <div class="thumbnail__img" style="padding-bottom:83%;background-size:cover;" c6-bg-img="{{SelfieCampaignVideoCtrl.customThumbSrc}}"></div> -->
+                                    <img ng-if="SelfieCampaignVideoCtrl.customThumbSrc" class="thumbnail__img" src="{{SelfieCampaignVideoCtrl.customThumbSrc}}">
+                                </span>
+                            </span>
+
+                            <span class="thumbnail__text">Custom thumbnail</span>
+                        </button>
+
+                        <input id="thumbnailUpload" type="file" style="display:none;" ng-model="SelfieCampaignVideoCtrl.customThumbFile">
+                    </div>
+
                 </div>
-                <video-preview ng-switch-default service="{{card.data.service}}"
-                    disable-trimmer="SelfieCampaignVideoCtrl.disableTrimmer()"
-                    videoid="{{card.data.videoid}}"
-                    start="card.data.start"
-                    end="card.data.end"
-                    class="sponsoredCard__preview"
-                    style="display: block;">
-                </video-preview>
-            </div>
 
-            <!-- / END OLD HTML, NEEDS TO BE CONVERTED -->
+            </div><!-- ng-if="service"-->
 
-            <fieldset class="form__item">
+
+            <!-- <fieldset class="form__item">
                 <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-thumb" ng-model="card.thumb">
                 <label class="form__label" for="c6-video-thumb">
                     <i class="fa fa-times ui--error"></i>
@@ -73,7 +139,7 @@
                         <i class="fa fa-exclamation-triangle"></i> Error message goes here
                     </p>
                 </div>
-            </fieldset>
+            </fieldset> -->
 
         </div>
 

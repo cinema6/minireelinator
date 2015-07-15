@@ -306,15 +306,21 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignVideoController', ['$injector','$scope','SelfieVideoService',
-                                                      'c6Debounce',
+                                                      'c6Debounce','VideoThumbnailService',
+                                                      'YouTubeDataService','FileService',
+                                                      'CollateralService',
         function                                     ( $injector , $scope , SelfieVideoService ,
-                                                       c6Debounce ) {
+                                                       c6Debounce , VideoThumbnailService ,
+                                                       YouTubeDataService , FileService ,
+                                                       CollateralService ) {
             var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 SelfieCampaignVideoCtrl = this,
                 card = SelfieCampaignCtrl.card,
                 service = card.data.service,
                 id = card.data.videoid;
 
+            this.useDefaultThumb = !card.thumb;
+            this.customThumbSrc = card.thumb;
             this.videoUrl = SelfieVideoService.urlFromData(service, id);
             this.disableTrimmer = function() { return true; };
 
@@ -324,7 +330,65 @@ function( angular , c6State  , PaginatedListState                    ,
                         card.data.service = data.service;
                         card.data.videoid = data.id;
                     });
-            }, 3000);
+            }, 1000);
+
+            $scope.$watch(function() {
+                return SelfieCampaignVideoCtrl.customThumbFile;
+            }, function(newFile, oldFile) {
+                var file;
+
+                if (!newFile) { return; }
+                file = FileService.open(newFile);
+
+                // SelfieCampaignVideoCtrl.customThumbSrc = file.url;
+                // SelfieCampaignVideoCtrl.useDefaultThumb = false;
+
+                CollateralService.uploadFromFile(newFile)
+                    .then(function(path) {
+                        SelfieCampaignVideoCtrl.customThumbSrc = '/' + path;
+                        SelfieCampaignVideoCtrl.useDefaultThumb = false;
+                        card.thumb = '/' + path;
+                    });
+
+                if (!oldFile) { return; }
+
+                FileService.open(oldFile).close();
+            });
+
+            $scope.$watch(function() {
+                return card.data.service + ':' + card.data.videoid;
+            }, function(newParams) {
+                if (!newParams) { return; }
+
+                var params = newParams.split(':'),
+                    service = params[0],
+                    videoid = params[1];
+
+                if (service === 'adUnit') {
+                    SelfieCampaignVideoCtrl.useDefaultThumb = false;
+                    SelfieCampaignVideoCtrl.defaultThumb = null;
+                } else {
+                    VideoThumbnailService.getThumbsFor(service, videoid)
+                        .ensureFulfillment()
+                        .then(function(thumbs) {
+                            SelfieCampaignVideoCtrl.defaultThumb = thumbs.large;
+                            SelfieCampaignVideoCtrl.useDefaultThumb = !card.thumb;
+                        });
+
+                    if (service === 'youtube') {
+                        YouTubeDataService.videos.list({
+                            part: ['snippet','statistics','contentDetails'],
+                            id: videoid
+                        }).then(function(video) {
+                            SelfieCampaignVideoCtrl.video = {
+                                title: video.snippet.title,
+                                duration: video.contentDetails.duration,
+                                views: video.statistics.viewCount
+                            };
+                        });
+                    }
+                }
+            });
 
         }])
 
@@ -335,8 +399,10 @@ function( angular , c6State  , PaginatedListState                    ,
                 card = SelfieCampaignCtrl.card;
 
             function updateActionLink() {
-                card.params.action = card.links.Action ? {
-                    type: SelfieCampaignTextCtrl.actionType.type,
+                var type = SelfieCampaignTextCtrl.actionType.type;
+
+                card.params.action = card.links.Action && type !== 'none' ? {
+                    type: type,
                     label: card.params.action.label
                 } : null;
             }
@@ -346,11 +412,11 @@ function( angular , c6State  , PaginatedListState                    ,
                 label: ''
             };
 
-            this.actionTypeOptions = ['Button', 'Text']
+            this.actionTypeOptions = ['None','Button', 'Link']
                 .map(function(option) {
                     return {
                         name: option,
-                        type: option.toLowerCase()
+                        type: option === 'Link' ? 'text' : option.toLowerCase()
                     };
                 });
 
@@ -361,12 +427,18 @@ function( angular , c6State  , PaginatedListState                    ,
 
             $scope.$on('SelfieCampaignWillSave', updateActionLink);
 
+            $scope.$watch(function() {
+                return card.params.action.label + ':' + SelfieCampaignTextCtrl.actionType.type;
+            }, function(newParams, oldParams) {
+                if (newParams === oldParams) { return; }
+            });
+
         }])
 
         .controller('SelfieCampaignPreviewController', ['$scope','cinema6','MiniReelService',
-                                                        'c6BrowserInfo',
+                                                        'c6BrowserInfo','c6Debounce',
         function                                       ( $scope , cinema6 , MiniReelService ,
-                                                         c6BrowserInfo ) {
+                                                         c6BrowserInfo , c6Debounce ) {
             var SelfieCampaignPreviewCtrl = this,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl;
 
@@ -407,6 +479,24 @@ function( angular , c6State  , PaginatedListState                    ,
             this.card = null;
             this.profile = copy(c6BrowserInfo.profile);
             this.active = true;
+            this.loadPreview = c6Debounce(function() {
+                var card = SelfieCampaignCtrl.card;
+
+                MiniReelService.convertCardForPlayer(card)
+                    .then(function(cardForPlayer) {
+                        var newExperience = copy(experience);
+
+                        cardForPlayer.data.autoplay = false;
+                        cardForPlayer.data.skip = true;
+                        cardForPlayer.data.controls = true;
+
+                        newExperience.data.deck = [cardForPlayer];
+
+                        SelfieCampaignPreviewCtrl.card = cardForPlayer;
+                        SelfieCampaignPreviewCtrl.experience = newExperience;
+                    });
+
+            }, 1000);
 
             $scope.$watch(function() {
                 return SelfieCampaignPreviewCtrl.device;
@@ -422,21 +512,22 @@ function( angular , c6State  , PaginatedListState                    ,
             });
 
             $scope.$watchCollection(function() {
-                return SelfieCampaignCtrl.card;
-            }, function(card) {
-                MiniReelService.convertCardForPlayer(card)
-                    .then(function(cardForPlayer) {
-                        var newExperience = copy(experience);
+                return SelfieCampaignCtrl.card.links;
+            }, SelfieCampaignPreviewCtrl.loadPreview);
 
-                        cardForPlayer.data.autoplay = false;
-                        cardForPlayer.data.skip = true;
-                        cardForPlayer.data.controls = true;
+            $scope.$watchCollection(function() {
+                var card = SelfieCampaignCtrl.card,
+                    data = card.data;
 
-                        newExperience.data.deck = [cardForPlayer];
-
-                        SelfieCampaignPreviewCtrl.card = cardForPlayer;
-                        SelfieCampaignPreviewCtrl.experience = newExperience;
-                    });
-            });
+                return [
+                    card.title,
+                    card.note,
+                    card.thumb,
+                    card.params.action.label,
+                    card.params.sponsor,
+                    data.videoid,
+                    data.service
+                ];
+            }, SelfieCampaignPreviewCtrl.loadPreview);
         }]);
 });

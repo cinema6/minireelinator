@@ -1,0 +1,387 @@
+/*  ================================================
+    video preview classes
+    ================================================ */
+
+    .videoPreview__group {
+        position: relative;
+        padding-bottom: 56.25%;
+        margin:-1em 0 0;
+    }
+        .videoPreview__group::before {
+            content:url("../img/sub-divider.svg");
+            display:block;
+            width:0.25em;
+            margin:0 auto;
+        }
+
+        .videoPreview__iframe {
+            position: absolute;
+            top: 1.5em;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .videoDescription__group {
+            width:100%;
+            padding:1em 1em 0.9375em;
+            margin-top:1.4375em;
+            background-color:#fff;
+            box-shadow:0 0 1em #e8e8e8;
+        }
+
+            .videoDescription__title {
+                margin:-0.25em 0 0 0;
+                color:#1c1c1c;
+                font-size:1.125em;
+                line-height:1.34em;
+                font-weight:normal;
+            }
+
+            .videoDescription__source {
+                font-size:0.778em;
+            }
+
+            .videoDescription__metaData {
+                color:#5c5c5c;
+                font-size:0.875em;
+                margin-top:0.75em;
+            }
+
+                .videoDescription__metaDatum {
+                    margin-right:2em;
+                }
+
+                    .videoDescription__metaDatumFa {
+                        font-size:1em;
+                        color:#b1b1b1;
+                        margin-right:0.35715em;
+                    }
+
+
+/*  ================================================
+    thumbnail classes
+    ================================================ */
+
+    .thumbnail__group {
+        margin-top:1.5em;
+        position:relative;
+    }
+
+        .thumbnail__btn,
+        .thumbnail__btn:focus {
+            background-color:#f1f1f1;
+            font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
+            transition: background-color 0.3s, border-bottom 0.3s, color 0.3s;
+            text-align:center;
+            position:relative;
+            z-index:1;
+            width:100%;
+            border-bottom:2px solid #5c5c5c;
+            padding:0.25em;
+        }
+
+        .thumbnail__btn .thumbnail__text:before {
+            display:none;
+        }
+        .thumbnail__btn.thumbnail__btn--selected .thumbnail__text:before {
+            display:block;
+        }
+        .thumbnail__btn.thumbnail__btn--selected {
+            border-bottom:2px solid #00a2de;
+            background-color:#fff;
+
+        }
+
+
+
+
+
+            .thumbnail__btn:hover {
+                background-color:#fff;
+            }
+            .thumbnail__btn:hover  {
+                border-bottom:2px solid #00c0ff;
+            }
+
+            .thumbnail__btn--selected:hover .thumbnail__text:before {
+                content:"\f00c";
+                font-family:FontAwesome;
+                color:#00c0ff;
+                position:absolute;
+                z-index:10;
+                left:0.5em;
+                margin-top:0.0625em;
+
+            }
+
+
+        .thumbnail__box,
+        .thumbnail__uploadBox {
+            width:96.25%;
+            display:block;
+            margin:0;
+            overflow:hidden;
+            position:absolute;
+            padding:0 0 66%;
+            right:0.25em;
+            background-color:#f1f1f1;
+        }
+
+
+
+
+
+
+            .thumbnail__btn.thumbnail__customBtn:hover:before {
+                position:absolute;
+                content:url("../img/upload-arrow-hover.svg");
+                display:block;
+                left:36%;
+                top:24%;
+                width:29%;
+                height:29%;
+                z-index:10;
+            }
+
+
+
+            .thumbnail {
+                position:absolute;
+                display:block;
+                transform:translateY(50%);
+                width:100%;
+                height:100%;
+                background-color:#f1f1f1;
+                z-index:5;
+            }
+
+                .thumbnail__img {
+                    position:absolute;
+                    display:block;
+                    transform:translateY(-50%);
+                    width:100%;
+                    background-color:#f1f1f1;
+                }
+
+
+
+        .thumbnail__text {
+            font-size:1em;
+            margin:69% 0 0.2em;
+            display:inline-block;
+            padding:0 1.75em;
+            transition:color 0.3s;
+
+        }
+
+          .thumbnail__text:before {
+                content:"\f00c";
+                font-family:FontAwesome;
+                color:#00a2de;
+                position:absolute;
+                z-index:10;
+                left:0.5em;
+                margin-top:0.0625em;
+            }
+
+
+
+
+
+        .thumbnail__uploadBox {
+            background:url("../img/upload-arrow.svg") #f1f1f1 no-repeat center;
+            background-size:30%;
+            padding:33.15% 0;
+            margin:0;
+            display:block;
+            background-color:#e8e8e8;
+            transition:background-color 0.3s;
+
+        }
+                .thumbnail__upload:hover {
+                    display:block;
+                    background:url("../img/upload-arrow-hover.svg") #f1f1f1 no-repeat center;
+                    background-size:30%;
+                    padding:33.15% 0;
+                    margin:0;
+                    background-color:#f1f1f1;
+                }
+
+                .thumbnail__upload .thumbnail {
+                    display:none;
+                }
+
+
+
+/*  ================================================
+    form helper class
+    ================================================ */
+
+
+        .form__textArea {
+            vertical-align: top;
+        }
+
+
+/*  ================================================
+    cta preview classes
+    ================================================ */
+
+
+.ctaPreview__group {
+    width:100%;
+    margin-bottom:2em;
+}
+
+    .ctaPreview__title {
+        text-align:center;
+        font-size:0.875em;
+        font-weight:300;
+        margin:-0.85715em 0 0.1875em 0;
+    }
+        .ctaPreview__title::before {
+            content:url("../img/sub-divider.svg");
+            display:block;
+            width:0.25em;
+            margin:-0.25em auto;
+        }
+
+    .ctaPreview__container {
+        width:100%;
+        padding:1.5em 5em;
+        background-color:#fff;
+        box-shadow:0 0 1em #e8e8e8;
+        text-align:center;
+    }
+    .ctaPreview__container--button .ctaPreview__link,
+    .ctaPreview__container--link .ctaPreview__button {
+        display:none;
+    }
+
+        .ctaPreview__button {
+            padding:0.85em 1em 0.651em;
+            margin:0 auto;
+            width:100%;
+            font-size:1.125em;
+            background-color:#00c0ff;
+            color:white;
+        }
+
+        .ctaPreview__link {
+            font-size:1em;
+
+        }
+
+
+
+/*  ================================================
+    cta label classes
+    ================================================ */
+.form__label {
+    color:#5c5c5c;
+    font-size:1em;
+    font-weight:300;
+    display: block;
+    top:0.375em;
+    position: absolute;
+    left:0.5em; z-index:-10;
+    transition: transform 0.3s;
+    padding:0 1.25em 0 0;
+}
+.form__microLabel {
+    color:#5c5c5c;
+    font-size:0.875em;
+    font-weight:300;
+    display: block;
+    top:-1.625em;
+    position: absolute;
+    left:0; z-index:10;
+    padding:0 1.25em 0 0;
+}
+/*  ================================================
+    cta form classes
+    ================================================ */
+
+.form__microItem,
+.form__microItemLast {
+    border:none;
+    position:relative;
+    display: block;
+    margin:1.25em 0 2.25em; padding:0;
+}
+
+
+
+.form__textBox,
+.form__microTextBox {
+    border:0;
+    padding:0.375rem 0.5rem 0.3125rem;
+    border-bottom:2px solid #5c5c5c;
+    font-size:1.125em;
+    color:#1c1c1c;
+    background:none;
+    transition:border 0.3s, background 0.3s, height 0.3s;
+    width:100%;
+    font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
+}
+.form__microTextBox {
+    background-color:#e8e8e8;
+    padding:0.45rem 0.5rem 0.45rem;
+    font-size:1em;
+}
+
+    .form__textBox:focus,
+    .form__microTextBox:focus {
+        border-bottom:2px solid #00c0ff;
+        background:#fff;
+    }
+
+
+
+
+
+/*  ================================================
+    ad preview classes
+    ================================================ */
+.formSection__groupLast {
+        margin:3em 0 0;
+    }
+
+.adPreview__buttonGroup {
+
+}
+
+    .adPreview__button {
+        font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
+        text-align:center;
+        display:block;
+        width:100%;
+        border-bottom:2px solid #5c5c5c;
+        padding:0.5em 0 0.45em;
+        transition:border 0.3s, background 0.3s;
+    }
+        .adPreview__button:focus {
+            border-top:2px solid #00c0ff;
+            background-color:#fff;
+        }
+
+.adPreview__container {
+    padding:2em;
+    background-color:#fff;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,5 +1,5 @@
-<div class="grid__item three-quarters">
-    <section class="formSection__group">
+<div ng-if="SelfieCampaignCtrl.card.data.videoid" class="grid__item three-quarters">
+    <section class="formSection__group" ng-controller="SelfieCampaignPreviewController as SelfieCampaignPreviewCtrl">
 
         <h1 class="formSection__title">
             <span class="formSection__number">
@@ -8,10 +8,23 @@
             <span class="formSection__titleText tk--hdr">Preview</span>
         </h1>
 
+        <div class="grid grid--full grid--center">
+
+            <div class="adPreview__buttonGroup grid__item one-third">
+                <button ng-class="{'selected' : SelfieCampaignPreviewCtrl.device === 'desktop' }" ng-click="SelfieCampaignPreviewCtrl.device = 'desktop'"class="adPreview__button">Desktop</button>
+            </div>
+
+            <div class="adPreview__buttonGroup grid__item one-third">
+                <button ng-class="{'selected' : SelfieCampaignPreviewCtrl.device === 'phone' }" ng-click="SelfieCampaignPreviewCtrl.device = 'phone'" class="adPreview__button">Mobile</button>
+            </div>
+
+        </div>
+
         <div class="form__items">
 
-            <div class="preview__iframeHolder" style="padding-bottom:40px;width:100%;" ng-controller="SelfieCampaignPreviewController as SelfieCampaignPreviewCtrl">
-                <c6-embed class="preview__embedHolder"
+            <div class="adPreview__container">
+                <c6-embed ng-class="{'mobile' : SelfieCampaignPreviewCtrl.device === 'phone'}"
+                    class="preview__embedHolder"
                     experience="SelfieCampaignPreviewCtrl.experience"
                     profile="SelfieCampaignPreviewCtrl.profile"
                     card="SelfieCampaignPreviewCtrl.card"
