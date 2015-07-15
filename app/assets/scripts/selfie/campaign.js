@@ -105,7 +105,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                     return cinema6.db.create('selfieCampaign', {
                             name: null,
-                            accountName: user.org.name,
+                            // accountName: user.org.name,
                             categories: [],
                             cards: [],
                             pricing: {}
@@ -405,6 +405,7 @@ function( angular , c6State  , PaginatedListState                    ,
                                 duration: video.contentDetails.duration,
                                 views: video.statistics.viewCount
                             };
+                            card.title = video.snippet.title;
                         });
                     }
                 }

@@ -114,6 +114,14 @@ function( angular , c6State  , c6uilib ) {
                             }
                         });
                     });
+
+                    scope.$watch(function() {
+                        return $element.val();
+                    }, function(value) {
+                        if (value) {
+                            $element.addClass('form__fillCheck--filled');
+                        }
+                    });
                 }
             };
         }])
