@@ -236,6 +236,10 @@ function( angular , c6State  , PaginatedListState                    ,
                 return campaign;
             }
 
+            function returnToDashboard() {
+                return c6State.goTo('Selfie:CampaignDashboard');
+            }
+
             function handleError(err) {
                 $log.error('Could not save the Campaign', err);
             }
@@ -252,6 +256,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 if (this.card.id) {
                     return cState.updateCard()
                         .then(saveCampaign)
+                        .then(returnToDashboard)
                         .catch(handleError);
                 } else {
                     return saveCampaign()
@@ -260,6 +265,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         .then(updateCard)
                         .then(addCardToCampaign)
                         .then(saveCampaign)
+                        .then(returnToDashboard)
                         .catch(handleError);
                 }
             };
@@ -324,6 +330,12 @@ function( angular , c6State  , PaginatedListState                    ,
             this.videoUrl = SelfieVideoService.urlFromData(service, id);
             this.disableTrimmer = function() { return true; };
 
+            this.updateThumbs = function() {
+                card.thumb = !this.useDefaultThumb ?
+                    SelfieCampaignVideoCtrl.customThumbSrc :
+                    null;
+            };
+
             this.updateUrl = c6Debounce(function() {
                 SelfieVideoService.dataFromUrl(SelfieCampaignVideoCtrl.videoUrl)
                     .then(function(data) {
@@ -331,6 +343,14 @@ function( angular , c6State  , PaginatedListState                    ,
                         card.data.videoid = data.id;
                     });
             }, 1000);
+
+            $scope.$watch(function() {
+                return SelfieCampaignVideoCtrl.useDefaultThumb;
+            }, function(useDefault) {
+                if (useDefault) {
+                    card.thumb = null;
+                }
+            });
 
             $scope.$watch(function() {
                 return SelfieCampaignVideoCtrl.customThumbFile;
@@ -390,6 +410,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
             });
 
+            $scope.$on('SelfieCampaignWillSave', this.upadteThumbs);
+
         }])
 
         .controller('SelfieCampaignTextController', ['$scope',
@@ -428,7 +450,9 @@ function( angular , c6State  , PaginatedListState                    ,
             $scope.$on('SelfieCampaignWillSave', updateActionLink);
 
             $scope.$watch(function() {
-                return card.params.action.label + ':' + SelfieCampaignTextCtrl.actionType.type;
+                var label = card.params.action && card.params.action.label;
+
+                return label + ':' + SelfieCampaignTextCtrl.actionType.type;
             }, function(newParams, oldParams) {
                 if (newParams === oldParams) { return; }
             });
@@ -517,14 +541,16 @@ function( angular , c6State  , PaginatedListState                    ,
 
             $scope.$watchCollection(function() {
                 var card = SelfieCampaignCtrl.card,
-                    data = card.data;
+                    data = card.data,
+                    params = card.params,
+                    label = params.action && params.action.label;
 
                 return [
                     card.title,
                     card.note,
                     card.thumb,
-                    card.params.action.label,
-                    card.params.sponsor,
+                    label,
+                    params.sponsor,
                     data.videoid,
                     data.service
                 ];
