@@ -1316,6 +1316,7 @@ VideoCardController           , c6embed) {
                         }
 
                         switch (this.model.type) {
+                        case 'image':
                         case 'video':
                         case 'videoBallot':
                             return [this.copyComplete].indexOf(false) < 0 &&
@@ -1563,23 +1564,19 @@ VideoCardController           , c6embed) {
             var self = this;
             var _private = {};
             this.imageUrl = null;
-            this.src = null;
-            this.width = null;
-            this.height = null;
+            this.data = { };
 
             // Update the embed info on the controller
             _private.updateEmbedInfo = function(service, imageid) {
+                self.data = { };
                 ImageService.getEmbedInfo(service, imageid)
                     .then(function(embedInfo) {
-                        self.src = embedInfo.src;
-                        self.width = embedInfo.width;
-                        self.height = embedInfo.height;
+                        Object.keys(embedInfo).forEach(function(key) {
+                            self.data[key] = embedInfo[key];
+                        });
                     })
                     .catch(function(reason) {
                         self.error = reason;
-                        self.src = null;
-                        self.width = null;
-                        self.height = null;
                     });
             };
 

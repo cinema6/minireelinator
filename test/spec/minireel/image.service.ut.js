@@ -323,6 +323,24 @@
                         expect(output).toEqual(expectedOutput);
                     });
 
+                    it('should recognize urls to an image on the web', function() {
+                        var input = [
+                            'site.com/image.jpg',
+                            'site.com/image.jpeg',
+                            'site.com/image.gif',
+                            'site.com/image.png',
+                            'site.com/image.bmp'
+                        ];
+                        var expectedOutput = input.map(function(imageUrl) {
+                            return {
+                                imageid: imageUrl,
+                                service: 'web',
+                            };
+                        });
+                        var output = input.map(fromUrl);
+                        expect(output).toEqual(expectedOutput);
+                    });
+
                     it('should return nulls if the URL could not be recognized', function() {
                         var input = 'www.google.com';
                         var expectedOutput = {
@@ -355,6 +373,16 @@
                             imageid: '12345'
                         };
                         var expectedOutput = 'http://gty.im/12345';
+                        var output = fromData(input.service, input.imageid);
+                        expect(output).toEqual(expectedOutput);
+                    });
+
+                    it('should construct a valid web url', function() {
+                        var input = {
+                            service: 'web',
+                            imageid: 'site.com/image.jpg'
+                        };
+                        var expectedOutput = 'site.com/image.jpg';
                         var output = fromData(input.service, input.imageid);
                         expect(output).toEqual(expectedOutput);
                     });
@@ -415,15 +443,22 @@
                         expect(failure).not.toHaveBeenCalled();
                     });
 
-                    it('should resolve the promise with nulls if passed an unrecognized service', function() {
+                    it('should return web embed info', function() {
+                        var expectedOutput = {
+                            src: 'site.com/image.jpg'
+                        };
+                        embedInfo('web', 'site.com/image.jpg').then(success, failure);
+                        $rootScope.$apply();
+                        var output = success.calls.mostRecent().args[0];
+                        expect(output).toEqual(expectedOutput);
+                        expect(failure).not.toHaveBeenCalled();
+                    });
+
+                    it('should resolve the promise with an empty object if passed an unrecognized service', function() {
                         var expectedOutput = 'Unrecognized service.';
                         embedInfo('apple', '12345').then(success, failure);
                         $rootScope.$apply();
-                        expect(success).toHaveBeenCalledWith({
-                            src: null,
-                            width: null,
-                            height: null
-                        });
+                        expect(success).toHaveBeenCalledWith({ });
                     });
                 });
 

@@ -384,20 +384,24 @@
             });
 
             describe('properties', function() {
-                function onlyEmpty(key) {
-                    ['title', 'note'].forEach(function(prop) {
-                        if (prop !== key) {
-                            model[prop] = 'Filled';
-                        } else {
+                function onlyEmpty(keys) {
+                    if(!(keys instanceof Array)) {
+                        keys = [keys];
+                    }
+                    var modelProps = ['title', 'note'];
+                    var dataProps = ['service', 'videoid', 'imageid'];
+                    modelProps.forEach(function(prop) {
+                        if (keys.indexOf(prop) > -1) {
                             model[prop] = null;
+                        } else {
+                            model[prop] = model[prop] || ('some_' + prop + '_value');
                         }
                     });
-
-                    ['service', 'videoid'].forEach(function(prop) {
-                        if (prop !== key) {
-                            model.data[prop] = 'Filled';
-                        } else {
+                    dataProps.forEach(function(prop) {
+                        if (keys.indexOf(prop) > -1) {
                             model.data[prop] = null;
+                        } else {
+                            model.data[prop] = model.data[prop] || ('some_' + prop + '_value');
                         }
                     });
                 }
@@ -476,6 +480,28 @@
 
                         it('should be undefined', function() {
                             expect(cardComplete()).toBeUndefined();
+                        });
+                    });
+
+                    describe('on an image card', function() {
+                        beforeEach(function() {
+                            model.type = 'image';
+                            model.data.service = 'flickr';
+                            model.data.imageid = '12345';
+                        });
+
+                        it('should be true if the required fields are defined', function() {
+                            expect(cardComplete()).toBe(true);
+                        });
+
+                        it('should be false if any of the required fields are not defined', function() {
+                            onlyEmpty('service');
+                            console.log(model.data.service);
+                            expect(cardComplete()).toBe(false);
+                            onlyEmpty('imageid');
+                            expect(cardComplete()).toBe(false);
+                            onlyEmpty('service', 'imageid');
+                            expect(cardComplete()).toBe(false);
                         });
                     });
 
@@ -714,7 +740,7 @@
                         return EditCardCtrl.canSave;
                     }
 
-                    ['video', 'videoBallot', 'ad'].forEach(function(type) {
+                    ['image', 'video', 'videoBallot', 'ad'].forEach(function(type) {
                         describe('on a ' + type + ' card', function() {
                             beforeEach(function() {
                                 model.title = 'Foo';
@@ -726,6 +752,24 @@
                             describe('if there is an error', function() {
                                 beforeEach(function() {
                                     EditCardCtrl.error = {};
+                                });
+
+                                it('should be false', function() {
+                                    expect(canSave()).toBe(false);
+                                });
+                            });
+                        });
+                    });
+
+                    ['image', 'video', 'videoBallot'].forEach(function(type) {
+                        describe('on a ' + type + ' card', function() {
+                            describe('if the copy is not complete', function() {
+                                beforeEach(function() {
+                                    Object.defineProperty(EditCardCtrl, 'copyComplete', {
+                                        get: function() {
+                                            return false;
+                                        }
+                                    });
                                 });
 
                                 it('should be false', function() {

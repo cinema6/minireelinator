@@ -1050,6 +1050,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return new ThumbModel(_private.fetchFlickrThumbs(imageid));
                         case 'getty':
                             return new ThumbModel($q.when(_private.fetchGettyThumbs(imageid)));
+                        case 'web':
+                            return new ThumbModel($q.when({
+                                small: imageid,
+                                large: imageid
+                            }));
                         default:
                             return new ThumbModel($q.when({
                                 small: null,
@@ -1381,6 +1386,16 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 }
                             }
                         ]
+                    },
+                    web: {
+                        patterns: [
+                            {
+                                urlFormat: /.+\.(jpg|jpeg|gif|png|bmp)/,
+                                idFetcher: function(url) {
+                                    return url;
+                                }
+                            }
+                        ]
                     }
                 };
 
@@ -1430,12 +1445,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     height: iframeInfo.height
                                 };
                             });
-                    default:
+                    case 'web':
                         return $q.when({
-                            src: null,
-                            width: null,
-                            height: null
+                            src: imageid
                         });
+                    default:
+                        return $q.when({ });
                 }
             };
 
@@ -1448,6 +1463,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return 'https://flic.kr/p/' + _private.encodeBase58(parseInt(imageid));
                     case 'getty':
                         return 'http://gty.im/' + imageid;
+                    case 'web':
+                        return imageid;
                     default:
                         return null;
                 }
@@ -1780,7 +1797,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 // image cards.
                 imageDataTemplate = {
                     service: copy(null),
-                    imageid: copy(null)
+                    imageid: function(data) {
+                        if(data.service === 'web') {
+                            return data.src || null;
+                        } else {
+                            return data.imageid || null;
+                        }
+                    }
                 };
 
                 // videoDataTemplate: this is the base template for all
@@ -2231,6 +2254,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return 'Flickr';
                     case 'getty':
                         return 'gettyimages';
+                    case 'web':
                     case 'adUnit':
                         return undefined;
                     default:
@@ -2366,7 +2390,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 function imageHrefValue() {
                     return function(data) {
-                        return ImageService.urlFromData(data.service, data.imageid);
+                        if(data.service === 'web') {
+                            return null;
+                        } else {
+                            return ImageService.urlFromData(data.service, data.imageid);
+                        }
                     };
                 }
 
@@ -2376,7 +2404,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         thumbs: articleThumbsValue()
                     },
                     image: {
-                        imageid: copy(null),
+                        imageid: function(data) {
+                            if(data.service === 'web') {
+                                return null;
+                            } else {
+                                return data.imageid;
+                            }
+                        },
                         service: copy(null),
                         src: embedValue('src'),
                         href: imageHrefValue(),

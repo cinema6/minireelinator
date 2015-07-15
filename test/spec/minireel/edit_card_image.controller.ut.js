@@ -131,9 +131,11 @@ define(['app'], function(appModule) {
                         });
 
                         it('should update the embed info on the controller', function() {
-                            expect(EditCardImageCtrl.src).toEqual('www.site.com/image.jpg');
-                            expect(EditCardImageCtrl.width).toEqual(200);
-                            expect(EditCardImageCtrl.height).toEqual(100);
+                            expect(EditCardImageCtrl.data).toEqual({
+                                src: 'www.site.com/image.jpg',
+                                width: 200,
+                                height: 100
+                            });
                         });
 
                         it('should not erase existing properties on the model', function() {
@@ -155,10 +157,8 @@ define(['app'], function(appModule) {
                             expect(EditCardImageCtrl.error).toEqual('error message');
                         });
 
-                        it('should set properties to null', function() {
-                            expect(EditCardImageCtrl.src).toBeNull();
-                            expect(EditCardImageCtrl.width).toBeNull();
-                            expect(EditCardImageCtrl.height).toBeNull();
+                        it('should remove the data properties', function() {
+                            expect(EditCardImageCtrl.data).toEqual({ });
                         });
                     });
                 });

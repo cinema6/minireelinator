@@ -9,7 +9,8 @@
                 <span class="typo--guidance typo--warning">Type in a <strong>URL</strong>.</span>
                 <span class="typo--guidance">Supported sources :
                     <a href="https://www.flickr.com" title="Flickr" target="_blank">Flickr</a>,
-                    <a href="http://www.gettyimages.com" title="GettyImages" target="_blank">GettyImages</a>
+                    <a href="http://www.gettyimages.com" title="GettyImages" target="_blank">GettyImages</a>,
+                    or the URL of an image file
                 </span>
             </span>
         </label>
@@ -20,9 +21,9 @@
         <p>Please choose another image for this card.</p>
     </div>
     <div class="imagePreview">
-        <div ng-switch="card.data.service" class="embeddedImage embeddedImage--{{card.data.service}}" ng-if="!!EditCardImageCtrl.src">
-            <getty-preview ng-switch-when="getty" frame-src="{{EditCardImageCtrl.src}}" frame-width="{{EditCardImageCtrl.width}}" frame-height="{{EditCardImageCtrl.height}}" imageid="{{card.data.imageid}}"></getty-preview>
-            <img ng-switch-default ng-src={{EditCardImageCtrl.src}} style="max-width:100%;max-height:100%;"></img>
+        <div ng-switch="card.data.service" class="embeddedImage embeddedImage--{{card.data.service}}" ng-if="!!EditCardImageCtrl.data.src">
+            <getty-preview ng-switch-when="getty" frame-src="{{EditCardImageCtrl.data.src}}" frame-width="{{EditCardImageCtrl.data.width}}" frame-height="{{EditCardImageCtrl.data.height}}" imageid="{{card.data.imageid}}"></getty-preview>
+            <img ng-switch-default ng-src={{EditCardImageCtrl.data.src}} style="max-width:100%;max-height:100%;"></img>
         </div>
     </div>
 

@@ -155,6 +155,19 @@
                      describe('getThumbsFor(data)', function() {
                          var result;
 
+                         ['flickr', 'getty', 'web'].forEach(function(service) {
+                             describe('when the service is ' + service, function() {
+                                 beforeEach(function() {
+                                     result = ImageThumbnailService.getThumbsFor('flickr', '12345');
+                                 });
+
+                                 it('should immediately return an object with null properties', function() {
+                                     expect(result.small).toBeNull();
+                                     expect(result.large).toBeNull();
+                                 });
+                             });
+                         });
+
                         describe('flickr', function() {
                             beforeEach(function() {
                                 spyOn(_private, 'fetchFlickrThumbs')
@@ -168,11 +181,6 @@
                                 result = ImageThumbnailService.getThumbsFor('flickr', '12345');
                             });
 
-                            it('should imediately retrun an object with null properties', function() {
-                                expect(result.small).toBeNull();
-                                expect(result.large).toBeNull();
-                            });
-
                             it('should set the small and large properties when the promise resolves', function() {
                                 expect(_private.fetchFlickrThumbs).toHaveBeenCalledWith('12345');
                                 $rootScope.$digest();
@@ -180,8 +188,42 @@
                                 expect(result.small).toBe('small.jpg');
                                 expect(result.large).toBe('large.jpg');
                             });
+                        });
 
-                         });
+                        describe('getty', function() {
+                            beforeEach(function() {
+                                spyOn(_private, 'fetchGettyThumbs')
+                                    .and.returnValue(
+                                        $q.when({
+                                            small: 'small.jpg',
+                                            large: 'large.jpg'
+                                        })
+                                    );
+
+                                result = ImageThumbnailService.getThumbsFor('getty', '12345');
+                            });
+
+                            it('should set the small and large properties when the promise resolves', function() {
+                                expect(_private.fetchGettyThumbs).toHaveBeenCalledWith('12345');
+                                $rootScope.$digest();
+
+                                expect(result.small).toBe('small.jpg');
+                                expect(result.large).toBe('large.jpg');
+                            });
+                        });
+
+                        describe('web', function() {
+                            beforeEach(function() {
+                                result = ImageThumbnailService.getThumbsFor('web', 'site.com/image.jpg');
+                            });
+
+                            it('should set the small and large properties when the promise resolves', function() {
+                                $rootScope.$digest();
+
+                                expect(result.small).toBe('site.com/image.jpg');
+                                expect(result.large).toBe('site.com/image.jpg');
+                            });
+                        });
 
                         describe('an unknown service', function() {
                             beforeEach(function() {
