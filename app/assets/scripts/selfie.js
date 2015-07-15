@@ -145,6 +145,25 @@ function( angular , c6State  , c6uilib ) {
             };
         }])
 
+        .filter('numberify', [function() {
+            return function(number) {
+                return number && number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            };
+        }])
+
+        .directive('hiddenInputClick', ['$document',function($document) {
+            return {
+                restrict: 'A',
+                link: function(scope, $element, attrs) {
+                    var input = $document[0].getElementById(attrs.hiddenInputClick);
+
+                    $element.on('click', function() {
+                        angular.element(input).trigger('click');
+                    });
+                }
+            };
+        }])
+
         .service('SelfieVideoService', ['$http','c6UrlParser','$q',
         function                       ( $http , c6UrlParser , $q ) {
             function getJSONProp(json, prop) {
