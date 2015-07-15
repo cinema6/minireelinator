@@ -210,6 +210,7 @@
                                     href: 'http://www.flickr.com/16767833635',
                                     width: '1600',
                                     height: '1067',
+                                    source: 'Flickr',
                                     thumbs: {
                                         small: 'images.flickr.com/image/16767833635/small.jpg',
                                         large: 'images.flickr.com/image/16767833635/large.jpg'

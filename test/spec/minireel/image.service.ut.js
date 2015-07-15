@@ -240,7 +240,7 @@
                         it('should use GettyImages\' oEmbed endpoint', function() {
                             spyOn($http, 'get').and.returnValue($q.when());
                             var input = '123';
-                            var expectedOutput = 'http://embed.gettyimages.com/oembed?url=http%3A%2F%2Fgty.im%2F123';
+                            var expectedOutput = '//embed.gettyimages.com/oembed?url=http%3A%2F%2Fgty.im%2F123';
                             fromData(input).then(success, failure);
                             var output = $http.get.calls.mostRecent().args[0];
                             expect(output).toEqual(expectedOutput);
