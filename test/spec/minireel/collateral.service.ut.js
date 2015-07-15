@@ -100,7 +100,7 @@
                             return thumbs[videoid] || new Thumb();
                         });
 
-                        $httpBackend.expectPOST('/api/collateral/splash/' + minireel.id, {
+                        $httpBackend.expectPOST('/api/collateral/splash', {
                             imageSpecs: [
                                 {
                                     name: 'splash',
@@ -149,7 +149,7 @@
                     });
 
                     it('should allow a default width to be configured', function() {
-                        $httpBackend.expectPOST('/api/collateral/splash/' + minireel.id, {
+                        $httpBackend.expectPOST('/api/collateral/splash', {
                             imageSpecs: [
                                 {
                                     name: 'foo',
@@ -184,7 +184,7 @@
                     });
 
                     it('should offer the option not to cache the image', function() {
-                        $httpBackend.expectPOST('/api/collateral/splash/' + minireel.id + '?noCache=true', {
+                        $httpBackend.expectPOST('/api/collateral/splash', {
                             imageSpecs: [
                                 {
                                     name: 'splash',
@@ -223,7 +223,7 @@
 
                         CollateralServiceProvider.ratios(ratios);
 
-                        $httpBackend.expectPOST('/api/collateral/splash/' + minireel.id, {
+                        $httpBackend.expectPOST('/api/collateral/splash', {
                             imageSpecs: ratios.map(function(ratio) {
                                 ratio = ratio.split('-');
 
@@ -307,13 +307,9 @@
                         });
                     });
 
-                    it('should name the file after the key', function() {
-                        expect(splashImageWrapper.name).toBe('splash');
-                    });
-
                     it('should upload the file to the collateral service', function() {
                         expect(FileService.open).toHaveBeenCalledWith(splashImage);
-                        expect(FileService.upload).toHaveBeenCalledWith('/api/collateral/files/' + experience.id + '?noCache=true', [splashImageWrapper]);
+                        expect(FileService.upload).toHaveBeenCalledWith('/api/collateral/files', [splashImageWrapper]);
                     });
 
                     it('should attach the progress state of the upload to the promise', function() {
@@ -401,6 +397,114 @@
                         expect(experience.data.collateral).toEqual({
                             splash: '/collateral/e2e-org/ce114e4501d2f4e2dcea3e17b546f339.splash.jpg'
                         });
+                    });
+                });
+
+                describe('uploadFromFile(file)', function() {
+                    var splashImage,
+                        uploadDeferred, splashImageWrapper,
+                        result, success, notify;
+
+                    beforeEach(function() {
+                        splashImage = {};
+                        splashImageWrapper = {
+                            file: splashImage,
+                            url: 'http://localhost:9000/f7394fn83'
+                        };
+
+                        uploadDeferred = $q.defer();
+
+                        spyOn(FileService, 'upload')
+                            .and.returnValue(uploadDeferred.promise);
+                        spyOn(FileService, 'open')
+                            .and.returnValue(splashImageWrapper);
+
+                        success = jasmine.createSpy('set success');
+                        notify = jasmine.createSpy('set notify');
+
+                        $rootScope.$apply(function() {
+                            result = CollateralService.uploadFromFile(splashImage);
+
+                            result.then(success, null, notify);
+                        });
+                    });
+
+                    it('should upload the file to the collateral service', function() {
+                        expect(FileService.open).toHaveBeenCalledWith(splashImage);
+                        expect(FileService.upload).toHaveBeenCalledWith('/api/collateral/files', [splashImageWrapper]);
+                    });
+
+                    it('should attach the progress state of the upload to the promise', function() {
+                        var state1 = {
+                                uploaded: 45,
+                                total: 1024,
+                                complete: 45 / 1024
+                            },
+                            state2 = {
+                                uploaded: 356,
+                                total: 1024,
+                                complete: 356 / 1024
+                            },
+                            state3 = {
+                                uploaded: 674,
+                                total: 1024,
+                                complete: 674 / 1024
+                            };
+
+                        $rootScope.$apply(function() {
+                            uploadDeferred.notify(state1);
+                        });
+                        expect(result.progress).toBe(state1);
+                        expect(notify).toHaveBeenCalledWith(state1);
+
+                        $rootScope.$apply(function() {
+                            uploadDeferred.notify(state2);
+                        });
+                        expect(result.progress).toBe(state2);
+                        expect(notify).toHaveBeenCalledWith(state2);
+
+                        $rootScope.$apply(function() {
+                            uploadDeferred.notify(state3);
+                        });
+                        expect(result.progress).toBe(state3);
+                        expect(notify).toHaveBeenCalledWith(state3);
+                    });
+
+                    describe('after the upload is complete', function() {
+                        beforeEach(function() {
+                            $rootScope.$apply(function() {
+                                uploadDeferred.resolve({
+                                    status: 201,
+                                    data: [
+                                        {
+                                            name: 'splash',
+                                            code: 201,
+                                            path: 'collateral/e2e-org/ce114e4501d2f4e2dcea3e17b546f339.splash.jpg'
+                                        }
+                                    ]
+                                });
+                            });
+                        });
+
+                        it('should resolve to the path', function() {
+                            expect(success).toHaveBeenCalledWith('collateral/e2e-org/ce114e4501d2f4e2dcea3e17b546f339.splash.jpg');
+                        });
+                    });
+                });
+
+                describe('uploadFromUri(uri)', function() {
+                    it('should resolve to the path', function() {
+                        var success = jasmine.createSpy('success');
+
+                        $httpBackend.expectPOST('/api/collateral/uri', { uri: 'http://foo.com/bar.jpg' })
+                            .respond(201, [{ path: 'collateral/userFiles/ce114e4501d2f4e2dcea3e17b546f339.jpg'}]);
+
+                        CollateralService.uploadFromUri('http://foo.com/bar.jpg')
+                            .then(success);
+
+                        $httpBackend.flush();
+
+                        expect(success).toHaveBeenCalledWith('collateral/userFiles/ce114e4501d2f4e2dcea3e17b546f339.jpg');
                     });
                 });
             });

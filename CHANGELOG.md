@@ -2,6 +2,7 @@
 
 * *[v1.14.1.rc1]*
   * Add a source property to image cards when they are saved.
+  * Update collateral service for uploading files and saving from URIs
 
 ## v1.14.0 (July 8, 2015)
 * *[v1.14.0.rc4]*
