@@ -473,6 +473,14 @@
                         return EditCardCtrl.cardComplete;
                     }
 
+                    describe('when there is an error on the card', function() {
+                        it('should be false', function() {
+                            EditCardCtrl.model.type = 'video';
+                            EditCardCtrl.error = 'error message';
+                            expect(cardComplete()).toBe(false);
+                        });
+                    });
+
                     describe('on non video cards', function() {
                         beforeEach(function() {
                             model.type = 'foo';
@@ -496,7 +504,6 @@
 
                         it('should be false if any of the required fields are not defined', function() {
                             onlyEmpty('service');
-                            console.log(model.data.service);
                             expect(cardComplete()).toBe(false);
                             onlyEmpty('imageid');
                             expect(cardComplete()).toBe(false);

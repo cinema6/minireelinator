@@ -8,7 +8,7 @@
         describe('MiniReelService', function() {
             var MiniReelService,
                 VoteService,
-                CollateralService,
+                CollateralUploadService,
                 ImageThumbnailService,
                 VideoThumbnailService,
                 OpenGraphService,
@@ -17,6 +17,7 @@
                 VideoService,
                 $rootScope,
                 c6UrlParser,
+                c6ImagePreloader,
                 cinema6,
                 c6State,
                 portal,
@@ -52,7 +53,7 @@
                     VoteService = $injector.get('VoteService');
                     cinema6 = $injector.get('cinema6');
                     $q = $injector.get('$q');
-                    CollateralService = $injector.get('CollateralService');
+                    CollateralUploadService = $injector.get('CollateralUploadService');
                     ImageThumbnailService = $injector.get('ImageThumbnailService');
                     VideoThumbnailService = $injector.get('VideoThumbnailService');
                     OpenGraphService = $injector.get('OpenGraphService');
@@ -61,6 +62,7 @@
                     VideoService = $injector.get('VideoService');
                     c6State = $injector.get('c6State');
                     c6UrlParser = $injector.get('c6UrlParser');
+                    c6ImagePreloader = $injector.get('c6ImagePreloader');
                 });
 
                 spyOn(ImageService._private, 'getFlickrEmbedInfo').and.returnValue(
@@ -238,7 +240,8 @@
                                 modules: [],
                                 data: {
                                     service: 'web',
-                                    src: 'http://www.fractalsciencekit.com/fractals/large/Fractal-Mobius-Dragon-IFS-10.jpg',
+                                    src: 'collateral/12345.jpg',
+                                    href: 'http://www.fractalsciencekit.com/fractals/large/Fractal-Mobius-Dragon-IFS-10.jpg',
                                     thumbs: {
                                         small: 'images.web.com/small.jpg',
                                         large: 'images.web.com/large.jpg'
@@ -2304,8 +2307,18 @@
 
                             thumbCache = {};
 
+                            spyOn(CollateralUploadService, 'uploadFromUri').and.callFake(function(uri) {
+                                return $q.when('collateral/12345.jpg');
+                            });
+
+                            spyOn(c6ImagePreloader, 'load').and.returnValue($q.when());
+
                             spyOn(ImageService, 'urlFromData').and.callFake(function(service, imageid) {
-                                return 'http://www.' + service + '.com/' + imageid;
+                                if(service === 'flickr' || service ==='getty') {
+                                    return 'http://www.' + service + '.com/' + imageid;
+                                } else {
+                                    return imageid;
+                                }
                             });
 
                             spyOn(ImageThumbnailService, 'getThumbsFor').and.callFake(function(service, imageid) {

@@ -1346,8 +1346,10 @@ VideoCardController           , c6embed) {
                 },
                 cardComplete: {
                     get: function() {
+                        if(this.error) {
+                            return false;
+                        }
                         var model = this.model;
-
                         switch (model.type) {
                         case 'image':
                             return ['service', 'imageid'].map(function(prop) {
@@ -1558,9 +1560,10 @@ VideoCardController           , c6embed) {
             };
         }])
 
-        .controller('EditCardImageController', ['$scope', 'ImageService',
-        function                               ( $scope,   ImageService ) {
+        .controller('EditCardImageController', ['$scope', 'c6State', 'ImageService',
+        function                               ( $scope ,  c6State ,  ImageService ) {
 
+            var EditCardCtrl = $scope.EditCardCtrl;
             var self = this;
             var _private = {};
             this.imageUrl = null;
@@ -1576,7 +1579,7 @@ VideoCardController           , c6embed) {
                         });
                     })
                     .catch(function(reason) {
-                        self.error = reason;
+                        EditCardCtrl.error = reason;
                     });
             };
 
@@ -1584,7 +1587,7 @@ VideoCardController           , c6embed) {
                 return self.imageUrl;
             }, function(imageUrl) {
                 if(imageUrl !== null) {
-                    self.error = null;
+                    EditCardCtrl.error = null;
                     var data = ImageService.dataFromUrl(imageUrl);
                     self.model.data.service = data.service;
                     self.model.data.imageid = data.imageid;

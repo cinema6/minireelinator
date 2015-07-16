@@ -3,17 +3,19 @@
 
     define(['minireel/services', 'c6_defines'], function(servicesModule, c6Defines) {
         describe('ImageService', function() {
-            var ImageService, $q, $http, $rootScope;
+            var ImageService, $q, $http, $rootScope, c6ImagePreloader, CollateralUploadService;
             var success, failure;
 
             beforeEach(function() {
                 module(servicesModule.name);
 
                 inject(function($injector) {
-                    ImageService = $injector.get('ImageService');
-                    $q           = $injector.get('$q');
-                    $http        = $injector.get('$http');
-                    $rootScope       = $injector.get('$rootScope');
+                    ImageService            = $injector.get('ImageService');
+                    $q                      = $injector.get('$q');
+                    $http                   = $injector.get('$http');
+                    $rootScope              = $injector.get('$rootScope');
+                    c6ImagePreloader        = $injector.get('c6ImagePreloader'),
+                    CollateralUploadService = $injector.get('CollateralUploadService');
                 });
 
                 success = jasmine.createSpy('success()');
@@ -254,6 +256,70 @@
                             expect(config.cache).toBe(true);
                         });
                     });
+
+                    describe('getWebEmbedInfo', function() {
+                        function fromData() {
+                            return ImageService._private.getWebEmbedInfo.apply(ImageService, arguments);
+                        }
+
+                        beforeEach(function() {
+                            spyOn(c6ImagePreloader, 'load');
+                            spyOn(CollateralUploadService, 'uploadFromUri');
+                        });
+
+                        it('should try to preload the image', function() {
+                            c6ImagePreloader.load.and.returnValue($q.when());
+                            CollateralUploadService.uploadFromUri.and.returnValue($q.when());
+                            fromData('www.site.com/image.jpg');
+                            expect(c6ImagePreloader.load).toHaveBeenCalledWith(['www.site.com/image.jpg']);
+                        });
+
+                        describe('when passed a valid image', function() {
+                            beforeEach(function() {
+                                c6ImagePreloader.load.and.returnValue($q.when());
+                                CollateralUploadService.uploadFromUri.and.returnValue(
+                                    $q.when('/collateral/image.jpg')
+                                );
+                            });
+
+                            it('should return the collateral embed info', function() {
+                                var expectedOutput = {
+                                    src: '/collateral/image.jpg'
+                                };
+                                fromData('www.site.com/image.jpg').then(success, failure);
+                                $rootScope.$apply();
+                                expect(success).toHaveBeenCalledWith(expectedOutput);
+                                expect(failure).not.toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('when the image fails to preload', function() {
+                            beforeEach(function() {
+                                c6ImagePreloader.load.and.returnValue($q.reject());
+                            });
+
+                            it('should reject with an error message', function() {
+                                fromData('www.site.com/image.jpg').then(success, failure);
+                                $rootScope.$apply();
+                                expect(success).not.toHaveBeenCalled();
+                                expect(failure).toHaveBeenCalledWith('Image could not be loaded.');
+                            });
+                        });
+
+                        describe('when the collateral service upload fails', function() {
+                            beforeEach(function() {
+                                c6ImagePreloader.load.and.returnValue($q.when());
+                                CollateralUploadService.uploadFromUri.and.returnValue($q.reject());
+                            });
+
+                            it('should reject with an error message', function() {
+                                fromData('www.site.com/image.jpg').then(success, failure);
+                                $rootScope.$apply();
+                                expect(success).not.toHaveBeenCalled();
+                                expect(failure).toHaveBeenCalledWith('Image could not be loaded.');
+                            });
+                        });
+                    });
                 });
             });
 
@@ -444,13 +510,17 @@
                     });
 
                     it('should return web embed info', function() {
+                        spyOn(ImageService._private, 'getWebEmbedInfo').and.returnValue(
+                            $q.when({
+                                src: '/collateral/image.jpg'
+                            })
+                        );
                         var expectedOutput = {
-                            src: 'site.com/image.jpg'
+                            src: '/collateral/image.jpg'
                         };
-                        embedInfo('web', 'site.com/image.jpg').then(success, failure);
+                        embedInfo('web', 'www.site.com/image.jpg').then(success, failure);
                         $rootScope.$apply();
-                        var output = success.calls.mostRecent().args[0];
-                        expect(output).toEqual(expectedOutput);
+                        expect(success).toHaveBeenCalledWith(expectedOutput);
                         expect(failure).not.toHaveBeenCalled();
                     });
 

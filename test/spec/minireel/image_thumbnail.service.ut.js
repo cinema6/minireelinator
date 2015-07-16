@@ -8,6 +8,7 @@
                 OpenGraphService,
                 ImageService,
                 ImageThumbnailService,
+                CollateralUploadService,
                 success, failure;
 
             var $httpBackend;
@@ -24,6 +25,7 @@
                     ImageService = $injector.get('ImageService');
                     $httpBackend = $injector.get('$httpBackend');
                     ImageThumbnailService = $injector.get('ImageThumbnailService');
+                    CollateralUploadService = $injector.get('CollateralUploadService');
                     _private = ImageThumbnailService._private;
                 });
 
@@ -147,6 +149,24 @@
                             expect(output).toEqual(expectedOutput);
                         });
                     });
+
+                    describe('fetchWebThumbs(imageid)', function() {
+                        it('should return the thumbs from the imageid', function() {
+                            spyOn(CollateralUploadService, 'uploadFromUri').and.returnValue(
+                                $q.when('/collateral/image.jpg')
+                            );
+                            var input = 'www.site.com/image.jpg';
+                            var expectedOutput = {
+                                small: '/collateral/image.jpg',
+                                large: '/collateral/image.jpg'
+                            };
+                            ImageThumbnailService._private.fetchWebThumbs(input)
+                                .then(success, failure);
+                            $rootScope.$apply();
+                            expect(success).toHaveBeenCalledWith(expectedOutput);
+                            expect(failure).not.toHaveBeenCalled();
+                        });
+                    });
                 });
             });
 
@@ -214,14 +234,24 @@
 
                         describe('web', function() {
                             beforeEach(function() {
-                                result = ImageThumbnailService.getThumbsFor('web', 'site.com/image.jpg');
+                                spyOn(_private, 'fetchWebThumbs')
+                                    .and.returnValue(
+                                        $q.when({
+                                            small: 'small.jpg',
+                                            large: 'large.jpg'
+                                        })
+                                    );
+
+                                result = ImageThumbnailService.getThumbsFor(
+                                    'web', 'www.site.com/image.jpg');
                             });
 
                             it('should set the small and large properties when the promise resolves', function() {
+                                expect(_private.fetchWebThumbs).toHaveBeenCalledWith('www.site.com/image.jpg');
                                 $rootScope.$digest();
 
-                                expect(result.small).toBe('site.com/image.jpg');
-                                expect(result.large).toBe('site.com/image.jpg');
+                                expect(result.small).toBe('small.jpg');
+                                expect(result.large).toBe('large.jpg');
                             });
                         });
 

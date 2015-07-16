@@ -67,6 +67,8 @@ define(['app'], function(appModule) {
                 });
                 spyOn(EditCardImageCtrl._private, 'updateEmbedInfo');
                 EditCardImageCtrl.imageUrl = 'www.site.com/123';
+                EditCardCtrl.error = 'error message';
+                EditCardImageCtrl.error = 'error message';
                 $rootScope.$apply();
             });
 
@@ -92,6 +94,10 @@ define(['app'], function(appModule) {
             });
 
             describe('when imageUrl is not null', function() {
+                it('should clear any existing errors', function() {
+                    expect(EditCardCtrl.error).toBeNull();
+                });
+
                 it('should update the model', function() {
                     expect(ImageService.dataFromUrl).toHaveBeenCalledWith('www.site.com/123');
                     expect(model.data.service).toEqual('site');
@@ -154,7 +160,7 @@ define(['app'], function(appModule) {
                         });
 
                         it('should update the error message', function() {
-                            expect(EditCardImageCtrl.error).toEqual('error message');
+                            expect(EditCardCtrl.error).toEqual('error message');
                         });
 
                         it('should remove the data properties', function() {

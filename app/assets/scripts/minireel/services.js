@@ -380,8 +380,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 return this;
             };
 
-            this.$get = ['FileService','$http','VideoThumbnailService','$q',
-            function    ( FileService , $http , VideoThumbnailService , $q ) {
+            this.$get = ['FileService','$http', 'ImageThumbnailService', 'VideoThumbnailService',
+                         '$q',
+            function    ( FileService , $http ,  ImageThumbnailService ,  VideoThumbnailService ,
+                          $q ) {
                 function CollateralService() {
                     function CollageResult(response) {
                         forEach(response, function(data) {
@@ -459,12 +461,21 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                         function fetchThumbs(minireel) {
                             return $q.all(minireel.data.deck.map(function(card) {
-                                return card.thumb ? {
-                                    large: card.thumb
-                                } : VideoThumbnailService.getThumbsFor(
-                                    card.data.service,
-                                    card.data.videoid
-                                ).ensureFulfillment();
+                                if(card.thumb) {
+                                    return {
+                                        large: card.thumb
+                                    };
+                                } else if(card.type === 'image') {
+                                    return ImageThumbnailService.getThumbsFor(
+                                        card.data.service,
+                                        card.data.imageid
+                                    ).ensureFulfillment();
+                                } else {
+                                    return VideoThumbnailService.getThumbsFor(
+                                        card.data.service,
+                                        card.data.videoid
+                                    ).ensureFulfillment();
+                                }
                             })).then(function map(thumbs) {
                                 return thumbs.map(function(thumb) {
                                     return thumb.large;
@@ -508,6 +519,29 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 return new CollateralService();
             }];
+        }])
+
+        .service('CollateralUploadService', [ '$cacheFactory', '$http',
+        function                            (  $cacheFactory ,  $http ) {
+            var cache = $cacheFactory('CollateralUploadService:models');
+
+            function returnPath(response) {
+                var result;
+                if(response.data instanceof Array) {
+                    result = response.data[0].path;
+                } else {
+                    result = response.data.path;
+                }
+                return '/' + result;
+            }
+
+            this.uploadFromUri = function(uri) {
+                var key = 'uri/' + uri;
+                return cache.get(key) || cache.put(key, (function() {
+                    return $http.post('/api/collateral/uri', { uri: uri })
+                        .then(returnPath);
+                }()));
+            };
         }])
 
         .service('FileService', ['$window','$q','$rootScope',
@@ -977,7 +1011,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
         }])
 
         .service('ImageThumbnailService', ['$q', '$cacheFactory', '$http',
-        function                          ( $q ,  $cacheFactory,   $http) {
+                                           'CollateralUploadService',
+        function                          ( $q ,  $cacheFactory,   $http ,
+                                            CollateralUploadService ) {
             var _private = {},
                 cache = $cacheFactory('ImageThumbnailService:models');
 
@@ -1040,6 +1076,16 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 };
             };
 
+            _private.fetchWebThumbs = function(imageid) {
+                return CollateralUploadService.uploadFromUri(imageid)
+                    .then(function(path) {
+                        return {
+                            small: path,
+                            large: path
+                        };
+                    });
+            };
+
             this.getThumbsFor = function(service, imageid) {
                 var key = service + ':' + imageid;
 
@@ -1051,10 +1097,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'getty':
                             return new ThumbModel($q.when(_private.fetchGettyThumbs(imageid)));
                         case 'web':
-                            return new ThumbModel($q.when({
-                                small: imageid,
-                                large: imageid
-                            }));
+                            return new ThumbModel(_private.fetchWebThumbs(imageid));
                         default:
                             return new ThumbModel($q.when({
                                 small: null,
@@ -1248,8 +1291,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
         }])
 
-        .service('ImageService', ['$http', '$q',
-        function                 ( $http , $q) {
+        .service('ImageService', ['$http', '$q', 'c6ImagePreloader', 'CollateralUploadService',
+        function                 ( $http ,  $q ,  c6ImagePreloader ,  CollateralUploadService ) {
 
             var _private = {};
 
@@ -1342,6 +1385,23 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             'GettyImages.');
                     }, function() {
                         return $q.reject('There was a problem contacting GettyImages.');
+                    });
+            };
+
+            // This function uses the collateral service endpoint to upload an image and return
+            // its path
+            _private.getWebEmbedInfo = function(imageid) {
+                return c6ImagePreloader.load([imageid])
+                    .then(function() {
+                        return CollateralUploadService.uploadFromUri(imageid);
+                    })
+                    .then(function(path) {
+                        return {
+                            src: path
+                        };
+                    })
+                    .catch(function() {
+                        return $q.reject('Image could not be loaded.');
                     });
             };
 
@@ -1446,9 +1506,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 };
                             });
                     case 'web':
-                        return $q.when({
-                            src: imageid
-                        });
+                        return _private.getWebEmbedInfo(imageid)
+                            .then(function(imageInfo) {
+                                return {
+                                    src: imageInfo.src
+                                };
+                            });
                     default:
                         return $q.when({ });
                 }
@@ -1799,7 +1862,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     service: copy(null),
                     imageid: function(data) {
                         if(data.service === 'web') {
-                            return data.src || null;
+                            return data.href || null;
                         } else {
                             return data.imageid || null;
                         }
@@ -2373,28 +2436,18 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     };
                 }
 
-                var embedInfo = null;
-                function embedValue(key) {
-                    return function(data) {
-                        if(embedInfo) {
-                            return embedInfo[key];
-                        } else {
-                            return ImageService.getEmbedInfo(data.service, data.imageid)
-                                .then(function(info) {
-                                    embedInfo = info;
-                                    return embedInfo[key];
-                                });
-                        }
+                function embedValue() {
+                    return function(data, key) {
+                        return ImageService.getEmbedInfo(data.service, data.imageid)
+                            .then(function(info) {
+                                return info[key];
+                            });
                     };
                 }
 
                 function imageHrefValue() {
                     return function(data) {
-                        if(data.service === 'web') {
-                            return null;
-                        } else {
-                            return ImageService.urlFromData(data.service, data.imageid);
-                        }
+                        return ImageService.urlFromData(data.service, data.imageid);
                     };
                 }
 
@@ -2412,10 +2465,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             }
                         },
                         service: copy(null),
-                        src: embedValue('src'),
+                        src: embedValue(),
                         href: imageHrefValue(),
-                        width: embedValue('width'),
-                        height: embedValue('height'),
+                        width: embedValue(),
+                        height: embedValue(),
                         source: function(data) {
                             return camelSource(data.service);
                         },
