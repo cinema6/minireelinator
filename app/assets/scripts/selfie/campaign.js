@@ -6,6 +6,7 @@ function( angular , c6State  , PaginatedListState                    ,
     'use strict';
 
     var copy = angular.copy,
+        equals = angular.equals,
         extend = angular.extend,
         forEach = angular.forEach,
         isObject = angular.isObject;
@@ -101,7 +102,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 var SelfieState = c6State.get('Selfie');
 
                 this.model = function() {
-                    var user = SelfieState.cModel;
+                    // var user = SelfieState.cModel;
 
                     return cinema6.db.create('selfieCampaign', {
                             name: null,
@@ -184,7 +185,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.campaign = null;
 
                 this.beforeModel = function() {
-                    this.card = this.cParent.card.pojoify();
+                    this.card = this.cParent.card;
                     this.campaign = this.cParent.cModel;
                 };
 
@@ -199,7 +200,9 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignController', ['$scope','$log','c6State','c6Computed','cState',
-        function                                ( $scope , $log , c6State , c6Computed , cState ) {
+                                                 'c6Debounce',
+        function                                ( $scope , $log , c6State , c6Computed , cState ,
+                                                  c6Debounce ) {
 
             var SelfieCampaignCtrl = this;
 
@@ -211,7 +214,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 return card;
             }
 
-            function saveCampaign() {
+            function saveCampaign(card) {
+                console.log('cState.card: ',card);
                 return SelfieCampaignCtrl.campaign.save();
             }
 
@@ -236,9 +240,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 return campaign;
             }
 
-            function returnToDashboard() {
-                return c6State.goTo('Selfie:CampaignDashboard');
-            }
+            // function returnToDashboard() {
+            //     return c6State.goTo('Selfie:CampaignDashboard');
+            // }
 
             function handleError(err) {
                 $log.error('Could not save the Campaign', err);
@@ -248,15 +252,27 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.card = cState.card;
                 this.campaign = cState.campaign;
                 this.categories = categories;
+
+                this._proxyCard = copy(this.card);
+                this._proxyCampaign = copy(this.campaign);
             };
 
+            function updateProxy() {
+                console.log('Ctrl.card: ',SelfieCampaignCtrl.card);
+
+                SelfieCampaignCtrl._proxyCard = copy(SelfieCampaignCtrl.card);
+                SelfieCampaignCtrl._proxyCampaign = copy(SelfieCampaignCtrl.campaign);
+            }
+
             this.save = function() {
+                console.log('saving!');
                 $scope.$broadcast('SelfieCampaignWillSave');
 
-                if (this.card.id) {
+                if (SelfieCampaignCtrl.card.id) {
                     return cState.updateCard()
                         .then(saveCampaign)
-                        .then(returnToDashboard)
+                        .then(updateProxy)
+                        // .then(returnToDashboard)
                         .catch(handleError);
                 } else {
                     return saveCampaign()
@@ -265,10 +281,61 @@ function( angular , c6State  , PaginatedListState                    ,
                         .then(updateCard)
                         .then(addCardToCampaign)
                         .then(saveCampaign)
-                        .then(returnToDashboard)
+                        .then(updateProxy)
+                        // .then(returnToDashboard)
                         .catch(handleError);
                 }
             };
+
+            this.autoSave = c6Debounce(SelfieCampaignCtrl.save, 5000);
+
+            $scope.$watchCollection(function() {
+                var card = SelfieCampaignCtrl.card,
+                    campaign = SelfieCampaignCtrl.campaign,
+                    data = card.data,
+                    params = card.params,
+                    label = params.action && params.action.label,
+                    actionType = params.action && params.action.type;
+
+                return [
+                    card.title,
+                    card.note,
+                    params.sponsor,
+                    label,
+                    actionType,
+                    card.thumb,
+                    card.links, // doesn't work, needs it's own $watcher, also true for Action link!
+                    card.collateral.logo,
+                    data.videoid,
+                    data.service,
+                    campaign.name,
+                    campaign.categories
+                ];
+            }, function(params, oldParams) {
+                if (params === oldParams) { return; }
+
+                if (SelfieCampaignCtrl.card.data.service && SelfieCampaignCtrl.card.data.videoid) {
+                    console.log('loadPreview');
+                    $scope.$broadcast('loadPreview');
+                }
+
+                console.log('$WATCHER TRIGGERED!', params, oldParams);
+
+                var cardDirty = !equals(SelfieCampaignCtrl.card, SelfieCampaignCtrl._proxyCard);
+                var campaignDirty = !equals(SelfieCampaignCtrl.campaign, SelfieCampaignCtrl._proxyCampaign);
+
+                if (cardDirty) {
+                    console.log('CARD IS DIRTY!!!!');
+                }
+                if (campaignDirty) {
+                    console.log('CAMPAIGN IS DIRTY!!!!');
+                }
+
+                if (cardDirty || campaignDirty) {
+                    SelfieCampaignCtrl.autoSave();
+
+                }
+            });
         }])
 
         .controller('SelfieCampaignSponsorController', ['$scope', function($scope) {
@@ -424,16 +491,21 @@ function( angular , c6State  , PaginatedListState                    ,
             function updateActionLink() {
                 var type = SelfieCampaignTextCtrl.actionType.type;
 
-                card.params.action = card.links.Action && type !== 'none' ? {
+                card.links.Action = SelfieCampaignTextCtrl.actionLink;
+
+                card.params.action = SelfieCampaignTextCtrl.actionLink && type !== 'none' ? {
                     type: type,
-                    label: card.params.action.label
+                    label: SelfieCampaignTextCtrl.actionLabel
                 } : null;
             }
 
-            card.params.action = card.params.action || {
-                type: 'button',
-                label: ''
-            };
+            // card.params.action = card.params.action || {
+            //     type: 'button',
+            //     label: ''
+            // };
+
+            this.actionLink = card.links.Action;
+            this.actionLabel = card.params.action && card.params.action.label;
 
             this.actionTypeOptions = ['None','Button', 'Link']
                 .map(function(option) {
@@ -445,18 +517,34 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.actionType = this.actionTypeOptions
                 .filter(function(option) {
-                    return option.type === card.params.action.type;
+                    var type = card.params.action || 'button';
+
+                    return option.type === type;
                 })[0];
 
             $scope.$on('SelfieCampaignWillSave', updateActionLink);
 
-            $scope.$watch(function() {
-                var label = card.params.action && card.params.action.label;
+            $scope.$watchCollection(function() {
+                return [
+                    SelfieCampaignTextCtrl.actionType.type,
+                    SelfieCampaignTextCtrl.actionLink,
+                    SelfieCampaignTextCtrl.actionLabel
+                ];
+            }, function(type, oldType) {
+                if (type === oldType) { return; }
 
-                return label + ':' + SelfieCampaignTextCtrl.actionType.type;
-            }, function(newParams, oldParams) {
-                if (newParams === oldParams) { return; }
+                console.log('DUUUU');
+
+                updateActionLink();
             });
+
+            // $scope.$watch(function() {
+            //     var label = card.params.action && card.params.action.label;
+
+            //     return label + ':' + SelfieCampaignTextCtrl.actionType.type;
+            // }, function(newParams, oldParams) {
+            //     if (newParams === oldParams) { return; }
+            // });
 
         }])
 
@@ -505,6 +593,7 @@ function( angular , c6State  , PaginatedListState                    ,
             this.profile = copy(c6BrowserInfo.profile);
             this.active = true;
             this.loadPreview = c6Debounce(function() {
+                console.log('loadpreview!!!!');
                 var card = SelfieCampaignCtrl.card;
 
                 MiniReelService.convertCardForPlayer(card)
@@ -536,25 +625,27 @@ function( angular , c6State  , PaginatedListState                    ,
                 });
             });
 
-            $scope.$watchCollection(function() {
-                return SelfieCampaignCtrl.card.links;
-            }, SelfieCampaignPreviewCtrl.loadPreview);
+            // $scope.$watchCollection(function() {
+            //     return SelfieCampaignCtrl.card.links;
+            // }, SelfieCampaignPreviewCtrl.loadPreview);
 
-            $scope.$watchCollection(function() {
-                var card = SelfieCampaignCtrl.card,
-                    data = card.data,
-                    params = card.params,
-                    label = params.action && params.action.label;
+            $scope.$on('loadPreview', SelfieCampaignPreviewCtrl.loadPreview);
 
-                return [
-                    card.title,
-                    card.note,
-                    card.thumb,
-                    label,
-                    params.sponsor,
-                    data.videoid,
-                    data.service
-                ];
-            }, SelfieCampaignPreviewCtrl.loadPreview);
+            // $scope.$watchCollection(function() {
+            //     var card = SelfieCampaignCtrl.card,
+            //         data = card.data,
+            //         params = card.params,
+            //         label = params.action && params.action.label;
+
+            //     return [
+            //         card.title,
+            //         card.note,
+            //         card.thumb,
+            //         label,
+            //         params.sponsor,
+            //         data.videoid,
+            //         data.service
+            //     ];
+            // }, SelfieCampaignPreviewCtrl.loadPreview);
         }]);
 });

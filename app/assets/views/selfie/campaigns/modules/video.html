@@ -94,7 +94,7 @@
                         <button class="thumbnail__btn" ng-click="SelfieCampaignVideoCtrl.useDefaultThumb = true" ng-class="{ 'thumbnail__btn--selected' : SelfieCampaignVideoCtrl.useDefaultThumb }">
                             <span class="thumbnail__box">
                                 <span class="thumbnail">
-                                    <img class="thumbnail__img" src="{{SelfieCampaignVideoCtrl.defaultThumb}}">
+                                    <img class="thumbnail__img" ng-src="{{SelfieCampaignVideoCtrl.defaultThumb}}">
                                 </span>
                             </span>
                             <span class="thumbnail__text">Default thumbnail</span>
@@ -108,7 +108,7 @@
                             <span class="thumbnail__uploadBox">
                                 <span class="thumbnail">
                                     <!-- <div class="thumbnail__img" style="padding-bottom:83%;background-size:cover;" c6-bg-img="{{SelfieCampaignVideoCtrl.customThumbSrc}}"></div> -->
-                                    <img ng-if="SelfieCampaignVideoCtrl.customThumbSrc" class="thumbnail__img" src="{{SelfieCampaignVideoCtrl.customThumbSrc}}">
+                                    <img ng-if="SelfieCampaignVideoCtrl.customThumbSrc" class="thumbnail__img" ng-src="{{SelfieCampaignVideoCtrl.customThumbSrc}}">
                                 </span>
                             </span>
 

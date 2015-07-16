@@ -67,7 +67,7 @@
             <div ng-if="SelfieCampaignTextCtrl.actionType.type !== 'none'">
 
                 <fieldset class="form__item">
-                    <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-campaign-label" ng-model="card.params.action.label">
+                    <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-campaign-label" ng-model="SelfieCampaignTextCtrl.actionLabel">
                     <label class="form__label" for="c6-campaign-label">
                         <i class="fa fa-times ui--error"></i>
                         {{SelfieCampaignTextCtrl.actionType.name}} Text
@@ -86,7 +86,7 @@
                 </fieldset>
 
                 <fieldset class="form__item">
-                    <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-campaign-name" ng-model="card.links.Action">
+                    <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-campaign-name" ng-model="SelfieCampaignTextCtrl.actionLink">
                     <label class="form__label" for="c6-campaign-name">
                         <i class="fa fa-times ui--error"></i>
                         Link/URL
