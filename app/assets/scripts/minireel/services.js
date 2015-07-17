@@ -2080,7 +2080,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 function convertDeck(minireel) {
                     return $q.all(minireel.data.deck.
                         filter(function(card) {
-                            return card.type !== 'ad';
+                            return card.type !== 'ad' && card.type !== 'recap';
                         })
                         .map(self.convertCardForEditor));
                 }
@@ -2168,7 +2168,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 },
                                 params: {},
                                 links: {},
-                                deck: [self.createCard('recap')]
+                                deck: []
                             }
                         });
                 }
@@ -2723,7 +2723,19 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             this.convertForPlayer = function(minireel, target) {
                 function convertDeck(minireel) {
-                    return $q.all(minireel.data.deck.map(function(card) {
+                    var deck = ngCopy(minireel.data.deck),
+                        lastCard = deck[deck.length - 1];
+
+                    if (lastCard) {
+                        if (lastCard.type === 'recap' && deck.length < 3) {
+                            deck.pop();
+                        }
+                        if (lastCard.type !== 'recap' && deck.length > 1) {
+                            deck.push(self.createCard('recap'));
+                        }
+                    }
+
+                    return $q.all(deck.map(function(card) {
                         return self.convertCardForPlayer(card, minireel);
                     }));
                 }

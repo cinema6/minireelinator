@@ -469,11 +469,18 @@ function( angular , c6uilib , services          , c6Drag           ) {
                         $cardScroller = $element.find('#card-scroller'),
                         setDimensions = c6Debounce(function() {
                             var $items = $cardScroller.find('.js-card-list-item'),
-                                firstButtonWidth = $items[0].clientWidth,
-                                cardWidth = $items[1].clientWidth,
-                                lastCardWidth = $items[$items.length - 1].clientWidth,
+                                firstButtonWidth, cardWidth, lastCardWidth, fullWidth;
+
+                            if ($items.length > 2) {
+                                firstButtonWidth = $items[0].clientWidth;
+                                cardWidth = $items[1].clientWidth;
+                                lastCardWidth = $items[$items.length - 1].clientWidth;
                                 fullWidth = (cardWidth * (controller.deck.length - 1)) +
                                     lastCardWidth;
+                            } else {
+                                firstButtonWidth = $items[1] ? $items[0].clientWidth : 0;
+                                fullWidth = firstButtonWidth + $items[0].clientWidth;
+                            }
 
                             controller.setScrollerFullWidth(fullWidth);
                             controller.setFirstButtonWidth(firstButtonWidth);
