@@ -21,6 +21,7 @@
                 cinema6,
                 c6State,
                 portal,
+                mocks,
                 $q;
 
             var minireel;
@@ -111,6 +112,46 @@
                         }
                     },
                     branding: 'elitedaily'
+                };
+
+                mocks = {
+                    playerCards: {
+                        vine: {
+                            id: 'rc-1ac904b814c8d6a20fea',
+                            type: 'vine',
+                            title: 'Vine Card',
+                            note: 'This is a Vine card.',
+                            source: 'Vine',
+                            placementId: null,
+                            templateUrl: null,
+                            sponsored: false,
+                            campaign: {
+                                campaignId: null,
+                                advertiserId: null,
+                                minViewTime: null,
+                                countUrls: [],
+                                clickUrls: []
+                            },
+                            thumbs: null,
+                            collateral: {},
+                            links: {},
+                            params: {},
+                            modules: [],
+                            data: {
+                                skip: true,
+                                service: 'vine',
+                                videoid: 'erUbKHDX6Ug',
+                                href: 'https://vine.co/v/erUbKHDX6Ug',
+                                thumbs: {
+                                    small: 'images.vine.com/video/erUbKHDX6Ug/small.jpg',
+                                    large: 'images.vine.com/video/erUbKHDX6Ug/large.jpg'
+                                },
+                                code: '<iframe src="https://vine.co/v/erUbKHDX6Ug/embed/simple"' +
+                                      ' style="width:100%;height:100%" frameborder="0"></iframe>' +
+                                      '<script src="https://platform.vine.co/static/scripts/embed.js"></script>'
+                            }
+                        }
+                    }
                 };
 
                 minireel = cinema6.db.create('experience', {
@@ -279,6 +320,7 @@
                                     large: 'images.somewhere.com/user_specified.jpg'
                                 }
                             },
+                            mocks.playerCards.vine,
                             {
                                 id: 'rc-c9cf24e87307ac',
                                 type: 'youtube',
@@ -1712,7 +1754,7 @@
                         });
 
                         it('should transpile the various video cards into two cards', function() {
-                            expect(deck[4]).toEqual({
+                            expect(deck[5]).toEqual({
                                 id: 'rc-c9cf24e87307ac',
                                 type: 'video',
                                 title: 'The Slowest Turtle',
@@ -1752,7 +1794,7 @@
                                 }
                             });
 
-                            expect(deck[5]).toEqual({
+                            expect(deck[6]).toEqual({
                                 id: 'rc-17721b74ce2584',
                                 type: 'videoBallot',
                                 title: 'The Ugliest Turtle',
@@ -1795,7 +1837,7 @@
                                 }
                             });
 
-                            expect(deck[6]).toEqual({
+                            expect(deck[7]).toEqual({
                                 id: 'rc-61fa9683714e13',
                                 type: 'videoBallot',
                                 title: 'The Smartest Turtle',
@@ -1838,7 +1880,7 @@
                                 }
                             });
 
-                            expect(deck[7]).toEqual({
+                            expect(deck[8]).toEqual({
                                 id: 'rc-d8ebd5461ba524',
                                 type: 'video',
                                 title: 'The Dumbest Turtle',
@@ -1893,7 +1935,7 @@
                                 }
                             });
 
-                            expect(deck[12]).toEqual({
+                            expect(deck[13]).toEqual({
                                 id: 'rc-82a19a12065636',
                                 type: 'video',
                                 title: 'AdUnit Card',
@@ -1936,7 +1978,7 @@
                                 }
                             });
 
-                            expect(deck[13]).toEqual({
+                            expect(deck[14]).toEqual({
                                 id: 'rc-fc6cfb661b7a86',
                                 type: 'video',
                                 title: 'Yahoo! Card',
@@ -1972,7 +2014,7 @@
                                 }
                             });
 
-                            expect(deck[14]).toEqual({
+                            expect(deck[15]).toEqual({
                                 id: 'rc-f51c0386a90a02',
                                 type: 'video',
                                 title: 'AOL Card',
@@ -2008,7 +2050,7 @@
                                 }
                             });
 
-                            expect(deck[15]).toEqual({
+                            expect(deck[16]).toEqual({
                                 id: 'rc-8142d1b5897b32',
                                 type: 'video',
                                 title: 'Rumble Card',
@@ -2046,7 +2088,7 @@
                         });
 
                         it('should transpile the links cards', function() {
-                            expect(deck[10]).toEqual({
+                            expect(deck[11]).toEqual({
                                 id: 'rc-25c1f60b933186',
                                 type: 'links',
                                 title: 'If You Love Turtles',
@@ -2068,10 +2110,10 @@
                                 thumb: null,
                                 links: {},
                                 params: {},
-                                data: minireel.data.deck[11].data
+                                data: minireel.data.deck[12].data
                             });
 
-                            expect(deck[10].data.links).not.toBe(minireel.data.deck[11].data.links);
+                            expect(deck[11].data.links).not.toBe(minireel.data.deck[12].data.links);
                         });
 
                         it('should not transpile the recap card', function() {
@@ -2081,7 +2123,7 @@
                         });
 
                         it('should transpile the displayAd cards', function() {
-                            expect(deck[11]).toEqual({
+                            expect(deck[12]).toEqual({
                                 id: 'rc-82a19a12065636',
                                 type: 'displayAd',
                                 title: 'By Ubisoft',
@@ -2112,7 +2154,7 @@
                         });
 
                         it('should transpile the wildcards', function() {
-                            expect(deck[16]).toEqual({
+                            expect(deck[17]).toEqual({
                                 id: 'rc-c99a6f4c6b4c54',
                                 type: 'wildcard',
                                 title: null,
@@ -2208,7 +2250,7 @@
                                 expect(newModel.status).toBe('pending');
                                 expect(newModel.access).toBe('public');
                                 expect('election' in newModel.data).toBe(false);
-                                expect('election' in newModel.data.deck[7].ballot).toBe(false);
+                                expect('election' in newModel.data.deck[8].ballot).toBe(false);
                             });
                         });
 

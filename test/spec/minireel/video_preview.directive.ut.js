@@ -53,6 +53,18 @@
                 expect($preview.find('iframe').length).toBe(0);
             });
 
+            describe('scope.disableTrimmer', function() {
+                describe('for Vine', function() {
+                    beforeEach(function() {
+                        scope.service = 'vine';
+                    });
+
+                    it('should be true', function() {
+                        expect(scope.disableTrimmer()).toBe(true);
+                    });
+                });
+            });
+
             describe('scope.embedCode', function() {
                 it('should be the embedCode given the service and video id', function() {
                     $scope.$apply(function() {

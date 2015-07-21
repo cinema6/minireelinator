@@ -7,10 +7,11 @@
             <span class="forms__inputHolder">
                 <input type="text" class="forms__textField forms__textField--block" ng-model="EditCardCtrl.videoUrl">
                 <span class="typo--guidance typo--warning">Type in a <strong>URL</strong> or <strong>KEYWORD</strong>.</span>
-                <span class="typo--guidance">Supported sources : 
-                    <a href="http://www.youtube.com" title="YouTube" target="_blank">YouTube</a>, 
+                <span class="typo--guidance">Supported sources :
+                    <a href="http://www.youtube.com" title="YouTube" target="_blank">YouTube</a>,
                     <a href="http://www.vimeo.com" title="Vimeo" target="_blank">Vimeo</a>,
-                    <a href="http://www.dailymotion.com" title="Daily Motion" target="_blank">Daily Motion</a>
+                    <a href="http://www.dailymotion.com" title="Daily Motion" target="_blank">Daily Motion</a>,
+                    <a href="http://www.vine.co" title="Vine" target="_blank">Vine</a>
                 </span>
             </span>
         </label>
@@ -32,12 +33,12 @@
 </div>
 
 <footer class="modalFooter__group">
-    <button class="btnAction btnAction--first" 
+    <button class="btnAction btnAction--first"
     ng-click="EditCardCtrl.negativeButton.action()"
     type="button" title="{{EditCardCtrl.negativeButton.text}}">
         {{EditCardCtrl.negativeButton.text}}
     </button>
-    <button class="btnAction btnAction--primary btnAction--last" 
+    <button class="btnAction btnAction--primary btnAction--last"
     ng-click="EditCardCtrl.primaryButton.action()" ng-disabled="!EditCardCtrl.primaryButton.enabled"
     type="button" title="{{EditCardCtrl.primaryButton.text}}">
         {{EditCardCtrl.primaryButton.text}}
