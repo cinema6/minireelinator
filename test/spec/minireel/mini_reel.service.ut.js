@@ -9,11 +9,11 @@
             var MiniReelService,
                 VoteService,
                 CollateralUploadService,
-                ImageThumbnailService,
-                VideoThumbnailService,
+                ThumbnailService,
                 OpenGraphService,
                 SettingsService,
                 ImageService,
+                InstagramService,
                 VideoService,
                 $rootScope,
                 c6UrlParser,
@@ -55,11 +55,11 @@
                     cinema6 = $injector.get('cinema6');
                     $q = $injector.get('$q');
                     CollateralUploadService = $injector.get('CollateralUploadService');
-                    ImageThumbnailService = $injector.get('ImageThumbnailService');
-                    VideoThumbnailService = $injector.get('VideoThumbnailService');
+                    ThumbnailService = $injector.get('ThumbnailService');
                     OpenGraphService = $injector.get('OpenGraphService');
                     SettingsService = $injector.get('SettingsService');
                     ImageService = $injector.get('ImageService');
+                    InstagramService = $injector.get('InstagramService');
                     VideoService = $injector.get('VideoService');
                     c6State = $injector.get('c6State');
                     c6UrlParser = $injector.get('c6UrlParser');
@@ -146,7 +146,46 @@
                                     small: 'images.vine.com/video/erUbKHDX6Ug/small.jpg',
                                     large: 'images.vine.com/video/erUbKHDX6Ug/large.jpg'
                                 }
-                            }
+                            },
+                        },
+                        instagram: {
+                            id: 'rc-94028ed693fda7',
+                            type: 'instagram',
+                            data: {
+                                type: 'image',
+                                id: '5YN6a0tOc-',
+                                src: 'https://mock.instagram.com/image/5YN6a0tOc-.jpg',
+                            },
+                            href: 'https:\/\/instagram.com\/p\/5YN6a0tOc-\/',
+                            likes: '77606',
+                            date: '1438099887',
+                            caption: 'Solomon, Pembroke Welsh Corgi (12 w\/o), BarkFest 2015, Brooklyn, NY',
+                            comments: '9718',
+                            user: {
+                                fullname: 'The Dogist',
+                                picture: 'https:\/\/igcdn-photos-g-a.akamaihd.net\/hphotos-ak-xfa1\/t51.2885-19\/s150x150\/11382947_1023728481019302_1629502413_a.jpg',
+                                username: 'thedogist',
+                                follow: 'https://instagram.com/accounts/login/?next=%2Fp%2F5YN6a0tOc-%2F&source=follow',
+                                bio: 'A photo-documentary series about the beauty of dogs. Author of THE DOGIST, coming October, 2015.',
+                                website: 'http:\/\/thedogist.com\/book',
+                                posts: '2884',
+                                followers: '1027481',
+                                following: '3'
+                            },
+                            placementId: null,
+                            templateUrl: null,
+                            sponsored: false,
+                            campaign: {
+                                campaignId: null,
+                                advertiserId: null,
+                                minViewTime: null,
+                                countUrls: [],
+                                clickUrls: []
+                            },
+                            collateral: {},
+                            links: {},
+                            params: {},
+                            modules: []
                         }
                     }
                 };
@@ -778,6 +817,7 @@
                                 data: {}
                             },
                             mocks.playerCards.vine,
+                            mocks.playerCards.instagram,
                             {
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
@@ -1788,6 +1828,35 @@
                             });
                         });
 
+                        it('should transpile the instagram card', function() {
+                            expect(deck[18]).toEqual({
+                                id: 'rc-94028ed693fda7',
+                                type: 'instagram',
+                                title: null,
+                                note: null,
+                                label: 'Instagram',
+                                thumb: null,
+                                ad: false,
+                                view: 'instagram',
+                                data: {
+                                    id: '5YN6a0tOc-'
+                                },
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
+                                },
+                                collateral: {},
+                                links: {},
+                                params: {}
+                            });
+                        });
+
                         it('should transpile the various video cards into two cards', function() {
                             expect(deck[4]).toEqual({
                                 id: 'rc-c9cf24e87307ac',
@@ -2398,30 +2467,26 @@
                                 }
                             });
 
-                            spyOn(ImageThumbnailService, 'getThumbsFor').and.callFake(function(service, imageid) {
+                            spyOn(ThumbnailService, 'getThumbsFor').and.callFake(function(service, id) {
 
-                                var id = service + ':' + imageid;
+                                var key = service + ':' + id;
 
                                 if(service === 'flickr' || service === 'getty') {
-                                    return thumbCache[id] || (thumbCache[id] = new MockThumb(
-                                        'images.' + service + '.com/image/' + imageid + '/small.jpg',
-                                        'images.' + service + '.com/image/' + imageid + '/large.jpg'
+                                    return thumbCache[key] || (thumbCache[key] = new MockThumb(
+                                        'images.' + service + '.com/image/' + id + '/small.jpg',
+                                        'images.' + service + '.com/image/' + id + '/large.jpg'
                                     ));
                                 } else if(service ==='web') {
-                                    return thumbCache[id] || (thumbCache[id] = new MockThumb(
+                                    return thumbCache[key] || (thumbCache[key] = new MockThumb(
                                         'images.' + service + '.com/small.jpg',
                                         'images.' + service + '.com/large.jpg'
                                     ));
+                                } else {
+                                    return thumbCache[key] || (thumbCache[key] = new MockThumb(
+                                        'images.' + service + '.com/video/' + id + '/small.jpg',
+                                        'images.' + service + '.com/video/' + id + '/large.jpg'
+                                    ));
                                 }
-                            });
-
-                            spyOn(VideoThumbnailService, 'getThumbsFor').and.callFake(function(service, videoid) {
-                                var id = service + ':' + videoid;
-
-                                return thumbCache[id] || (thumbCache[id] = new MockThumb(
-                                    'images.' + service + '.com/video/' + videoid + '/small.jpg',
-                                    'images.' + service + '.com/video/' + videoid + '/large.jpg'
-                                ));
                             });
 
                             spyOn(OpenGraphService, 'getData').and.callFake(function(articleUrl) {
@@ -2431,6 +2496,29 @@
                                             value: articleUrl + '/og_logo.jpg'
                                         }
                                     ]
+                                });
+                            });
+
+                            spyOn(InstagramService, 'getCardInfo').and.callFake(function(id) {
+                                return $q.when({
+                                    type: 'image',
+                                    src: 'https://mock.instagram.com/image/' + id + '.jpg',
+                                    href: 'https:\/\/instagram.com\/p\/5YN6a0tOc-\/',
+                                    likes: '77606',
+                                    date: '1438099887',
+                                    caption: 'Solomon, Pembroke Welsh Corgi (12 w\/o), BarkFest 2015, Brooklyn, NY',
+                                    comments: '9718',
+                                    user: {
+                                        fullname: 'The Dogist',
+                                        picture: 'https:\/\/igcdn-photos-g-a.akamaihd.net\/hphotos-ak-xfa1\/t51.2885-19\/s150x150\/11382947_1023728481019302_1629502413_a.jpg',
+                                        username: 'thedogist',
+                                        follow: 'https://instagram.com/accounts/login/?next=%2Fp%2F5YN6a0tOc-%2F&source=follow',
+                                        bio: 'A photo-documentary series about the beauty of dogs. Author of THE DOGIST, coming October, 2015.',
+                                        website: 'http:\/\/thedogist.com\/book',
+                                        posts: '2884',
+                                        followers: '1027481',
+                                        following: '3'
+                                    }
                                 });
                             });
                         });
@@ -2485,7 +2573,7 @@
                             result = resultSpy.calls.mostRecent().args[0];
 
                             result.data.deck.forEach(function(card) {
-                                if (!(/adUnit|article|image|text|links|displayAd|wildcard/).test(card.type)) {
+                                if (!(/adUnit|article|image|instagram|text|links|displayAd|wildcard/).test(card.type)) {
                                     expect(card.modules.indexOf('displayAd')).not.toBe(-1);
                                 } else if (card.type !== 'links') {
                                     expect((card.modules || []).indexOf('displayAd')).toBe(-1);
@@ -2532,7 +2620,7 @@
                             result = resultSpy.calls.mostRecent().args[0];
 
                             result.data.deck.forEach(function(card) {
-                                if (!(/adUnit|article|image|text|links|displayAd|wildcard/).test(card.type)) {
+                                if (!(/adUnit|article|image|instagram|text|links|displayAd|wildcard/).test(card.type)) {
                                     expect(card.modules.indexOf('displayAd')).not.toBe(-1);
                                 } else if (card.type !== 'links') {
                                     expect((card.modules || []).indexOf('displayAd')).toBe(-1);
@@ -2727,7 +2815,7 @@
                             });
                             converted = convertedSpy.calls.mostRecent().args[0];
 
-                            converted.data.deck[10].data.videoid = null;
+                            converted.data.deck[11].data.videoid = null;
 
                             expect(function() {
                                 MiniReelService.convertForPlayer(converted);

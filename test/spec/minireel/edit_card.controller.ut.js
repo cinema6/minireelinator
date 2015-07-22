@@ -389,7 +389,7 @@
                         keys = [keys];
                     }
                     var modelProps = ['title', 'note'];
-                    var dataProps = ['service', 'videoid', 'imageid'];
+                    var dataProps = ['service', 'videoid', 'imageid', 'id'];
                     modelProps.forEach(function(prop) {
                         if (keys.indexOf(prop) > -1) {
                             model[prop] = null;
@@ -508,6 +508,22 @@
                             onlyEmpty('imageid');
                             expect(cardComplete()).toBe(false);
                             onlyEmpty('service', 'imageid');
+                            expect(cardComplete()).toBe(false);
+                        });
+                    });
+
+                    describe('on an instagram card', function() {
+                        beforeEach(function() {
+                            model.type = 'instagram';
+                            model.data.id = '12345';
+                        });
+
+                        it('should be true if the required fields are defined', function() {
+                            expect(cardComplete()).toBe(true);
+                        });
+
+                        it('should be false if any of the required fields are not defined', function() {
+                            onlyEmpty('id');
                             expect(cardComplete()).toBe(false);
                         });
                     });
@@ -691,7 +707,7 @@
                             });
                         });
 
-                        ['MR:EditCard.Copy', 'MR:EditCard.Ballot'].forEach(function(state) {
+                        ['MR:EditCard.Copy', 'MR:EditCard.Ballot', 'MR:EditCard.Instagram'].forEach(function(state) {
                             describe('on the ' + state + ' state', function() {
                                 beforeEach(function() {
                                     setCurrentState(state);
