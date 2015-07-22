@@ -3,7 +3,7 @@
 
     define(['minireel/services', 'c6_defines'], function(servicesModule, c6Defines) {
         describe('ImageService', function() {
-            var ImageService, $q, $http, $rootScope, c6ImagePreloader, CollateralUploadService;
+            var ImageService, $q, $http, $rootScope, c6ImagePreloader;
             var success, failure;
 
             beforeEach(function() {
@@ -14,8 +14,7 @@
                     $q                      = $injector.get('$q');
                     $http                   = $injector.get('$http');
                     $rootScope              = $injector.get('$rootScope');
-                    c6ImagePreloader        = $injector.get('c6ImagePreloader'),
-                    CollateralUploadService = $injector.get('CollateralUploadService');
+                    c6ImagePreloader        = $injector.get('c6ImagePreloader');
                 });
 
                 success = jasmine.createSpy('success()');
@@ -264,12 +263,10 @@
 
                         beforeEach(function() {
                             spyOn(c6ImagePreloader, 'load');
-                            spyOn(CollateralUploadService, 'uploadFromUri');
                         });
 
                         it('should try to preload the image', function() {
                             c6ImagePreloader.load.and.returnValue($q.when());
-                            CollateralUploadService.uploadFromUri.and.returnValue($q.when());
                             fromData('www.site.com/image.jpg');
                             expect(c6ImagePreloader.load).toHaveBeenCalledWith(['www.site.com/image.jpg']);
                         });
@@ -277,14 +274,11 @@
                         describe('when passed a valid image', function() {
                             beforeEach(function() {
                                 c6ImagePreloader.load.and.returnValue($q.when());
-                                CollateralUploadService.uploadFromUri.and.returnValue(
-                                    $q.when('/collateral/image.jpg')
-                                );
                             });
 
-                            it('should return the collateral embed info', function() {
+                            it('should return the embed info', function() {
                                 var expectedOutput = {
-                                    src: '/collateral/image.jpg'
+                                    src: 'www.site.com/image.jpg'
                                 };
                                 fromData('www.site.com/image.jpg').then(success, failure);
                                 $rootScope.$apply();
@@ -296,20 +290,6 @@
                         describe('when the image fails to preload', function() {
                             beforeEach(function() {
                                 c6ImagePreloader.load.and.returnValue($q.reject());
-                            });
-
-                            it('should reject with an error message', function() {
-                                fromData('www.site.com/image.jpg').then(success, failure);
-                                $rootScope.$apply();
-                                expect(success).not.toHaveBeenCalled();
-                                expect(failure).toHaveBeenCalledWith('Image could not be loaded.');
-                            });
-                        });
-
-                        describe('when the collateral service upload fails', function() {
-                            beforeEach(function() {
-                                c6ImagePreloader.load.and.returnValue($q.when());
-                                CollateralUploadService.uploadFromUri.and.returnValue($q.reject());
                             });
 
                             it('should reject with an error message', function() {
@@ -395,7 +375,12 @@
                             'site.com/image.jpeg',
                             'site.com/image.gif',
                             'site.com/image.png',
-                            'site.com/image.bmp'
+                            'site.com/image.bmp',
+                            'site.com/image.JPG',
+                            'site.com/image.JPEG',
+                            'site.com/image.GIF',
+                            'site.com/image.PNG',
+                            'site.com/image.BMP'
                         ];
                         var expectedOutput = input.map(function(imageUrl) {
                             return {
@@ -408,12 +393,17 @@
                     });
 
                     it('should return nulls if the URL could not be recognized', function() {
-                        var input = 'www.google.com';
-                        var expectedOutput = {
-                            service: null,
-                            imageid: null
-                        };
-                        var output = fromUrl(input);
+                        var input = [
+                            'www.google.com',
+                            'site.com/imagejpg'
+                        ];
+                        var expectedOutput = input.map(function() {
+                            return {
+                                service: null,
+                                imageid: null
+                            };
+                        });
+                        var output = input.map(fromUrl);
                         expect(output).toEqual(expectedOutput);
                     });
                 });
@@ -512,11 +502,11 @@
                     it('should return web embed info', function() {
                         spyOn(ImageService._private, 'getWebEmbedInfo').and.returnValue(
                             $q.when({
-                                src: '/collateral/image.jpg'
+                                src: 'www.site.com/image.jpg'
                             })
                         );
                         var expectedOutput = {
-                            src: '/collateral/image.jpg'
+                            src: 'www.site.com/image.jpg'
                         };
                         embedInfo('web', 'www.site.com/image.jpg').then(success, failure);
                         $rootScope.$apply();

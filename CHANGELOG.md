@@ -1,8 +1,10 @@
 # MiniReelinator
 
+* *[v1.15.0.rc1]*
+  * [FEATURE]: When creating an image card, you can use the url of any image
+
 ## v1.14.1 (July 20, 2015)
 * *[v1.14.1.rc1]*
-  * [FEATURE]: When creating an image card, you can use the url of any image
   * Add a source property to image cards when they are saved.
   * Update collateral service for uploading files and saving from URIs
   * Remove Recap card from Studio UI

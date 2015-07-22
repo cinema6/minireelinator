@@ -8,7 +8,6 @@
                 OpenGraphService,
                 ImageService,
                 ImageThumbnailService,
-                CollateralUploadService,
                 success, failure;
 
             var $httpBackend;
@@ -25,7 +24,6 @@
                     ImageService = $injector.get('ImageService');
                     $httpBackend = $injector.get('$httpBackend');
                     ImageThumbnailService = $injector.get('ImageThumbnailService');
-                    CollateralUploadService = $injector.get('CollateralUploadService');
                     _private = ImageThumbnailService._private;
                 });
 
@@ -152,19 +150,13 @@
 
                     describe('fetchWebThumbs(imageid)', function() {
                         it('should return the thumbs from the imageid', function() {
-                            spyOn(CollateralUploadService, 'uploadFromUri').and.returnValue(
-                                $q.when('/collateral/image.jpg')
-                            );
                             var input = 'www.site.com/image.jpg';
                             var expectedOutput = {
-                                small: '/collateral/image.jpg',
-                                large: '/collateral/image.jpg'
+                                small: 'www.site.com/image.jpg',
+                                large: 'www.site.com/image.jpg'
                             };
-                            ImageThumbnailService._private.fetchWebThumbs(input)
-                                .then(success, failure);
-                            $rootScope.$apply();
-                            expect(success).toHaveBeenCalledWith(expectedOutput);
-                            expect(failure).not.toHaveBeenCalled();
+                            var output = ImageThumbnailService._private.fetchWebThumbs(input);
+                            expect(output).toEqual(expectedOutput);
                         });
                     });
                 });

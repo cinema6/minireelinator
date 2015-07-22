@@ -1011,9 +1011,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
         }])
 
         .service('ImageThumbnailService', ['$q', '$cacheFactory', '$http',
-                                           'CollateralUploadService',
-        function                          ( $q ,  $cacheFactory,   $http ,
-                                            CollateralUploadService ) {
+        function                          ( $q ,  $cacheFactory,   $http ) {
             var _private = {},
                 cache = $cacheFactory('ImageThumbnailService:models');
 
@@ -1077,13 +1075,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
 
             _private.fetchWebThumbs = function(imageid) {
-                return CollateralUploadService.uploadFromUri(imageid)
-                    .then(function(path) {
-                        return {
-                            small: path,
-                            large: path
-                        };
-                    });
+                return {
+                    small: imageid,
+                    large: imageid
+                };
             };
 
             this.getThumbsFor = function(service, imageid) {
@@ -1097,7 +1092,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'getty':
                             return new ThumbModel($q.when(_private.fetchGettyThumbs(imageid)));
                         case 'web':
-                            return new ThumbModel(_private.fetchWebThumbs(imageid));
+                            return new ThumbModel($q.when(_private.fetchWebThumbs(imageid)));
                         default:
                             return new ThumbModel($q.when({
                                 small: null,
@@ -1291,8 +1286,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
         }])
 
-        .service('ImageService', ['$http', '$q', 'c6ImagePreloader', 'CollateralUploadService',
-        function                 ( $http ,  $q ,  c6ImagePreloader ,  CollateralUploadService ) {
+        .service('ImageService', ['$http', '$q', 'c6ImagePreloader',
+        function                 ( $http ,  $q ,  c6ImagePreloader ) {
 
             var _private = {};
 
@@ -1393,11 +1388,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             _private.getWebEmbedInfo = function(imageid) {
                 return c6ImagePreloader.load([imageid])
                     .then(function() {
-                        return CollateralUploadService.uploadFromUri(imageid);
-                    })
-                    .then(function(path) {
                         return {
-                            src: path
+                            src: imageid
                         };
                     })
                     .catch(function() {
@@ -1450,7 +1442,15 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     web: {
                         patterns: [
                             {
-                                urlFormat: /.+\.(jpg|jpeg|gif|png|bmp)/,
+                                urlFormat: (function() {
+                                    var imageTypes = ['jpg', 'jpeg', 'gif', 'png', 'bmp'];
+                                    var typeRegex = imageTypes
+                                    .reduce(function(previous, current) {
+                                        return previous + '|' + current +
+                                                          '|' + current.toUpperCase();
+                                    }, '');
+                                    return new RegExp('.+\\.(' + typeRegex.slice(1) + ')');
+                                }()),
                                 idFetcher: function(url) {
                                     return url;
                                 }
@@ -1506,12 +1506,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 };
                             });
                     case 'web':
-                        return _private.getWebEmbedInfo(imageid)
-                            .then(function(imageInfo) {
-                                return {
-                                    src: imageInfo.src
-                                };
-                            });
+                        return _private.getWebEmbedInfo(imageid);
                     default:
                         return $q.when({ });
                 }
@@ -1660,9 +1655,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
                                      'SettingsService','VideoService','ImageThumbnailService',
                                      'VideoThumbnailService', 'ImageService', 'OpenGraphService',
+                                     'CollateralUploadService',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
                                       SettingsService , VideoService , ImageThumbnailService,
-                                      VideoThumbnailService,   ImageService,   OpenGraphService ) {
+                                      VideoThumbnailService,   ImageService,   OpenGraphService,
+                                      CollateralUploadService ) {
             var ngCopy = angular.copy;
 
             var self = this,
@@ -2397,14 +2394,24 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 function imageThumbsValue() {
                     return function(data) {
-                        return ImageThumbnailService.getThumbsFor(data.service, data.imageid)
-                            .ensureFulfillment()
-                            .then(function(thumbs) {
-                                return {
-                                    small: thumbs.small,
-                                    large: thumbs.large
-                                };
-                            });
+                        if(data.service === 'web') {
+                            return CollateralUploadService.uploadFromUri(data.imageid)
+                                .then(function(path) {
+                                    return {
+                                        small: path,
+                                        large: path
+                                    };
+                                });
+                        } else {
+                            return ImageThumbnailService.getThumbsFor(data.service, data.imageid)
+                                .ensureFulfillment()
+                                .then(function(thumbs) {
+                                    return {
+                                        small: thumbs.small,
+                                        large: thumbs.large
+                                    };
+                                });
+                        }
                     };
                 }
 
@@ -2451,6 +2458,19 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     };
                 }
 
+                function imageSrcValue() {
+                    return function(data, key) {
+                        if(data.service === 'web') {
+                            return CollateralUploadService.uploadFromUri(data.imageid)
+                                .then(function(path) {
+                                    return path;
+                                });
+                        } else {
+                            return embedValue()(data, key);
+                        }
+                    };
+                }
+
                 dataTemplates = {
                     article: {
                         src: copy(null),
@@ -2465,7 +2485,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             }
                         },
                         service: copy(null),
-                        src: embedValue(),
+                        src: imageSrcValue(),
                         href: imageHrefValue(),
                         width: embedValue(),
                         height: embedValue(),

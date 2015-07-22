@@ -243,8 +243,8 @@
                                     src: 'collateral/12345.jpg',
                                     href: 'http://www.fractalsciencekit.com/fractals/large/Fractal-Mobius-Dragon-IFS-10.jpg',
                                     thumbs: {
-                                        small: 'images.web.com/small.jpg',
-                                        large: 'images.web.com/large.jpg'
+                                        small: 'collateral/12345.jpg',
+                                        large: 'collateral/12345.jpg'
                                     }
                                 }
                             },
