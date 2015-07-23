@@ -145,6 +145,23 @@ function( angular , c6uilib ) {
 
                         return promise;
                     };
+                },
+
+                debounce: function(fn, context) {
+                    var pending = null;
+
+                    return function() {
+                        if (pending) {
+                            return pending;
+                        }
+
+                        pending = $q.when(fn.apply(context, arguments));
+                        pending.finally(function() {
+                            pending = null;
+                        });
+
+                        return pending;
+                    };
                 }
             };
 
