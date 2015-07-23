@@ -3,17 +3,18 @@
 
     define(['minireel/services', 'c6_defines'], function(servicesModule, c6Defines) {
         describe('ImageService', function() {
-            var ImageService, $q, $http, $rootScope;
+            var ImageService, $q, $http, $rootScope, c6ImagePreloader;
             var success, failure;
 
             beforeEach(function() {
                 module(servicesModule.name);
 
                 inject(function($injector) {
-                    ImageService = $injector.get('ImageService');
-                    $q           = $injector.get('$q');
-                    $http        = $injector.get('$http');
-                    $rootScope       = $injector.get('$rootScope');
+                    ImageService            = $injector.get('ImageService');
+                    $q                      = $injector.get('$q');
+                    $http                   = $injector.get('$http');
+                    $rootScope              = $injector.get('$rootScope');
+                    c6ImagePreloader        = $injector.get('c6ImagePreloader');
                 });
 
                 success = jasmine.createSpy('success()');
@@ -254,6 +255,51 @@
                             expect(config.cache).toBe(true);
                         });
                     });
+
+                    describe('getWebEmbedInfo', function() {
+                        function fromData() {
+                            return ImageService._private.getWebEmbedInfo.apply(ImageService, arguments);
+                        }
+
+                        beforeEach(function() {
+                            spyOn(c6ImagePreloader, 'load');
+                        });
+
+                        it('should try to preload the image', function() {
+                            c6ImagePreloader.load.and.returnValue($q.when());
+                            fromData('www.site.com/image.jpg');
+                            expect(c6ImagePreloader.load).toHaveBeenCalledWith(['www.site.com/image.jpg']);
+                        });
+
+                        describe('when passed a valid image', function() {
+                            beforeEach(function() {
+                                c6ImagePreloader.load.and.returnValue($q.when());
+                            });
+
+                            it('should return the embed info', function() {
+                                var expectedOutput = {
+                                    src: 'www.site.com/image.jpg'
+                                };
+                                fromData('www.site.com/image.jpg').then(success, failure);
+                                $rootScope.$apply();
+                                expect(success).toHaveBeenCalledWith(expectedOutput);
+                                expect(failure).not.toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('when the image fails to preload', function() {
+                            beforeEach(function() {
+                                c6ImagePreloader.load.and.returnValue($q.reject());
+                            });
+
+                            it('should reject with an error message', function() {
+                                fromData('www.site.com/image.jpg').then(success, failure);
+                                $rootScope.$apply();
+                                expect(success).not.toHaveBeenCalled();
+                                expect(failure).toHaveBeenCalledWith('Image could not be loaded.');
+                            });
+                        });
+                    });
                 });
             });
 
@@ -323,13 +369,41 @@
                         expect(output).toEqual(expectedOutput);
                     });
 
+                    it('should recognize urls to an image on the web', function() {
+                        var input = [
+                            'site.com/image.jpg',
+                            'site.com/image.jpeg',
+                            'site.com/image.gif',
+                            'site.com/image.png',
+                            'site.com/image.bmp',
+                            'site.com/image.JPG',
+                            'site.com/image.JPEG',
+                            'site.com/image.GIF',
+                            'site.com/image.PNG',
+                            'site.com/image.BMP'
+                        ];
+                        var expectedOutput = input.map(function(imageUrl) {
+                            return {
+                                imageid: imageUrl,
+                                service: 'web',
+                            };
+                        });
+                        var output = input.map(fromUrl);
+                        expect(output).toEqual(expectedOutput);
+                    });
+
                     it('should return nulls if the URL could not be recognized', function() {
-                        var input = 'www.google.com';
-                        var expectedOutput = {
-                            service: null,
-                            imageid: null
-                        };
-                        var output = fromUrl(input);
+                        var input = [
+                            'www.google.com',
+                            'site.com/imagejpg'
+                        ];
+                        var expectedOutput = input.map(function() {
+                            return {
+                                service: null,
+                                imageid: null
+                            };
+                        });
+                        var output = input.map(fromUrl);
                         expect(output).toEqual(expectedOutput);
                     });
                 });
@@ -355,6 +429,16 @@
                             imageid: '12345'
                         };
                         var expectedOutput = 'http://gty.im/12345';
+                        var output = fromData(input.service, input.imageid);
+                        expect(output).toEqual(expectedOutput);
+                    });
+
+                    it('should construct a valid web url', function() {
+                        var input = {
+                            service: 'web',
+                            imageid: 'site.com/image.jpg'
+                        };
+                        var expectedOutput = 'site.com/image.jpg';
                         var output = fromData(input.service, input.imageid);
                         expect(output).toEqual(expectedOutput);
                     });
@@ -415,15 +499,26 @@
                         expect(failure).not.toHaveBeenCalled();
                     });
 
-                    it('should resolve the promise with nulls if passed an unrecognized service', function() {
+                    it('should return web embed info', function() {
+                        spyOn(ImageService._private, 'getWebEmbedInfo').and.returnValue(
+                            $q.when({
+                                src: 'www.site.com/image.jpg'
+                            })
+                        );
+                        var expectedOutput = {
+                            src: 'www.site.com/image.jpg'
+                        };
+                        embedInfo('web', 'www.site.com/image.jpg').then(success, failure);
+                        $rootScope.$apply();
+                        expect(success).toHaveBeenCalledWith(expectedOutput);
+                        expect(failure).not.toHaveBeenCalled();
+                    });
+
+                    it('should resolve the promise with an empty object if passed an unrecognized service', function() {
                         var expectedOutput = 'Unrecognized service.';
                         embedInfo('apple', '12345').then(success, failure);
                         $rootScope.$apply();
-                        expect(success).toHaveBeenCalledWith({
-                            src: null,
-                            width: null,
-                            height: null
-                        });
+                        expect(success).toHaveBeenCalledWith({ });
                     });
                 });
 
