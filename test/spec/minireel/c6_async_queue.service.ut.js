@@ -29,6 +29,123 @@
                     queue = c6AsyncQueue();
                 });
 
+                describe('debounce(fn, context)', function() {
+                    var deferred;
+                    var fn, context;
+                    var result;
+
+                    beforeEach(function() {
+                        deferred = $q.defer();
+
+                        fn = jasmine.createSpy('fn()').and.returnValue(deferred.promise);
+                        context = {};
+
+                        result = queue.debounce(fn, context);
+                    });
+
+                    it('should return a function', function() {
+                        expect(result).toEqual(jasmine.any(Function));
+                    });
+
+                    describe('if the fn does not return a promise', function() {
+                        var value;
+                        var success, failure;
+
+                        beforeEach(function() {
+                            value = { data: 'foo' };
+                            success = jasmine.createSpy('success()');
+                            failure = jasmine.createSpy('failure()');
+
+                            fn.and.returnValue(value);
+
+                            $rootScope.$apply(function() {
+                                queue.debounce(fn)().then(success, failure);
+                            });
+                        });
+
+                        it('should return a promise that is fulfilled with the data', function() {
+                            expect(success).toHaveBeenCalledWith(value);
+                        });
+                    });
+
+                    describe('when the result is called', function() {
+                        var success, failure;
+                        var callResult;
+
+                        beforeEach(function() {
+                            success = jasmine.createSpy('success()');
+                            failure = jasmine.createSpy('failure()');
+
+                            callResult = result('abc', 123);
+                            callResult.then(success, failure);
+                        });
+
+                        it('should call the provided function with the provided context', function() {
+                            expect(fn).toHaveBeenCalledWith('abc', 123);
+                            expect(fn.calls.mostRecent().object).toBe(context);
+                        });
+
+                        describe('after it has been called once', function() {
+                            var previousResult;
+
+                            beforeEach(function() {
+                                previousResult = callResult;
+                                callResult = result('foo');
+                            });
+
+                            it('should not call the function again', function() {
+                                expect(fn.calls.count()).toBe(1);
+                            });
+
+                            it('should return the result of the old call', function() {
+                                expect(callResult).toBe(previousResult);
+                            });
+                        });
+
+                        describe('after the promise has been rejected', function() {
+                            var reason;
+
+                            beforeEach(function() {
+                                reason = new Error('I failed.');
+                                $rootScope.$apply(function() {
+                                    deferred.reject(reason);
+                                });
+
+                                result('hello!');
+                            });
+
+                            it('should reject the returned promise', function() {
+                                expect(failure).toHaveBeenCalledWith(reason);
+                            });
+
+                            it('should call the function again', function() {
+                                expect(fn).toHaveBeenCalledWith('hello!');
+                            });
+                        });
+
+                        describe('after the promise has been fulfilled', function() {
+                            var value;
+
+                            beforeEach(function() {
+                                value = { foo: 'bar' };
+                                $rootScope.$apply(function() {
+                                    deferred.resolve(value);
+                                });
+
+                                result('sup?!');
+                            });
+
+                            it('should fulfill the returned promise', function() {
+                                expect(success).toHaveBeenCalledWith(value);
+                            });
+
+                            it('should call the function again', function() {
+                                expect(fn).toHaveBeenCalledWith('sup?!');
+                            });
+                        });
+                    });
+                });
+
                 describe('wrap(fn)', function() {
                     var fn,
                         wrapped;

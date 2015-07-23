@@ -10,10 +10,26 @@ define(['app'], function(appModule) {
             ConfirmDialogService,
             CampaignCtrl;
 
-        var campaign;
+        var campaign, debouncedFns;
 
         beforeEach(function() {
+            debouncedFns = [];
+
             module(appModule.name);
+            module(function($provide) {
+                $provide.decorator('c6AsyncQueue', function($delegate) {
+                    return jasmine.createSpy('c6AsyncQueue()').and.callFake(function() {
+                        var queue = $delegate.apply(this, arguments);
+                        var debounce = queue.debounce;
+                        spyOn(queue, 'debounce').and.callFake(function() {
+                            var fn = debounce.apply(queue, arguments);
+                            debouncedFns.push(fn);
+                            return fn;
+                        });
+                        return queue;
+                    });
+                });
+            });
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
@@ -356,6 +372,10 @@ define(['app'], function(appModule) {
                     $scope.$apply(function() {
                         CampaignCtrl.save().then(success, failure);
                     });
+                });
+
+                it('should be wrapped in a queue', function() {
+                    expect(debouncedFns).toContain(CampaignCtrl.save);
                 });
 
                 it('should update the campaign\'s links', function() {

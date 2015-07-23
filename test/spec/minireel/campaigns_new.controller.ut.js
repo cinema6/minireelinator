@@ -13,10 +13,26 @@ define(['app'], function(appModule) {
             CampaignsNewCtrl;
 
         var campaign, customers,
-            model;
+            model, debouncedFns;
 
         beforeEach(function() {
+            debouncedFns = [];
+
             module(appModule.name);
+            module(function($provide) {
+                $provide.decorator('c6AsyncQueue', function($delegate) {
+                    return jasmine.createSpy('c6AsyncQueue()').and.callFake(function() {
+                        var queue = $delegate.apply(this, arguments);
+                        var debounce = queue.debounce;
+                        spyOn(queue, 'debounce').and.callFake(function() {
+                            var fn = debounce.apply(queue, arguments);
+                            debouncedFns.push(fn);
+                            return fn;
+                        });
+                        return queue;
+                    });
+                });
+            });
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
@@ -201,59 +217,65 @@ define(['app'], function(appModule) {
         });
 
         describe('methods', function() {
-            var saveDeffered, advertiser,
-                success, failure;
+            describe('save()', function() {
+                var saveDeffered, advertiser,
+                    success, failure;
 
-            beforeEach(function() {
-                success = jasmine.createSpy('success()');
-                failure = jasmine.createSpy('failure()');
-
-                advertiser = cinema6.db.create('advertiser', {
-                    defaultLinks: {
-                        Facebook: 'https://www.facebook.com/pages/Diageo/108265212535624',
-                        Twitter: 'https://twitter.com/Diageo_News'
-                    },
-                    defaultLogos: {
-                        square: 'http://i.imgur.com/YbBIFZv.png'
-                    },
-                    name: 'Diageo'
-                });
-
-                saveDeffered = $q.defer();
-
-                campaign.advertiser = advertiser;
-                spyOn(campaign, 'save').and.returnValue(saveDeffered.promise);
-
-                $scope.$apply(function() {
-                    CampaignsNewCtrl.save().then(success, failure);
-                });
-            });
-
-            it('should inherit links and logos from the advertiser', function() {
-                expect(campaign).toEqual(jasmine.objectContaining({
-                    links: jasmine.objectContaining(advertiser.defaultLinks),
-                    logos: jasmine.objectContaining(advertiser.defaultLogos),
-                    miniReels: [],
-                    cards: [],
-                    brand: advertiser.name
-                }));
-            });
-
-            it('should save the campaign', function() {
-                expect(campaign.save).toHaveBeenCalled();
-            });
-
-            describe('when the campaign is saved', function() {
                 beforeEach(function() {
-                    spyOn(c6State, 'goTo');
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
+
+                    advertiser = cinema6.db.create('advertiser', {
+                        defaultLinks: {
+                            Facebook: 'https://www.facebook.com/pages/Diageo/108265212535624',
+                            Twitter: 'https://twitter.com/Diageo_News'
+                        },
+                        defaultLogos: {
+                            square: 'http://i.imgur.com/YbBIFZv.png'
+                        },
+                        name: 'Diageo'
+                    });
+
+                    saveDeffered = $q.defer();
+
+                    campaign.advertiser = advertiser;
+                    spyOn(campaign, 'save').and.returnValue(saveDeffered.promise);
 
                     $scope.$apply(function() {
-                        saveDeffered.resolve(campaign);
+                        CampaignsNewCtrl.save().then(success, failure);
                     });
                 });
 
-                it('should go to the MR:Campaign state', function() {
-                    expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign', [campaign]);
+                it('should be wrapped in a c6AsyncQueue', function() {
+                    expect(debouncedFns).toContain(CampaignsNewCtrl.save);
+                });
+
+                it('should inherit links and logos from the advertiser', function() {
+                    expect(campaign).toEqual(jasmine.objectContaining({
+                        links: jasmine.objectContaining(advertiser.defaultLinks),
+                        logos: jasmine.objectContaining(advertiser.defaultLogos),
+                        miniReels: [],
+                        cards: [],
+                        brand: advertiser.name
+                    }));
+                });
+
+                it('should save the campaign', function() {
+                    expect(campaign.save).toHaveBeenCalled();
+                });
+
+                describe('when the campaign is saved', function() {
+                    beforeEach(function() {
+                        spyOn(c6State, 'goTo');
+
+                        $scope.$apply(function() {
+                            saveDeffered.resolve(campaign);
+                        });
+                    });
+
+                    it('should go to the MR:Campaign state', function() {
+                        expect(c6State.goTo).toHaveBeenCalledWith('MR:Campaign', [campaign]);
+                    });
                 });
             });
         });
