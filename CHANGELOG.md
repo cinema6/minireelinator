@@ -1,7 +1,10 @@
 # MiniReelinator
 
+## v1.15.0 (July 23, 2015)
 * *[v1.15.0.rc1]*
   * [FEATURE]: When creating an image card, you can use the url of any image
+  * Update c6ui to v3.7.2
+* *[/v1.15.0.rc1]*
 
 ## v1.14.1 (July 20, 2015)
 * *[v1.14.1.rc1]*
