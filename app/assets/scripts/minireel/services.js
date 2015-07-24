@@ -380,8 +380,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 return this;
             };
 
-            this.$get = ['FileService','$http','VideoThumbnailService','$q',
-            function    ( FileService , $http , VideoThumbnailService , $q ) {
+            this.$get = ['FileService','$http', 'ImageThumbnailService', 'VideoThumbnailService',
+                         '$q',
+            function    ( FileService , $http ,  ImageThumbnailService ,  VideoThumbnailService ,
+                          $q ) {
                 function CollateralService() {
                     function CollageResult(response) {
                         forEach(response, function(data) {
@@ -459,12 +461,21 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                         function fetchThumbs(minireel) {
                             return $q.all(minireel.data.deck.map(function(card) {
-                                return card.thumb ? {
-                                    large: card.thumb
-                                } : VideoThumbnailService.getThumbsFor(
-                                    card.data.service,
-                                    card.data.videoid
-                                ).ensureFulfillment();
+                                if(card.thumb) {
+                                    return {
+                                        large: card.thumb
+                                    };
+                                } else if(card.type === 'image') {
+                                    return ImageThumbnailService.getThumbsFor(
+                                        card.data.service,
+                                        card.data.imageid
+                                    ).ensureFulfillment();
+                                } else {
+                                    return VideoThumbnailService.getThumbsFor(
+                                        card.data.service,
+                                        card.data.videoid
+                                    ).ensureFulfillment();
+                                }
                             })).then(function map(thumbs) {
                                 return thumbs.map(function(thumb) {
                                     return thumb.large;
@@ -508,6 +519,29 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 return new CollateralService();
             }];
+        }])
+
+        .service('CollateralUploadService', [ '$cacheFactory', '$http',
+        function                            (  $cacheFactory ,  $http ) {
+            var cache = $cacheFactory('CollateralUploadService:models');
+
+            function returnPath(response) {
+                var result;
+                if(response.data instanceof Array) {
+                    result = response.data[0].path;
+                } else {
+                    result = response.data.path;
+                }
+                return '/' + result;
+            }
+
+            this.uploadFromUri = function(uri) {
+                var key = 'uri/' + uri;
+                return cache.get(key) || cache.put(key, (function() {
+                    return $http.post('/api/collateral/uri', { uri: uri })
+                        .then(returnPath);
+                }()));
+            };
         }])
 
         .service('FileService', ['$window','$q','$rootScope',
@@ -977,7 +1011,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
         }])
 
         .service('ImageThumbnailService', ['$q', '$cacheFactory', '$http',
-        function                          ( $q ,  $cacheFactory,   $http) {
+        function                          ( $q ,  $cacheFactory,   $http ) {
             var _private = {},
                 cache = $cacheFactory('ImageThumbnailService:models');
 
@@ -1040,6 +1074,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 };
             };
 
+            _private.fetchWebThumbs = function(imageid) {
+                return {
+                    small: imageid,
+                    large: imageid
+                };
+            };
+
             this.getThumbsFor = function(service, imageid) {
                 var key = service + ':' + imageid;
 
@@ -1050,6 +1091,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return new ThumbModel(_private.fetchFlickrThumbs(imageid));
                         case 'getty':
                             return new ThumbModel($q.when(_private.fetchGettyThumbs(imageid)));
+                        case 'web':
+                            return new ThumbModel($q.when(_private.fetchWebThumbs(imageid)));
                         default:
                             return new ThumbModel($q.when({
                                 small: null,
@@ -1243,8 +1286,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
         }])
 
-        .service('ImageService', ['$http', '$q',
-        function                 ( $http , $q) {
+        .service('ImageService', ['$http', '$q', 'c6ImagePreloader',
+        function                 ( $http ,  $q ,  c6ImagePreloader ) {
 
             var _private = {};
 
@@ -1340,6 +1383,20 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     });
             };
 
+            // This function uses the collateral service endpoint to upload an image and return
+            // its path
+            _private.getWebEmbedInfo = function(imageid) {
+                return c6ImagePreloader.load([imageid])
+                    .then(function() {
+                        return {
+                            src: imageid
+                        };
+                    })
+                    .catch(function() {
+                        return $q.reject('Image could not be loaded.');
+                    });
+            };
+
             // Takes as an argument a url, checks to see if it's of a recognizable form,
             // and returns information that was parsed from it.
             this.dataFromUrl = function(url) {
@@ -1378,6 +1435,24 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 urlFormat: /gty.im\/\d+(?=\/?$)/,
                                 idFetcher: function(url) {
                                     return url.replace(/gty.im\//, '');
+                                }
+                            }
+                        ]
+                    },
+                    web: {
+                        patterns: [
+                            {
+                                urlFormat: (function() {
+                                    var imageTypes = ['jpg', 'jpeg', 'gif', 'png', 'bmp'];
+                                    var typeRegex = imageTypes
+                                    .reduce(function(previous, current) {
+                                        return previous + '|' + current +
+                                                          '|' + current.toUpperCase();
+                                    }, '');
+                                    return new RegExp('.+\\.(' + typeRegex.slice(1) + ')');
+                                }()),
+                                idFetcher: function(url) {
+                                    return url;
                                 }
                             }
                         ]
@@ -1430,12 +1505,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     height: iframeInfo.height
                                 };
                             });
+                    case 'web':
+                        return _private.getWebEmbedInfo(imageid);
                     default:
-                        return $q.when({
-                            src: null,
-                            width: null,
-                            height: null
-                        });
+                        return $q.when({ });
                 }
             };
 
@@ -1448,6 +1521,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return 'https://flic.kr/p/' + _private.encodeBase58(parseInt(imageid));
                     case 'getty':
                         return 'http://gty.im/' + imageid;
+                    case 'web':
+                        return imageid;
                     default:
                         return null;
                 }
@@ -1580,9 +1655,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
                                      'SettingsService','VideoService','ImageThumbnailService',
                                      'VideoThumbnailService', 'ImageService', 'OpenGraphService',
+                                     'CollateralUploadService',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
                                       SettingsService , VideoService , ImageThumbnailService,
-                                      VideoThumbnailService,   ImageService,   OpenGraphService ) {
+                                      VideoThumbnailService,   ImageService,   OpenGraphService,
+                                      CollateralUploadService ) {
             var ngCopy = angular.copy;
 
             var self = this,
@@ -1780,7 +1857,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 // image cards.
                 imageDataTemplate = {
                     service: copy(null),
-                    imageid: copy(null)
+                    imageid: function(data) {
+                        if(data.service === 'web') {
+                            return data.href || null;
+                        } else {
+                            return data.imageid || null;
+                        }
+                    }
                 };
 
                 // videoDataTemplate: this is the base template for all
@@ -2080,7 +2163,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 function convertDeck(minireel) {
                     return $q.all(minireel.data.deck.
                         filter(function(card) {
-                            return card.type !== 'ad';
+                            return card.type !== 'ad' && card.type !== 'recap';
                         })
                         .map(self.convertCardForEditor));
                 }
@@ -2168,7 +2251,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 },
                                 params: {},
                                 links: {},
-                                deck: [self.createCard('recap')]
+                                deck: []
                             }
                         });
                 }
@@ -2231,6 +2314,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return 'Flickr';
                     case 'getty':
                         return 'gettyimages';
+                    case 'web':
                     case 'adUnit':
                         return undefined;
                     default:
@@ -2310,14 +2394,24 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 function imageThumbsValue() {
                     return function(data) {
-                        return ImageThumbnailService.getThumbsFor(data.service, data.imageid)
-                            .ensureFulfillment()
-                            .then(function(thumbs) {
-                                return {
-                                    small: thumbs.small,
-                                    large: thumbs.large
-                                };
-                            });
+                        if(data.service === 'web') {
+                            return CollateralUploadService.uploadFromUri(data.imageid)
+                                .then(function(path) {
+                                    return {
+                                        small: path,
+                                        large: path
+                                    };
+                                });
+                        } else {
+                            return ImageThumbnailService.getThumbsFor(data.service, data.imageid)
+                                .ensureFulfillment()
+                                .then(function(thumbs) {
+                                    return {
+                                        small: thumbs.small,
+                                        large: thumbs.large
+                                    };
+                                });
+                        }
                     };
                 }
 
@@ -2349,18 +2443,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     };
                 }
 
-                var embedInfo = null;
-                function embedValue(key) {
-                    return function(data) {
-                        if(embedInfo) {
-                            return embedInfo[key];
-                        } else {
-                            return ImageService.getEmbedInfo(data.service, data.imageid)
-                                .then(function(info) {
-                                    embedInfo = info;
-                                    return embedInfo[key];
-                                });
-                        }
+                function embedValue() {
+                    return function(data, key) {
+                        return ImageService.getEmbedInfo(data.service, data.imageid)
+                            .then(function(info) {
+                                return info[key];
+                            });
                     };
                 }
 
@@ -2370,18 +2458,37 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     };
                 }
 
+                function imageSrcValue() {
+                    return function(data, key) {
+                        if(data.service === 'web') {
+                            return CollateralUploadService.uploadFromUri(data.imageid)
+                                .then(function(path) {
+                                    return path;
+                                });
+                        } else {
+                            return embedValue()(data, key);
+                        }
+                    };
+                }
+
                 dataTemplates = {
                     article: {
                         src: copy(null),
                         thumbs: articleThumbsValue()
                     },
                     image: {
-                        imageid: copy(null),
+                        imageid: function(data) {
+                            if(data.service === 'web') {
+                                return null;
+                            } else {
+                                return data.imageid;
+                            }
+                        },
                         service: copy(null),
-                        src: embedValue('src'),
+                        src: imageSrcValue(),
                         href: imageHrefValue(),
-                        width: embedValue('width'),
-                        height: embedValue('height'),
+                        width: embedValue(),
+                        height: embedValue(),
                         source: function(data) {
                             return camelSource(data.service);
                         },
@@ -2723,7 +2830,19 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             this.convertForPlayer = function(minireel, target) {
                 function convertDeck(minireel) {
-                    return $q.all(minireel.data.deck.map(function(card) {
+                    var deck = ngCopy(minireel.data.deck),
+                        lastCard = deck[deck.length - 1];
+
+                    if (lastCard) {
+                        if (lastCard.type === 'recap' && deck.length < 3) {
+                            deck.pop();
+                        }
+                        if (lastCard.type !== 'recap' && deck.length > 1) {
+                            deck.push(self.createCard('recap'));
+                        }
+                    }
+
+                    return $q.all(deck.map(function(card) {
                         return self.convertCardForPlayer(card, minireel);
                     }));
                 }

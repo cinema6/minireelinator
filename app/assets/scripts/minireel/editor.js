@@ -1313,6 +1313,7 @@ VideoCardController           , c6embed) {
                         }
 
                         switch (this.model.type) {
+                        case 'image':
                         case 'video':
                         case 'videoBallot':
                             return [this.copyComplete].indexOf(false) < 0 &&
@@ -1342,8 +1343,10 @@ VideoCardController           , c6embed) {
                 },
                 cardComplete: {
                     get: function() {
+                        if(this.error) {
+                            return false;
+                        }
                         var model = this.model;
-
                         switch (model.type) {
                         case 'image':
                             return ['service', 'imageid'].map(function(prop) {
@@ -1554,29 +1557,26 @@ VideoCardController           , c6embed) {
             };
         }])
 
-        .controller('EditCardImageController', ['$scope', 'ImageService',
-        function                               ( $scope,   ImageService ) {
+        .controller('EditCardImageController', ['$scope', 'c6State', 'ImageService',
+        function                               ( $scope ,  c6State ,  ImageService ) {
 
+            var EditCardCtrl = $scope.EditCardCtrl;
             var self = this;
             var _private = {};
             this.imageUrl = null;
-            this.src = null;
-            this.width = null;
-            this.height = null;
+            this.data = { };
 
             // Update the embed info on the controller
             _private.updateEmbedInfo = function(service, imageid) {
+                self.data = { };
                 ImageService.getEmbedInfo(service, imageid)
                     .then(function(embedInfo) {
-                        self.src = embedInfo.src;
-                        self.width = embedInfo.width;
-                        self.height = embedInfo.height;
+                        Object.keys(embedInfo).forEach(function(key) {
+                            self.data[key] = embedInfo[key];
+                        });
                     })
                     .catch(function(reason) {
-                        self.error = reason;
-                        self.src = null;
-                        self.width = null;
-                        self.height = null;
+                        EditCardCtrl.error = reason;
                     });
             };
 
@@ -1584,7 +1584,7 @@ VideoCardController           , c6embed) {
                 return self.imageUrl;
             }, function(imageUrl) {
                 if(imageUrl !== null) {
-                    self.error = null;
+                    EditCardCtrl.error = null;
                     var data = ImageService.dataFromUrl(imageUrl);
                     self.model.data.service = data.service;
                     self.model.data.imageid = data.imageid;

@@ -8,7 +8,7 @@
         describe('MiniReelService', function() {
             var MiniReelService,
                 VoteService,
-                CollateralService,
+                CollateralUploadService,
                 ImageThumbnailService,
                 VideoThumbnailService,
                 OpenGraphService,
@@ -17,6 +17,7 @@
                 VideoService,
                 $rootScope,
                 c6UrlParser,
+                c6ImagePreloader,
                 cinema6,
                 c6State,
                 portal,
@@ -52,7 +53,7 @@
                     VoteService = $injector.get('VoteService');
                     cinema6 = $injector.get('cinema6');
                     $q = $injector.get('$q');
-                    CollateralService = $injector.get('CollateralService');
+                    CollateralUploadService = $injector.get('CollateralUploadService');
                     ImageThumbnailService = $injector.get('ImageThumbnailService');
                     VideoThumbnailService = $injector.get('VideoThumbnailService');
                     OpenGraphService = $injector.get('OpenGraphService');
@@ -61,6 +62,7 @@
                     VideoService = $injector.get('VideoService');
                     c6State = $injector.get('c6State');
                     c6UrlParser = $injector.get('c6UrlParser');
+                    c6ImagePreloader = $injector.get('c6ImagePreloader');
                 });
 
                 spyOn(ImageService._private, 'getFlickrEmbedInfo').and.returnValue(
@@ -214,6 +216,35 @@
                                     thumbs: {
                                         small: 'images.flickr.com/image/16767833635/small.jpg',
                                         large: 'images.flickr.com/image/16767833635/large.jpg'
+                                    }
+                                }
+                            },
+                            {
+                                id: 'rc-642d031cd42b07',
+                                type: 'image',
+                                title: 'This is a web image card!',
+                                note: 'Imagetastic',
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
+                                },
+                                collateral: {},
+                                links: {},
+                                params: {},
+                                modules: [],
+                                data: {
+                                    service: 'web',
+                                    src: 'collateral/12345.jpg',
+                                    href: 'http://www.fractalsciencekit.com/fractals/large/Fractal-Mobius-Dragon-IFS-10.jpg',
+                                    thumbs: {
+                                        small: 'collateral/12345.jpg',
+                                        large: 'collateral/12345.jpg'
                                     }
                                 }
                             },
@@ -525,27 +556,6 @@
                                 }
                             },
                             {
-                                id: 'rc-b74a127991ee75',
-                                type: 'recap',
-                                title: 'Recap of My MiniReel',
-                                note: null,
-                                placementId: null,
-                                templateUrl: null,
-                                sponsored: false,
-                                campaign: {
-                                    campaignId: null,
-                                    advertiserId: null,
-                                    minViewTime: null,
-                                    countUrls: [],
-                                    clickUrls: []
-                                },
-                                collateral: {},
-                                links: {},
-                                params: {},
-                                modules: [],
-                                data: {}
-                            },
-                            {
                                 id: 'rc-82a19a12065636',
                                 type: 'displayAd',
                                 title: 'By Ubisoft',
@@ -728,7 +738,28 @@
                                 id: 'rc-c99a6f4c6b4c54',
                                 type: 'wildcard',
                                 data: {}
-                            }
+                            },
+                            {
+                                id: 'rc-b74a127991ee75',
+                                type: 'recap',
+                                title: 'Recap of My MiniReel',
+                                note: null,
+                                placementId: null,
+                                templateUrl: null,
+                                sponsored: false,
+                                campaign: {
+                                    campaignId: null,
+                                    advertiserId: null,
+                                    minViewTime: null,
+                                    countUrls: [],
+                                    clickUrls: []
+                                },
+                                collateral: {},
+                                links: {},
+                                params: {},
+                                modules: [],
+                                data: {}
+                            },
                         ]
                     }
                 });
@@ -1420,7 +1451,7 @@
 
                         it('should convert cards for the editor individually', function() {
                             minireel.data.deck.filter(function(card) {
-                                return card.type !== 'ad';
+                                return card.type !== 'ad' && card.type !== 'recap';
                             }).forEach(function(card, index) {
                                 var editorCard = editorMR.data.deck[index];
                                 var spy = jasmine.createSpy('spy()');
@@ -1440,7 +1471,7 @@
                             var editorArticleCard;
 
                             beforeEach(function() {
-                                var card = minireel.data.deck[2];
+                                var card = minireel.data.deck[3];
                                 var spy = jasmine.createSpy('spy()');
                                 $rootScope.$apply(function() {
                                     MiniReelService.convertCardForEditor(card).then(spy);
@@ -1621,7 +1652,7 @@
                         });
 
                         it('should transpile the article card', function() {
-                            expect(deck[2]).toEqual({
+                            expect(deck[3]).toEqual({
                                 id: 'rc-b2d076ce052459',
                                 type: 'article',
                                 title: 'This is an article card!',
@@ -1681,7 +1712,7 @@
                         });
 
                         it('should transpile the various video cards into two cards', function() {
-                            expect(deck[3]).toEqual({
+                            expect(deck[4]).toEqual({
                                 id: 'rc-c9cf24e87307ac',
                                 type: 'video',
                                 title: 'The Slowest Turtle',
@@ -1721,7 +1752,7 @@
                                 }
                             });
 
-                            expect(deck[4]).toEqual({
+                            expect(deck[5]).toEqual({
                                 id: 'rc-17721b74ce2584',
                                 type: 'videoBallot',
                                 title: 'The Ugliest Turtle',
@@ -1764,7 +1795,7 @@
                                 }
                             });
 
-                            expect(deck[5]).toEqual({
+                            expect(deck[6]).toEqual({
                                 id: 'rc-61fa9683714e13',
                                 type: 'videoBallot',
                                 title: 'The Smartest Turtle',
@@ -1807,7 +1838,7 @@
                                 }
                             });
 
-                            expect(deck[6]).toEqual({
+                            expect(deck[7]).toEqual({
                                 id: 'rc-d8ebd5461ba524',
                                 type: 'video',
                                 title: 'The Dumbest Turtle',
@@ -2015,7 +2046,7 @@
                         });
 
                         it('should transpile the links cards', function() {
-                            expect(deck[9]).toEqual({
+                            expect(deck[10]).toEqual({
                                 id: 'rc-25c1f60b933186',
                                 type: 'links',
                                 title: 'If You Love Turtles',
@@ -2037,37 +2068,16 @@
                                 thumb: null,
                                 links: {},
                                 params: {},
-                                data: minireel.data.deck[10].data
+                                data: minireel.data.deck[11].data
                             });
 
-                            expect(deck[9].data.links).not.toBe(minireel.data.deck[10].data.links);
+                            expect(deck[10].data.links).not.toBe(minireel.data.deck[11].data.links);
                         });
 
-                        it('should transpile the recap cards', function() {
-                            expect(deck[10]).toEqual({
-                                id: 'rc-b74a127991ee75',
-                                type: 'recap',
-                                title: null,
-                                note: null,
-                                label: 'Recap',
-                                ad: false,
-                                view: 'recap',
-                                placementId: null,
-                                templateUrl: null,
-                                sponsored: false,
-                                campaign: {
-                                    campaignId: null,
-                                    advertiserId: null,
-                                    minViewTime: null,
-                                    countUrls: [],
-                                    clickUrls: []
-                                },
-                                collateral: {},
-                                thumb: null,
-                                links: {},
-                                params: {},
-                                data: {}
-                            });
+                        it('should not transpile the recap card', function() {
+                            expect(deck.filter(function(card) {
+                                return card.type === 'recap';
+                            }).length).toEqual(0);
                         });
 
                         it('should transpile the displayAd cards', function() {
@@ -2198,7 +2208,7 @@
                                 expect(newModel.status).toBe('pending');
                                 expect(newModel.access).toBe('public');
                                 expect('election' in newModel.data).toBe(false);
-                                expect('election' in newModel.data.deck[6].ballot).toBe(false);
+                                expect('election' in newModel.data.deck[7].ballot).toBe(false);
                             });
                         });
 
@@ -2232,15 +2242,7 @@
                                         },
                                         params: {},
                                         links: {},
-                                        deck: [
-                                            (function() {
-                                                var recap = MiniReelService.createCard('recap');
-
-                                                recap.id = jasmine.any(String);
-
-                                                return recap;
-                                            }())
-                                        ]
+                                        deck: []
                                     }
                                 });
                             });
@@ -2305,18 +2307,35 @@
 
                             thumbCache = {};
 
+                            spyOn(CollateralUploadService, 'uploadFromUri').and.callFake(function(uri) {
+                                return $q.when('collateral/12345.jpg');
+                            });
+
+                            spyOn(c6ImagePreloader, 'load').and.returnValue($q.when());
+
                             spyOn(ImageService, 'urlFromData').and.callFake(function(service, imageid) {
-                                return 'http://www.' + service + '.com/' + imageid;
+                                if(service === 'flickr' || service ==='getty') {
+                                    return 'http://www.' + service + '.com/' + imageid;
+                                } else {
+                                    return imageid;
+                                }
                             });
 
                             spyOn(ImageThumbnailService, 'getThumbsFor').and.callFake(function(service, imageid) {
 
                                 var id = service + ':' + imageid;
 
-                                return thumbCache[id] || (thumbCache[id] = new MockThumb(
-                                    'images.' + service + '.com/image/' + imageid + '/small.jpg',
-                                    'images.' + service + '.com/image/' + imageid + '/large.jpg'
-                                ));
+                                if(service === 'flickr' || service === 'getty') {
+                                    return thumbCache[id] || (thumbCache[id] = new MockThumb(
+                                        'images.' + service + '.com/image/' + imageid + '/small.jpg',
+                                        'images.' + service + '.com/image/' + imageid + '/large.jpg'
+                                    ));
+                                } else if(service ==='web') {
+                                    return thumbCache[id] || (thumbCache[id] = new MockThumb(
+                                        'images.' + service + '.com/small.jpg',
+                                        'images.' + service + '.com/large.jpg'
+                                    ));
+                                }
                             });
 
                             spyOn(VideoThumbnailService, 'getThumbsFor').and.callFake(function(service, videoid) {
@@ -2360,6 +2379,11 @@
                                     card.id = jasmine.any(String);
                                 }
                             });
+
+                            // remove the recap card from both because they're filtered out and added back during conversion
+                            delete result.data.deck[result.data.deck.length - 1];
+                            delete minireel.data.deck[minireel.data.deck.length - 1];
+
                             expect(result.data).toEqual(minireel.data);
                             minireel.data.deck.forEach(function(card, index) {
                                 expect(result.data.deck[index]).toEqual(card, card.id);
@@ -2716,6 +2740,79 @@
                             result = resultSpy.calls.mostRecent().args[0];
 
                             expect(result.data.deck[0].modules).toContain('post');
+                        });
+
+                        describe('handling recap cards', function() {
+                            var result, resultSpy, minireel;
+
+                            beforeEach(function() {
+                                resultSpy = jasmine.createSpy('resultSpy');
+                                minireel = {
+                                    data: {
+                                        deck: []
+                                    }
+                                }
+                            });
+
+                            describe('when there is a recap card present in the minireel', function() {
+                                describe('when the deck has more than one non-recap card', function() {
+                                    it('should do nothing', function() {
+                                        minireel.data.deck = [{},{},{},{},{type: 'recap'}];
+
+                                        $rootScope.$apply(function() {
+                                            MiniReelService.convertForPlayer(minireel).then(resultSpy);
+                                        });
+                                        result = resultSpy.calls.mostRecent().args[0];
+
+                                        expect(result.data.deck.length).toBe(5);
+                                        expect(result.data.deck[result.data.deck.length - 1].type).toBe('recap');
+                                    });
+                                });
+
+                                describe('when the deck has less than 2 non-recap cards', function() {
+                                    it('should remove the recap card from the deck', function() {
+                                        minireel.data.deck = [{},{type: 'recap'}];
+
+                                        $rootScope.$apply(function() {
+                                            MiniReelService.convertForPlayer(minireel).then(resultSpy);
+                                        });
+                                        result = resultSpy.calls.mostRecent().args[0];
+
+                                        expect(result.data.deck.length).toBe(1);
+                                        expect(result.data.deck[result.data.deck.length - 1].type).not.toBe('recap');
+                                    });
+                                });
+                            });
+
+                            describe('when there is no recap present in the minireel', function() {
+                                describe('when the deck has more than 1 card', function() {
+                                    it('should add a recap card', function() {
+                                        minireel.data.deck = [{},{},{},{}];
+
+                                        $rootScope.$apply(function() {
+                                            MiniReelService.convertForPlayer(minireel).then(resultSpy);
+                                        });
+                                        result = resultSpy.calls.mostRecent().args[0];
+
+                                        expect(result.data.deck.length).toBe(5);
+                                        expect(result.data.deck[result.data.deck.length - 1].type).toBe('recap');
+                                    });
+                                });
+
+                                describe('when there are less than 2 cards', function() {
+                                    it('should do nothing', function() {
+                                        minireel.data.deck = [{}];
+
+                                        $rootScope.$apply(function() {
+                                            MiniReelService.convertForPlayer(minireel).then(resultSpy);
+                                        });
+                                        result = resultSpy.calls.mostRecent().args[0];
+
+                                        expect(result.data.deck.length).toBe(1);
+                                        expect(result.data.deck[result.data.deck.length - 1].type).not.toBe('recap');
+                                    });
+                                });
+                            });
                         });
                     });
 

@@ -2,7 +2,8 @@ module.exports = function(http) {
     'use strict';
 
     var grunt = require('grunt'),
-        path = require('path');
+        path = require('path'),
+        Q = require('q');
 
     var fn = require('../utils/fn'),
         pluckExcept = fn.pluckExcept,
@@ -102,7 +103,7 @@ module.exports = function(http) {
 
         grunt.file.write(objectPath('campaigns', id), JSON.stringify(campaign, null, '    '));
 
-        this.respond(201, extend(campaign, { id: id }));
+        this.respond(201, Q.when(extend(campaign, { id: id })).delay(2500));
     });
 
     http.whenPUT('/api/campaign/**', function(request) {
@@ -139,9 +140,9 @@ module.exports = function(http) {
 
         grunt.file.write(filePath, JSON.stringify(campaign, null, '    '));
 
-        this.respond(200, extend(campaign, {
+        this.respond(200, Q.when(extend(campaign, {
             id: id
-        }));
+        })).delay(1000));
     });
 
     http.whenDELETE('/api/campaign/**', function(request) {

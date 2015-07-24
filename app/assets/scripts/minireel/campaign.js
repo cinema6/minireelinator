@@ -160,9 +160,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignsNewController', ['$scope','c6State','c6Computed',
-        function                              ( $scope , c6State , c6Computed ) {
+        .controller('CampaignsNewController', ['$scope','c6State','c6Computed','c6AsyncQueue',
+        function                              ( $scope , c6State , c6Computed , c6AsyncQueue ) {
             var c = c6Computed($scope),
+                queue = c6AsyncQueue(),
                 MiniReelCtrl = $scope.MiniReelCtrl;
 
             function optionsByName(items, type) {
@@ -190,7 +191,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.customerOptions = optionsByName(this.customers, 'customers');
             };
 
-            this.save = function() {
+            this.save = queue.debounce(function() {
                 var advertiser = this.model.advertiser;
 
                 deepExtend(this.model, {
@@ -203,7 +204,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     .then(function(campaign) {
                         return c6State.goTo('MR:Campaign', [campaign]);
                     });
-            };
+            }, this);
         }])
 
         .config(['c6StateProvider',
@@ -224,9 +225,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignController', ['$scope','$q','ConfirmDialogService',
-        function                          ( $scope , $q , ConfirmDialogService ) {
-            var CampaignCtrl = this,
+        .controller('CampaignController', ['$scope','$q','ConfirmDialogService','c6AsyncQueue',
+        function                          ( $scope , $q , ConfirmDialogService , c6AsyncQueue ) {
+            var queue = c6AsyncQueue(),
+                CampaignCtrl = this,
                 AppCtrl = $scope.AppCtrl;
 
             function createModelLinks(uiLinks) {
@@ -320,7 +322,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.model.links = createModelLinks(this.links);
             };
 
-            this.save = function() {
+            this.save = queue.debounce(function() {
                 this.updateLinks();
                 trimEmptyPlaceholders(this.model.staticCardMap);
 
@@ -331,7 +333,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     return campaign;
                 })
                 .catch(handleError);
-            };
+            }, this);
         }])
 
         .config(['c6StateProvider',
@@ -537,11 +539,12 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignMiniReelController', ['$injector','$scope','c6State',
+        .controller('CampaignMiniReelController', ['$injector','$scope','c6State','c6AsyncQueue',
                                                    'MiniReelService','cState',
-        function                                  ( $injector , $scope , c6State ,
+        function                                  ( $injector , $scope , c6State , c6AsyncQueue ,
                                                     MiniReelService , cState ) {
-            var CampaignMiniReelCtrl = this,
+            var queue = c6AsyncQueue(),
+                CampaignMiniReelCtrl = this,
                 CampaignMiniReelsCtrl = $scope.CampaignMiniReelsCtrl,
                 CampaignCtrl = $scope.CampaignCtrl;
 
@@ -584,7 +587,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 }
             });
 
-            this.confirm = function() {
+            this.confirm = queue.debounce(function() {
                 return cState.updateMiniReel()
                     .then(function(minireel) {
                         return CampaignMiniReelsCtrl.add(minireel, {
@@ -609,7 +612,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             return minireel;
                         });
                     });
-            };
+            }, this);
         }])
 
         .config(['c6StateProvider',
@@ -812,9 +815,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('WildcardController', ['$injector','$scope','c6State','cState',
-        function                          ( $injector , $scope , c6State , cState ) {
-            var WildcardCtrl = this,
+        .controller('WildcardController', ['$injector','$scope','c6State','cState','c6AsyncQueue',
+        function                          ( $injector , $scope , c6State , cState , c6AsyncQueue ) {
+            var queue = c6AsyncQueue(),
+                WildcardCtrl = this,
                 AppCtrl = $scope.AppCtrl,
                 CampaignCtrl = $scope.CampaignCtrl,
                 CampaignCardsCtrl = $scope.CampaignCardsCtrl;
@@ -952,7 +956,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.tabs = _private.tabsForCardType(card.type);
             };
 
-            this.save = function() {
+            this.save = queue.debounce(function() {
                 if (this.enableMoat) {
                     this.model.data.moat = {
                         campaign: CampaignCtrl.model.name,
@@ -967,7 +971,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     return c6State.goTo('MR:Campaign.Cards')
                         .then(function() { return card; });
                 });
-            };
+            }, this);
 
             if (window.c6.kHasKarma) { this._private = _private; }
         }])

@@ -2,7 +2,8 @@ module.exports = function(http) {
     'use strict';
 
     var grunt = require('grunt'),
-        path = require('path');
+        path = require('path'),
+        Q = require('q');
 
     var genId = require('../../tasks/resources/helpers').genId,
         fn = require('../utils/fn'),
@@ -125,9 +126,9 @@ module.exports = function(http) {
 
         grunt.file.write(filePath, JSON.stringify(newExperience, null, '    '));
 
-        this.respond(200, extend(newExperience, {
+        this.respond(200, Q.when(extend(newExperience, {
             id: id
-        }));
+        })).delay(500));
     });
 
     http.whenPOST('/api/content/experience', function(request) {
@@ -143,7 +144,7 @@ module.exports = function(http) {
 
         grunt.file.write(objectPath('experiences', id), JSON.stringify(experience, null, '    '));
 
-        this.respond(201, extend(experience, { id: id }));
+        this.respond(201, Q.when(extend(experience, { id: id })).delay(520));
     });
 
     http.whenDELETE('/api/content/experience/**', function(request) {

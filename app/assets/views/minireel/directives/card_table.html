@@ -14,12 +14,10 @@
         <ul id="card-scroller" class="card__list" c6-bind-scroll="CardTableCtrl.position">
             <li class="card__list-item js-card-list-item">
                 <div id="drop-zone-0" c6-drag-zone class="card__drop-zone">&nbsp;</div><!--
-                --><div class="new__container" ng-hide="DragCtrl.currentDrags.length" ng-if="deck.length > 1">
+                --><div class="new__container" ng-hide="DragCtrl.currentDrags.length" ng-if="deck.length > 0">
                     <button ng-click="EditorCtrl.newCard(0, $event)" class="new__button ui__add c6studioSprite--alpha"><span class="ir">Add Here</span></button>
                 </div>
-            </li>
-            <li class="card__list-item js-card-list-item" render-deck="deck">
-                <div id="new-slide" class="card__container card--createNew" ng-if="$index === (EditorCtrl.lastEditableIndex + 1)">
+                <div id="new-slide" class="card__container card--createNew" ng-if="deck.length === 0">
                     <h4 class="card__type">&nbsp;</h4>
                     <div class="card__item">
                         <button ng-click="EditorCtrl.newCard($index, $event)" class="createNew__button">
@@ -27,13 +25,15 @@
                         </button>
                         <h1 class="card__title"><span class="card__titleText">Create A New Slide</span></h1>
                     </div>
-                </div><!--
-             --><div class="new__container new__container--spacer"
-                    ng-if="$index === (EditorCtrl.lastEditableIndex + 1)"
+                </div>
+            </li>
+            <li class="card__list-item js-card-list-item" render-deck="deck">
+                <!--
+             --><!-- <div class="new__container new__container--spacer"
                     ng-hide="DragCtrl.currentDrags.length">
                     <div class="no__button">&nbsp;</div>
                     <button ng-click="EditorCtrl.newCard($index + 1, $event)" class="new__button ui__add c6studioSprite--alpha" id="zone-{{$this.id}}" data-index={{$index}}><span class="ir">Add Here</span></button>
-                </div><!--
+                </div> --><!--
              --><div class="card__container card--{{$this.type}}"
                     ng-class="{
                         'card__container--dragging': DragCtrl.currentDrags[0] === DragCtrl.draggables[$this.id]
@@ -57,10 +57,18 @@
              --><div data-title="{{$this.title}}" ng-show="$index > EditorCtrl.lastEditableIndex" class="card__drop-zone">&nbsp;</div><!--
              --><div class="new__container"
                     ng-class="{'new__container--spacer': $index >= EditorCtrl.lastEditableIndex}"
-                    ng-hide="DragCtrl.currentDrags.length"
-                    ng-style="{ visibility: $index === (deck.length - 1) ? 'hidden' : '' }">
+                    ng-hide="DragCtrl.currentDrags.length">
                     <div class="no__button">&nbsp;</div>
                     <button ng-click="EditorCtrl.newCard($index + 1, $event)" class="new__button ui__add c6studioSprite--alpha" id="zone-{{$this.id}}" data-index={{$index}}><span class="ir">Add Here</span></button>
+                </div>
+                <div id="new-slide" class="card__container card--createNew" ng-if="$index === deck.length - 1">
+                    <h4 class="card__type">&nbsp;</h4>
+                    <div class="card__item">
+                        <button ng-click="EditorCtrl.newCard($index, $event)" class="createNew__button">
+                            <span class="ui__add c6studioSprite--alpha"><span class="ir">Add Here</span></span>
+                        </button>
+                        <h1 class="card__title"><span class="card__titleText">Create A New Slide</span></h1>
+                    </div>
                 </div>
             </li>
         </ul>
@@ -75,7 +83,7 @@
     scroller-view-ratio="CardTableCtrl.scrollerViewRatio"
     scroller-view-position="CardTableCtrl.scrollerViewPosition">
         <ul id="paginator-list" class="pageMap__list">
-            <li style="width:25px;background-color:#fff;text-align:center;" ng-repeat="card in EditorCtrl.model.data.deck" class="pageMap__item" ng-if="($index !== EditorCtrl.model.data.deck.length - 1)" card-table-paginator-item>
+            <li style="width:25px;background-color:#fff;text-align:center;" ng-repeat="card in EditorCtrl.model.data.deck" class="pageMap__item" card-table-paginator-item>
                 <button class="btnInvis pageMap__page"
                 ng-class="{'pageMap__page--error' : EditorCtrl.errorForCard(card)}"
                 ng-click="CardTableCtrl.scrollToCard(card)">
@@ -88,12 +96,12 @@
                     <span class="btn__label">+</span>
                 </button>
             </li>
-            <li style="width:25px;background-color:#fff;text-align:center;" class="pageMap__item" card-table-paginator-item>
+            <!-- <li style="width:25px;background-color:#fff;text-align:center;" class="pageMap__item" card-table-paginator-item>
                 <button class="btnInvis pageMap__page"
                 ng-class="{'pageMap__page--error' : EditorCtrl.errorForCard(EditorCtrl.model.data.deck[EditorCtrl.model.data.deck.length - 1])}"
                 ng-click="CardTableCtrl.scrollToCard(EditorCtrl.model.data.deck[EditorCtrl.model.data.deck.length - 1])">
                     <span class="btn__label">{{EditorCtrl.model.data.deck.length}}</span>
                 </button>
-            </li>
+            </li> -->
         </ul>
 </card-table-paginator>

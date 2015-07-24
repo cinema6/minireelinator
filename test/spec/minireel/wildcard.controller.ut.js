@@ -14,10 +14,27 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
             CampaignCardsCtrl,
             WildcardCtrl;
 
-        var campaign, card;
+        var campaign, card,
+            debouncedFns;
 
         beforeEach(function() {
+            debouncedFns = [];
+
             module(appModule.name);
+            module(function($provide) {
+                $provide.decorator('c6AsyncQueue', function($delegate) {
+                    return jasmine.createSpy('c6AsyncQueue()').and.callFake(function() {
+                        var queue = $delegate.apply(this, arguments);
+                        var debounce = queue.debounce;
+                        spyOn(queue, 'debounce').and.callFake(function() {
+                            var fn = debounce.apply(queue, arguments);
+                            debouncedFns.push(fn);
+                            return fn;
+                        });
+                        return queue;
+                    });
+                });
+            });
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
@@ -506,6 +523,10 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     });
                 });
 
+                it('should be debounced', function() {
+                    expect(debouncedFns).toContain(WildcardCtrl.save);
+                });
+
                 it('should update the card', function() {
                     expect(WildcardState.updateCard).toHaveBeenCalled();
                 });
@@ -546,6 +567,14 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                 });
 
                 describe('when MOAT is enabled', function() {
+                    beforeEach(function() {
+                        WildcardCtrl = $scope.WildcardCtrl = $controller('WildcardController', {
+                            $scope: $scope,
+                            cState: WildcardState
+                        });
+                        WildcardCtrl.initWithModel(WildcardState.cModel);
+                    });
+
                     it('should add a MOAT object to the data property of the card', function() {
                         spyOn(card, '_update').and.returnValue({save:function(){return $q.defer().promise;}});
                         WildcardState.updateCard.and.callThrough();

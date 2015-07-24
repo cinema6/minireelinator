@@ -1,8 +1,24 @@
 # MiniReelinator
 
+## v1.15.0 (July 23, 2015)
+* *[v1.15.0.rc2]*
+  * [FIX]: Fix for an issue that caused multiple MiniReels to be created
+    when clicking "Save" multiple times quickly
+* *[/v1.15.0.rc2]*
+
+* *[v1.15.0.rc1]*
+  * [FEATURE]: When creating an image card, you can use the url of any image
+  * Update c6ui to v3.7.2
+* *[/v1.15.0.rc1]*
+
+## v1.14.1 (July 20, 2015)
 * *[v1.14.1.rc1]*
   * Add a source property to image cards when they are saved.
   * Update collateral service for uploading files and saving from URIs
+  * Remove Recap card from Studio UI
+  * Ensure that MiniReels with less than two cards have no recap card, while
+    MiniReels with more than one card have recap cards
+* *[/v1.14.1.rc1]*
 
 ## v1.14.0 (July 8, 2015)
 * *[v1.14.0.rc4]*
