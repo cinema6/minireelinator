@@ -1,5 +1,6 @@
 <div class="grid__item one-half">
-    <section class="formSection__group" ng-controller="SelfieCampaignSponsorController as SelfieCampaignSponsorCtrl" c6-alias="SelfieCampaignCtrl.card as card">
+
+    <section class="formSection__group" id="section_2" ng-controller="SelfieCampaignSponsorController as SelfieCampaignSponsorCtrl" c6-alias="SelfieCampaignCtrl.card as card">
 
         <h1 class="formSection__title">
             <span class="formSection__number">
@@ -29,7 +30,11 @@
             </fieldset>
 
             <fieldset class="form__item" ng-class="{ 'ui--hasError': !SelfieCampaignSponsorCtrl.validLogo }">
-                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-name" ng-model="card.collateral.logo">
+                <!-- <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-name" ng-model="card.collateral.logo"> -->
+
+                <select c6-select-box preselected="true" class="form__selectBox form__selectBox--single" ng-model="SelfieCampaignSponsorCtrl.logoType" ng-options="option.label for option in SelfieCampaignSponsorCtrl.logoOptions">
+                </select><!-- TO DO: big time selector customization -->
+
                 <label class="form__label" for="c6-sponsor-name">
                     <i class="fa fa-times ui--error"></i>
                     Sponsor Logo
@@ -45,6 +50,44 @@
                     </p>
                 </div>
             </fieldset>
+
+            <div class="sponsorLogo__wizard ui__connector" ng-if="SelfieCampaignSponsorCtrl.logoType.type !== 'none'">
+                <div class="logoPreview__group" ng-if="SelfieCampaignSponsorCtrl.logo">
+                    <div class="logoPreview__thumbnail">
+                        <span class="thumbnail__box thumbnail__box--square">
+                            <span class="thumbnail">
+                                <img class="thumbnail__img" ng-src="{{SelfieCampaignSponsorCtrl.logo}}">
+                            </span>
+                        </span>
+                    </div>
+                    <span class="thumbnail__label">Thumbnail Preview</span>
+                </div>
+                <fieldset class="form__item form__item--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'upload-from-url'">
+                    <input class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-model="SelfieCampaignSponsorCtrl.url">
+                    <label class="form__label" for="c6-video-ctaText">
+                        <i class="fa fa-times ui--error"></i>
+                        URL to image
+                    </label>
+                    <div class="form__helpBox form__helpBox--right">
+                        <div class="form__helpText">
+                            The text is what the link will be attached to for the button or the link.
+                        </div>
+                    </div>
+                    <div class="form__errorBox">
+                        <p class="form__errorMsg">
+                            <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                        </p>
+                    </div>
+                </fieldset>
+                <div class="ui__btnHolder ui__btnHolder--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'upload-from-url'">
+                    <button class="action__btn action__btn--small" ng-click="SelfieCampaignSponsorCtrl.uploadFromUri(SelfieCampaignSponsorCtrl.url)">Upload From URL</button>
+                </div>
+                <div class="ui__btnHolder ui__btnHolder--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'upload-from-file'">
+                    <button class="action__btn action__btn--small" hidden-input-click="logoUpload">Upload Your Image</button>
+                </div>
+
+                <input id="logoUpload" type="file" style="display:none;" ng-model="SelfieCampaignSponsorCtrl.logoFile"><!-- hidden file input-->
+            </div><!--.sponsorLogo__wizard-->
 
             <fieldset class="form__item" ng-repeat="link in SelfieCampaignSponsorCtrl.links">
                 <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-{{link.name}}" ng-model="link.href" ng-blur="SelfieCampaignSponsorCtrl.updateLinks()">
@@ -66,5 +109,6 @@
 
         </div>
 
-    </section><!--.formSection__group-->
+    </section><!--.formSection__group, #section_2, ng-controller, c6-alias -->
+
 </div><!--.grid__item-->

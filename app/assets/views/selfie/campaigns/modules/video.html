@@ -1,5 +1,6 @@
 <div class="grid__item one-half">
-    <section class="formSection__group" ng-controller="SelfieCampaignVideoController as SelfieCampaignVideoCtrl" c6-alias="SelfieCampaignCtrl.card as card">
+
+    <section class="formSection__group" id="section_3" ng-controller="SelfieCampaignVideoController as SelfieCampaignVideoCtrl" c6-alias="SelfieCampaignCtrl.card as card">
 
         <h1 class="formSection__title">
             <span class="formSection__number">
@@ -28,13 +29,13 @@
                 </div>
             </fieldset>
 
-            <div ng-if="card.data.service">
+        </div><!-- .form__items -->
 
-                <div class="videoPreview__group">
+        <div class="videoPreview__wizard ui__connector" ng-if="card.data.service">
+
+            <div class="videoPreview__group">
+                <div class="videoPreview">
                     <!-- <iframe class="videoPreview__iframe" src="https://www.youtube.com/embed/UOjY61tlh98?rel=0" frameborder="0" allowfullscreen></iframe> -->
-
-                    <!-- OLD HTML, NEEDS TO BE CONVERTED -->
-
                     <div ng-switch="card.data.service"
                     style="position:absolute;width:100%;">
                         <div ng-switch-when="adUnit" ng-controller="AdPlayerController as AdPlayerCtrl">
@@ -62,88 +63,63 @@
                             style="display: block;">
                         </video-preview>
                     </div>
-
-                    <!-- / END OLD HTML, NEEDS TO BE CONVERTED -->
-
-                </div><!--.videoPreview__group-->
+                </div><!--.videoPreview-->
 
 
-                <div ng-if="card.data.service !== 'adUnit'" class="videoDescription__group">
+                <div class="videoDescription__group" ng-if="card.data.service !== 'adUnit'">
 
-                    <h1 class="videoDescription__title">{{SelfieCampaignVideoCtrl.video.title}} <a class="videoDescription__source">YouTube</a></h1>
+                    <h1 class="videoDescription__title">{{SelfieCampaignVideoCtrl.video.title}} <a href="#" class="videoDescription__source">YouTube</a></h1>
 
                     <div class="videoDescription__metaData">
-
                         <span class="videoDescription__metaDatum">
-
                             <span class="videoDescription__metaDatumFa fa fa-clock-o"></span>&nbsp;<span>{{SelfieCampaignVideoCtrl.video.duration | timestamp}}</span>
-
                         </span>
 
                         <span class="videoDescription__metaDatum">
-
                             <span class="videoDescription__metaDatumFa fa fa-eye"></span>&nbsp;<span>{{SelfieCampaignVideoCtrl.video.views | numberify}}</span>
-
                         </span>
                     </div><!--videoDescription__metaData-->
                 </div><!--.videoDescription__group-->
+            </div><!--.videoPreview__group-->
 
-                <div class="thumbnail__group grid">
+            <div class="grid">
 
-                    <div ng-if="card.data.service !== 'adUnit'" class="grid__item one-half">
-                        <button class="thumbnail__btn" ng-click="SelfieCampaignVideoCtrl.useDefaultThumb = true" ng-class="{ 'thumbnail__btn--selected' : SelfieCampaignVideoCtrl.useDefaultThumb }">
-                            <span class="thumbnail__box">
-                                <span class="thumbnail">
-                                    <img class="thumbnail__img" ng-src="{{SelfieCampaignVideoCtrl.defaultThumb}}">
-                                </span>
+                <div class="grid__item one-half portable--one-whole" ng-if="card.data.service !== 'adUnit'">
+                    <button class="thumbnail__btn" ng-click="SelfieCampaignVideoCtrl.useDefaultThumb = true" ng-class="{ 'thumbnail__btn--selected' : SelfieCampaignVideoCtrl.useDefaultThumb }">
+                        <span class="thumbnail__box">
+                            <span class="thumbnail">
+                                <img class="thumbnail__img" ng-src="{{SelfieCampaignVideoCtrl.defaultThumb}}">
                             </span>
-                            <span class="thumbnail__text">Default thumbnail</span>
-                        </button>
-                    </div>
+                        </span>
+                        <span class="thumbnail__label">Default thumbnail</span>
+                    </button>
+                </div><!--
 
 
-                    <div class="grid__item one-half">
-                        <button hidden-input-click="thumbnailUpload" ng-class="{ 'thumbnail__btn--selected' : !SelfieCampaignVideoCtrl.useDefaultThumb }" class="thumbnail__btn thumbnail__customBtn">
+             --><div class="grid__item one-half portable--one-whole">
+                    <button class="thumbnail__btn" ng-click="SelfieCampaignVideoCtrl.useDefaultThumb = false" ng-class="{ 'thumbnail__btn--selected' : !SelfieCampaignVideoCtrl.useDefaultThumb }">
 
-                            <span class="thumbnail__uploadBox">
-                                <span class="thumbnail">
-                                    <!-- <div class="thumbnail__img" style="padding-bottom:83%;background-size:cover;" c6-bg-img="{{SelfieCampaignVideoCtrl.customThumbSrc}}"></div> -->
-                                    <img ng-if="SelfieCampaignVideoCtrl.customThumbSrc" class="thumbnail__img" ng-src="{{SelfieCampaignVideoCtrl.customThumbSrc}}">
-                                </span>
+                        <span class="thumbnail__box thumbnail__box--uploader" hidden-input-click="thumbnailUpload">
+                            <span class="thumbnail">
+                                <img ng-if="SelfieCampaignVideoCtrl.customThumbSrc" class="thumbnail__img" ng-src="{{SelfieCampaignVideoCtrl.customThumbSrc}}">
                             </span>
+                        </span>
 
-                            <span class="thumbnail__text">Custom thumbnail</span>
-                        </button>
+                        <span class="thumbnail__label">Custom thumbnail</span>
 
-                        <input id="thumbnailUpload" type="file" style="display:none;" ng-model="SelfieCampaignVideoCtrl.customThumbFile">
+                        <input id="thumbnailUpload" type="file" style="display:none;" ng-model="SelfieCampaignVideoCtrl.customThumbFile"><!-- hidden file input-->
+
+                    </button>
+                    <div class="form__errorBox">
+                        <p class="form__errorMsg">
+                            <i class="fa fa-exclamation-triangle"></i> Your image is greater than 30mb and you suck at hockey
+                        </p>
                     </div>
+                </div><!-- .grid__item-->
 
-                </div>
+            </div><!--.grid-->
 
-            </div><!-- ng-if="service"-->
-
-
-            <!-- <fieldset class="form__item">
-                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-thumb" ng-model="card.thumb">
-                <label class="form__label" for="c6-video-thumb">
-                    <i class="fa fa-times ui--error"></i>
-                    Thumbnail Url
-                </label>
-                <div class="form__helpBox form__helpBox--right">
-                    <div class="form__helpText">
-                        Provide a unique identifier for your campaign. This is not displayed within the ad unit and is for internal tracking purposes.
-                    </div>
-                </div>
-                <div class="form__errorBox">
-                    <p class="form__errorMsg">
-                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
-                    </p>
-                </div>
-            </fieldset> -->
-
-        </div>
-
-        <br><br><br><br>
+        </div><!--.videoPreview__group-->
 
     </section><!--.formSection__group-->
 

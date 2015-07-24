@@ -338,19 +338,41 @@ function( angular , c6State  , PaginatedListState                    ,
             });
         }])
 
-        .controller('SelfieCampaignSponsorController', ['$scope', function($scope) {
+        .controller('SelfieCampaignSponsorController', ['$scope','CollateralService','FileService',
+        function                                       ( $scope , CollateralService , FileService ) {
             var SelfieCampaignSponsorCtrl = this,
                 AppCtrl = $scope.AppCtrl,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 card = SelfieCampaignCtrl.card;
 
+            // card.collateral.logo = null;
+
+            function idify(name) {
+                return name.replace(/\s+/g, '-').toLowerCase();
+            }
+
+            this.defaultLogo = card && card.collateral && card.collateral.logo;
+
+            this.logoOptions = ['None','Upload from URL','Upload from File'].reduce(function(result, option) {
+                result.push({
+                    type: idify(option),
+                    label: option
+                });
+                return result;
+            }, this.defaultLogo ?
+                [{
+                    type: 'use-default',
+                    label: 'Use Default'
+                }] : []);
+
+            this.logoType = this.logoOptions[0];
+            this.logo = this.defaultLogo;
+            this.previouslyUploadedLogo = null;
+
             Object.defineProperties(this, {
                 validLogo: {
                     get: function() {
-                        var logo = card && card.collateral &&
-                            card.collateral.logo;
-
-                        return !logo || AppCtrl.validImgSrc.test(logo);
+                        return !this.defaultLogo || AppCtrl.validImgSrc.test(this.defaultLogo);
                     }
                 }
             });
@@ -374,6 +396,47 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
                 });
             };
+
+            this.uploadFromUri = function(uri) {
+                CollateralService.uploadFromUri(uri).then(function(path) {
+                    SelfieCampaignSponsorCtrl.logo = '/' + path;
+                    SelfieCampaignSponsorCtrl.previouslyUploadedLogo = '/' + path;
+                });
+            };
+
+            $scope.$watch(function() {
+                return SelfieCampaignSponsorCtrl.logoType.type;
+            },function(type) {
+                if (type === 'use-default') {
+                    SelfieCampaignSponsorCtrl.logo = SelfieCampaignSponsorCtrl.defaultLogo;
+                }
+                if (type === 'upload-from-file' || type === 'upload-from-url') {
+                    SelfieCampaignSponsorCtrl.logo = SelfieCampaignSponsorCtrl.previouslyUploadedLogo;
+                }
+            });
+
+            $scope.$watch(function() {
+                return SelfieCampaignSponsorCtrl.logoFile;
+            }, function(newFile, oldFile) {
+                var file;
+
+                if (!newFile) { return; }
+                file = FileService.open(newFile);
+
+                // SelfieCampaignVideoCtrl.customThumbSrc = file.url;
+                // SelfieCampaignVideoCtrl.useDefaultThumb = false;
+
+                CollateralService.uploadFromFile(newFile)
+                    .then(function(path) {
+                        SelfieCampaignSponsorCtrl.logo = '/' + path;
+                        SelfieCampaignSponsorCtrl.previouslyUploadedLogo = '/' + path;
+                        // card.collateral.logo = '/' + path;
+                    });
+
+                if (!oldFile) { return; }
+
+                FileService.open(oldFile).close();
+            });
 
             $scope.$on('SelfieCampaignWillSave', this.updateLinks);
         }])
@@ -505,7 +568,7 @@ function( angular , c6State  , PaginatedListState                    ,
             // };
 
             this.actionLink = card.links.Action;
-            this.actionLabel = card.params.action && card.params.action.label;
+            this.actionLabel = (card.params.action && card.params.action.label) || 'Learn More';
 
             this.actionTypeOptions = ['None','Button', 'Link']
                 .map(function(option) {

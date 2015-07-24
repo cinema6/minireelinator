@@ -398,8 +398,16 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         }
                     };
 
+
                     function returnPath(response) {
-                        return response.data[0].path;
+                        var result;
+
+                        if (response.data instanceof Array) {
+                            result = response.data[0].path;
+                        } else {
+                            result = response.data.path;
+                        }
+                        return result;
                     }
 
                     this.uploadFromUri = function(uri) {

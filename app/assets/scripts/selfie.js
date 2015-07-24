@@ -146,8 +146,28 @@ function( angular , c6State  , c6uilib ) {
                         });
 
                         $element.on('select2:close', function() {
+                            if (!$element.val()) {
+                                $element.removeClass('form__fillCheck--filled');
+                            }
                             $element.removeClass('ui--active');
                         });
+                    });
+                }
+            };
+        }])
+
+        .directive('c6ScrollTo', ['$document',function($document) {
+            return {
+                restrict: 'A',
+                link: function(scope, $element, attrs) {
+                    var $ = angular.element;
+
+                    $element.click(function(e) {
+                        e.preventDefault();
+
+                        var distance = $(attrs.href).offset().top - 80;
+
+                        $('html, body').animate({ scrollTop: distance + 'px' });
                     });
                 }
             };
