@@ -1,9 +1,14 @@
-define( ['angular','c6_state','./campaign'],
-function( angular , c6State  , campaign   ) {
+define( ['angular','c6_state','./services','./campaign','./directives'],
+function( angular , c6State  , services   , campaign   , directives   ) {
     /* jshint -W106 */
     'use strict';
 
-    return angular.module('c6.app.selfie.app', [c6State.name, campaign.name])
+    return angular.module('c6.app.selfie.app', [
+        c6State.name,
+        services.name,
+        campaign.name,
+        directives.name
+    ])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.map('Selfie:App', function() {

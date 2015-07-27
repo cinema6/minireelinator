@@ -611,6 +611,65 @@ function( angular , c6State  , PaginatedListState                    ,
 
         }])
 
+        .controller('SelfieCampaignTargetingController', ['$scope','GeoService',
+        function                                         ( $scope , GeoService ) {
+            var SelfieCampaignTargetingCtrl = this,
+                SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+                campaign = SelfieCampaignCtrl.campaign;
+
+            this.geoOptions = GeoService.usa.map(function(state) {
+                return {
+                    state: state,
+                    country: 'usa'
+                };
+            });
+
+            this.geo = this.geoOptions.filter(function(option) {
+                var state = campaign.geoTargeting && campaign.geoTargeting.state;
+
+                return state === option.state;
+            })[0];
+
+            Object.defineProperties(this, {
+                cpv: {
+                    get: function() {
+                        var categories = campaign.categories.length,
+                            multiplier = categories + (this.geo ? 1 : 0),
+                            increase = 0.5 * multiplier;
+
+                        return 50 + increase;
+                    }
+                },
+                validBudget: {
+                    get: function() {
+                        var budget = parseInt(campaign.pricing.budget);
+
+                        return !budget || (budget > 50 && budget < 20000);
+                    }
+                },
+                dailyLimitError: {
+                    get: function() {
+                        var budget = parseInt(campaign.pricing.budget),
+                            max = parseInt(campaign.pricing.dailyLimit);
+
+                        if (max && !budget) {
+                            return 'Please enter your Total Budget first';
+                        }
+
+                        if (max < budget * 0.015) {
+                            return 'Must be greater than 1.5% of the Total Budget';
+                        }
+
+                        if (max > budget) {
+                            return 'Must be less than Total Budget';
+                        }
+
+                        return false;
+                    }
+                }
+            });
+        }])
+
         .controller('SelfieCampaignPreviewController', ['$scope','cinema6','MiniReelService',
                                                         'c6BrowserInfo','c6Debounce',
         function                                       ( $scope , cinema6 , MiniReelService ,

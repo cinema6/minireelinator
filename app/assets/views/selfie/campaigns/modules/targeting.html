@@ -1,5 +1,5 @@
-<div class="grid__item one-half">
-    <section class="formSection__group" id="section_5" c6-alias="SelfieCampaignCtrl.categories as categories">
+<div class="grid__item one-half" ng-controller="SelfieCampaignTargetingController as SelfieCampaignTargetingCtrl" c6-alias="SelfieCampaignCtrl.categories as categories">
+    <section class="formSection__group" id="section_5">
 
         <h1 class="formSection__title">
             <span class="formSection__number">
@@ -29,14 +29,7 @@
             </fieldset>
 
             <fieldset class="form__item">
-                <select c6-select-box class="form__selectBox form__selectBox--multiple" multiple="multiple">
-                    <option>Alabama</option>
-                    <option>Connecticut</option>
-                    <option>Delaware</option>
-                    <option>Georgia</option>
-                    <option>Idaho</option>
-                    <option>Kansas</option>
-                </select>
+                <select c6-select-box config="{allowClear:true,placeholder:''}"class="form__selectBox form__selectBox--single" ng-model="SelfieCampaignTargetingCtrl.geo" ng-options="option.state for option in SelfieCampaignTargetingCtrl.geoOptions"></select>
                 <label class="form__label" for="c6-sponsor-name">
                     <i class="fa fa-times ui--error"></i>
                     Geography
@@ -65,13 +58,13 @@
         <h1 class="formSection__title">
             <span class="formSection__titleText tk--hdr">Set Your Budget</span>
         </h1>
-        <p class="formSection__introText">Your calculated cost per 1000 video plays is : <strong>$50</strong>. A video must play for a minimum of 3 seconds to count as a play.</p>
+        <p class="formSection__introText">Your calculated cost per 1000 video plays is : <strong>${{SelfieCampaignTargetingCtrl.cpv}}</strong>. A video must play for a minimum of 3 seconds to count as a play.</p>
 
 
         <div class="form__items">
 
-            <fieldset class="form__item form__item--shortInput">
-                <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="text" id="c6-sponsor-name">
+            <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': !SelfieCampaignTargetingCtrl.validBudget }">
+                <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="text" id="c6-sponsor-name" ng-model="campaign.pricing.budget">
                 <span class="input__unit">$</span>
                 <label class="form__label" for="c6-sponsor-name">
                     <i class="fa fa-times ui--error"></i>
@@ -89,8 +82,8 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form__item form__item--shortInput">
-                <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="text" id="c6-sponsor-name">
+            <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': SelfieCampaignTargetingCtrl.dailyLimitError }">
+                <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="text" id="c6-sponsor-name" ng-model="campaign.pricing.dailyLimit">
                 <span class="input__unit">$</span>
                 <label class="form__label" for="c6-sponsor-name">
                     <i class="fa fa-times ui--error"></i>
@@ -103,7 +96,7 @@
                 </div>
                 <div class="form__errorBox">
                     <p class="form__errorMsg">
-                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                        <i class="fa fa-exclamation-triangle"></i> {{SelfieCampaignTargetingCtrl.dailyLimitError}}
                     </p>
                 </div>
             </fieldset>
