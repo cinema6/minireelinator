@@ -145,10 +145,7 @@
                                 thumbs: {
                                     small: 'images.vine.com/video/erUbKHDX6Ug/small.jpg',
                                     large: 'images.vine.com/video/erUbKHDX6Ug/large.jpg'
-                                },
-                                code: '<iframe src="https://vine.co/v/erUbKHDX6Ug/embed/simple"' +
-                                      ' style="width:100%;height:100%" frameborder="0"></iframe>' +
-                                      '<script src="https://platform.vine.co/static/scripts/embed.js"></script>'
+                                }
                             }
                         }
                     }
@@ -1750,6 +1747,44 @@
                                     service: 'flickr',
                                     imageid: '16767833635'
                                 }
+                            });
+                        });
+
+                        it('should transpile the vine card', function() {
+                            expect(deck[4]).toEqual({
+                                data: {
+                        	       skip: 'anytime',
+                        	        controls: true,
+                        	        autoplay: null,
+                        	        autoadvance: null,
+                        	        survey: null,
+                        	        service: 'vine',
+                                    videoid: 'erUbKHDX6Ug',
+                        	        start: null,
+                        	        end: null,
+                        	        moat: null
+                        	    },
+                        	    id: 'rc-1ac904b814c8d6a20fea',
+                        	    type: 'video',
+                        	    title: 'Vine Card',
+                        	    note: 'This is a Vine card.',
+                        	    label: 'Video',
+                        	    view: 'video',
+                        	    ad: false,
+                        	    placementId: null,
+                        	    templateUrl: null,
+                        	    sponsored: false,
+                        	    campaign: {
+                        	        campaignId: null,
+                        	        advertiserId: null,
+                        	        minViewTime: null,
+                        	        countUrls: [],
+                        	        clickUrls: []
+                        	    },
+                        	    collateral: {},
+                        	    thumb: null,
+                        	    links: {},
+                        	    params: {}
                             });
                         });
 

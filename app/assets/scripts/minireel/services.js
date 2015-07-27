@@ -2610,9 +2610,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         skip: skipValue(),
                         service: copy(),
                         videoid: copy(null),
-                        code: function(data) {
-                            return VideoService.embedCodeFromData(data.service, data.videoid);
-                        },
                         href: hrefValue(),
                         thumbs: thumbsValue(),
                         moat: copy(null)
