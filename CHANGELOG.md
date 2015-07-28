@@ -3,6 +3,8 @@
 * *[v1.15.1.rc1]*
   * Make it possible to only delete Sponsored MiniReels from the
     campaign manager
+  * [FIX]: Fix for an issue that caused the campaign manager to take
+    longer to load than it should
 
 ## v1.15.0 (July 23, 2015)
 * *[v1.15.0.rc2]*
