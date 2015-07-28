@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.15.1.rc1]*
+  * Make it possible to only delete Sponsored MiniReels from the
+    campaign manager
+
 ## v1.15.0 (July 23, 2015)
 * *[v1.15.0.rc2]*
   * [FIX]: Fix for an issue that caused multiple MiniReels to be created
