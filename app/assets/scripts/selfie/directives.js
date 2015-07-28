@@ -2,7 +2,8 @@ define( ['angular','select2'],
 function( angular ) {
     'use strict';
 
-    var extend = angular.extend;
+    var $ = angular.element,
+        extend = angular.extend;
 
     return angular.module('c6.app.selfie.directives', [])
         .directive('c6FillCheck', ['$timeout',
@@ -41,7 +42,29 @@ function( angular ) {
                 restrict: 'A',
                 link: function(scope, $element, attrs) {
                     $timeout(function() {
-                        var config = $parse(attrs.config)(scope);
+                        var config = $parse(attrs.config)(scope) || {},
+                            options = $parse(attrs.options)(scope);
+
+                        function findBy(prop, value, arr) {
+                            return arr.filter(function(item) {
+                                return item[prop] === value;
+                            })[0];
+                        }
+
+                        function format(option) {
+                            var found = findBy('label', option.text, options) || {};
+
+                            if (!found.src) { return option.text; }
+
+                            var $option = $('<span><img src="' +
+                                found.src + '" /> ' + option.text + '</span>');
+
+                            return $option;
+                        }
+
+                        if (attrs.thumbnails) {
+                            config.templateResult = format;
+                        }
 
                         $element.select2(extend({
                             minimumResultsForSearch: Infinity
@@ -71,8 +94,6 @@ function( angular ) {
             return {
                 restrict: 'A',
                 link: function(scope, $element, attrs) {
-                    var $ = angular.element;
-
                     $element.click(function(e) {
                         e.preventDefault();
 
@@ -100,6 +121,21 @@ function( angular ) {
         .filter('numberify', [function() {
             return function(number) {
                 return number && number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            };
+        }])
+
+        .filter('videoService', [function() {
+            return function(service) {
+                switch (service) {
+                case 'youtube':
+                    return 'YouTube';
+                case 'vimeo':
+                    return 'Vimeo';
+                case 'dailymotion':
+                    return 'DailyMotion';
+                case 'adUnit':
+                    return 'VAST';
+                }
             };
         }]);
 });

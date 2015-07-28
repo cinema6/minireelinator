@@ -11,8 +11,8 @@
 
         <div class="form__items">
 
-            <fieldset class="form__item">
-                <textarea c6-fill-check class="form__textBox form__textArea form__fillCheck" type="text" id="c6-video-input" ng-model="SelfieCampaignVideoCtrl.videoUrl" ng-change="SelfieCampaignVideoCtrl.updateUrl()"></textarea>
+            <fieldset class="form__item" ng-class="{ 'ui--hasError': SelfieCampaignVideoCtrl.videoError }">
+                <textarea c6-fill-check class="form__textBox form__textArea form__fillCheck" type="text" id="c6-video-input" ng-model="SelfieCampaignVideoCtrl.videoUrl"></textarea>
                 <label class="form__label" for="c6-video-input">
                     <i class="fa fa-times ui--error"></i>
                     Video URL or Embed Code
@@ -24,14 +24,14 @@
                 </div>
                 <div class="form__errorBox">
                     <p class="form__errorMsg">
-                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                        <i class="fa fa-exclamation-triangle"></i> Please enter a valid link, embed code or VAST tag
                     </p>
                 </div>
             </fieldset>
 
         </div><!-- .form__items -->
 
-        <div class="videoPreview__wizard ui__connector" ng-if="card.data.service">
+        <div class="videoPreview__wizard ui__connector" ng-if="SelfieCampaignVideoCtrl.video">
 
             <div class="videoPreview__group">
                 <div class="videoPreview">
@@ -68,7 +68,7 @@
 
                 <div class="videoDescription__group" ng-if="card.data.service !== 'adUnit'">
 
-                    <h1 class="videoDescription__title">{{SelfieCampaignVideoCtrl.video.title}} <a href="#" class="videoDescription__source">YouTube</a></h1>
+                    <h1 class="videoDescription__title">{{SelfieCampaignVideoCtrl.video.title}} - <a ng-href="{{SelfieCampaignVideoCtrl.video.href}}" target="_blank" class="videoDescription__source">{{card.data.service | videoService}}</a></h1>
 
                     <div class="videoDescription__metaData">
                         <span class="videoDescription__metaDatum">

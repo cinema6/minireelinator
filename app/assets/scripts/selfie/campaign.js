@@ -62,14 +62,18 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignsController', ['$injector','$scope','$q','cState',
-                                                  'ConfirmDialogService',
+                                                  'ConfirmDialogService','LogoService',
         function                                 ( $injector , $scope , $q , cState ,
-                                                   ConfirmDialogService ) {
+                                                   ConfirmDialogService , LogoService ) {
             var SelfieCampaignsCtrl = this;
 
             $injector.invoke(PaginatedListController, this, {
                 cState: cState,
                 $scope: $scope
+            });
+
+            cState.cModel.items.value.forEach(function(campaign) {
+                LogoService.registerLogo(campaign, campaign.cards[0].item);
             });
 
             this.remove = function(campaigns) {
@@ -215,7 +219,6 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function saveCampaign(card) {
-                console.log('cState.card: ',card);
                 return SelfieCampaignCtrl.campaign.save();
             }
 
@@ -258,10 +261,32 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             function updateProxy() {
-                console.log('Ctrl.card: ',SelfieCampaignCtrl.card);
-
                 SelfieCampaignCtrl._proxyCard = copy(SelfieCampaignCtrl.card);
                 SelfieCampaignCtrl._proxyCampaign = copy(SelfieCampaignCtrl.campaign);
+            }
+
+            function handleWatching(params, oldParams) {
+                if (params === oldParams) { return; }
+
+                var card = SelfieCampaignCtrl.card,
+                    campaign = SelfieCampaignCtrl.campaign;
+
+                var _proxyCard = SelfieCampaignCtrl._proxyCard,
+                    _proxyCampaign = SelfieCampaignCtrl._proxyCampaign;
+
+                var cardDirty = !equals(card, _proxyCard),
+                    campaignDirty = !equals(campaign, _proxyCampaign);
+
+                if (card.data.service && card.data.videoid) {
+                    console.log('loadPreview');
+                    $scope.$broadcast('loadPreview');
+                }
+
+                // console.log('$WATCHER TRIGGERED!', params, oldParams);
+
+                if (cardDirty || campaignDirty) {
+                    SelfieCampaignCtrl.autoSave();
+                }
             }
 
             this.save = function() {
@@ -290,8 +315,22 @@ function( angular , c6State  , PaginatedListState                    ,
             this.autoSave = c6Debounce(SelfieCampaignCtrl.save, 5000);
 
             $scope.$watchCollection(function() {
+                // watch the Sponsor Links for autosaving
+                return SelfieCampaignCtrl.card.links;
+            }, handleWatching);
+
+            $scope.$watchCollection(function() {
+                // watch the necessary Campaign properties
+                var campaign = SelfieCampaignCtrl.campaign;
+                return [
+                    campaign.name,
+                    campaign.categories
+                ];
+            }, handleWatching);
+
+            $scope.$watchCollection(function() {
+                // watch the necessary card properties
                 var card = SelfieCampaignCtrl.card,
-                    campaign = SelfieCampaignCtrl.campaign,
                     data = card.data,
                     params = card.params,
                     label = params.action && params.action.label,
@@ -300,52 +339,24 @@ function( angular , c6State  , PaginatedListState                    ,
                 return [
                     card.title,
                     card.note,
+                    card.thumb,
+                    card.collateral.logo,
                     params.sponsor,
                     label,
                     actionType,
-                    card.thumb,
-                    card.links, // doesn't work, needs it's own $watcher, also true for Action link!
-                    card.collateral.logo,
                     data.videoid,
                     data.service,
-                    campaign.name,
-                    campaign.categories
                 ];
-            }, function(params, oldParams) {
-                if (params === oldParams) { return; }
-
-                if (SelfieCampaignCtrl.card.data.service && SelfieCampaignCtrl.card.data.videoid) {
-                    console.log('loadPreview');
-                    $scope.$broadcast('loadPreview');
-                }
-
-                console.log('$WATCHER TRIGGERED!', params, oldParams);
-
-                var cardDirty = !equals(SelfieCampaignCtrl.card, SelfieCampaignCtrl._proxyCard);
-                var campaignDirty = !equals(SelfieCampaignCtrl.campaign, SelfieCampaignCtrl._proxyCampaign);
-
-                if (cardDirty) {
-                    console.log('CARD IS DIRTY!!!!');
-                }
-                if (campaignDirty) {
-                    console.log('CAMPAIGN IS DIRTY!!!!');
-                }
-
-                if (cardDirty || campaignDirty) {
-                    SelfieCampaignCtrl.autoSave();
-
-                }
-            });
+            }, handleWatching);
         }])
 
-        .controller('SelfieCampaignSponsorController', ['$scope','CollateralService','FileService',
-        function                                       ( $scope , CollateralService , FileService ) {
+        .controller('SelfieCampaignSponsorController', ['$scope','CollateralService',
+                                                        'FileService','LogoService',
+        function                                       ( $scope , CollateralService ,
+                                                         FileService , LogoService ) {
             var SelfieCampaignSponsorCtrl = this,
-                AppCtrl = $scope.AppCtrl,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 card = SelfieCampaignCtrl.card;
-
-            // card.collateral.logo = null;
 
             function idify(name) {
                 return name.replace(/\s+/g, '-').toLowerCase();
@@ -353,29 +364,31 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.defaultLogo = card && card.collateral && card.collateral.logo;
 
-            this.logoOptions = ['None','Upload from URL','Upload from File'].reduce(function(result, option) {
-                result.push({
-                    type: idify(option),
-                    label: option
-                });
-                return result;
-            }, this.defaultLogo ?
+            this.logoOptions = ['None','Upload from URL','Upload from File']
+                .reduce(function(result, option) {
+                    result.push({
+                        type: idify(option),
+                        label: option
+                    });
+                    return result;
+                }, this.defaultLogo ?
                 [{
                     type: 'use-default',
-                    label: 'Use Default'
-                }] : []);
+                    label: 'Use Default',
+                    src: this.defaultLogo
+                }] : [])
+                .concat(LogoService.fetchLogos(SelfieCampaignCtrl.campaign.name)
+                    .map(function(logo) {
+                        return {
+                            type: 'custom',
+                            label: logo.name,
+                            src: logo.src
+                        };
+                    }));
 
             this.logoType = this.logoOptions[0];
             this.logo = this.defaultLogo;
             this.previouslyUploadedLogo = null;
-
-            Object.defineProperties(this, {
-                validLogo: {
-                    get: function() {
-                        return !this.defaultLogo || AppCtrl.validImgSrc.test(this.defaultLogo);
-                    }
-                }
-            });
 
             this.links = ['Website','Facebook','Twitter','Pinterest','YouTube','Instagram']
                 .map(function(name) {
@@ -405,17 +418,43 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             $scope.$watch(function() {
+                // new logo urls come from various places, sometimes asynchronously
+                // so we only want to trigger a real change when we get a new, valid url
+                return SelfieCampaignSponsorCtrl.logo;
+            }, function(newLogo, oldLogo) {
+                if (newLogo === oldLogo) { return; }
+
+                card.collateral.logo = newLogo;
+            });
+
+            $scope.$watch(function() {
+                // we do very different things depending on what the
+                // user chooses from the dropdown
                 return SelfieCampaignSponsorCtrl.logoType.type;
             },function(type) {
-                if (type === 'use-default') {
-                    SelfieCampaignSponsorCtrl.logo = SelfieCampaignSponsorCtrl.defaultLogo;
-                }
-                if (type === 'upload-from-file' || type === 'upload-from-url') {
-                    SelfieCampaignSponsorCtrl.logo = SelfieCampaignSponsorCtrl.previouslyUploadedLogo;
+                var Ctrl = SelfieCampaignSponsorCtrl;
+
+                switch (type) {
+                case 'use-default':
+                    Ctrl.logo = Ctrl.defaultLogo;
+                    break;
+                case 'upload-from-file':
+                case 'upload-from-url':
+                    if (Ctrl.previouslyUploadedLogo) {
+                        Ctrl.logo = Ctrl.previouslyUploadedLogo;
+                    }
+                    break;
+                case 'custom':
+                    Ctrl.logo = SelfieCampaignSponsorCtrl.logoType.src;
+                    break;
+                case 'none':
+                    Ctrl.logo = null;
+                    break;
                 }
             });
 
             $scope.$watch(function() {
+                // as soon as someone selects a local file we upload it
                 return SelfieCampaignSponsorCtrl.logoFile;
             }, function(newFile, oldFile) {
                 var file;
@@ -423,14 +462,10 @@ function( angular , c6State  , PaginatedListState                    ,
                 if (!newFile) { return; }
                 file = FileService.open(newFile);
 
-                // SelfieCampaignVideoCtrl.customThumbSrc = file.url;
-                // SelfieCampaignVideoCtrl.useDefaultThumb = false;
-
                 CollateralService.uploadFromFile(newFile)
                     .then(function(path) {
                         SelfieCampaignSponsorCtrl.logo = '/' + path;
                         SelfieCampaignSponsorCtrl.previouslyUploadedLogo = '/' + path;
-                        // card.collateral.logo = '/' + path;
                     });
 
                 if (!oldFile) { return; }
@@ -443,17 +478,35 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignVideoController', ['$injector','$scope','SelfieVideoService',
                                                       'c6Debounce','VideoThumbnailService',
-                                                      'YouTubeDataService','FileService',
-                                                      'CollateralService',
+                                                      'FileService','CollateralService',
         function                                     ( $injector , $scope , SelfieVideoService ,
                                                        c6Debounce , VideoThumbnailService ,
-                                                       YouTubeDataService , FileService ,
-                                                       CollateralService ) {
+                                                       FileService , CollateralService ) {
             var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 SelfieCampaignVideoCtrl = this,
                 card = SelfieCampaignCtrl.card,
                 service = card.data.service,
                 id = card.data.videoid;
+
+            function setDefaultThumbs(service, id) {
+                if (service === 'adUnit') {
+                    SelfieCampaignVideoCtrl.useDefaultThumb = false;
+                    SelfieCampaignVideoCtrl.defaultThumb = null;
+                } else {
+                    VideoThumbnailService.getThumbsFor(service, id)
+                        .ensureFulfillment()
+                        .then(function(thumbs) {
+                            SelfieCampaignVideoCtrl.defaultThumb = thumbs.large;
+                            SelfieCampaignVideoCtrl.useDefaultThumb = !card.thumb;
+                        });
+                }
+            }
+
+            function handleVideoError(err) {
+                console.log('ERROR: ', err);
+                SelfieCampaignVideoCtrl.videoError = true;
+                SelfieCampaignVideoCtrl.video = null;
+            }
 
             this.useDefaultThumb = !card.thumb;
             this.customThumbSrc = card.thumb;
@@ -461,28 +514,52 @@ function( angular , c6State  , PaginatedListState                    ,
             this.disableTrimmer = function() { return true; };
 
             this.updateThumbs = function() {
-                card.thumb = !this.useDefaultThumb ?
+                card.thumb = !SelfieCampaignVideoCtrl.useDefaultThumb ?
                     SelfieCampaignVideoCtrl.customThumbSrc :
                     null;
             };
 
-            this.updateUrl = c6Debounce(function() {
-                SelfieVideoService.dataFromUrl(SelfieCampaignVideoCtrl.videoUrl)
+            this.updateUrl = c6Debounce(function(args) {
+                var service, id,
+                    url = args[0];
+
+                if (!url) {
+                    SelfieCampaignVideoCtrl.video = null;
+                    return;
+                }
+
+                SelfieVideoService.dataFromUrl(url)
                     .then(function(data) {
-                        card.data.service = data.service;
-                        card.data.videoid = data.id;
-                    });
+                        service = data.service;
+                        id = data.id;
+
+                        setDefaultThumbs(service, id);
+
+                        return SelfieVideoService.statsFromService(service, id);
+                    })
+                    .then(function(data) {
+                        SelfieCampaignVideoCtrl.videoError = false;
+                        SelfieCampaignVideoCtrl.video = data;
+                        card.title = card.title || data.title;
+                        card.data.service = service;
+                        card.data.videoid = id;
+                    })
+                    .catch(handleVideoError);
             }, 1000);
 
             $scope.$watch(function() {
+                // watch the thumbnail selector button
                 return SelfieCampaignVideoCtrl.useDefaultThumb;
             }, function(useDefault) {
                 if (useDefault) {
                     card.thumb = null;
+                } else {
+                    card.thumb = SelfieCampaignVideoCtrl.customThumbSrc;
                 }
             });
 
             $scope.$watch(function() {
+                // watch the the File <input> and upload when chosen
                 return SelfieCampaignVideoCtrl.customThumbFile;
             }, function(newFile, oldFile) {
                 var file;
@@ -506,42 +583,12 @@ function( angular , c6State  , PaginatedListState                    ,
             });
 
             $scope.$watch(function() {
-                return card.data.service + ':' + card.data.videoid;
-            }, function(newParams) {
-                if (!newParams) { return; }
+                // watch the video link/embed/vast tag input
+                // and then do all the checking/getting of data
+                return SelfieCampaignVideoCtrl.videoUrl;
+            }, SelfieCampaignVideoCtrl.updateUrl);
 
-                var params = newParams.split(':'),
-                    service = params[0],
-                    videoid = params[1];
-
-                if (service === 'adUnit') {
-                    SelfieCampaignVideoCtrl.useDefaultThumb = false;
-                    SelfieCampaignVideoCtrl.defaultThumb = null;
-                } else {
-                    VideoThumbnailService.getThumbsFor(service, videoid)
-                        .ensureFulfillment()
-                        .then(function(thumbs) {
-                            SelfieCampaignVideoCtrl.defaultThumb = thumbs.large;
-                            SelfieCampaignVideoCtrl.useDefaultThumb = !card.thumb;
-                        });
-
-                    if (service === 'youtube') {
-                        YouTubeDataService.videos.list({
-                            part: ['snippet','statistics','contentDetails'],
-                            id: videoid
-                        }).then(function(video) {
-                            SelfieCampaignVideoCtrl.video = {
-                                title: video.snippet.title,
-                                duration: video.contentDetails.duration,
-                                views: video.statistics.viewCount
-                            };
-                            card.title = video.snippet.title;
-                        });
-                    }
-                }
-            });
-
-            $scope.$on('SelfieCampaignWillSave', this.upadteThumbs);
+            $scope.$on('SelfieCampaignWillSave', this.updateThumbs);
 
         }])
 
@@ -554,7 +601,9 @@ function( angular , c6State  , PaginatedListState                    ,
             function updateActionLink() {
                 var type = SelfieCampaignTextCtrl.actionType.type;
 
-                card.links.Action = SelfieCampaignTextCtrl.actionLink;
+                if (SelfieCampaignTextCtrl.actionLink) {
+                    card.links.Action = SelfieCampaignTextCtrl.actionLink;
+                }
 
                 card.params.action = SelfieCampaignTextCtrl.actionLink && type !== 'none' ? {
                     type: type,
@@ -580,7 +629,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.actionType = this.actionTypeOptions
                 .filter(function(option) {
-                    var type = card.params.action || 'button';
+                    var type = card.params.action && card.params.action.type || 'button';
 
                     return option.type === type;
                 })[0];
@@ -613,8 +662,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignTargetingController', ['$scope','GeoService',
         function                                         ( $scope , GeoService ) {
-            var SelfieCampaignTargetingCtrl = this,
-                SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 campaign = SelfieCampaignCtrl.campaign;
 
             this.geoOptions = GeoService.usa.map(function(state) {

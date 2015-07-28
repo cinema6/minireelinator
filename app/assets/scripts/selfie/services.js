@@ -3,6 +3,7 @@ function( angular , c6uilib ) {
     'use strict';
 
     var extend = angular.extend,
+        forEach = angular.forEach,
         fromJson = angular.fromJson,
         toJson = angular.toJson;
 
@@ -29,8 +30,12 @@ function( angular , c6uilib ) {
             };
         }])
 
-        .service('SelfieVideoService', ['$http','c6UrlParser','$q',
-        function                       ( $http , c6UrlParser , $q ) {
+        .service('SelfieVideoService', ['$http','c6UrlParser','$q','YouTubeDataService',
+                                        'VimeoDataService','DailymotionDataService',
+        function                       ( $http , c6UrlParser , $q , YouTubeDataService ,
+                                         VimeoDataService , DailymotionDataService ) {
+            var self = this;
+
             function getJSONProp(json, prop) {
                 return (fromJson(json) || {})[prop];
             }
@@ -60,65 +65,59 @@ function( angular , c6uilib ) {
                     });
             }
 
-            this.dataFromUrl = function(url) {
-                var parsed = c6UrlParser(url),
-                    service = (parsed.hostname.match(
-                        /youtube|dailymotion|vimeo|aol|yahoo|rumble/
-                    ) || [])[0],
+            this.dataFromUrl = function(text) {
+                var service = (text.match(/youtu\.be|youtube|dailymotion|dai\.ly|vimeo/) || [])[0],
+                    type = /iframe/.test(text) ? 'embed' : 'url',
                     id,
                     idFetchers = {
-                        youtube: function(url) {
-                            return params(url.search).v;
-                        },
-                        vimeo: function(url) {
-                            return url.pathname.replace(/^\//, '');
-                        },
-                        dailymotion: function(url) {
-                            var pathname = url.pathname;
-
-                            if (pathname.search(/^\/video\//) < 0) {
-                                return null;
+                        embed: {
+                            youtube: function(embed) {
+                                return (embed.match(/embed\/([a-zA-Z0-9]+)"/) || [])[1];
+                            },
+                            vimeo: function(embed) {
+                                return (embed.match(/video\/([0-9]+)/) || [])[1];
+                            },
+                            dailymotion: function(embed) {
+                                return (embed.match(/video\/([a-zA-Z0-9]+)/) || [])[1];
                             }
-
-                            return (pathname
-                                .replace(/\/video\//, '')
-                                .match(/[a-zA-Z0-9]+/) || [])[0];
                         },
-                        aol: function(url) {
-                            return (url.pathname.match(/[^\/]+$/) || [null])[0];
-                        },
-                        yahoo: function(url) {
-                            return (url.pathname
-                                .match(/[^/]+(?=(\.html))/) || [null])[0];
-                        },
-                        rumble: function(url) {
-                            return (url.pathname
-                                .match(/[^/]+(?=(\.html))/) || [null])[0];
+                        url: {
+                            'youtu.be': function(url) {
+                                return (url.match(/\.be\/([a-zA-Z0-9]+)$/) || [])[1];
+                            },
+                            youtube: function(url) {
+                                return (url.match(/v=([a-zA-Z0-9]+)/) || [])[1];
+                            },
+                            vimeo: function(url) {
+                                return (url.match(/\/([0-9]+)$/) || [])[1];
+                            },
+                            'dai.ly': function(url) {
+                                return (url.match(/\.ly\/([a-zA-Z0-9]+)$/) || [])[1];
+                            },
+                            dailymotion: function(url) {
+                                return (url.match(/video\/([a-zA-Z0-9]+)/) || [])[1];
+                            }
                         }
                     };
 
-                function params(search) {
-                    return search.split('&')
-                        .map(function(pair) {
-                            return pair.split('=')
-                                .map(decodeURIComponent);
-                        })
-                        .reduce(function(params, pair) {
-                            params[pair[0]] = pair[1];
-
-                            return params;
-                        }, {});
-                }
-
                 if (!service) {
-                    if (/^http|https|\/\//.test(url)) {
-                        return validateVast(url);
+                    if (/^http|https|\/\//.test(text)) {
+                        return validateVast(text);
                     } else {
                         return $q.reject('Unable to determine service');
                     }
                 }
 
-                id = idFetchers[service](parsed);
+                id = idFetchers[type][service](text);
+
+                switch (service) {
+                case 'youtu.be':
+                    service = 'youtube';
+                    break;
+                case 'dai.ly':
+                    service = 'dailymotion';
+                    break;
+                }
 
                 if (!id) { return $q.reject('Unable to find id'); }
 
@@ -147,6 +146,109 @@ function( angular , c6uilib ) {
                     return getJSONProp(id, 'vast');
 
                 }
+            };
+
+            this.statsFromService = function(service, id) {
+                var fetch = {
+                    youtube: function() {
+                        return YouTubeDataService.videos.list({
+                            part: ['snippet','statistics','contentDetails'],
+                            id: id
+                        }).then(function(data) {
+                            return {
+                                title: data.snippet.title,
+                                duration: data.contentDetails.duration,
+                                views: data.statistics.viewCount,
+                                href: self.urlFromData(service, id)
+                            };
+                        });
+                    },
+                    vimeo: function() {
+                        return VimeoDataService.getVideo(id)
+                            .then(function(data) {
+                                return {
+                                    title: data.title,
+                                    duration: data.duration,
+                                    views: data.statsNumberOfPlays,
+                                    href: self.urlFromData(service, id)
+                                };
+                            });
+                    },
+                    dailymotion: function() {
+                        return DailymotionDataService.video(id).get({
+                            fields: ['viewsTotal','duration','title']
+                        }).then(function(data) {
+                            return {
+                                title: data.title,
+                                duration: data.duration,
+                                views: data.viewsTotal,
+                                href: self.urlFromData(service, id)
+                            };
+                        });
+                    },
+                    adUnit: function() {
+                        return $q.when({
+                            title: null,
+                            duration: 0,
+                            views: 0,
+                            href: self.urlFromData(service, id)
+                        });
+                    }
+                };
+
+                if (!/youtube|vimeo|dailymotion|adUnit/.test(service)) {
+                    return $q.reject('Unknown service');
+                }
+
+                return fetch[service]();
+            };
+        }])
+
+        .service('LogoService', [function() {
+            var logoCache = {},
+                nameCount = {};
+
+            function exists(value, obj) {
+                var result = false;
+
+                forEach(obj, function(val) {
+                    if (val === value) {
+                        result = true;
+                    }
+                });
+
+                return result;
+            }
+
+            this.registerLogo = function(campaign, card) {
+                var key;
+
+                if (!card.collateral.logo || exists(card.collateral.logo, logoCache)) { return; }
+
+                if (!nameCount[campaign.name]) {
+                    key = campaign.name;
+                    nameCount[campaign.name] = 1;
+                } else {
+                    key = campaign.name + ' (' + nameCount[campaign.name] + ')';
+                    nameCount[campaign.name] = nameCount[campaign.name] + 1;
+                }
+
+                logoCache[key] = card.collateral.logo;
+            };
+
+            this.fetchLogos = function(campaignName) {
+                var logos = [];
+
+                forEach(logoCache, function(src, name) {
+                    if (name === campaignName) { return; }
+
+                    logos.push({
+                        name: name,
+                        src: src
+                    });
+                });
+
+                return logos;
             };
         }])
 
