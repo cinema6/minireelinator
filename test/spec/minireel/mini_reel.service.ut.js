@@ -151,6 +151,7 @@
                         instagram: {
                             id: 'rc-94028ed693fda7',
                             type: 'instagram',
+                            source: 'Instagram',
                             data: {
                                 type: 'image',
                                 id: '5YN6a0tOc-',
