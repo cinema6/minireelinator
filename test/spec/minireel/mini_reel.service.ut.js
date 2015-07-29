@@ -155,6 +155,10 @@
                                 type: 'image',
                                 id: '5YN6a0tOc-',
                                 src: 'https://mock.instagram.com/image/5YN6a0tOc-.jpg',
+                                thumbs: {
+                                    small: 'images.instagram.com/small.jpg',
+                                    large: 'images.instagram.com/large.jpg'
+                                }
                             },
                             href: 'https:\/\/instagram.com\/p\/5YN6a0tOc-\/',
                             likes: '77606',
@@ -2476,7 +2480,7 @@
                                         'images.' + service + '.com/image/' + id + '/small.jpg',
                                         'images.' + service + '.com/image/' + id + '/large.jpg'
                                     ));
-                                } else if(service ==='web') {
+                                } else if(service === 'web' || service === 'instagram') {
                                     return thumbCache[key] || (thumbCache[key] = new MockThumb(
                                         'images.' + service + '.com/small.jpg',
                                         'images.' + service + '.com/large.jpg'

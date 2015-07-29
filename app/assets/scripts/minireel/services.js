@@ -2507,7 +2507,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     };
                 }
 
-                function thumbsValue() {
+                function videoThumbsValue() {
                     return function(data) {
                         return ThumbnailService.getThumbsFor(data.service, data.videoid)
                             .ensureFulfillment()
@@ -2566,6 +2566,19 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 return {
                                     small: null,
                                     large: null
+                                };
+                            });
+                    };
+                }
+
+                function instagramThumbsValue() {
+                    return function(data) {
+                        return ThumbnailService.getThumbsFor('instagram', data.id)
+                            .ensureFulfillment()
+                            .then(function(thumbs) {
+                                return {
+                                    small: thumbs.small,
+                                    large: thumbs.large
                                 };
                             });
                     };
@@ -2634,7 +2647,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     instagram: {
                         type: instagramCardInfo(),
                         id: copy(null),
-                        src: instagramCardInfo()
+                        src: instagramCardInfo(),
+                        thumbs: instagramThumbsValue()
                     },
                     youtube: {
                         hideSource: hideSourceValue(),
@@ -2648,7 +2662,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         end: trimmer(),
                         videoid: copy(null),
                         href: hrefValue(),
-                        thumbs: thumbsValue(),
+                        thumbs: videoThumbsValue(),
                         moat: copy(null)
                     },
                     vimeo: {
@@ -2660,7 +2674,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         end: trimmer(),
                         videoid: copy(null),
                         href: hrefValue(),
-                        thumbs: thumbsValue(),
+                        thumbs: videoThumbsValue(),
                         moat: copy(null)
                     },
                     dailymotion: {
@@ -2674,7 +2688,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         related: value(0),
                         videoid: copy(null),
                         href: hrefValue(),
-                        thumbs: thumbsValue(),
+                        thumbs: videoThumbsValue(),
                         moat: copy(null)
                     },
                     rumble: {
@@ -2691,7 +2705,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return VideoService.embedIdFromVideoId('rumble', data.videoid);
                         },
                         href: hrefValue(),
-                        thumbs: thumbsValue(),
+                        thumbs: videoThumbsValue(),
                         moat: copy(null)
                     },
                     adUnit: {
@@ -2722,7 +2736,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return VideoService.embedCodeFromData(data.service, data.videoid);
                         },
                         href: hrefValue(),
-                        thumbs: thumbsValue(),
+                        thumbs: videoThumbsValue(),
                         moat: copy(null)
                     },
                     vine: {
