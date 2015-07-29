@@ -113,7 +113,8 @@ function( angular , c6State  , PaginatedListState                    ,
                             // accountName: user.org.name,
                             categories: [],
                             cards: [],
-                            pricing: {}
+                            pricing: {},
+                            geoTargeting: []
                         });
                 };
 
@@ -218,7 +219,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 return card;
             }
 
-            function saveCampaign(card) {
+            function saveCampaign() {
                 return SelfieCampaignCtrl.campaign.save();
             }
 
@@ -265,26 +266,17 @@ function( angular , c6State  , PaginatedListState                    ,
                 SelfieCampaignCtrl._proxyCampaign = copy(SelfieCampaignCtrl.campaign);
             }
 
-            function handleWatching(params, oldParams) {
+            function watchForPreview(params, oldParams) {
                 if (params === oldParams) { return; }
 
-                var card = SelfieCampaignCtrl.card,
-                    campaign = SelfieCampaignCtrl.campaign;
-
-                var _proxyCard = SelfieCampaignCtrl._proxyCard,
-                    _proxyCampaign = SelfieCampaignCtrl._proxyCampaign;
-
-                var cardDirty = !equals(card, _proxyCard),
-                    campaignDirty = !equals(campaign, _proxyCampaign);
+                var card = SelfieCampaignCtrl.card;
 
                 if (card.data.service && card.data.videoid) {
                     console.log('loadPreview');
                     $scope.$broadcast('loadPreview');
                 }
 
-                // console.log('$WATCHER TRIGGERED!', params, oldParams);
-
-                if (cardDirty || campaignDirty) {
+                if (shouldSave()) {
                     SelfieCampaignCtrl.autoSave();
                 }
             }
@@ -314,29 +306,48 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.autoSave = c6Debounce(SelfieCampaignCtrl.save, 5000);
 
+            function watchForSaving(params, oldParams) {
+                if (params === oldParams) { return; }
+
+                if (shouldSave()) {
+                    SelfieCampaignCtrl.autoSave();
+                }
+            }
+
+            function shouldSave() {
+                return !equals(SelfieCampaignCtrl.card, SelfieCampaignCtrl._proxyCard) ||
+                    !equals(SelfieCampaignCtrl.campaign, SelfieCampaignCtrl._proxyCampaign);
+            }
+
+            // watch for saving only
             $scope.$watchCollection(function() {
-                // watch the Sponsor Links for autosaving
-                return SelfieCampaignCtrl.card.links;
-            }, handleWatching);
+                // categroies, geo, budget, limit,
+                var campaign = SelfieCampaignCtrl.campaign;
+
+                return [
+                    campaign.categories,
+                    campaign.geoTargeting,
+                    campaign.pricing.budget,
+                    campaign.pricing.dailyLimit
+                ];
+            }, watchForSaving);
 
             $scope.$watchCollection(function() {
-                // watch the necessary Campaign properties
-                var campaign = SelfieCampaignCtrl.campaign;
-                return [
-                    campaign.name,
-                    campaign.categories
-                ];
-            }, handleWatching);
+                // watch the Sponsor Links for autosaving and previewing
+                return SelfieCampaignCtrl.card.links;
+            }, watchForPreview);
 
             $scope.$watchCollection(function() {
                 // watch the necessary card properties
-                var card = SelfieCampaignCtrl.card,
+                var campaign = SelfieCampaignCtrl.campaign,
+                    card = SelfieCampaignCtrl.card,
                     data = card.data,
                     params = card.params,
                     label = params.action && params.action.label,
                     actionType = params.action && params.action.type;
 
                 return [
+                    campaign.name,
                     card.title,
                     card.note,
                     card.thumb,
@@ -347,7 +358,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     data.videoid,
                     data.service,
                 ];
-            }, handleWatching);
+            }, watchForPreview);
         }])
 
         .controller('SelfieCampaignSponsorController', ['$scope','CollateralService',
@@ -629,7 +640,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.actionType = this.actionTypeOptions
                 .filter(function(option) {
-                    var type = card.params.action && card.params.action.type || 'button';
+                    var type = card.params.action && card.params.action.type || 'none';
 
                     return option.type === type;
                 })[0];
@@ -644,8 +655,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 ];
             }, function(type, oldType) {
                 if (type === oldType) { return; }
-
-                console.log('DUUUU');
 
                 updateActionLink();
             });
@@ -662,18 +671,24 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignTargetingController', ['$scope','GeoService',
         function                                         ( $scope , GeoService ) {
-            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+            var SelfieCampaignTargetingCtrl = this,
+                SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 campaign = SelfieCampaignCtrl.campaign;
 
-            this.geoOptions = GeoService.usa.map(function(state) {
-                return {
-                    state: state,
-                    country: 'usa'
-                };
-            });
+            this.budget = campaign.pricing.budget || null;
+            this.limit = campaign.pricing.dailyLimit || null;
+
+            this.geoOptions = [{state: 'No Geo Targeting', none: true}]
+                .concat(GeoService.usa.map(function(state) {
+                    return {
+                        state: state,
+                        country: 'usa'
+                    };
+                }));
 
             this.geo = this.geoOptions.filter(function(option) {
-                var state = campaign.geoTargeting && campaign.geoTargeting.state;
+                var state = campaign.geoTargeting[0] && campaign.geoTargeting[0].state ||
+                    'No Geo Targeting';
 
                 return state === option.state;
             })[0];
@@ -681,24 +696,24 @@ function( angular , c6State  , PaginatedListState                    ,
             Object.defineProperties(this, {
                 cpv: {
                     get: function() {
-                        var categories = campaign.categories.length,
-                            multiplier = categories + (this.geo ? 1 : 0),
-                            increase = 0.5 * multiplier;
+                        var hasCategories = campaign.categories.length,
+                            hasGeo = this.geo !== this.geoOptions[0];
 
-                        return 50 + increase;
+                        return 50 + ([hasCategories, hasGeo]
+                            .filter(function(bool) { return bool; }).length * 0.5);
                     }
                 },
                 validBudget: {
                     get: function() {
-                        var budget = parseInt(campaign.pricing.budget);
+                        var budget = parseInt(this.budget);
 
                         return !budget || (budget > 50 && budget < 20000);
                     }
                 },
                 dailyLimitError: {
                     get: function() {
-                        var budget = parseInt(campaign.pricing.budget),
-                            max = parseInt(campaign.pricing.dailyLimit);
+                        var budget = parseInt(this.budget),
+                            max = parseInt(this.limit);
 
                         if (max && !budget) {
                             return 'Please enter your Total Budget first';
@@ -714,6 +729,30 @@ function( angular , c6State  , PaginatedListState                    ,
 
                         return false;
                     }
+                }
+            });
+
+            $scope.$watch(function() {
+                return SelfieCampaignTargetingCtrl.geo;
+            }, function(newGeo, oldGeo) {
+                if (newGeo === oldGeo) { return; }
+
+                campaign.geoTargeting = newGeo.none ? [] : [{ state: newGeo.state }];
+            });
+
+            $scope.$watchCollection(function() {
+                return [
+                    SelfieCampaignTargetingCtrl.budget,
+                    SelfieCampaignTargetingCtrl.limit
+                ];
+            }, function(params, oldParams) {
+                if (params === oldParams) { return; }
+
+                var Ctrl = SelfieCampaignTargetingCtrl;
+
+                if (Ctrl.validBudget && !Ctrl.dailyLimitError) {
+                    campaign.pricing.budget = params[0];
+                    campaign.pricing.dailyLimit = params[1];
                 }
             });
         }])

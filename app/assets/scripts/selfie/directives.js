@@ -62,6 +62,10 @@ function( angular ) {
                             return $option;
                         }
 
+                        function shouldHideDefaultOption() {
+                            return attrs.unselectDefault && $element.val() === '0';
+                        }
+
                         if (attrs.thumbnails) {
                             config.templateResult = format;
                         }
@@ -70,7 +74,7 @@ function( angular ) {
                             minimumResultsForSearch: Infinity
                         }, config));
 
-                        if (attrs.preselected) {
+                        if (attrs.preselected || ($element.val() && !shouldHideDefaultOption())) {
                             $element.addClass('form__fillCheck--filled');
                         }
 
@@ -80,7 +84,7 @@ function( angular ) {
                         });
 
                         $element.on('select2:close', function() {
-                            if (!$element.val()) {
+                            if (!$element.val() || shouldHideDefaultOption()) {
                                 $element.removeClass('form__fillCheck--filled');
                             }
                             $element.removeClass('ui--active');

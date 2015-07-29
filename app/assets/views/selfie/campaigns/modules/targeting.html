@@ -29,7 +29,7 @@
             </fieldset>
 
             <fieldset class="form__item">
-                <select c6-select-box config="{allowClear:true,placeholder:''}"class="form__selectBox form__selectBox--single" ng-model="SelfieCampaignTargetingCtrl.geo" ng-options="option.state for option in SelfieCampaignTargetingCtrl.geoOptions"></select>
+                <select c6-select-box unselect-default="true" class="form__selectBox form__selectBox--single" ng-model="SelfieCampaignTargetingCtrl.geo" ng-options="option.state for option in SelfieCampaignTargetingCtrl.geoOptions"></select>
                 <label class="form__label" for="c6-sponsor-name">
                     <i class="fa fa-times ui--error"></i>
                     Geography
@@ -64,7 +64,7 @@
         <div class="form__items">
 
             <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': !SelfieCampaignTargetingCtrl.validBudget }">
-                <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="text" id="c6-sponsor-name" ng-model="campaign.pricing.budget">
+                <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="text" id="c6-sponsor-name" ng-model="SelfieCampaignTargetingCtrl.budget">
                 <span class="input__unit">$</span>
                 <label class="form__label" for="c6-sponsor-name">
                     <i class="fa fa-times ui--error"></i>
@@ -83,7 +83,7 @@
             </fieldset>
 
             <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': SelfieCampaignTargetingCtrl.dailyLimitError }">
-                <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="text" id="c6-sponsor-name" ng-model="campaign.pricing.dailyLimit">
+                <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="text" id="c6-sponsor-name" ng-model="SelfieCampaignTargetingCtrl.limit">
                 <span class="input__unit">$</span>
                 <label class="form__label" for="c6-sponsor-name">
                     <i class="fa fa-times ui--error"></i>
