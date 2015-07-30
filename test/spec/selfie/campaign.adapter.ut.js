@@ -62,9 +62,7 @@ define(['app', 'angular'], function(appModule, angular) {
         });
 
         describe('decorateCampaign(campaign)', function() {
-            var campaign,
-                advertiserId, customerId, sponsoredMiniReels, sponsoredCards,
-                minireels, cards, advertisers, customers;
+            var campaign, sponsoredCards, cards;
 
             beforeEach(function() {
                 campaign = {
@@ -83,23 +81,7 @@ define(['app', 'angular'], function(appModule, angular) {
                     ]
                 };
 
-                advertiserId = campaign.advertiserId;
-                customerId = campaign.customerId;
                 sponsoredCards = campaign.cards.slice().map(function(item) { return copy(item); });
-
-                advertisers = {
-                    'a-3f7cf5012b15b4': {
-                        id: 'a-3f7cf5012b15b4',
-                        name: 'Toyota'
-                    }
-                };
-
-                customers = {
-                    'cus-5156b33a6f834c': {
-                        id: 'cus-5156b33a6f834c',
-                        name: 'Sterling Cooper Draper Pryce'
-                    }
-                };
 
                 cards = {
                     'rc-223a31e4d985c4': {
@@ -334,14 +316,14 @@ define(['app', 'angular'], function(appModule, angular) {
                     geoTargeting: []
                 };
 
-                postData = without(['advertiser', 'customer'], extend(campaign, {
+                postData = extend(campaign, {
                     cards: campaign.cards.map(function(data) {
                         return {
                             endDate: data.endDate,
                             id: data.id
                         };
                     })
-                }));
+                });
 
                 response = extend(postData, {
                     id: 'c-b2532a42ea21d6',

@@ -1110,8 +1110,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     'styles/selfie/css/select2.min.css',
                     'styles/selfie/css/css-wizardry-grids.css',
                     'styles/selfie/css/c6selfie__base.css'
-                    // 'styles/selfie/css/jess.css',
-                    // 'styles/selfie/css/scott.css'
                 ]
             };
 
