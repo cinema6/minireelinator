@@ -294,6 +294,7 @@
                                             picture: 'www.instagram.com/swag.jpg',
                                             username: 'agent007',
                                             follow: 'https://instagram.com/accounts/login/?next=%2Fp%2Fabc123%2F&source=follow',
+                                            href: 'https://instagram.com/agent007',
                                             bio: 'classified',
                                             website: 'something.com',
                                             posts: '24',

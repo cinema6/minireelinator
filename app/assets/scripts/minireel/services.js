@@ -1599,7 +1599,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             /* jshint camelcase:true */
                             username: data.user.username,
                             follow: 'https://instagram.com/accounts/login/?next=%2Fp%2F' + id +
-                                '%2F&source=follow'
+                                '%2F&source=follow',
+                            href: 'https://instagram.com/' + data.user.username
                         };
                         return _private.apiUser(data.user.id);
                     })
