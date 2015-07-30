@@ -2748,7 +2748,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         service: copy(),
                         videoid: copy(null),
                         href: hrefValue(),
-                        thumbs: thumbsValue(),
+                        thumbs: videoThumbsValue(),
                         moat: copy(null)
                     },
                     ad: {
