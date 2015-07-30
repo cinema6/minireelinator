@@ -70,7 +70,7 @@ define(['app'], function(appModule) {
 
                     campaignState.beforeModel();
 
-                    expect(campaignState.card).toEqual(card.pojoify());
+                    expect(campaignState.card).toEqual(card);
                     expect(campaignState.campaign).toEqual(campaign);
                 });
             });

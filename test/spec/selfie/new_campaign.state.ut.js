@@ -78,9 +78,9 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                 expect(cinema6.db.create).toHaveBeenCalledWith('selfieCampaign', {
                     name: null,
                     categories: [],
-                    accountName: 'My Org',
                     cards: [],
-                    pricing: {}
+                    pricing: {},
+                    geoTargeting: []
                 });
             });
 
