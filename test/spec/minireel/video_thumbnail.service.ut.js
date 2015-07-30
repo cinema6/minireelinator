@@ -290,7 +290,7 @@
                             });
                         });
 
-                        ['yahoo', 'aol', 'rumble'].forEach(function(service) {
+                        ['yahoo', 'aol', 'rumble', 'vine'].forEach(function(service) {
                             describe(service, function() {
                                 var result;
 

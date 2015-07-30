@@ -21,6 +21,7 @@
                 cinema6,
                 c6State,
                 portal,
+                mocks,
                 $q;
 
             var minireel;
@@ -111,6 +112,43 @@
                         }
                     },
                     branding: 'elitedaily'
+                };
+
+                mocks = {
+                    playerCards: {
+                        vine: {
+                            id: 'rc-1ac904b814c8d6a20fea',
+                            type: 'vine',
+                            title: 'Vine Card',
+                            note: 'This is a Vine card.',
+                            source: 'Vine',
+                            placementId: null,
+                            templateUrl: null,
+                            sponsored: false,
+                            campaign: {
+                                campaignId: null,
+                                advertiserId: null,
+                                minViewTime: null,
+                                countUrls: [],
+                                clickUrls: []
+                            },
+                            thumbs: null,
+                            collateral: {},
+                            links: {},
+                            params: {},
+                            modules: [],
+                            data: {
+                                skip: true,
+                                service: 'vine',
+                                videoid: 'erUbKHDX6Ug',
+                                href: 'https://vine.co/v/erUbKHDX6Ug',
+                                thumbs: {
+                                    small: 'images.vine.com/video/erUbKHDX6Ug/small.jpg',
+                                    large: 'images.vine.com/video/erUbKHDX6Ug/large.jpg'
+                                }
+                            }
+                        }
+                    }
                 };
 
                 minireel = cinema6.db.create('experience', {
@@ -739,6 +777,7 @@
                                 type: 'wildcard',
                                 data: {}
                             },
+                            mocks.playerCards.vine,
                             {
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
@@ -1711,6 +1750,44 @@
                             });
                         });
 
+                        it('should transpile the vine card', function() {
+                            expect(deck[17]).toEqual({
+                                data: {
+                        	       skip: 'anytime',
+                        	        controls: true,
+                        	        autoplay: null,
+                        	        autoadvance: null,
+                        	        survey: null,
+                        	        service: 'vine',
+                                    videoid: 'erUbKHDX6Ug',
+                        	        start: null,
+                        	        end: null,
+                        	        moat: null
+                        	    },
+                        	    id: 'rc-1ac904b814c8d6a20fea',
+                        	    type: 'video',
+                        	    title: 'Vine Card',
+                        	    note: 'This is a Vine card.',
+                        	    label: 'Video',
+                        	    view: 'video',
+                        	    ad: false,
+                        	    placementId: null,
+                        	    templateUrl: null,
+                        	    sponsored: false,
+                        	    campaign: {
+                        	        campaignId: null,
+                        	        advertiserId: null,
+                        	        minViewTime: null,
+                        	        countUrls: [],
+                        	        clickUrls: []
+                        	    },
+                        	    collateral: {},
+                        	    thumb: null,
+                        	    links: {},
+                        	    params: {}
+                            });
+                        });
+
                         it('should transpile the various video cards into two cards', function() {
                             expect(deck[4]).toEqual({
                                 id: 'rc-c9cf24e87307ac',
@@ -2208,7 +2285,7 @@
                                 expect(newModel.status).toBe('pending');
                                 expect(newModel.access).toBe('public');
                                 expect('election' in newModel.data).toBe(false);
-                                expect('election' in newModel.data.deck[7].ballot).toBe(false);
+                                expect('election' in newModel.data.deck[8].ballot).toBe(false);
                             });
                         });
 

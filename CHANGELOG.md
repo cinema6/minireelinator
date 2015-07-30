@@ -1,6 +1,7 @@
 # MiniReelinator
 
 * *[v1.15.1.rc1]*
+  * [FEATURE]: Added support for creating Vine video cards
   * Make it possible to only delete Sponsored MiniReels from the
     campaign manager
   * [FIX]: Fix for an issue that caused the campaign manager to take
