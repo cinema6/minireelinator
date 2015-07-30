@@ -67,12 +67,14 @@
         </div>
         <div class="pageHeader__actionBar clearfix">
             <div class="btnGroup pageHeader__btnGroup">
-                <button ng-click="EditorCtrl.deleteMinireel()" class="btn btn--primary" type="button" title="Delete">
-                    <span class="btn__label fab fa-trash">&nbsp; Delete</span>
-                </button>
-                <button ng-click="EditorCtrl.makePrivate()" ng-show="minireel.status === 'active'" class="btn btn--primary" type="button" title="Make Private">
-                    <span class="btn__label fab fa-lock">&nbsp; Make Private</span>
-                </button>
+                <span ng-if="!EditorCtrl.campaign">
+                    <button ng-click="EditorCtrl.deleteMinireel()" class="btn btn--primary" type="button" title="Delete">
+                        <span class="btn__label fab fa-trash">&nbsp; Delete</span>
+                    </button>
+                    <button ng-click="EditorCtrl.makePrivate()" ng-show="minireel.status === 'active'" class="btn btn--primary" type="button" title="Make Private">
+                        <span class="btn__label fab fa-lock">&nbsp; Make Private</span>
+                    </button>
+                </span>
                 <a class="btn btn--primary" type="button" title="Preview Link" ng-href="{{EditorCtrl.previewUrl}}" ng-show="EditorCtrl.previewUrl" target="_blank">
                     <svg class="ui__iconHolder16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                         viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
