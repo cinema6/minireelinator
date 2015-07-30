@@ -130,7 +130,7 @@
         position:relative;
     }
         .ui__connector:before {
-            background:url('../img/sub-divider.svg') center / 0.25em no-repeat;
+            background:url('../img/sub-divider.svg') center / auto 1rem no-repeat;
             content: '';
             display:block;
             width:100%; height:1em;
@@ -1005,6 +1005,7 @@
             padding:0.4375rem 0 0.375rem;
             font-size:1.125em;
             color:#1c1c1c;
+            text-align: start;
             height:auto;
         }
             .ui--active ~ .select2-container--default .select2-selection--single,
@@ -1128,7 +1129,9 @@
         margin:0;
     }
 
-        .videoPreview__iframe {
+        .videoPreview__player,
+        .videoPlayer,
+        #videoEmbedPlayer {
             position: absolute;
             top: 0; left: 0;
             width: 100%;
@@ -1298,24 +1301,29 @@
 
         .adPreview__desktop {
             width:100%;
-            padding:29% 0;
             background-color:#e1e1e1;
             position:relative;
+            min-height:32em;
         }
             .adPreview__desktop:before {
                 content:'No preview available';
                 font-style: italic;
                 font-size:1.5em;
                 color:#b1b1b1;
+                position: absolute;
+                z-index: 1;
+                width:100%;
+                left:0; top:46%;
             }
 
             .adPreview__desktopFrame {
-                position:absolute;
+                position:relative;
                 width:100%;
                 top:0;
                 left:0;
                 height:100%;
                 border:2px solid #e1e1e1;
+                z-index:5;
             }
 
 
@@ -1328,21 +1336,27 @@
             margin:0 auto;
             position:relative;
         }
-            .adPreview__mobile:before {
-                content:'No preview available';
-                font-style: italic;
-                font-size:1.5em;
-                left:1em; right:1em;
-                top:46%;
-                position:absolute;
-            }
 
             .adPreview__mobileFrame {
                 width:90%;
                 height:81%;
                 background-color:#e1e1e1;
                 position:absolute;
-                z-index: 2;
                 top:8.5%; 
                 left:5%;
             }
+            .adPreview__mobileFrame:before {
+                content:'No preview available';
+                font-style: italic;
+                font-size:1.5em;
+                color:#b1b1b1;
+                left:1em; right:1em;
+                top:46%;
+                position:absolute;
+            }
+
+        .preview__embedHolder {
+            width:100%;
+            height:100%;
+            z-index: 5;
+        }

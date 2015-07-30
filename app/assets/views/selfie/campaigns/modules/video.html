@@ -36,11 +36,11 @@
             <div class="videoPreview__group">
                 <div class="videoPreview">
                     <!-- <iframe class="videoPreview__iframe" src="https://www.youtube.com/embed/UOjY61tlh98?rel=0" frameborder="0" allowfullscreen></iframe> -->
-                    <div ng-switch="card.data.service"
-                    style="position:absolute;width:100%;">
+                    <div ng-switch="card.data.service">
                         <div ng-switch-when="adUnit" ng-controller="AdPlayerController as AdPlayerCtrl">
                             <div>
                                 <vast-player
+                                    class="videoPreview__player"
                                     videoid="preview"
                                     ad-tag="{{SelfieCampaignVideoCtrl.videoUrl}}">
                                 </vast-player>
@@ -59,7 +59,7 @@
                             videoid="{{card.data.videoid}}"
                             start="card.data.start"
                             end="card.data.end"
-                            class="sponsoredCard__preview"
+                            class="videoPreview__player"
                             style="display: block;">
                         </video-preview>
                     </div>
