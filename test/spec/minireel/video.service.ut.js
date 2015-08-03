@@ -59,6 +59,10 @@
                                 expect(fromData('rumble', videoid)).toBe('https://rumble.com/' + videoid + '.html');
                             });
                         });
+
+                        it('should create a vine url', function() {
+                            expect(fromData('vine', '12345')).toBe('https://vine.co/v/12345');
+                        });
                     });
 
                     describe('dataFromUrl(url)', function() {
@@ -105,6 +109,13 @@
                             expect(fromUrl('https://rumble.com/v2zfax-my-cat-dog-meets-mac-n-cheese-for-the-first-time.html')).toEqual({
                                 service: 'rumble',
                                 id: 'v2zfax-my-cat-dog-meets-mac-n-cheese-for-the-first-time'
+                            });
+                        });
+
+                        it('should parse a vine url', function() {
+                            expect(fromUrl('https://vine.co/v/12345')).toEqual({
+                                service: 'vine',
+                                id: '12345'
                             });
                         });
 
@@ -167,6 +178,12 @@
                                 '    allowtransparency="true">',
                                 '</iframe>'
                             ].join('\n'));
+                        });
+
+                        it('should create a Vine embed code', function() {
+                            expect(VideoService.embedCodeFromData('vine', '12345')).toEqual(
+                                '<iframe src="https://vine.co/v/12345/embed/simple" style="width:100%;height:100%" frameborder="0"></iframe><script src="https://platform.vine.co/static/scripts/embed.js"></script>'
+                            );
                         });
                     });
                 });

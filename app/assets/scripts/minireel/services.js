@@ -1004,6 +1004,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return new ThumbModel(_private.fetchDailyMotionThumbs(videoid));
                         case 'yahoo':
                         case 'aol':
+                        case 'vine':
                         case 'rumble':
                             return new ThumbModel(_private.fetchOpenGraphThumbs(service, videoid));
                         default:
@@ -1181,6 +1182,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     return 'https://screen.yahoo.com/' + id + '.html';
                 case 'rumble':
                     return 'https://rumble.com/' + id + '.html';
+                case 'vine':
+                    return 'https://vine.co/v/' + id;
 
                 }
             };
@@ -1188,7 +1191,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             this.dataFromUrl = function(url) {
                 var parsed = c6UrlParser(url),
                     service = (parsed.hostname.match(
-                        /youtube|dailymotion|vimeo|aol|yahoo|rumble/
+                        /youtube|dailymotion|vimeo|aol|yahoo|rumble|vine/
                     ) || [])[0],
                     id,
                     idFetchers = {
@@ -1219,6 +1222,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         rumble: function(url) {
                             return (url.pathname
                                 .match(/[^/]+(?=(\.html))/) || [null])[0];
+                        },
+                        vine: function(url) {
+                            return (url.pathname
+                                .replace(/\/v\//, '')
+                                .match(/[a-zA-Z\d]+/) || [null])[0];
                         }
                     };
 
@@ -1269,6 +1277,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         'format=embed';
                 }
 
+                function vineSrc(id) {
+                    return 'https://vine.co/v/' + id + '/embed/simple';
+                }
+
                 switch (service) {
                 case 'aol':
                     return [
@@ -1290,6 +1302,15 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         '    allowtransparency="true">',
                         '</iframe>'
                     ].join('\n');
+                case 'vine':
+                    return '<iframe' +
+                               ' src="' + vineSrc(id) + '"' +
+                               ' style="width:100%;height:100%"' +
+                               ' frameborder="0">' +
+                           '</iframe>' +
+                           '<script' +
+                               ' src="https://platform.vine.co/static/scripts/embed.js">' +
+                           '</script>';
                 }
             };
         }])
@@ -1746,6 +1767,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'rumble':
                         case 'adUnit':
                         case 'embedded':
+                        case 'vine':
                             return 'video' + ((card.modules.indexOf('ballot') > -1) ?
                                 'Ballot' : '');
                         default:
@@ -2318,8 +2340,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return 'AOL On';
                     case 'yahoo':
                         return 'Yahoo! Screen';
-                    case 'flickr':
-                        return 'Flickr';
                     case 'getty':
                         return 'gettyimages';
                     case 'web':
@@ -2587,6 +2607,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         code: function(data) {
                             return VideoService.embedCodeFromData(data.service, data.videoid);
                         },
+                        href: hrefValue(),
+                        thumbs: thumbsValue(),
+                        moat: copy(null)
+                    },
+                    vine: {
+                        hideSource: hideSourceValue(),
+                        autoplay: copy(null),
+                        autoadvance: copy(null),
+                        skip: skipValue(),
+                        service: copy(),
+                        videoid: copy(null),
                         href: hrefValue(),
                         thumbs: thumbsValue(),
                         moat: copy(null)

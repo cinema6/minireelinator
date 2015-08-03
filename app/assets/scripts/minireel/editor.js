@@ -2158,6 +2158,10 @@ VideoCardController           , c6embed) {
                             .on('error', $emitError);
                     }
 
+                    scope.disableTrimmer = function() {
+                        return (scope.service === 'vine');
+                    };
+
                     Object.defineProperties(scope, {
                         embedCode: {
                             get: function() {

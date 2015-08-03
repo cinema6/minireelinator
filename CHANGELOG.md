@@ -1,10 +1,17 @@
 # MiniReelinator
 
-* *[v1.15.1.rc1]*
+## v1.16.0 (July 31, 2015)
+* *[v1.16.0.rc2]*
+  * Update c6embed to v2.35.4
+* *[/v1.16.0.rc2]*
+
+* *[v1.16.0.rc1]*
+  * [FEATURE]: Added support for creating Vine video cards
   * Make it possible to only delete Sponsored MiniReels from the
     campaign manager
   * [FIX]: Fix for an issue that caused the campaign manager to take
     longer to load than it should
+* *[/v1.16.0.rc1]*
 
 ## v1.15.0 (July 23, 2015)
 * *[v1.15.0.rc2]*
