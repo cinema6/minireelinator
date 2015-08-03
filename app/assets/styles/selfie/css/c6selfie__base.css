@@ -259,6 +259,7 @@
         .thumbnail__img {
             position:absolute;
             display:block;
+            -webkit-transform:translateY(50%);
             transform:translateY(50%);
             width:100%;
             height:100%;
@@ -267,6 +268,7 @@
         }
 
             .thumbnail__img {
+                -webkit-transform:translateY(-50%);
                 transform:translateY(-50%);
                 height:auto;
                 background:#f1f1f1;
@@ -584,6 +586,7 @@
         .tocNav__list {
             list-style: none;
             margin:0; padding:0;
+            -webkit-transform: translate3d(0, -42%, 0);
             transform: translate3d(0, -42%, 0);
         }
 
@@ -613,13 +616,16 @@
             position:absolute;
             z-index: -1;
             left:2.25em; top:0.125em;
+            -webkit-transition:opacity 0.3s, -webkit-transform 0.5s;
             transition:opacity 0.3s, transform 0.5s;
+            -webkit-transform: translate3d(0, -50%, 0);
             transform: translate3d(0, -50%, 0);
             color:#b1b1b1;
             width:10em;
         }
             .tocNav__link:hover ~ .tocNav__label {
                 opacity:1;
+                -webkit-transform: translate3d(0,0,0);
                 transform: translate3d(0, 0, 0);
             }
 
@@ -695,11 +701,13 @@
             top:0.375em;
             position: absolute;
             left:0.5em; z-index:-10;
+            -webkit-transition: -webkit-transform 0.3s;
             transition: transform 0.3s;
             padding:0 1.25em 0 0;
         }
             .form__textBox:focus ~ .form__label,
             .form__fillCheck--filled ~ .form__label {
+                -webkit-transform: translate3d(-100%, 0, 0);
                 transform: translate3d(-100%, 0, 0);
                 text-align: right;
                 left:0;
@@ -758,6 +766,7 @@
         }
             .form__item--bigInput .form__textBox:focus ~ .form__label,
             .form__item--bigInput .form__fillCheck--filled ~ .form__label {
+                -webkit-transform: translate3d(0,-2.5em,0);
                 transform: translate3d(0, -2.5em, 0);
                 text-align: center;
             }
@@ -789,6 +798,7 @@
             }
                 .form__item--sub .form__textBox:focus ~ .form__label,
                 .form__item--sub .form__fillCheck--filled ~ .form__label {
+                    -webkit-transform:none;
                     transform:none;
                     text-align: left;
                 }
@@ -960,10 +970,13 @@
             background:#ff1e1e;
             color:#fff;
             padding:0.125em 0.75em 0.25em 0.75em;
+            -webkit-transition:-webkit-transform 0.3s 0.2s;
             transition: transform 0.3s 0.2s;
+            -webkit-transform: translate3d(0,-100%,0);
             transform: translate3d(0, -100%, 0);
         }
             .ui--hasError .form__errorMsg {
+                -webkit-transform: translate3d(0,0,0);
                 transform: translate3d(0, 0, 0);
             }
 
@@ -1047,7 +1060,15 @@
                 }
 
                     .select2-container--default .select2-results__option[aria-selected=true].select2-results__option--highlighted[aria-selected] {
-                        background-color:#00a2de; 
+                        background-color:#00a2de;
+                        position:relative;
+                    }
+
+                    .select2-container--default img {
+                        display:inline-block;
+                        vertical-align: middle;
+                        width:3em;
+                        padding-right:0.25rem;
                     }
 
             .select2-container--default .select2-results__option--highlighted[aria-selected] {
