@@ -30,9 +30,9 @@ function( angular , c6uilib ) {
             };
         }])
 
-        .service('SelfieVideoService', ['$http','c6UrlParser','$q','YouTubeDataService',
+        .service('SelfieVideoService', ['$http','$q','YouTubeDataService',
                                         'VimeoDataService','DailymotionDataService',
-        function                       ( $http , c6UrlParser , $q , YouTubeDataService ,
+        function                       ( $http , $q , YouTubeDataService ,
                                          VimeoDataService , DailymotionDataService ) {
             var self = this;
 
@@ -72,7 +72,7 @@ function( angular , c6uilib ) {
                     idFetchers = {
                         embed: {
                             youtube: function(embed) {
-                                return (embed.match(/embed\/([a-zA-Z0-9]+)"/) || [])[1];
+                                return (embed.match(/embed\/([\-_a-zA-Z0-9]+)/) || [])[1];
                             },
                             vimeo: function(embed) {
                                 return (embed.match(/video\/([0-9]+)/) || [])[1];
@@ -83,10 +83,10 @@ function( angular , c6uilib ) {
                         },
                         url: {
                             'youtu.be': function(url) {
-                                return (url.match(/\.be\/([a-zA-Z0-9]+)$/) || [])[1];
+                                return (url.match(/\.be\/([\-_a-zA-Z0-9]+)$/) || [])[1];
                             },
                             youtube: function(url) {
-                                return (url.match(/v=([a-zA-Z0-9]+)/) || [])[1];
+                                return (url.match(/v=([\-_a-zA-Z0-9]+)/) || [])[1];
                             },
                             vimeo: function(url) {
                                 return (url.match(/\/([0-9]+)$/) || [])[1];
@@ -136,12 +136,6 @@ function( angular , c6uilib ) {
                     return 'http://vimeo.com/' + id;
                 case 'dailymotion':
                     return 'http://www.dailymotion.com/video/' + id;
-                case 'aol':
-                    return 'http://on.aol.com/video/' + id;
-                case 'yahoo':
-                    return 'https://screen.yahoo.com/' + id + '.html';
-                case 'rumble':
-                    return 'https://rumble.com/' + id + '.html';
                 case 'adUnit':
                     return getJSONProp(id, 'vast');
 
