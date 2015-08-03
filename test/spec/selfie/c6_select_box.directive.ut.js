@@ -1,7 +1,7 @@
 define(['app','angular','select2'], function(appModule, angular) {
     'use strict';
 
-    fdescribe('c6-select-box directive', function() {
+    describe('c6-select-box directive', function() {
         var $rootScope,
             $compile,
             $scope,
