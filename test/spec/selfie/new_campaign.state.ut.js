@@ -80,7 +80,8 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     categories: [],
                     cards: [],
                     pricing: {},
-                    geoTargeting: []
+                    geoTargeting: [],
+                    status: 'new'
                 });
             });
 

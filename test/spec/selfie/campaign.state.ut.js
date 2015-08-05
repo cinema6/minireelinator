@@ -6,14 +6,17 @@ define(['app'], function(appModule) {
             var $rootScope,
                 $q,
                 campaignState,
+                selfieState,
                 newCampaignState,
                 c6State,
                 cinema6,
-                MiniReelService;
+                MiniReelService,
+                LogoService;
 
             var card,
                 categories,
-                campaign;
+                campaign,
+                logos;
 
             beforeEach(function() {
                 module(appModule.name);
@@ -24,6 +27,7 @@ define(['app'], function(appModule) {
                     c6State = $injector.get('c6State');
                     cinema6 = $injector.get('cinema6');
                     MiniReelService = $injector.get('MiniReelService');
+                    LogoService = $injector.get('LogoService');
 
                     card = cinema6.db.create('card', MiniReelService.createCard('video'));
                     categories = [
@@ -42,7 +46,24 @@ define(['app'], function(appModule) {
                         cards: [],
                         links: {}
                     };
+                    logos = [
+                        {
+                            name: 'logo1',
+                            src: 'logo1.jpg'
+                        },
+                        {
+                            name: 'logo2',
+                            src: 'logo2.png'
+                        }
+                    ];
 
+                    selfieState = c6State.get('Selfie');
+                    selfieState.cModel = {
+                        advertiser: {},
+                        org: {
+                            id: 'o-123'
+                        }
+                    };
                     campaignState = c6State.get(stateName);
                 });
             });
@@ -76,17 +97,27 @@ define(['app'], function(appModule) {
             });
 
             describe('model()', function() {
-                it('should find all categories', function() {
+                it('should find all categories and logos', function() {
                     var success = jasmine.createSpy('success()'),
                         failure = jasmine.createSpy('failure()');
 
                     spyOn(cinema6.db, 'findAll').and.returnValue($q.when(categories));
+                    spyOn(LogoService, 'getLogos').and.returnValue($q.when(logos));
 
                     $rootScope.$apply(function() {
                         campaignState.model().then(success, failure);
                     });
                     expect(cinema6.db.findAll).toHaveBeenCalledWith('category');
-                    expect(success).toHaveBeenCalledWith(categories);
+                    expect(LogoService.getLogos).toHaveBeenCalledWith({
+                        sort: 'lastUpdated,-1',
+                        org: 'o-123',
+                        limit: 50,
+                        skip: 0
+                    });
+                    expect(success).toHaveBeenCalledWith({
+                        categories: categories,
+                        logos: logos
+                    });
                 });
             });
 

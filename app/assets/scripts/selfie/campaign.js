@@ -212,9 +212,9 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieCampaignController', ['$scope','$log','c6State','c6Computed','cState',
+        .controller('SelfieCampaignController', ['$scope','$log','c6State','cState',
                                                  'c6Debounce',
-        function                                ( $scope , $log , c6State , c6Computed , cState ,
+        function                                ( $scope , $log , c6State , cState ,
                                                   c6Debounce ) {
 
             var SelfieCampaignCtrl = this;
@@ -336,7 +336,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
             // watch for saving only
             $scope.$watchCollection(function() {
-                var campaign = SelfieCampaignCtrl.campaign;
+                var campaign = SelfieCampaignCtrl.campaign || {};
 
                 return [
                     campaign.categories,
