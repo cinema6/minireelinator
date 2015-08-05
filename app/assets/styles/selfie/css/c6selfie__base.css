@@ -1157,7 +1157,24 @@
             top: 0; left: 0;
             width: 100%;
             height: 100%;
+            background-color:#000;
         }
+
+
+    /*  VAST Player component classes
+        ================================================ */
+        .vastControls__group {
+            text-align: left;
+            padding:0 0 0 0.5em;
+        }
+            .vastControls__btn {
+                padding:0.75rem 0.5rem;
+                color:#5c5c5c;
+                transition:color 0.3s;
+            }
+                .vastControls__btn:hover {
+                    color:#de0073;
+                }
 
 
     /*  .videoDescription classes
@@ -1165,6 +1182,7 @@
         .videoDescription__group {
             width:100%;
             padding:0.625em 1em 0.8125em;
+            text-align:left;
         }
 
             .videoDescription__title {

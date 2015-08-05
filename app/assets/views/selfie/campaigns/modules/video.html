@@ -34,36 +34,36 @@
         <div class="videoPreview__wizard ui__connector" ng-if="SelfieCampaignVideoCtrl.video">
 
             <div class="videoPreview__group">
-                <div class="videoPreview">
-                    <!-- <iframe class="videoPreview__iframe" src="https://www.youtube.com/embed/UOjY61tlh98?rel=0" frameborder="0" allowfullscreen></iframe> -->
-                    <div ng-switch="card.data.service">
-                        <div ng-switch-when="adUnit" ng-controller="AdPlayerController as AdPlayerCtrl">
-                            <div>
-                                <vast-player
-                                    class="videoPreview__player"
-                                    videoid="preview"
-                                    ad-tag="{{SelfieCampaignVideoCtrl.videoUrl}}">
-                                </vast-player>
-                            </div>
-                            <div ng-if="!!AdPlayerCtrl.player" style="position:relative;top:-35px;left:15px;">
-                                <span ng-click="AdPlayerCtrl.player.play()" style="margin-right:10px;">
-                                    <i class="fa fa-play"></i>
-                                </span>
-                                <span ng-click="AdPlayerCtrl.player.pause()">
-                                    <i class="fa fa-pause"></i>
-                                </span>
-                            </div>
+                    
+                <div ng-switch="card.data.service">
+                    <div ng-switch-when="adUnit" ng-controller="AdPlayerController as AdPlayerCtrl">
+                        <div class="videoPreview">
+                            <vast-player
+                                class="videoPreview__player"
+                                videoid="preview"
+                                ad-tag="{{SelfieCampaignVideoCtrl.videoUrl}}">
+                            </vast-player>
                         </div>
-                        <video-preview ng-switch-default service="{{card.data.service}}"
+                    
+                        <div ng-if="!!AdPlayerCtrl.player" class="vastControls__group">
+                            <button ng-click="AdPlayerCtrl.player.play()" class="vastControls__btn">
+                                <i class="fa fa-play"></i>
+                            </button>
+                            <button ng-click="AdPlayerCtrl.player.pause()" class="vastControls__btn">
+                                <i class="fa fa-pause"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="videoPreview" ng-switch-default>
+                        <video-preview service="{{card.data.service}}"
                             disable-trimmer="SelfieCampaignVideoCtrl.disableTrimmer()"
                             videoid="{{card.data.videoid}}"
                             start="card.data.start"
                             end="card.data.end"
-                            class="videoPreview__player"
-                            style="display: block;">
+                            class="videoPreview__player">
                         </video-preview>
                     </div>
-                </div><!--.videoPreview-->
+                </div>
 
 
                 <div class="videoDescription__group" ng-if="card.data.service !== 'adUnit'">
