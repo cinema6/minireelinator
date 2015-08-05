@@ -3,9 +3,9 @@ function( angular , c6uilib ) {
     'use strict';
 
     var extend = angular.extend,
-        forEach = angular.forEach,
         fromJson = angular.fromJson,
-        toJson = angular.toJson;
+        toJson = angular.toJson,
+        isDefined = angular.isDefined;
 
     return angular.module('c6.app.selfie.services', [c6uilib.name])
         .service('CSSLoadingService', ['$document',
@@ -198,51 +198,46 @@ function( angular , c6uilib ) {
             };
         }])
 
-        .service('LogoService', [function() {
-            var logoCache = {},
-                nameCount = {};
-
-            function exists(value, obj) {
-                var result = false;
-
-                forEach(obj, function(val) {
-                    if (val === value) {
-                        result = true;
-                    }
-                });
-
-                return result;
+        .service('LogoService', ['cinema6',
+        function                ( cinema6 ) {
+            function exists(value, prop, arr) {
+                return arr.filter(function(item) {
+                    return item[prop] === value;
+                }).length > 0;
             }
 
-            this.registerLogo = function(campaign, card) {
-                var key;
+            function findActiveCampaigns(campaigns) {
+                return campaigns.filter(function(campaign) {
+                    return (/active|paused|expired/).test(campaign.status);
+                });
+            }
 
-                if (!card.collateral.logo || exists(card.collateral.logo, logoCache)) { return; }
+            function generateLogoData(campaigns) {
+                var names = {};
 
-                if (!nameCount[campaign.name]) {
-                    key = campaign.name;
-                    nameCount[campaign.name] = 1;
-                } else {
-                    key = campaign.name + ' (' + nameCount[campaign.name] + ')';
-                    nameCount[campaign.name] = nameCount[campaign.name] + 1;
-                }
+                return campaigns.reduce(function(result, campaign) {
+                    var card = campaign.cards[0].item,
+                        src = card.collateral.logo,
+                        name = card.params.sponsor + ' from ' + campaign.name;
 
-                logoCache[key] = card.collateral.logo;
-            };
+                    if (!src || exists(src, 'src', result)) {
+                        return result;
+                    }
 
-            this.fetchLogos = function(campaignName) {
-                var logos = [];
+                    names[name] = isDefined(names[name]) ?
+                        names[name] + 1 : 0;
 
-                forEach(logoCache, function(src, name) {
-                    if (name === campaignName) { return; }
-
-                    logos.push({
-                        name: name,
+                    return result.concat({
+                        name: (names[name] ? name + ' (' + names[name] + ')' : name),
                         src: src
                     });
-                });
+                }, []);
+            }
 
-                return logos;
+            this.getLogos = function(query) {
+                return cinema6.db.findAll('selfieCampaign', query)
+                    .then(findActiveCampaigns)
+                    .then(generateLogoData);
             };
         }])
 

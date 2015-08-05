@@ -62,7 +62,7 @@
                     </div>
                     <span class="thumbnail__label">Thumbnail Preview</span>
                 </div>
-                <fieldset class="form__item form__item--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'upload-from-url'">
+                <fieldset class="form__item form__item--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'url'">
                     <input class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-model="SelfieCampaignSponsorCtrl.url">
                     <label class="form__label" for="c6-video-ctaText">
                         <i class="fa fa-times ui--error"></i>
@@ -79,10 +79,10 @@
                         </p>
                     </div>
                 </fieldset>
-                <div class="ui__btnHolder ui__btnHolder--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'upload-from-url'">
+                <div class="ui__btnHolder ui__btnHolder--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'url'">
                     <button class="action__btn action__btn--small" ng-click="SelfieCampaignSponsorCtrl.uploadFromUri(SelfieCampaignSponsorCtrl.url)">Upload From URL</button>
                 </div>
-                <div class="ui__btnHolder ui__btnHolder--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'upload-from-file'">
+                <div class="ui__btnHolder ui__btnHolder--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'file'">
                     <button class="action__btn action__btn--small" hidden-input-click="logoUpload">Upload Your Image</button>
                 </div>
 
