@@ -19,7 +19,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         return target;
     }
 
-    fdescribe('SelfieCampaignController', function() {
+    describe('SelfieCampaignController', function() {
         var $rootScope,
             $scope,
             $controller,
@@ -61,10 +61,11 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
             module(c6uilib.name, function($provide) {
                 $provide.decorator('c6Debounce', function($delegate) {
-                    return jasmine.createSpy('c6Debounce()').and.callFake(function(fn) {
-                        c6Debounce.debounceFn = fn;
-                        spyOn(c6Debounce, 'debounceFn');
-                        return c6Debounce.debounceFn;
+                    return jasmine.createSpy('c6Debounce()').and.callFake(function(fn, time) {
+                        c6Debounce.debouncedFn = fn;
+                        spyOn(c6Debounce, 'debouncedFn');
+
+                        return $delegate.call(null, c6Debounce.debouncedFn, time);
                     });
                 });
             });
@@ -318,26 +319,278 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             describe('autoSave()', function() {
                 it('should call save after a 5 second debounce', function() {
                     expect(c6Debounce).toHaveBeenCalled();
-                    expect(c6Debounce.debounceFn).not.toHaveBeenCalled();
+                    expect(c6Debounce.debouncedFn).not.toHaveBeenCalled();
 
-                    // spyOn(SelfieCampaignCtrl, 'save');
+                    SelfieCampaignCtrl.autoSave();
+                    SelfieCampaignCtrl.autoSave();
+                    SelfieCampaignCtrl.autoSave();
+                    SelfieCampaignCtrl.autoSave();
+                    SelfieCampaignCtrl.autoSave();
+                    SelfieCampaignCtrl.autoSave();
+                    SelfieCampaignCtrl.autoSave();
+                    SelfieCampaignCtrl.autoSave();
+                    SelfieCampaignCtrl.autoSave();
+                    SelfieCampaignCtrl.autoSave();
+                    SelfieCampaignCtrl.autoSave();
 
-                    // SelfieCampaignCtrl.autoSave();
-                    // SelfieCampaignCtrl.autoSave();
-                    // SelfieCampaignCtrl.autoSave();
-                    // SelfieCampaignCtrl.autoSave();
-                    // SelfieCampaignCtrl.autoSave();
-                    // SelfieCampaignCtrl.autoSave();
-                    // SelfieCampaignCtrl.autoSave();
-                    // SelfieCampaignCtrl.autoSave();
-                    // SelfieCampaignCtrl.autoSave();
-                    // SelfieCampaignCtrl.autoSave();
-                    // SelfieCampaignCtrl.autoSave();
+                    $timeout.flush(5000);
 
-                    // $timeout.flush(5000);
+                    expect(c6Debounce.debouncedFn).toHaveBeenCalled();
+                    expect(c6Debounce.debouncedFn.calls.count()).toBe(1);
+                });
+            });
+        });
 
-                    // expect(c6Debounce.debounceFn).toHaveBeenCalled();
-                    // expect(c6Debounce.debounceFn.calls.count()).toBe(1);
+        describe('$watchers', function() {
+            describe('campaign properties', function() {
+                beforeEach(function() {
+                    spyOn(SelfieCampaignCtrl, 'autoSave');
+                    spyOn($scope, '$broadcast');
+                });
+
+                describe('when campaign should auto save', function() {
+                    it('category changes should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.categories = [{name: 'Comedy'}];
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                    });
+
+                    it('geoTargeting changes should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.geoTargeting = [{state: 'Arizona'}];
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                    });
+
+                    it('budget changes should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.pricing.budget = 3000;
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                    });
+
+                    it('geoTargeting changes should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.pricing.dailyLimit = 50;
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                    });
+
+                    describe('name changes', function() {
+                        it('should trigger an autosave', function() {
+                            $scope.$apply(function() {
+                                SelfieCampaignCtrl.campaign.name = 'Campaign Name!';
+                            });
+
+                            expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                        });
+
+                        describe('when the card has a service type and video id', function() {
+                            it('should reload preview', function() {
+                                SelfieCampaignCtrl.card.data.service = 'youtube';
+                                SelfieCampaignCtrl.card.data.videoid = '123';
+
+                                $scope.$apply(function() {
+                                    SelfieCampaignCtrl.campaign.name = 'Campaign Name!';
+                                });
+
+                                expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
+                            });
+                        });
+
+                        describe('when the card has no service type and video id', function() {
+                            it('should not reload preview', function() {
+                                $scope.$apply(function() {
+                                    SelfieCampaignCtrl.campaign.name = 'Campaign Name!';
+                                });
+
+                                expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                            });
+                        });
+                    });
+                });
+
+                describe('when campaign should not auto save', function() {
+                    beforeEach(function() {
+                        SelfieCampaignCtrl.campaign.status = 'active';
+                    });
+
+                    it('category changes should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.categories = [{name: 'Comedy'}];
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).not.toHaveBeenCalled();
+                    });
+
+                    it('geoTargeting changes should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.geoTargeting = [{state: 'Arizona'}];
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).not.toHaveBeenCalled();
+                    });
+
+                    it('budget changes should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.pricing.budget = 3000;
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).not.toHaveBeenCalled();
+                    });
+
+                    it('geoTargeting changes should not trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.pricing.dailyLimit = 50;
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).not.toHaveBeenCalled();
+                    });
+
+                    describe('name changes', function() {
+                        it('should trigger not an autosave', function() {
+                            $scope.$apply(function() {
+                                SelfieCampaignCtrl.campaign.name = 'Campaign Name!';
+                            });
+
+                            expect(SelfieCampaignCtrl.autoSave).not.toHaveBeenCalled();
+                        });
+
+                        describe('when the card has a service type and video id', function() {
+                            it('should reload preview', function() {
+                                SelfieCampaignCtrl.card.data.service = 'youtube';
+                                SelfieCampaignCtrl.card.data.videoid = '123';
+
+                                $scope.$apply(function() {
+                                    SelfieCampaignCtrl.campaign.name = 'Campaign Name!';
+                                });
+
+                                expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
+                            });
+                        });
+
+                        describe('when the card has no service type and video id', function() {
+                            it('should not reload preview', function() {
+                                $scope.$apply(function() {
+                                    SelfieCampaignCtrl.campaign.name = 'Campaign Name!';
+                                });
+
+                                expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                            });
+                        });
+                    });
+                });
+            });
+
+            describe('card properties', function() {
+                beforeEach(function() {
+                    spyOn(SelfieCampaignCtrl, 'autoSave');
+                    spyOn($scope, '$broadcast');
+                });
+
+                describe('when card should auto save', function() {
+                    ['title','note','thumb'].forEach(function(prop) {
+                        it(prop + ' changes should trigger an autosave', function() {
+                            $scope.$apply(function() {
+                                SelfieCampaignCtrl.card[prop] = 'something';
+                            });
+
+                            expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                        });
+
+                        it(prop + ' changes should not reload preview if card has no service and id', function() {
+                            $scope.$apply(function() {
+                                SelfieCampaignCtrl.card[prop] = 'something';
+                            });
+
+                            expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                        });
+
+
+                        it(prop + ' changes should reload preview if card has service and id', function() {
+                            SelfieCampaignCtrl.card.data.service = 'youtube';
+                            SelfieCampaignCtrl.card.data.videoid = '123';
+
+                            $scope.$apply(function() {
+                                SelfieCampaignCtrl.card[prop] = 'something';
+                            });
+
+                            expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
+                        });
+                    });
+
+                    it('logo changes should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.card.collateral.logo = 'newlogo.jpg';
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                    });
+
+                    it('sponsor name changes should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.card.params.sponsor = 'New Sponsor';
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                    });
+
+                    ['label','type'].forEach(function(prop) {
+                        it('action ' + prop + ' changes should trigger and autosave', function() {
+                            $scope.$apply(function() {
+                                SelfieCampaignCtrl.card.params.action = {};
+                                SelfieCampaignCtrl.card.params.action[prop] = 'something';
+                            });
+
+                            expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                        });
+
+                        it(prop + ' changes should not reload preview if card has no service and id', function() {
+                            $scope.$apply(function() {
+                                SelfieCampaignCtrl.card.params.action = {};
+                                SelfieCampaignCtrl.card.params.action[prop] = 'something';
+                            });
+
+                            expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                        });
+
+
+                        it(prop + ' changes should reload preview if card has service and id', function() {
+                            SelfieCampaignCtrl.card.data.service = 'youtube';
+                            SelfieCampaignCtrl.card.data.videoid = '123';
+
+                            $scope.$apply(function() {
+                                SelfieCampaignCtrl.card.params.action = {};
+                                SelfieCampaignCtrl.card.params.action[prop] = 'something';
+                            });
+
+                            expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
+                        });
+                    });
+
+                    it('service and id changes should tigger an autosave and reload a preview', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.card.data.service = 'youtube';
+                            SelfieCampaignCtrl.card.data.videoid = '123';
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                        expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
+                    });
+
+                    it('service and id changes should not trigger a preview reload if null', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.card.data.service = null;
+                            SelfieCampaignCtrl.card.data.videoid = null;
+                        });
+
+                        expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                    });
                 });
             });
         });

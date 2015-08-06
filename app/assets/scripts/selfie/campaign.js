@@ -224,18 +224,6 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function updateCard() {
-                var Ctrl = SelfieCampaignCtrl,
-                    campaign = Ctrl.campaign,
-                    card = Ctrl.card;
-
-                if (Ctrl.shouldSave) {
-                    Ctrl.card.data.moat = {
-                        campaign: campaign.name,
-                        advertiser: card.params.sponsor,
-                        creative: campaign.name
-                    };
-                }
-
                 return cState.updateCard();
             }
 
@@ -284,7 +272,9 @@ function( angular , c6State  , PaginatedListState                    ,
 
             // this gets set to 'true' when a user clicks into
             // the video title input field, at which point we don't
-            // want changes in videos to overwrite the video title
+            // want changes in videos to overwrite the video title.
+            // It's defined on the this Ctrl because it affects
+            // multiple child Ctrls that don't know about each other
             this.disableVideoTitleOverwrite = false;
 
             Object.defineProperties(this, {
@@ -346,6 +336,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 ];
             }, function(params, oldParams) {
                 if (params === oldParams) { return; }
+
 
                 if (SelfieCampaignCtrl.shouldSave) {
                     SelfieCampaignCtrl.autoSave();
