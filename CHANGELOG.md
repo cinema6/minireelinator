@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.16.1 (August 7, 2015)
+* *[v1.16.1.rc2]*
+  * [FIX]: Configure the VPAID player to use the most current c6ui swf
+* *[/v1.16.0.rc2]*
+
 * *[v1.16.1.rc1]*
   * Update c6ui to v3.7.3
 * *[/v1.16.0.rc1]*
