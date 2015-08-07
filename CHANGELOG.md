@@ -1,5 +1,10 @@
 # MiniReelinator
 
+## v1.16.1 (August 7, 2015)
+* *[v1.16.1.rc1]*
+  * Update c6ui to v3.7.3
+* *[/v1.16.0.rc1]*
+
 ## v1.16.0 (July 31, 2015)
 * *[v1.16.0.rc2]*
   * Update c6embed to v2.35.4
