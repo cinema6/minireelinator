@@ -1105,7 +1105,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 ],
                 Selfie: [
                     'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300' +
-                        'italic,400italic,600italic,700italic|Roboto+Condensed:300italic,300',
+                        'italic,400italic,600italic,700italic|Roboto+Condensed:300italic,400italic,300,400',
                     'https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css',
                     'styles/selfie/css/select2.min.css',
                     'styles/selfie/css/css-wizardry-grids.css',
