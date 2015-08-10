@@ -373,9 +373,7 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignSponsorController', ['$scope','CollateralService',
-                                                        'FileService',
-        function                                       ( $scope , CollateralService ,
-                                                         FileService ) {
+        function                                       ( $scope , CollateralService ) {
             var SelfieCampaignSponsorCtrl = this,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 advertiser = SelfieCampaignCtrl.advertiser,
@@ -454,8 +452,12 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.updateLinks = function() {
                 SelfieCampaignSponsorCtrl.links.forEach(function(link) {
+                    if (link.href && link.href === card.links[link.name]) { return; }
+
                     if (link.href) {
                         card.links[link.name] = link.href;
+                    } else if (card.links[link.name]) {
+                        delete card.links[link.name];
                     }
                 });
             };
@@ -507,15 +509,11 @@ function( angular , c6State  , PaginatedListState                    ,
             // as soon as someone selects a local file we upload it
             $scope.$watch(function() {
                 return SelfieCampaignSponsorCtrl.logoFile;
-            }, function(newFile, oldFile) {
+            }, function(newFile) {
                 if (!newFile) { return; }
 
                 CollateralService.uploadFromFile(newFile)
                     .then(handleUpload);
-
-                if (!oldFile) { return; }
-
-                FileService.open(oldFile).close();
             });
 
             $scope.$on('SelfieCampaignWillSave', this.updateLinks);
@@ -532,7 +530,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 card = SelfieCampaignCtrl.card,
                 service = card.data.service,
                 id = card.data.videoid,
-                hasExistingVideo = service && id;
+                hasExistingVideo = !!service && !!id;
 
             function setDefaultThumbs(service, id) {
                 if (service === 'adUnit') {
@@ -621,7 +619,7 @@ function( angular , c6State  , PaginatedListState                    ,
             // on success we're assuming a choice of "custom"
             $scope.$watch(function() {
                 return SelfieCampaignVideoCtrl.customThumbFile;
-            }, function(newFile, oldFile) {
+            }, function(newFile) {
                 if (!newFile) { return; }
 
                 CollateralService.uploadFromFile(newFile)
@@ -630,10 +628,6 @@ function( angular , c6State  , PaginatedListState                    ,
                         SelfieCampaignVideoCtrl.useDefaultThumb = false;
                         card.thumb = '/' + path;
                     });
-
-                if (!oldFile) { return; }
-
-                FileService.open(oldFile).close();
             });
 
             // watch the video link/embed/vast tag input

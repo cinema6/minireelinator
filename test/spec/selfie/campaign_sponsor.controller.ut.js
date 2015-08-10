@@ -1,12 +1,12 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    fdescribe('SelfieCampaignSponsorController', function() {
+    describe('SelfieCampaignSponsorController', function() {
         var $rootScope,
             $controller,
             $scope,
+            $q,
             CollateralService,
-            FileService,
             SelfieCampaignSponsorCtrl;
 
         var advertiser,
@@ -14,7 +14,9 @@ define(['app'], function(appModule) {
             logos;
 
         function compileCtrl() {
-            SelfieCampaignSponsorCtrl = $controller('SelfieCampaignSponsorController', { $scope: $scope });
+            $scope.$apply(function() {
+                SelfieCampaignSponsorCtrl = $controller('SelfieCampaignSponsorController', { $scope: $scope });
+            });
         }
 
         beforeEach(function() {
@@ -23,8 +25,8 @@ define(['app'], function(appModule) {
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
+                $q = $injector.get('$q');
                 CollateralService = $injector.get('CollateralService');
-                FileService = $injector.get('FileService');
 
                 advertiser = {};
                 logos = [];
@@ -162,8 +164,11 @@ define(['app'], function(appModule) {
                     compileCtrl();
 
                     expect(SelfieCampaignSponsorCtrl.logo).toEqual(null);
+                });
 
+                it('should be the card logo', function() {
                     card.collateral.logo = 'logo.jpg';
+                    card.collateral.logoType = 'file';
 
                     compileCtrl();
 
@@ -174,6 +179,215 @@ define(['app'], function(appModule) {
             describe('previouslyUploadedLogo', function() {
                 it('should be null', function() {
                     expect(SelfieCampaignSponsorCtrl.previouslyUploadedLogo).toBe(null);
+                });
+            });
+
+            describe('links', function() {
+                it('should be an array of objects containing the hrefs stored on the card', function() {
+                    card.links = {
+                        Facebook: 'http://facebook.com/my-brand',
+                        YouTube: 'http://youtube.com/my-brand',
+                        Website: 'http://mybrand.com'
+                    };
+
+                    compileCtrl();
+
+                    ['Website','YouTube','Facebook'].forEach(function(link) {
+                        expect(SelfieCampaignSponsorCtrl.links).toContain({
+                            cssClass: /website/.test(link.toLowerCase()) ? 'link' : link.toLowerCase(),
+                            name: link,
+                            href: card.links[link]
+                        });
+                    });
+
+                    ['Twitter','Pinterest','Instagram'].forEach(function(link) {
+                        expect(SelfieCampaignSponsorCtrl.links).toContain({
+                            cssClass: link.toLowerCase(),
+                            name: link,
+                            href: null
+                        });
+                    });
+                });
+            });
+        });
+
+        describe('methods', function() {
+            describe('updateLinks()', function() {
+                it('should add and remove links on the actual card', function() {
+                    SelfieCampaignSponsorCtrl.links[0].href = 'http://mywebsite.com';
+
+                    SelfieCampaignSponsorCtrl.updateLinks();
+
+                    expect(card.links.Website).toEqual('http://mywebsite.com');
+
+                    SelfieCampaignSponsorCtrl.links[0].href = '';
+
+                    SelfieCampaignSponsorCtrl.updateLinks();
+
+                    expect(card.links.Website).toBeUndefined();
+                });
+            });
+
+            describe('uploadFromUri(uri)', function() {
+                var deferred;
+
+                beforeEach(function() {
+                    deferred = $q.defer();
+
+                    spyOn(CollateralService, 'uploadFromUri').and.returnValue(deferred.promise);
+
+                    SelfieCampaignSponsorCtrl.uploadFromUri('http://someimage.com/image.jpg');
+                });
+
+                it('should upload via Collateral Service', function() {
+                    expect(CollateralService.uploadFromUri).toHaveBeenCalledWith('http://someimage.com/image.jpg');
+                });
+
+                describe('when promise resolves', function() {
+                    it('should set the path on the controller', function() {
+                        $scope.$apply(function() {
+                            deferred.resolve('collateral/userFiles/iuyewriujksdfhjh.jpg');
+                        });
+
+                        expect(SelfieCampaignSponsorCtrl.logo).toEqual('/collateral/userFiles/iuyewriujksdfhjh.jpg');
+                        expect(SelfieCampaignSponsorCtrl.previouslyUploadedLogo).toEqual('/collateral/userFiles/iuyewriujksdfhjh.jpg');
+                    });
+                });
+            });
+        });
+
+        describe('$watchers', function() {
+            describe('logo', function() {
+                it('should update the logo and logoType properties on the card', function() {
+                    expect(card.collateral.logo).toBe(null);
+                    expect(card.collateral.logoType).toBeUndefined();
+
+                    $scope.$apply(function() {
+                        SelfieCampaignSponsorCtrl.logoType.type = 'file';
+                    });
+
+                    $scope.$apply(function() {
+                        SelfieCampaignSponsorCtrl.logo = '/newlogo.jpg';
+                    });
+
+                    expect(card.collateral.logo).toBe('/newlogo.jpg');
+                    expect(card.collateral.logoType).toBe('file');
+
+                    $scope.$apply(function() {
+                        SelfieCampaignSponsorCtrl.logoType.type = 'custom';
+                    });
+
+                    $scope.$apply(function() {
+                        SelfieCampaignSponsorCtrl.logo = '/differentlogo.jpg';
+                    });
+
+                    expect(card.collateral.logo).toBe('/differentlogo.jpg');
+                    expect(card.collateral.logoType).toBe(null);
+                });
+            });
+
+            describe('logoType', function() {
+                describe('when File or URL are chosen', function() {
+                    it('should show previously uploaded logo if defined', function() {
+                        SelfieCampaignSponsorCtrl.previouslyUploadedLogo = '/previous.jpg';
+
+                        $scope.$apply(function() {
+                            SelfieCampaignSponsorCtrl.logoType.type = 'file';
+                        });
+
+                        expect(SelfieCampaignSponsorCtrl.logo).toEqual('/previous.jpg');
+                    });
+
+                    it('should do nothing if no previously uploaded files exist', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignSponsorCtrl.logoType.type = 'file';
+                        });
+
+                        expect(SelfieCampaignSponsorCtrl.logo).toEqual(null);
+                    });
+                });
+
+                describe('when custom is chosen', function() {
+                    it('should show the custom image', function() {
+                        logos.push({name: 'Diageo from Summer Campaign', src: 'diageo.jpg'});
+                        logos.push({name: 'Volvo from JCVD Campaign', src: 'volvo.jpg'});
+
+                        compileCtrl();
+
+                        $scope.$apply(function() {
+                            SelfieCampaignSponsorCtrl.logoType = SelfieCampaignSponsorCtrl.logoOptions[4];
+                        });
+
+                        expect(SelfieCampaignSponsorCtrl.logo).toEqual('volvo.jpg');
+                    });
+                });
+
+                describe('when default account logo is chosen', function() {
+                    it('should show the account default logo', function() {
+                        advertiser.defaultLogos = {
+                            square: 'square.jpg'
+                        };
+
+                        compileCtrl();
+
+                        $scope.$apply(function() {
+                            SelfieCampaignSponsorCtrl.logoType = SelfieCampaignSponsorCtrl.logoOptions[0];
+                        });
+
+                        expect(SelfieCampaignSponsorCtrl.logo).toEqual('square.jpg');
+                    });
+                });
+
+                describe('when "none" is selected', function() {
+                    it('should remove any logo', function() {
+                        advertiser.defaultLogos = {
+                            square: 'square.jpg'
+                        };
+
+                        compileCtrl();
+
+                        $scope.$apply(function() {
+                            SelfieCampaignSponsorCtrl.logoType = SelfieCampaignSponsorCtrl.logoOptions[0];
+                        });
+
+                        expect(SelfieCampaignSponsorCtrl.logo).toEqual('square.jpg');
+
+                        $scope.$apply(function() {
+                            SelfieCampaignSponsorCtrl.logoType = SelfieCampaignSponsorCtrl.logoOptions[1];
+                        });
+
+                        expect(SelfieCampaignSponsorCtrl.logo).toEqual(null);
+                        expect(SelfieCampaignSponsorCtrl.logoType.type).toEqual('none');
+                    });
+                });
+            });
+
+            describe('logoFile', function() {
+                var deferred;
+
+                beforeEach(function() {
+                    deferred = $q.defer();
+
+                    spyOn(CollateralService, 'uploadFromFile').and.returnValue(deferred.promise);
+
+                    $scope.$apply(function() {
+                        SelfieCampaignSponsorCtrl.logoFile = {filename: 'file'};
+                    });
+                });
+
+                it('should upload via Collateral Service', function() {
+                    expect(CollateralService.uploadFromFile).toHaveBeenCalledWith({filename: 'file'});
+                });
+
+                describe('when promise resolves', function() {
+                    it('should set the path on the controller', function() {
+                        $scope.$apply(function() {
+                            deferred.resolve('collateral/userFiles/iuyewriujksdfhjh.jpg');
+                        });
+
+                        expect(SelfieCampaignSponsorCtrl.logo).toEqual('/collateral/userFiles/iuyewriujksdfhjh.jpg');
+                        expect(SelfieCampaignSponsorCtrl.previouslyUploadedLogo).toEqual('/collateral/userFiles/iuyewriujksdfhjh.jpg');
+                    });
                 });
             });
         });
