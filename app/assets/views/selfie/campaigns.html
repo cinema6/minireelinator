@@ -7,7 +7,7 @@
 <div class="pageHolder">
     
 
-    <div class="pageHeader__group">
+    <header class="pageHeader__group">
         <div class="mainHeader__group">
             <h1 class="mainHeader__breadcrumbs tk--hdr">
                 Campaigns
@@ -46,7 +46,7 @@
                 </li>
             </ul><!--.sortBar__list-->
         </div><!--.sortBar__group-->
-    </div><!--.pageHeader__group-->
+    </header><!--.pageHeader__group-->
 
 
 
@@ -139,6 +139,18 @@
 
 
 
+    <footer class="dockedFooter__group">
+        <div class="paginator__group clearfix">
+
+            
+            <div class="paginator__readout" c6-alias="SelfieCampaignsCtrl.model.items.value.meta.items as items">
+                <span ng-show="campaigns.length">Viewing <strong>{{items.start}} &ndash; {{items.end}}</strong> &nbsp;of&nbsp; {{items.total}} Campaigns</span>
+                <span ng-show="!campaigns.length">0 Campaigns</span>
+            </div><!--.paginator__readout-->
+
+
+        </div><!--.paginator__group-->
+    </footer><!--.dockedFooter__group-->
 
 
 

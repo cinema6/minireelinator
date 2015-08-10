@@ -100,6 +100,7 @@
 
 
 
+
 /*  ================================================
     helper classes
     ================================================ */
@@ -506,6 +507,45 @@
         }
 
 
+/*  ================================================
+    dockedFooter classes
+    ================================================ */
+    .dockedFooter__group {
+        position:fixed;
+        bottom:0; left:4em; right:0;
+        z-index: 10;
+        background:#eee;
+    }
+        .dockedFooter__group:after {
+            content:'';
+            background: #5c5c5c;
+            width:100%; height:0.125em;
+            position: absolute;
+            bottom:100%; left:0;
+        }
+
+
+        .paginator__group {
+            min-height:3em;
+            background: #fff;
+            padding:0 1em;
+        }
+
+            .paginator__readout {
+                float:right;
+                color:#9c9c9c;
+                font-size:0.875em;
+                line-height: 1.5rem;
+                margin:0.75rem 0;
+            }
+                .paginator__readout strong {
+                    color:#5c5c5c;
+                    font-weight:normal;
+                }
+
+
+
+
 
 /*  ================================================
     campaign list classes
@@ -524,7 +564,7 @@
             margin:0 0 2px 0;
             display: block;
             color:#5c5c5c;
-            transition:transform 0.3s;
+            transition:transform 0.2s;
         }
             .campaign__item:hover {
                 cursor: pointer;
