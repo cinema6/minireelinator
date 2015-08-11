@@ -836,6 +836,9 @@ function( angular , c6State  , PaginatedListState                    ,
             });
             experience.id = 'e-123';
 
+            // TODO: need to somehow get {standalone: true} onto the object
+            // within the <c6-embed> directive (defined in editor.js)
+            // note: standalone property is a sibling of profile property
             this.device = 'desktop';
             this.card = null;
             this.profile = copy(c6BrowserInfo.profile);

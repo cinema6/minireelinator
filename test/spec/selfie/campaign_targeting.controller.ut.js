@@ -1,7 +1,7 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    fdescribe('SelfieCampaignTargetingController', function() {
+    describe('SelfieCampaignTargetingController', function() {
         var $rootScope,
             $scope,
             $controller,
@@ -178,6 +178,75 @@ define(['app'], function(appModule) {
                     SelfieCampaignTargetingCtrl.budget = 100;
                     SelfieCampaignTargetingCtrl.limit = 101;
                     expect(SelfieCampaignTargetingCtrl.dailyLimitError).toBe('Must be less than Total Budget');
+                });
+            });
+        });
+
+        describe('$watchers', function() {
+            describe('geo', function() {
+                it('should set the geoTargeting on the campaign', function() {
+                    expect(campaign.geoTargeting).toEqual([]);
+
+                    $scope.$apply(function() {
+                        SelfieCampaignTargetingCtrl.geo = SelfieCampaignTargetingCtrl.geoOptions[3];
+                    });
+
+                    expect(campaign.geoTargeting).toEqual([{ state: 'Arizona' }]);
+
+                    $scope.$apply(function() {
+                        SelfieCampaignTargetingCtrl.geo = SelfieCampaignTargetingCtrl.geoOptions[0];
+                    });
+
+                    expect(campaign.geoTargeting).toEqual([]);
+                });
+            });
+
+            describe('budget and limit', function() {
+                it('should set the budget and daily limit on the campaign if valid', function() {
+                    expect(campaign.pricing.budget).toBeUndefined();
+                    expect(campaign.pricing.dailyLimit).toBeUndefined();
+
+                    $scope.$apply(function() {
+                        SelfieCampaignTargetingCtrl.budget = 3000;
+                    });
+
+                    expect(campaign.pricing.budget).toBe(3000);
+                    expect(campaign.pricing.dailyLimit).toBe(null);
+
+                    $scope.$apply(function() {
+                        SelfieCampaignTargetingCtrl.limit = 100;
+                    });
+
+                    expect(campaign.pricing.budget).toBe(3000);
+                    expect(campaign.pricing.dailyLimit).toBe(100);
+
+                    $scope.$apply(function() {
+                        SelfieCampaignTargetingCtrl.limit = 500000;
+                    });
+
+                    expect(campaign.pricing.budget).toBe(3000);
+                    expect(campaign.pricing.dailyLimit).toBe(100);
+
+                    $scope.$apply(function() {
+                        SelfieCampaignTargetingCtrl.limit = 300;
+                    });
+
+                    expect(campaign.pricing.budget).toBe(3000);
+                    expect(campaign.pricing.dailyLimit).toBe(300);
+
+                    $scope.$apply(function() {
+                        SelfieCampaignTargetingCtrl.budget = 3000000;
+                    });
+
+                    expect(campaign.pricing.budget).toBe(3000);
+                    expect(campaign.pricing.dailyLimit).toBe(300);
+
+                    $scope.$apply(function() {
+                        SelfieCampaignTargetingCtrl.budget = 5000;
+                    });
+
+                    expect(campaign.pricing.budget).toBe(5000);
+                    expect(campaign.pricing.dailyLimit).toBe(300);
                 });
             });
         });
