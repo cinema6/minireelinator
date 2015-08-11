@@ -836,13 +836,11 @@ function( angular , c6State  , PaginatedListState                    ,
             });
             experience.id = 'e-123';
 
-            // TODO: need to somehow get {standalone: true} onto the object
-            // within the <c6-embed> directive (defined in editor.js)
-            // note: standalone property is a sibling of profile property
             this.device = 'desktop';
             this.card = null;
             this.profile = copy(c6BrowserInfo.profile);
             this.active = true;
+            this.standalone = true;
 
             // debounce for 2 seconds then convert card for player,
             // then make a new copy of the default preview experience,
@@ -851,8 +849,6 @@ function( angular , c6State  , PaginatedListState                    ,
             // on the Ctrl for binding in the template
             this.loadPreview = c6Debounce(function() {
                 $log.info('loading preview');
-
-                // var card = SelfieCampaignCtrl.card;
 
                 MiniReelService.convertCardForPlayer(card)
                     .then(function(cardForPlayer) {

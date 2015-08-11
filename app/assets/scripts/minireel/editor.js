@@ -1662,13 +1662,14 @@ VideoCardController           , c6embed) {
 
         .directive('c6Embed', ['$timeout',
         function              ( $timeout ) {
-            var props = '[experience, active, profile, card]';
+            var props = '[experience, active, profile, card, standalone]';
 
             function link(scope, $element) {
                 var settings = null;
 
                 scope.$watchCollection(props, function(vals, oldVals) {
                     var experience = vals[0], active = vals[1], profile = vals[2], card = vals[3];
+                    var standalone = vals[4];
                     var oldExperience = oldVals[0], oldProfile = oldVals[2];
                     var needsEmbedding = !!(
                         (experience !== oldExperience) ||
@@ -1680,6 +1681,7 @@ VideoCardController           , c6embed) {
                         settings = experience ? {
                             experience: experience,
                             profile: profile,
+                            standalone: standalone,
                             allowFullscreen: (profile || {}).device !== 'phone',
                             embed: $element[0],
                             splashDelegate: {},
@@ -1725,7 +1727,7 @@ VideoCardController           , c6embed) {
 
             return {
                 restrict: 'E',
-                scope: { experience: '=', card: '=', profile: '=', active: '=' },
+                scope: { experience: '=', card: '=', profile: '=', active: '=', standalone: '=' },
                 link: link
             };
         }])
