@@ -25,6 +25,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             $controller,
             $timeout,
             $q,
+            c6State,
             c6Debounce,
             cinema6,
             MiniReelService,
@@ -75,6 +76,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 $controller = $injector.get('$controller');
                 $q = $injector.get('$q');
                 $timeout = $injector.get('$timeout');
+                c6State = $injector.get('c6State');
                 c6Debounce = $injector.get('c6Debounce');
                 cinema6 = $injector.get('cinema6');
                 MiniReelService = $injector.get('MiniReelService');
@@ -313,6 +315,26 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             });
                         });
                     });
+                });
+            });
+
+            describe('submit()', function() {
+                it('should save the campaign/card and return to dashboard on success', function() {
+                    var saveDeferred = $q.defer();
+
+                    spyOn(c6State, 'goTo');
+                    spyOn(SelfieCampaignCtrl, 'save').and.returnValue(saveDeferred.promise);
+
+                    SelfieCampaignCtrl.submit();
+
+                    expect(SelfieCampaignCtrl.save).toHaveBeenCalled();
+                    expect(c6State.goTo).not.toHaveBeenCalled();
+
+                    $scope.$apply(function() {
+                        saveDeferred.resolve();
+                    });
+
+                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
                 });
             });
 

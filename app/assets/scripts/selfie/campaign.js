@@ -102,11 +102,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 var SelfieState = c6State.get('Selfie');
 
                 this.model = function() {
-                    // var user = SelfieState.cModel;
-
                     return cinema6.db.create('selfieCampaign', {
                             name: null,
-                            // accountName: user.org.name,
                             categories: [],
                             cards: [],
                             pricing: {},
@@ -119,10 +116,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     var user = SelfieState.cModel,
                         advertiser = user.advertiser,
                         card = cinema6.db.create('card', MiniReelService.createCard('video'));
-
-                    // TODO: what values should MOAT use?
-                    // How does thumbnail work??
-                    // Where does 'note' go??
 
                     this.card = deepExtend(card, {
                             id: undefined,
@@ -237,18 +230,17 @@ function( angular , c6State  , PaginatedListState                    ,
 
             function addCampaignToCard(campaign) {
                 SelfieCampaignCtrl.card.campaignId = campaign.id;
-                // SelfieCampaignCtrl.card.campaign.campaignId = campaign.id;
 
                 return campaign;
             }
 
-            // function returnToDashboard() {
-            //     return c6State.goTo('Selfie:CampaignDashboard');
-            // }
-
             function updateProxy() {
                 SelfieCampaignCtrl._proxyCard = copy(SelfieCampaignCtrl.card);
                 SelfieCampaignCtrl._proxyCampaign = copy(SelfieCampaignCtrl.campaign);
+            }
+
+            function returnToDashboard() {
+                return c6State.goTo('Selfie:CampaignDashboard');
             }
 
             function handleError(err) {
@@ -307,7 +299,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     return updateCard()
                         .then(saveCampaign)
                         .then(updateProxy)
-                        // .then(returnToDashboard)
                         .catch(handleError);
                 } else {
                     return saveCampaign()
@@ -316,9 +307,12 @@ function( angular , c6State  , PaginatedListState                    ,
                         .then(addCardToCampaign)
                         .then(saveCampaign)
                         .then(updateProxy)
-                        // .then(returnToDashboard)
                         .catch(handleError);
                 }
+            };
+
+            this.submit = function() {
+                this.save().then(returnToDashboard);
             };
 
             // debounce the auto-save
@@ -424,9 +418,9 @@ function( angular , c6State  , PaginatedListState                    ,
                         };
                     }));
 
-            // if the type matches that means we have a uploaded via URL of File
+            // if the logo 'type' matches that means we have a uploaded via URL of File
             // if the src matches that means we could be using an Account Default
-            // or a log from another campaign
+            // or a logo from another campaign
             // if we have NO logo on the card but we DO have an Account Default
             // then "none" must have been selected
             this.logoType = this.logoOptions.filter(function(option) {

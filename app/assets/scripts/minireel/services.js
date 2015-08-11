@@ -398,7 +398,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         }
                     };
 
-
                     function returnPath(response) {
                         var result;
 

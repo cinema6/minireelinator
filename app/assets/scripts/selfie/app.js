@@ -1,5 +1,5 @@
-define( ['angular','c6_state','./services','./campaign','./directives'],
-function( angular , c6State  , services   , campaign   , directives   ) {
+define( ['angular','c6_state','./services','./directives','./campaign'],
+function( angular , c6State  , services   , directives   , campaign   ) {
     /* jshint -W106 */
     'use strict';
 
