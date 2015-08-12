@@ -198,10 +198,6 @@ function( angular , c6State  , PaginatedListState                    ,
                         })
                     });
                 };
-
-                this.updateCard = function() {
-                    return this.cParent.card._update(this.card).save();
-                };
             }]);
         }])
 
@@ -216,8 +212,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 return SelfieCampaignCtrl.campaign.save();
             }
 
-            function updateCard() {
-                return cState.updateCard();
+            function saveCard() {
+                return SelfieCampaignCtrl.card.save();
             }
 
             function addCardToCampaign(card) {
@@ -296,14 +292,14 @@ function( angular , c6State  , PaginatedListState                    ,
                 $scope.$broadcast('SelfieCampaignWillSave');
 
                 if (SelfieCampaignCtrl.card.id) {
-                    return updateCard()
+                    return saveCard()
                         .then(saveCampaign)
                         .then(updateProxy)
                         .catch(handleError);
                 } else {
                     return saveCampaign()
                         .then(addCampaignToCard)
-                        .then(updateCard)
+                        .then(saveCard)
                         .then(addCardToCampaign)
                         .then(saveCampaign)
                         .then(updateProxy)

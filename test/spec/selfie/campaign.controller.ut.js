@@ -38,7 +38,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             logos,
             advertiser;
 
-        var updateCardDeferred,
+        var saveCardDeferred,
             saveCampaignDeferred;
 
         function compileCtrl(cState, model) {
@@ -49,8 +49,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     cState: {
                         card: cState.card,
                         campaign: cState.campaign,
-                        advertiser: cState.advertiser,
-                        updateCard: cState.updateCard
+                        advertiser: cState.advertiser
                     }
                 });
                 SelfieCampaignCtrl.initWithModel(model);
@@ -124,13 +123,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             categories = [];
             logos = [];
 
-            updateCardDeferred = $q.defer();
-
             cState = {
                 campaign: campaign,
                 card: card,
-                advertiser: advertiser,
-                updateCard: jasmine.createSpy('cState.updateCard()').and.returnValue(updateCardDeferred.promise)
+                advertiser: advertiser
             };
 
             compileCtrl(cState, {
@@ -217,8 +213,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 describe('when the card has not been saved yet, and has no ID', function() {
                     beforeEach(function() {
                         saveCampaignDeferred = $q.defer();
+                        saveCardDeferred = $q.defer();
 
                         spyOn(SelfieCampaignCtrl.campaign, 'save').and.returnValue(saveCampaignDeferred.promise);
+                        spyOn(SelfieCampaignCtrl.card, 'save').and.returnValue(saveCardDeferred.promise);
 
                         SelfieCampaignCtrl.save();
                     });
@@ -246,12 +244,16 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             expect(SelfieCampaignCtrl._proxyCampaign).not.toEqual(copy(SelfieCampaignCtrl.campaign));
                         });
 
-                        describe('after the card is updated', function() {
+                        it('should save the card', function() {
+                            expect(SelfieCampaignCtrl.card.save).toHaveBeenCalled();
+                        });
+
+                        describe('after the card is saved', function() {
                             beforeEach(function() {
                                 $scope.$apply(function() {
                                     card.id = 'rc-123';
 
-                                    updateCardDeferred.resolve(card);
+                                    saveCardDeferred.resolve(card);
                                 });
                             });
 
@@ -272,24 +274,26 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         SelfieCampaignCtrl.card.id = 'rc-321';
 
                         saveCampaignDeferred = $q.defer();
+                        saveCardDeferred = $q.defer();
 
                         spyOn(SelfieCampaignCtrl.campaign, 'save').and.returnValue(saveCampaignDeferred.promise);
+                        spyOn(SelfieCampaignCtrl.card, 'save').and.returnValue(saveCardDeferred.promise);
 
                         SelfieCampaignCtrl.save();
                     });
 
-                    it('should update the card first', function() {
-                        expect(cState.updateCard).toHaveBeenCalled();
+                    it('should save the card first', function() {
+                        expect(SelfieCampaignCtrl.card.save).toHaveBeenCalled();
                     });
 
                     it('should not save the campaign yet', function() {
                         expect(SelfieCampaignCtrl.campaign.save).not.toHaveBeenCalled();
                     });
 
-                    describe('after card is updated', function() {
+                    describe('after card is saved', function() {
                         beforeEach(function() {
                             $scope.$apply(function() {
-                                updateCardDeferred.resolve(card);
+                                saveCardDeferred.resolve(card);
                             });
                         });
 

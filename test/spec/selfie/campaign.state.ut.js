@@ -120,47 +120,6 @@ define(['app'], function(appModule) {
                     });
                 });
             });
-
-            describe('updateCard()', function() {
-                var saveDeferred,
-                    success, failure;
-
-                beforeEach(function() {
-                    saveDeferred = $q.defer();
-
-                    success = jasmine.createSpy('success()');
-                    failure = jasmine.createSpy('failure()');
-
-                    campaignState.cParent.card = card;
-                    campaignState.card = card.pojoify();
-                    spyOn(campaignState.cParent.card, '_update').and.returnValue(campaignState.cParent.card);
-                    spyOn(campaignState.cParent.card, 'save').and.returnValue(saveDeferred.promise);
-
-                    $rootScope.$apply(function() {
-                        campaignState.updateCard().then(success, failure);
-                    });
-                });
-
-                it('should update the card with the data from the model', function() {
-                    expect(campaignState.cParent.card._update).toHaveBeenCalledWith(campaignState.card);
-                });
-
-                it('should save the card', function() {
-                    expect(campaignState.cParent.card.save).toHaveBeenCalled();
-                });
-
-                describe('when the save completes', function() {
-                    beforeEach(function() {
-                        $rootScope.$apply(function() {
-                            saveDeferred.resolve(campaignState.cParent.card);
-                        });
-                    });
-
-                    it('should resolve to the card', function() {
-                        expect(success).toHaveBeenCalledWith(campaignState.cParent.card);
-                    });
-                });
-            });
         });
     });
 });
