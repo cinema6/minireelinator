@@ -1,1 +1,43 @@
-Preview
+<div class="grid__item seven-eighths">
+
+    <section class="formSection__group" id="section_5" ng-controller="SelfieCampaignPreviewController as SelfieCampaignPreviewCtrl">
+
+        <h1 class="formSection__title">
+            <span class="formSection__number">
+                <span class="formSection__numberText">5</span>
+            </span>
+            <span class="formSection__titleText tk--hdr">Preview Your Ad</span>
+        </h1>
+
+        <div class="grid grid--full grid--center adPreview__group">
+
+            <div class="tabHolder">
+                <button class="one-quarter palm--one-half ui__tab" data-panel="js-preview-desktop" ng-class="{'ui__tab--active' : SelfieCampaignPreviewCtrl.device === 'desktop' }" ng-click="SelfieCampaignPreviewCtrl.device = 'desktop'">
+                    Desktop
+                </button><!--
+             --><button class="one-quarter palm--one-half ui__tab" data-panel="js-preview-mobile" ng-class="{'ui__tab--active' : SelfieCampaignPreviewCtrl.device === 'phone' }" ng-click="SelfieCampaignPreviewCtrl.device = 'phone'">
+                    Mobile
+                </button>
+            </div><!--.tabHolder-->
+
+            <div class="adPreview__panel">
+                <div ng-class="{'adPreview__desktop' : SelfieCampaignPreviewCtrl.device === 'desktop', 'adPreview__mobile' : SelfieCampaignPreviewCtrl.device === 'phone'}">
+                    <div ng-class="{'adPreview__desktopFrame' : SelfieCampaignPreviewCtrl.device === 'desktop', 'adPreview__mobileFrame' : SelfieCampaignPreviewCtrl.device === 'phone'}">
+                        <c6-embed class="preview__embedHolder"
+                            experience="SelfieCampaignPreviewCtrl.experience"
+                            profile="SelfieCampaignPreviewCtrl.profile"
+                            card="SelfieCampaignPreviewCtrl.card"
+                            active="SelfieCampaignPreviewCtrl.active"
+                            standalone="SelfieCampaignPreviewCtrl.standalone">
+                        </c6-embed>
+                    </div>
+                </div>
+            </div>
+
+        </div><!--.grid .grid--full .grid--center adPreview__group-->
+
+    </section><!--.formSection__group-->
+
+</div><!--.grid__item-->
+
+

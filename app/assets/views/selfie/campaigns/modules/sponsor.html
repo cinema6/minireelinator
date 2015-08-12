@@ -1,76 +1,114 @@
-<h1 class="forms__title forms__title--divider">Sponsor</h1>
+<div class="grid__item one-half">
 
-<form class="pageBody__group" ng-controller="SelfieCampaignSponsorController as SelfieCampaignSponsorCtrl" c6-alias="SelfieCampaignCtrl.card as card">
+    <section class="formSection__group" id="section_2" ng-controller="SelfieCampaignSponsorController as SelfieCampaignSponsorCtrl" c6-alias="SelfieCampaignCtrl.card as card">
 
-    <label class="forms__pair forms__pair--spacer clearfix">
-        <span class="forms__name" > Name </span>
-        <span class="forms__inputHolder forms__inputHolder--fluid
-        forms__inputHolder--maxMed">
-            <input class="forms__textField forms__textField--padded forms__textField--block" ng-model="card.params.sponsor" type="text"></input>
-        </span>
-    </label>
-
-    <label class="forms__pair forms__pair--spacer clearfix">
-        <span class="forms__name" > Logo:</span>
-        <span class="forms__inputHolder forms__inputHolder--fluid 
-        forms__inputHolder--maxMed">
-            <input class="forms__textField forms__textField--padded forms__textField--block" 
-            ng-class="{ 'forms__textField--danger': !SelfieCampaignSponsorCtrl.validLogo }"
-            ng-model="card.collateral.logo" type="text"></input>
-        </span>
-    </label>
-
-    <h2>Links</h2>
-    <label class="forms__pair clearfix" ng-repeat="link in SelfieCampaignSponsorCtrl.links" style="margin:0.25em 0;">
-        <span class="forms__name">
-            {{link.name}}
-        </span>
-        <span class="forms__inputHolder forms__inputHolder--fluid 
-        forms__inputHolder--maxMed">
-            <input type="text" class="forms__textField forms__textField--block" ng-model="link.href">
-        </span>
-        <button class="btnInvis ui__iconHolder18" style="float:left; margin:0.25em 0 0 0.5em;" ng-click="SelfieCampaignSponsorCtrl.removeLink(link)">
-            <span class="fab fa-trash">&nbsp;</span>
-        </button>
-    </label>
-
-    <c6-alias model="SelfieCampaignSponsorCtrl.newLink" as="newLink">
-        <h2>Custom Link Creator</h2>
-        <label class="forms__pair clearfix" style="margin:0.25em 0;">
-            <span class="forms__name">
-                Link Name
+        <h1 class="formSection__title">
+            <span class="formSection__number">
+                <span class="formSection__numberText">2</span>
             </span>
-            <span class="forms__inputHolder forms__inputHolder--fluid forms__inputHolder--maxMed">
-                <input type="text" c6-autoselect class="forms__textField forms__textField--block" ng-model="newLink.name">
-            </span>
-        </label>
-        <label class="forms__pair clearfix" style="margin:0.25em 0;">
-            <span class="forms__name">
-                URL
-            </span>
-            <span class="forms__inputHolder forms__inputHolder--fluid forms__inputHolder--maxMed">
-                <input type="text" c6-autoselect class="forms__textField forms__textField--block" ng-model="newLink.href">
-            </span>
-        </label>
-        <button class="btnAction btnAction--success" style="margin:0.5em 0 0 8em;" ng-click="SelfieCampaignSponsorCtrl.addNewLink();">Add</button>
-    </c6-alias>
+            <span class="formSection__titleText tk--hdr">Sponsor Details</span>
+        </h1>
 
-    <h2>Call to action</h2>
-    <label class="forms__pair forms__pair--spacer clearfix">
-        <span class="forms__name">
-            Label
-        </span>
-        <span class="forms__inputHolder forms__inputHolder--fluid forms__inputHolder--maxMed">
-            <input type="text" class="forms__textField forms__textField--block" ng-model="card.params.action.label">
-        </span>
-    </label>
-    <label class="forms__pair forms__pair--spacer clearfix">
-        <span class="forms__name">
-            Link
-        </span>
-        <span class="forms__inputHolder forms__inputHolder--fluid forms__inputHolder--maxMed">
-            <input type="text" class="forms__textField forms__textField--block" ng-model="card.links.Action">
-        </span>
-    </label>
-    <c6-dropdown options="SelfieCampaignSponsorCtrl.actionTypeOptions" value="card.params.action.type"></c6-dropdown>
-</form>
+        <div class="form__items">
+
+            <fieldset class="form__item">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-name" ng-model="card.params.sponsor">
+                <label class="form__label" for="c6-sponsor-name">
+                    <i class="fa fa-times ui--error"></i>
+                    Sponsor Name
+                </label>
+                <div class="form__helpBox form__helpBox--right">
+                    <div class="form__helpText">
+                        Provide a unique identifier for your campaign. This is not displayed within the ad unit and is for internal tracking purposes.
+                    </div>
+                </div>
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                    </p>
+                </div>
+            </fieldset>
+
+            <fieldset class="form__item">
+                <!-- <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-name" ng-model="card.collateral.logo"> -->
+
+                <select c6-select-box data-options="SelfieCampaignSponsorCtrl.logoOptions" thumbnails="true" preselected="true" class="form__selectBox form__selectBox--single" ng-model="SelfieCampaignSponsorCtrl.logoType" ng-options="option.label for option in SelfieCampaignSponsorCtrl.logoOptions">
+                </select><!-- TO DO: big time selector customization -->
+
+                <label class="form__label" for="c6-sponsor-name">
+                    <i class="fa fa-times ui--error"></i>
+                    Sponsor Logo
+                </label>
+                <div class="form__helpBox form__helpBox--right">
+                    <div class="form__helpText">
+                        Provide a unique identifier for your campaign. This is not displayed within the ad unit and is for internal tracking purposes.
+                    </div>
+                </div>
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                    </p>
+                </div>
+            </fieldset>
+
+            <div class="sponsorLogo__wizard ui__connector" ng-if="SelfieCampaignSponsorCtrl.logoType.type !== 'none'">
+                <div class="logoPreview__group" ng-if="SelfieCampaignSponsorCtrl.logo">
+                    <div class="logoPreview__thumbnail">
+                        <span class="thumbnail__box thumbnail__box--square">
+                            <span class="thumbnail">
+                                <img class="thumbnail__img" ng-src="{{SelfieCampaignSponsorCtrl.logo}}">
+                            </span>
+                        </span>
+                    </div>
+                    <span class="thumbnail__label">Thumbnail Preview</span>
+                </div>
+                <fieldset class="form__item form__item--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'url'">
+                    <input class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-model="SelfieCampaignSponsorCtrl.url">
+                    <label class="form__label" for="c6-video-ctaText">
+                        <i class="fa fa-times ui--error"></i>
+                        URL to image
+                    </label>
+                    <div class="form__helpBox form__helpBox--right">
+                        <div class="form__helpText">
+                            The text is what the link will be attached to for the button or the link.
+                        </div>
+                    </div>
+                    <div class="form__errorBox">
+                        <p class="form__errorMsg">
+                            <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                        </p>
+                    </div>
+                </fieldset>
+                <div class="ui__btnHolder ui__btnHolder--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'url'">
+                    <button class="action__btn action__btn--small" ng-click="SelfieCampaignSponsorCtrl.uploadFromUri(SelfieCampaignSponsorCtrl.url)">Upload From URL</button>
+                </div>
+                <div class="ui__btnHolder ui__btnHolder--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'file'">
+                    <button class="action__btn action__btn--small" hidden-input-click="logoUpload">Upload Your Image</button>
+                </div>
+
+                <input id="logoUpload" type="file" style="display:none;" ng-model="SelfieCampaignSponsorCtrl.logoFile"><!-- hidden file input-->
+            </div><!--.sponsorLogo__wizard-->
+
+            <fieldset class="form__item" ng-repeat="link in SelfieCampaignSponsorCtrl.links">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-{{link.name}}" ng-model="link.href" ng-blur="SelfieCampaignSponsorCtrl.updateLinks()">
+                <label class="form__label" for="c6-sponsor-{{link.name}}">
+                    <i class="fa fa-times ui--error"></i>
+                    <i class="fa fa-{{link.cssClass}} tk--active tk--{{link.cssClass}}"></i> {{link.name}}
+                </label>
+                <div class="form__helpBox form__helpBox--right">
+                    <div class="form__helpText">
+                        Provide a unique identifier for your campaign. This is not displayed within the ad unit and is for internal tracking purposes.
+                    </div>
+                </div>
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                    </p>
+                </div>
+            </fieldset>
+
+        </div>
+
+    </section><!--.formSection__group, #section_2, ng-controller, c6-alias -->
+
+</div><!--.grid__item-->

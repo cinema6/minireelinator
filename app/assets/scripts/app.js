@@ -743,6 +743,101 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
             }]);
 
+            $provide.constant('SelfieCampaignAdapter', ['config','$http','$q','cinema6',
+            function                                   ( config , $http , $q , cinema6 ) {
+                var adapter = this;
+
+                function url(end) {
+                    return config.apiBase + '/' + end;
+                }
+
+                function decorateCampaigns(campaigns) {
+                    return $q.all(campaigns.map(function(campaign) {
+                        return adapter.decorateCampaign(campaign);
+                    }));
+                }
+
+                function makeCreativeWrapper(data) {
+                    return extend(data, {
+                        item: undefined
+                    });
+                }
+
+                function undecorateCampaign(campaign) {
+                    return extend(campaign, {
+                        created: undefined,
+                        advertiserId: undefined,
+                        customerId: undefined,
+                        cards: campaign.cards.map(makeCreativeWrapper)
+                    });
+                }
+
+                this.decorateCampaign = function(campaign) {
+                    function getDbModel(type) {
+                        return function(id) {
+                            return cinema6.db.find(type, id);
+                        };
+                    }
+
+                    function parseWrapper(data) {
+                        return extend(data, {
+                            endDate: data.endDate && new Date(data.endDate)
+                        });
+                    }
+
+                    return $q.all(campaign.cards.map(function(data) {
+                        return $q.all(extend(parseWrapper(data), {
+                            item: getDbModel('card')(data.id)
+                        }));
+                    })).then(function(cards) {
+                        campaign.cards = cards;
+                        return campaign;
+                    });
+                };
+
+                this.findAll = function() {
+                    return $http.get(url('campaigns'))
+                        .then(pick('data'))
+                        .then(decorateCampaigns);
+                };
+
+                this.find = function(type, id) {
+                    return $http.get(url('campaign/' + id), { cache: true })
+                        .then(pick('data'))
+                        .then(this.decorateCampaign)
+                        .then(putInArray);
+                };
+
+                this.findQuery = function(type, query, meta) {
+                    return $http.get(url('campaigns'), { params: query })
+                        .then(fillMeta(meta))
+                        .then(pick('data'), function(response) {
+                            return response.status === 404 ?
+                                [] : $q.reject(response);
+                        })
+                        .then(decorateCampaigns);
+                };
+
+                this.create = function(type, data) {
+                    return $http.post(url('campaign'), undecorateCampaign(data))
+                        .then(pick('data'))
+                        .then(this.decorateCampaign)
+                        .then(putInArray);
+                };
+
+                this.erase = function(type, campaign) {
+                    return $http.delete(url('campaign/' + campaign.id))
+                        .then(value(null));
+                };
+
+                this.update = function(type, campaign) {
+                    return $http.put(url('campaign/' + campaign.id), undecorateCampaign(campaign))
+                        .then(pick('data'))
+                        .then(this.decorateCampaign)
+                        .then(putInArray);
+                };
+            }]);
+
             $provide.constant('ExpGroupAdapter', ['config','$http','$q',
             function                             ( config , $http , $q ) {
                 function url() {
@@ -793,10 +888,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
         .config(['cinema6Provider','ContentAdapter','CWRXAdapter','CampaignAdapter',
                  'VoteAdapter','OrgAdapter','UserAdapter','CardAdapter','CustomerAdapter',
-                 'CategoryAdapter','AdvertiserAdapter','ExpGroupAdapter',
+                 'CategoryAdapter','AdvertiserAdapter','ExpGroupAdapter','SelfieCampaignAdapter',
         function( cinema6Provider , ContentAdapter , CWRXAdapter , CampaignAdapter ,
                   VoteAdapter , OrgAdapter , UserAdapter , CardAdapter , CustomerAdapter ,
-                  CategoryAdapter , AdvertiserAdapter , ExpGroupAdapter ) {
+                  CategoryAdapter , AdvertiserAdapter , ExpGroupAdapter , SelfieCampaignAdapter ) {
 
             [
                 ContentAdapter,
@@ -807,6 +902,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 CategoryAdapter,
                 ExpGroupAdapter,
                 CampaignAdapter,
+                SelfieCampaignAdapter,
                 AdvertiserAdapter,
                 CustomerAdapter
             ].forEach(function(Adapter) {
@@ -825,6 +921,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 advertiser: AdvertiserAdapter,
                 expGroup: ExpGroupAdapter,
                 campaign: CampaignAdapter,
+                selfieCampaign: SelfieCampaignAdapter,
                 customer: CustomerAdapter
             };
 
@@ -999,7 +1096,25 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             });
         }])
 
-        .controller('AppController', [function() {
+        .controller('AppController', ['CSSLoadingService','cState',
+        function                     ( CSSLoadingService , cState ) {
+            var appStyles = {
+                Portal: [
+                    'styles/c6main.css',
+                    'styles/minireel/c6studio.css'
+                ],
+                Selfie: [
+                    'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300' +
+                        'italic,400italic,600italic,700italic|Roboto+Condensed:300italic,300',
+                    'https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css',
+                    'styles/selfie/css/select2.min.css',
+                    'styles/selfie/css/css-wizardry-grids.css',
+                    'styles/selfie/css/c6selfie__base.css'
+                ]
+            };
+
+            CSSLoadingService.load(appStyles[cState.name]);
+
             this.version = version;
             this.validImgSrc = /^(http:\/\/|https:\/\/|\/\/)/;
             this.validUrl = /^(http:\/\/|https:\/\/|\/\/)/;

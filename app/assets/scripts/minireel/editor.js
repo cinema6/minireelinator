@@ -156,8 +156,7 @@ VideoCardController           , c6embed) {
 
                     return CollateralService.generateCollage({
                         minireel: proxy,
-                        name: 'splash',
-                        cache: proxy.status === 'active'
+                        name: 'splash'
                     }).then(function store(data) {
                         proxy.data.collateral.splash = data.toString();
                     })
@@ -475,8 +474,7 @@ VideoCardController           , c6embed) {
                     CollateralService.generateCollage({
                         minireel: self.model,
                         name: 'splash--temp.jpg',
-                        allRatios: false,
-                        cache: false
+                        allRatios: false
                     }).then(function attach(collage) {
                         self.model.data.collateral.splash = collage.toString();
                         self.bustCache();
@@ -1114,8 +1112,7 @@ VideoCardController           , c6embed) {
                 return CollateralService.generateCollage({
                     minireel: minireel,
                     name: 'splash',
-                    allRatios: !permanent,
-                    cache: false
+                    allRatios: !permanent
                 }).then(function setSplashSrc(data) {
                     copy(data, self.generatedSrcs);
 
@@ -1734,13 +1731,14 @@ VideoCardController           , c6embed) {
 
         .directive('c6Embed', ['$timeout',
         function              ( $timeout ) {
-            var props = '[experience, active, profile, card]';
+            var props = '[experience, active, profile, card, standalone]';
 
             function link(scope, $element) {
                 var settings = null;
 
                 scope.$watchCollection(props, function(vals, oldVals) {
                     var experience = vals[0], active = vals[1], profile = vals[2], card = vals[3];
+                    var standalone = vals[4];
                     var oldExperience = oldVals[0], oldProfile = oldVals[2];
                     var needsEmbedding = !!(
                         (experience !== oldExperience) ||
@@ -1752,6 +1750,7 @@ VideoCardController           , c6embed) {
                         settings = experience ? {
                             experience: experience,
                             profile: profile,
+                            standalone: standalone,
                             allowFullscreen: (profile || {}).device !== 'phone',
                             embed: $element[0],
                             splashDelegate: {},
@@ -1797,7 +1796,7 @@ VideoCardController           , c6embed) {
 
             return {
                 restrict: 'E',
-                scope: { experience: '=', card: '=', profile: '=', active: '=' },
+                scope: { experience: '=', card: '=', profile: '=', active: '=', standalone: '=' },
                 link: link
             };
         }])

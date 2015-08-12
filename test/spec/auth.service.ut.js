@@ -9,12 +9,22 @@
                 c6UrlMaker, cinema6, $q;
 
             var org,
-                user;
+                user,
+                advertiser,
+                customer;
 
             beforeEach(function(){
                 org = {
                     id: 'o-44342fd02ee28d',
                     config: {}
+                };
+
+                advertiser = {
+                    id: 'a-1234'
+                };
+
+                customer = {
+                    id: 'cus-1234'
                 };
 
                 module(appModule.name);
@@ -40,6 +50,23 @@
                     $q           = $injector.get('$q');
                 }]);
 
+                spyOn(cinema6.db, 'find').and.callFake(function(args) {
+                    var response;
+
+                    switch(args) {
+                        case 'org':
+                            response = org;
+                            break;
+                        case 'advertiser':
+                            response = advertiser;
+                            break;
+                        case 'customer':
+                            response = customer;
+                            break;
+                    }
+
+                    return $q.when(response);
+                });
             });
 
             describe('resetPassword(userId, token, password)', function() {
@@ -49,11 +76,12 @@
                 beforeEach(function() {
                     success = jasmine.createSpy('success()');
                     failure = jasmine.createSpy('failure()');
-                    spyOn(cinema6.db, 'find').and.returnValue($q.when(org));
 
                     userJSON = {
                         id: 'u-956a985182e6aa',
                         org: 'o-44342fd02ee28d',
+                        advertiser: 'a-1234',
+                        customer: 'cus-1234',
                         config: {}
                     };
 
@@ -61,7 +89,7 @@
                         id: 'u-956a985182e6aa',
                         token: '4510d0785dcfa5',
                         newPassword: 'password2'
-                    }).respond(200, extend(userJSON, { org: org }));
+                    }).respond(200, extend(userJSON, { org: org, advertiser: advertiser, customer: customer }));
 
                     AuthService.resetPassword('u-956a985182e6aa', '4510d0785dcfa5', 'password2')
                         .then(success, failure);
@@ -72,6 +100,13 @@
                 it('should attach the org to the user', function() {
                     expect(cinema6.db.find).toHaveBeenCalledWith('org', userJSON.org);
                     expect(success.calls.mostRecent().args[0].org).toBe(org);
+                });
+
+                it('should attached the advertiser and customer', function() {
+                    expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', userJSON.advertiser);
+                    expect(cinema6.db.find).toHaveBeenCalledWith('customer', userJSON.customer);
+                    expect(success.calls.mostRecent().args[0].advertiser).toBe(advertiser);
+                    expect(success.calls.mostRecent().args[0].customer).toBe(customer);
                 });
 
                 it('should resolve to the cinema6.db user model', function() {
@@ -143,17 +178,18 @@
                     successSpy = jasmine.createSpy('login.success');
                     failureSpy = jasmine.createSpy('login.failure');
                     spyOn($timeout,'cancel');
-                    spyOn(cinema6.db, 'find').and.returnValue($q.when(org));
                 });
 
                 it('will resolve promise if successfull',function(){
-                    var mockUser = { id: 'userX', org: 'o-44342fd02ee28d' };
+                    var mockUser = { id: 'userX', org: 'o-44342fd02ee28d', advertiser: 'a-1234', customer: 'cus-1234' };
                     $httpBackend.expectPOST('/api/auth/login').respond(200,mockUser);
                     AuthService.login('userX','foobar').then(successSpy,failureSpy);
                     $httpBackend.flush();
                     expect(cinema6.db.find).toHaveBeenCalledWith('org', mockUser.org);
-                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: org }));
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: org, advertiser: advertiser, customer: customer }));
                     expect(successSpy.calls.mostRecent().args[0].org).toBe(org);
+                    expect(successSpy.calls.mostRecent().args[0].advertiser).toBe(advertiser);
+                    expect(successSpy.calls.mostRecent().args[0].customer).toBe(customer);
                     expect(successSpy).toHaveBeenCalledWith(user);
                     expect(failureSpy).not.toHaveBeenCalled();
                 });
@@ -173,17 +209,18 @@
                     successSpy = jasmine.createSpy('checkStatus.success');
                     failureSpy = jasmine.createSpy('checkStatus.failure');
                     spyOn($timeout,'cancel');
-                    spyOn(cinema6.db, 'find').and.returnValue($q.when(org));
                 });
 
                 it('will resolve promise if successfull',function(){
-                    var mockUser = { id: 'userX', org: 'o-44342fd02ee28d' };
+                    var mockUser = { id: 'userX', org: 'o-44342fd02ee28d', advertiser: 'a-1234', customer: 'cus-1234' };
                     $httpBackend.expectGET('/api/auth/status').respond(200,mockUser);
                     AuthService.checkStatus().then(successSpy,failureSpy);
                     $httpBackend.flush();
                     expect(cinema6.db.find).toHaveBeenCalledWith('org', mockUser.org);
-                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: org }));
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: org, advertiser: advertiser, customer: customer }));
                     expect(successSpy.calls.mostRecent().args[0].org).toBe(org);
+                    expect(successSpy.calls.mostRecent().args[0].advertiser).toBe(advertiser);
+                    expect(successSpy.calls.mostRecent().args[0].customer).toBe(customer);
                     expect(successSpy).toHaveBeenCalledWith(user);
                     expect(failureSpy).not.toHaveBeenCalled();
                 });

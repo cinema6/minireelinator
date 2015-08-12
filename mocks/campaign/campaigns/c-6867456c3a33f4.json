@@ -1,0 +1,19 @@
+{
+    "miniReels": [],
+    "cards": [
+        {
+            "id": "rc-bd96e9f53b3dda",
+            "endDate": "2016-08-05T15:22:44.799Z"
+        }
+    ],
+    "name": "Another Campaign",
+    "categories": [],
+    "pricing": {},
+    "geoTargeting": [],
+    "status": "new",
+    "created": "2015-08-05T15:22:42.280Z",
+    "user": "u-35b096c999711b",
+    "org": "o-a6fd7298acb6fa",
+    "lastUpdated": "2015-08-05T16:52:33.327Z",
+    "id": "c-6867456c3a33f4"
+}

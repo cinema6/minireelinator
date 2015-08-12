@@ -2,6 +2,7 @@
 
 * *[v1.17.0.rc1]*
   * [FEATURE]: Added support for creating Instagram cards
+  * [FEATURE]: (Selfie) Add Campaign Creation UI
 
 ## v1.16.1 (August 7, 2015)
 * *[v1.16.1.rc2]*

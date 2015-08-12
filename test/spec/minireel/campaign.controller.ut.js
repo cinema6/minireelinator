@@ -68,7 +68,7 @@ define(['app'], function(appModule) {
                 });
 
                 $scope = $rootScope.$new();
-                $scope.AppCtrl = $controller('AppController');
+                $scope.AppCtrl = $controller('AppController', { cState: {} });
                 $scope.$apply(function() {
                     CampaignCtrl = $controller('CampaignController', {
                         $scope: $scope,

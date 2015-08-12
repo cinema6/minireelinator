@@ -372,8 +372,7 @@
                             it('should generate a splash image', function() {
                                 expect(CollateralService.generateCollage).toHaveBeenCalledWith({
                                     minireel: proxy,
-                                    name: 'splash',
-                                    cache: false
+                                    name: 'splash'
                                 });
                             });
 
@@ -394,8 +393,7 @@
                                 it('should cache the image', function() {
                                     expect(CollateralService.generateCollage).toHaveBeenCalledWith({
                                         minireel: proxy,
-                                        name: 'splash',
-                                        cache: true
+                                        name: 'splash'
                                     });
                                 });
                             });

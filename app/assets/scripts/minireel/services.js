@@ -399,7 +399,14 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     };
 
                     function returnPath(response) {
-                        return response.data[0].path;
+                        var result;
+
+                        if (response.data instanceof Array) {
+                            result = response.data[0].path;
+                        } else {
+                            result = response.data.path;
+                        }
+                        return result;
                     }
 
                     this.uploadFromUri = function(uri) {
@@ -1153,45 +1160,70 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 }
             };
 
-            this.dataFromUrl = function(url) {
-                var parsed = c6UrlParser(url),
-                    service = (parsed.hostname.match(
-                        /youtube|dailymotion|vimeo|aol|yahoo|rumble|vine/
+            this.dataFromText = function(text) {
+                var parsedUrl = c6UrlParser(text),
+                    urlService = (parsedUrl.hostname.match(
+                        /youtube|youtu\.be|dailymotion|dai\.ly|vimeo|aol|yahoo|rumble|vine/
                     ) || [])[0],
-                    id,
+                    embedService = (text.match(
+                        /youtube|youtu\.be|dailymotion|dai\.ly|vimeo/
+                    ) || [])[0],
+                    embed = /<iframe|<script/.test(text) ? 'embed' : null,
+                    type = !!urlService ? 'url' : embed,
+                    parsed = type === 'url' ? parsedUrl : text,
+                    id, service,
                     idFetchers = {
-                        youtube: function(url) {
-                            return params(url.search).v;
-                        },
-                        vimeo: function(url) {
-                            return url.pathname.replace(/^\//, '');
-                        },
-                        dailymotion: function(url) {
-                            var pathname = url.pathname;
+                        url: {
+                            youtube: function(url) {
+                                return params(url.search).v;
+                            },
+                            'youtu.be': function(url) {
+                                return url.pathname.replace(/^\//, '');
+                            },
+                            vimeo: function(url) {
+                                return url.pathname.replace(/^\//, '');
+                            },
+                            dailymotion: function(url) {
+                                var pathname = url.pathname;
 
-                            if (pathname.search(/^\/video\//) < 0) {
-                                return null;
+                                if (pathname.search(/^\/video\//) < 0) {
+                                    return null;
+                                }
+
+                                return (pathname
+                                    .replace(/\/video\//, '')
+                                    .match(/[a-zA-Z0-9]+/) || [])[0];
+                            },
+                            'dai.ly': function(url) {
+                                return url.pathname.replace(/^\//, '');
+                            },
+                            aol: function(url) {
+                                return (url.pathname.match(/[^\/]+$/) || [null])[0];
+                            },
+                            yahoo: function(url) {
+                                return (url.pathname
+                                    .match(/[^/]+(?=(\.html))/) || [null])[0];
+                            },
+                            rumble: function(url) {
+                                return (url.pathname
+                                    .match(/[^/]+(?=(\.html))/) || [null])[0];
+                            },
+                            vine: function(url) {
+                                return (url.pathname
+                                    .replace(/\/v\//, '')
+                                    .match(/[a-zA-Z\d]+/) || [null])[0];
                             }
-
-                            return (pathname
-                                .replace(/\/video\//, '')
-                                .match(/[a-zA-Z0-9]+/) || [])[0];
                         },
-                        aol: function(url) {
-                            return (url.pathname.match(/[^\/]+$/) || [null])[0];
-                        },
-                        yahoo: function(url) {
-                            return (url.pathname
-                                .match(/[^/]+(?=(\.html))/) || [null])[0];
-                        },
-                        rumble: function(url) {
-                            return (url.pathname
-                                .match(/[^/]+(?=(\.html))/) || [null])[0];
-                        },
-                        vine: function(url) {
-                            return (url.pathname
-                                .replace(/\/v\//, '')
-                                .match(/[a-zA-Z\d]+/) || [null])[0];
+                        embed: {
+                            youtube: function(embed) {
+                                return (embed.match(/embed\/([\-_a-zA-Z0-9]+)/) || [])[1];
+                            },
+                            vimeo: function(embed) {
+                                return (embed.match(/video\/([0-9]+)/) || [])[1];
+                            },
+                            dailymotion: function(embed) {
+                                return (embed.match(/video\/([a-zA-Z0-9]+)/) || [])[1];
+                            }
                         }
                     };
 
@@ -1208,9 +1240,20 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         }, {});
                 }
 
-                if (!service) { return null; }
+                service = urlService || embedService;
 
-                id = idFetchers[service](parsed);
+                if (!service || !type) { return null; }
+
+                id = idFetchers[type][service](parsed);
+
+                switch (service) {
+                case 'youtu.be':
+                    service = 'youtube';
+                    break;
+                case 'dai.ly':
+                    service = 'dailymotion';
+                    break;
+                }
 
                 if (!id) { return null; }
 

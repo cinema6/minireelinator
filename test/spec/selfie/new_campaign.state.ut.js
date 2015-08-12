@@ -49,8 +49,12 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
 
                 selfieState = c6State.get('Selfie');
                 selfieState.cModel = {
-                    advertiserId: 'a-123',
-                    customerId: 'cus-123',
+                    advertiser: {
+                        id: 'a-123'
+                    },
+                    customer: {
+                        id: 'cus-123'
+                    },
                     org: {
                         name: 'My Org'
                     }
@@ -71,25 +75,12 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
             });
 
             it('should create a new campaign', function() {
-                expect(cinema6.db.create).toHaveBeenCalledWith('campaign', {
+                expect(cinema6.db.create).toHaveBeenCalledWith('selfieCampaign', {
                     name: null,
                     categories: [],
-                    minViewTime: 3,
-                    advertiser: {
-                        id: 'a-123'
-                    },
-                    brand: 'My Org',
-                    customer: {
-                        id: 'cus-123'
-                    },
-                    logos: {
-                        square: null
-                    },
-                    links: {},
-                    miniReels: [],
                     cards: [],
-                    staticCardMap: [],
-                    miniReelGroups: [],
+                    pricing: {},
+                    geoTargeting: [],
                     status: 'new'
                 });
             });
