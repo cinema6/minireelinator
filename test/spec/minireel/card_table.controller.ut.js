@@ -8,7 +8,7 @@
                 $scope,
                 c6EventEmitter,
                 $interval,
-                VideoThumbnailService,
+                ThumbnailService,
                 DragCtrl,
                 EditorCtrl,
                 CardTableCtrl;
@@ -46,7 +46,7 @@
                     $controller = $injector.get('$controller');
                     c6EventEmitter = $injector.get('c6EventEmitter');
                     $interval = $injector.get('$interval');
-                    VideoThumbnailService = $injector.get('VideoThumbnailService');
+                    ThumbnailService = $injector.get('ThumbnailService');
 
                     $scope = $rootScope.$new();
                     $scope.$apply(function() {
@@ -200,18 +200,18 @@
                     beforeEach(function() {
                         thumbs = {};
 
-                        spyOn(VideoThumbnailService, 'getThumbsFor')
+                        spyOn(ThumbnailService, 'getThumbsFor')
                             .and.returnValue(thumbs);
                     });
 
-                    it('should proxy to the VideoThumbnailService.getThumbsFor() method', function() {
+                    it('should proxy to the ThumbnailService.getThumbsFor() method', function() {
                         expect(CardTableCtrl.getThumbs({
                             data: {
                                 service: 'youtube',
                                 videoid: 'abc123'
                             }
                         })).toBe(thumbs);
-                        expect(VideoThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', 'abc123');
+                        expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', 'abc123');
 
                         expect(CardTableCtrl.getThumbs({
                             data: {
@@ -219,7 +219,7 @@
                                 videoid: '12345'
                             }
                         })).toBe(thumbs);
-                        expect(VideoThumbnailService.getThumbsFor).toHaveBeenCalledWith('vimeo', '12345');
+                        expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('vimeo', '12345');
                     });
                 });
 

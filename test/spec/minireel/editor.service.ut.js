@@ -13,7 +13,7 @@
                 VoteService,
                 EditorService,
                 CollateralService,
-                VideoThumbnailService,
+                ThumbnailService,
                 SettingsService,
                 c6UrlParser,
                 c6State, portal,
@@ -76,7 +76,7 @@
                     VoteService = $injector.get('VoteService');
                     cinema6 = $injector.get('cinema6');
                     CollateralService = $injector.get('CollateralService');
-                    VideoThumbnailService = $injector.get('VideoThumbnailService');
+                    ThumbnailService = $injector.get('ThumbnailService');
                     SettingsService = $injector.get('SettingsService');
                     c6UrlParser = $injector.get('c6UrlParser');
                     c6State = $injector.get('c6State');
@@ -87,7 +87,7 @@
                     _private = EditorService._private;
                 });
 
-                spyOn(VideoThumbnailService, 'getThumbsFor').and.returnValue({
+                spyOn(ThumbnailService, 'getThumbsFor').and.returnValue({
                     small: null,
                     large: null,
                     ensureFulfillment: function() {
@@ -306,7 +306,7 @@
                                     }
                                 };
 
-                                VideoThumbnailService.getThumbsFor
+                                ThumbnailService.getThumbsFor
                                     .and.callFake(function(service, videoid) {
                                         return thumbs[service][videoid] || new ThumbModel();
                                     });
@@ -319,9 +319,9 @@
                             });
 
                             it('should fetch thumbs for yahoo and aol cards without thumbnails', function() {
-                                expect(VideoThumbnailService.getThumbsFor.calls.count()).toBe(3);
+                                expect(ThumbnailService.getThumbsFor.calls.count()).toBe(3);
                                 [yahooCard, aolCard, rumbleCard].forEach(function(card) {
-                                    expect(VideoThumbnailService.getThumbsFor).toHaveBeenCalledWith(card.data.service, card.data.videoid);
+                                    expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith(card.data.service, card.data.videoid);
                                 });
                             });
 

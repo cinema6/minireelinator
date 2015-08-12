@@ -502,10 +502,8 @@ function( angular , c6uilib , services          , c6Drag           ) {
             };
         }])
 
-        .controller('CardTableController', ['$scope', '$q', '$interval', 'ImageThumbnailService',
-                                            'VideoThumbnailService',
-        function                           ( $scope ,  $q ,  $interval ,  ImageThumbnailService,
-                                             VideoThumbnailService ) {
+        .controller('CardTableController', ['$scope', '$q', '$interval', 'ThumbnailService',
+        function                           ( $scope ,  $q ,  $interval ,  ThumbnailService ) {
             var self = this,
                 EditorCtrl = $scope.EditorCtrl,
                 forEach = angular.forEach;
@@ -715,12 +713,10 @@ function( angular , c6uilib , services          , c6Drag           ) {
 
             this.getThumbs = function(card) {
                 var data = card.data;
+                var service = data.service || card.type;
+                var id = data.videoid || data.imageid || data.id;
 
-                if (card.type === 'image') {
-                    return ImageThumbnailService.getThumbsFor(data.service, data.imageid);
-                } else {
-                    return VideoThumbnailService.getThumbsFor(data.service, data.videoid);
-                }
+                return ThumbnailService.getThumbsFor(service, id);
             };
 
             this.setScrollerFullWidth = function(width) {
