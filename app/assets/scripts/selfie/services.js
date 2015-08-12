@@ -30,9 +30,9 @@ function( angular , c6uilib ) {
             };
         }])
 
-        .service('SelfieVideoService', ['$http','$q','YouTubeDataService',
+        .service('SelfieVideoService', ['$http','$q','VideoService','YouTubeDataService',
                                         'VimeoDataService','DailymotionDataService',
-        function                       ( $http , $q , YouTubeDataService ,
+        function                       ( $http , $q , VideoService , YouTubeDataService ,
                                          VimeoDataService , DailymotionDataService ) {
             var self = this;
 
@@ -65,42 +65,10 @@ function( angular , c6uilib ) {
                     });
             }
 
-            this.dataFromUrl = function(text) {
-                var service = (text.match(/youtu\.be|youtube|dailymotion|dai\.ly|vimeo/) || [])[0],
-                    type = /iframe/.test(text) ? 'embed' : 'url',
-                    id,
-                    idFetchers = {
-                        embed: {
-                            youtube: function(embed) {
-                                return (embed.match(/embed\/([\-_a-zA-Z0-9]+)/) || [])[1];
-                            },
-                            vimeo: function(embed) {
-                                return (embed.match(/video\/([0-9]+)/) || [])[1];
-                            },
-                            dailymotion: function(embed) {
-                                return (embed.match(/video\/([a-zA-Z0-9]+)/) || [])[1];
-                            }
-                        },
-                        url: {
-                            'youtu.be': function(url) {
-                                return (url.match(/\.be\/([\-_a-zA-Z0-9]+)$/) || [])[1];
-                            },
-                            youtube: function(url) {
-                                return (url.match(/v=([\-_a-zA-Z0-9]+)/) || [])[1];
-                            },
-                            vimeo: function(url) {
-                                return (url.match(/\/([0-9]+)$/) || [])[1];
-                            },
-                            'dai.ly': function(url) {
-                                return (url.match(/\.ly\/([a-zA-Z0-9]+)$/) || [])[1];
-                            },
-                            dailymotion: function(url) {
-                                return (url.match(/video\/([a-zA-Z0-9]+)/) || [])[1];
-                            }
-                        }
-                    };
+            this.dataFromText = function(text) {
+                var data = VideoService.dataFromText(text);
 
-                if (!service) {
+                if (!data) {
                     if (/^http|https|\/\//.test(text)) {
                         return validateVast(text);
                     } else {
@@ -108,38 +76,13 @@ function( angular , c6uilib ) {
                     }
                 }
 
-                id = idFetchers[type][service](text);
-
-                switch (service) {
-                case 'youtu.be':
-                    service = 'youtube';
-                    break;
-                case 'dai.ly':
-                    service = 'dailymotion';
-                    break;
-                }
-
-                if (!id) { return $q.reject('Unable to find id'); }
-
-                return $q.when({
-                    service: service,
-                    id: id
-                });
+                return $q.when(data);
             };
 
             this.urlFromData = function(service, id) {
-                switch (service) {
-
-                case 'youtube':
-                    return 'https://www.youtube.com/watch?v=' + id;
-                case 'vimeo':
-                    return 'http://vimeo.com/' + id;
-                case 'dailymotion':
-                    return 'http://www.dailymotion.com/video/' + id;
-                case 'adUnit':
-                    return getJSONProp(id, 'vast');
-
-                }
+                return service === 'adUnit' ?
+                    getJSONProp(id, 'vast') :
+                    VideoService.urlFromData(service, id);
             };
 
             this.statsFromService = function(service, id) {

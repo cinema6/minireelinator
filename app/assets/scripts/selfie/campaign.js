@@ -575,7 +575,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     return;
                 }
 
-                SelfieVideoService.dataFromUrl(url)
+                SelfieVideoService.dataFromText(url)
                     .then(function(data) {
                         service = data.service;
                         id = data.id;

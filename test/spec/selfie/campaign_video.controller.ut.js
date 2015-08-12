@@ -200,7 +200,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     statsDeferred = $q.defer();
                     thumbnailDeferred = $q.defer();
 
-                    spyOn(SelfieVideoService,'dataFromUrl').and.returnValue(dataDeferred.promise);
+                    spyOn(SelfieVideoService,'dataFromText').and.returnValue(dataDeferred.promise);
                     spyOn(SelfieVideoService, 'statsFromService').and.returnValue(statsDeferred.promise);
                     spyOn(VideoThumbnailService, 'getThumbsFor').and.callFake(function() {
                         return {
@@ -247,7 +247,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     });
 
                     it('should call the Video Service for data', function() {
-                        expect(SelfieVideoService.dataFromUrl).toHaveBeenCalledWith('http://youtube.com/watch?v=12345');
+                        expect(SelfieVideoService.dataFromText).toHaveBeenCalledWith('http://youtube.com/watch?v=12345');
                     });
 
                     describe('when data is returned', function() {

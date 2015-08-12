@@ -29,11 +29,11 @@ define(['app'], function(appModule) {
         });
 
         describe('methods', function() {
-            describe('dataFromUrl(text)', function() {
+            describe('dataFromText(text)', function() {
                 var success, failure;
 
                 function fromUrl() {
-                    return SelfieVideoService.dataFromUrl.apply(SelfieVideoService, arguments)
+                    return SelfieVideoService.dataFromText.apply(SelfieVideoService, arguments)
                         .then(success, failure);
                 }
 
@@ -46,100 +46,8 @@ define(['app'], function(appModule) {
                     expect(fromUrl('').then).toBeDefined();
                 });
 
-                it('should parse a youtube.com url', function() {
-                    $rootScope.$apply(function() {
-                        fromUrl('https://www.youtube.com/watch?v=jFJUz1DO20Q&list=PLFD1E8B0910A73A12&index=11');
-                    });
+                it('should call the VideoService for data', function() {
 
-                    expect(failure).not.toHaveBeenCalled();
-                    expect(success).toHaveBeenCalledWith({
-                        service: 'youtube',
-                        id: 'jFJUz1DO20Q'
-                    });
-                });
-
-                it('should parse a youtu.be url', function() {
-                    $rootScope.$apply(function() {
-                        fromUrl('https://www.youtube.com/watch?v=jFJUz1DO20Q&list=PLFD1E8B0910A73A12&index=11');
-                    });
-
-                    expect(failure).not.toHaveBeenCalled();
-                    expect(success).toHaveBeenCalledWith({
-                        service: 'youtube',
-                        id: 'jFJUz1DO20Q'
-                    });
-                });
-
-                it('should parse a youtube embed code', function() {
-                    $rootScope.$apply(function() {
-                        fromUrl('<iframe width="560" height="315" src="https://www.youtube.com/embed/jFJUz1DO20Q?list=PLFD1E8B0910A73A12" frameborder="0" allowfullscreen></iframe>');
-                    });
-
-                    expect(failure).not.toHaveBeenCalled();
-                    expect(success).toHaveBeenCalledWith({
-                        service: 'youtube',
-                        id: 'jFJUz1DO20Q'
-                    });
-                });
-
-                it('should parse a vimeo url', function() {
-                    $rootScope.$apply(function() {
-                        fromUrl('http://vimeo.com/89495751');
-                    });
-
-                    expect(failure).not.toHaveBeenCalled();
-                    expect(success).toHaveBeenCalledWith({
-                        service: 'vimeo',
-                        id: '89495751'
-                    });
-                });
-
-                it('should parse a vimeo embed code', function() {
-                    $rootScope.$apply(function() {
-                        fromUrl('<iframe src="https://player.vimeo.com/video/89495751?color=ffffff" width="500" height="192" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="https://vimeo.com/89495751">molt.</a> from <a href="https://vimeo.com/user13462546">▲Bipolar Spider▲</a> on <a href="https://vimeo.com">Vimeo</a>.</p>');
-                    });
-
-                    expect(failure).not.toHaveBeenCalled();
-                    expect(success).toHaveBeenCalledWith({
-                        service: 'vimeo',
-                        id: '89495751'
-                    });
-                });
-
-                it('should parse a dailymotion.com url', function() {
-                    $rootScope.$apply(function() {
-                        fromUrl('http://www.dailymotion.com/video/x120oui_vincent-and-the-doctor-vincent-van-gogh-visits-the-museum-doctor-who-museum-scene_shortfilms?search_algo=2');
-                    });
-
-                    expect(failure).not.toHaveBeenCalled();
-                    expect(success).toHaveBeenCalledWith({
-                        service: 'dailymotion',
-                        id: 'x120oui'
-                    });
-                });
-
-                it('should parse a dai.ly url', function() {
-                    $rootScope.$apply(function() {
-                        fromUrl('http://dai.ly/x120oui');
-                    });
-
-                    expect(failure).not.toHaveBeenCalled();
-                    expect(success).toHaveBeenCalledWith({
-                        service: 'dailymotion',
-                        id: 'x120oui'
-                    });
-                });
-
-                it('should parse a dailymotion embed code', function() {
-                    $rootScope.$apply(function() {
-                        fromUrl('<iframe frameborder="0" width="480" height="270" src="//www.dailymotion.com/embed/video/x120oui" allowfullscreen></iframe><br /><a href="http://www.dailymotion.com/video/x120oui_vincent-van-gogh-visits-the-museum-doctor-who-museum-scene-vincent-and-the-doctor_shortfilms" target="_blank">Vincent van Gogh visits the Museum (Doctor Who...</a> <i>by <a href="http://www.dailymotion.com/PuertoLibre" target="_blank">PuertoLibre</a></i>');
-                    });
-
-                    expect(failure).not.toHaveBeenCalled();
-                    expect(success).toHaveBeenCalledWith({
-                        service: 'dailymotion',
-                        id: 'x120oui'
-                    });
                 });
 
                 describe('when no service is found', function() {
@@ -208,17 +116,6 @@ define(['app'], function(appModule) {
                         });
                     });
                 });
-
-                describe('when no id is found', function() {
-                    it('should reject the promise', function() {
-                        $rootScope.$apply(function() {
-                            fromUrl('http://youtube.com');
-                        });
-
-                        expect(failure).toHaveBeenCalledWith('Unable to find id');
-                        expect(success).not.toHaveBeenCalled();
-                    });
-                });
             });
 
             describe('urlFromData(service, id)', function() {
@@ -244,7 +141,7 @@ define(['app'], function(appModule) {
                     expect(fromData('dailymotion', 'x3pih4')).toBe('http://www.dailymotion.com/video/x3pih4');
                 });
 
-                it('should create a dailymotion url', function() {
+                it('should create an adUnit url', function() {
                     expect(fromData('adUnit', '{"vast":"http://vasttag.com/vast.xml"}')).toBe('http://vasttag.com/vast.xml');
                 });
             });
