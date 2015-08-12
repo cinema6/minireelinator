@@ -198,8 +198,8 @@ function( angular , c6uilib ) {
             };
         }])
 
-        .service('LogoService', ['cinema6',
-        function                ( cinema6 ) {
+        .service('SelfieLogoService', ['cinema6',
+        function                      ( cinema6 ) {
             function exists(value, prop, arr) {
                 return arr.filter(function(item) {
                     return item[prop] === value;

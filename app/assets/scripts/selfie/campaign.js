@@ -170,8 +170,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Campaign', ['cinema6','LogoService','c6State','$q',
-            function                                 ( cinema6 , LogoService , c6State , $q ) {
+            c6StateProvider.state('Selfie:Campaign', ['cinema6','SelfieLogoService',
+                                                      'c6State','$q',
+            function                                 ( cinema6 , SelfieLogoService ,
+                                                       c6State , $q ) {
                 var SelfieState = c6State.get('Selfie');
 
                 this.templateUrl = 'views/selfie/campaigns/campaign.html';
@@ -190,7 +192,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.model = function() {
                     return $q.all({
                         categories: cinema6.db.findAll('category'),
-                        logos: LogoService.getLogos({
+                        logos: SelfieLogoService.getLogos({
                             sort: 'lastUpdated,-1',
                             org: SelfieState.cModel.org.id,
                             limit: 50,
