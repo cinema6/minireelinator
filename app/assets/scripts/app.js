@@ -802,7 +802,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
 
                 this.find = function(type, id) {
-                    return $http.get(url('campaign/' + id))
+                    return $http.get(url('campaign/' + id), { cache: true })
                         .then(pick('data'))
                         .then(this.decorateCampaign)
                         .then(putInArray);
