@@ -24,14 +24,6 @@ function( angular ) {
                             }
                         });
                     });
-
-                    scope.$watch(function() {
-                        return $element.val();
-                    }, function(value) {
-                        if (value) {
-                            $element.addClass('form__fillCheck--filled');
-                        }
-                    });
                 }
             };
         }])
