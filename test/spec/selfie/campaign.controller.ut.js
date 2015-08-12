@@ -19,7 +19,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         return target;
     }
 
-    fdescribe('SelfieCampaignController', function() {
+    describe('SelfieCampaignController', function() {
         var $rootScope,
             $scope,
             $controller,

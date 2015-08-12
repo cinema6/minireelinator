@@ -17,7 +17,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             SelfieCampaignPreviewCtrl;
 
         var experience,
-            card;
+            card,
+            miniReelDeferred;
 
         function compileCtrl() {
             $scope.$apply(function() {
@@ -74,6 +75,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 };
             });
 
+            miniReelDeferred = $q.defer();
+            spyOn(MiniReelService, 'create').and.returnValue(miniReelDeferred.promise);
+
             compileCtrl();
         });
 
@@ -82,11 +86,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         });
 
         it('should create an experience for the preview', function() {
-            spyOn(cinema6.db, 'create').and.returnValue(experience);
-
-            compileCtrl();
-
-            expect(cinema6.db.create).toHaveBeenCalledWith('experience', jasmine.any(Object));
+            expect(MiniReelService.create).toHaveBeenCalled();
         });
 
         it('should load the preview if there is a service and video id on instantiation', function() {
@@ -181,6 +181,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         SelfieCampaignPreviewCtrl.loadPreview();
 
                         $timeout.flush(2000);
+
+                        $scope.$apply(function() {
+                            miniReelDeferred.resolve(experience);
+                        });
 
                         $scope.$apply(function() {
                             deferred.resolve(convertedCard);

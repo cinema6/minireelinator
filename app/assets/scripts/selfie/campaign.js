@@ -791,40 +791,27 @@ function( angular , c6State  , PaginatedListState                    ,
                                                          c6BrowserInfo , c6Debounce , $log ) {
             var SelfieCampaignPreviewCtrl = this,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
-                card = SelfieCampaignCtrl.card;
+                card = SelfieCampaignCtrl.card,
+                experience;
 
-            var experience = cinema6.db.create('experience', {
-                type: 'minireel',
-                appUri: 'mini-reel-player',
-                org: 'o-123',
-                data: {
-                    title: null,
-                    mode: 'light',
-                    autoplay: false,
-                    autoadvance: false,
-                    sponsored: false,
-                    splash: {
-                        source: 'generated',
-                        ratio: '6-5',
-                        theme: 'horizontal-stack'
-                    },
-                    adConfig: {
-                        video: {
-                            firstPlacement: -1,
-                            frequency: 0
-                        },
-                        display: {}
-                    },
-                    collateral: {
-                        splash: null
-                    },
-                    campaign: {},
-                    params: {},
-                    links: {},
-                    deck: []
-                }
-            });
-            experience.id = 'e-123';
+            MiniReelService.create()
+                .then(function(minireel) {
+                    experience = deepExtend(minireel, {
+                        id: 'e-123',
+                        data: {
+                            mode: 'light',
+                            autoplay: false,
+                            autoadvance: false,
+                            adConfig: {
+                                video: {
+                                    firstPlacement: -1,
+                                    frequency: 0
+                                },
+                                display: {}
+                            }
+                        }
+                    });
+                });
 
             this.device = 'desktop';
             this.card = null;
