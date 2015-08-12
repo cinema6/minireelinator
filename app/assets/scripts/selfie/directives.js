@@ -93,7 +93,7 @@ function( angular ) {
                     $element.click(function(e) {
                         e.preventDefault();
 
-                        var distance = $(attrs.href).offset().top - 80;
+                        var distance = $(attrs.href).offset().top;
 
                         $('html, body').animate({ scrollTop: distance + 'px' });
                     });
