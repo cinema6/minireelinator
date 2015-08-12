@@ -1373,9 +1373,7 @@ VideoCardController           , c6embed) {
                                 return !!model.data[prop];
                             }).indexOf(false) < 0;
                         case 'instagram':
-                            return ['id'].map(function(prop) {
-                                return !!model.data[prop];
-                            }).indexOf(false) < 0;
+                            return !!model.data.id;
                         case 'video':
                         case 'videoBallot':
                             return true;
