@@ -19,7 +19,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         return target;
     }
 
-    describe('SelfieCampaignController', function() {
+    fdescribe('SelfieCampaignController', function() {
         var $rootScope,
             $scope,
             $controller,
@@ -39,7 +39,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             advertiser;
 
         var saveCardDeferred,
-            saveCampaignDeferred;
+            saveCampaignDeferred,
+            debouncedFns;
 
         function compileCtrl(cState, model) {
             $scope = $rootScope.$new();
@@ -57,7 +58,23 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         }
 
         beforeEach(function() {
+            debouncedFns = [];
+
             module(appModule.name);
+            module(function($provide) {
+                $provide.decorator('c6AsyncQueue', function($delegate) {
+                    return jasmine.createSpy('c6AsyncQueue()').and.callFake(function() {
+                        var queue = $delegate.apply(this, arguments);
+                        var debounce = queue.debounce;
+                        spyOn(queue, 'debounce').and.callFake(function() {
+                            var fn = debounce.apply(queue, arguments);
+                            debouncedFns.push(fn);
+                            return fn;
+                        });
+                        return queue;
+                    });
+                });
+            });
 
             module(c6uilib.name, function($provide) {
                 $provide.decorator('c6Debounce', function($delegate) {
@@ -323,12 +340,20 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
 
             describe('submit()', function() {
-                it('should save the campaign/card and return to dashboard on success', function() {
-                    var saveDeferred = $q.defer();
+                var saveDeferred;
+
+                beforeEach(function() {
+                    saveDeferred = $q.defer();
 
                     spyOn(c6State, 'goTo');
                     spyOn(SelfieCampaignCtrl, 'save').and.returnValue(saveDeferred.promise);
+                });
 
+                it('should be wrapped in a c6AsyncQueue', function() {
+                    expect(debouncedFns).toContain(SelfieCampaignCtrl.submit);
+                });
+
+                it('should save the campaign/card and return to dashboard on success', function() {
                     SelfieCampaignCtrl.submit();
 
                     expect(SelfieCampaignCtrl.save).toHaveBeenCalled();

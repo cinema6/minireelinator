@@ -202,11 +202,11 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignController', ['$scope','$log','c6State','cState',
-                                                 'c6Debounce',
+                                                 'c6Debounce','c6AsyncQueue',
         function                                ( $scope , $log , c6State , cState ,
-                                                  c6Debounce ) {
-
-            var SelfieCampaignCtrl = this;
+                                                  c6Debounce , c6AsyncQueue ) {
+            var SelfieCampaignCtrl = this,
+                queue = c6AsyncQueue();
 
             function saveCampaign() {
                 return SelfieCampaignCtrl.campaign.save();
@@ -307,9 +307,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
             };
 
-            this.submit = function() {
-                this.save().then(returnToDashboard);
-            };
+            this.submit = queue.debounce(function() {
+                return this.save().then(returnToDashboard);
+            }, this);
 
             // debounce the auto-save
             this.autoSave = c6Debounce(SelfieCampaignCtrl.save, 5000);
