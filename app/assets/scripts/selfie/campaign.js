@@ -512,10 +512,10 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignVideoController', ['$injector','$scope','SelfieVideoService',
-                                                      'c6Debounce','VideoThumbnailService',
+                                                      'c6Debounce','ThumbnailService',
                                                       'FileService','CollateralService',
         function                                     ( $injector , $scope , SelfieVideoService ,
-                                                       c6Debounce , VideoThumbnailService ,
+                                                       c6Debounce , ThumbnailService ,
                                                        FileService , CollateralService ) {
             var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 SelfieCampaignVideoCtrl = this,
@@ -529,7 +529,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     SelfieCampaignVideoCtrl.useDefaultThumb = false;
                     SelfieCampaignVideoCtrl.defaultThumb = null;
                 } else {
-                    VideoThumbnailService.getThumbsFor(service, id)
+                    ThumbnailService.getThumbsFor(service, id)
                         .ensureFulfillment()
                         .then(function(thumbs) {
                             SelfieCampaignVideoCtrl.defaultThumb = thumbs.large;

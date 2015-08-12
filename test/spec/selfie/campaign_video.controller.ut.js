@@ -7,7 +7,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             $controller,
             $timeout,
             $q,
-            VideoThumbnailService,
+            ThumbnailService,
             SelfieVideoService,
             FileService,
             CollateralService,
@@ -42,7 +42,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 $controller = $injector.get('$controller');
                 $timeout = $injector.get('$timeout');
                 $q = $injector.get('$q');
-                VideoThumbnailService = $injector.get('VideoThumbnailService');
+                ThumbnailService = $injector.get('ThumbnailService');
                 SelfieVideoService = $injector.get('SelfieVideoService');
                 CollateralService = $injector.get('CollateralService');
                 c6Debounce = $injector.get('c6Debounce');
@@ -202,7 +202,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                     spyOn(SelfieVideoService,'dataFromText').and.returnValue(dataDeferred.promise);
                     spyOn(SelfieVideoService, 'statsFromService').and.returnValue(statsDeferred.promise);
-                    spyOn(VideoThumbnailService, 'getThumbsFor').and.callFake(function() {
+                    spyOn(ThumbnailService, 'getThumbsFor').and.callFake(function() {
                         return {
                             ensureFulfillment: jasmine.createSpy('ensureFulfillment()')
                                 .and.returnValue(thumbnailDeferred.promise)
@@ -276,8 +276,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                     });
                                 });
 
-                                it('should call VideoThumbnailService', function() {
-                                    expect(VideoThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', '12345');
+                                it('should call ThumbnailService', function() {
+                                    expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', '12345');
                                 });
 
                                 describe('when thumbs are resolved', function() {
