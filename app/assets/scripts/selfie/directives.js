@@ -114,12 +114,6 @@ function( angular ) {
             };
         }])
 
-        .filter('numberify', [function() {
-            return function(number) {
-                return number && number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-            };
-        }])
-
         .filter('videoService', [function() {
             return function(service) {
                 switch (service) {
