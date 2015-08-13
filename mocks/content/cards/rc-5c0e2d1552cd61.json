@@ -1,0 +1,50 @@
+{
+    "data": {
+        "hideSource": true,
+        "controls": true,
+        "skip": true,
+        "modestbranding": 0,
+        "rel": 0,
+        "videoid": "AvCsxj45MD8",
+        "href": "https://www.youtube.com/watch?v=AvCsxj45MD8",
+        "thumbs": {
+            "small": "//img.youtube.com/vi/AvCsxj45MD8/2.jpg",
+            "large": "//img.youtube.com/vi/AvCsxj45MD8/0.jpg"
+        }
+    },
+    "type": "youtube",
+    "title": "Don't you love the friendly skies?",
+    "note": null,
+    "modules": [],
+    "thumbs": null,
+    "placementId": null,
+    "templateUrl": null,
+    "sponsored": true,
+    "campaign": {
+        "campaignId": null,
+        "advertiserId": null,
+        "minViewTime": 3,
+        "countUrls": [],
+        "clickUrls": []
+    },
+    "collateral": {
+        "logo": "http://i.imgur.com/YbBIFZv.png"
+    },
+    "links": {
+        "Facebook": "https://www.facebook.com/pages/Diageo/108265212535624",
+        "Twitter": "https://twitter.com/Diageo_News",
+        "Instagram": "http://instagram.com"
+    },
+    "params": {
+        "sponsor": "American Airlines",
+        "ad": true,
+        "action": null
+    },
+    "campaignId": "c-ebf9e9285c0f6c",
+    "created": "2015-08-05T14:32:16.390Z",
+    "user": "u-35b096c999711b",
+    "org": "o-a6fd7298acb6fa",
+    "lastUpdated": "2015-08-05T15:22:07.866Z",
+    "id": "rc-5c0e2d1552cd61",
+    "source": "YouTube"
+}

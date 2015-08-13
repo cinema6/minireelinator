@@ -43,7 +43,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 }()));
 
                 $rootScope.$apply(function() {
-                    model = paginatedDbList('campaign', {}, 50);
+                    model = paginatedDbList('selfieCampaign', {}, 50);
                 });
 
                 $scope = $rootScope.$new();

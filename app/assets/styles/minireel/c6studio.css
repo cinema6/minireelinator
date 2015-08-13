@@ -1540,6 +1540,21 @@
                 background: #fff;
             }
 
+        .instagramPreview {
+            width:100%; height:20em;
+            background:#ccc url('../../img/minireel/default_square.jpg') 50% 50% / cover no-repeat;
+            text-align: center;
+            position: relative;
+        }
+            .mrEdit__instagramTab .instagramPreview {
+                margin:1em 0 0 0;
+            }
+            .embeddedInstagram {
+                display: block;
+                width: 100%; height: 20em;
+                background: #fff;
+            }
+
     .wizard__group--small .wizard__choice {
         padding:1em 0 0 0;
     }

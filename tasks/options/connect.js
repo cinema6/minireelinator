@@ -6,27 +6,30 @@
 
     module.exports = {
         options: {
-            hostname: '*'
+            hostname: '*',
+            protocol: 'https'
         },
         app: {
             proxies: [
                 {
                     context: '/api',
-                    port: 80,
-                    https: false,
+                    port: 443,
+                    https: true,
                     host: 'staging.cinema6.com',
+                    protocol: 'https:',
                     headers: {
-                        origin : 'http://staging.cinema6.com',
+                        origin : 'https://staging.cinema6.com',
                         host: 'staging.cinema6.com'
                     }
                 },
                 {
                     context: '/collateral',
-                    port: 80,
-                    https: false,
+                    port: 443,
+                    https: true,
                     host: 'staging.cinema6.com',
+                    protocol: 'https:',
                     headers: {
-                        origin : 'http://staging.cinema6.com',
+                        origin : 'https://staging.cinema6.com',
                         host: 'staging.cinema6.com'
                     }
                 }

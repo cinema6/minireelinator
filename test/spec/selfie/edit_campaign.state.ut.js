@@ -33,13 +33,11 @@ define(['app'], function(appModule) {
                 model = {
                     id: 'cam-c3fd97889f4fb9',
                     name: '$$$',
-                    minireels: [],
                     cards: [{
                         item: {
                             id: 'rc-123'
                         }
-                    }],
-                    targetMiniReels: []
+                    }]
                 };
 
                 success = jasmine.createSpy('success()');
@@ -53,7 +51,7 @@ define(['app'], function(appModule) {
             });
 
             it('should return the campaign', function() {
-                expect(cinema6.db.find).toHaveBeenCalledWith('campaign', model.id);
+                expect(cinema6.db.find).toHaveBeenCalledWith('selfieCampaign', model.id);
                 expect(success).toHaveBeenCalledWith(model);
             });
         });
@@ -70,11 +68,9 @@ define(['app'], function(appModule) {
                     campaign = {
                         id: 'cam-c3fd97889f4fb9',
                         name: '$$$',
-                        minireels: [],
                         cards: [{
                             item: card
-                        }],
-                        targetMiniReels: []
+                        }]
                     };
 
                 $rootScope.$apply(function() {

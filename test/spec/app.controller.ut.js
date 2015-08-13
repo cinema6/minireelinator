@@ -5,7 +5,18 @@ define(['app', 'version'], function(appModule, version) {
         var $rootScope,
             $controller,
             $scope,
-            AppCtrl;
+            AppCtrl,
+            CSSLoadingService;
+
+        function initCtrl(appName) {
+            $scope = $rootScope.$new();
+            $scope.$apply(function() {
+                AppCtrl = $controller('AppController', {
+                    $scope: $scope,
+                    cState: { name: appName }
+                });
+            });
+        }
 
         beforeEach(function() {
             module(appModule.name);
@@ -13,18 +24,28 @@ define(['app', 'version'], function(appModule, version) {
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
+                CSSLoadingService = $injector.get('CSSLoadingService');
 
-                $scope = $rootScope.$new();
-                $scope.$apply(function() {
-                    AppCtrl = $controller('AppController', {
-                        $scope: $scope
-                    });
-                });
+                spyOn(CSSLoadingService, 'load');
+
+                initCtrl('Portal');
             });
         });
 
         it('should exist', function() {
             expect(AppCtrl).toEqual(jasmine.any(Object));
+        });
+
+        describe('loading app-specific CSS files', function() {
+            ['Portal', 'Selfie'].forEach(function(app) {
+                it('should load the app\'s CSS files', function() {
+                    CSSLoadingService.load.calls.reset();
+
+                    initCtrl(app);
+
+                    expect(CSSLoadingService.load).toHaveBeenCalledWith(jasmine.any(Array));
+                });
+            });
         });
 
         describe('properties', function() {

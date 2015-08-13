@@ -1,0 +1,35 @@
+{
+    "data": {},
+    "type": "video",
+    "title": null,
+    "note": null,
+    "modules": [],
+    "thumbs": null,
+    "placementId": null,
+    "templateUrl": null,
+    "sponsored": true,
+    "campaign": {
+        "campaignId": null,
+        "advertiserId": null,
+        "minViewTime": 3,
+        "countUrls": [],
+        "clickUrls": []
+    },
+    "collateral": {
+        "logo": "http://i.imgur.com/YbBIFZv.png"
+    },
+    "links": {
+        "Facebook": "https://www.facebook.com/pages/Diageo/108265212535624",
+        "Twitter": "https://twitter.com/Diageo_News"
+    },
+    "params": {
+        "sponsor": "Diageo",
+        "ad": true,
+        "action": null
+    },
+    "campaignId": "c-c38222a7fb71a3",
+    "created": "2015-08-05T15:58:43.412Z",
+    "user": "u-35b096c999711b",
+    "org": "o-a6fd7298acb6fa",
+    "lastUpdated": "2015-08-05T15:58:43.412Z"
+}

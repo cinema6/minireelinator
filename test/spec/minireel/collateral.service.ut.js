@@ -8,7 +8,7 @@
                 $httpBackend,
                 CollateralServiceProvider,
                 CollateralService,
-                VideoThumbnailService,
+                ThumbnailService,
                 FileService;
 
             beforeEach(function() {
@@ -21,7 +21,7 @@
                     FileService = $injector.get('FileService');
                     $q = $injector.get('$q');
                     $httpBackend = $injector.get('$httpBackend');
-                    VideoThumbnailService = $injector.get('VideoThumbnailService');
+                    ThumbnailService = $injector.get('ThumbnailService');
 
                     CollateralService = $injector.get('CollateralService');
                 });
@@ -96,7 +96,7 @@
                             'abc123': new Thumb(minireel.data.deck[3])
                         };
 
-                        spyOn(VideoThumbnailService, 'getThumbsFor').and.callFake(function(service, videoid) {
+                        spyOn(ThumbnailService, 'getThumbsFor').and.callFake(function(service, videoid) {
                             return thumbs[videoid] || new Thumb();
                         });
 

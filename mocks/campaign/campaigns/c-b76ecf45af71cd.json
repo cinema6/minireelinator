@@ -1,15 +1,9 @@
 {
     "adtechId": "87654322",
     "name": "My New Shop",
-    "brand": "Diageo",
-    "categories": ["food"],
+    "categories": ["film","television"],
     "advertiserId": "a-282824b8bb40a2",
     "customerId": "cus-71e725f8bf33d5",
-    "logos": {
-        "square": "square.png"
-    },
-    "links": {},
-    "miniReels": [],
     "cards": [
         {
             "id": "rc-72acb4edf87aeb",
@@ -17,8 +11,8 @@
             "state": "active"
         }
     ],
-    "staticCardMap": {},
-    "miniReelGroups": [],
+    "pricing": {},
+    "geoTargeting": [],
     "created": "2014-12-02T18:03:22.663Z",
     "user": "u-82b0123da9678c",
     "org": "o-a6fd7298acb6fa",

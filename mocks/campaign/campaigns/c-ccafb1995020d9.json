@@ -1,0 +1,24 @@
+{
+    "miniReels": [],
+    "cards": [
+        {
+            "id": "rc-5099327e1418af",
+            "endDate": "2016-08-05T16:08:53.739Z"
+        }
+    ],
+    "name": "Nike Summer Campaign",
+    "categories": [
+        "comedy"
+    ],
+    "pricing": {
+        "budget": "1000",
+        "dailyLimit": "45"
+    },
+    "geoTargeting": [],
+    "status": "active",
+    "created": "2015-08-05T16:08:51.216Z",
+    "user": "u-35b096c999711b",
+    "org": "o-a6fd7298acb6fa",
+    "lastUpdated": "2015-08-05T16:51:22.254Z",
+    "id": "c-ccafb1995020d9"
+}

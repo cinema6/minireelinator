@@ -1,5 +1,11 @@
 # MiniReelinator
 
+## v1.17.0 (August 12, 2015)
+* *[v1.17.0.rc1]*
+  * [FEATURE]: Added support for creating Instagram cards
+  * [FEATURE]: (Selfie) Add Campaign Creation UI
+* *[/v1.17.0.rc1]*
+
 ## v1.16.2 (August 12, 2015)
 * *[v1.16.2.rc1]*
   * [FIX]: Fix for an issue that caused the pagination controls in the

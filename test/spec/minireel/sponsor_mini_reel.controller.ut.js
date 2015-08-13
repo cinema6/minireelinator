@@ -64,7 +64,7 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                 });
 
                 $scope = $rootScope.$new();
-                $scope.AppCtrl = $controller('AppController');
+                $scope.AppCtrl = $controller('AppController', { cState: {} });
                 $scope.$apply(function() {
                     SponsorMiniReelCtrl = $scope.SponsorMiniReelCtrl = $controller('SponsorMiniReelController', {
                         $scope: $scope,
