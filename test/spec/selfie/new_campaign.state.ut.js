@@ -76,6 +76,8 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
 
             it('should create a new campaign', function() {
                 expect(cinema6.db.create).toHaveBeenCalledWith('selfieCampaign', {
+                    advertiserId: 'a-123',
+                    customerId: 'cus-123',
                     name: null,
                     categories: [],
                     cards: [],

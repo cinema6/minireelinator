@@ -766,8 +766,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 function undecorateCampaign(campaign) {
                     return extend(campaign, {
                         created: undefined,
-                        advertiserId: undefined,
-                        customerId: undefined,
+                        // advertiserId: undefined,
+                        // customerId: undefined,
                         cards: campaign.cards.map(makeCreativeWrapper)
                     });
                 }

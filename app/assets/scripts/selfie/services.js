@@ -159,9 +159,10 @@ function( angular , c6uilib ) {
                 var names = {};
 
                 return campaigns.reduce(function(result, campaign) {
-                    var card = campaign.cards[0].item,
-                        src = card.collateral.logo,
-                        name = card.params.sponsor + ' from ' + campaign.name;
+                    var card = (campaign.cards[0] && campaign.cards[0].item) || {},
+                        src = card.collateral && card.collateral.logo,
+                        name = card.params && card.params.sponsor +
+                            ' from ' + campaign.name;
 
                     if (!src || exists(src, 'src', result)) {
                         return result;

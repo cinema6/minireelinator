@@ -313,7 +313,9 @@ define(['app', 'angular'], function(appModule, angular) {
                     ],
                     categories: [],
                     pricing: {},
-                    geoTargeting: []
+                    geoTargeting: [],
+                    advertiserId: 'a-3f7cf5012b15b4',
+                    customerId: 'cus-5156b33a6f834c',
                 };
 
                 postData = extend(campaign, {
@@ -406,7 +408,7 @@ define(['app', 'angular'], function(appModule, angular) {
 
                 spyOn(adapter, 'decorateCampaign').and.returnValue($q.when(response));
 
-                $httpBackend.expectPUT('/api/campaign/' + campaign.id, without(['created','advertiserId','customerId'], rawCampaign))
+                $httpBackend.expectPUT('/api/campaign/' + campaign.id, without(['created'], rawCampaign))
                     .respond(200, response);
 
                 adapter.update('campaign', campaign).then(success, failure);
