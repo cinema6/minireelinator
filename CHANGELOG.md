@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.17.0 (August 12, 2015)
+* *[v1.17.0.rc2]*
+  * [FIX]: Fix for an issue preventing the splash image for MiniReels containing
+    Instagram cards from being generated correctly
+
 * *[v1.17.0.rc1]*
   * [FEATURE]: Added support for creating Instagram cards
   * [FEATURE]: (Selfie) Add Campaign Creation UI
