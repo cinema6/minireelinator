@@ -1,5 +1,10 @@
 # MiniReelinator
 
+## v1.16.2 (August 12, 2015)
+* *[v1.16.2.rc1]*
+  * [FIX]: Fix for an issue that caused the pagination controls in the
+    campaign manager not to work
+
 ## v1.16.1 (August 7, 2015)
 * *[v1.16.1.rc2]*
   * [FIX]: Configure the VPAID player to use the most current c6ui swf

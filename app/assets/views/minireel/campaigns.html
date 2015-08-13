@@ -15,7 +15,7 @@
 
 <section class="container miniReels__group">
     <header class="tableHeader__group clearfix">
-        <paginator-controls page="CampaignsCtrl.model.page" limit="CampaignsCtrl.limit" limits="CampaignsCtrl.limits" total="CampaignsCtrl.model.items.page.total"></paginator-controls>
+        <paginator-controls page="CampaignsCtrl.page" limit="CampaignsCtrl.limit" limits="CampaignsCtrl.limits" total="CampaignsCtrl.model.items.page.total"></paginator-controls>
         <nav class="selectorActions__group">
             <div class="selectorActions__selector">
                 <label class="checkbox--inline selectorActions__selectorCheckBox">
@@ -85,7 +85,7 @@
         </ul>
     </div>
     <footer class="tableFooter__group">
-        <paginator-controls page="CampaignsCtrl.model.page" limit="CampaignsCtrl.limit" limits="CampaignsCtrl.limits" total="CampaignsCtrl.model.items.page.total"></paginator-controls>
+        <paginator-controls page="CampaignsCtrl.page" limit="CampaignsCtrl.limit" limits="CampaignsCtrl.limits" total="CampaignsCtrl.model.items.page.total"></paginator-controls>
         <p class="tableFooter__displayText" c6-alias="CampaignsCtrl.model.items.value.meta.items as items">
             <span ng-show="campaigns.length">Displaying <strong>{{items.start}}-{{items.end}}</strong> of {{items.total}} Campaigns</span>
             <span ng-show="!campaigns.length">0 Campaigns</span>
