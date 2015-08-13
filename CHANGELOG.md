@@ -4,6 +4,9 @@
 * *[v1.16.2.rc1]*
   * [FIX]: Fix for an issue that caused the pagination controls in the
     campaign manager not to work
+  * [FIX]: Fix for an issue that caused requests for all
+    MiniReels/Campaigns to be made when opening a single
+    MiniReel/Campaign
 
 ## v1.16.1 (August 7, 2015)
 * *[v1.16.1.rc2]*
