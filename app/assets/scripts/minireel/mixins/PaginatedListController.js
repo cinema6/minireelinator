@@ -1,5 +1,8 @@
-define([], function() {
+define(['angular'],
+function(angular ) {
     'use strict';
+
+    var isUndefined = angular.isUndefined;
 
     function nonInitializingWatchFn(fn) {
         return function(value, prevValue) {
@@ -59,13 +62,15 @@ define([], function() {
         $scope.$watch(ctrlProp('page'), nonInitializingWatchFn(function(page) {
             var model = PaginatedListCtrl.model;
 
-            if (page === model.page) { return; }
+            if (page === model.page || isUndefined(page)) { return; }
 
             model.goTo(page);
         }));
 
         $scope.$watch(ctrlProp('limit'), nonInitializingWatchFn(function(limit) {
             var model = PaginatedListCtrl.model;
+
+            if (isUndefined(limit)) { return; }
 
             model.update(model.query, limit);
             PaginatedListCtrl.page = 1;

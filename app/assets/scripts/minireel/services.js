@@ -473,10 +473,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                         large: card.thumb
                                     };
                                 } else {
-                                    return ThumbnailService.getThumbsFor(
-                                        card.data.service,
-                                        card.data.videoid
-                                    ).ensureFulfillment();
+                                    var data = card.data;
+                                    var service = data.service || card.type;
+                                    var id = data.videoid || data.imageid || data.id;
+
+                                    return ThumbnailService.getThumbsFor(service, id)
+                                        .ensureFulfillment();
                                 }
                             })).then(function map(thumbs) {
                                 return thumbs.map(function(thumb) {

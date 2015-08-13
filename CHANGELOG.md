@@ -4,10 +4,26 @@
   * [FIX]: Add advertiser and customer IDs to campaigns
 
 ## v1.17.0 (August 12, 2015)
+* *[v1.17.0.rc2]*
+  * [FIX]: Fix for an issue preventing the splash image for MiniReels containing
+    Instagram cards from being generated correctly
+
 * *[v1.17.0.rc1]*
   * [FEATURE]: Added support for creating Instagram cards
   * [FEATURE]: (Selfie) Add Campaign Creation UI
 * *[/v1.17.0.rc1]*
+
+## v1.16.2 (August 12, 2015)
+* *[v1.16.2.rc1]*
+  * [FIX]: Fix for an issue that caused the pagination controls in the
+    campaign manager not to work
+  * [FIX]: Fix for an issue that caused requests for all
+    MiniReels/Campaigns to be made when opening a single
+    MiniReel/Campaign
+  * [FIX]: Fix for an issue that caused multiple campaign delete
+    requests to be sent to the server if the user clicked "delete" again
+    while the first deletion was happening
+* *[/v1.16.2.rc1]*
 
 ## v1.16.1 (August 7, 2015)
 * *[v1.16.1.rc2]*
