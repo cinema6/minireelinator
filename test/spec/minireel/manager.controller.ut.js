@@ -142,6 +142,23 @@
                         model = ManagerCtrl.model;
                     });
 
+                    describe('all', function() {
+                        describe('when changed to undefined', function() {
+                            beforeEach(function() {
+                                minireel.getMiniReelList.calls.reset();
+                                $scope.$apply(function() {
+                                    ManagerCtrl.filter = undefined;
+                                    ManagerCtrl.limit = undefined;
+                                    ManagerCtrl.page = undefined;
+                                });
+                            });
+
+                            it('should do nothing', function() {
+                                expect(minireel.getMiniReelList).not.toHaveBeenCalled();
+                            });
+                        });
+                    });
+
                     describe('this.filter', function() {
                         ['all', 'active', 'pending'].forEach(function(status) {
                             describe('when changed to ' + status, function() {

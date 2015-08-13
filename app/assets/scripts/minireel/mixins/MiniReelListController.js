@@ -134,8 +134,9 @@ function( angular ) {
             },
             function(props, prevProps) {
                 var samePage = isSame(0, props, prevProps);
+                var unset = equals(props, [undefined, undefined, undefined]);
 
-                if (equals(props, prevProps)) { return; }
+                if (unset || equals(props, prevProps)) { return; }
 
                 if (self.page !== 1 && samePage) {
                     /* jshint boss:true */

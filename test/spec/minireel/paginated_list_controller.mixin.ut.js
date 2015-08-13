@@ -223,6 +223,19 @@ define(['angular', 'minireel/services', 'minireel/mixins/PaginatedListController
                     it('should not call goTo again', function() {
                         expect(cinema6.db.findAll.calls.count()).toBe(1);
                     });
+
+                    describe('if set to undefined', function() {
+                        beforeEach(function() {
+                            model.update.calls.reset();
+                            $scope.$apply(function() {
+                                PaginatedListCtrl.limit = undefined;
+                            });
+                        });
+
+                        it('should not update the model', function() {
+                            expect(model.update).not.toHaveBeenCalled();
+                        });
+                    });
                 });
 
                 describe('this.page', function() {
@@ -236,6 +249,19 @@ define(['angular', 'minireel/services', 'minireel/mixins/PaginatedListController
 
                     it('should go to the new page', function() {
                         expect(model.goTo).toHaveBeenCalledWith(PaginatedListCtrl.page);
+                    });
+
+                    describe('if set to undefined', function() {
+                        beforeEach(function() {
+                            model.goTo.calls.reset();
+                            $scope.$apply(function() {
+                                PaginatedListCtrl.page = undefined;
+                            });
+                        });
+
+                        it('should not goTo a new page', function() {
+                            expect(model.goTo).not.toHaveBeenCalled();
+                        });
                     });
                 });
             });

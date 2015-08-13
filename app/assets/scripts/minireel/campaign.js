@@ -71,10 +71,11 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         }])
 
         .controller('CampaignsController', ['$injector','$scope','cState','$q',
-                                            'ConfirmDialogService',
+                                            'ConfirmDialogService','c6AsyncQueue',
         function                           ( $injector , $scope , cState , $q ,
-                                             ConfirmDialogService ) {
+                                             ConfirmDialogService , c6AsyncQueue ) {
             var CampaignsCtrl = this;
+            var queue = c6AsyncQueue();
 
             $injector.invoke(PaginatedListController, this, {
                 cState: cState,
@@ -90,16 +91,15 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     onCancel: function() {
                         return ConfirmDialogService.close();
                     },
-                    onAffirm: function() {
+                    onAffirm: queue.debounce(function() {
                         ConfirmDialogService.close();
-
 
                         return $q.all(campaigns.map(function(campaign) {
                             return campaign.erase();
                         })).then(function() {
                             return CampaignsCtrl.model.refresh();
                         });
-                    }
+                    })
                 });
             };
 
