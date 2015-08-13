@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.17.1.rc1]*
+  * [FIX]: Add advertiser and customer IDs to campaigns
+
 ## v1.17.0 (August 12, 2015)
 * *[v1.17.0.rc1]*
   * [FEATURE]: Added support for creating Instagram cards
