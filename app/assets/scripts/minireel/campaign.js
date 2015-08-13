@@ -724,9 +724,21 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 var CampaignState = c6State.get('MR:Campaign');
 
                 this.model = function(params) {
-                    var campaign = CampaignState.cModel,
-                        cardType = (params.type === 'article') ? 'article' : 'video',
-                        card = cinema6.db.create('card', MiniReelService.createCard(cardType));
+                    var campaign = CampaignState.cModel;
+
+                    var cardType;
+                    switch(params.type) {
+                    case 'article':
+                        cardType = 'article';
+                        break;
+                    case 'instagram':
+                        cardType = 'instagram';
+                        break;
+                    default:
+                        cardType = 'video';
+                    }
+
+                    var card = cinema6.db.create('card', MiniReelService.createCard(cardType));
 
                     return deepExtend(card, {
                         id: undefined,
@@ -847,6 +859,11 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         return validSrc && validTitle;
                     }
                 },
+                validInstagramModel: {
+                    get: function() {
+                        return !!WildcardCtrl.model.data.id;
+                    }
+                },
                 validDate: {
                     configurable: true,
                     get: function() {
@@ -890,6 +907,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         switch(WildcardCtrl.model.type) {
                         case 'article':
                             return WildcardCtrl.validArticleModel;
+                        case 'instagram':
+                            return WildcardCtrl.validInstagramModel;
                         case 'video':
                             return WildcardCtrl.validDate &&
                                WildcardCtrl.validReportingId &&
@@ -931,6 +950,11 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         required: true,
                         sref: 'MR:Wildcard.Article'
                     },
+                    instagramTab = {
+                        name: 'Instagram Content',
+                        required: true,
+                        sref: 'MR:Wildcard.Instagram'
+                    },
                     thumbsTab = {
                         name: 'Thumbnail Content',
                         required: false,
@@ -939,6 +963,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 switch(type) {
                 case 'article':
                     return [articleTab, thumbsTab];
+                case 'instagram':
+                    return [instagramTab, brandingTab, linksTab];
                 default:
                     return [copyTab, videoTab, surveyTab,
                             brandingTab, linksTab, advertTab];
@@ -954,6 +980,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.campaignData = cState.metaData;
                 this.enableMoat = !!card.data.moat;
                 this.tabs = _private.tabsForCardType(card.type);
+                if(card.type === 'instagram') {
+                    this.hideTemplate = true;
+                }
             };
 
             this.save = queue.debounce(function() {
@@ -987,6 +1016,63 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     return this.cParent.cModel;
                 };
             }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Instagram', [function() {
+                this.controller = 'WildcardInstagramController';
+                this.controllerAs = 'wildcardInstagramCtrl';
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/cards/wildcard/instagram.html';
+
+                this.model = function() {
+                    return this.cParent.cModel;
+                };
+            }]);
+        }])
+
+        .controller('WildcardInstagramController', ['$scope', 'InstagramService', '$sce',
+        function                                   ( $scope ,  InstagramService ,  $sce ) {
+            var self = this;
+            var _private = { };
+            this.error = null;
+            this.inputUrl = null;
+            this.data = { };
+
+            _private.updateEmbedInfo = function(id) {
+                self.data = { };
+                InstagramService.getEmbedInfo(id)
+                    .then(function(embedInfo) {
+                        Object.keys(embedInfo).forEach(function(key) {
+                            self.data[key] = embedInfo[key];
+                        });
+                    })
+                    .catch(function(reason) {
+                        self.error = reason;
+                    });
+            };
+
+            $scope.trustSrc = function(src) {
+                return $sce.trustAsResourceUrl(src);
+            };
+
+            $scope.$watch(function() {
+                return self.inputUrl;
+            }, function(inputUrl) {
+                if(inputUrl !== null) {
+                    self.error = null;
+                    var data = InstagramService.dataFromUrl(inputUrl);
+                    self.model.data.id = data.id;
+                    _private.updateEmbedInfo(data.id);
+                } else {
+                    self.inputUrl = InstagramService.urlFromData(
+                        self.model.data.id
+                    );
+                }
+            });
+
+            if (window.c6.kHasKarma) { this._private = _private; }
         }])
 
         .config(['c6StateProvider',

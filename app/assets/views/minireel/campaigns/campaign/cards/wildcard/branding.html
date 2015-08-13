@@ -17,13 +17,13 @@
                 Logo URL <strong class="typo--danger">*</strong>
             </span>
             <span class="forms__inputHolder">
-                <input type="text" class="forms__textField forms__textField--block" 
+                <input type="text" class="forms__textField forms__textField--block"
                 ng-class="{'forms__textField--danger': !WildcardCtrl.validLogo}"
                 ng-model="card.collateral.logo">
             </span>
         </label>
 
-        <label class="forms__pair forms__pair--spacer clearfix">
+        <label class="forms__pair forms__pair--spacer clearfix" ng-hide="WildcardCtrl.hideTemplate">
             <span class="forms__name">
                 Template
             </span>

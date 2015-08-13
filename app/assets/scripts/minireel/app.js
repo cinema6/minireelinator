@@ -127,6 +127,8 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                             this.route('/new', 'MR:NewWildcard', function() {
                                 this.state('MR:Wildcard', 'MR:New:Wildcard', function() {
                                     this.state('MR:Wildcard.Article', 'MR:New:Wildcard.Article');
+                                    this.state('MR:Wildcard.Instagram',
+                                               'MR:New:Wildcard.Instagram');
                                     this.state('MR:Wildcard.Thumbs', 'MR:New:Wildcard.Thumbs');
                                     this.state('MR:Wildcard.Copy', 'MR:New:Wildcard.Copy');
                                     this.state('MR:Wildcard.Video', 'MR:New:Wildcard.Video');
@@ -143,6 +145,8 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                             this.route('/:cardId', 'MR:EditWildcard', function() {
                                 this.state('MR:Wildcard', 'MR:Edit:Wildcard', function() {
                                     this.state('MR:Wildcard.Article', 'MR:Edit:Wildcard.Article');
+                                    this.state('MR:Wildcard.Instagram',
+                                               'MR:Edit:Wildcard.Instagram');
                                     this.state('MR:Wildcard.Thumbs', 'MR:Edit:Wildcard.Thumbs');
                                     this.state('MR:Wildcard.Copy', 'MR:Edit:Wildcard.Copy');
                                     this.state('MR:Wildcard.Video', 'MR:Edit:Wildcard.Video');
