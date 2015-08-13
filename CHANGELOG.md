@@ -1,12 +1,10 @@
 # MiniReelinator
 
-* *[v1.17.1.rc1]*
-  * [FIX]: Add advertiser and customer IDs to campaigns
-
 ## v1.17.0 (August 12, 2015)
 * *[v1.17.0.rc2]*
   * [FIX]: Fix for an issue preventing the splash image for MiniReels containing
     Instagram cards from being generated correctly
+  * [FIX]: (Selfie) Add advertiser and customer IDs to campaigns
 
 * *[v1.17.0.rc1]*
   * [FEATURE]: Added support for creating Instagram cards
