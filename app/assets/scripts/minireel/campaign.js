@@ -677,10 +677,20 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignCardsController', ['$scope',
-        function                               ( $scope ) {
+        .controller('CampaignCardsController', ['$scope', 'ThumbnailService',
+        function                               ( $scope ,  ThumbnailService ) {
             var CampaignCtrl = $scope.CampaignCtrl,
                 campaign = CampaignCtrl.model;
+
+            this.getThumbs = function(card) {
+                if(!card) { return null; }
+                if(card.thumb) { return { small: card.thumb }; }
+                if(card.data.thumbUrl) { return { small: card.data.thumbUrl }; }
+                var data = card.data;
+                var service = data.service || card.type;
+                var id = data.videoid || data.imageid || data.id;
+                return ThumbnailService.getThumbsFor(service, id);
+            };
 
             this.remove = function(card) {
                 var items = campaign.cards;

@@ -48,7 +48,7 @@
                         c6-params="{}">
                             <div class="miniReel__img"
                             title="Edit This MiniReel: {{card.title}}"
-                            c6-bg-img="{{card.thumb || card.data.thumbUrl}}">
+                            c6-bg-img="{{CampaignCardsCtrl.getThumbs(card).small || ''}}">
                                 &nbsp;
                             </div>
                         </a>
