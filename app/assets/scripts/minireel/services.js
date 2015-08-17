@@ -2847,6 +2847,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     instagram: {
                         id: copy(),
                         type: value('instagram'),
+                        title: copy(null),
                         source: function(card) {
                             return camelSource(card.type);
                         },

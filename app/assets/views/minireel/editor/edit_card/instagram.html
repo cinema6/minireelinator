@@ -2,7 +2,16 @@
     <form>
         <label class="forms__pair clearfix">
             <span class="forms__name">
-                Instagram URL
+                Slide Title
+            </span>
+            <span class="forms__inputHolder">
+                <input ng-model="card.title" type="text" class="forms__textField forms__textField--block">
+                <span class="typo--guidance typo--warning">({{card.title.length || 0}} of 100 max characters recommended)</span>
+            </span>
+        </label>
+        <label class="forms__pair clearfix">
+            <span class="forms__name">
+                Instagram URL <strong class="typo--danger">*</strong>
             </span>
             <span class="forms__inputHolder">
                 <input type="text" class="forms__textField forms__textField--block" ng-model="EditCardInstagramCtrl.inputUrl">
@@ -11,6 +20,11 @@
                     <a href="" title="Photo" target="_blank">Photo</a>,
                     <a href="" title="Video" target="_blank">Video</a>
                 </span>
+            </span>
+        </label>
+        <label class="forms__pair clearfix">
+            <span class="forms__name">
+                Preview:
             </span>
         </label>
     </form>
@@ -28,7 +42,6 @@
            </video>
         </div>
     </div>
-
 </div>
 
 <footer class="modalFooter__group">
