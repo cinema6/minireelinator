@@ -1,6 +1,9 @@
 # MiniReelinator
 
 ## v1.17.0 (August 12, 2015)
+* *[v1.17.0.rc3]*
+  * [FEATURE]: Added the ability to add a title when creating Instagram cards
+
 * *[v1.17.0.rc2]*
   * [FIX]: Fix for an issue preventing the splash image for MiniReels containing
     Instagram cards from being generated correctly

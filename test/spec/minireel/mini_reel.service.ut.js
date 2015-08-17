@@ -151,6 +151,7 @@
                         instagram: {
                             id: 'rc-94028ed693fda7',
                             type: 'instagram',
+                            title: 'Hey it\'s an Instagram Card!',
                             source: 'Instagram',
                             data: {
                                 type: 'image',
@@ -1838,7 +1839,7 @@
                             expect(deck[18]).toEqual({
                                 id: 'rc-94028ed693fda7',
                                 type: 'instagram',
-                                title: null,
+                                title: 'Hey it\'s an Instagram Card!',
                                 note: null,
                                 label: 'Instagram',
                                 thumb: null,
