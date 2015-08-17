@@ -3,6 +3,8 @@
 ## v1.17.0 (August 12, 2015)
 * *[v1.17.0.rc3]*
   * [FEATURE]: Added the ability to add a title when creating Instagram cards
+  * [FIX]: Fix for an issue where the where wrong card type was created in
+    the MiniReel Editor
 
 * *[v1.17.0.rc2]*
   * [FIX]: Fix for an issue preventing the splash image for MiniReels containing
