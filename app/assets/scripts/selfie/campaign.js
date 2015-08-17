@@ -99,10 +99,15 @@ function( angular , c6State  , PaginatedListState                    ,
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:NewCampaign', ['cinema6','c6State','MiniReelService',
             function                                    ( cinema6 , c6State , MiniReelService ) {
-                var SelfieState = c6State.get('Selfie');
+                var SelfieState = c6State.get('Selfie'),
+                    user = SelfieState.cModel,
+                    advertiser = user.advertiser,
+                    customer = user.customer;
 
                 this.model = function() {
                     return cinema6.db.create('selfieCampaign', {
+                            advertiserId: advertiser.id,
+                            customerId: customer.id,
                             name: null,
                             categories: [],
                             cards: [],
@@ -113,9 +118,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.afterModel = function() {
-                    var user = SelfieState.cModel,
-                        advertiser = user.advertiser,
-                        card = cinema6.db.create('card', MiniReelService.createCard('video'));
+                    var card = cinema6.db.create('card', MiniReelService.createCard('video'));
 
                     this.card = deepExtend(card, {
                             id: undefined,
