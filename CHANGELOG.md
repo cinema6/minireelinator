@@ -5,6 +5,7 @@
   * [FIX]: Fix for an issue preventing the splash image for MiniReels containing
     Instagram cards from being generated correctly
   * [FIX]: (Selfie) Add advertiser and customer IDs to campaigns
+* *[/v1.17.0.rc2]*
 
 * *[v1.17.0.rc1]*
   * [FEATURE]: Added support for creating Instagram cards
