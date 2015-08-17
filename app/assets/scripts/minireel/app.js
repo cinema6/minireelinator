@@ -135,6 +135,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                                     this.state('MR:Wildcard.Survey', 'MR:New:Wildcard.Survey');
                                     this.state('MR:Wildcard.Branding', 'MR:New:Wildcard.Branding');
                                     this.state('MR:Wildcard.Links', 'MR:New:Wildcard.Links');
+                                    this.state('MR:Wildcard.Sharing', 'MR:New:Wildcard.Sharing');
                                     this.state(
                                         'MR:Wildcard.Advertising',
                                         'MR:New:Wildcard.Advertising'
@@ -153,6 +154,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                                     this.state('MR:Wildcard.Survey', 'MR:Edit:Wildcard.Survey');
                                     this.state('MR:Wildcard.Branding', 'MR:Edit:Wildcard.Branding');
                                     this.state('MR:Wildcard.Links', 'MR:Edit:Wildcard.Links');
+                                    this.state('MR:Wildcard.Sharing', 'MR:Edit:Wildcard.Sharing');
                                     this.state(
                                         'MR:Wildcard.Advertising',
                                         'MR:Edit:Wildcard.Advertising'

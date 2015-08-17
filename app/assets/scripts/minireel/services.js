@@ -2006,6 +2006,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return card.links || {};
                         }
                     },
+                    shareLinks: function(card) {
+                        return {
+                            facebook: (card.shareLinks && card.shareLinks.facebook) || null
+                        };
+                    },
                     params: copy({})
                 };
 
@@ -2939,6 +2944,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         campaign: copy(),
                         collateral: copy(),
                         links: copy(),
+                        shareLinks: function(card) {
+                            return {
+                                facebook: (card.shareLinks && card.shareLinks.facebook) || null
+                            };
+                        },
                         params: function(card) {
                             var params = copy({}).apply(this, arguments);
 
