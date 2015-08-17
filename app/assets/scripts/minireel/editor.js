@@ -1704,19 +1704,10 @@ VideoCardController           , c6embed) {
             var EditorCtrl = $scope.EditorCtrl,
                 minireel = EditorCtrl.model;
 
-            Object.defineProperties(this, {
-                type: {
-                    get: function() {
-                        return this.model.type;
-                    },
-                    set: function(value) {
-                        MiniReelService.setCardType(this.model, value);
-                    }
-                }
-            });
+            this.type = 'videoBallot';
 
             this.edit = function() {
-                var card = this.model,
+                var card = MiniReelService.setCardType(this.model, this.type),
                     insertionIndex = this.insertionIndex;
 
                 return c6State.goTo('MR:EditCard', [card], { insertAt: this.insertionIndex }, true)
