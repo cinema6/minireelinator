@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.19.0.rc1]*
+  * [FEATURE]: Activated Instagram card creation in the wizard
+
 ## v1.18.0 (August 19, 2015)
 * *[v1.18.0.rc1]*
   * [FIX]: Fix for an issue where the new cards are inserted at the wrong index
