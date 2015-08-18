@@ -682,14 +682,14 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             var CampaignCtrl = $scope.CampaignCtrl,
                 campaign = CampaignCtrl.model;
 
-            this.getThumbs = function(card) {
+            this.getThumb = function(card) {
                 if(!card) { return null; }
-                if(card.thumb) { return { small: card.thumb }; }
-                if(card.data.thumbUrl) { return { small: card.data.thumbUrl }; }
+                if(card.thumb) { return card.thumb; }
+                if(card.data.thumbUrl) { return card.data.thumbUrl; }
                 var data = card.data;
                 var service = data.service || card.type;
                 var id = data.videoid || data.imageid || data.id;
-                return ThumbnailService.getThumbsFor(service, id);
+                return ThumbnailService.getThumbsFor(service, id).small;
             };
 
             this.remove = function(card) {
@@ -871,7 +871,11 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 },
                 validInstagramModel: {
                     get: function() {
-                        return !!WildcardCtrl.model.data.id;
+                        if(WildcardCtrl.model.data && WildcardCtrl.model.data.id) {
+                            return true;
+                        } else {
+                            return false;
+                        }
                     }
                 },
                 validDate: {

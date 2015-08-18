@@ -147,6 +147,12 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     expect(WildcardCtrl.model.campaign.countUrls).toEqual(['http://countpixel.com/pixel']);
                     expect(WildcardCtrl.model.campaign.clickUrls).toEqual(['http://clickpixel.com/pixel']);
                 });
+
+                it('should set hideTemplate for Instagram cards', function() {
+                    WildcardState.cModel.type = 'instagram';
+                    WildcardCtrl.initWithModel(WildcardState.cModel);
+                    expect(WildcardCtrl.hideTemplate).toBe(true);
+                });
             });
 
             describe('campaignData', function() {
@@ -225,6 +231,18 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                 });
             });
 
+            describe('validInstagramModel', function() {
+                it('should be true if an id exists on the model', function() {
+                    WildcardCtrl.model.data.id = 'abc123';
+                    expect(WildcardCtrl.validInstagramModel).toBe(true);
+                });
+
+                it('should be false if an id doesn\'t exist on the model', function() {
+                    WildcardCtrl.model.data.id = null;
+                    expect(WildcardCtrl.validInstagramModel).toBe(false);
+                });
+            });
+
             describe('canSave', function() {
 
                 describe('for an article card', function() {
@@ -243,6 +261,26 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     it('should return false if there is not a valid article model', function() {
                         WildcardCtrl.model = {
                             type: 'article'
+                        };
+                        expect(WildcardCtrl.canSave).toBe(false);
+                    });
+                });
+
+                describe('for an instagram card', function() {
+                    it('should return true if there is a valid instagram model', function() {
+                        WildcardCtrl.model = {
+                            data: {
+                                id: 'abc123'
+                            },
+                            type: 'instagram'
+                        };
+                        expect(WildcardCtrl.canSave).toBe(true);
+                    });
+
+                    it('should return false if there is not a valid instagram model', function() {
+                        WildcardCtrl.model = {
+                            title: 'Instagram Card',
+                            type: 'instagram'
                         };
                         expect(WildcardCtrl.canSave).toBe(false);
                     });
@@ -451,6 +489,25 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                                 name: 'Thumbnail Content',
                                 sref: 'MR:Wildcard.Thumbs',
                                 required: false
+                            }
+                        ]);
+                    });
+
+                    it('should return tabs for an instagram card', function() {
+                        var result = WildcardCtrl._private.tabsForCardType('instagram');
+                        expect(result).toEqual([
+                            {
+                                name: 'Instagram Content',
+                                required: true,
+                                sref: 'MR:Wildcard.Instagram'
+                            },
+                            {
+                                name: 'Branding',
+                                sref: 'MR:Wildcard.Branding'
+                            },
+                            {
+                                name: 'Links',
+                                sref: 'MR:Wildcard.Links'
                             }
                         ]);
                     });
