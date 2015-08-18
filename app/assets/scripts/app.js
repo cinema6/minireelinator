@@ -161,11 +161,19 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 //var self = this;
 
                 function clean(model) {
+                    var advertiser = model.advertiser,
+                        customer = model.customer;
+
                     delete model.id;
                     delete model.created;
                     delete model.org;
                     delete model.email;
                     delete model.permissions;
+
+                    if (advertiser && customer) {
+                        model.advertiser = advertiser.id;
+                        model.customer = customer.id;
+                    }
 
                     return model;
                 }
