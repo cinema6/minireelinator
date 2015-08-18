@@ -55,7 +55,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     // TODO: query by type also
                     return paginatedDbList('selfieCampaign', {
                         sort: 'lastUpdated,-1',
-                        org: SelfieState.cModel.org.id
+                        org: SelfieState.cModel.org.id,
+                        application: 'selfie'
                     }, this.limit, this.page).ensureResolution();
                 };
             }]);

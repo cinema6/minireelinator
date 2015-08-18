@@ -64,7 +64,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.model = function() {
                     return paginatedDbList('campaign', {
                         sort: 'lastUpdated,-1',
-                        org: PortalState.cModel.org.id
+                        org: PortalState.cModel.org.id,
+                        application: 'studio'
                     }, this.limit, this.page).ensureResolution();
                 };
             }]);
