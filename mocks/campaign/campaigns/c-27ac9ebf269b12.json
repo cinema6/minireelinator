@@ -1,5 +1,6 @@
 {
     "adtechId": "87654323",
+    "application": "selfie",
     "name": "My New Product",
     "brand": "Diageo",
     "categories": ["music"],

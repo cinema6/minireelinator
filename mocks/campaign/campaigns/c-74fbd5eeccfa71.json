@@ -1,4 +1,5 @@
 {
+    "application": "studio",
     "adtechId": "12345678",
     "name": "The Bar (1)",
     "categories": ["food"],
