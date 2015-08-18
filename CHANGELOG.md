@@ -1,10 +1,21 @@
 # MiniReelinator
 
+## v1.17.1 (August 18, 2015)
+* *[v1.17.1.rc1]*
+  * [FIX]: Fix for an issue where the new cards are inserted at the wrong index
+  * [FIX]: Fix for an issue where advertiser and customer data were saved
+    to User accounts
+  * [FEATURE]: (Selfie) Add Campaign Dashboard
+  * [FIX]: Only show Selfie Campaigns in Selfie App and Studio Campaigns in
+    Studio App
+* *[/v1.17.1.rc1]*
+
 ## v1.17.0 (August 12, 2015)
 * *[v1.17.0.rc3]*
   * [FEATURE]: Added the ability to add a title when creating Instagram cards
   * [FIX]: Fix for an issue where the where wrong card type was created in
     the MiniReel Editor
+* *[/v1.17.0.rc3]*
 
 * *[v1.17.0.rc2]*
   * [FIX]: Fix for an issue preventing the splash image for MiniReels containing
