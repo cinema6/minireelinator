@@ -1,6 +1,7 @@
 # MiniReelinator
 
 * *[v1.19.0.rc1]*
+  * [FEATURE]: Added the ability to create Instagram sponsored cards
   * [FIX]: Change how Instagram cards are saved to be more consistent with
     the format in which other cards are saved.
   * [FEATURE]: Activated Instagram card creation in the wizard
