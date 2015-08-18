@@ -34,7 +34,7 @@ define(['app','angular'], function(appModule, angular) {
                 $link.trigger('click');
 
                 expect($link.offset).toHaveBeenCalled();
-                expect($link.animate).toHaveBeenCalledWith({ scrollTop: 300 - 80 + 'px'});
+                expect($link.animate).toHaveBeenCalledWith({ scrollTop: 300 + 'px'});
             });
         });
     });

@@ -24,14 +24,6 @@ function( angular ) {
                             }
                         });
                     });
-
-                    scope.$watch(function() {
-                        return $element.val();
-                    }, function(value) {
-                        if (value) {
-                            $element.addClass('form__fillCheck--filled');
-                        }
-                    });
                 }
             };
         }])
@@ -101,7 +93,7 @@ function( angular ) {
                     $element.click(function(e) {
                         e.preventDefault();
 
-                        var distance = $(attrs.href).offset().top - 80;
+                        var distance = $(attrs.href).offset().top;
 
                         $('html, body').animate({ scrollTop: distance + 'px' });
                     });
@@ -119,12 +111,6 @@ function( angular ) {
                         angular.element(input).trigger('click');
                     });
                 }
-            };
-        }])
-
-        .filter('numberify', [function() {
-            return function(number) {
-                return number && number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
             };
         }])
 

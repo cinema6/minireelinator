@@ -36,7 +36,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
 
         .config(['VPAIDServiceProvider', function(VPAIDServiceProvider) {
             VPAIDServiceProvider.swfUrl(
-                '//lib.cinema6.com/c6ui/v3.1.0-0-g58b71cd/videos/swf/player.swf'
+                '//lib.cinema6.com/c6ui/v3.7.3-0-g68ed6ac/videos/swf/player.swf'
             );
         }])
 
@@ -71,6 +71,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                             this.state('MR:EditCard.Video');
                             this.state('MR:EditCard.Ballot');
                             this.state('MR:EditCard.Image');
+                            this.state('MR:EditCard.Instagram');
                         });
                     });
                 });

@@ -1,5 +1,43 @@
 # MiniReelinator
 
+## v1.17.0 (August 12, 2015)
+* *[v1.17.0.rc3]*
+  * [FEATURE]: Added the ability to add a title when creating Instagram cards
+  * [FIX]: Fix for an issue where the where wrong card type was created in
+    the MiniReel Editor
+
+* *[v1.17.0.rc2]*
+  * [FIX]: Fix for an issue preventing the splash image for MiniReels containing
+    Instagram cards from being generated correctly
+  * [FIX]: (Selfie) Add advertiser and customer IDs to campaigns
+* *[/v1.17.0.rc2]*
+
+* *[v1.17.0.rc1]*
+  * [FEATURE]: Added support for creating Instagram cards
+  * [FEATURE]: (Selfie) Add Campaign Creation UI
+* *[/v1.17.0.rc1]*
+
+## v1.16.2 (August 12, 2015)
+* *[v1.16.2.rc1]*
+  * [FIX]: Fix for an issue that caused the pagination controls in the
+    campaign manager not to work
+  * [FIX]: Fix for an issue that caused requests for all
+    MiniReels/Campaigns to be made when opening a single
+    MiniReel/Campaign
+  * [FIX]: Fix for an issue that caused multiple campaign delete
+    requests to be sent to the server if the user clicked "delete" again
+    while the first deletion was happening
+* *[/v1.16.2.rc1]*
+
+## v1.16.1 (August 7, 2015)
+* *[v1.16.1.rc2]*
+  * [FIX]: Configure the VPAID player to use the most current c6ui swf
+* *[/v1.16.0.rc2]*
+
+* *[v1.16.1.rc1]*
+  * Update c6ui to v3.7.3
+* *[/v1.16.0.rc1]*
+
 ## v1.16.0 (July 31, 2015)
 * *[v1.16.0.rc2]*
   * Update c6embed to v2.35.4

@@ -8,7 +8,7 @@
                 $httpBackend,
                 CollateralServiceProvider,
                 CollateralService,
-                VideoThumbnailService,
+                ThumbnailService,
                 FileService;
 
             beforeEach(function() {
@@ -21,7 +21,7 @@
                     FileService = $injector.get('FileService');
                     $q = $injector.get('$q');
                     $httpBackend = $injector.get('$httpBackend');
-                    VideoThumbnailService = $injector.get('VideoThumbnailService');
+                    ThumbnailService = $injector.get('ThumbnailService');
 
                     CollateralService = $injector.get('CollateralService');
                 });
@@ -29,6 +29,47 @@
 
             it('should exist', function() {
                 expect(CollateralService).toEqual(jasmine.any(Object));
+            });
+
+            describe('generating a collage of a minireel containing instagram cards', function() {
+                beforeEach(function() {
+                    spyOn(ThumbnailService, 'getThumbsFor').and.returnValue({
+                        ensureFulfillment: function() {
+                            return $q.when({
+                                small: 'small.jpg',
+                                large: 'large.jpg'
+                            });
+                        }
+                    });
+                });
+
+                it('should work with instagram cards', function() {
+                    var minireel = {
+                        id: 'e-ef657e8ea90c84',
+                        data: {
+                            splash: {
+                                ratio: '16-9'
+                            },
+                            deck: [{
+                                type: 'instagram',
+                                data: {
+                                    id: 'abc123',
+                                    thumbs: {
+                                        small: 'small.jpg',
+                                        large: 'large.jpg'
+                                    }
+                                }
+                            }]
+                        }
+                    };
+                    CollateralService.generateCollage({
+                        minireel: minireel,
+                        name: 'splash',
+                        width: 600,
+                        allRatios: true
+                    });
+                    expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('instagram', 'abc123');
+                });
             });
 
             describe('methods', function() {
@@ -96,8 +137,8 @@
                             'abc123': new Thumb(minireel.data.deck[3])
                         };
 
-                        spyOn(VideoThumbnailService, 'getThumbsFor').and.callFake(function(service, videoid) {
-                            return thumbs[videoid] || new Thumb();
+                        spyOn(ThumbnailService, 'getThumbsFor').and.callFake(function(service, id) {
+                            return thumbs[id] || new Thumb();
                         });
 
                         $httpBackend.expectPOST('/api/collateral/splash', {

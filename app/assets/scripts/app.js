@@ -766,8 +766,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 function undecorateCampaign(campaign) {
                     return extend(campaign, {
                         created: undefined,
-                        advertiserId: undefined,
-                        customerId: undefined,
+                        // advertiserId: undefined,
+                        // customerId: undefined,
                         cards: campaign.cards.map(makeCreativeWrapper)
                     });
                 }
@@ -802,7 +802,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
 
                 this.find = function(type, id) {
-                    return $http.get(url('campaign/' + id))
+                    return $http.get(url('campaign/' + id), { cache: true })
                         .then(pick('data'))
                         .then(this.decorateCampaign)
                         .then(putInArray);

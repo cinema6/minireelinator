@@ -17,7 +17,7 @@ function() {
                     return VideoService.urlFromData(service, id) || val;
                 },
                 set: function(value) {
-                    var info = VideoService.dataFromUrl(value) || {
+                    var info = VideoService.dataFromText(value) || {
                         service: null,
                         id: null
                     };

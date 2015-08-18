@@ -108,27 +108,8 @@
 
             describe('properties', function() {
                 describe('type', function() {
-                    describe('getting', function() {
-                        it('should be whatever the model\'s type is', function() {
-                            expect(NewCardCtrl.type).toBe(model.type);
-
-                            MiniReelService.setCardType(model, 'video');
-                            expect(NewCardCtrl.type).toBe(model.type);
-                        });
-                    });
-
-                    describe('setting', function() {
-                        beforeEach(function() {
-                            spyOn(MiniReelService, 'setCardType').and.callThrough();
-                        });
-
-                        it('should set the card type', function() {
-                            NewCardCtrl.type = 'text';
-                            expect(MiniReelService.setCardType).toHaveBeenCalledWith(model, 'text');
-
-                            NewCardCtrl.type = 'wildcard';
-                            expect(MiniReelService.setCardType).toHaveBeenCalledWith(model, 'wildcard');
-                        });
+                    it('should default to videoBallot', function() {
+                        expect(NewCardCtrl.type).toBe('videoBallot');
                     });
                 });
             });
@@ -144,13 +125,19 @@
                         success = jasmine.createSpy('success()');
                         failure = jasmine.createSpy('failure()');
 
+                        spyOn(MiniReelService, 'setCardType').and.callThrough();
                         spyOn(c6State, 'goTo').and.returnValue(goToDeferred.promise);
 
                         NewCardCtrl.insertionIndex = 3;
+                        NewCardCtrl.type = 'text';
 
                         $scope.$apply(function() {
                             NewCardCtrl.edit().then(success, failure);
                         });
+                    });
+
+                    it('should set the card type', function() {
+                        expect(MiniReelService.setCardType).toHaveBeenCalledWith(model, 'text');
                     });
 
                     it('should goTo the card editing state', function() {

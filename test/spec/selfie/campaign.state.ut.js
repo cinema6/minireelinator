@@ -11,7 +11,7 @@ define(['app'], function(appModule) {
                 c6State,
                 cinema6,
                 MiniReelService,
-                LogoService;
+                SelfieLogoService;
 
             var card,
                 categories,
@@ -27,7 +27,7 @@ define(['app'], function(appModule) {
                     c6State = $injector.get('c6State');
                     cinema6 = $injector.get('cinema6');
                     MiniReelService = $injector.get('MiniReelService');
-                    LogoService = $injector.get('LogoService');
+                    SelfieLogoService = $injector.get('SelfieLogoService');
 
                     card = cinema6.db.create('card', MiniReelService.createCard('video'));
                     categories = [
@@ -102,13 +102,13 @@ define(['app'], function(appModule) {
                         failure = jasmine.createSpy('failure()');
 
                     spyOn(cinema6.db, 'findAll').and.returnValue($q.when(categories));
-                    spyOn(LogoService, 'getLogos').and.returnValue($q.when(logos));
+                    spyOn(SelfieLogoService, 'getLogos').and.returnValue($q.when(logos));
 
                     $rootScope.$apply(function() {
                         campaignState.model().then(success, failure);
                     });
                     expect(cinema6.db.findAll).toHaveBeenCalledWith('category');
-                    expect(LogoService.getLogos).toHaveBeenCalledWith({
+                    expect(SelfieLogoService.getLogos).toHaveBeenCalledWith({
                         sort: 'lastUpdated,-1',
                         org: 'o-123',
                         limit: 50,
@@ -117,47 +117,6 @@ define(['app'], function(appModule) {
                     expect(success).toHaveBeenCalledWith({
                         categories: categories,
                         logos: logos
-                    });
-                });
-            });
-
-            describe('updateCard()', function() {
-                var saveDeferred,
-                    success, failure;
-
-                beforeEach(function() {
-                    saveDeferred = $q.defer();
-
-                    success = jasmine.createSpy('success()');
-                    failure = jasmine.createSpy('failure()');
-
-                    campaignState.cParent.card = card;
-                    campaignState.card = card.pojoify();
-                    spyOn(campaignState.cParent.card, '_update').and.returnValue(campaignState.cParent.card);
-                    spyOn(campaignState.cParent.card, 'save').and.returnValue(saveDeferred.promise);
-
-                    $rootScope.$apply(function() {
-                        campaignState.updateCard().then(success, failure);
-                    });
-                });
-
-                it('should update the card with the data from the model', function() {
-                    expect(campaignState.cParent.card._update).toHaveBeenCalledWith(campaignState.card);
-                });
-
-                it('should save the card', function() {
-                    expect(campaignState.cParent.card.save).toHaveBeenCalled();
-                });
-
-                describe('when the save completes', function() {
-                    beforeEach(function() {
-                        $rootScope.$apply(function() {
-                            saveDeferred.resolve(campaignState.cParent.card);
-                        });
-                    });
-
-                    it('should resolve to the card', function() {
-                        expect(success).toHaveBeenCalledWith(campaignState.cParent.card);
                     });
                 });
             });

@@ -65,13 +65,27 @@
                         });
                     });
 
-                    describe('dataFromUrl(url)', function() {
+                    describe('dataFromText(url)', function() {
                         function fromUrl() {
-                            return VideoService.dataFromUrl.apply(VideoService, arguments);
+                            return VideoService.dataFromText.apply(VideoService, arguments);
                         }
 
                         it('should parse a youtube url', function() {
                             expect(fromUrl('https://www.youtube.com/watch?v=jFJUz1DO20Q&list=PLFD1E8B0910A73A12&index=11')).toEqual({
+                                service: 'youtube',
+                                id: 'jFJUz1DO20Q'
+                            });
+                        });
+
+                        it('should parse a youtu.be url', function() {
+                            expect(fromUrl('https://www.youtube.com/watch?v=jFJUz1DO20Q&list=PLFD1E8B0910A73A12&index=11')).toEqual({
+                                service: 'youtube',
+                                id: 'jFJUz1DO20Q'
+                            });
+                        });
+
+                        it('should parse a youtube embed code', function() {
+                            expect(fromUrl('<iframe width="560" height="315" src="https://www.youtube.com/embed/jFJUz1DO20Q?list=PLFD1E8B0910A73A12" frameborder="0" allowfullscreen></iframe>')).toEqual({
                                 service: 'youtube',
                                 id: 'jFJUz1DO20Q'
                             });
@@ -84,8 +98,29 @@
                             });
                         });
 
+                        it('should parse a vimeo embed code', function() {
+                            expect(fromUrl('<iframe src="https://player.vimeo.com/video/89495751?color=ffffff" width="500" height="192" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="https://vimeo.com/89495751">molt.</a> from <a href="https://vimeo.com/user13462546">▲Bipolar Spider▲</a> on <a href="https://vimeo.com">Vimeo</a>.</p>')).toEqual({
+                                service: 'vimeo',
+                                id: '89495751'
+                            });
+                        });
+
                         it('should parse a dailymotion url', function() {
                             expect(fromUrl('http://www.dailymotion.com/video/x120oui_vincent-and-the-doctor-vincent-van-gogh-visits-the-museum-doctor-who-museum-scene_shortfilms?search_algo=2')).toEqual({
+                                service: 'dailymotion',
+                                id: 'x120oui'
+                            });
+                        });
+
+                        it('should parse a dai.ly url', function() {
+                            expect(fromUrl('http://dai.ly/x120oui')).toEqual({
+                                service: 'dailymotion',
+                                id: 'x120oui'
+                            });
+                        });
+
+                        it('should parse a dailymotion embed code', function() {
+                            expect(fromUrl('<iframe frameborder="0" width="480" height="270" src="//www.dailymotion.com/embed/video/x120oui" allowfullscreen></iframe><br /><a href="http://www.dailymotion.com/video/x120oui_vincent-van-gogh-visits-the-museum-doctor-who-museum-scene-vincent-and-the-doctor_shortfilms" target="_blank">Vincent van Gogh visits the Museum (Doctor Who...</a> <i>by <a href="http://www.dailymotion.com/PuertoLibre" target="_blank">PuertoLibre</a></i>')).toEqual({
                                 service: 'dailymotion',
                                 id: 'x120oui'
                             });

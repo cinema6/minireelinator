@@ -25,6 +25,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             $controller,
             $timeout,
             $q,
+            c6State,
             c6Debounce,
             cinema6,
             MiniReelService,
@@ -37,8 +38,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             logos,
             advertiser;
 
-        var updateCardDeferred,
-            saveCampaignDeferred;
+        var saveCardDeferred,
+            saveCampaignDeferred,
+            debouncedFns;
 
         function compileCtrl(cState, model) {
             $scope = $rootScope.$new();
@@ -48,8 +50,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     cState: {
                         card: cState.card,
                         campaign: cState.campaign,
-                        advertiser: cState.advertiser,
-                        updateCard: cState.updateCard
+                        advertiser: cState.advertiser
                     }
                 });
                 SelfieCampaignCtrl.initWithModel(model);
@@ -57,7 +58,23 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         }
 
         beforeEach(function() {
+            debouncedFns = [];
+
             module(appModule.name);
+            module(function($provide) {
+                $provide.decorator('c6AsyncQueue', function($delegate) {
+                    return jasmine.createSpy('c6AsyncQueue()').and.callFake(function() {
+                        var queue = $delegate.apply(this, arguments);
+                        var debounce = queue.debounce;
+                        spyOn(queue, 'debounce').and.callFake(function() {
+                            var fn = debounce.apply(queue, arguments);
+                            debouncedFns.push(fn);
+                            return fn;
+                        });
+                        return queue;
+                    });
+                });
+            });
 
             module(c6uilib.name, function($provide) {
                 $provide.decorator('c6Debounce', function($delegate) {
@@ -75,6 +92,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 $controller = $injector.get('$controller');
                 $q = $injector.get('$q');
                 $timeout = $injector.get('$timeout');
+                c6State = $injector.get('c6State');
                 c6Debounce = $injector.get('c6Debounce');
                 cinema6 = $injector.get('cinema6');
                 MiniReelService = $injector.get('MiniReelService');
@@ -122,13 +140,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             categories = [];
             logos = [];
 
-            updateCardDeferred = $q.defer();
-
             cState = {
                 campaign: campaign,
                 card: card,
-                advertiser: advertiser,
-                updateCard: jasmine.createSpy('cState.updateCard()').and.returnValue(updateCardDeferred.promise)
+                advertiser: advertiser
             };
 
             compileCtrl(cState, {
@@ -215,8 +230,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 describe('when the card has not been saved yet, and has no ID', function() {
                     beforeEach(function() {
                         saveCampaignDeferred = $q.defer();
+                        saveCardDeferred = $q.defer();
 
                         spyOn(SelfieCampaignCtrl.campaign, 'save').and.returnValue(saveCampaignDeferred.promise);
+                        spyOn(SelfieCampaignCtrl.card, 'save').and.returnValue(saveCardDeferred.promise);
 
                         SelfieCampaignCtrl.save();
                     });
@@ -244,12 +261,16 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             expect(SelfieCampaignCtrl._proxyCampaign).not.toEqual(copy(SelfieCampaignCtrl.campaign));
                         });
 
-                        describe('after the card is updated', function() {
+                        it('should save the card', function() {
+                            expect(SelfieCampaignCtrl.card.save).toHaveBeenCalled();
+                        });
+
+                        describe('after the card is saved', function() {
                             beforeEach(function() {
                                 $scope.$apply(function() {
                                     card.id = 'rc-123';
 
-                                    updateCardDeferred.resolve(card);
+                                    saveCardDeferred.resolve(card);
                                 });
                             });
 
@@ -270,24 +291,26 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         SelfieCampaignCtrl.card.id = 'rc-321';
 
                         saveCampaignDeferred = $q.defer();
+                        saveCardDeferred = $q.defer();
 
                         spyOn(SelfieCampaignCtrl.campaign, 'save').and.returnValue(saveCampaignDeferred.promise);
+                        spyOn(SelfieCampaignCtrl.card, 'save').and.returnValue(saveCardDeferred.promise);
 
                         SelfieCampaignCtrl.save();
                     });
 
-                    it('should update the card first', function() {
-                        expect(cState.updateCard).toHaveBeenCalled();
+                    it('should save the card first', function() {
+                        expect(SelfieCampaignCtrl.card.save).toHaveBeenCalled();
                     });
 
                     it('should not save the campaign yet', function() {
                         expect(SelfieCampaignCtrl.campaign.save).not.toHaveBeenCalled();
                     });
 
-                    describe('after card is updated', function() {
+                    describe('after card is saved', function() {
                         beforeEach(function() {
                             $scope.$apply(function() {
-                                updateCardDeferred.resolve(card);
+                                saveCardDeferred.resolve(card);
                             });
                         });
 
@@ -313,6 +336,34 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             });
                         });
                     });
+                });
+            });
+
+            describe('submit()', function() {
+                var saveDeferred;
+
+                beforeEach(function() {
+                    saveDeferred = $q.defer();
+
+                    spyOn(c6State, 'goTo');
+                    spyOn(SelfieCampaignCtrl, 'save').and.returnValue(saveDeferred.promise);
+                });
+
+                it('should be wrapped in a c6AsyncQueue', function() {
+                    expect(debouncedFns).toContain(SelfieCampaignCtrl.submit);
+                });
+
+                it('should save the campaign/card and return to dashboard on success', function() {
+                    SelfieCampaignCtrl.submit();
+
+                    expect(SelfieCampaignCtrl.save).toHaveBeenCalled();
+                    expect(c6State.goTo).not.toHaveBeenCalled();
+
+                    $scope.$apply(function() {
+                        saveDeferred.resolve();
+                    });
+
+                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
                 });
             });
 

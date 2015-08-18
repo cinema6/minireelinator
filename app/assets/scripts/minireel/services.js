@@ -380,9 +380,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 return this;
             };
 
-            this.$get = ['FileService','$http', 'ImageThumbnailService', 'VideoThumbnailService',
+            this.$get = ['FileService','$http', 'ThumbnailService',
                          '$q',
-            function    ( FileService , $http ,  ImageThumbnailService ,  VideoThumbnailService ,
+            function    ( FileService , $http ,  ThumbnailService ,
                           $q ) {
                 function CollateralService() {
                     function CollageResult(response) {
@@ -397,7 +397,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             }, this).join(',');
                         }
                     };
-
 
                     function returnPath(response) {
                         var result;
@@ -473,16 +472,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     return {
                                         large: card.thumb
                                     };
-                                } else if(card.type === 'image') {
-                                    return ImageThumbnailService.getThumbsFor(
-                                        card.data.service,
-                                        card.data.imageid
-                                    ).ensureFulfillment();
                                 } else {
-                                    return VideoThumbnailService.getThumbsFor(
-                                        card.data.service,
-                                        card.data.videoid
-                                    ).ensureFulfillment();
+                                    var data = card.data;
+                                    var service = data.service || card.type;
+                                    var id = data.videoid || data.imageid || data.id;
+
+                                    return ThumbnailService.getThumbsFor(service, id)
+                                        .ensureFulfillment();
                                 }
                             })).then(function map(thumbs) {
                                 return thumbs.map(function(thumb) {
@@ -915,12 +911,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
         }])
 
-        .service('VideoThumbnailService', ['$q','$cacheFactory','$http','VideoService',
-                                           'OpenGraphService',
-        function                          ( $q , $cacheFactory , $http , VideoService ,
-                                            OpenGraphService ) {
+        .service('ThumbnailService', ['$q', '$http', '$cacheFactory', 'VideoService',
+                                      'OpenGraphService',
+        function                     ( $q ,  $http ,  $cacheFactory ,  VideoService ,
+                                       OpenGraphService ) {
             var _private = {},
-                cache = $cacheFactory('VideoThumbnailService:models');
+                cache = $cacheFactory('ThumbnailService:models');
 
             function ThumbModel(promise) {
                 var self = this;
@@ -939,6 +935,72 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     return self;
                 });
             }
+
+            _private.fetchInstagramThumbs = function(id) {
+                var instagramKey = c6Defines.kInstagramDataApiKey;
+                var request = 'https://api.instagram.com/v1/media/shortcode/' + id +
+                              '?client_id=' + instagramKey + '&callback=JSON_CALLBACK';
+                return $http.jsonp(request, {cache: true})
+                    .then(function(json) {
+                        if(json.status === 200 && json.data.meta.code === 200) {
+                            return {
+                                small: json.data.data.images.thumbnail.url,
+                                /* jshint camelcase:false */
+                                large: json.data.data.images.low_resolution.url
+                                /* jshint camelcase:true */
+                            };
+                        }
+                        return $q.reject();
+                    });
+            };
+
+            _private.fetchFlickrThumbs = function(imageid) {
+                var flickrKey = c6Defines.kFlickrDataApiKey;
+                var request = 'https://www.flickr.com/services/rest/?' +
+                    'method=flickr.photos.getSizes&' +
+                    'format=json&api_key=' + flickrKey + '&' +
+                    'photo_id=' + imageid + '&' +
+                    'jsoncallback=JSON_CALLBACK';
+                return $http.jsonp(request, {cache: true})
+                    .then(function(json) {
+                        if(json.data.sizes) {
+                            var sizes = json.data.sizes.size;
+                            if(sizes.length > 1) {
+                                var thumbs = {
+                                    small: sizes[0].source,
+                                    large: sizes[1].source
+                                };
+                                for(var i=0;i<sizes.length;i++) {
+                                    if(sizes[i].label === 'Thumbnail') {
+                                        thumbs = {
+                                            small: sizes[i].source,
+                                            large: sizes[i+1].source
+                                        };
+                                        break;
+                                    }
+                                }
+                                return thumbs;
+                            }
+                        }
+                        return $q.reject();
+                    });
+            };
+
+            _private.fetchGettyThumbs = function(imageid) {
+                return {
+                    small: '//embed-cdn.gettyimages.com/xt/' + imageid +
+                        '.jpg?v=1&g=fs1|0|DV|33|651&s=1',
+                    large: '//embed-cdn.gettyimages.com/xt/' + imageid +
+                        '.jpg?v=1&g=fs1|0|DV|33|651&s=1'
+                };
+            };
+
+            _private.fetchWebThumbs = function(imageid) {
+                return {
+                    small: imageid,
+                    large: imageid
+                };
+            };
 
             _private.fetchYouTubeThumbs = function(videoid) {
                 return $q.when({
@@ -990,118 +1052,30 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     });
             };
 
-            this.getThumbsFor = function(service, videoid) {
-                var key = service + ':' + videoid;
-
+            this.getThumbsFor = function(service, id) {
+                var key = service + ':' + id;
                 return cache.get(key) ||
                     cache.put(key, (function() {
                         switch (service) {
+                        case 'instagram':
+                            return new ThumbModel(_private.fetchInstagramThumbs(id));
+                        case 'flickr':
+                            return new ThumbModel(_private.fetchFlickrThumbs(id));
+                        case 'getty':
+                            return new ThumbModel($q.when(_private.fetchGettyThumbs(id)));
+                        case 'web':
+                            return new ThumbModel($q.when(_private.fetchWebThumbs(id)));
                         case 'youtube':
-                            return new ThumbModel(_private.fetchYouTubeThumbs(videoid));
+                            return new ThumbModel(_private.fetchYouTubeThumbs(id));
                         case 'vimeo':
-                            return new ThumbModel(_private.fetchVimeoThumbs(videoid));
+                            return new ThumbModel(_private.fetchVimeoThumbs(id));
                         case 'dailymotion':
-                            return new ThumbModel(_private.fetchDailyMotionThumbs(videoid));
+                            return new ThumbModel(_private.fetchDailyMotionThumbs(id));
                         case 'yahoo':
                         case 'aol':
                         case 'vine':
                         case 'rumble':
-                            return new ThumbModel(_private.fetchOpenGraphThumbs(service, videoid));
-                        default:
-                            return new ThumbModel($q.when({
-                                small: null,
-                                large: null
-                            }));
-                        }
-                    }()));
-            };
-
-            if (window.c6.kHasKarma) { this._private = _private; }
-        }])
-
-        .service('ImageThumbnailService', ['$q', '$cacheFactory', '$http',
-        function                          ( $q ,  $cacheFactory,   $http ) {
-            var _private = {},
-                cache = $cacheFactory('ImageThumbnailService:models');
-
-            function ThumbModel(promise) {
-                var self = this;
-
-                this.small = null;
-                this.large = null;
-
-                this.ensureFulfillment = function() {
-                    return promise;
-                };
-
-                promise = promise.then(function setThumbs(thumbs) {
-                    self.small = thumbs.small;
-                    self.large = thumbs.large;
-
-                    return self;
-                });
-            }
-
-            _private.fetchFlickrThumbs = function(imageid) {
-                var flickrKey = c6Defines.kFlickrDataApiKey;
-                var request = 'https://www.flickr.com/services/rest/?' +
-                    'method=flickr.photos.getSizes&' +
-                    'format=json&api_key=' + flickrKey + '&' +
-                    'photo_id=' + imageid + '&' +
-                    'jsoncallback=JSON_CALLBACK';
-                return $http.jsonp(request, {cache: true})
-                    .then(function(json) {
-                        if(json.data.sizes) {
-                            var sizes = json.data.sizes.size;
-                            if(sizes.length > 1) {
-                                var thumbs = {
-                                    small: sizes[0].source,
-                                    large: sizes[1].source
-                                };
-                                for(var i=0;i<sizes.length;i++) {
-                                    if(sizes[i].label === 'Thumbnail') {
-                                        thumbs = {
-                                            small: sizes[i].source,
-                                            large: sizes[i+1].source
-                                        };
-                                        break;
-                                    }
-                                }
-                                return thumbs;
-                            }
-                        }
-                        return $q.reject();
-                    });
-            };
-
-            _private.fetchGettyThumbs = function(imageid) {
-                return {
-                    small: '//embed-cdn.gettyimages.com/xt/' + imageid +
-                        '.jpg?v=1&g=fs1|0|DV|33|651&s=1',
-                    large: '//embed-cdn.gettyimages.com/xt/' + imageid +
-                        '.jpg?v=1&g=fs1|0|DV|33|651&s=1'
-                };
-            };
-
-            _private.fetchWebThumbs = function(imageid) {
-                return {
-                    small: imageid,
-                    large: imageid
-                };
-            };
-
-            this.getThumbsFor = function(service, imageid) {
-                var key = service + ':' + imageid;
-
-                return cache.get(key) ||
-                    cache.put(key, (function() {
-                        switch (service) {
-                        case 'flickr':
-                            return new ThumbModel(_private.fetchFlickrThumbs(imageid));
-                        case 'getty':
-                            return new ThumbModel($q.when(_private.fetchGettyThumbs(imageid)));
-                        case 'web':
-                            return new ThumbModel($q.when(_private.fetchWebThumbs(imageid)));
+                            return new ThumbModel(_private.fetchOpenGraphThumbs(service, id));
                         default:
                             return new ThumbModel($q.when({
                                 small: null,
@@ -1188,45 +1162,70 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 }
             };
 
-            this.dataFromUrl = function(url) {
-                var parsed = c6UrlParser(url),
-                    service = (parsed.hostname.match(
-                        /youtube|dailymotion|vimeo|aol|yahoo|rumble|vine/
+            this.dataFromText = function(text) {
+                var parsedUrl = c6UrlParser(text),
+                    urlService = (parsedUrl.hostname.match(
+                        /youtube|youtu\.be|dailymotion|dai\.ly|vimeo|aol|yahoo|rumble|vine/
                     ) || [])[0],
-                    id,
+                    embedService = (text.match(
+                        /youtube|youtu\.be|dailymotion|dai\.ly|vimeo/
+                    ) || [])[0],
+                    embed = /<iframe|<script/.test(text) ? 'embed' : null,
+                    type = !!urlService ? 'url' : embed,
+                    parsed = type === 'url' ? parsedUrl : text,
+                    id, service,
                     idFetchers = {
-                        youtube: function(url) {
-                            return params(url.search).v;
-                        },
-                        vimeo: function(url) {
-                            return url.pathname.replace(/^\//, '');
-                        },
-                        dailymotion: function(url) {
-                            var pathname = url.pathname;
+                        url: {
+                            youtube: function(url) {
+                                return params(url.search).v;
+                            },
+                            'youtu.be': function(url) {
+                                return url.pathname.replace(/^\//, '');
+                            },
+                            vimeo: function(url) {
+                                return url.pathname.replace(/^\//, '');
+                            },
+                            dailymotion: function(url) {
+                                var pathname = url.pathname;
 
-                            if (pathname.search(/^\/video\//) < 0) {
-                                return null;
+                                if (pathname.search(/^\/video\//) < 0) {
+                                    return null;
+                                }
+
+                                return (pathname
+                                    .replace(/\/video\//, '')
+                                    .match(/[a-zA-Z0-9]+/) || [])[0];
+                            },
+                            'dai.ly': function(url) {
+                                return url.pathname.replace(/^\//, '');
+                            },
+                            aol: function(url) {
+                                return (url.pathname.match(/[^\/]+$/) || [null])[0];
+                            },
+                            yahoo: function(url) {
+                                return (url.pathname
+                                    .match(/[^/]+(?=(\.html))/) || [null])[0];
+                            },
+                            rumble: function(url) {
+                                return (url.pathname
+                                    .match(/[^/]+(?=(\.html))/) || [null])[0];
+                            },
+                            vine: function(url) {
+                                return (url.pathname
+                                    .replace(/\/v\//, '')
+                                    .match(/[a-zA-Z\d]+/) || [null])[0];
                             }
-
-                            return (pathname
-                                .replace(/\/video\//, '')
-                                .match(/[a-zA-Z0-9]+/) || [])[0];
                         },
-                        aol: function(url) {
-                            return (url.pathname.match(/[^\/]+$/) || [null])[0];
-                        },
-                        yahoo: function(url) {
-                            return (url.pathname
-                                .match(/[^/]+(?=(\.html))/) || [null])[0];
-                        },
-                        rumble: function(url) {
-                            return (url.pathname
-                                .match(/[^/]+(?=(\.html))/) || [null])[0];
-                        },
-                        vine: function(url) {
-                            return (url.pathname
-                                .replace(/\/v\//, '')
-                                .match(/[a-zA-Z\d]+/) || [null])[0];
+                        embed: {
+                            youtube: function(embed) {
+                                return (embed.match(/embed\/([\-_a-zA-Z0-9]+)/) || [])[1];
+                            },
+                            vimeo: function(embed) {
+                                return (embed.match(/video\/([0-9]+)/) || [])[1];
+                            },
+                            dailymotion: function(embed) {
+                                return (embed.match(/video\/([a-zA-Z0-9]+)/) || [])[1];
+                            }
                         }
                     };
 
@@ -1243,9 +1242,20 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         }, {});
                 }
 
-                if (!service) { return null; }
+                service = urlService || embedService;
 
-                id = idFetchers[service](parsed);
+                if (!service || !type) { return null; }
+
+                id = idFetchers[type][service](parsed);
+
+                switch (service) {
+                case 'youtu.be':
+                    service = 'youtube';
+                    break;
+                case 'dai.ly':
+                    service = 'dailymotion';
+                    break;
+                }
 
                 if (!id) { return null; }
 
@@ -1560,6 +1570,132 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             if (window.c6.kHasKarma) { this._private = _private; }
         }])
 
+        .service('InstagramService', ['$http', '$q',
+        function                     ( $http ,  $q ) {
+            var _private = { };
+
+            _private.apiRequest = function(endpoint) {
+                var instagramKey = c6Defines.kInstagramDataApiKey;
+                var request = 'https://api.instagram.com/v1' + endpoint +
+                    '?client_id=' + instagramKey + '&callback=JSON_CALLBACK';
+                return $http.jsonp(request, {cache: true})
+                    .then(function(json) {
+                        if(json.status === 200 && json.data.meta.code === 200) {
+                            return json.data.data;
+                        } else {
+                            return $q.reject('api error');
+                        }
+                    })
+                    .catch(function(reason) {
+                        if(reason === 'api error') {
+                            return $q.reject(
+                                'There was a problem retrieving the media from Instagram.'
+                            );
+                        } else {
+                            return $q.reject('There was a problem contacting Instagram.');
+                        }
+                    });
+            };
+
+            _private.apiMedia = function(id) {
+                return _private.apiRequest('/media/shortcode/' + id);
+            };
+
+            _private.apiUser = function(id) {
+                return _private.apiRequest('/users/' + id);
+            };
+
+            this.dataFromUrl = function(url) {
+                var id = (url.match(/(www\.|:\/\/)instagram.com\/p\/[\dA-z_-]+/) || [''])[0]
+                             .replace(/(www\.|:\/\/)instagram.com\/p\//, '') || null;
+                return {
+                    id: id
+                };
+            };
+
+            this.getCardInfo = function(id) {
+                var cardInfo = { };
+                return _private.apiMedia(id)
+                    .then(function(data) {
+                        cardInfo.type = data.type;
+                        switch(cardInfo.type) {
+                        case 'image':
+                            /* jshint camelcase:false */
+                            cardInfo.src = data.images.standard_resolution.url;
+                            /* jshint camelcase:true */
+                            break;
+                        case 'video':
+                            /* jshint camelcase:false */
+                            cardInfo.src = data.videos.standard_resolution.url;
+                            /* jshint camelcase:true */
+                            break;
+                        }
+                        cardInfo.href = data.link;
+                        cardInfo.likes = data.likes.count;
+                        /* jshint camelcase:false */
+                        cardInfo.date = data.created_time;
+                        /* jshint camelcase:true */
+                        cardInfo.caption = data.caption.text;
+                        cardInfo.comments = data.comments.count;
+                        cardInfo.user = {
+                            /* jshint camelcase:false */
+                            fullname: data.user.full_name,
+                            picture: data.user.profile_picture,
+                            /* jshint camelcase:true */
+                            username: data.user.username,
+                            follow: 'https://instagram.com/accounts/login/?next=%2Fp%2F' + id +
+                                '%2F&source=follow',
+                            href: 'https://instagram.com/' + data.user.username
+                        };
+                        return _private.apiUser(data.user.id);
+                    })
+                    .then(function(data) {
+                        cardInfo.user.bio = data.bio;
+                        cardInfo.user.website = data.website;
+                        cardInfo.user.posts = data.counts.media;
+                        /* jshint camelcase:false */
+                        cardInfo.user.followers = data.counts.followed_by;
+                        /* jshint camelcase:true */
+                        cardInfo.user.following = data.counts.follows;
+                        return cardInfo;
+                    });
+            };
+
+            this.getEmbedInfo = function(id) {
+                if(!id) { return $q.when({ }); }
+
+                return _private.apiMedia(id)
+                    .then(function(data) {
+                        var result = {
+                            type: data.type
+                        };
+                        switch(result.type) {
+                        case 'image':
+                            /* jshint camelcase:false */
+                            result.src = data.images.standard_resolution.url;
+                            /* jshint camelcase:true */
+                            break;
+                        case 'video':
+                            /* jshint camelcase:false */
+                            result.src = data.videos.standard_resolution.url;
+                            /* jshint camelcase:true */
+                            break;
+                        }
+                        return result;
+                    });
+            };
+
+            this.urlFromData = function(id) {
+                if(!id) {
+                    return null;
+                }
+
+                return 'https://instagram.com/p/' + id;
+            };
+
+            if (window.c6.kHasKarma) { this._private = _private; }
+        }])
+
         .service('VideoSearchService', ['$http','c6UrlMaker','$q','VideoDataService',
         function                       ( $http , c6UrlMaker , $q , VideoDataService ) {
             function VideoSearchResult(videos, _meta) {
@@ -1682,13 +1818,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
         }])
 
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
-                                     'SettingsService','VideoService','ImageThumbnailService',
-                                     'VideoThumbnailService', 'ImageService', 'OpenGraphService',
-                                     'CollateralUploadService',
+                                     'SettingsService','VideoService', 'ThumbnailService',
+                                     'ImageService', 'OpenGraphService',
+                                     'CollateralUploadService', 'InstagramService',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
-                                      SettingsService , VideoService , ImageThumbnailService,
-                                      VideoThumbnailService,   ImageService,   OpenGraphService,
-                                      CollateralUploadService ) {
+                                      SettingsService , VideoService ,  ThumbnailService,
+                                      ImageService,   OpenGraphService,
+                                      CollateralUploadService ,  InstagramService ) {
             var ngCopy = angular.copy;
 
             var self = this,
@@ -1743,6 +1879,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             function makeCard(rawData, base) {
                 var template, dataTemplates, articleDataTemplate,
                     imageDataTemplate, videoDataTemplate,
+                    instagramDataTemplate,
                     dataTemplate,
                     card = base || {
                         data: {}
@@ -1795,6 +1932,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     return 'Article';
                                 case 'image':
                                     return 'Image';
+                                case 'instagram':
+                                    return 'Instagram';
                                 case 'video':
                                     return 'Video';
                                 case 'videoBallot':
@@ -1896,6 +2035,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     }
                 };
 
+                // instagramDataTemplate: this is the base template for all
+                // instagram cards.
+                instagramDataTemplate = {
+                    id: copy(null)
+                };
+
                 // videoDataTemplate: this is the base template for all
                 // video cards.
                 videoDataTemplate = {
@@ -1961,6 +2106,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 dataTemplates = {
                     article: articleDataTemplate,
                     image: imageDataTemplate,
+                    instagram: instagramDataTemplate,
                     video: videoDataTemplate,
                     videoBallot: extend(ngCopy(videoDataTemplate), {
                         ballot: function(data, key, card) {
@@ -2407,9 +2553,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     };
                 }
 
-                function thumbsValue() {
+                function videoThumbsValue() {
                     return function(data) {
-                        return VideoThumbnailService.getThumbsFor(data.service, data.videoid)
+                        return ThumbnailService.getThumbsFor(data.service, data.videoid)
                             .ensureFulfillment()
                             .then(function(thumbs) {
                                 return {
@@ -2431,7 +2577,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     };
                                 });
                         } else {
-                            return ImageThumbnailService.getThumbsFor(data.service, data.imageid)
+                            return ThumbnailService.getThumbsFor(data.service, data.imageid)
                                 .ensureFulfillment()
                                 .then(function(thumbs) {
                                     return {
@@ -2471,6 +2617,19 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     };
                 }
 
+                function instagramThumbsValue() {
+                    return function(data) {
+                        return ThumbnailService.getThumbsFor('instagram', data.id)
+                            .ensureFulfillment()
+                            .then(function(thumbs) {
+                                return {
+                                    small: thumbs.small,
+                                    large: thumbs.large
+                                };
+                            });
+                    };
+                }
+
                 function embedValue() {
                     return function(data, key) {
                         return ImageService.getEmbedInfo(data.service, data.imageid)
@@ -2499,6 +2658,15 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     };
                 }
 
+                function instagramCardInfo() {
+                    return function(data, key, card) {
+                        return InstagramService.getCardInfo(card.data.id)
+                            .then(function(info) {
+                                return info[key];
+                            });
+                    };
+                }
+
                 dataTemplates = {
                     article: {
                         src: copy(null),
@@ -2522,6 +2690,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         },
                         thumbs: imageThumbsValue()
                     },
+                    instagram: {
+                        type: instagramCardInfo(),
+                        id: copy(null),
+                        src: instagramCardInfo(),
+                        thumbs: instagramThumbsValue()
+                    },
                     youtube: {
                         hideSource: hideSourceValue(),
                         autoplay: copy(null),
@@ -2534,7 +2708,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         end: trimmer(),
                         videoid: copy(null),
                         href: hrefValue(),
-                        thumbs: thumbsValue(),
+                        thumbs: videoThumbsValue(),
                         moat: copy(null)
                     },
                     vimeo: {
@@ -2546,7 +2720,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         end: trimmer(),
                         videoid: copy(null),
                         href: hrefValue(),
-                        thumbs: thumbsValue(),
+                        thumbs: videoThumbsValue(),
                         moat: copy(null)
                     },
                     dailymotion: {
@@ -2560,7 +2734,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         related: value(0),
                         videoid: copy(null),
                         href: hrefValue(),
-                        thumbs: thumbsValue(),
+                        thumbs: videoThumbsValue(),
                         moat: copy(null)
                     },
                     rumble: {
@@ -2577,7 +2751,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return VideoService.embedIdFromVideoId('rumble', data.videoid);
                         },
                         href: hrefValue(),
-                        thumbs: thumbsValue(),
+                        thumbs: videoThumbsValue(),
                         moat: copy(null)
                     },
                     adUnit: {
@@ -2608,7 +2782,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return VideoService.embedCodeFromData(data.service, data.videoid);
                         },
                         href: hrefValue(),
-                        thumbs: thumbsValue(),
+                        thumbs: videoThumbsValue(),
                         moat: copy(null)
                     },
                     vine: {
@@ -2619,7 +2793,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         service: copy(),
                         videoid: copy(null),
                         href: hrefValue(),
-                        thumbs: thumbsValue(),
+                        thumbs: videoThumbsValue(),
                         moat: copy(null)
                     },
                     ad: {
@@ -2669,6 +2843,28 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         collateral: copy(),
                         links: copy(),
                         params: copy()
+                    },
+                    instagram: {
+                        id: copy(),
+                        type: value('instagram'),
+                        title: copy(null),
+                        source: function(card) {
+                            return camelSource(card.type);
+                        },
+                        modules: value([]),
+                        placementId: copy(null),
+                        templateUrl: copy(null),
+                        sponsored: copy(false),
+                        campaign: copy(),
+                        collateral: copy(),
+                        links: copy(),
+                        params: copy(),
+                        href: instagramCardInfo(),
+                        likes: instagramCardInfo(),
+                        date: instagramCardInfo(),
+                        caption: instagramCardInfo(),
+                        comments: instagramCardInfo(),
+                        user: instagramCardInfo()
                     },
                     text: {
                         id: copy(),

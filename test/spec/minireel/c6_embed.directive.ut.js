@@ -27,9 +27,10 @@ function( editorModule    , c6embed , $      ) {
             $scope.active = null;
             $scope.profile = null;
             $scope.card = null;
+            $scope.standalone = null;
 
             $scope.$apply(function() {
-                $c6Embed = $compile('<c6-embed experience="experience" active="active" profile="profile" card="card"></c6-embed>')($scope);
+                $c6Embed = $compile('<c6-embed experience="experience" active="active" profile="profile" card="card" standalone="standalone"></c6-embed>')($scope);
             });
 
             $('body').append($c6Embed);
@@ -99,6 +100,7 @@ function( editorModule    , c6embed , $      ) {
                             embed: $c6Embed[0],
                             splashDelegate: {},
                             profile: $scope.profile,
+                            standalone: $scope.standalone,
                             config: {
                                 container: 'studio',
                                 exp: experience.id,

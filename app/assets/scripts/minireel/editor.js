@@ -43,9 +43,9 @@ VideoCardController           , c6embed) {
         }])
 
         .service('EditorService', ['MiniReelService','$q','c6AsyncQueue','VoteService',
-                                   'CollateralService','SettingsService','VideoThumbnailService',
+                                   'CollateralService','SettingsService','ThumbnailService',
         function                  ( MiniReelService , $q , c6AsyncQueue , VoteService ,
-                                    CollateralService , SettingsService , VideoThumbnailService ) {
+                                    CollateralService , SettingsService , ThumbnailService ) {
             var _private = {},
                 queue = c6AsyncQueue(),
                 beforeSyncFns = {};
@@ -172,7 +172,7 @@ VideoCardController           , c6embed) {
                         var service = card.data.service,
                             videoid = card.data.videoid;
 
-                        return VideoThumbnailService.getThumbsFor(service, videoid)
+                        return ThumbnailService.getThumbsFor(service, videoid)
                             .ensureFulfillment()
                             .then(function(thumb) {
                                 card.thumb = thumb.large;
@@ -1219,7 +1219,7 @@ VideoCardController           , c6embed) {
                     };
 
                     this.afterModel = function(model) {
-                        var types = ['image', 'video', 'videoBallot', 'text'];
+                        var types = ['image', 'video', 'videoBallot', 'text', 'instagram'];
 
                         if (!model || types.indexOf(model.type) < 0 || model.sponsored) {
                             c6State.goTo('MR:Editor', null, {}, true);
@@ -1278,6 +1278,23 @@ VideoCardController           , c6embed) {
 
                         if (card.type !== 'image') {
                             MiniReelService.setCardType(card, 'image');
+                        }
+
+                        return card;
+                    };
+                }])
+
+                .state('MR:EditCard.Instagram', ['MiniReelService',
+                function                    ( MiniReelService ) {
+                    this.controller = 'EditCardInstagramController';
+                    this.controllerAs = 'EditCardInstagramCtrl';
+                    this.templateUrl = 'views/minireel/editor/edit_card/instagram.html';
+
+                    this.model = function() {
+                        var card = this.cParent.cModel;
+
+                        if (card.type !== 'instagram') {
+                            MiniReelService.setCardType(card, 'instagram');
                         }
 
                         return card;
@@ -1352,6 +1369,8 @@ VideoCardController           , c6embed) {
                             return ['service', 'imageid'].map(function(prop) {
                                 return !!model.data[prop];
                             }).indexOf(false) < 0;
+                        case 'instagram':
+                            return !!model.data.id;
                         case 'video':
                         case 'videoBallot':
                             return true;
@@ -1364,7 +1383,7 @@ VideoCardController           , c6embed) {
                     get: function() {
                         var state = c6State.current;
 
-                        if (/^(MR:EditCard.(Copy|Ballot))$/.test(state)) {
+                        if (/^(MR:EditCard.(Copy|Ballot|Instagram))$/.test(state)) {
                             return copy({
                                 text: EditorCtrl.model.status === 'active' ? 'I\'m Done!' : 'Save',
                                 action: function() { self.save(); },
@@ -1430,6 +1449,11 @@ VideoCardController           , c6embed) {
                         name: 'Image Content',
                         sref: 'MR:EditCard.Image',
                         required: true
+                    },
+                    instagramTab = {
+                        name: 'Instagram Content',
+                        sref: 'MR:EditCard.Instagram',
+                        required: true
                     };
 
                 this.model = model;
@@ -1437,6 +1461,8 @@ VideoCardController           , c6embed) {
                     switch (model.type) {
                     case 'image':
                         return [imageTab, copyTab];
+                    case 'instagram':
+                        return [instagramTab];
                     case 'video':
                     case 'videoBallot':
                     case 'text':
@@ -1600,6 +1626,49 @@ VideoCardController           , c6embed) {
             if (window.c6.kHasKarma) { this._private = _private; }
         }])
 
+        .controller('EditCardInstagramController', ['$scope', 'InstagramService', '$sce',
+        function                                   ( $scope ,  InstagramService ,  $sce ) {
+            var EditCardCtrl = $scope.EditCardCtrl;
+            var self = this;
+            var _private = { };
+            this.inputUrl = null;
+            this.data = { };
+
+            _private.updateEmbedInfo = function(id) {
+                self.data = { };
+                InstagramService.getEmbedInfo(id)
+                    .then(function(embedInfo) {
+                        Object.keys(embedInfo).forEach(function(key) {
+                            self.data[key] = embedInfo[key];
+                        });
+                    })
+                    .catch(function(reason) {
+                        EditCardCtrl.error = reason;
+                    });
+            };
+
+            $scope.trustSrc = function(src) {
+                return $sce.trustAsResourceUrl(src);
+            };
+
+            $scope.$watch(function() {
+                return self.inputUrl;
+            }, function(inputUrl) {
+                if(inputUrl !== null) {
+                    EditCardCtrl.error = null;
+                    var data = InstagramService.dataFromUrl(inputUrl);
+                    self.model.data.id = data.id;
+                    _private.updateEmbedInfo(data.id);
+                } else {
+                    self.inputUrl = InstagramService.urlFromData(
+                        self.model.data.id
+                    );
+                }
+            });
+
+            if (window.c6.kHasKarma) { this._private = _private; }
+        }])
+
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('MR:Editor.NewCard', ['MiniReelService', 'c6State', '$q',
@@ -1635,19 +1704,10 @@ VideoCardController           , c6embed) {
             var EditorCtrl = $scope.EditorCtrl,
                 minireel = EditorCtrl.model;
 
-            Object.defineProperties(this, {
-                type: {
-                    get: function() {
-                        return this.model.type;
-                    },
-                    set: function(value) {
-                        MiniReelService.setCardType(this.model, value);
-                    }
-                }
-            });
+            this.type = 'videoBallot';
 
             this.edit = function() {
-                var card = this.model,
+                var card = MiniReelService.setCardType(this.model, this.type),
                     insertionIndex = this.insertionIndex;
 
                 return c6State.goTo('MR:EditCard', [card], { insertAt: this.insertionIndex }, true)
@@ -1662,13 +1722,14 @@ VideoCardController           , c6embed) {
 
         .directive('c6Embed', ['$timeout',
         function              ( $timeout ) {
-            var props = '[experience, active, profile, card]';
+            var props = '[experience, active, profile, card, standalone]';
 
             function link(scope, $element) {
                 var settings = null;
 
                 scope.$watchCollection(props, function(vals, oldVals) {
                     var experience = vals[0], active = vals[1], profile = vals[2], card = vals[3];
+                    var standalone = vals[4];
                     var oldExperience = oldVals[0], oldProfile = oldVals[2];
                     var needsEmbedding = !!(
                         (experience !== oldExperience) ||
@@ -1680,6 +1741,7 @@ VideoCardController           , c6embed) {
                         settings = experience ? {
                             experience: experience,
                             profile: profile,
+                            standalone: standalone,
                             allowFullscreen: (profile || {}).device !== 'phone',
                             embed: $element[0],
                             splashDelegate: {},
@@ -1725,7 +1787,7 @@ VideoCardController           , c6embed) {
 
             return {
                 restrict: 'E',
-                scope: { experience: '=', card: '=', profile: '=', active: '=' },
+                scope: { experience: '=', card: '=', profile: '=', active: '=', standalone: '=' },
                 link: link
             };
         }])

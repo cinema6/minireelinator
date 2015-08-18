@@ -99,14 +99,16 @@ function( angular , c6State  , PaginatedListState                    ,
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:NewCampaign', ['cinema6','c6State','MiniReelService',
             function                                    ( cinema6 , c6State , MiniReelService ) {
-                var SelfieState = c6State.get('Selfie');
+                var SelfieState = c6State.get('Selfie'),
+                    user = SelfieState.cModel,
+                    advertiser = user.advertiser,
+                    customer = user.customer;
 
                 this.model = function() {
-                    // var user = SelfieState.cModel;
-
                     return cinema6.db.create('selfieCampaign', {
+                            advertiserId: advertiser.id,
+                            customerId: customer.id,
                             name: null,
-                            // accountName: user.org.name,
                             categories: [],
                             cards: [],
                             pricing: {},
@@ -116,13 +118,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.afterModel = function() {
-                    var user = SelfieState.cModel,
-                        advertiser = user.advertiser,
-                        card = cinema6.db.create('card', MiniReelService.createCard('video'));
-
-                    // TODO: what values should MOAT use?
-                    // How does thumbnail work??
-                    // Where does 'note' go??
+                    var card = cinema6.db.create('card', MiniReelService.createCard('video'));
 
                     this.card = deepExtend(card, {
                             id: undefined,
@@ -177,8 +173,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Campaign', ['cinema6','LogoService','c6State','$q',
-            function                                 ( cinema6 , LogoService , c6State , $q ) {
+            c6StateProvider.state('Selfie:Campaign', ['cinema6','SelfieLogoService',
+                                                      'c6State','$q',
+            function                                 ( cinema6 , SelfieLogoService ,
+                                                       c6State , $q ) {
                 var SelfieState = c6State.get('Selfie');
 
                 this.templateUrl = 'views/selfie/campaigns/campaign.html';
@@ -197,7 +195,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.model = function() {
                     return $q.all({
                         categories: cinema6.db.findAll('category'),
-                        logos: LogoService.getLogos({
+                        logos: SelfieLogoService.getLogos({
                             sort: 'lastUpdated,-1',
                             org: SelfieState.cModel.org.id,
                             limit: 50,
@@ -205,26 +203,22 @@ function( angular , c6State  , PaginatedListState                    ,
                         })
                     });
                 };
-
-                this.updateCard = function() {
-                    return this.cParent.card._update(this.card).save();
-                };
             }]);
         }])
 
         .controller('SelfieCampaignController', ['$scope','$log','c6State','cState',
-                                                 'c6Debounce',
+                                                 'c6Debounce','c6AsyncQueue',
         function                                ( $scope , $log , c6State , cState ,
-                                                  c6Debounce ) {
-
-            var SelfieCampaignCtrl = this;
+                                                  c6Debounce , c6AsyncQueue ) {
+            var SelfieCampaignCtrl = this,
+                queue = c6AsyncQueue();
 
             function saveCampaign() {
                 return SelfieCampaignCtrl.campaign.save();
             }
 
-            function updateCard() {
-                return cState.updateCard();
+            function saveCard() {
+                return SelfieCampaignCtrl.card.save();
             }
 
             function addCardToCampaign(card) {
@@ -237,18 +231,17 @@ function( angular , c6State  , PaginatedListState                    ,
 
             function addCampaignToCard(campaign) {
                 SelfieCampaignCtrl.card.campaignId = campaign.id;
-                // SelfieCampaignCtrl.card.campaign.campaignId = campaign.id;
 
                 return campaign;
             }
 
-            // function returnToDashboard() {
-            //     return c6State.goTo('Selfie:CampaignDashboard');
-            // }
-
             function updateProxy() {
                 SelfieCampaignCtrl._proxyCard = copy(SelfieCampaignCtrl.card);
                 SelfieCampaignCtrl._proxyCampaign = copy(SelfieCampaignCtrl.campaign);
+            }
+
+            function returnToDashboard() {
+                return c6State.goTo('Selfie:CampaignDashboard');
             }
 
             function handleError(err) {
@@ -304,22 +297,24 @@ function( angular , c6State  , PaginatedListState                    ,
                 $scope.$broadcast('SelfieCampaignWillSave');
 
                 if (SelfieCampaignCtrl.card.id) {
-                    return updateCard()
+                    return saveCard()
                         .then(saveCampaign)
                         .then(updateProxy)
-                        // .then(returnToDashboard)
                         .catch(handleError);
                 } else {
                     return saveCampaign()
                         .then(addCampaignToCard)
-                        .then(updateCard)
+                        .then(saveCard)
                         .then(addCardToCampaign)
                         .then(saveCampaign)
                         .then(updateProxy)
-                        // .then(returnToDashboard)
                         .catch(handleError);
                 }
             };
+
+            this.submit = queue.debounce(function() {
+                return this.save().then(returnToDashboard);
+            }, this);
 
             // debounce the auto-save
             this.autoSave = c6Debounce(SelfieCampaignCtrl.save, 5000);
@@ -373,9 +368,7 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignSponsorController', ['$scope','CollateralService',
-                                                        'FileService',
-        function                                       ( $scope , CollateralService ,
-                                                         FileService ) {
+        function                                       ( $scope , CollateralService ) {
             var SelfieCampaignSponsorCtrl = this,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 advertiser = SelfieCampaignCtrl.advertiser,
@@ -426,9 +419,9 @@ function( angular , c6State  , PaginatedListState                    ,
                         };
                     }));
 
-            // if the type matches that means we have a uploaded via URL of File
+            // if the logo 'type' matches that means we have a uploaded via URL of File
             // if the src matches that means we could be using an Account Default
-            // or a log from another campaign
+            // or a logo from another campaign
             // if we have NO logo on the card but we DO have an Account Default
             // then "none" must have been selected
             this.logoType = this.logoOptions.filter(function(option) {
@@ -454,8 +447,12 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.updateLinks = function() {
                 SelfieCampaignSponsorCtrl.links.forEach(function(link) {
+                    if (link.href && link.href === card.links[link.name]) { return; }
+
                     if (link.href) {
                         card.links[link.name] = link.href;
+                    } else if (card.links[link.name]) {
+                        delete card.links[link.name];
                     }
                 });
             };
@@ -507,39 +504,35 @@ function( angular , c6State  , PaginatedListState                    ,
             // as soon as someone selects a local file we upload it
             $scope.$watch(function() {
                 return SelfieCampaignSponsorCtrl.logoFile;
-            }, function(newFile, oldFile) {
+            }, function(newFile) {
                 if (!newFile) { return; }
 
                 CollateralService.uploadFromFile(newFile)
                     .then(handleUpload);
-
-                if (!oldFile) { return; }
-
-                FileService.open(oldFile).close();
             });
 
             $scope.$on('SelfieCampaignWillSave', this.updateLinks);
         }])
 
         .controller('SelfieCampaignVideoController', ['$injector','$scope','SelfieVideoService',
-                                                      'c6Debounce','VideoThumbnailService',
+                                                      'c6Debounce','ThumbnailService',
                                                       'FileService','CollateralService',
         function                                     ( $injector , $scope , SelfieVideoService ,
-                                                       c6Debounce , VideoThumbnailService ,
+                                                       c6Debounce , ThumbnailService ,
                                                        FileService , CollateralService ) {
             var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 SelfieCampaignVideoCtrl = this,
                 card = SelfieCampaignCtrl.card,
                 service = card.data.service,
                 id = card.data.videoid,
-                hasExistingVideo = service && id;
+                hasExistingVideo = !!service && !!id;
 
             function setDefaultThumbs(service, id) {
                 if (service === 'adUnit') {
                     SelfieCampaignVideoCtrl.useDefaultThumb = false;
                     SelfieCampaignVideoCtrl.defaultThumb = null;
                 } else {
-                    VideoThumbnailService.getThumbsFor(service, id)
+                    ThumbnailService.getThumbsFor(service, id)
                         .ensureFulfillment()
                         .then(function(thumbs) {
                             SelfieCampaignVideoCtrl.defaultThumb = thumbs.large;
@@ -585,7 +578,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     return;
                 }
 
-                SelfieVideoService.dataFromUrl(url)
+                SelfieVideoService.dataFromText(url)
                     .then(function(data) {
                         service = data.service;
                         id = data.id;
@@ -621,7 +614,7 @@ function( angular , c6State  , PaginatedListState                    ,
             // on success we're assuming a choice of "custom"
             $scope.$watch(function() {
                 return SelfieCampaignVideoCtrl.customThumbFile;
-            }, function(newFile, oldFile) {
+            }, function(newFile) {
                 if (!newFile) { return; }
 
                 CollateralService.uploadFromFile(newFile)
@@ -630,10 +623,6 @@ function( angular , c6State  , PaginatedListState                    ,
                         SelfieCampaignVideoCtrl.useDefaultThumb = false;
                         card.thumb = '/' + path;
                     });
-
-                if (!oldFile) { return; }
-
-                FileService.open(oldFile).close();
             });
 
             // watch the video link/embed/vast tag input
@@ -807,45 +796,33 @@ function( angular , c6State  , PaginatedListState                    ,
                                                          c6BrowserInfo , c6Debounce , $log ) {
             var SelfieCampaignPreviewCtrl = this,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
-                card = SelfieCampaignCtrl.card;
+                card = SelfieCampaignCtrl.card,
+                experience;
 
-            var experience = cinema6.db.create('experience', {
-                type: 'minireel',
-                appUri: 'mini-reel-player',
-                org: 'o-123',
-                data: {
-                    title: null,
-                    mode: 'light',
-                    autoplay: false,
-                    autoadvance: false,
-                    sponsored: false,
-                    splash: {
-                        source: 'generated',
-                        ratio: '6-5',
-                        theme: 'horizontal-stack'
-                    },
-                    adConfig: {
-                        video: {
-                            firstPlacement: -1,
-                            frequency: 0
-                        },
-                        display: {}
-                    },
-                    collateral: {
-                        splash: null
-                    },
-                    campaign: {},
-                    params: {},
-                    links: {},
-                    deck: []
-                }
-            });
-            experience.id = 'e-123';
+            MiniReelService.create()
+                .then(function(minireel) {
+                    experience = deepExtend(minireel, {
+                        id: 'e-123',
+                        data: {
+                            mode: 'light',
+                            autoplay: false,
+                            autoadvance: false,
+                            adConfig: {
+                                video: {
+                                    firstPlacement: -1,
+                                    frequency: 0
+                                },
+                                display: {}
+                            }
+                        }
+                    });
+                });
 
             this.device = 'desktop';
             this.card = null;
             this.profile = copy(c6BrowserInfo.profile);
             this.active = true;
+            this.standalone = true;
 
             // debounce for 2 seconds then convert card for player,
             // then make a new copy of the default preview experience,
@@ -854,8 +831,6 @@ function( angular , c6State  , PaginatedListState                    ,
             // on the Ctrl for binding in the template
             this.loadPreview = c6Debounce(function() {
                 $log.info('loading preview');
-
-                // var card = SelfieCampaignCtrl.card;
 
                 MiniReelService.convertCardForPlayer(card)
                     .then(function(cardForPlayer) {
