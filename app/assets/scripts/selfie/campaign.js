@@ -62,15 +62,53 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignsController', ['$injector','$scope','$q','cState',
-                                                  'ConfirmDialogService',
+                                                  'ConfirmDialogService','ThumbnailService',
         function                                 ( $injector , $scope , $q , cState ,
-                                                   ConfirmDialogService ) {
+                                                   ConfirmDialogService , ThumbnailService ) {
             var SelfieCampaignsCtrl = this;
 
             $injector.invoke(PaginatedListController, this, {
                 cState: cState,
                 $scope: $scope
             });
+
+            function thumbFor(card) {
+                var service = card.data.service,
+                    id = card.data.videoid,
+                    thumb = card.thumb;
+
+                if (thumb) { return $q.when(thumb); }
+
+                if (service && id) {
+                    return ThumbnailService.getThumbsFor(service, id)
+                        .ensureFulfillment()
+                        .then(function(thumbs) {
+                            return thumbs.large;
+                        });
+                }
+
+                return $q.when(null);
+            }
+
+            this.initWithModel = function(campaigns) {
+                var metaData = {};
+
+                this.metaData = metaData;
+                this.model = campaigns;
+
+                campaigns.items.value.forEach(function(campaign) {
+                    var card = campaign.cards && campaign.cards[0] && campaign.cards[0].item;
+
+                    metaData[campaign.id] = {
+                        sponsor: card.params.sponsor,
+                        logo: card.collateral.logo
+                    };
+
+                    thumbFor(card).then(function(thumb) {
+                        metaData[campaign.id].thumb = thumb;
+                    });
+                });
+            };
 
             this.remove = function(campaigns) {
                 ConfirmDialogService.display({
