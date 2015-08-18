@@ -141,6 +141,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     return $q.all({
                         campaign: cinema6.db.create('campaign', {
                             name: null,
+                            application: 'studio',
                             categories: [],
                             minViewTime: -1,
                             advertiser: null,

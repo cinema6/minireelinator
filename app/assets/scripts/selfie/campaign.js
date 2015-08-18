@@ -152,7 +152,8 @@ function( angular , c6State  , PaginatedListState                    ,
                             cards: [],
                             pricing: {},
                             geoTargeting: [],
-                            status: 'new'
+                            status: 'draft',
+                            application: 'selfie'
                         });
                 };
 
@@ -312,7 +313,7 @@ function( angular , c6State  , PaginatedListState                    ,
             Object.defineProperties(this, {
                 shouldSave: {
                     get: function() {
-                        return  this.campaign.status === 'new' &&
+                        return  (!this.campaign.status || this.campaign.status === 'draft') &&
                             (!equals(this.card, this._proxyCard) ||
                             !equals(this.campaign, this._proxyCampaign));
                     }
