@@ -1,11 +1,11 @@
 <main c6-alias="SelfieCampaignsCtrl.model.items.value as campaigns">
 
 <nav class="mainNav__group">
-    
+
 </nav>
 
 <div class="pageHolder">
-    
+
 
     <header class="pageHeader__group">
         <div class="mainHeader__group">
@@ -51,32 +51,32 @@
 
 
     <ul class="campaigns__list">
-        
-        <li class="campaign__item campaign__item--{{$this.status}} clearfix" 
+
+        <li class="campaign__item campaign__item--{{$this.status}} clearfix"
         ng-repeat="$this in campaigns track by $this.id"
         c6-sref="Selfie:EditCampaign" c6-models="[$this]" c6-params="{}" >
-            
+
             <div class="campaign__column column__status">
                 <span class="campaign__status">{{$this.status}}</span>
                 <span class="campaign__date">{{$this.created | date:'M/d/yyyy'}}</span>
             </div><!--.column__status-->
-            
+
             <div class="campaign__column column__sponsor">
-                <div class="thumbnail__box campaign__thumbnail" title="CAMPAIGN NAME">
+                <div class="thumbnail__box campaign__thumbnail" title="{{$this.name}}">
                     <span class="thumbnail">
-                        <img class="thumbnail__img" src="http://www.lorempixel.com/300/300/" alt="CAMPAIGN NAME">
+                        <img class="thumbnail__img" ng-src="{{SelfieCampaignsCtrl.metaData[$this.id].thumb}}" alt="">
                     </span>
                 </div>
                 <div class="campaign__sponsorInfo">
                     <div class="thumbnail__box campaign__sponsorLogo">
                         <span class="thumbnail">
-                            <img class="thumbnail__img" src="http://www.lorempixel.com/50/50/" alt="SPONSOR NAME">
+                            <img class="thumbnail__img" ng-src="{{SelfieCampaignsCtrl.metaData[$this.id].logo}}" alt="">
                         </span>
                     </div>
-                    <div class="campaign__sponsorName">Walt Disney Animation Studios</div>
+                    <div class="campaign__sponsorName">{{SelfieCampaignsCtrl.metaData[$this.id].sponsor}}</div>
                 </div>
             </div><!--.column__sponsor-->
-            
+
             <div class="campaign__column column__campaignName">
                 <h1 class="campaign__name tk--hdr">
                     {{$this.name}}
@@ -92,7 +92,7 @@
                 </span>
                 <div class="campaign__viewChart">&nbsp;</div>
             </div><!--.column__totalViews-->
-            
+
             <div class="campaign__column column__totalSpending">
                 <span class="campaign__spendTotal">
                     <strong>$</strong> 361,051.39
@@ -102,16 +102,18 @@
                 </span>
                 <div class="campaign__viewChart">&nbsp;</div>
             </div><!--.column__totalSpending-->
-            
+
             <div class="campaign__column column__budget">
                 <div class="campaign__budgetInfo">
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">T<span class="fullText">otal</span>:</span>
-                        <strong>$</strong> 950,000.00
+                        <span ng-if="$this.pricing.budget"><strong>$</strong> {{$this.pricing.budget | number}}</span>
+                        <span ng-if="!$this.pricing.budget">--</span>
                     </span>
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">D<span class="fullText">aily</span>:</span>
-                        <strong>$</strong> 500.00
+                        <span ng-if="$this.pricing.dailyLimit"><strong>$</strong> {{$this.pricing.dailyLimit | number}}</span>
+                        <span ng-if="!$this.pricing.dailyLimit">--</span>
                     </span>
                 </div>
             </div><!--.column__budget-->
@@ -142,7 +144,7 @@
     <footer class="dockedFooter__group">
         <div class="paginator__group clearfix">
 
-            
+
             <div class="paginator__readout" c6-alias="SelfieCampaignsCtrl.model.items.value.meta.items as items">
                 <span ng-show="campaigns.length">Viewing <strong>{{items.start}} &ndash; {{items.end}}</strong> &nbsp;of&nbsp; {{items.total}} Campaigns</span>
                 <span ng-show="!campaigns.length">0 Campaigns</span>
@@ -166,14 +168,14 @@
                 </label>
                 <button ng-click="SelfieCampaignsCtrl.dropDowns.select.toggle()" c6-click-outside="SelfieCampaignsCtrl.dropDowns.select.hide()" class="btn faa fa-caret-down ui__clickDrop">&nbsp;</button>
                 <div ng-show="SelfieCampaignsCtrl.dropDowns.select.shown" class="pager__itemsPerPage ui__clickDropMenu">
-                    <button class="ui__clickDropBtn" type="button" 
-                    title="Select All" 
-                    ng-show="!SelfieCampaignsCtrl.allAreSelected" 
+                    <button class="ui__clickDropBtn" type="button"
+                    title="Select All"
+                    ng-show="!SelfieCampaignsCtrl.allAreSelected"
                     ng-click="SelfieCampaignsCtrl.model.selectAll()">
                         Select All
                     </button>
-                    <button class="ui__clickDropBtn" type="button" 
-                    title="Select None" 
+                    <button class="ui__clickDropBtn" type="button"
+                    title="Select None"
                     ng-show="SelfieCampaignsCtrl.model.getSelected().length > 0"
                     ng-click="SelfieCampaignsCtrl.model.selectNone()">
                         Select None
@@ -181,7 +183,7 @@
                 </div>
             </div>
             <div class="btnGroup__animator">
-                <div class="btnGroup clearfix" 
+                <div class="btnGroup clearfix"
                 ng-show="SelfieCampaignsCtrl.model.getSelected().length > 0">
                     <button class="btn btn--primary" type="button" title="Delete" ng-click="SelfieCampaignsCtrl.remove(SelfieCampaignsCtrl.model.getSelected())">
                         <span class="btn__label">Delete</span>
@@ -199,7 +201,7 @@
                 </article>
             </li>
 
-            
+
         </ul>
     </div>
     <footer class="tableFooter__group">
