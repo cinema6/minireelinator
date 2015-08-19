@@ -63,7 +63,8 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
             it('should be for a list of campaigns', function() {
                 expect(paginatedDbList).toHaveBeenCalledWith('campaign', {
                     sort: 'lastUpdated,-1',
-                    org: 'o-123456'
+                    org: 'o-123456',
+                    application: 'studio'
                 }, campaigns.limit, campaigns.page);
             });
         });

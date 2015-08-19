@@ -64,7 +64,7 @@
                 <div id="new-slide" class="card__container card--createNew" ng-if="$index === deck.length - 1">
                     <h4 class="card__type">&nbsp;</h4>
                     <div class="card__item">
-                        <button ng-click="EditorCtrl.newCard($index, $event)" class="createNew__button">
+                        <button ng-click="EditorCtrl.newCard($index + 1, $event)" class="createNew__button">
                             <span class="ui__add c6studioSprite--alpha"><span class="ir">Add Here</span></span>
                         </button>
                         <h1 class="card__title"><span class="card__titleText">Create A New Slide</span></h1>

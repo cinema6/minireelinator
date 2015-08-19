@@ -1,17 +1,161 @@
 <main c6-alias="SelfieCampaignsCtrl.model.items.value as campaigns">
-<header class="pageHeader container">
-    <div class="pageHeader__titleBar clearfix">
-        <h1 class="pageTitle">Campaigns</h1>
-        <a c6-sref="Selfie:NewCampaign" title="New Campaign" class="btnAction btnAction--primary btnAction--hasIcon" >
-            <!-- <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                 viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
-                <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M9,0C4,0,0,4,0,9c0,5,4,9,9,9s9-4,9-9C18,4,14,0,9,0z M9,16c-3.9,0-7-3.1-7-7
-                    c0-3.9,3.1-7,7-7s7,3.1,7,7C16,12.9,12.9,16,9,16z M10,5H8v3H5v2h3v3h2v-3h3V8h-3V5z"/>
-            </svg> -->
-            <span class="btn__label">New Campaign</span>
-        </a>
-    </div>
-</header>
+
+<nav class="mainNav__group">
+
+</nav>
+
+<div class="pageHolder">
+
+
+    <header class="pageHeader__group">
+        <div class="mainHeader__group">
+            <h1 class="mainHeader__breadcrumbs tk--hdr">
+                Campaigns
+            </h1>
+            <div class="pageHeader__actions">
+                <button c6-sref="Selfie:NewCampaign" title="New Campaign" class="action__btn action__btn--small" type="button">
+                    <i class="fa fa-plus"></i>
+                    New Campaign
+                </button>
+            </div>
+        </div><!--.mainHeader__group-->
+        <div class="sortBar__group">
+            <ul class="sortBar__list clearfix">
+                <li class="sortBar__item column__status">
+                    <button class="sortBar__btn sortBar__btn--asc" type="button">Status</button>
+                </li>
+                <li class="sortBar__item column__sponsor">
+                    <button class="sortBar__btn" type="button">Sponsor</button>
+                </li>
+                <li class="sortBar__item column__campaignName">
+                    <button class="sortBar__btn" type="button">Campaign Name</button>
+                </li>
+                <li class="sortBar__item column__totalViews">
+                    <button class="sortBar__colName" type="button">Total Views</button>
+                </li>
+                <li class="sortBar__item column__totalSpending">
+                    <button class="sortBar__colName" type="button">Total Spending</button>
+                </li>
+                <li class="sortBar__item column__budget">
+                    <button class="sortBar__colName" type="button">Budget</button>
+                </li>
+                <li class="sortBar__item column__summaryTotals">
+                    <button class="sortBar__btn" type="button">Views</button> /
+                    <button class="sortBar__btn" type="button">Spend</button> /
+                    <button class="sortBar__btn" type="button">Budget</button>
+                </li>
+            </ul><!--.sortBar__list-->
+        </div><!--.sortBar__group-->
+    </header><!--.pageHeader__group-->
+
+
+
+    <ul class="campaigns__list">
+
+        <li class="campaign__item campaign__item--{{$this.status}} clearfix"
+        ng-repeat="$this in campaigns track by $this.id"
+        c6-sref="Selfie:EditCampaign" c6-models="[$this]" c6-params="{}" >
+
+            <div class="campaign__column column__status">
+                <span class="campaign__status">{{$this.status}}</span>
+                <span class="campaign__date">{{$this.created | date:'M/d/yyyy'}}</span>
+            </div><!--.column__status-->
+
+            <div class="campaign__column column__sponsor">
+                <div class="thumbnail__box campaign__thumbnail" title="{{$this.name}}">
+                    <span class="thumbnail">
+                        <img class="thumbnail__img" ng-src="{{SelfieCampaignsCtrl.metaData[$this.id].thumb}}" alt="">
+                    </span>
+                </div>
+                <div class="campaign__sponsorInfo">
+                    <div class="thumbnail__box campaign__sponsorLogo">
+                        <span class="thumbnail">
+                            <img class="thumbnail__img" ng-src="{{SelfieCampaignsCtrl.metaData[$this.id].logo}}" alt="">
+                        </span>
+                    </div>
+                    <div class="campaign__sponsorName">{{SelfieCampaignsCtrl.metaData[$this.id].sponsor}}</div>
+                </div>
+            </div><!--.column__sponsor-->
+
+            <div class="campaign__column column__campaignName">
+                <h1 class="campaign__name tk--hdr">
+                    {{$this.name}}
+                </h1>
+            </div><!--.column__campaignName-->
+
+            <div class="campaign__column column__totalViews">
+                <span class="campaign__viewTotal">
+                    <i class="fa fa-play-circle"></i> 1,235,032
+                </span>
+                <span class="campaign__viewDelta">
+                    <i class="fa fa-arrow-circle-up"></i> 4,587
+                </span>
+                <div class="campaign__viewChart">&nbsp;</div>
+            </div><!--.column__totalViews-->
+
+            <div class="campaign__column column__totalSpending">
+                <span class="campaign__spendTotal">
+                    <strong>$</strong> 361,051.39
+                </span>
+                <span class="campaign__spendDelta">
+                    <i class="fa fa-arrow-circle-up"></i> $1,239.25
+                </span>
+                <div class="campaign__viewChart">&nbsp;</div>
+            </div><!--.column__totalSpending-->
+
+            <div class="campaign__column column__budget">
+                <div class="campaign__budgetInfo">
+                    <span class="campaign__budgetNumbers">
+                        <span class="budget__label">T<span class="fullText">otal</span>:</span>
+                        <span ng-if="$this.pricing.budget"><strong>$</strong> {{$this.pricing.budget | number}}</span>
+                        <span ng-if="!$this.pricing.budget">--</span>
+                    </span>
+                    <span class="campaign__budgetNumbers">
+                        <span class="budget__label">D<span class="fullText">aily</span>:</span>
+                        <span ng-if="$this.pricing.dailyLimit"><strong>$</strong> {{$this.pricing.dailyLimit | number}}</span>
+                        <span ng-if="!$this.pricing.dailyLimit">--</span>
+                    </span>
+                </div>
+            </div><!--.column__budget-->
+
+            <div class="campaign__column column__summaryTotals">
+                <div class="campaign__budgetInfo">
+                    <span class="campaign__budgetNumbers">
+                        <span class="budget__label">Views:</span>
+                        <i class="fa fa-play-circle"></i> 1,235,032
+                    </span>
+                    <span class="campaign__budgetNumbers">
+                        <span class="budget__label">Spend:</span>
+                        <strong>$</strong> 361,051.39
+                    </span>
+                    <span class="campaign__budgetNumbers">
+                        <span class="budget__label">Budget:</span>
+                        <strong>$</strong> 950,000.00
+                    </span>
+                </div>
+            </div><!--.column__summaryTotals-->
+
+        </li><!--.campaign__item-->
+
+    </ul><!--.campaigns__list-->
+
+
+
+    <footer class="dockedFooter__group">
+        <div class="paginator__group clearfix">
+
+
+            <div class="paginator__readout" c6-alias="SelfieCampaignsCtrl.model.items.value.meta.items as items">
+                <span ng-show="campaigns.length">Viewing <strong>{{items.start}} &ndash; {{items.end}}</strong> &nbsp;of&nbsp; {{items.total}} Campaigns</span>
+                <span ng-show="!campaigns.length">0 Campaigns</span>
+            </div><!--.paginator__readout-->
+
+
+        </div><!--.paginator__group-->
+    </footer><!--.dockedFooter__group-->
+
+
+
 
 <section class="container">
     <header class="tableHeader__group clearfix">
@@ -24,14 +168,14 @@
                 </label>
                 <button ng-click="SelfieCampaignsCtrl.dropDowns.select.toggle()" c6-click-outside="SelfieCampaignsCtrl.dropDowns.select.hide()" class="btn faa fa-caret-down ui__clickDrop">&nbsp;</button>
                 <div ng-show="SelfieCampaignsCtrl.dropDowns.select.shown" class="pager__itemsPerPage ui__clickDropMenu">
-                    <button class="ui__clickDropBtn" type="button" 
-                    title="Select All" 
-                    ng-show="!SelfieCampaignsCtrl.allAreSelected" 
+                    <button class="ui__clickDropBtn" type="button"
+                    title="Select All"
+                    ng-show="!SelfieCampaignsCtrl.allAreSelected"
                     ng-click="SelfieCampaignsCtrl.model.selectAll()">
                         Select All
                     </button>
-                    <button class="ui__clickDropBtn" type="button" 
-                    title="Select None" 
+                    <button class="ui__clickDropBtn" type="button"
+                    title="Select None"
                     ng-show="SelfieCampaignsCtrl.model.getSelected().length > 0"
                     ng-click="SelfieCampaignsCtrl.model.selectNone()">
                         Select None
@@ -39,7 +183,7 @@
                 </div>
             </div>
             <div class="btnGroup__animator">
-                <div class="btnGroup clearfix" 
+                <div class="btnGroup clearfix"
                 ng-show="SelfieCampaignsCtrl.model.getSelected().length > 0">
                     <button class="btn btn--primary" type="button" title="Delete" ng-click="SelfieCampaignsCtrl.remove(SelfieCampaignsCtrl.model.getSelected())">
                         <span class="btn__label">Delete</span>
@@ -57,30 +201,7 @@
                 </article>
             </li>
 
-            <li class="miniReels__item grid__item" ng-repeat="$this in campaigns track by $this.id">
-                <article class="miniReel__group clearfix">
-                    <div class="miniReel__selector">
-                        <label class="checkbox--inline">
-                            <input type="checkbox" ng-model="SelfieCampaignsCtrl.model.items.selected[$index]" class="checkbox__input">
-                            <span class="btn__label faa">&nbsp;</span>
-                        </label>
-                    </div>
-                    <div class="miniReel__titleBox">
-                        <h1 class="miniReel__title">
-                            <a c6-sref="Selfie:EditCampaign" c6-models="[$this]" c6-params="{}" class="miniReel__titleLink" title="Edit This Campaign: {{$this.name}}">
-                                {{$this.name}}
-                            </a>
-                        </h1>
-                    </div>
-                    <div class="miniReel__status">
-                        <strong>{{$this.accountName || $this.brand}}</strong><br>
-                        <span class="miniReel__date">Created: {{$this.created | date:'M/d/yyyy'}}</span>
-                    </div>
-                    <div class="miniReel__stats">
-                        <p class="miniReel__views">Status: {{$this.status}}</p>
-                    </div>
-                </article>
-            </li>
+
         </ul>
     </div>
     <footer class="tableFooter__group">
@@ -93,3 +214,6 @@
 </section>
 </main>
 <c6-view></c6-view>
+
+
+</div><!--.pageHolder-->

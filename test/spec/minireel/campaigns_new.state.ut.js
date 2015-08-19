@@ -75,6 +75,7 @@ define(['app', 'c6uilib'], function(appModule, c6uilib) {
             it('should create a new campaign', function() {
                 expect(cinema6.db.create).toHaveBeenCalledWith('campaign', {
                     name: null,
+                    application: 'studio',
                     categories: [],
                     minViewTime: -1,
                     advertiser: null,

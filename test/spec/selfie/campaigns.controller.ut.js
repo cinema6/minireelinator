@@ -8,6 +8,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
             cinema6,
             c6State,
             ConfirmDialogService,
+            ThumbnailService,
             paginatedDbList,
             $scope,
             SelfieCampaignsCtrl;
@@ -26,6 +27,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 c6State = $injector.get('c6State');
                 ConfirmDialogService = $injector.get('ConfirmDialogService');
                 paginatedDbList = $injector.get('paginatedDbList');
+                ThumbnailService = $injector.get('ThumbnailService');
 
                 campaigns = c6State.get('Selfie:Campaigns');
 
@@ -48,7 +50,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
-                    SelfieCampaignsCtrl = $controller('CampaignsController', {
+                    SelfieCampaignsCtrl = $controller('SelfieCampaignsController', {
                         $scope: $scope,
                         cState: campaigns
                     });
@@ -69,6 +71,92 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
         }));
 
         describe('methods', function() {
+            describe('initWithModel(model)', function() {
+                beforeEach(function() {
+                    model.items.value = [
+                        {
+                            id: 'cam-1',
+                            cards: [
+                                {
+                                    item: {
+                                        params: {},
+                                        collateral: {},
+                                        data: {}
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            id: 'cam-2',
+                            cards: [
+                                {
+                                    item: {
+                                        params: {
+                                            sponsor: 'Diageo'
+                                        },
+                                        collateral: {
+                                            logo: 'diageo.jpg'
+                                        },
+                                        data: {
+                                            service: 'youtube',
+                                            videoid: '123'
+                                        },
+                                        thumb: 'thumb.jpg'
+                                    }
+                                }
+                            ]
+                        }
+                    ];
+                });
+
+                it('should add the model', function() {
+                    SelfieCampaignsCtrl.initWithModel(model);
+
+                    expect(SelfieCampaignsCtrl.model).toEqual(model);
+                });
+
+                it('should add metaData for each campaign', function() {
+                    SelfieCampaignsCtrl.initWithModel(model);
+
+                    $scope.$digest();
+
+                    expect(SelfieCampaignsCtrl.metaData['cam-1']).toEqual({
+                        sponsor: undefined,
+                        logo: undefined,
+                        thumb: null
+                    });
+
+                    expect(SelfieCampaignsCtrl.metaData['cam-2']).toEqual({
+                        sponsor: 'Diageo',
+                        logo: 'diageo.jpg',
+                        thumb: 'thumb.jpg'
+                    });
+                });
+
+                describe('when the card does not have a custom thumb', function() {
+                    it('should get thumbs from Thumbnail Service', function() {
+                        var promise = {
+                            ensureFulfillment: jasmine.createSpy('ensureFulfillment').and.returnValue($q.when({large: 'large-thumb.jpg'}))
+                        };
+
+                        spyOn(ThumbnailService, 'getThumbsFor').and.returnValue(promise);
+
+                        delete model.items.value[1].cards[0].item.thumb;
+
+                        SelfieCampaignsCtrl.initWithModel(model);
+
+                        $scope.$digest();
+
+                        expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', '123');
+                        expect(SelfieCampaignsCtrl.metaData['cam-2']).toEqual({
+                            sponsor: 'Diageo',
+                            logo: 'diageo.jpg',
+                            thumb: 'large-thumb.jpg'
+                        });
+                    });
+                });
+            });
+
             describe('remove(campaigns)', function() {
                 var campaigns,
                     campaign1EraseDeferred, campaign2EraseDeferred,

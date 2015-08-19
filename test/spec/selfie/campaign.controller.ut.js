@@ -110,7 +110,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 cards: [],
                 pricing: {},
                 geoTargeting: [],
-                status: 'new'
+                status: 'draft',
+                appllication: 'selfie'
             });
             card = deepExtend(cinema6.db.create('card', MiniReelService.createCard('video')), {
                 id: undefined,
@@ -164,9 +165,18 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
 
             describe('shouldSave', function() {
-                describe('when campaign status is not "new"', function() {
+                describe('when campaign status is not defined', function() {
+                    it('should be false until a property changes', function() {
+                        expect(SelfieCampaignCtrl.shouldSave).toBe(false);
+                        SelfieCampaignCtrl.campaign.name = 'Something Else';
+                        expect(SelfieCampaignCtrl.shouldSave).toBe(true);
+                    });
+                });
+
+                describe('when campaign status is not "draft"', function() {
                     it('should be false even if properties change', function() {
                         SelfieCampaignCtrl.campaign.status = 'active';
+                        SelfieCampaignCtrl.campaign.name = 'Something Else';
                         expect(SelfieCampaignCtrl.shouldSave).toBe(false);
                     });
 
@@ -178,18 +188,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     });
                 });
 
-                describe('when the campaign status is "new"', function() {
-                    it('should be false by default because nothing has changed', function() {
-                        SelfieCampaignCtrl.campaign.status = 'new';
+                describe('when the campaign status is "draft"', function() {
+                    it('should be false until a property changes', function() {
+                        SelfieCampaignCtrl.campaign.status = 'draft';
                         expect(SelfieCampaignCtrl.shouldSave).toBe(false);
-                    });
-
-                    describe('if a property on the card changes', function() {
-                        it('should be true', function() {
-                            SelfieCampaignCtrl.campaign.status = 'new';
-                            SelfieCampaignCtrl.card.title = 'Something';
-                            expect(SelfieCampaignCtrl.shouldSave).toBe(true);
-                        });
+                        SelfieCampaignCtrl.campaign.name = 'Something Else';
+                        expect(SelfieCampaignCtrl.shouldSave).toBe(true);
                     });
                 });
             });

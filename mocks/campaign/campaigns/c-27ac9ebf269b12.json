@@ -1,5 +1,6 @@
 {
     "adtechId": "87654323",
+    "application": "selfie",
     "name": "My New Product",
     "brand": "Diageo",
     "categories": ["music"],
@@ -18,5 +19,5 @@
     "user": "u-82b0123da9678c",
     "org": "o-a6fd7298acb6fa",
     "lastUpdated": "2014-12-02T18:03:22.663Z",
-    "status": "new"
+    "status": "pendingApproval"
 }

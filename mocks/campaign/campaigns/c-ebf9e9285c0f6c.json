@@ -1,4 +1,5 @@
 {
+    "application": "selfie",
     "miniReels": [],
     "cards": [
         {
@@ -10,7 +11,7 @@
     "categories": [],
     "pricing": {},
     "geoTargeting": [],
-    "status": "new",
+    "status": "pending",
     "created": "2015-08-05T14:32:13.876Z",
     "user": "u-35b096c999711b",
     "org": "o-a6fd7298acb6fa",
