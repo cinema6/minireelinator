@@ -1,6 +1,6 @@
 # MiniReelinator
 
-## v1.17.1 (August 18, 2015)
+## v1.17.1 (August 19, 2015)
 * *[v1.17.1.rc1]*
   * [FIX]: Fix for an issue where the new cards are inserted at the wrong index
   * [FIX]: Fix for an issue where advertiser and customer data were saved
