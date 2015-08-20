@@ -14,6 +14,7 @@ module.exports = function(config) {
         files: [
             { pattern: 'settings.json', included: false },
             { pattern: (settings.appDir + '/assets/scripts/**/*.js'), included: false },
+            { pattern: (settings.appDir + '/assets/views/**/*.html'), included: false },
             { pattern: '.tmp/templates.js', included: false },
             { pattern: 'test/spec/**/*.js', included: false },
             { pattern: 'test/helpers/*.js', included: false },
@@ -24,6 +25,10 @@ module.exports = function(config) {
         exclude: [
             (settings.appDir + '/assets/scripts/main.js')
         ],
+
+        preprocessors: {
+            '**/*.html': ['ng-html2js']
+        },
 
         // test results reporter to use
         // possible values: dots || progress || growl
@@ -62,6 +67,11 @@ module.exports = function(config) {
 
         // Continuous Integration mode
         // if true, it capture browsers, run tests and exit
-        singleRun: true
+        singleRun: true,
+
+        ngHtml2JsPreprocessor: {
+            stripPrefix: settings.appDir + '/assets/',
+            moduleName: settings.appModule + '.testTemplates'
+        }
     });
 };

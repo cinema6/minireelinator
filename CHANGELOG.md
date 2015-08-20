@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.18.1.rc1]*
+  * [DEV]: Make karma debug server show colors
+
 ## v1.18.0 (August 19, 2015)
 * *[v1.18.0.rc1]*
   * [FIX]: Fix for an issue where the new cards are inserted at the wrong index

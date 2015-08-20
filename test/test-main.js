@@ -5,6 +5,9 @@
     var tests = Object.keys($window.__karma__.files).filter(function(file){
         return (/\.(ut|it)\.js$/).test(file);
     }),
+        templates = Object.keys(window.__karma__.files).filter(function(file) {
+            return (/\.html\.js/).test(file);
+        }),
         packageRequest = new XMLHttpRequest(),
         c6 = $window.c6 = {};
 
@@ -55,7 +58,6 @@
                 c6uilib: libUrl('c6ui/v3.7.3-0-g68ed6ac/c6uilib'),
                 c6log: libUrl('c6ui/v3.7.3-0-g68ed6ac/c6log'),
                 c6embed: libUrl('c6embed/v1/app--v2.34.1.rc1-0-g3ec6d59'),
-                templates: '/base/.tmp/templates',
                 'helpers/drag': '/base/test/helpers/drag'
             },
             shim: {
@@ -91,10 +93,16 @@
             }
         });
 
-        require(['c6_defines','ngMock'], function(c6Defines) {
-            c6Defines.kHasKarma = true;
+        require(['angular'], function() {
+            require(['c6_defines','ngMock'].concat(templates), function(c6Defines) {
+                c6Defines.kHasKarma = true;
 
-            require(tests, $window.__karma__.start);
+                beforeEach(function() {
+                    module(settings.appModule + '.testTemplates');
+                });
+
+                require(tests, $window.__karma__.start);
+            });
         });
     };
 }(window));

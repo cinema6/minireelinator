@@ -70,10 +70,7 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('test:unit:debug', 'run unit tests whenever files change', [
-        'clean:build',
-        'ngtemplates:test',
-        'karma:debug',
-        'watch:unit'
+        'karma:debug'
     ]);
 
     grunt.registerTask('test:e2e', 'run e2e tests on specified browser', function(browser, env) {
