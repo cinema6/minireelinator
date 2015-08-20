@@ -852,32 +852,47 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
             $injector.invoke(WizardController, this);
 
+            function validTabModel(sref) {
+                var tab = sref.replace('MR:Wildcard.', '').toLowerCase();
+                switch(tab) {
+                case 'instagram':
+                    if(WildcardCtrl.model.data && WildcardCtrl.model.data.id) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                    break;
+                case 'article':
+                    var validSrc = false,
+                        validTitle = false;
+                    if(!WildcardCtrl.model.data){
+                        return false;
+                    }
+                    if(WildcardCtrl.model.data.src) {
+                        validSrc = WildcardCtrl.model.data.src !== '';
+                    }
+                    if(WildcardCtrl.model.title) {
+                        validTitle = WildcardCtrl.model.title !== '';
+                    }
+                    return validSrc && validTitle;
+                case 'branding':
+                    if(!WildcardCtrl.hideBrand && !WildcardCtrl.model.params.sponsor) {
+                        return false;
+                    }
+                    if(!WildcardCtrl.validImageSrcs) {
+                        return false;
+                    }
+                    return true;
+                case 'advertising':
+                    return WildcardCtrl.validDate;
+                case 'video':
+                    return WildcardCtrl.validReportingId;
+                default:
+                    return true;
+                }
+            }
+
             Object.defineProperties(this, {
-                validArticleModel: {
-                    get: function() {
-                        var validSrc = false,
-                            validTitle = false;
-                        if(!WildcardCtrl.model.data){
-                            return false;
-                        }
-                        if(WildcardCtrl.model.data.src) {
-                            validSrc = WildcardCtrl.model.data.src !== '';
-                        }
-                        if(WildcardCtrl.model.title) {
-                            validTitle = WildcardCtrl.model.title !== '';
-                        }
-                        return validSrc && validTitle;
-                    }
-                },
-                validInstagramModel: {
-                    get: function() {
-                        if(WildcardCtrl.model.data && WildcardCtrl.model.data.id) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                },
                 validDate: {
                     configurable: true,
                     get: function() {
@@ -900,7 +915,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     get: function() {
                         var logo = this.model.collateral.logo;
 
-                        return !logo || AppCtrl.validImgSrc.test(logo);
+                        return this.hideLogoUrl || !logo || AppCtrl.validImgSrc.test(logo);
                     }
                 },
                 validThumb: {
@@ -918,16 +933,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 },
                 canSave: {
                     get: function() {
-                        switch(WildcardCtrl.model.type) {
-                        case 'article':
-                            return WildcardCtrl.validArticleModel;
-                        case 'instagram':
-                            return WildcardCtrl.validInstagramModel;
-                        case 'video':
-                            return WildcardCtrl.validDate &&
-                               WildcardCtrl.validReportingId &&
-                               WildcardCtrl.validImageSrcs;
-                        }
+                        return this.tabs.reduce(function(acc, tab) {
+                            return acc && validTabModel(tab.sref);
+                        }, true);
                     }
                 }
             });
@@ -995,6 +1003,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.enableMoat = !!card.data.moat;
                 this.tabs = _private.tabsForCardType(card.type);
                 if(card.type === 'instagram') {
+                    this.hideBrand = true;
+                    this.hideLogoUrl = true;
                     this.hideTemplate = true;
                 }
             };
