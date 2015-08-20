@@ -2,6 +2,8 @@
 
 * *[v1.18.1.rc1]*
   * [DEV]: Make karma debug server show colors
+  * [FIX]: Stop lots of errors from being thrown in the console when
+    editing/creating a sponsored video card
 
 ## v1.18.0 (August 19, 2015)
 * *[v1.18.0.rc1]*

@@ -891,11 +891,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         case 'article':
                             return WildcardCtrl.validArticleModel;
                         case 'video':
-                            return (WildcardCtrl.placements.length > 0 ||
-                                   WildcardCtrl.minireel) &&
-                                   WildcardCtrl.validDate &&
-                                   WildcardCtrl.validReportingId &&
-                                   WildcardCtrl.validImageSrcs;
+                            return WildcardCtrl.validDate &&
+                               WildcardCtrl.validReportingId &&
+                               WildcardCtrl.validImageSrcs;
                         }
                     }
                 }
