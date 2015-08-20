@@ -44,12 +44,20 @@ module.exports = function(grunt) {
      *
      *********************************************************************************************/
 
-    grunt.registerTask('server', 'start a development server', [
-        'configureProxies:app',
-        'connect:app',
-        'open:server',
-        'watch:livereload'
-    ]);
+    grunt.registerTask('server', 'start a development server', function() {
+        var secure = grunt.option('secure');
+
+        grunt.config.set('connect.options.protocol', secure ? 'https' : 'http');
+
+        [
+            'configureProxies:app',
+            'connect:app',
+            'open:server',
+            'watch:livereload'
+        ].forEach(function(task) {
+            grunt.task.run(task);
+        });
+    });
 
     /*********************************************************************************************
      *

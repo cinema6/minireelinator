@@ -4,6 +4,8 @@
   * [DEV]: Make karma debug server show colors
   * [FIX]: Stop lots of errors from being thrown in the console when
     editing/creating a sponsored video card
+  * [DEV]: Make grunt server run over http by default, https if
+    `--secure` is passed on the command line
 
 ## v1.18.0 (August 19, 2015)
 * *[v1.18.0.rc1]*
