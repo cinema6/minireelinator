@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## v1.18.1 (August 21, 2015)
 * *[v1.18.1.rc1]*
   * [DEV]: Make karma debug server show colors
   * [FIX]: Stop lots of errors from being thrown in the console when
@@ -9,6 +10,7 @@
   * [FIX]: Fix for an issue that caused duplicate card entires to be
     added to a campaign after editing and saving an exisitng sponsored
     card
+* *[/v1.18.1.rc1]*
 
 ## v1.18.0 (August 19, 2015)
 * *[v1.18.0.rc1]*
