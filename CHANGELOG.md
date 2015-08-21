@@ -6,6 +6,9 @@
     editing/creating a sponsored video card
   * [DEV]: Make grunt server run over http by default, https if
     `--secure` is passed on the command line
+  * [FIX]: Fix for an issue that caused duplicate card entires to be
+    added to a campaign after editing and saving an exisitng sponsored
+    card
 
 ## v1.18.0 (August 19, 2015)
 * *[v1.18.0.rc1]*
