@@ -44,12 +44,20 @@ module.exports = function(grunt) {
      *
      *********************************************************************************************/
 
-    grunt.registerTask('server', 'start a development server', [
-        'configureProxies:app',
-        'connect:app',
-        'open:server',
-        'watch:livereload'
-    ]);
+    grunt.registerTask('server', 'start a development server', function() {
+        var secure = grunt.option('secure');
+
+        grunt.config.set('connect.options.protocol', secure ? 'https' : 'http');
+
+        [
+            'configureProxies:app',
+            'connect:app',
+            'open:server',
+            'watch:livereload'
+        ].forEach(function(task) {
+            grunt.task.run(task);
+        });
+    });
 
     /*********************************************************************************************
      *
@@ -70,10 +78,7 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('test:unit:debug', 'run unit tests whenever files change', [
-        'clean:build',
-        'ngtemplates:test',
-        'karma:debug',
-        'watch:unit'
+        'karma:debug'
     ]);
 
     grunt.registerTask('test:e2e', 'run e2e tests on specified browser', function(browser, env) {

@@ -15,14 +15,6 @@
             },
             tasks: ['jshint:all']
         },
-        unit: {
-            files: [
-                '<%= settings.appDir %>/assets/scripts/**/*.js',
-                '<%= settings.appDir %>/assets/views/**/*.html',
-                'test/spec/**/*.js'
-            ],
-            tasks: ['ngtemplates:test', 'karma:debug:run']
-        },
         e2e: {
             files: [
                 '<%= settings.appDir %>/*.html',

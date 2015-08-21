@@ -279,21 +279,9 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                             }
                         });
                         WildcardCtrl.model.type = 'video';
-                        WildcardCtrl.placements = ['placement'];
-                        WildcardCtrl.minireel = {};
                         WildcardCtrl.validDate = true;
                         WildcardCtrl.validReportingId = true;
                         WildcardCtrl.validImageSrcs = true;
-                    });
-
-                    it('should return true if there are placements but no minireel', function() {
-                        delete WildcardCtrl.minireel;
-                        expect(WildcardCtrl.canSave).toBe(true);
-                    });
-
-                    it('should return true if there is a minireel but no placements', function() {
-                        WildcardCtrl.placements = [];
-                        expect(WildcardCtrl.canSave).toBe(true);
                     });
 
                     it('should return true if everything is valid', function() {
