@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.19.0.rc1]*
+  * [FEATURE]: Activated Instagram card creation in the wizard
+
 ## v1.18.1 (August 21, 2015)
 * *[v1.18.1.rc1]*
   * [DEV]: Make karma debug server show colors
