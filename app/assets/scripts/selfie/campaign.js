@@ -452,7 +452,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 SelfieCampaignSponsorCtrl.uploadError = false;
             }
 
-            function handleUploadError(err) {
+            function handleUploadError() {
                 SelfieCampaignSponsorCtrl.uploadError = true;
             }
 
