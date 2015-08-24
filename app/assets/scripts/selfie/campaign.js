@@ -318,6 +318,23 @@ function( angular , c6State  , PaginatedListState                    ,
                             (!equals(this.card, this._proxyCard) ||
                             !equals(this.campaign, this._proxyCampaign));
                     }
+                },
+                canSubmit: {
+                    get: function() {
+                        var campaign = this.campaign,
+                            card = this.card;
+
+                        return [
+                            campaign.name,
+                            campaign.pricing.budget,
+                            campaign.pricing.dailyLimit,
+                            card.params.sponsor,
+                            card.data.service,
+                            card.data.videoid
+                        ].filter(function(prop) {
+                            return !prop;
+                        }).length === 0;
+                    }
                 }
             });
 
@@ -432,6 +449,11 @@ function( angular , c6State  , PaginatedListState                    ,
             function handleUpload(path) {
                 SelfieCampaignSponsorCtrl.logo = '/' + path;
                 SelfieCampaignSponsorCtrl.previouslyUploadedLogo = '/' + path;
+                SelfieCampaignSponsorCtrl.uploadError = false;
+            }
+
+            function handleUploadError(err) {
+                SelfieCampaignSponsorCtrl.uploadError = true;
             }
 
             // we need to build an array of objects for the dropdown,
@@ -500,7 +522,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.uploadFromUri = function(uri) {
                 CollateralService.uploadFromUri(uri)
-                    .then(handleUpload);
+                    .then(handleUpload)
+                    .catch(handleUploadError);
             };
 
             // new logo urls come from various places, sometimes asynchronously
@@ -522,6 +545,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 return SelfieCampaignSponsorCtrl.logoType.type;
             },function(type) {
                 var Ctrl = SelfieCampaignSponsorCtrl;
+
+                Ctrl.uploadError = false;
 
                 switch (type) {
                 case 'file':
@@ -549,7 +574,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 if (!newFile) { return; }
 
                 CollateralService.uploadFromFile(newFile)
-                    .then(handleUpload);
+                    .then(handleUpload)
+                    .catch(handleUploadError);
             });
 
             $scope.$on('SelfieCampaignWillSave', this.updateLinks);

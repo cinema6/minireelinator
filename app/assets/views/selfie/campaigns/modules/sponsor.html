@@ -29,7 +29,7 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form__item">
+            <fieldset class="form__item" ng-class="{ 'ui--hasError': SelfieCampaignSponsorCtrl.uploadError }">
                 <!-- <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-name" ng-model="card.collateral.logo"> -->
 
                 <select c6-select-box data-options="SelfieCampaignSponsorCtrl.logoOptions" thumbnails="true" preselected="true" class="form__selectBox form__selectBox--single" ng-model="SelfieCampaignSponsorCtrl.logoType" ng-options="option.label for option in SelfieCampaignSponsorCtrl.logoOptions">
