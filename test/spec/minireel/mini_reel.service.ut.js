@@ -160,24 +160,24 @@
                                 thumbs: {
                                     small: 'images.instagram.com/small.jpg',
                                     large: 'images.instagram.com/large.jpg'
-                                }
-                            },
-                            href: 'https:\/\/instagram.com\/p\/5YN6a0tOc-\/',
-                            likes: '77606',
-                            date: '1438099887',
-                            caption: 'Solomon, Pembroke Welsh Corgi (12 w\/o), BarkFest 2015, Brooklyn, NY',
-                            comments: '9718',
-                            user: {
-                                fullname: 'The Dogist',
-                                picture: 'https:\/\/igcdn-photos-g-a.akamaihd.net\/hphotos-ak-xfa1\/t51.2885-19\/s150x150\/11382947_1023728481019302_1629502413_a.jpg',
-                                username: 'thedogist',
-                                follow: 'https://instagram.com/accounts/login/?next=%2Fp%2F5YN6a0tOc-%2F&source=follow',
-                                href: 'https://instagram.com/thedogist',
-                                bio: 'A photo-documentary series about the beauty of dogs. Author of THE DOGIST, coming October, 2015.',
-                                website: 'http:\/\/thedogist.com\/book',
-                                posts: '2884',
-                                followers: '1027481',
-                                following: '3'
+                                },
+                                href: 'https:\/\/instagram.com\/p\/5YN6a0tOc-\/',
+                                likes: '77606',
+                                date: '1438099887',
+                                caption: 'Solomon, Pembroke Welsh Corgi (12 w\/o), BarkFest 2015, Brooklyn, NY',
+                                comments: '9718',
+                                user: {
+                                    fullname: 'The Dogist',
+                                    picture: 'https:\/\/igcdn-photos-g-a.akamaihd.net\/hphotos-ak-xfa1\/t51.2885-19\/s150x150\/11382947_1023728481019302_1629502413_a.jpg',
+                                    username: 'thedogist',
+                                    follow: 'https://instagram.com/accounts/login/?next=%2Fp%2F5YN6a0tOc-%2F&source=follow',
+                                    href: 'https://instagram.com/thedogist',
+                                    bio: 'A photo-documentary series about the beauty of dogs. Author of THE DOGIST, coming October, 2015.',
+                                    website: 'http:\/\/thedogist.com\/book',
+                                    posts: '2884',
+                                    followers: '1027481',
+                                    following: '3'
+                                },
                             },
                             placementId: null,
                             templateUrl: null,

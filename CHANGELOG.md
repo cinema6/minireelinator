@@ -1,6 +1,8 @@
 # MiniReelinator
 
 * *[v1.19.0.rc1]*
+  * [FIX]: Change how Instagram cards are saved to be more consistent with
+    the format in which other cards are saved.
   * [FEATURE]: Activated Instagram card creation in the wizard
 
 ## v1.18.1 (August 21, 2015)
