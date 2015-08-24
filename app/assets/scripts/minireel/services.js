@@ -2694,7 +2694,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         type: instagramCardInfo(),
                         id: copy(null),
                         src: instagramCardInfo(),
-                        thumbs: instagramThumbsValue()
+                        thumbs: instagramThumbsValue(),
+                        href: instagramCardInfo(),
+                        likes: instagramCardInfo(),
+                        date: instagramCardInfo(),
+                        caption: instagramCardInfo(),
+                        comments: instagramCardInfo(),
+                        user: instagramCardInfo()
                     },
                     youtube: {
                         hideSource: hideSourceValue(),
@@ -2858,13 +2864,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         campaign: copy(),
                         collateral: copy(),
                         links: copy(),
-                        params: copy(),
-                        href: instagramCardInfo(),
-                        likes: instagramCardInfo(),
-                        date: instagramCardInfo(),
-                        caption: instagramCardInfo(),
-                        comments: instagramCardInfo(),
-                        user: instagramCardInfo()
+                        params: copy()
                     },
                     text: {
                         id: copy(),
