@@ -238,6 +238,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         logos: SelfieLogoService.getLogos({
                             sort: 'lastUpdated,-1',
                             org: SelfieState.cModel.org.id,
+                            application: 'selfie',
                             limit: 50,
                             skip: 0
                         })
