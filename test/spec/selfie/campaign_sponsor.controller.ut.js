@@ -253,6 +253,16 @@ define(['app'], function(appModule) {
                         expect(SelfieCampaignSponsorCtrl.previouslyUploadedLogo).toEqual('/collateral/userFiles/iuyewriujksdfhjh.jpg');
                     });
                 });
+
+                describe('when promise is rejected', function() {
+                    it('should show error', function() {
+                        $scope.$apply(function() {
+                            deferred.reject();
+                        });
+
+                        expect(SelfieCampaignSponsorCtrl.uploadError).toBe(true);
+                    });
+                });
             });
         });
 
@@ -287,6 +297,16 @@ define(['app'], function(appModule) {
             });
 
             describe('logoType', function() {
+                it('should reset uploadError property', function() {
+                    SelfieCampaignSponsorCtrl.uploadError = true;
+
+                    $scope.$apply(function() {
+                        SelfieCampaignSponsorCtrl.logoType.type = 'file';
+                    });
+
+                    expect(SelfieCampaignSponsorCtrl.uploadError).toBe(false);
+                });
+
                 describe('when File or URL are chosen', function() {
                     it('should show previously uploaded logo if defined', function() {
                         SelfieCampaignSponsorCtrl.previouslyUploadedLogo = '/previous.jpg';
@@ -387,6 +407,16 @@ define(['app'], function(appModule) {
 
                         expect(SelfieCampaignSponsorCtrl.logo).toEqual('/collateral/userFiles/iuyewriujksdfhjh.jpg');
                         expect(SelfieCampaignSponsorCtrl.previouslyUploadedLogo).toEqual('/collateral/userFiles/iuyewriujksdfhjh.jpg');
+                    });
+                });
+
+                describe('when promise is rejected', function() {
+                    it('should show error', function() {
+                        $scope.$apply(function() {
+                            deferred.reject();
+                        });
+
+                        expect(SelfieCampaignSponsorCtrl.uploadError).toBe(true);
                     });
                 });
             });

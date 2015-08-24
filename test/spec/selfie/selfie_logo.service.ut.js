@@ -133,6 +133,7 @@ define(['app'], function(appModule) {
                     query = {
                         sort: 'lastUpdated,-1',
                         org: 'o-123',
+                        application: 'selfie',
                         limit: 50,
                         skip: 0
                     };

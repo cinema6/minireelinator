@@ -11,7 +11,7 @@
         <div class="form__items">
 
             <fieldset class="form__item">
-                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-title" ng-model="card.title" ng-focus="SelfieCampaignCtrl.disableVideoTitleOverwrite = 'true'">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-title" ng-model="card.title" ng-class="{'form__fillCheck--filled' : card.title }" ng-focus="SelfieCampaignCtrl.disableVideoTitleOverwrite = 'true'">
                 <label class="form__label" for="c6-video-title">
                     <i class="fa fa-times ui--error"></i>
                     Video Title

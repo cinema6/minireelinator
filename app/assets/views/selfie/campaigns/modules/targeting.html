@@ -1,4 +1,4 @@
-<div class="grid__item one-half" ng-controller="SelfieCampaignTargetingController as SelfieCampaignTargetingCtrl" c6-alias="SelfieCampaignCtrl.categories as categories">
+<div class="grid__item one-half" ng-controller="SelfieCampaignTargetingController as SelfieCampaignTargetingCtrl">
     <section class="formSection__group" id="section_6">
 
         <h1 class="formSection__title">
@@ -11,7 +11,7 @@
         <div class="form__items">
 
             <fieldset class="form__item">
-                <select c6-select-box multiple="multiple" ng-model="campaign.categories" ng-options="category.name as category.label for category in categories" class="form__selectBox form__selectBox--multiple"></select>
+                <select c6-select-box unselect-default="true" ng-model="SelfieCampaignTargetingCtrl.category" ng-options="category.label for category in SelfieCampaignTargetingCtrl.categories" class="form__selectBox form__selectBox--single"></select>
                 <label class="form__label" for="c6-sponsor-name">
                     <i class="fa fa-times ui--error"></i>
                     Content Categories
@@ -29,7 +29,7 @@
             </fieldset>
 
             <fieldset class="form__item">
-                <select c6-select-box unselect-default="true" class="form__selectBox form__selectBox--single" ng-model="SelfieCampaignTargetingCtrl.geo" ng-options="option.state for option in SelfieCampaignTargetingCtrl.geoOptions"></select>
+                <select c6-select-box multiple="multiple" class="form__selectBox form__selectBox--multiple" ng-model="SelfieCampaignTargetingCtrl.geo" ng-options="option.state for option in SelfieCampaignTargetingCtrl.geoOptions"></select>
                 <label class="form__label" for="c6-sponsor-name">
                     <i class="fa fa-times ui--error"></i>
                     Geography
