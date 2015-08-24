@@ -2,6 +2,13 @@
 
 * *[v1.19.0.rc1]*
   * [FEATURE]: Activated Instagram card creation in the wizard
+  * [FIX]: (Selfie) Only allow one category per campaign
+  * [FIX]: (Selfie) Allow multiple U.S. States for geo targeting campaigns
+  * [FIX]: (Selfie) Only fetch logos for Selfie campaigns (no Studio campaigns)
+  * [FIX]: (Selfie) Ensure the Video Title input label is positioned correctly
+    even when the title get magically filled in based on a new video source
+  * [FIX]: (Selfie) Add very loose validation for link URLs
+  * [FIX]: (Selfie) Disable Submit button if required properties aren't set
 
 ## v1.18.1 (August 21, 2015)
 * *[v1.18.1.rc1]*
