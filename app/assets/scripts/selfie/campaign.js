@@ -746,29 +746,38 @@ function( angular , c6State  , PaginatedListState                    ,
             this.budget = campaign.pricing.budget || null;
             this.limit = campaign.pricing.dailyLimit || null;
 
-            this.geoOptions = [{state: 'No Geo Targeting', none: true}]
-                .concat(GeoService.usa.map(function(state) {
-                    return {
-                        state: state,
-                        country: 'usa'
-                    };
-                }));
+            // we need to have a selectable item in the dropdown for 'none'
+            this.categories = [{name: 'none', label: 'No Category Targeting'}]
+                .concat(SelfieCampaignCtrl.categories);
 
-            // we default to 'No Geo Targeting' if no state is set
-            this.geo = this.geoOptions.filter(function(option) {
-                var state = campaign.geoTargeting[0] && campaign.geoTargeting[0].state ||
-                    'No Geo Targeting';
+            // we default to 'none'
+            this.category = this.categories.filter(function(category) {
+                var name = campaign.categories[0] || 'none';
 
-                return state === option.state;
+                return name === category.name;
             })[0];
+
+            this.geoOptions = GeoService.usa.map(function(state) {
+                return {
+                    state: state,
+                    country: 'usa'
+                };
+            });
+
+            // we filter the options and use only the ones saved on the campaign
+            this.geo = this.geoOptions.filter(function(option) {
+                return campaign.geoTargeting.filter(function(geo) {
+                    return option.state === geo.state;
+                }).length > 0;
+            });
 
             Object.defineProperties(this, {
                 cpv: {
                     get: function() {
-                        var hasCategories = campaign.categories.length,
-                            hasGeo = this.geo !== this.geoOptions[0];
+                        var hasCategory = this.category !== this.categories[0],
+                            hasGeos = campaign.geoTargeting.length;
 
-                        return 50 + ([hasCategories, hasGeo]
+                        return 50 + ([hasCategory, hasGeos]
                             .filter(function(bool) { return bool; }).length * 0.5);
                     }
                 },
@@ -801,14 +810,25 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
             });
 
-            // we watch the geo choice and add only one to the campaign if chosen
-            // and set to empty array if 'No Geo' is chosen
+            // we watch the geo choices and save an array of states
             $scope.$watch(function() {
                 return SelfieCampaignTargetingCtrl.geo;
             }, function(newGeo, oldGeo) {
                 if (newGeo === oldGeo) { return; }
 
-                campaign.geoTargeting = newGeo.none ? [] : [{ state: newGeo.state }];
+                campaign.geoTargeting = newGeo.map(function(geo) {
+                    return { state: geo.state };
+                });
+            });
+
+            // we watch the category choice and add only one to the campaign if chosen
+            // and set to empty array if 'No Categories' is chosen
+            $scope.$watch(function() {
+                return SelfieCampaignTargetingCtrl.category;
+            }, function(newCat, oldCat) {
+                if (newCat === oldCat) { return; }
+
+                campaign.categories = newCat.name !== 'none' ? [newCat.name] : [];
             });
 
             // watch the budget and limit but only add them to the campaign

@@ -41,7 +41,17 @@ define(['app'], function(appModule) {
 
                 $scope = $rootScope.$new();
                 $scope.SelfieCampaignCtrl = {
-                    campaign: campaign
+                    campaign: campaign,
+                    categories: [
+                        {
+                            name: 'comedy',
+                            label: 'Comedy'
+                        },
+                        {
+                            name: 'entertainment',
+                            label: 'Entertainment'
+                        }
+                    ]
                 };
             });
 
@@ -77,33 +87,66 @@ define(['app'], function(appModule) {
                 });
             });
 
+            describe('categories', function() {
+                it('should include a "None" option', function() {
+                    expect(SelfieCampaignTargetingCtrl.categories[0]).toEqual({
+                        name: 'none', label: 'No Category Targeting'
+                    });
+
+                    expect(SelfieCampaignTargetingCtrl.categories).toContain({
+                        name: 'comedy', label: 'Comedy'
+                    });
+
+                    expect(SelfieCampaignTargetingCtrl.categories).toContain({
+                        name: 'entertainment', label: 'Entertainment'
+                    });
+                });
+            });
+
+            describe('category', function() {
+                it('should come from the campaign or default to "None"', function() {
+                    expect(SelfieCampaignTargetingCtrl.category).toEqual({
+                        name: 'none', label: 'No Category Targeting'
+                    });
+                    expect(SelfieCampaignTargetingCtrl.category).toBe(SelfieCampaignTargetingCtrl.categories[0]);
+
+                    campaign.categories.push('entertainment');
+
+                    compileCtrl();
+
+                    expect(SelfieCampaignTargetingCtrl.category).toBe(SelfieCampaignTargetingCtrl.categories[2]);
+                });
+            });
+
             describe('geoOptions', function() {
-                it('should include a "No Geo" option in additon to the U.S. States', function() {
+                it('should contain the U.S. States', function() {
                     expect(SelfieCampaignTargetingCtrl.geoOptions).toContain({
-                        state: 'No Geo Targeting', none: true
+                        state: 'Alabama', country: 'usa'
                     });
 
                     expect(SelfieCampaignTargetingCtrl.geoOptions).toContain({
-                        state: 'Alabama', country: 'usa'
+                        state: 'Arizona', country: 'usa'
                     });
                 });
             });
 
             describe('geo', function() {
-                it('should be the state from the campaign or default to "none"', function() {
-                    expect(SelfieCampaignTargetingCtrl.geo).toEqual({
-                        state: 'No Geo Targeting', none: true
-                    });
-
-                    expect(SelfieCampaignTargetingCtrl.geo).toBe(SelfieCampaignTargetingCtrl.geoOptions[0]);
+                it('should be the state(s) from the campaign', function() {
+                    expect(SelfieCampaignTargetingCtrl.geo).toEqual([]);
 
                     campaign.geoTargeting.push({state: 'Arizona'});
+                    campaign.geoTargeting.push({state: 'Alabama'});
 
                     compileCtrl();
 
-                    expect(SelfieCampaignTargetingCtrl.geo).toEqual({
-                        state: 'Arizona', country: 'usa'
-                    });
+                    expect(SelfieCampaignTargetingCtrl.geo).toEqual([
+                        {
+                            state: 'Alabama', country: 'usa'
+                        },
+                        {
+                            state: 'Arizona', country: 'usa'
+                        }
+                    ]);
                 });
             });
 
@@ -111,15 +154,15 @@ define(['app'], function(appModule) {
                 it('should add $.50 each for categories and geo service', function() {
                     expect(SelfieCampaignTargetingCtrl.cpv).toBe(50);
 
-                    campaign.categories.push('Comedy');
+                    campaign.geoTargeting.push({state: 'Arizona'});
 
                     expect(SelfieCampaignTargetingCtrl.cpv).toBe(50.5);
 
-                    campaign.categories.push('Entertainment');
+                    campaign.geoTargeting.push({state: 'Alabama'});
 
                     expect(SelfieCampaignTargetingCtrl.cpv).toBe(50.5);
 
-                    SelfieCampaignTargetingCtrl.geo = SelfieCampaignTargetingCtrl.geoOptions[1];
+                    SelfieCampaignTargetingCtrl.category = SelfieCampaignTargetingCtrl.geoOptions[1];
 
                     expect(SelfieCampaignTargetingCtrl.cpv).toBe(51);
                 });
@@ -188,16 +231,34 @@ define(['app'], function(appModule) {
                     expect(campaign.geoTargeting).toEqual([]);
 
                     $scope.$apply(function() {
-                        SelfieCampaignTargetingCtrl.geo = SelfieCampaignTargetingCtrl.geoOptions[3];
+                        SelfieCampaignTargetingCtrl.geo = [ SelfieCampaignTargetingCtrl.geoOptions[2],  SelfieCampaignTargetingCtrl.geoOptions[3]];
                     });
 
-                    expect(campaign.geoTargeting).toEqual([{ state: 'Arizona' }]);
+                    expect(campaign.geoTargeting).toEqual([{ state: 'Arizona' }, { state: 'Arkansas' }]);
 
                     $scope.$apply(function() {
-                        SelfieCampaignTargetingCtrl.geo = SelfieCampaignTargetingCtrl.geoOptions[0];
+                        SelfieCampaignTargetingCtrl.geo = [];
                     });
 
                     expect(campaign.geoTargeting).toEqual([]);
+                });
+            });
+
+            describe('category', function() {
+                it('should set category on the campaign', function() {
+                    expect(campaign.categories).toEqual([]);
+
+                    $scope.$apply(function() {
+                        SelfieCampaignTargetingCtrl.category = SelfieCampaignTargetingCtrl.categories[2];
+                    });
+
+                    expect(campaign.categories).toEqual(['entertainment']);
+
+                    $scope.$apply(function() {
+                        SelfieCampaignTargetingCtrl.category = SelfieCampaignTargetingCtrl.categories[0];
+                    });
+
+                    expect(campaign.categories).toEqual([]);
                 });
             });
 
