@@ -49,7 +49,7 @@ define(['app'], function(appModule) {
             expect(CampaignCardsCtrl).toEqual(jasmine.any(Object));
         });
 
-        describe('getThumbs(card)', function() {
+        describe('getThumb(card)', function() {
             beforeEach(function() {
                 spyOn(ThumbnailService, 'getThumbsFor').and.returnValue({
                     small: 'www.example.com/small.jpg'

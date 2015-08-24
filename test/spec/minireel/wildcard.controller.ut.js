@@ -148,10 +148,12 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     expect(WildcardCtrl.model.campaign.clickUrls).toEqual(['http://clickpixel.com/pixel']);
                 });
 
-                it('should set hideTemplate for Instagram cards', function() {
+                it('should set some fields to be hidden for Instagram cards', function() {
                     WildcardState.cModel.type = 'instagram';
                     WildcardCtrl.initWithModel(WildcardState.cModel);
                     expect(WildcardCtrl.hideTemplate).toBe(true);
+                    expect(WildcardCtrl.hideBrand).toBe(true);
+                    expect(WildcardCtrl.hideLogoUrl).toBe(true);
                 });
             });
 
@@ -161,185 +163,48 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                 });
             });
 
-            describe('validArticleModel', function() {
-                it('should be false if there is no data property', function() {
-                    WildcardCtrl.model = {
-                        title: 'Title'
-                    };
-                    expect(WildcardCtrl.validArticleModel).toBe(false);
-                });
-
-                it('should be true if src and title are not empty strings', function() {
-                    WildcardCtrl.model = {
-                        title: 'Title',
-                        data: {
-                            src: 'http://www.cinema6.com'
-                        }
-                    };
-                    expect(WildcardCtrl.validArticleModel).toBe(true);
-                });
-
-                it('should be false if either the src or title are an empty string', function() {
-                    WildcardCtrl.model = {
-                        title: 'Title',
-                        data: {
-                            src: ''
-                        }
-                    };
-                    expect(WildcardCtrl.validArticleModel).toBe(false);
-                    WildcardCtrl.model = {
-                        title: '',
-                        data: {
-                            src: 'http://www.cinema6.com'
-                        }
-                    };
-                    expect(WildcardCtrl.validArticleModel).toBe(false);
-                });
-
-                it('should be false if either the src or title are null', function() {
-                    WildcardCtrl.model = {
-                        title: 'Title',
-                        data: {
-                            src: null
-                        }
-                    };
-                    expect(WildcardCtrl.validArticleModel).toBe(false);
-                    WildcardCtrl.model = {
-                        title: null,
-                        data: {
-                            src: 'http://www.cinema6.com'
-                        }
-                    };
-                    expect(WildcardCtrl.validArticleModel).toBe(false);
-                });
-
-                it('should be false if either the src or title are undefined', function() {
-                    WildcardCtrl.model = {
-                        title: 'Title',
-                        data: {
-                            src: undefined
-                        }
-                    };
-                    expect(WildcardCtrl.validArticleModel).toBe(false);
-                    WildcardCtrl.model = {
-                        title: undefined,
-                        data: {
-                            src: 'http://www.cinema6.com'
-                        }
-                    };
-                    expect(WildcardCtrl.validArticleModel).toBe(false);
-                });
-            });
-
-            describe('validInstagramModel', function() {
-                it('should be true if an id exists on the model', function() {
-                    WildcardCtrl.model.data.id = 'abc123';
-                    expect(WildcardCtrl.validInstagramModel).toBe(true);
-                });
-
-                it('should be false if an id doesn\'t exist on the model', function() {
-                    WildcardCtrl.model.data.id = null;
-                    expect(WildcardCtrl.validInstagramModel).toBe(false);
-                });
-            });
-
             describe('canSave', function() {
-
-                describe('for an article card', function() {
-                    it('should return true if there is a valid article model', function() {
-                        WildcardCtrl.model = {
-                            title: 'Cinema6',
-                            type: 'article',
-                            data: {
-                                src: 'http://www.cinema6.com',
-                                thumbUrl: 'http://www.cinema6.com/logo'
-                            }
-                        };
-                        expect(WildcardCtrl.canSave).toBe(true);
-                    });
-
-                    it('should return false if there is not a valid article model', function() {
-                        WildcardCtrl.model = {
-                            type: 'article'
-                        };
-                        expect(WildcardCtrl.canSave).toBe(false);
-                    });
-                });
-
-                describe('for an instagram card', function() {
-                    it('should return true if there is a valid instagram model', function() {
-                        WildcardCtrl.model = {
-                            data: {
-                                id: 'abc123'
-                            },
-                            type: 'instagram'
-                        };
-                        expect(WildcardCtrl.canSave).toBe(true);
-                    });
-
-                    it('should return false if there is not a valid instagram model', function() {
-                        WildcardCtrl.model = {
-                            title: 'Instagram Card',
-                            type: 'instagram'
-                        };
-                        expect(WildcardCtrl.canSave).toBe(false);
+                var validVideo, validSurvey, validBranding;
+                beforeEach(function() {
+                    WildcardCtrl.tabs = [
+                        {
+                            name: 'Video Content',
+                            sref: 'MR:Wildcard.Video',
+                            required: true
+                        },
+                        {
+                            name: 'Survey',
+                            sref: 'MR:Wildcard.Survey'
+                        },
+                        {
+                            name: 'Branding',
+                            sref: 'MR:Wildcard.Branding'
+                        },
+                    ];
+                    spyOn(WildcardCtrl._private, 'validTabModel').and.callFake(function(sref) {
+                        switch(sref) {
+                        case 'MR:Wildcard.Video':
+                            return validVideo;
+                        case 'MR:Wildcard.Survey':
+                            return validSurvey;
+                        case 'MR:Wildcard.Branding':
+                            return validBranding;
+                        }
                     });
                 });
 
-                describe('for a video card', function() {
+                it('should return true if every tab is valid', function() {
+                    validVideo = true;
+                    validSurvey = true;
+                    validBranding = true;
+                    expect(WildcardCtrl.canSave).toBe(true);
+                });
 
-                    beforeEach(function() {
-                        var validDate, validReportingId, validImageSrcs;
-                        Object.defineProperties(WildcardCtrl, {
-                            validDate: {
-                                get: function() {
-                                    return validDate;
-                                },
-                                set: function(val) {
-                                    validDate = val;
-                                }
-                            },
-                            validReportingId: {
-                                get: function() {
-                                    return validReportingId;
-                                },
-                                set: function(val) {
-                                    validReportingId = val;
-                                }
-                            },
-                            validImageSrcs: {
-                                get: function() {
-                                    return validImageSrcs;
-                                },
-                                set: function(val) {
-                                    validImageSrcs = val;
-                                }
-                            }
-                        });
-                        WildcardCtrl.model.type = 'video';
-                        WildcardCtrl.validDate = true;
-                        WildcardCtrl.validReportingId = true;
-                        WildcardCtrl.validImageSrcs = true;
-                    });
-
-                    it('should return true if everything is valid', function() {
-                        expect(WildcardCtrl.canSave).toBe(true);
-                    });
-
-                    it('should return false if there is an invalid date', function() {
-                        WildcardCtrl.validDate = false;
-                        expect(WildcardCtrl.canSave).toBe(false);
-                    });
-
-                    it('should return false if there is an invalid reporting id', function() {
-                        WildcardCtrl.validReportingId = false;
-                        expect(WildcardCtrl.canSave).toBe(false);
-                    });
-
-                    it('should return false if there are invalid image srcs', function() {
-                        WildcardCtrl.validImageSrcs = false;
-                        expect(WildcardCtrl.canSave).toBe(false);
-                    });
+                it('should return false if any tab is not valid', function() {
+                    validVideo = true;
+                    validSurvey = false;
+                    validBranding = true;
+                    expect(WildcardCtrl.canSave).toBe(false);
                 });
             });
 
@@ -476,6 +341,202 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
 
         describe('methods', function() {
             describe('private', function() {
+                describe('validTabModel(sref)', function() {
+                    beforeEach(function() {
+                        var validDate, validReportingId, validImageSrcs;
+                        Object.defineProperties(WildcardCtrl, {
+                            validDate: {
+                                get: function() {
+                                    return validDate;
+                                },
+                                set: function(val) {
+                                    validDate = val;
+                                }
+                            },
+                            validReportingId: {
+                                get: function() {
+                                    return validReportingId;
+                                },
+                                set: function(val) {
+                                    validReportingId = val;
+                                }
+                            },
+                            validImageSrcs: {
+                                get: function() {
+                                    return validImageSrcs;
+                                },
+                                set: function(val) {
+                                    validImageSrcs = val;
+                                }
+                            }
+                        });
+                    });
+
+                    describe('instagram tab', function() {
+                        function validInstagramModel() {
+                            return WildcardCtrl._private.validTabModel('MR:Wildcard.Instagram');
+                        }
+
+                        it('should be true if an id exists on the model', function() {
+                            WildcardCtrl.model.data.id = 'abc123';
+                            expect(validInstagramModel()).toBe(true);
+                        });
+
+                        it('should be false if an id doesn\'t exist on the model', function() {
+                            WildcardCtrl.model.data.id = null;
+                            expect(validInstagramModel()).toBe(false);
+                        });
+                    });
+
+                    describe('article tab', function() {
+                        function validArticleModel() {
+                            return WildcardCtrl._private.validTabModel('MR:Wildcard.Article');
+                        }
+
+                        it('should be false if there is no data property', function() {
+                            WildcardCtrl.model = {
+                                title: 'Title'
+                            };
+                            expect(validArticleModel()).toBe(false);
+                        });
+
+                        it('should be true if src and title are not empty strings', function() {
+                            WildcardCtrl.model = {
+                                title: 'Title',
+                                data: {
+                                    src: 'http://www.cinema6.com'
+                                }
+                            };
+                            expect(validArticleModel()).toBe(true);
+                        });
+
+                        it('should be false if either the src or title are an empty string', function() {
+                            WildcardCtrl.model = {
+                                title: 'Title',
+                                data: {
+                                    src: ''
+                                }
+                            };
+                            expect(validArticleModel()).toBe(false);
+                            WildcardCtrl.model = {
+                                title: '',
+                                data: {
+                                    src: 'http://www.cinema6.com'
+                                }
+                            };
+                            expect(validArticleModel()).toBe(false);
+                        });
+
+                        it('should be false if either the src or title are null', function() {
+                            WildcardCtrl.model = {
+                                title: 'Title',
+                                data: {
+                                    src: null
+                                }
+                            };
+                            expect(validArticleModel()).toBe(false);
+                            WildcardCtrl.model = {
+                                title: null,
+                                data: {
+                                    src: 'http://www.cinema6.com'
+                                }
+                            };
+                            expect(validArticleModel()).toBe(false);
+                        });
+
+                        it('should be false if either the src or title are undefined', function() {
+                            WildcardCtrl.model = {
+                                title: 'Title',
+                                data: {
+                                    src: undefined
+                                }
+                            };
+                            expect(validArticleModel()).toBe(false);
+                            WildcardCtrl.model = {
+                                title: undefined,
+                                data: {
+                                    src: 'http://www.cinema6.com'
+                                }
+                            };
+                            expect(validArticleModel()).toBe(false);
+                        });
+                    });
+
+                    describe('branding tab', function() {
+                        function validBrandingModel() {
+                            return WildcardCtrl._private.validTabModel('MR:Wildcard.Branding');
+                        }
+
+                        it('should be true if it has the required fields', function() {
+                            WildcardCtrl.model = {
+                                params: {
+                                    sponsor: 'Cinema6'
+                                }
+                            };
+                            WildcardCtrl.validImageSrcs = true;
+                            expect(validBrandingModel()).toBe(true);
+                        });
+
+                        it('should be true even if there is no branding but the branding field is hidden', function() {
+                            WildcardCtrl.model = { };
+                            WildcardCtrl.validImageSrcs = true;
+                            WildcardCtrl.hideBrand = true;
+                            expect(validBrandingModel()).toBe(true);
+                        });
+
+                        it('should be false if there is no branding', function() {
+                            WildcardCtrl.model = {
+                                params: { }
+                            };
+                            WildcardCtrl.validImageSrcs = true;
+                            WildcardCtrl.hideBrand = false;
+                            expect(validBrandingModel()).toBe(false);
+                        });
+
+                        it('should be false if the image sources are invalid', function() {
+                            WildcardCtrl.model = {
+                                params: {
+                                    sponsor: 'Cinema6'
+                                }
+                            };
+                            WildcardCtrl.validImageSrcs = false;
+                            expect(validBrandingModel()).toBe(false);
+                        });
+                    });
+
+                    describe('advertising tab', function() {
+                        function validAdvertisingModel() {
+                            return WildcardCtrl._private.validTabModel('MR:Wildcard.Advertising');
+                        }
+
+                        it('should return true if there is a valid date', function() {
+                            WildcardCtrl.validDate = true;
+                            expect(validAdvertisingModel()).toBe(true);
+                        });
+
+                        it('should return false if there is an invalid date', function() {
+                            WildcardCtrl.validDate = false;
+                            expect(validAdvertisingModel()).toBe(false);
+                        });
+                    });
+
+                    describe('video tab', function() {
+                        function validVideoModel() {
+                            return WildcardCtrl._private.validTabModel('MR:Wildcard.Video');
+                        }
+
+                        it('should return true if there is a valid reporting id', function() {
+                            WildcardCtrl.validReportingId = true;
+                            expect(validVideoModel()).toBe(true);
+                        });
+
+                        it('should return false if there is an invalid reporting id', function() {
+                            WildcardCtrl.validReportingId = false;
+                            expect(validVideoModel()).toBe(false);
+                        });
+                    });
+                });
+
                 describe('tabsForCardType(type)', function() {
                     it('should return tabs for an article card', function() {
                         var result = WildcardCtrl._private.tabsForCardType('article');

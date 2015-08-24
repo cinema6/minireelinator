@@ -72,39 +72,45 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     brand: 'Custom Name',
                     minViewTime: 15
                 });
-                cinema6.db.create.calls.reset();
+            });
 
-                result = newWildcard.model({
-                    type: 'video'
+            ['video', 'instagram', 'article'].forEach(function(type) {
+                describe('for ' + type + ' cards', function() {
+                    beforeEach(function() {
+                        cinema6.db.create.calls.reset();
+                        result = newWildcard.model({
+                            type: type
+                        });
+                    });
+
+                    it('should be a new card', function() {
+                        expect(MiniReelService.createCard).toHaveBeenCalledWith(type);
+                        expect(cinema6.db.create).toHaveBeenCalledWith('card', cardTemplate);
+                        expect(result).toBe(card);
+                    });
+
+                    it('should be for a wildcard', function() {
+                        expect(result).toEqual(jasmine.objectContaining({
+                            id: undefined,
+                            campaignId: campaign.cModel.id,
+                            sponsored: true,
+                            collateral: jasmine.objectContaining({
+                                logo: campaign.cModel.logos.square
+                            }),
+                            links: jasmine.objectContaining(campaign.cModel.links),
+                            params: jasmine.objectContaining({
+                                sponsor: campaign.cModel.brand,
+                                ad: true
+                            }),
+                            campaign: jasmine.objectContaining({
+                                minViewTime: campaign.cModel.minViewTime
+                            }),
+                            data: jasmine.objectContaining({
+                                autoadvance: false
+                            })
+                        }));
+                    });
                 });
-            });
-
-            it('should be a new card', function() {
-                expect(MiniReelService.createCard).toHaveBeenCalledWith('video');
-                expect(cinema6.db.create).toHaveBeenCalledWith('card', cardTemplate);
-                expect(result).toBe(card);
-            });
-
-            it('should be for a wildcard', function() {
-                expect(result).toEqual(jasmine.objectContaining({
-                    id: undefined,
-                    campaignId: campaign.cModel.id,
-                    sponsored: true,
-                    collateral: jasmine.objectContaining({
-                        logo: campaign.cModel.logos.square
-                    }),
-                    links: jasmine.objectContaining(campaign.cModel.links),
-                    params: jasmine.objectContaining({
-                        sponsor: campaign.cModel.brand,
-                        ad: true
-                    }),
-                    campaign: jasmine.objectContaining({
-                        minViewTime: campaign.cModel.minViewTime
-                    }),
-                    data: jasmine.objectContaining({
-                        autoadvance: false
-                    })
-                }));
             });
         });
 

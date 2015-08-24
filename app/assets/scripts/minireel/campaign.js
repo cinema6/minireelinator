@@ -852,7 +852,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
             $injector.invoke(WizardController, this);
 
-            function validTabModel(sref) {
+            _private.validTabModel = function(sref) {
                 var tab = sref.replace('MR:Wildcard.', '').toLowerCase();
                 switch(tab) {
                 case 'instagram':
@@ -890,7 +890,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 default:
                     return true;
                 }
-            }
+            };
 
             Object.defineProperties(this, {
                 validDate: {
@@ -934,7 +934,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 canSave: {
                     get: function() {
                         return this.tabs.reduce(function(acc, tab) {
-                            return acc && validTabModel(tab.sref);
+                            return acc && _private.validTabModel(tab.sref);
                         }, true);
                     }
                 }
