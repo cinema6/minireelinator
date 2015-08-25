@@ -1,0 +1,46 @@
+<div class="modalBody__group modalBody__group--sideTabs mrEdit__copyTab" c6-alias="WildcardInstagramCtrl.model as card">
+    <form>
+        <label class="forms__pair clearfix">
+            <span class="forms__name">
+                Slide Title
+            </span>
+            <span class="forms__inputHolder">
+                <input ng-model="card.title" type="text" class="forms__textField forms__textField--block">
+                <span class="typo--guidance typo--warning">({{card.title.length || 0}} of 100 max characters recommended)</span>
+            </span>
+        </label>
+        <label class="forms__pair clearfix">
+            <span class="forms__name">
+                Instagram URL <strong class="typo--danger">*</strong>
+            </span>
+            <span class="forms__inputHolder">
+                <input type="text" class="forms__textField forms__textField--block" ng-model="WildcardInstagramCtrl.inputUrl">
+                <span class="typo--guidance typo--warning">Type in a <strong>URL</strong>.</span>
+                <span class="typo--guidance">Supported sources :
+                    <a href="" title="Photo" target="_blank">Photo</a>,
+                    <a href="" title="Video" target="_blank">Video</a>
+                </span>
+            </span>
+        </label>
+        <label class="forms__pair clearfix">
+            <span class="forms__name">
+                Preview:
+            </span>
+        </label>
+    </form>
+    <div class="imagePlayer__messenger" ng-if="WildcardInstagramCtrl.error">
+        <h3>Oops! There was a problem with your Instagram content.</h3>
+        <p>{{EditCardCtrl.error}}</p>
+        <p>Please choose another Instagram url for this card.</p>
+    </div>
+    <div class="instagramPreview">
+        <div ng-if="WildcardInstagramCtrl.data.src" ng-switch="WildcardInstagramCtrl.data.type" class="embeddedInstagram">
+            <img ng-switch-when="image" src="{{WildcardInstagramCtrl.data.src}}"></img>
+            <video ng-switch-when="video" controls>
+                <source src="{{WildcardInstagramCtrl.trustSrc(WildcardInstagramCtrl.data.src)}}" type="video/mp4">
+                Your browser does not support the video tag.
+           </video>
+        </div>
+    </div>
+    <p class="modalBody__fineprint typo--danger"><strong>*</strong> Indicates required field.</p>
+</div>

@@ -7,6 +7,7 @@ define(['app'], function(appModule) {
             cinema6,
             c6State,
             $scope,
+            ThumbnailService,
             CampaignCtrl,
             CampaignCardsCtrl;
 
@@ -20,6 +21,7 @@ define(['app'], function(appModule) {
                 $controller = $injector.get('$controller');
                 cinema6 = $injector.get('cinema6');
                 c6State = $injector.get('c6State');
+                ThumbnailService = $injector.get('ThumbnailService');
 
                 campaign = cinema6.db.create('campaign', {
                     id: 'cam-74070a860d121e',
@@ -45,6 +47,68 @@ define(['app'], function(appModule) {
 
         it('should exist', function() {
             expect(CampaignCardsCtrl).toEqual(jasmine.any(Object));
+        });
+
+        describe('getThumb(card)', function() {
+            beforeEach(function() {
+                spyOn(ThumbnailService, 'getThumbsFor').and.returnValue({
+                    small: 'www.example.com/small.jpg'
+                });
+            });
+
+            it('should return null if not passed a card', function() {
+                expect(CampaignCardsCtrl.getThumb(undefined)).toBe(null);
+                expect(CampaignCardsCtrl.getThumb(null)).toBe(null);
+            });
+
+            it('should return the thumb property if it exists', function() {
+                var input = {
+                    thumb: 'www.example.com/thumb.jpg'
+                };
+                expect(CampaignCardsCtrl.getThumb(input)).toBe('www.example.com/thumb.jpg');
+            });
+
+            it('should return the thumbUrl property if it exists', function() {
+                var input = {
+                    data: {
+                        thumbUrl: 'www.example.com/thumb.jpg'
+                    }
+                };
+                expect(CampaignCardsCtrl.getThumb(input)).toBe('www.example.com/thumb.jpg');
+            });
+
+            it('should get thumbs for a video card', function() {
+                var input = {
+                    data: {
+                        videoid: 'abc123',
+                        service: 'youtube'
+                    }
+                };
+                CampaignCardsCtrl.getThumb(input);
+                expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', 'abc123');
+            });
+
+            it('should get thumbs for an image card', function() {
+                var input = {
+                    data: {
+                        imageid: 'abc123',
+                        service: 'flickr'
+                    }
+                };
+                CampaignCardsCtrl.getThumb(input);
+                expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('flickr', 'abc123');
+            });
+
+            it('should get thumbs for an instagram card', function() {
+                var input = {
+                    data: {
+                        id: 'abc123'
+                    },
+                    type: 'instagram'
+                };
+                CampaignCardsCtrl.getThumb(input);
+                expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('instagram', 'abc123');
+            });
         });
 
         describe('remove(item)', function() {

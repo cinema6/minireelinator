@@ -1635,7 +1635,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         /* jshint camelcase:false */
                         cardInfo.date = data.created_time;
                         /* jshint camelcase:true */
-                        cardInfo.caption = data.caption.text;
+                        cardInfo.caption = (data.caption) ? data.caption.text : null;
                         cardInfo.comments = data.comments.count;
                         cardInfo.user = {
                             /* jshint camelcase:false */

@@ -677,10 +677,20 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignCardsController', ['$scope',
-        function                               ( $scope ) {
+        .controller('CampaignCardsController', ['$scope', 'ThumbnailService',
+        function                               ( $scope ,  ThumbnailService ) {
             var CampaignCtrl = $scope.CampaignCtrl,
                 campaign = CampaignCtrl.model;
+
+            this.getThumb = function(card) {
+                if(!card) { return null; }
+                if(card.thumb) { return card.thumb; }
+                if(card.data.thumbUrl) { return card.data.thumbUrl; }
+                var data = card.data;
+                var service = data.service || card.type;
+                var id = data.videoid || data.imageid || data.id;
+                return ThumbnailService.getThumbsFor(service, id).small;
+            };
 
             this.remove = function(card) {
                 var items = campaign.cards;
@@ -724,9 +734,21 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 var CampaignState = c6State.get('MR:Campaign');
 
                 this.model = function(params) {
-                    var campaign = CampaignState.cModel,
-                        cardType = (params.type === 'article') ? 'article' : 'video',
-                        card = cinema6.db.create('card', MiniReelService.createCard(cardType));
+                    var campaign = CampaignState.cModel;
+
+                    var cardType;
+                    switch(params.type) {
+                    case 'article':
+                        cardType = 'article';
+                        break;
+                    case 'instagram':
+                        cardType = 'instagram';
+                        break;
+                    default:
+                        cardType = 'video';
+                    }
+
+                    var card = cinema6.db.create('card', MiniReelService.createCard(cardType));
 
                     return deepExtend(card, {
                         id: undefined,
@@ -830,23 +852,31 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
             $injector.invoke(WizardController, this);
 
+            _private.validTabModel = function(sref) {
+                var tab = sref.replace('MR:Wildcard.', '').toLowerCase();
+                var model = WildcardCtrl.model;
+                if(!model.data) {
+                    return false;
+                }
+                switch(tab) {
+                case 'instagram':
+                    return (!!model.data.id);
+                case 'article':
+                    return ((!!model.data.src && model.data.src!=='') &&
+                            (!!model.title && model.title!==''));
+                case 'branding':
+                    return ((WildcardCtrl.hideBrand || !!model.params.sponsor) &&
+                            WildcardCtrl.validImageSrcs);
+                case 'advertising':
+                    return WildcardCtrl.validDate;
+                case 'video':
+                    return WildcardCtrl.validReportingId;
+                default:
+                    return true;
+                }
+            };
+
             Object.defineProperties(this, {
-                validArticleModel: {
-                    get: function() {
-                        var validSrc = false,
-                            validTitle = false;
-                        if(!WildcardCtrl.model.data){
-                            return false;
-                        }
-                        if(WildcardCtrl.model.data.src) {
-                            validSrc = WildcardCtrl.model.data.src !== '';
-                        }
-                        if(WildcardCtrl.model.title) {
-                            validTitle = WildcardCtrl.model.title !== '';
-                        }
-                        return validSrc && validTitle;
-                    }
-                },
                 validDate: {
                     configurable: true,
                     get: function() {
@@ -869,7 +899,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     get: function() {
                         var logo = this.model.collateral.logo;
 
-                        return !logo || AppCtrl.validImgSrc.test(logo);
+                        return this.hideLogoUrl || !logo || AppCtrl.validImgSrc.test(logo);
                     }
                 },
                 validThumb: {
@@ -887,14 +917,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 },
                 canSave: {
                     get: function() {
-                        switch(WildcardCtrl.model.type) {
-                        case 'article':
-                            return WildcardCtrl.validArticleModel;
-                        case 'video':
-                            return WildcardCtrl.validDate &&
-                               WildcardCtrl.validReportingId &&
-                               WildcardCtrl.validImageSrcs;
-                        }
+                        return this.tabs.reduce(function(acc, tab) {
+                            return acc && _private.validTabModel(tab.sref);
+                        }, true);
                     }
                 }
             });
@@ -931,6 +956,11 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         required: true,
                         sref: 'MR:Wildcard.Article'
                     },
+                    instagramTab = {
+                        name: 'Instagram Content',
+                        required: true,
+                        sref: 'MR:Wildcard.Instagram'
+                    },
                     thumbsTab = {
                         name: 'Thumbnail Content',
                         required: false,
@@ -939,6 +969,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 switch(type) {
                 case 'article':
                     return [articleTab, thumbsTab];
+                case 'instagram':
+                    return [instagramTab, brandingTab, linksTab];
                 default:
                     return [copyTab, videoTab, surveyTab,
                             brandingTab, linksTab, advertTab];
@@ -954,6 +986,11 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.campaignData = cState.metaData;
                 this.enableMoat = !!card.data.moat;
                 this.tabs = _private.tabsForCardType(card.type);
+                if(card.type === 'instagram') {
+                    this.hideBrand = true;
+                    this.hideLogoUrl = true;
+                    this.hideTemplate = true;
+                }
             };
 
             this.save = queue.debounce(function() {
@@ -964,6 +1001,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         creative: this.campaignData.reportingId
                     };
                 }
+
+                $scope.$broadcast('CampaignCtrl:campaignWillSave');
 
                 return cState.updateCard().then(function(card) {
                     return CampaignCardsCtrl.add(card, WildcardCtrl.campaignData);
@@ -987,6 +1026,63 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     return this.cParent.cModel;
                 };
             }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Instagram', [function() {
+                this.controller = 'WildcardInstagramController';
+                this.controllerAs = 'WildcardInstagramCtrl';
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/cards/wildcard/instagram.html';
+
+                this.model = function() {
+                    return this.cParent.cModel;
+                };
+            }]);
+        }])
+
+        .controller('WildcardInstagramController', ['$scope', 'InstagramService', '$sce',
+        function                                   ( $scope ,  InstagramService ,  $sce ) {
+            var self = this;
+            var _private = { };
+            this.error = null;
+            this.inputUrl = null;
+            this.data = { };
+
+            _private.updateEmbedInfo = function(id) {
+                self.data = { };
+                InstagramService.getEmbedInfo(id)
+                    .then(function(embedInfo) {
+                        Object.keys(embedInfo).forEach(function(key) {
+                            self.data[key] = embedInfo[key];
+                        });
+                    })
+                    .catch(function(reason) {
+                        self.error = reason;
+                    });
+            };
+
+            this.trustSrc = function(src) {
+                return $sce.trustAsResourceUrl(src);
+            };
+
+            $scope.$watch(function() {
+                return self.inputUrl;
+            }, function(inputUrl) {
+                if(inputUrl !== null) {
+                    self.error = null;
+                    var data = InstagramService.dataFromUrl(inputUrl);
+                    self.model.data.id = data.id;
+                    _private.updateEmbedInfo(data.id);
+                } else {
+                    self.inputUrl = InstagramService.urlFromData(
+                        self.model.data.id
+                    );
+                }
+            });
+
+            if (window.c6.kHasKarma) { this._private = _private; }
         }])
 
         .config(['c6StateProvider',
