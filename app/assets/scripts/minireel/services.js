@@ -2007,9 +2007,16 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         }
                     },
                     shareLinks: function(card) {
-                        return {
-                            facebook: (card.shareLinks && card.shareLinks.facebook) || null
-                        };
+                        var result = { };
+                        if(!card.shareLinks) {
+                            return result;
+                        }
+                        ['facebook', 'twitter', 'pinterest'].forEach(function(service) {
+                            if(card.shareLinks[service]) {
+                                result[service] = card.shareLinks[service];
+                            }
+                        });
+                        return result;
                     },
                     params: copy({})
                 };
@@ -2945,9 +2952,16 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         collateral: copy(),
                         links: copy(),
                         shareLinks: function(card) {
-                            return {
-                                facebook: (card.shareLinks && card.shareLinks.facebook) || null
-                            };
+                            var result = { };
+                            if(!card.shareLinks) {
+                                return result;
+                            }
+                            ['facebook', 'twitter', 'pinterest'].forEach(function(service) {
+                                if(card.shareLinks[service]) {
+                                    result[service] = card.shareLinks[service];
+                                }
+                            });
+                            return result;
                         },
                         params: function(card) {
                             var params = copy({}).apply(this, arguments);
