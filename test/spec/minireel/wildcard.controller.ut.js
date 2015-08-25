@@ -619,6 +619,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
 
                     spyOn(CampaignCardsCtrl, 'add').and.callThrough();
                     spyOn(WildcardState, 'updateCard').and.returnValue(updateCardDeferred.promise);
+                    spyOn($scope, '$broadcast').and.callThrough();
 
                     WildcardCtrl.campaignData = {
                         endDate: new Date()
@@ -627,6 +628,10 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     $scope.$apply(function() {
                         WildcardCtrl.save().then(success, failure);
                     });
+                });
+
+                it('should braodcast the campaignWillSave event', function() {
+                    expect($scope.$broadcast).toHaveBeenCalledWith('CampaignCtrl:campaignWillSave');
                 });
 
                 it('should be debounced', function() {

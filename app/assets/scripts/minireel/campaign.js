@@ -1018,6 +1018,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     };
                 }
 
+                $scope.$broadcast('CampaignCtrl:campaignWillSave');
+
                 return cState.updateCard().then(function(card) {
                     return CampaignCardsCtrl.add(card, WildcardCtrl.campaignData);
                 }).then(function(card) {

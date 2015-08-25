@@ -83,6 +83,7 @@ function( angular ) {
             }));
         };
 
+        $scope.$on('CampaignCtrl:campaignWillSave', save);
         $scope.$on('$destroy', save);
     }
 
