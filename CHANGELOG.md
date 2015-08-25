@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## v1.19.0 (August 25, 2015)
 * *[v1.19.0.rc1]*
   * [FEATURE]: Added the ability to create Instagram sponsored cards
   * [FIX]: Fix for an issue that prevented Instagram cards without captions from being saved
@@ -13,6 +14,7 @@
     even when the title get magically filled in based on a new video source
   * [FIX]: (Selfie) Add very loose validation for link URLs
   * [FIX]: (Selfie) Disable Submit button if required properties aren't set
+* *[/v1.19.0.rc1]*
 
 ## v1.18.1 (August 21, 2015)
 * *[v1.18.1.rc1]*
