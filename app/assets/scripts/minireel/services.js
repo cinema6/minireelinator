@@ -2864,7 +2864,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         campaign: copy(),
                         collateral: copy(),
                         links: copy(),
-                        params: copy()
+                        params: copy(),
+                        thumbs: function(card) {
+                            return (card.thumb || null) && {
+                                small: card.thumb,
+                                large: card.thumb
+                            };
+                        }
                     },
                     text: {
                         id: copy(),

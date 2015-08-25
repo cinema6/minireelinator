@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.19.0 (August 25, 2015)
+* *[v1.19.0.rc2]*
+  * [FIX]: Fix for an issue which prevented specifying a custom Instagram thumbnail URL
+* *[/v1.19.0.rc2]*
+
 * *[v1.19.0.rc1]*
   * [FEATURE]: Added the ability to create Instagram sponsored cards
   * [FIX]: Fix for an issue that prevented Instagram cards without captions from being saved
