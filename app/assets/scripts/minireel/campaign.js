@@ -871,9 +871,18 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     return WildcardCtrl.validDate;
                 case 'video':
                     return WildcardCtrl.validReportingId;
+                case 'sharing':
+                    return ['facebook', 'twitter', 'pinterest'].reduce(function(acc, svc) {
+                        var shareLink = model.shareLinks[svc];
+                        return acc && WildcardCtrl.validUrl(shareLink);
+                    }, true);
                 default:
                     return true;
                 }
+            };
+
+            this.validUrl = function(url) {
+                return !url || AppCtrl.validUrl.test(url);
             };
 
             Object.defineProperties(this, {

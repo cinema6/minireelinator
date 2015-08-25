@@ -8,7 +8,8 @@
             <span class="forms__name">via Facebook</span>
             <span class="forms__inputHolder"
             style="float:left; width:36.5em;">
-                <input type="text" class="forms__textField forms__textField--block" ng-model="card.model.shareLinks.facebook">
+                <input type="text" class="forms__textField forms__textField--block" ng-model="card.model.shareLinks.facebook"
+                       ng-class="{'forms__textField--danger': !WildcardCtrl.validUrl(card.model.shareLinks.facebook)}">
             </span>
         </label>
 
@@ -17,7 +18,8 @@
             <span class="forms__name">via Twitter</span>
             <span class="forms__inputHolder"
             style="float:left; width:36.5em;">
-                <input type="text" class="forms__textField forms__textField--block" ng-model="card.model.shareLinks.twitter">
+                <input type="text" class="forms__textField forms__textField--block" ng-model="card.model.shareLinks.twitter"
+                       ng-class="{'forms__textField--danger': !WildcardCtrl.validUrl(card.model.shareLinks.twitter)}">
             </span>
         </label>
 
@@ -26,7 +28,8 @@
             <span class="forms__name">via Pinterest</span>
             <span class="forms__inputHolder"
             style="float:left; width:36.5em;">
-                <input type="text" class="forms__textField forms__textField--block" ng-model="card.model.shareLinks.pinterest">
+                <input type="text" class="forms__textField forms__textField--block" ng-model="card.model.shareLinks.pinterest"
+                       ng-class="{'forms__textField--danger': !WildcardCtrl.validUrl(card.model.shareLinks.pinterest)}">
             </span>
         </label>
     </form>
