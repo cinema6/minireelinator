@@ -2,6 +2,7 @@
 
 * *[v1.19.0.rc1]*
   * [FEATURE]: Added the ability to create Instagram sponsored cards
+  * [FIX]: Fix for an issue that prevented Instagram cards without captions from being saved
   * [FIX]: Change how Instagram cards are saved to be more consistent with
     the format in which other cards are saved.
   * [FEATURE]: Activated Instagram card creation in the wizard
