@@ -854,35 +854,19 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
             _private.validTabModel = function(sref) {
                 var tab = sref.replace('MR:Wildcard.', '').toLowerCase();
+                var model = WildcardCtrl.model;
+                if(!model.data) {
+                    return false;
+                }
                 switch(tab) {
                 case 'instagram':
-                    if(WildcardCtrl.model.data && WildcardCtrl.model.data.id) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                    break;
+                    return (!!model.data.id);
                 case 'article':
-                    var validSrc = false,
-                        validTitle = false;
-                    if(!WildcardCtrl.model.data){
-                        return false;
-                    }
-                    if(WildcardCtrl.model.data.src) {
-                        validSrc = WildcardCtrl.model.data.src !== '';
-                    }
-                    if(WildcardCtrl.model.title) {
-                        validTitle = WildcardCtrl.model.title !== '';
-                    }
-                    return validSrc && validTitle;
+                    return ((!!model.data.src && model.data.src!=='') &&
+                            (!!model.title && model.title!==''));
                 case 'branding':
-                    if(!WildcardCtrl.hideBrand && !WildcardCtrl.model.params.sponsor) {
-                        return false;
-                    }
-                    if(!WildcardCtrl.validImageSrcs) {
-                        return false;
-                    }
-                    return true;
+                    return ((WildcardCtrl.hideBrand || !!model.params.sponsor) &&
+                            WildcardCtrl.validImageSrcs);
                 case 'advertising':
                     return WildcardCtrl.validDate;
                 case 'video':
@@ -1048,7 +1032,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         function( c6StateProvider ) {
             c6StateProvider.state('MR:Wildcard.Instagram', [function() {
                 this.controller = 'WildcardInstagramController';
-                this.controllerAs = 'wildcardInstagramCtrl';
+                this.controllerAs = 'WildcardInstagramCtrl';
                 this.templateUrl =
                     'views/minireel/campaigns/campaign/cards/wildcard/instagram.html';
 
@@ -1079,7 +1063,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     });
             };
 
-            $scope.trustSrc = function(src) {
+            this.trustSrc = function(src) {
                 return $sce.trustAsResourceUrl(src);
             };
 

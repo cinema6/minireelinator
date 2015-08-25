@@ -469,6 +469,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
 
                         it('should be true if it has the required fields', function() {
                             WildcardCtrl.model = {
+                                data: { },
                                 params: {
                                     sponsor: 'Cinema6'
                                 }
@@ -478,7 +479,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                         });
 
                         it('should be true even if there is no branding but the branding field is hidden', function() {
-                            WildcardCtrl.model = { };
+                            WildcardCtrl.model = { data: { } };
                             WildcardCtrl.validImageSrcs = true;
                             WildcardCtrl.hideBrand = true;
                             expect(validBrandingModel()).toBe(true);
@@ -486,6 +487,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
 
                         it('should be false if there is no branding', function() {
                             WildcardCtrl.model = {
+                                data: { },
                                 params: { }
                             };
                             WildcardCtrl.validImageSrcs = true;
@@ -495,6 +497,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
 
                         it('should be false if the image sources are invalid', function() {
                             WildcardCtrl.model = {
+                                data: { },
                                 params: {
                                     sponsor: 'Cinema6'
                                 }

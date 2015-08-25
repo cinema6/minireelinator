@@ -1,4 +1,4 @@
-<div class="modalBody__group modalBody__group--sideTabs mrEdit__copyTab" c6-alias="wildcardInstagramCtrl.model as card">
+<div class="modalBody__group modalBody__group--sideTabs mrEdit__copyTab" c6-alias="WildcardInstagramCtrl.model as card">
     <form>
         <label class="forms__pair clearfix">
             <span class="forms__name">
@@ -14,7 +14,7 @@
                 Instagram URL <strong class="typo--danger">*</strong>
             </span>
             <span class="forms__inputHolder">
-                <input type="text" class="forms__textField forms__textField--block" ng-model="wildcardInstagramCtrl.inputUrl">
+                <input type="text" class="forms__textField forms__textField--block" ng-model="WildcardInstagramCtrl.inputUrl">
                 <span class="typo--guidance typo--warning">Type in a <strong>URL</strong>.</span>
                 <span class="typo--guidance">Supported sources :
                     <a href="" title="Photo" target="_blank">Photo</a>,
@@ -28,16 +28,16 @@
             </span>
         </label>
     </form>
-    <div class="imagePlayer__messenger" ng-if="wildcardInstagramCtrl.error">
+    <div class="imagePlayer__messenger" ng-if="WildcardInstagramCtrl.error">
         <h3>Oops! There was a problem with your Instagram content.</h3>
         <p>{{EditCardCtrl.error}}</p>
         <p>Please choose another Instagram url for this card.</p>
     </div>
     <div class="instagramPreview">
-        <div ng-if="wildcardInstagramCtrl.data.src" ng-switch="wildcardInstagramCtrl.data.type" class="embeddedInstagram">
-            <img ng-switch-when="image" src="{{wildcardInstagramCtrl.data.src}}"></img>
+        <div ng-if="WildcardInstagramCtrl.data.src" ng-switch="WildcardInstagramCtrl.data.type" class="embeddedInstagram">
+            <img ng-switch-when="image" src="{{WildcardInstagramCtrl.data.src}}"></img>
             <video ng-switch-when="video" controls>
-                <source src="{{trustSrc(wildcardInstagramCtrl.data.src)}}" type="video/mp4">
+                <source src="{{WildcardInstagramCtrl.trustSrc(WildcardInstagramCtrl.data.src)}}" type="video/mp4">
                 Your browser does not support the video tag.
            </video>
         </div>
