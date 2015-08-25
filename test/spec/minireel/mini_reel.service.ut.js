@@ -192,7 +192,11 @@
                             collateral: {},
                             links: {},
                             params: {},
-                            modules: []
+                            modules: [],
+                            thumbs: {
+                                small: 'https://user-specified.com/thumb.jpg',
+                                large: 'https://user-specified.com/thumb.jpg'
+                            }
                         }
                     }
                 };
@@ -1842,7 +1846,7 @@
                                 title: 'Hey it\'s an Instagram Card!',
                                 note: null,
                                 label: 'Instagram',
-                                thumb: null,
+                                thumb: 'https://user-specified.com/thumb.jpg',
                                 ad: false,
                                 view: 'instagram',
                                 data: {
