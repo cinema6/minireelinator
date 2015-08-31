@@ -21,14 +21,28 @@
         </div><!--.mainHeader__group-->
         <div class="sortBar__group">
             <ul class="sortBar__list clearfix">
-                <li class="sortBar__item column__status">
-                    <button class="sortBar__btn sortBar__btn--asc" type="button">Status</button>
+                <li class="sortBar__item sortBar__item--sortable column__status">
+                    <button class="sortBar__btn" type="button">Status</button><span class="faa fa-caret-down ui__clickDrop sortBar__btn--Dropdown"> </span>
+                    <div class="ui__clickDropMenu">
+                    <button class="ui__clickDropBtn" type="button" title="Select All">
+                        Active
+                    </button>
+                    <button class="ui__clickDropBtn" type="button">
+                        Cancelled
+                    </button>
+                    <button class="ui__clickDropBtn" type="button">
+                        Paused
+                    </button>
+                    <button class="ui__clickDropBtn ng-hide" type="button">
+                        Pending Approval
+                    </button>
+                </div>
                 </li>
-                <li class="sortBar__item column__sponsor">
+                <li class="sortBar__item sortBar__item--sortable column__sponsor">
                     <button class="sortBar__btn" type="button">Sponsor</button>
                 </li>
-                <li class="sortBar__item column__campaignName">
-                    <button class="sortBar__btn" type="button">Campaign Name</button>
+                <li class="sortBar__item sortBar__item--sortable column__campaignName">
+                    <button class="sortBar__btn sortBar__btn--asc" type="button">Campaign Name</button>
                 </li>
                 <li class="sortBar__item column__totalViews">
                     <button class="sortBar__colName" type="button">Total Views</button>
@@ -140,13 +154,11 @@
     </ul><!--.campaigns__list-->
 
 
-
     <footer class="dockedFooter__group">
         <div class="paginator__group clearfix">
-
-
-            <div class="paginator__readout" c6-alias="SelfieCampaignsCtrl.model.items.value.meta.items as items">
-                <span ng-show="campaigns.length">Viewing <strong>{{items.start}} &ndash; {{items.end}}</strong> &nbsp;of&nbsp; {{items.total}} Campaigns</span>
+ <paginator-controls page="SelfieCampaignsCtrl.model.page" limit="SelfieCampaignsCtrl.limit" limits="SelfieCampaignsCtrl.limits" total="SelfieCampaignsCtrl.model.items.page.total"></paginator-controls>
+             <div class="paginator__readout" c6-alias="SelfieCampaignsCtrl.model.items.value.meta.items as items">
+                <span ng-show="campaigns.length">Displaying <strong>{{items.start}} &ndash; {{items.end}}</strong> &nbsp;of&nbsp; {{items.total}} Campaigns</span>
                 <span ng-show="!campaigns.length">0 Campaigns</span>
             </div><!--.paginator__readout-->
 
@@ -154,64 +166,6 @@
         </div><!--.paginator__group-->
     </footer><!--.dockedFooter__group-->
 
-
-
-
-<section class="container">
-    <header class="tableHeader__group clearfix">
-        <paginator-controls page="SelfieCampaignsCtrl.page" limit="SelfieCampaignsCtrl.limit" limits="SelfieCampaignsCtrl.limits" total="SelfieCampaignsCtrl.model.items.page.total"></paginator-controls>
-        <nav class="selectorActions__group">
-            <div class="selectorActions__selector">
-                <label class="checkbox--inline selectorActions__selectorCheckBox">
-                    <input type="checkbox" ng-model="SelfieCampaignsCtrl.allAreSelected" class="checkbox__input">
-                    <span class="btn__label faa">&nbsp;</span>
-                </label>
-                <button ng-click="SelfieCampaignsCtrl.dropDowns.select.toggle()" c6-click-outside="SelfieCampaignsCtrl.dropDowns.select.hide()" class="btn faa fa-caret-down ui__clickDrop">&nbsp;</button>
-                <div ng-show="SelfieCampaignsCtrl.dropDowns.select.shown" class="pager__itemsPerPage ui__clickDropMenu">
-                    <button class="ui__clickDropBtn" type="button"
-                    title="Select All"
-                    ng-show="!SelfieCampaignsCtrl.allAreSelected"
-                    ng-click="SelfieCampaignsCtrl.model.selectAll()">
-                        Select All
-                    </button>
-                    <button class="ui__clickDropBtn" type="button"
-                    title="Select None"
-                    ng-show="SelfieCampaignsCtrl.model.getSelected().length > 0"
-                    ng-click="SelfieCampaignsCtrl.model.selectNone()">
-                        Select None
-                    </button>
-                </div>
-            </div>
-            <div class="btnGroup__animator">
-                <div class="btnGroup clearfix"
-                ng-show="SelfieCampaignsCtrl.model.getSelected().length > 0">
-                    <button class="btn btn--primary" type="button" title="Delete" ng-click="SelfieCampaignsCtrl.remove(SelfieCampaignsCtrl.model.getSelected())">
-                        <span class="btn__label">Delete</span>
-                    </button>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <div class="tableBody__group">
-        <ul class="miniReels__list grid">
-            <li class="miniReels__item grid__item" ng-show="!campaigns.length">
-                <article class="miniReels__welcomeMsg">
-                    <p><a c6-sref="Selfie:NewCampaign" class="btnAction btnAction--primary">Create Campaign</a></p>
-                </article>
-            </li>
-
-
-        </ul>
-    </div>
-    <footer class="tableFooter__group">
-        <paginator-controls page="SelfieCampaignsCtrl.model.page" limit="SelfieCampaignsCtrl.limit" limits="SelfieCampaignsCtrl.limits" total="SelfieCampaignsCtrl.model.items.page.total"></paginator-controls>
-        <p class="tableFooter__displayText" c6-alias="SelfieCampaignsCtrl.model.items.value.meta.items as items">
-            <span ng-show="campaigns.length">Displaying <strong>{{items.start}}-{{items.end}}</strong> of {{items.total}} Campaigns</span>
-            <span ng-show="!campaigns.length">0 Campaigns</span>
-        </p>
-    </footer>
-</section>
 </main>
 <c6-view></c6-view>
 
