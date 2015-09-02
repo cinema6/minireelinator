@@ -1,0 +1,26 @@
+<div class="grid grid--full grid--center adPreview__group">
+
+    <div class="tabHolder">
+        <button class="one-quarter palm--one-half ui__tab" data-panel="js-preview-desktop" ng-class="{'ui__tab--active' : device === 'desktop' }" ng-click="device = 'desktop'">
+            Desktop
+        </button><!--
+     --><button class="one-quarter palm--one-half ui__tab" data-panel="js-preview-mobile" ng-class="{'ui__tab--active' : device === 'phone' }" ng-click="device = 'phone'">
+            Mobile
+        </button>
+    </div><!--.tabHolder-->
+
+    <div class="adPreview__panel">
+        <div ng-class="{'adPreview__desktop' : device === 'desktop', 'adPreview__mobile' : device === 'phone'}">
+            <div ng-class="{'adPreview__desktopFrame' : device === 'desktop', 'adPreview__mobileFrame' : device === 'phone'}">
+                <c6-embed class="preview__embedHolder"
+                    experience="SelfiePreviewCtrl.experience"
+                    profile="SelfiePreviewCtrl.profile"
+                    card="SelfiePreviewCtrl.card"
+                    active="SelfiePreviewCtrl.active"
+                    standalone="SelfiePreviewCtrl.standalone">
+                </c6-embed>
+            </div>
+        </div>
+    </div>
+
+</div><!--.grid .grid--full .grid--center adPreview__group-->

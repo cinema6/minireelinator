@@ -54,7 +54,7 @@
 
         <li class="campaign__item campaign__item--{{$this.status}} clearfix"
         ng-repeat="$this in campaigns track by $this.id"
-        c6-sref="Selfie:EditCampaign" c6-models="[$this]" c6-params="{}" >
+        c6-sref="{{SelfieCampaignsCtrl.editStateFor($this)}}" c6-models="[$this]" c6-params="{}" >
 
             <div class="campaign__column column__status">
                 <span class="campaign__status">{{$this.status}}</span>
