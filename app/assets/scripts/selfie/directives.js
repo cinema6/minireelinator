@@ -83,8 +83,6 @@ function( angular ) {
                             minimumResultsForSearch: Infinity
                         }, config));
 
-                        // console.log(attrs.unselectDefault, $element.val() === '0');
-
                         if (attrs.preselected || ($element.val() && !shouldHideDefaultOption())) {
                             $element.addClass('form__fillCheck--filled');
                         }
@@ -138,43 +136,34 @@ function( angular ) {
             return {
                 restrict: 'E',
                 scope: {
-                    campaign: '='
+                    campaign: '=',
+                    categories: '='
                 },
                 templateUrl: 'views/selfie/directives/categories.html',
                 controller: 'SelfieCategoriesController',
-                controllerAs: 'SelfieCategoriesCtrl',
-                link: function(scope, element, attrs, ctrl) {
-                    ctrl.loadCategories().then(function() {
-                        $compile(element.contents())(scope);
-                    });
-                }
+                controllerAs: 'SelfieCategoriesCtrl'
             };
         }])
 
         .controller('SelfieCategoriesController', ['$scope','cinema6',
         function                                  ( $scope , cinema6 ) {
             var SelfieCategoriesCtrl = this,
-                campaign = $scope.campaign;
+                campaign = $scope.campaign,
+                categories = $scope.categories;
 
-            this.loadCategories = function() {
-                return cinema6.db.findAll('category').then(function(cats) {
-                    // we need to have a selectable item in the dropdown for 'none'
-                    SelfieCategoriesCtrl.categories = [{
-                        name: 'none',
-                        label: 'No Category Targeting'
-                    }].concat(cats);
+            // we need to have a selectable item in the dropdown for 'none'
+            SelfieCategoriesCtrl.categories = [{
+                name: 'none',
+                label: 'No Category Targeting'
+            }].concat(categories);
 
-                    // we default to 'none'
-                    SelfieCategoriesCtrl.category = SelfieCategoriesCtrl.categories
-                        .filter(function(category) {
-                            var name = campaign.categories[0] || 'none';
+            // we default to 'none'
+            SelfieCategoriesCtrl.category = SelfieCategoriesCtrl.categories
+                .filter(function(category) {
+                    var name = campaign.categories[0] || 'none';
 
-                            return name === category.name;
-                        })[0];
-
-                    return cats;
-                });
-            };
+                    return name === category.name;
+                })[0];
 
             // we watch the category choice and add only one to the campaign if chosen
             // and set to empty array if 'No Categories' is chosen

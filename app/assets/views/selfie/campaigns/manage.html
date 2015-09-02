@@ -2,58 +2,42 @@
 
 </nav>
 
-<div class="pageHolder">
+<div class="pageHolder" c6-alias="SelfieManageCampaignCtrl.campaign as campaign">
 
     <div class="pageHeader__group">
         <div class="mainHeader__group">
             <h1 class="mainHeader__breadcrumbs tk--hdr">
                 <a c6-sref="Selfie:Campaigns">Back to Campaigns</a> &nbsp;/&nbsp;
+                {{campaign.name}} &nbsp;/&nbsp;
                 <span ng-click="SelfieCtrl.logout()">Logout</span>
             </h1>
         </div><!--.mainHeader__group-->
+        <div class="tabBar__group">
+            <ul class="tabBar__list clearfix">
+                <li class="tabBar__item" ng-class="{ 'tabBar__item--active': SelfieManageCampaignCtrl.tab === 'stats' }">
+                    <button class="tabBar__btn" type="button" ng-click="SelfieManageCampaignCtrl.tab = 'stats'">Stats</button>
+                </li>
+                <li class="tabBar__item" ng-class="{ 'tabBar__item--active': SelfieManageCampaignCtrl.tab === 'manage' }">
+                    <button class="tabBar__btn" type="button" ng-click="SelfieManageCampaignCtrl.tab = 'manage'">Manage Campaign</button>
+                </li>
+                <li class="tabBar__item" ng-class="{ 'tabBar__item--active': SelfieManageCampaignCtrl.tab === 'targeting' }">
+                    <button class="tabBar__btn" type="button" ng-click="SelfieManageCampaignCtrl.tab = 'targeting'">Targeting</button>
+                </li>
+                <li class="tabBar__item" ng-class="{ 'tabBar__item--active': SelfieManageCampaignCtrl.tab === 'budget' }">
+                    <button class="tabBar__btn" type="button" ng-click="SelfieManageCampaignCtrl.tab = 'budget'">Budget</button>
+                </li>
+                <li class="tabBar__item" ng-class="{ 'tabBar__item--active': SelfieManageCampaignCtrl.tab === 'payment' }">
+                    <button class="tabBar__btn" type="button" ng-click="SelfieManageCampaignCtrl.tab = 'payment'">Payment Options</button>
+                </li>
+            </ul><!--.tabBar__list-->
+        </div><!--.tabBar__group-->
     </div><!--.pageHeader__group-->
 
-    <ul style="padding-top:50px">
-        <li>
-            <a ng-click="SelfieManageCampaignCtrl.tab = 'stats'" title="Stats">
-                Stats
-            </a>
-        </li>
-        <li>
-            <a ng-click="SelfieManageCampaignCtrl.tab = 'manage'" title="Manage Campaign">
-                Manage Campaign
-            </a>
-        </li>
-        <li>
-            <a ng-click="SelfieManageCampaignCtrl.tab = 'targeting'" title="Targeting">
-                Targeting
-            </a>
-        </li>
-        <li>
-            <a ng-click="SelfieManageCampaignCtrl.tab = 'budget'" title="Budget">
-                Budget
-            </a>
-        </li>
-        <li>
-            <a ng-click="SelfieManageCampaignCtrl.tab = 'payment'" title="Payment">
-                Payment
-            </a>
-        </li>
-    </ul>
-
-    <div class="gridHolder">
-
-        <div class="grid grid--center" c6-alias="SelfieManageCampaignCtrl.campaign as campaign">
-
-            <div ng-if="SelfieManageCampaignCtrl.tab === 'stats'" ng-include="'views/selfie/campaigns/manage/stats.html'"></div>
-            <div ng-if="SelfieManageCampaignCtrl.tab === 'manage'" ng-include="'views/selfie/campaigns/manage/manage.html'"></div>
-            <div ng-if="SelfieManageCampaignCtrl.tab === 'targeting'" ng-include="'views/selfie/campaigns/manage/targeting.html'"></div>
-            <div ng-if="SelfieManageCampaignCtrl.tab === 'budget'" ng-include="'views/selfie/campaigns/manage/budget.html'"></div>
-            <div ng-if="SelfieManageCampaignCtrl.tab === 'payment'"ng-include="'views/selfie/campaigns/manage/payment.html'"></div>
-
-        </div><!-- .grid -->
-
-    </div><!-- .gridHolder -->
+    <div ng-if="SelfieManageCampaignCtrl.tab === 'stats'" ng-include="'views/selfie/campaigns/manage/stats.html'"></div>
+    <div ng-if="SelfieManageCampaignCtrl.tab === 'manage'" ng-include="'views/selfie/campaigns/manage/manage.html'"></div>
+    <div ng-if="SelfieManageCampaignCtrl.tab === 'targeting'" ng-include="'views/selfie/campaigns/manage/targeting.html'"></div>
+    <div ng-if="SelfieManageCampaignCtrl.tab === 'budget'" ng-include="'views/selfie/campaigns/manage/budget.html'"></div>
+    <div ng-if="SelfieManageCampaignCtrl.tab === 'payment'"ng-include="'views/selfie/campaigns/manage/payment.html'"></div>
 
     <div class="footer__group">
         &copy; Copyright 2015 Cinema6. All rights reserved.

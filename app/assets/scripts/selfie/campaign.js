@@ -112,7 +112,7 @@ function( angular , c6State  , PaginatedListState                    ,
             this.editStateFor = function(campaign) {
                 return campaign.status === 'draft' ?
                     'Selfie:EditCampaign' :
-                    'Selfie:Manage:Campaign';
+                    'Selfie:ManageCampaign';
             };
 
             this.remove = function(campaigns) {
@@ -238,6 +238,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.model = function() {
                     return $q.all({
+                        categories: cinema6.db.findAll('category'),
                         logos: SelfieLogoService.getLogos({
                             sort: 'lastUpdated,-1',
                             org: SelfieState.cModel.org.id,
@@ -346,6 +347,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.card = cState.card;
                 this.campaign = cState.campaign;
                 this.logos = model.logos;
+                this.categories = model.categories;
                 this.advertiser = cState.advertiser;
 
                 this._proxyCard = copy(this.card);
@@ -796,12 +798,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6','$q',
-            function                                        ( cinema6 , $q ) {
-                this.templateUrl = 'views/selfie/campaigns/manage.html';
-                this.controller = 'SelfieManageCampaignController';
-                this.controllerAs = 'SelfieManageCampaignCtrl';
-
+            c6StateProvider.state('Selfie:ManageCampaign', ['cinema6','c6State',
+            function                                       ( cinema6 , c6State ) {
                 this.model = function(params) {
                     return cinema6.db.find('selfieCampaign', params.campaignId);
                 };
@@ -809,13 +807,38 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.afterModel = function(campaign) {
                     this.card = campaign.cards[0].item;
                 };
+
+                this.enter = function() {
+                    return c6State.goTo('Selfie:Manage:Campaign', null, null, true);
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6',
+            function                                        ( cinema6 ) {
+                this.templateUrl = 'views/selfie/campaigns/manage.html';
+                this.controller = 'SelfieManageCampaignController';
+                this.controllerAs = 'SelfieManageCampaignCtrl';
+
+                this.card = null;
+                this.campaign = null;
+
+                this.beforeModel = function() {
+                    this.card = this.cParent.card;
+                    this.campaign = this.cParent.cModel;
+                };
+
+                this.model = function() {
+                    return cinema6.db.findAll('category');
+                };
             }]);
         }])
 
         .controller('SelfieManageCampaignController', ['cState','c6AsyncQueue',
         function                                      ( cState , c6AsyncQueue ) {
-            var SelfieManageCampaignCtrl = this,
-                queue = c6AsyncQueue();
+            var queue = c6AsyncQueue();
 
             Object.defineProperties(this, {
                 canSubmit: {
@@ -831,10 +854,12 @@ function( angular , c6State  , PaginatedListState                    ,
             });
 
             this.validBudget = true;
+            this.tab = 'manage';
 
-            this.initWithModel = function(campaign) {
+            this.initWithModel = function(categories) {
                 this.card = cState.card;
-                this.campaign = campaign;
+                this.campaign = cState.campaign;
+                this.categories = categories;
             };
 
             this.update = queue.debounce(function() {

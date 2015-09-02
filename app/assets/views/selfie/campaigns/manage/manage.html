@@ -1,3 +1,44 @@
-<div class="grid__item seven-eighths">
-    <selfie-preview card="SelfieManageCampaignCtrl.card"></selfie-preview>
+<div class="tabContent targeting__content container">
+    <header class="tabContent__header">
+        <h2 class="tabContent__title tk--hdr">Your campaign is currently {{campaign.status}}</h2>
+        <span class="tabContent__subtitle">{{campaign.name}}</span>
+    </header>
+
+    <div class="tabContent__gridHolder">
+        <div class="grid">
+            <!--left column-->
+            <div class="grid__item adManage one-third palm--one-whole">
+                <div class="grid">
+
+                    <div class="grid__item lap--one-half desk--one-third grid--center">
+                        <button class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-copy"></i>  Copy</button>
+                    </div><!--
+
+                 --><div class="grid__item  lap--one-half  desk--one-third grid--center">
+                        <button class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-ban"></i>  Cancel</button>
+                    </div><!--
+
+                 --><div class="grid__item  desk--one-third grid--center">
+                        <button class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-trash-o"></i>  Delete</button>
+                    </div>
+                    <div class="grid__item grid--center lockedMsg">
+                        <img src="styles/selfie/img/lock-icon.png" class="lockedMsg__icon"/>
+                        <h3 class="lockedMsg__icon--text tk--hdr">Locked</h3>
+                        <p class="lockedMsg__info">Your campaign is <strong>{{campaign.status}}</strong></p>
+                        <p class="lockedMsg__info">You cannot make changes to the campaign once it's approved. If you want to make changes, create a copy of the campaign and cancel this one.</p>
+                    </div>
+                    <div class="grid__item one--whole grid--center">
+                        <button class="action__btn action__btn--small"><i class="fa fa-pause"></i>  Pause</button>
+                    </div>
+                </div>
+            </div>
+            <!--left column ends-->
+
+            <div class="grid__item one-half palm--one-whole">
+                <section class="campaignPreview__group">
+                    <selfie-preview card="SelfieManageCampaignCtrl.card"></selfie-preview>
+                </section>
+            </div><!--.grid__item-->
+        </div>
+    </div>
 </div>

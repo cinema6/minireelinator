@@ -21,7 +21,9 @@ function( angular , c6State  , services   , directives   , campaign   ) {
                     this.route('/edit/:campaignId', 'Selfie:EditCampaign', function() {
                         this.state('Selfie:Campaign', 'Selfie:Edit:Campaign');
                     });
-                    this.route('/manage/:campaignId', 'Selfie:Manage:Campaign');
+                    this.route('/manage/:campaignId', 'Selfie:ManageCampaign', function() {
+                        this.state('Selfie:Manage:Campaign');
+                    });
                 });
             });
         }])
