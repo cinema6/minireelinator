@@ -796,6 +796,68 @@ function( angular , c6State  , PaginatedListState                    ,
 
         }])
 
+        .controller('SelfieCategoriesController', ['$scope','cinema6',
+        function                                  ( $scope , cinema6 ) {
+            var SelfieCategoriesCtrl = this,
+                campaign = $scope.campaign,
+                categories = $scope.categories;
+
+            // we need to have a selectable item in the dropdown for 'none'
+            SelfieCategoriesCtrl.categories = [{
+                name: 'none',
+                label: 'No Category Targeting'
+            }].concat(categories);
+
+            // we default to 'none'
+            SelfieCategoriesCtrl.category = SelfieCategoriesCtrl.categories
+                .filter(function(category) {
+                    var name = campaign.categories[0] || 'none';
+
+                    return name === category.name;
+                })[0];
+
+            // we watch the category choice and add only one to the campaign if chosen
+            // and set to empty array if 'No Categories' is chosen
+            $scope.$watch(function() {
+                return SelfieCategoriesCtrl.category;
+            }, function(newCat, oldCat) {
+                if (newCat === oldCat) { return; }
+
+                campaign.categories = newCat.name !== 'none' ? [newCat.name] : [];
+            });
+        }])
+
+        .controller('SelfieGeotargetingController', ['$scope','cinema6','GeoService',
+        function                                    ( $scope , cinema6 , GeoService ) {
+            var SelfieGeotargetingCtrl = this,
+                campaign = $scope.campaign;
+
+            this.geoOptions = GeoService.usa.map(function(state) {
+                return {
+                    state: state,
+                    country: 'usa'
+                };
+            });
+
+            // we filter the options and use only the ones saved on the campaign
+            this.geo = this.geoOptions.filter(function(option) {
+                return campaign.geoTargeting.filter(function(geo) {
+                    return option.state === geo.state;
+                }).length > 0;
+            });
+
+            // we watch the geo choices and save an array of states
+            $scope.$watch(function() {
+                return SelfieGeotargetingCtrl.geo;
+            }, function(newGeo, oldGeo) {
+                if (newGeo === oldGeo) { return; }
+
+                campaign.geoTargeting = newGeo.map(function(geo) {
+                    return { state: geo.state };
+                });
+            });
+        }])
+
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:ManageCampaign', ['cinema6','c6State',

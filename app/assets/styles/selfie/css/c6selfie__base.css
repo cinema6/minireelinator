@@ -1583,7 +1583,7 @@
             width:100%;
             background-color:#e1e1e1;
             position:relative;
-            /*min-height:32em;*/
+            min-height:32em;
         }
             .adPreview__desktop:before {
                 content:'No preview available';

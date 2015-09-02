@@ -8,9 +8,9 @@
             <span class="formSection__titleText tk--hdr">Choose Your Audience</span>
         </h1>
 
-        <div class="form__items">
-            <selfie-categories categories="SelfieCampaignCtrl.categories" campaign="campaign"></selfie-categories>
-            <selfie-geotargeting campaign="campaign"></selfie-geotargeting>
+        <div class="form__items" c6-alias="SelfieCampaignCtrl.categories as categories">
+            <div ng-include="'views/selfie/directives/categories.html'"></div>
+            <div ng-include="'views/selfie/directives/geotargeting.html'"></div>
         </div>
 
     </section><!--.formSection__group-->
