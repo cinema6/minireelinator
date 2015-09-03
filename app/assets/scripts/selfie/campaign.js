@@ -829,8 +829,8 @@ function( angular , c6State  , PaginatedListState                    ,
             });
         }])
 
-        .controller('SelfieGeotargetingController', ['$scope','cinema6','GeoService',
-        function                                    ( $scope , cinema6 , GeoService ) {
+        .controller('SelfieGeotargetingController', ['$scope','GeoService',
+        function                                    ( $scope , GeoService ) {
             var SelfieGeotargetingCtrl = this,
                 campaign = $scope.campaign;
 
@@ -866,8 +866,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 campaign = $scope.campaign,
                 validation = $scope.validation || {};
 
-            this.budget = campaign.pricing.budget;
-            this.limit = campaign.pricing.dailyLimit;
+            this.budget = campaign.pricing.budget || null;
+            this.limit = campaign.pricing.dailyLimit || null;
 
             Object.defineProperties(this, {
                 cpv: {
@@ -926,7 +926,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     campaign.pricing.budget = params[0];
                     campaign.pricing.dailyLimit = params[1];
 
-                    validation.budget = budget && limit;
+                    validation.budget = !!budget && !!limit;
                 } else {
                     validation.budget = false;
                 }
