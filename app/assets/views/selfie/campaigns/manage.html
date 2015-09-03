@@ -36,7 +36,7 @@
     <div ng-if="SelfieManageCampaignCtrl.tab === 'stats'" ng-include="'views/selfie/campaigns/manage/stats.html'"></div>
     <div ng-if="SelfieManageCampaignCtrl.tab === 'manage'" ng-include="'views/selfie/campaigns/manage/manage.html'"></div>
     <div ng-if="SelfieManageCampaignCtrl.tab === 'targeting'" ng-include="'views/selfie/campaigns/manage/targeting.html'"></div>
-    <div ng-if="SelfieManageCampaignCtrl.tab === 'budget'" ng-include="'views/selfie/campaigns/manage/budget.html'"></div>
+    <div ng-if="SelfieManageCampaignCtrl.tab === 'budget'" ng-include="'views/selfie/campaigns/manage/budget.html'" c6-alias="SelfieManageCampaignCtrl.validation as validation"></div>
     <div ng-if="SelfieManageCampaignCtrl.tab === 'payment'"ng-include="'views/selfie/campaigns/manage/payment.html'"></div>
 
     <div class="footer__group">

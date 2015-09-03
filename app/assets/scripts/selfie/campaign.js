@@ -341,13 +341,15 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
             });
 
-            this.validBudget = true;
+            this.validation = {
+                budget: true
+            };
 
             this.initWithModel = function(model) {
                 this.card = cState.card;
                 this.campaign = cState.campaign;
-                this.logos = model.logos;
                 this.categories = model.categories;
+                this.logos = model.logos;
                 this.advertiser = cState.advertiser;
 
                 this._proxyCard = copy(this.card);
@@ -796,8 +798,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
         }])
 
-        .controller('SelfieCategoriesController', ['$scope','cinema6',
-        function                                  ( $scope , cinema6 ) {
+        .controller('SelfieCategoriesController', ['$scope',
+        function                                  ( $scope ) {
             var SelfieCategoriesCtrl = this,
                 campaign = $scope.campaign,
                 categories = $scope.categories;
@@ -858,6 +860,79 @@ function( angular , c6State  , PaginatedListState                    ,
             });
         }])
 
+        .controller('SelfieBudgetController', ['$scope',
+        function                              ( $scope ) {
+            var SelfieBudgetCtrl = this,
+                campaign = $scope.campaign,
+                validation = $scope.validation || {};
+
+            this.budget = campaign.pricing.budget;
+            this.limit = campaign.pricing.dailyLimit;
+
+            Object.defineProperties(this, {
+                cpv: {
+                    get: function() {
+                        var hasCategory = campaign.categories.length,
+                            hasGeos = campaign.geoTargeting.length;
+
+                        return 50 + ([hasCategory, hasGeos]
+                            .filter(function(bool) { return bool; }).length * 0.5);
+                    }
+                },
+                validBudget: {
+                    get: function() {
+                        var budget = parseInt(this.budget);
+
+                        return !budget || (budget > 50 && budget < 20000);
+                    }
+                },
+                dailyLimitError: {
+                    get: function() {
+                        var budget = parseInt(this.budget),
+                            max = parseInt(this.limit);
+
+                        if (max && !budget) {
+                            return 'Please enter your Total Budget first';
+                        }
+
+                        if (max < budget * 0.015) {
+                            return 'Must be greater than 1.5% of the Total Budget';
+                        }
+
+                        if (max > budget) {
+                            return 'Must be less than Total Budget';
+                        }
+
+                        return false;
+                    }
+                }
+            });
+
+            // watch the budget and limit but only add them to the campaign
+            // if they're valid so no bad values get autosaved
+            $scope.$watchCollection(function() {
+                return [
+                    SelfieBudgetCtrl.budget,
+                    SelfieBudgetCtrl.limit
+                ];
+            }, function(params, oldParams) {
+                if (params === oldParams) { return; }
+
+                var Ctrl = SelfieBudgetCtrl,
+                    budget = params[0],
+                    limit = params[1];
+
+                if (Ctrl.validBudget && !Ctrl.dailyLimitError) {
+                    campaign.pricing.budget = params[0];
+                    campaign.pricing.dailyLimit = params[1];
+
+                    validation.budget = budget && limit;
+                } else {
+                    validation.budget = false;
+                }
+            });
+        }])
+
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:ManageCampaign', ['cinema6','c6State',
@@ -898,8 +973,8 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieManageCampaignController', ['cState','c6AsyncQueue',
-        function                                      ( cState , c6AsyncQueue ) {
+        .controller('SelfieManageCampaignController', ['$scope','cState','c6AsyncQueue',
+        function                                      ( $scope , cState , c6AsyncQueue ) {
             var queue = c6AsyncQueue();
 
             Object.defineProperties(this, {
@@ -907,7 +982,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     get: function() {
                         return [
                             this.campaign.name,
-                            this.validBudget
+                            this.validation.budget
                         ].filter(function(prop) {
                             return !prop;
                         }).length === 0;
@@ -915,7 +990,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
             });
 
-            this.validBudget = true;
+            this.validation = {
+                budget: true
+            };
             this.tab = 'manage';
 
             this.initWithModel = function(categories) {

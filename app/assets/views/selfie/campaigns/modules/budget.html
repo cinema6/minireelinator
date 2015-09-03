@@ -1,0 +1,39 @@
+<div ng-controller="SelfieBudgetController as SelfieBudgetCtrl">
+    <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': !SelfieBudgetCtrl.validBudget }">
+        <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="text" id="c6-sponsor-name" ng-model="SelfieBudgetCtrl.budget">
+        <span class="input__unit">$</span>
+        <label class="form__label" for="c6-sponsor-name">
+            <i class="fa fa-times ui--error"></i>
+            Campaign Budget
+        </label>
+        <div class="form__helpBox form__helpBox--right">
+            <div class="form__helpText">
+                Provide a unique identifier for your campaign. This is not displayed within the ad unit and is for internal tracking purposes.
+            </div>
+        </div>
+        <div class="form__errorBox">
+            <p class="form__errorMsg">
+                <i class="fa fa-exclamation-triangle"></i> Error message goes here
+            </p>
+        </div>
+    </fieldset>
+
+    <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': SelfieBudgetCtrl.dailyLimitError }">
+        <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="text" id="c6-sponsor-name" ng-model="SelfieBudgetCtrl.limit">
+        <span class="input__unit">$</span>
+        <label class="form__label" for="c6-sponsor-name">
+            <i class="fa fa-times ui--error"></i>
+            Daily Max
+        </label>
+        <div class="form__helpBox form__helpBox--right">
+            <div class="form__helpText">
+                Provide a unique identifier for your campaign. This is not displayed within the ad unit and is for internal tracking purposes.
+            </div>
+        </div>
+        <div class="form__errorBox">
+            <p class="form__errorMsg">
+                <i class="fa fa-exclamation-triangle"></i> {{SelfieBudgetCtrl.dailyLimitError}}
+            </p>
+        </div>
+    </fieldset>
+</div>
