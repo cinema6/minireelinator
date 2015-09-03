@@ -330,7 +330,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                         return [
                             campaign.name,
-                            this.validBudget,
+                            this.validation.budget,
                             card.params.sponsor,
                             card.data.service,
                             card.data.videoid
@@ -805,13 +805,13 @@ function( angular , c6State  , PaginatedListState                    ,
                 categories = $scope.categories;
 
             // we need to have a selectable item in the dropdown for 'none'
-            SelfieCategoriesCtrl.categories = [{
+            this.categories = [{
                 name: 'none',
                 label: 'No Category Targeting'
             }].concat(categories);
 
             // we default to 'none'
-            SelfieCategoriesCtrl.category = SelfieCategoriesCtrl.categories
+            this.category = this.categories
                 .filter(function(category) {
                     var name = campaign.categories[0] || 'none';
 
