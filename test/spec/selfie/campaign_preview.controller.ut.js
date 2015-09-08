@@ -8,21 +8,15 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             $scope,
             $controller,
             $timeout,
-            $q,
-            cinema6,
-            MiniReelService,
-            c6BrowserInfo,
             c6Debounce,
             SelfieCampaignCtrl,
             SelfieCampaignPreviewCtrl;
 
-        var experience,
-            card,
-            miniReelDeferred;
+        var card;
 
         function compileCtrl() {
             $scope.$apply(function() {
-                SelfieCampaignPreviewCtrl = $controller('SelfieCampaignPreviewController', { $scope: $scope, c6BrowserInfo: c6BrowserInfo });
+                SelfieCampaignPreviewCtrl = $controller('SelfieCampaignPreviewController', { $scope: $scope });
             });
         }
 
@@ -44,39 +38,17 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
                 $timeout = $injector.get('$timeout');
-                $q = $injector.get('$q');
-                cinema6 = $injector.get('cinema6');
-                MiniReelService = $injector.get('MiniReelService');
                 c6Debounce = $injector.get('c6Debounce');
 
                 card = {
                     data: {}
                 };
 
-                experience = {
-                    type: 'minireel',
-                    appUri: 'mini-reel-player',
-                    data: {
-                        mode: 'light',
-                        deck: []
-                    }
-                };
-
-                c6BrowserInfo = {
-                    profile: {
-                        device: 'desktop',
-                        flash: true
-                    }
-                }
-
                 $scope = $rootScope.$new();
                 $scope.SelfieCampaignCtrl = {
                     card: card
                 };
             });
-
-            miniReelDeferred = $q.defer();
-            spyOn(MiniReelService, 'create').and.returnValue(miniReelDeferred.promise);
 
             compileCtrl();
         });
@@ -98,14 +70,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
         describe('methods', function() {
             describe('loadPreview()', function() {
-                var deferred;
-
-                beforeEach(function() {
-                    deferred = $q.defer();
-
-                    spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue(deferred.promise);
-                });
-
                 it('should debounce for 2 seconds', function() {
                     expect(c6Debounce.debouncedFn).not.toHaveBeenCalled();
 
@@ -132,44 +96,14 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(c6Debounce.debouncedFn.calls.count()).toBe(1);
                 });
 
-                it('should convert the card for the player', function() {
+                it('should put a copy of the card on the controller', function() {
+                    expect(SelfieCampaignPreviewCtrl.card).toBe(undefined);
+
                     SelfieCampaignPreviewCtrl.loadPreview();
 
                     $timeout.flush(2000);
 
-                    expect(MiniReelService.convertCardForPlayer).toHaveBeenCalledWith(card);
-                });
-
-                describe('when card is converted for player', function() {
-                    var convertedCard;
-
-                    beforeEach(function() {
-                        convertedCard = copy(card);
-
-                        SelfieCampaignPreviewCtrl.loadPreview();
-
-                        $timeout.flush(2000);
-
-                        $scope.$apply(function() {
-                            miniReelDeferred.resolve(experience);
-                        });
-
-                        $scope.$apply(function() {
-                            deferred.resolve(convertedCard);
-                        });
-                    });
-
-                    it('should add certain properties to the data object and add the card to the controller', function() {
-                        expect(convertedCard.data.autoplay).toBe(false);
-                        expect(convertedCard.data.skip).toBe(true);
-                        expect(convertedCard.data.controls).toBe(true);
-                        expect(SelfieCampaignPreviewCtrl.card).toBe(convertedCard);
-                    });
-
-                    it('should add a copy of the experience to the controller with the converted card in the deck', function() {
-                        expect(SelfieCampaignPreviewCtrl.experience).not.toBe(experience);
-                        expect(SelfieCampaignPreviewCtrl.experience.data.deck).toEqual([convertedCard]);
-                    });
+                    expect(SelfieCampaignPreviewCtrl.card).toEqual(card);
                 });
             });
         });

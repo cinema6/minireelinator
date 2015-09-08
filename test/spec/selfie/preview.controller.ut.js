@@ -1,6 +1,8 @@
 define(['app'], function(appModule) {
     'use strict';
 
+    var copy = angular.copy;
+
     describe('SelfiePreviewController', function() {
         var $rootScope,
             $controller,
@@ -76,17 +78,6 @@ define(['app'], function(appModule) {
         });
 
         describe('properties', function() {
-            describe('card', function() {
-                it('should use what is on the $scope', function() {
-                    expect(SelfiePreviewCtrl.card).toBe(undefined);
-
-                    $scope.card = card;
-                    compileCtrl();
-
-                    expect(SelfiePreviewCtrl.card).toBe(card);
-                });
-            });
-
             describe('profile', function() {
                 it('should use what is on the $scope but default to a copy of the c6BrowserInfo.profile', function() {
                     expect(SelfiePreviewCtrl.profile).toEqual(c6BrowserInfo.profile);
@@ -95,14 +86,13 @@ define(['app'], function(appModule) {
                         device: 'phone',
                         flash: false
                     };
+                    $scope.device = 'phone';
                     compileCtrl();
 
                     expect(SelfiePreviewCtrl.profile).not.toEqual(c6BrowserInfo.profile);
                     expect(SelfiePreviewCtrl.profile).toEqual({
-                        profile: {
-                            device: 'phone',
-                            flash: false
-                        }
+                        device: 'phone',
+                        flash: false
                     });
                 });
             });
@@ -115,6 +105,17 @@ define(['app'], function(appModule) {
                     compileCtrl();
 
                     expect(SelfiePreviewCtrl.active).toBe(false);
+                });
+            });
+
+            describe('standalone', function() {
+                it('should use what is on the $scope but default to true', function() {
+                    expect(SelfiePreviewCtrl.standalone).toBe(true);
+
+                    $scope.standalone = false;
+                    compileCtrl();
+
+                    expect(SelfiePreviewCtrl.standalone).toBe(false);
                 });
             });
         });
@@ -135,6 +136,73 @@ define(['app'], function(appModule) {
         });
 
         describe('$watchers', function() {
+            describe('card', function() {
+                beforeEach(function() {
+                    $scope.$apply(function() {
+                        $scope.card = card;
+                    });
+                });
+
+                it('should convert the card for the player', function() {
+                    expect(MiniReelService.convertCardForPlayer).toHaveBeenCalledWith(card);
+                });
+
+                describe('when card is converted for player', function() {
+                    var convertedCard;
+
+                    beforeEach(function() {
+                        convertedCard = copy(card);
+
+                        $scope.$apply(function() {
+                            miniReelDeferred.resolve(experience);
+                        });
+
+                        $scope.$apply(function() {
+                            cardDeferred.resolve(convertedCard);
+                        });
+                    });
+
+                    it('should add certain properties to the data object and add the card to the controller', function() {
+                        expect(convertedCard.data.autoplay).toBe(false);
+                        expect(convertedCard.data.skip).toBe(true);
+                        expect(convertedCard.data.controls).toBe(true);
+                        expect(SelfiePreviewCtrl.card).toBe(convertedCard);
+                    });
+
+                    it('should add a copy of the experience to the controller with the converted card in the deck', function() {
+                        expect(SelfiePreviewCtrl.experience).not.toBe(experience);
+                        expect(SelfiePreviewCtrl.experience.data.deck).toEqual([convertedCard]);
+                    });
+                });
+            });
+
+            describe('experience', function() {
+                beforeEach(function() {
+                    $scope.card = card;
+
+                    $scope.$apply(function() {
+                        experience.id = 'e-111';
+                        experience.data.mode = 'full';
+                        $scope.experience = experience;
+                    });
+                });
+
+                it('should convert the card for the player', function() {
+                    expect(MiniReelService.convertCardForPlayer).toHaveBeenCalledWith(card);
+                });
+
+                describe('when card is converted for player', function() {
+                    it('should use the new experience for the preview', function() {
+                        $scope.$apply(function() {
+                            cardDeferred.resolve(copy(card));
+                        });
+
+                        expect(SelfiePreviewCtrl.experience.data.mode).toBe('full');
+                        expect(SelfiePreviewCtrl.experience.id).toBe('e-111');
+                    });
+                });
+            });
+
             describe('device', function() {
                 it('should update the profile with the new device', function() {
                     expect(SelfiePreviewCtrl.profile.device).toBe('desktop');

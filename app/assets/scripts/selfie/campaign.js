@@ -771,10 +771,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
         }])
 
-        .controller('SelfieCampaignPreviewController', ['$scope','cinema6','MiniReelService',
-                                                        'c6BrowserInfo','c6Debounce','$log',
-        function                                       ( $scope , cinema6 , MiniReelService ,
-                                                         c6BrowserInfo , c6Debounce , $log ) {
+        .controller('SelfieCampaignPreviewController', ['$scope','c6Debounce','$log',
+        function                                       ( $scope , c6Debounce , $log ) {
             var SelfieCampaignPreviewCtrl = this,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 card = SelfieCampaignCtrl.card;

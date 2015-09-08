@@ -246,6 +246,32 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     });
                 });
             });
+
+            describe('editStateFor(campaign)', function() {
+                describe('when status is "draft"', function() {
+                    it('should be Selfie:EditCampaign', function() {
+                        var campaign = {
+                            id: 'cam-111',
+                            cards: [{}],
+                            status: 'draft'
+                        };
+
+                        expect(SelfieCampaignsCtrl.editStateFor(campaign)).toBe('Selfie:EditCampaign');
+                    });
+                });
+
+                describe('when status is not "draft"', function() {
+                    it('should be Selfie:ManageCampaign', function() {
+                        var campaign = {
+                            id: 'cam-111',
+                            cards: [{}],
+                            status: 'active'
+                        };
+
+                        expect(SelfieCampaignsCtrl.editStateFor(campaign)).toBe('Selfie:ManageCampaign');
+                    });
+                });
+            });
         });
     });
 });
