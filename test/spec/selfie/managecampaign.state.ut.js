@@ -1,12 +1,12 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    describe('Selfie:EditCampaign State', function() {
+    describe('Selfie:ManageCampaign State', function() {
         var $rootScope,
             $q,
             c6State,
             cinema6,
-            editCampaignState;
+            manageCampaignState;
 
         beforeEach(function() {
             module(appModule.name);
@@ -17,12 +17,12 @@ define(['app'], function(appModule) {
                 c6State = $injector.get('c6State');
                 cinema6 = $injector.get('cinema6');
 
-                editCampaignState = c6State.get('Selfie:EditCampaign');
+                manageCampaignState = c6State.get('Selfie:ManageCampaign');
             });
         });
 
         it('should exist', function() {
-            expect(editCampaignState).toEqual(jasmine.any(Object));
+            expect(manageCampaignState).toEqual(jasmine.any(Object));
         });
 
         describe('model()', function() {
@@ -46,7 +46,7 @@ define(['app'], function(appModule) {
                 spyOn(cinema6.db, 'find').and.returnValue($q.when(model));
 
                 $rootScope.$apply(function() {
-                    editCampaignState.model({ campaignId: model.id }).then(success, failure);
+                    manageCampaignState.model({ campaignId: model.id }).then(success, failure);
                 });
             });
 
@@ -74,10 +74,10 @@ define(['app'], function(appModule) {
                     };
 
                 $rootScope.$apply(function() {
-                    editCampaignState.afterModel(campaign);
+                    manageCampaignState.afterModel(campaign);
                 });
 
-                expect(editCampaignState.card).toEqual(card);
+                expect(manageCampaignState.card).toEqual(card);
             });
         });
 
@@ -85,11 +85,11 @@ define(['app'], function(appModule) {
             beforeEach(function() {
                 spyOn(c6State, 'goTo');
 
-                editCampaignState.enter();
+                manageCampaignState.enter();
             });
 
-            it('should go to the Selfie:Edit:Campaign state', function() {
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Edit:Campaign', null, null, true);
+            it('should go to the Selfie:Manage:Campaign state', function() {
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign', null, null, true);
             });
         });
     });

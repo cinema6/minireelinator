@@ -7,7 +7,6 @@ function( angular , c6State  , PaginatedListState                    ,
 
     var copy = angular.copy,
         equals = angular.equals,
-        extend = angular.extend,
         forEach = angular.forEach,
         isObject = angular.isObject;
 
@@ -52,7 +51,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     return 'Selfie Campaign Manager';
                 };
                 this.model = function() {
-                    // TODO: query by type also
                     return paginatedDbList('selfieCampaign', {
                         sort: 'lastUpdated,-1',
                         org: SelfieState.cModel.org.id,
@@ -109,6 +107,12 @@ function( angular , c6State  , PaginatedListState                    ,
                         metaData[campaign.id].thumb = thumb;
                     });
                 });
+            };
+
+            this.editStateFor = function(campaign) {
+                return campaign.status === 'draft' ?
+                    'Selfie:EditCampaign' :
+                    'Selfie:ManageCampaign';
             };
 
             this.remove = function(campaigns) {
@@ -326,8 +330,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                         return [
                             campaign.name,
-                            campaign.pricing.budget,
-                            campaign.pricing.dailyLimit,
+                            this.validation.budget,
                             card.params.sponsor,
                             card.data.service,
                             card.data.videoid
@@ -337,6 +340,10 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
                 }
             });
+
+            this.validation = {
+                budget: true
+            };
 
             this.initWithModel = function(model) {
                 this.card = cState.card;
@@ -764,25 +771,66 @@ function( angular , c6State  , PaginatedListState                    ,
 
         }])
 
-        .controller('SelfieCampaignTargetingController', ['$scope','GeoService',
-        function                                         ( $scope , GeoService ) {
-            var SelfieCampaignTargetingCtrl = this,
+        .controller('SelfieCampaignPreviewController', ['$scope','c6Debounce','$log',
+        function                                       ( $scope , c6Debounce , $log ) {
+            var SelfieCampaignPreviewCtrl = this,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
-                campaign = SelfieCampaignCtrl.campaign;
+                card = SelfieCampaignCtrl.card;
 
-            this.budget = campaign.pricing.budget || null;
-            this.limit = campaign.pricing.dailyLimit || null;
+            // debounce for 2 seconds then convert card for player,
+            // then make a new copy of the default preview experience,
+            // add a few preview-only settings on the card: autoplay, skip, controls,
+            // add the card to the deck, then put the card and experience
+            // on the Ctrl for binding in the template
+            this.loadPreview = c6Debounce(function() {
+                $log.info('loading preview');
+                SelfieCampaignPreviewCtrl.card = copy(card);
+            }, 2000);
+
+            // if we have what we need on initiation then load a preview
+            if (card.data.service && card.data.videoid) {
+                SelfieCampaignPreviewCtrl.loadPreview();
+            }
+
+            $scope.$on('loadPreview', SelfieCampaignPreviewCtrl.loadPreview);
+
+        }])
+
+        .controller('SelfieCategoriesController', ['$scope',
+        function                                  ( $scope ) {
+            var SelfieCategoriesCtrl = this,
+                campaign = $scope.campaign,
+                categories = $scope.categories;
 
             // we need to have a selectable item in the dropdown for 'none'
-            this.categories = [{name: 'none', label: 'No Category Targeting'}]
-                .concat(SelfieCampaignCtrl.categories);
+            this.categories = [{
+                name: 'none',
+                label: 'No Category Targeting'
+            }].concat(categories);
 
             // we default to 'none'
-            this.category = this.categories.filter(function(category) {
-                var name = campaign.categories[0] || 'none';
+            this.category = this.categories
+                .filter(function(category) {
+                    var name = campaign.categories[0] || 'none';
 
-                return name === category.name;
-            })[0];
+                    return name === category.name;
+                })[0];
+
+            // we watch the category choice and add only one to the campaign if chosen
+            // and set to empty array if 'No Categories' is chosen
+            $scope.$watch(function() {
+                return SelfieCategoriesCtrl.category;
+            }, function(newCat, oldCat) {
+                if (newCat === oldCat) { return; }
+
+                campaign.categories = newCat.name !== 'none' ? [newCat.name] : [];
+            });
+        }])
+
+        .controller('SelfieGeotargetingController', ['$scope','GeoService',
+        function                                    ( $scope , GeoService ) {
+            var SelfieGeotargetingCtrl = this,
+                campaign = $scope.campaign;
 
             this.geoOptions = GeoService.usa.map(function(state) {
                 return {
@@ -798,10 +846,31 @@ function( angular , c6State  , PaginatedListState                    ,
                 }).length > 0;
             });
 
+            // we watch the geo choices and save an array of states
+            $scope.$watch(function() {
+                return SelfieGeotargetingCtrl.geo;
+            }, function(newGeo, oldGeo) {
+                if (newGeo === oldGeo) { return; }
+
+                campaign.geoTargeting = newGeo.map(function(geo) {
+                    return { state: geo.state };
+                });
+            });
+        }])
+
+        .controller('SelfieBudgetController', ['$scope',
+        function                              ( $scope ) {
+            var SelfieBudgetCtrl = this,
+                campaign = $scope.campaign,
+                validation = $scope.validation || {};
+
+            this.budget = campaign.pricing.budget || null;
+            this.limit = campaign.pricing.dailyLimit || null;
+
             Object.defineProperties(this, {
                 cpv: {
                     get: function() {
-                        var hasCategory = this.category !== this.categories[0],
+                        var hasCategory = campaign.categories.length,
                             hasGeos = campaign.geoTargeting.length;
 
                         return 50 + ([hasCategory, hasGeos]
@@ -837,123 +906,101 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
             });
 
-            // we watch the geo choices and save an array of states
-            $scope.$watch(function() {
-                return SelfieCampaignTargetingCtrl.geo;
-            }, function(newGeo, oldGeo) {
-                if (newGeo === oldGeo) { return; }
-
-                campaign.geoTargeting = newGeo.map(function(geo) {
-                    return { state: geo.state };
-                });
-            });
-
-            // we watch the category choice and add only one to the campaign if chosen
-            // and set to empty array if 'No Categories' is chosen
-            $scope.$watch(function() {
-                return SelfieCampaignTargetingCtrl.category;
-            }, function(newCat, oldCat) {
-                if (newCat === oldCat) { return; }
-
-                campaign.categories = newCat.name !== 'none' ? [newCat.name] : [];
-            });
-
             // watch the budget and limit but only add them to the campaign
             // if they're valid so no bad values get autosaved
             $scope.$watchCollection(function() {
                 return [
-                    SelfieCampaignTargetingCtrl.budget,
-                    SelfieCampaignTargetingCtrl.limit
+                    SelfieBudgetCtrl.budget,
+                    SelfieBudgetCtrl.limit
                 ];
             }, function(params, oldParams) {
                 if (params === oldParams) { return; }
 
-                var Ctrl = SelfieCampaignTargetingCtrl;
+                var Ctrl = SelfieBudgetCtrl,
+                    budget = params[0],
+                    limit = params[1];
 
                 if (Ctrl.validBudget && !Ctrl.dailyLimitError) {
                     campaign.pricing.budget = params[0];
                     campaign.pricing.dailyLimit = params[1];
+
+                    validation.budget = !!budget && !!limit;
+                } else {
+                    validation.budget = false;
                 }
             });
         }])
 
-        .controller('SelfieCampaignPreviewController', ['$scope','cinema6','MiniReelService',
-                                                        'c6BrowserInfo','c6Debounce','$log',
-        function                                       ( $scope , cinema6 , MiniReelService ,
-                                                         c6BrowserInfo , c6Debounce , $log ) {
-            var SelfieCampaignPreviewCtrl = this,
-                SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
-                card = SelfieCampaignCtrl.card,
-                experience;
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:ManageCampaign', ['cinema6','c6State',
+            function                                       ( cinema6 , c6State ) {
+                this.model = function(params) {
+                    return cinema6.db.find('selfieCampaign', params.campaignId);
+                };
 
-            MiniReelService.create()
-                .then(function(minireel) {
-                    experience = deepExtend(minireel, {
-                        id: 'e-123',
-                        data: {
-                            mode: 'light',
-                            autoplay: false,
-                            autoadvance: false,
-                            adConfig: {
-                                video: {
-                                    firstPlacement: -1,
-                                    frequency: 0
-                                },
-                                display: {}
-                            }
-                        }
-                    });
-                });
+                this.afterModel = function(campaign) {
+                    this.card = campaign.cards[0].item;
+                };
 
-            this.device = 'desktop';
-            this.card = null;
-            this.profile = copy(c6BrowserInfo.profile);
-            this.active = true;
-            this.standalone = true;
+                this.enter = function() {
+                    return c6State.goTo('Selfie:Manage:Campaign', null, null, true);
+                };
+            }]);
+        }])
 
-            // debounce for 2 seconds then convert card for player,
-            // then make a new copy of the default preview experience,
-            // add a few preview-only settings on the card: autoplay, skip, controls,
-            // add the card to the deck, then put the card and experience
-            // on the Ctrl for binding in the template
-            this.loadPreview = c6Debounce(function() {
-                $log.info('loading preview');
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6',
+            function                                        ( cinema6 ) {
+                this.templateUrl = 'views/selfie/campaigns/manage.html';
+                this.controller = 'SelfieManageCampaignController';
+                this.controllerAs = 'SelfieManageCampaignCtrl';
 
-                MiniReelService.convertCardForPlayer(card)
-                    .then(function(cardForPlayer) {
-                        var newExperience = copy(experience);
+                this.card = null;
+                this.campaign = null;
 
-                        cardForPlayer.data.autoplay = false;
-                        cardForPlayer.data.skip = true;
-                        cardForPlayer.data.controls = true;
+                this.beforeModel = function() {
+                    this.card = this.cParent.card;
+                    this.campaign = this.cParent.cModel;
+                };
 
-                        newExperience.data.deck = [cardForPlayer];
+                this.model = function() {
+                    return cinema6.db.findAll('category');
+                };
+            }]);
+        }])
 
-                        SelfieCampaignPreviewCtrl.card = cardForPlayer;
-                        SelfieCampaignPreviewCtrl.experience = newExperience;
-                    });
+        .controller('SelfieManageCampaignController', ['$scope','cState','c6AsyncQueue',
+        function                                      ( $scope , cState , c6AsyncQueue ) {
+            var queue = c6AsyncQueue();
 
-            }, 2000);
-
-            // if we have what we need on initiation then load a preview
-            if (card.data.service && card.data.videoid) {
-                SelfieCampaignPreviewCtrl.loadPreview();
-            }
-
-            $scope.$watch(function() {
-                return SelfieCampaignPreviewCtrl.device;
-            }, function(device) {
-                var profile = SelfieCampaignPreviewCtrl.profile;
-
-                if (device === profile.device) { return; }
-
-                SelfieCampaignPreviewCtrl.profile = extend(copy(profile), {
-                    device: device,
-                    flash: device !== 'phone'
-                });
+            Object.defineProperties(this, {
+                canSubmit: {
+                    get: function() {
+                        return [
+                            this.campaign.name,
+                            this.validation.budget
+                        ].filter(function(prop) {
+                            return !prop;
+                        }).length === 0;
+                    }
+                }
             });
 
-            $scope.$on('loadPreview', SelfieCampaignPreviewCtrl.loadPreview);
+            this.validation = {
+                budget: true
+            };
+            this.tab = 'manage';
 
+            this.initWithModel = function(categories) {
+                this.card = cState.card;
+                this.campaign = cState.campaign;
+                this.categories = categories;
+            };
+
+            this.update = queue.debounce(function() {
+                return this.campaign.save();
+            }, this);
         }]);
 });

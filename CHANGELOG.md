@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.19.0 (August 25, 2015)
+* *[v1.19.0.rc3]*
+  * [FEATURE]: Add tabbed management screen for non-draft campaigns
+  * [DEV]: Modularize campaign editing tools: categories, geo-targeting, budget, preview
+
 * *[v1.19.0.rc2]*
   * [FIX]: Fix for an issue which prevented specifying a custom Instagram thumbnail URL
 * *[/v1.19.0.rc2]*

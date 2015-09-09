@@ -202,13 +202,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 it('should only be true when required propeties are set', function() {
                     expect(SelfieCampaignCtrl.canSubmit).toBe(false);
 
+                    SelfieCampaignCtrl.validation.budget = false;
+
                     SelfieCampaignCtrl.campaign.name = 'Campaign Name';
-                    expect(SelfieCampaignCtrl.canSubmit).toBe(false);
-
-                    SelfieCampaignCtrl.campaign.pricing.budget = 3000;
-                    expect(SelfieCampaignCtrl.canSubmit).toBe(false);
-
-                    SelfieCampaignCtrl.campaign.pricing.dailyLimit = 50;
                     expect(SelfieCampaignCtrl.canSubmit).toBe(false);
 
                     SelfieCampaignCtrl.card.params.sponsor = 'Sponsor Name';
@@ -218,6 +214,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieCampaignCtrl.canSubmit).toBe(false);
 
                     SelfieCampaignCtrl.card.data.videoid = '123456';
+                    expect(SelfieCampaignCtrl.canSubmit).toBe(false);
+
+                    SelfieCampaignCtrl.validation.budget = true;
                     expect(SelfieCampaignCtrl.canSubmit).toBe(true);
                 });
             });

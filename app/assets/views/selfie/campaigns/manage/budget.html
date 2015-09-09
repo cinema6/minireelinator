@@ -1,0 +1,23 @@
+<div class="tabContent targeting__content container">
+    <header class="tabContent__header">
+        <h2 class="tabContent__title tk--hdr">Set Your Budget</h2>
+        <span class="tabContent__subtitle">Sub heading can be entered here to explain more about the tab function</span>
+    </header>
+
+    <div class="tabContent__gridHolder">
+        <div class="grid grid--center">
+            <div class="grid__item one-half">
+                <section class="formSection__group">
+                    <div class="form__items">
+
+                        <div ng-include="'views/selfie/campaigns/modules/budget.html'" c6-alias="SelfieCampaignCtrl.validation as validation"></div>
+
+                        <div class="ui__btnHolder">
+                            <button class="action__btn action__btn--big" ng-disabled="!SelfieManageCampaignCtrl.canSubmit" ng-click="SelfieManageCampaignCtrl.update()">Save Changes</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>

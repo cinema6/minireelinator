@@ -1,0 +1,32 @@
+<div class="grid__item one-half">
+    <section class="formSection__group" id="section_6">
+
+        <h1 class="formSection__title">
+            <span class="formSection__number">
+                <span class="formSection__numberText">6</span>
+            </span>
+            <span class="formSection__titleText tk--hdr">Choose Your Audience</span>
+        </h1>
+
+        <div class="form__items" c6-alias="SelfieCampaignCtrl.categories as categories">
+            <div ng-include="'views/selfie/campaigns/modules/categories.html'"></div>
+            <div ng-include="'views/selfie/campaigns/modules/geotargeting.html'"></div>
+        </div>
+
+    </section><!--.formSection__group-->
+
+    <section class="formSection__group formSection__group--sub">
+
+        <h1 class="formSection__title">
+            <span class="formSection__titleText tk--hdr">Set Your Budget</span>
+        </h1>
+        <p class="formSection__introText">Your calculated cost per 1000 video plays is : <strong>${{SelfieCampaignTargetingCtrl.cpv}}</strong>. A video must play for a minimum of 3 seconds to count as a play.</p>
+
+        <div class="form__items">
+            <div ng-include="'views/selfie/campaigns/modules/budget.html'"></div>
+        </div>
+
+    </section><!--.formSection__group-->
+
+</div><!--.grid__item-->
+

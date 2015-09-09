@@ -34,7 +34,7 @@
         <div class="videoPreview__wizard ui__connector" ng-if="SelfieCampaignVideoCtrl.video">
 
             <div class="videoPreview__group">
-                    
+
                 <div ng-switch="card.data.service">
                     <div ng-switch-when="adUnit" ng-controller="AdPlayerController as AdPlayerCtrl">
                         <div class="videoPreview">
@@ -44,7 +44,7 @@
                                 ad-tag="{{SelfieCampaignVideoCtrl.videoUrl}}">
                             </vast-player>
                         </div>
-                    
+
                         <div ng-if="!!AdPlayerCtrl.player" class="vastControls__group">
                             <button ng-click="AdPlayerCtrl.player.play()" class="vastControls__btn">
                                 <i class="fa fa-play"></i>
