@@ -4,6 +4,8 @@
 * *[v1.19.0.rc3]*
   * [FEATURE]: Add tabbed management screen for non-draft campaigns
   * [DEV]: Modularize campaign editing tools: categories, geo-targeting, budget, preview
+  * [FIX]: Fix for an issue where refreshing the page when creating a new campaign
+    caused an error and blocked the loading of the app
 
 * *[v1.19.0.rc2]*
   * [FIX]: Fix for an issue which prevented specifying a custom Instagram thumbnail URL
