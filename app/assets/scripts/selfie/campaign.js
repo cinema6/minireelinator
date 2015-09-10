@@ -163,7 +163,6 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.afterModel = function() {
                     var advertiser = SelfieState.cModel.advertiser,
-                        customer = SelfieState.cModel.customer,
                         card = cinema6.db.create('card', MiniReelService.createCard('video'));
 
                     this.card = deepExtend(card, {
