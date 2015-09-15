@@ -684,7 +684,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                                     return $q.all({
                                         placeholder: findMiniReel.then(function(minireel) {
-                                            return findCard(minireel.data.deck, placeholderId);
+                                            return findCard(minireel.data.deck, placeholderId) || {};
                                         }),
                                         wildcard: getDbModel('card')(wildcardId)
                                     });

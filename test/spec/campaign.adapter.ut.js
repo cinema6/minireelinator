@@ -94,7 +94,8 @@ define(['app', 'angular'], function(appModule, angular) {
                     staticCardMap: {
                         'e-d43686a9835df1': {
                             'rc-72ba2dff0fdebf': 'rc-223a31e4d985c4',
-                            'rc-bd83763f6a7a5a': 'rc-06f6db8ba1877f'
+                            'rc-bd83763f6a7a5a': 'rc-06f6db8ba1877f',
+                            'rc-not-found': 'rc-06f6db8ba1877f'
                         },
                         'e-fb0e54efddc44c': {
                             'rc-b56a249106d3d8': 'rc-a6ca92dfd09795'
@@ -247,6 +248,10 @@ define(['app', 'angular'], function(appModule, angular) {
                             {
                                 wildcard: cards['rc-06f6db8ba1877f'],
                                 placeholder: minireels['e-d43686a9835df1'].data.deck[1]
+                            },
+                            {
+                                wildcard: cards['rc-06f6db8ba1877f'],
+                                placeholder: {}
                             }
                         ]
                     },
