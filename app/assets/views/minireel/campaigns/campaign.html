@@ -6,7 +6,7 @@
                 {{campaign.name}}
             </h1>
             <button ng-click="CampaignCtrl.save()"
-            ng-disabled="CampaignCtrl.isClean || !CampaignCtrl.validLogo"
+            ng-disabled="CampaignCtrl.isClean || !CampaignCtrl.validLogo || !CampaignCtrl.validPricing"
             class="btnAction btnAction--success btnAction--hasFaIcon"
             type="button" title="Save">
                 <span class="btn__label fab fa-floppy-o">&nbsp; Save Changes</span>

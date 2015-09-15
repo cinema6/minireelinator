@@ -99,6 +99,10 @@ define(['app'], function(appModule) {
 
                     expect(CampaignCtrl.model.brand).toEqual(campaign.advertiser.name);
                 });
+
+                it('should ensure a pricing object is set', function() {
+                    expect(CampaignCtrl.model.pricing).toEqual({});
+                });
             });
 
             describe('cleanModel', function() {
@@ -170,6 +174,20 @@ define(['app'], function(appModule) {
                 });
             });
 
+            describe('validPricing', function() {
+                it('should be true if budget and cost are set', function() {
+                    expect(CampaignCtrl.validPricing).toBe(false);
+
+                    CampaignCtrl.model.pricing.budget = 3000;
+
+                    expect(CampaignCtrl.validPricing).toBe(false);
+
+                    CampaignCtrl.model.pricing.cost = 0.25;
+
+                    expect(CampaignCtrl.validPricing).toBe(true);
+                });
+            });
+
             describe('links', function() {
                 beforeEach(function() {
                     campaign.links = {
@@ -236,6 +254,23 @@ define(['app'], function(appModule) {
                             };
                         }));
                     });
+                });
+            });
+
+            describe('pricingModels', function() {
+                it('should be an array', function() {
+                    expect(CampaignCtrl.pricingModels).toEqual(['CPV','CPM']);
+                });
+            });
+
+            describe('pricingModel', function() {
+                it('should reflect the campaign and default to CPV', function() {
+                    expect(CampaignCtrl.pricingModel).toBe('CPV');
+
+                    campaign.pricing = { model: 'cpm' };
+                    CampaignCtrl.initWithModel(campaign);
+
+                    expect(CampaignCtrl.pricingModel).toBe('CPM');
                 });
             });
         });
@@ -317,6 +352,64 @@ define(['app'], function(appModule) {
                     expect(campaign.links).toEqual({
                         'Website': 'mysite.com',
                         'YouTube': 'yt.com'
+                    });
+                });
+            });
+
+            describe('updatePricing()', function() {
+                it('should set the pricing model', function() {
+                    expect(CampaignCtrl.model.pricing.model).toBe(undefined);
+
+                    CampaignCtrl.updatePricing();
+
+                    expect(CampaignCtrl.model.pricing.model).toBe('cpv');
+
+                    CampaignCtrl.pricingModel = 'CPM';
+
+                    CampaignCtrl.updatePricing();
+
+                    expect(CampaignCtrl.model.pricing.model).toBe('cpm');
+                });
+
+                describe('when daily limit is not set', function() {
+                    it('should not set the daily limit', function() {
+                        expect(CampaignCtrl.model.pricing.dailyLimit).toBe(undefined);
+
+                        CampaignCtrl.updatePricing();
+
+                        expect(CampaignCtrl.model.pricing.dailyLimit).toBe(undefined);
+                    });
+                });
+
+                describe('when the daily limit was set but is removed', function() {
+                    it('should remove the property', function() {
+                        CampaignCtrl.model.pricing.dailyLimit = 200;
+
+                        CampaignCtrl.updatePricing();
+
+                        expect(CampaignCtrl.model.pricing.dailyLimit).toBe(200);
+
+                        CampaignCtrl.model.pricing.dailyLimit = null;
+
+                        CampaignCtrl.updatePricing();
+
+                        expect(CampaignCtrl.model.pricing.dailyLimit).toBe(undefined);
+
+                        CampaignCtrl.model.pricing.dailyLimit = '';
+
+                        CampaignCtrl.updatePricing();
+
+                        expect(CampaignCtrl.model.pricing.dailyLimit).toBe(undefined);
+                    });
+                });
+
+                describe('when the daily limit is set', function() {
+                    it('should use it', function() {
+                        CampaignCtrl.model.pricing.dailyLimit = 200;
+
+                        CampaignCtrl.updatePricing();
+
+                        expect(CampaignCtrl.model.pricing.dailyLimit).toBe(200);
                     });
                 });
             });

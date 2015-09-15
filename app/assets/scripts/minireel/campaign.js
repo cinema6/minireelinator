@@ -154,7 +154,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             miniReels: [],
                             cards: [],
                             staticCardMap: [],
-                            miniReelGroups: []
+                            miniReelGroups: [],
+                            pricing: {}
                         }),
                         customers: cinema6.db.findAll('customer')
                     });
@@ -287,13 +288,29 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
                         return !logo || AppCtrl.validImgSrc.test(logo);
                     }
+                },
+                validPricing: {
+                    get: function() {
+                        var pricing = this.model.pricing;
+
+                        return !!pricing.budget && !!pricing.cost;
+                    }
                 }
             });
 
             this.initWithModel = function(campaign) {
                 campaign.brand = campaign.brand || campaign.advertiser.name;
+                campaign.pricing = campaign.pricing || {};
                 this.model = campaign;
                 this.cleanModel = campaign.pojoify();
+
+                this.pricingModels = ['CPV','CPM'];
+                this.pricingModel = this.pricingModels.filter(function(model) {
+                    var value = model.toLowerCase();
+
+                    return value === campaign.pricing.model ||
+                        (!campaign.pricing.model && value === 'cpv');
+                })[0];
 
                 this.links = ['Action', 'Website', 'Facebook', 'Twitter', 'YouTube', 'Pinterest']
                     .concat(Object.keys(campaign.links))
@@ -324,8 +341,16 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 this.model.links = createModelLinks(this.links);
             };
 
+            this.updatePricing = function() {
+                var pricing = this.model.pricing;
+
+                pricing.model = this.pricingModel.toLowerCase();
+                pricing.dailyLimit = pricing.dailyLimit || undefined;
+            };
+
             this.save = queue.debounce(function() {
                 this.updateLinks();
+                this.updatePricing();
                 trimEmptyPlaceholders(this.model.staticCardMap);
 
                 return this.model.save().then(function(campaign) {
