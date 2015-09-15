@@ -24,4 +24,37 @@
             <input class="forms__textField forms__textField--padded forms__textField--block" ng-model="campaign.minViewTime" type="number"></input>
         </span>
     </label>
+
+    <label class="forms__pair forms__pair--spacer clearfix">
+        <span class="forms__name" > Budget:</span>
+        <span class="forms__inputHolder forms__inputHolder--fluid 
+        forms__inputHolder--maxMed">
+            <input class="forms__textField forms__textField--padded forms__textField--block" ng-model="campaign.pricing.budget" type="number" ng-class="{ 'forms__textField--danger': !campaign.pricing.budget }"></input>
+        </span>
+    </label>
+
+    <label class="forms__pair forms__pair--spacer clearfix">
+        <span class="forms__name" > Daily Limit:</span>
+        <span class="forms__inputHolder forms__inputHolder--fluid 
+        forms__inputHolder--maxMed">
+            <input class="forms__textField forms__textField--padded forms__textField--block" ng-model="campaign.pricing.dailyLimit" type="number"></input>
+        </span>
+    </label>
+
+    <label class="forms__pair forms__pair--spacer clearfix">
+        <span class="forms__name" > Cost:</span>
+        <span class="forms__inputHolder forms__inputHolder--fluid 
+        forms__inputHolder--maxMed">
+            <input class="forms__textField forms__textField--padded forms__textField--block" ng-model="campaign.pricing.cost" type="number" ng-class="{ 'forms__textField--danger': !campaign.pricing.cost }"></input>
+        </span>
+    </label>
+
+    <label class="forms__pair forms__pair--spacer clearfix">
+        <span class="forms__name" > Model:</span>
+        <span class="forms__inputHolder forms__inputHolder--fluid 
+        forms__inputHolder--maxMed">
+            <!-- <input class="forms__textField forms__textField--padded forms__textField--block" ng-model="campaign.pricing.model" type="text" ng-class="{ 'forms__textField--danger': !campaign.pricing.model }"></input> -->
+            <c6-dropdown options="CampaignCtrl.pricingModels" value="CampaignCtrl.pricingModel"></c6-dropdown>
+        </span>
+    </label>
 </form>
