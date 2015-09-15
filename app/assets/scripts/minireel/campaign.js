@@ -871,9 +871,18 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     return WildcardCtrl.validDate;
                 case 'video':
                     return WildcardCtrl.validReportingId;
+                case 'sharing':
+                    return ['facebook', 'twitter', 'pinterest'].reduce(function(acc, svc) {
+                        var shareLink = model.shareLinks[svc];
+                        return acc && WildcardCtrl.validUrl(shareLink);
+                    }, true);
                 default:
                     return true;
                 }
+            };
+
+            this.validUrl = function(url) {
+                return !url || AppCtrl.validUrl.test(url);
             };
 
             Object.defineProperties(this, {
@@ -965,6 +974,11 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         name: 'Thumbnail Content',
                         required: false,
                         sref: 'MR:Wildcard.Thumbs'
+                    },
+                    sharingTab = {
+                        name: 'Social Sharing',
+                        required: false,
+                        sref: 'MR:Wildcard.Sharing'
                     };
                 switch(type) {
                 case 'article':
@@ -973,7 +987,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     return [instagramTab, brandingTab, linksTab];
                 default:
                     return [copyTab, videoTab, surveyTab,
-                            brandingTab, linksTab, advertTab];
+                            brandingTab, linksTab, sharingTab, advertTab];
                 }
             };
 
@@ -1343,6 +1357,20 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             $injector.invoke(LinksController, this, {
                 $scope: $scope
             });
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('MR:Wildcard.Sharing', [function() {
+                this.templateUrl =
+                    'views/minireel/campaigns/campaign/cards/wildcard/sharing.html';
+                this.controller = 'GenericController';
+                this.controllerAs = 'WildcardSharingCtrl';
+
+                this.model = function() {
+                    return this.cParent.cModel;
+                };
+            }]);
         }])
 
         .config(['c6StateProvider',

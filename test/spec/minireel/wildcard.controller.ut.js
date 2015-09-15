@@ -602,6 +602,11 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                                 sref: 'MR:Wildcard.Links'
                             },
                             {
+                                name: 'Social Sharing',
+                                sref: 'MR:Wildcard.Sharing',
+                                required: false
+                            },
+                            {
                                 name: 'Advertising',
                                 sref: 'MR:Wildcard.Advertising'
                             }

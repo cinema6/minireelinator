@@ -135,6 +135,7 @@
                             thumbs: null,
                             collateral: {},
                             links: {},
+                            shareLinks: {},
                             params: {},
                             modules: [],
                             data: {
@@ -386,6 +387,7 @@
                                 thumbs: null,
                                 collateral: {},
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 modules: [],
                                 data: {
@@ -427,6 +429,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 ballot: {
                                     prompt: 'Was it ugly?',
@@ -477,6 +480,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 ballot: {
                                     prompt: 'How smart was it?',
@@ -521,6 +525,11 @@
                                 links: {
                                     'Facebook': 'my-fb.html',
                                     'Website': 'awesome.com'
+                                },
+                                shareLinks: {
+                                    facebook: 'http://www.facebook.com/turtles',
+                                    twitter: 'http://www.twitter.com/turtles',
+                                    pinterest: 'http://www.pinterest.com/turtles'
                                 },
                                 params: {
                                     ad: true,
@@ -576,6 +585,7 @@
                                 thumbs: null,
                                 collateral: {},
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {}
                             },
@@ -598,6 +608,7 @@
                                 thumbs: null,
                                 collateral: {},
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 ballot: {
                                     prompt: null,
@@ -691,6 +702,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                shareLinks: {},
                                 thumbs: {
                                     small: 'logo.jpg',
                                     large: 'logo.jpg'
@@ -729,6 +741,7 @@
                                     thumbs: null,
                                     collateral: {},
                                     links: {},
+                                    shareLinks: {},
                                     params: {},
                                     modules: [],
                                     data: {
@@ -767,6 +780,7 @@
                                     thumbs: null,
                                     collateral: {},
                                     links: {},
+                                    shareLinks: {},
                                     params: {},
                                     modules: [],
                                     data: {
@@ -804,6 +818,7 @@
                                     },
                                     collateral: {},
                                     links: {},
+                                    shareLinks: {},
                                     params: {},
                                     modules: [],
                                     thumbs: null,
@@ -846,6 +861,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 modules: [],
                                 data: {}
@@ -946,6 +962,7 @@
                                 collateral: {},
                                 thumb: null,
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {
                                     service: null,
@@ -974,6 +991,7 @@
                                 collateral: {},
                                 thumb: null,
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {
                                     skip: 'anytime',
@@ -1010,6 +1028,7 @@
                                 collateral: {},
                                 thumb: null,
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {}
                             });
@@ -1035,6 +1054,7 @@
                                 collateral: {},
                                 thumb: null,
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {
                                     skip: 'anytime',
@@ -1075,6 +1095,7 @@
                                 collateral: {},
                                 thumb: null,
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {
                                     autoplay: true,
@@ -1104,6 +1125,7 @@
                                 collateral: {},
                                 thumb: null,
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {}
                             });
@@ -1129,6 +1151,7 @@
                                 collateral: {},
                                 thumb: null,
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {
                                     links: []
@@ -1180,6 +1203,7 @@
                                 collateral: {},
                                 thumb: null,
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {}
                             });
@@ -1209,6 +1233,7 @@
                                 collateral: {},
                                 thumb: null,
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {
                                     size: '300x250'
@@ -1240,6 +1265,7 @@
                                 collateral: {},
                                 thumb: null,
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {}
                             });
@@ -1736,6 +1762,7 @@
                                 collateral: {},
                                 thumb: null,
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {}
                             });
@@ -1763,6 +1790,7 @@
                                 collateral: {},
                                 thumb: 'images.somewhere.com/user_specified.jpg',
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {
                                     src: 'http://www.cinema6.com',
@@ -1793,6 +1821,7 @@
                                 collateral: {},
                                 thumb: null,
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {
                                     service: 'flickr',
@@ -1835,6 +1864,7 @@
                         	    collateral: {},
                         	    thumb: null,
                         	    links: {},
+                                shareLinks: {},
                         	    params: {}
                             });
                         });
@@ -1864,6 +1894,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                shareLinks: {},
                                 params: {}
                             });
                         });
@@ -1890,6 +1921,7 @@
                                 collateral: {},
                                 thumb: null,
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {
                                     skip: 'anytime',
@@ -1930,6 +1962,7 @@
                                 collateral: {},
                                 thumb: null,
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {
                                     skip: 25,
@@ -1973,6 +2006,7 @@
                                 collateral: {},
                                 thumb: null,
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {
                                     skip: 'never',
@@ -2020,6 +2054,11 @@
                                 links: {
                                     'Facebook': 'my-fb.html',
                                     'Website': 'awesome.com'
+                                },
+                                shareLinks: {
+                                    facebook: "http://www.facebook.com/turtles",
+                        	        twitter: "http://www.twitter.com/turtles",
+                        	        pinterest: "http://www.pinterest.com/turtles"
                                 },
                                 params: {
                                     ad: true,
@@ -2070,6 +2109,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 thumb: 'logo.jpg',
                                 data: {
@@ -2113,6 +2153,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 thumb: null,
                                 data: {
@@ -2149,6 +2190,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 thumb: null,
                                 data: {
@@ -2185,6 +2227,7 @@
                                 },
                                 collateral: {},
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 thumb: null,
                                 data: {
@@ -2224,6 +2267,7 @@
                                 collateral: {},
                                 thumb: null,
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: minireel.data.deck[11].data
                             });
@@ -2259,6 +2303,7 @@
                                 collateral: {},
                                 thumb: 'logo.jpg',
                                 links: {},
+                                shareLinks: {},
                                 params: {
                                     sponsor: 'Ubisoft'
                                 },
@@ -2290,6 +2335,7 @@
                                 collateral: {},
                                 thumb: null,
                                 links: {},
+                                shareLinks: {},
                                 params: {},
                                 data: {}
                             });
@@ -2687,6 +2733,7 @@
                                     },
                                     collateral: {},
                                     links: {},
+                                    shareLinks: {},
                                     thumbs: {
                                         small: 'logo.jpg',
                                         large: 'logo.jpg'
@@ -2753,6 +2800,7 @@
                                     },
                                     collateral: {},
                                     links: {},
+                                    shareLinks: {},
                                     params: {},
                                     data: {}
                                 }
