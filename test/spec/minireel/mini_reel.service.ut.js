@@ -198,6 +198,39 @@
                                 small: 'https://user-specified.com/thumb.jpg',
                                 large: 'https://user-specified.com/thumb.jpg'
                             }
+                        },
+                        vzaar: {
+                            id: 'rc-16acda0e8302116df64d',
+                            type: 'vzaar',
+                            title: 'Vzaar Card',
+                            note: 'This is a Vzaar card.',
+                            source: 'Vzaar',
+                            placementId: null,
+                            templateUrl: null,
+                            sponsored: false,
+                            campaign: {
+                                campaignId: null,
+                                advertiserId: null,
+                                minViewTime: null,
+                                countUrls: [],
+                                clickUrls: []
+                            },
+                            thumbs: null,
+                            collateral: {},
+                            links: {},
+                            shareLinks: {},
+                            params: {},
+                            modules: [],
+                            data: {
+                                skip: true,
+                                service: 'vzaar',
+                                videoid: '1380051',
+                                href: 'http://vzaar.tv/1380051',
+                                thumbs: {
+                                    small: 'images.vzaar.com/video/1380051/small.jpg',
+                                    large: 'images.vzaar.com/video/1380051/large.jpg'
+                                }
+                            }
                         }
                     }
                 };
@@ -844,6 +877,7 @@
                             },
                             mocks.playerCards.vine,
                             mocks.playerCards.instagram,
+                            mocks.playerCards.vzaar,
                             {
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
@@ -1896,6 +1930,45 @@
                                 links: {},
                                 shareLinks: {},
                                 params: {}
+                            });
+                        });
+
+                        it('should transpile the vzaar card', function() {
+                            expect(deck[19]).toEqual({
+                                data: {
+                        	       skip: 'anytime',
+                        	        controls: true,
+                        	        autoplay: null,
+                        	        autoadvance: null,
+                        	        survey: null,
+                        	        service: 'vzaar',
+                                    videoid: '1380051',
+                        	        start: null,
+                        	        end: null,
+                        	        moat: null
+                        	    },
+                        	    id: 'rc-16acda0e8302116df64d',
+                        	    type: 'video',
+                        	    title: 'Vzaar Card',
+                        	    note: 'This is a Vzaar card.',
+                        	    label: 'Video',
+                        	    view: 'video',
+                        	    ad: false,
+                        	    placementId: null,
+                        	    templateUrl: null,
+                        	    sponsored: false,
+                        	    campaign: {
+                        	        campaignId: null,
+                        	        advertiserId: null,
+                        	        minViewTime: null,
+                        	        countUrls: [],
+                        	        clickUrls: []
+                        	    },
+                        	    collateral: {},
+                        	    thumb: null,
+                        	    links: {},
+                                shareLinks: {},
+                        	    params: {}
                             });
                         });
 
