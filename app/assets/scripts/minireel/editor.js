@@ -2221,7 +2221,7 @@ VideoCardController           , c6embed) {
                     }
 
                     scope.disableTrimmer = function() {
-                        return (scope.service === 'vine');
+                        return (scope.service === 'vine' || scope.service === 'vzaar');
                     };
 
                     Object.defineProperties(scope, {

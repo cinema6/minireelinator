@@ -63,6 +63,16 @@
                         expect(scope.disableTrimmer()).toBe(true);
                     });
                 });
+
+                describe('for Vzaar', function() {
+                    beforeEach(function() {
+                        scope.service = 'vzaar';
+                    });
+
+                    it('should be true', function() {
+                        expect(scope.disableTrimmer()).toBe(true);
+                    });
+                });
             });
 
             describe('scope.embedCode', function() {

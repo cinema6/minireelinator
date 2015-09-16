@@ -63,6 +63,12 @@
                         it('should create a vine url', function() {
                             expect(fromData('vine', '12345')).toBe('https://vine.co/v/12345');
                         });
+
+                        it('should create a vine url', function() {
+                            expect(fromData('vzaar', '12345')).toBe('http://vzaar.tv/12345');
+                            expect(fromData('vzaar', '54321')).toBe('http://vzaar.tv/54321');
+                            expect(fromData('vzaar', '1380051')).toBe('http://vzaar.tv/1380051');
+                        });
                     });
 
                     describe('dataFromText(url)', function() {
@@ -154,6 +160,13 @@
                             });
                         });
 
+                        it('should parse a vzaar url', function() {
+                            expect(fromUrl('http://vzaar.tv/1380051')).toEqual({
+                                service: 'vzaar',
+                                id: '1380051'
+                            });
+                        });
+
                         it('should return null if the url is not valid', function() {
                             expect(fromUrl('apple.com')).toBeNull();
                             expect(fromUrl('84fh439#')).toBeNull();
@@ -161,6 +174,7 @@
                             expect(fromUrl('http://www.vimeo.com/')).toBeNull();
                             expect(fromUrl('http://www.dailymotion.com/')).toBeNull();
                             expect(fromUrl('http://www.youtube.c')).toBeNull();
+                            expect(fromUrl('http://www.vzaar.t/123')).toBeNull();
                         });
                     });
 
@@ -218,6 +232,17 @@
                         it('should create a Vine embed code', function() {
                             expect(VideoService.embedCodeFromData('vine', '12345')).toEqual(
                                 '<iframe src="https://vine.co/v/12345/embed/simple" style="width:100%;height:100%" frameborder="0"></iframe><script src="https://platform.vine.co/static/scripts/embed.js"></script>'
+                            );
+                        });
+
+                        it('should create Vzaar embed code', function() {
+                            expect(VideoService.embedCodeFromData('vzaar', '12345')).toBe(
+                                '<iframe allowFullScreen allowTransparency="true"' +
+                                ' width="100%" height="100%"' +
+                                ' class="vzaar-video-player" frameborder="0" id="vzvd-12345"' +
+                                ' mozallowfullscreen name="vzvd-12345"' +
+                                ' src="//view.vzaar.com/12345/player" title="vzaar video player"' +
+                                ' type="text/html" webkitAllowFullScreen width="768"></iframe>'
                             );
                         });
                     });

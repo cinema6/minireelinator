@@ -60,6 +60,31 @@
                         });
                     });
 
+                    describe('fetchVzaarThumbs(videoid)', function() {
+                        var success;
+
+                        beforeEach(function() {
+                            success = jasmine.createSpy('fetchVzaarThumbs()');
+                            var request = 'https://vzaar.com/api/videos/12345.json?callback=JSON_CALLBACK'
+                            $httpBackend.whenJSONP(request).respond({
+                                thumbnail_url: 'https://view.vzaar.com/12345/thumb'
+                            });
+                            _private.fetchVzaarThumbs('12345').then(success);
+                        });
+
+                        it('should resolve to an object with small and large thumbs', function() {
+                            expect(success).not.toHaveBeenCalled();
+
+                            $httpBackend.flush();
+
+                            expect(success).toHaveBeenCalledWith({
+                                small: 'https://view.vzaar.com/12345/thumb',
+                                large: 'https://view.vzaar.com/12345/thumb'
+                            });
+                        });
+
+                    });
+
                     describe('fetchVimeoThumbs(videoid)', function() {
                         var success;
 
@@ -373,10 +398,10 @@
                      describe('getThumbsFor(data)', function() {
                          var result;
 
-                         ['instagram', 'flickr', 'getty', 'web', 'yahoo', 'aol', 'rumble'].forEach(function(service) {
+                         ['instagram', 'flickr', 'getty', 'web', 'yahoo', 'aol', 'rumble', 'vzaar'].forEach(function(service) {
                              describe('when the service is ' + service, function() {
                                  beforeEach(function() {
-                                     result = ThumbnailService.getThumbsFor('flickr', '12345');
+                                     result = ThumbnailService.getThumbsFor(service, '12345');
                                  });
 
                                  it('should immediately return an object with null properties', function() {
@@ -581,6 +606,28 @@
 
                             it('should set the small and large properties when the promise resolves', function() {
                                 expect(_private.fetchInstagramThumbs).toHaveBeenCalledWith('12345');
+                                $rootScope.$digest();
+
+                                expect(result.small).toBe('small.jpg');
+                                expect(result.large).toBe('large.jpg');
+                            });
+                        });
+
+                        describe('vzaar', function() {
+                            beforeEach(function() {
+                                spyOn(_private, 'fetchVzaarThumbs')
+                                    .and.returnValue(
+                                        $q.when({
+                                            small: 'small.jpg',
+                                            large: 'large.jpg'
+                                        })
+                                    );
+
+                                result = ThumbnailService.getThumbsFor('vzaar', '12345');
+                            });
+
+                            it('should set the small and large properties when the promise resolves', function() {
+                                expect(_private.fetchVzaarThumbs).toHaveBeenCalledWith('12345');
                                 $rootScope.$digest();
 
                                 expect(result.small).toBe('small.jpg');

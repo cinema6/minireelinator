@@ -936,6 +936,22 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 });
             }
 
+            _private.fetchVzaarThumbs = function(id) {
+                var request = 'https://vzaar.com/api/videos/' + id + '.json?callback=JSON_CALLBACK';
+                return $http.jsonp(request, {cache: false})
+                    .then(function(json) {
+                        if(json.status === 200) {
+                            return {
+                                /* jshint camelcase:false */
+                                small: json.data.thumbnail_url,
+                                large: json.data.thumbnail_url
+                                /* jshint camelcase:true */
+                            };
+                        }
+                        return $q.reject();
+                    });
+            };
+
             _private.fetchInstagramThumbs = function(id) {
                 var instagramKey = c6Defines.kInstagramDataApiKey;
                 var request = 'https://api.instagram.com/v1/media/shortcode/' + id +
@@ -1071,6 +1087,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return new ThumbModel(_private.fetchVimeoThumbs(id));
                         case 'dailymotion':
                             return new ThumbModel(_private.fetchDailyMotionThumbs(id));
+                        case 'vzaar':
+                            return new ThumbModel(_private.fetchVzaarThumbs(id));
                         case 'yahoo':
                         case 'aol':
                         case 'vine':
@@ -1158,14 +1176,16 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     return 'https://rumble.com/' + id + '.html';
                 case 'vine':
                     return 'https://vine.co/v/' + id;
-
+                case 'vzaar':
+                    return 'http://vzaar.tv/' + id;
                 }
             };
 
             this.dataFromText = function(text) {
                 var parsedUrl = c6UrlParser(text),
                     urlService = (parsedUrl.hostname.match(
-                        /youtube|youtu\.be|dailymotion|dai\.ly|vimeo|aol|yahoo|rumble|vine/
+                        new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|aol|yahoo|' +
+                            'rumble|vine|vzaar\\.tv')
                     ) || [])[0],
                     embedService = (text.match(
                         /youtube|youtu\.be|dailymotion|dai\.ly|vimeo/
@@ -1214,6 +1234,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 return (url.pathname
                                     .replace(/\/v\//, '')
                                     .match(/[a-zA-Z\d]+/) || [null])[0];
+                            },
+                            'vzaar.tv': function(url) {
+                                return (url.pathname
+                                    .replace(/\//, '')
+                                    .match(/\d+/) || [null])[0];
                             }
                         },
                         embed: {
@@ -1255,6 +1280,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 case 'dai.ly':
                     service = 'dailymotion';
                     break;
+                case 'vzaar.tv':
+                    service = 'vzaar';
+                    break;
                 }
 
                 if (!id) { return null; }
@@ -1291,6 +1319,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     return 'https://vine.co/v/' + id + '/embed/simple';
                 }
 
+                function vzaarSrc(id) {
+                    return '//view.vzaar.com/' + id + '/player';
+                }
+
                 switch (service) {
                 case 'aol':
                     return [
@@ -1321,6 +1353,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                            '<script' +
                                ' src="https://platform.vine.co/static/scripts/embed.js">' +
                            '</script>';
+                case 'vzaar':
+                    return '<iframe allowFullScreen allowTransparency="true"' +
+                        ' width="100%" height="100%"' +
+                        ' class="vzaar-video-player" frameborder="0" id="vzvd-' + id + '"' +
+                        ' mozallowfullscreen name="vzvd-' + id + '"' +
+                        ' src="' + vzaarSrc(id) + '" title="vzaar video player"' +
+                        ' type="text/html" webkitAllowFullScreen width="768"></iframe>';
                 }
             };
         }])
@@ -1905,6 +1944,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'adUnit':
                         case 'embedded':
                         case 'vine':
+                        case 'vzaar':
                             return 'video' + ((card.modules.indexOf('ballot') > -1) ?
                                 'Ballot' : '');
                         default:
@@ -2804,6 +2844,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         moat: copy(null)
                     },
                     vine: {
+                        hideSource: hideSourceValue(),
+                        autoplay: copy(null),
+                        autoadvance: copy(null),
+                        skip: skipValue(),
+                        service: copy(),
+                        videoid: copy(null),
+                        href: hrefValue(),
+                        thumbs: videoThumbsValue(),
+                        moat: copy(null)
+                    },
+                    vzaar: {
                         hideSource: hideSourceValue(),
                         autoplay: copy(null),
                         autoadvance: copy(null),

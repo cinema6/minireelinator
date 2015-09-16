@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.20.0.rc1]*
+  * [FEATURE]: Added the ability to create Vzaar video cards
+
 ## v1.19.0 (September 16, 2015)
 * *[v1.19.0.rc4]*
   * [FIX]: Fix for an issue where changes to a campaign's pricing model were not
