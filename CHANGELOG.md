@@ -1,6 +1,11 @@
 # MiniReelinator
 
-## v1.19.0 (August 25, 2015)
+## v1.19.0 (September 16, 2015)
+* *[v1.19.0.rc4]*
+  * [FIX]: Fix for an issue where changes to a campaign's pricing model were not
+    enabling the "Save" button
+* *[/v1.19.0.rc4]*
+
 * *[v1.19.0.rc3]*
   * [FEATURE]: Add social sharing for video sponsored cards
   * [FEATURE]: Add tabbed management screen for non-draft campaigns
