@@ -361,6 +361,14 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 })
                 .catch(handleError);
             }, this);
+
+            $scope.$watch(function() {
+                return CampaignCtrl.pricingModel;
+            }, function(newModel, oldModel) {
+                if (newModel === oldModel) { return; }
+
+                CampaignCtrl.model.pricing.model = newModel.toLowerCase();
+            });
         }])
 
         .config(['c6StateProvider',

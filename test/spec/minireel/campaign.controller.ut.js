@@ -527,5 +527,27 @@ define(['app'], function(appModule) {
                 });
             });
         });
+
+        describe('$watchers', function() {
+            describe('pricingModel', function() {
+                it('should set the pricing model on the campaign', function() {
+                    expect(CampaignCtrl.pricingModel).toBe('CPV');
+
+                    expect(CampaignCtrl.model.pricing.model).toBe(undefined);
+
+                    $scope.$apply(function() {
+                        CampaignCtrl.pricingModel = 'CPM';
+                    });
+
+                    expect(CampaignCtrl.model.pricing.model).toBe('cpm');
+
+                    $scope.$apply(function() {
+                        CampaignCtrl.pricingModel = 'CPV';
+                    });
+
+                    expect(CampaignCtrl.model.pricing.model).toBe('cpv');
+                });
+            });
+        });
     });
 });
