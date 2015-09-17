@@ -1,7 +1,9 @@
 # MiniReelinator
 
+## v1.20.0 (September 17, 2015)
 * *[v1.20.0.rc1]*
   * [FEATURE]: Added the ability to create Vzaar video cards
+* *[/v1.20.0.rc1]*
 
 ## v1.19.0 (September 16, 2015)
 * *[v1.19.0.rc4]*
