@@ -938,7 +938,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             _private.fetchVzaarThumbs = function(id) {
                 var request = 'https://vzaar.com/api/videos/' + id + '.json?callback=JSON_CALLBACK';
-                return $http.jsonp(request, {cache: false})
+                return $http.jsonp(request, {cache: true})
                     .then(function(json) {
                         if(json.status === 200) {
                             return {
