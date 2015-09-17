@@ -937,19 +937,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             }
 
             _private.fetchVzaarThumbs = function(id) {
-                var request = 'https://vzaar.com/api/videos/' + id + '.json?callback=JSON_CALLBACK';
-                return $http.jsonp(request, {cache: false})
-                    .then(function(json) {
-                        if(json.status === 200) {
-                            return {
-                                /* jshint camelcase:false */
-                                small: json.data.thumbnail_url,
-                                large: json.data.thumbnail_url
-                                /* jshint camelcase:true */
-                            };
-                        }
-                        return $q.reject();
-                    });
+                var thumbnailUrl = 'https://view.vzaar.com/' + id + '/thumb';
+                return {
+                    small: thumbnailUrl,
+                    large: thumbnailUrl
+                };
             };
 
             _private.fetchInstagramThumbs = function(id) {
@@ -1088,7 +1080,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'dailymotion':
                             return new ThumbModel(_private.fetchDailyMotionThumbs(id));
                         case 'vzaar':
-                            return new ThumbModel(_private.fetchVzaarThumbs(id));
+                            return new ThumbModel($q.when(_private.fetchVzaarThumbs(id)));
                         case 'yahoo':
                         case 'aol':
                         case 'vine':
