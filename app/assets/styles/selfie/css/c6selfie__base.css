@@ -1998,3 +1998,148 @@ fa,
             height:100%;
             z-index: 5;
         }
+
+
+
+
+
+
+
+
+
+/*  ======================================================
+    modal styles
+    ====================================================== */
+    .modal__overlay {
+        position:fixed; z-index: 99; top:0; left:0; right:0; bottom:0;
+        background:#000; opacity:0.75;
+    }
+        .modal__overlay--confirm {
+            z-index:199;
+        }
+    .modal__group {
+        position:fixed; z-index: 100; top:50%; left:50%;
+        width:61.5em; height:37.5em;
+        margin:-18.75em 0 0 -30.75em;
+        background:#fff;
+        border-radius:0.25em;
+        overflow: hidden;
+        box-sizing:border-box;
+
+        -webkit-box-shadow: 0 0 4px 1px rgba(0,0,0,0.6);
+        box-shadow: 0 0 10px 1px rgba(0,0,0,0.6);
+        border-radius:5px;
+        border:2px solid #4c4c4c;
+    }
+        .modal__group--focus {
+            z-index: 150;
+        }
+    .modalDialog__group {
+        position:fixed; z-index: 100; top:50%; left:50%;
+        width:37.5em; height:18em;
+        margin:-9em 0 0 -18.75em;
+        background:#fff;
+        border-radius:0.25em;
+        overflow: hidden;
+    }
+        .modalDialog__group--confirm {
+            z-index:200;
+        }
+    .modalHeader__group {
+        min-height:3em;
+        background:#eee;
+        border-bottom:1px solid #ddd;
+        position:relative;
+        z-index: 5;
+    }
+        .modal__closeBtn,
+        .modal__closeBtn:focus {
+            width:3em; height:100%;
+            position: absolute; right:0; top:0;
+            border-left:1px solid #ddd;
+            -webkit-transition:background 0.25s; transition:background 0.25s;
+        }
+            .modal__closeBtn .ui__icon {
+                fill:#d94040;
+            }
+            .modal__closeBtn:hover {
+                background:#d94040;
+            }
+            .modal__closeBtn:hover .ui__icon {
+                fill:#fff;
+            }
+        .modal__title {
+            color:#626262; 
+            font-size:1.25em; font-weight:500;
+            text-align: center;
+            margin:0 3rem; padding:0.45em 0 0 0;
+            overflow: hidden; text-overflow:ellipsis;
+            white-space: nowrap;
+        }
+    .modalTabs__group {
+        width:10.5em;
+        position:absolute; left:1.5em; top:4.5em; z-index:1;
+    }
+    .modalBody__group {
+        position:absolute; 
+        left:1.5em; right:0.25em; top:3em; bottom:3.8em;
+        overflow:auto;
+        padding:2em 0.5em 5em 0;
+    }
+        .modalBody__group--sideTabs {
+            left:13.5em;
+        }
+        .modalBody__title {
+            font-size:1.5em; font-weight:100;
+            margin:1.5625rem 0 0.5625rem 0;
+            line-height: 1.25;
+        }
+        .modalBody__message {
+            margin:0;
+        }
+        .modalBody__fineprint {
+            position: absolute;
+            bottom:1rem;
+            font-size:0.75em;
+            margin:0;
+        }
+    .modalFooter__group {
+        position:absolute; bottom:0; left:0; right:0; z-index:5;
+        background:#eee; border-top:1px solid #ddd;
+        height:3.75em;
+    }
+        .modalFooter__group .btnAction {
+            position:absolute;
+        }
+            .modalFooter__group .btnAction--first {
+                top:0.75em; left:0.75em;
+            }
+            .modalFooter__group .btnAction--last {
+                top:0.75em; right:0.75em;
+            }
+        .modalFooter__guideText {
+            margin:1.75em 8em 0; 
+            text-align: center; font-size:0.75em;
+        }
+
+    @media screen and (max-width:65em), screen and (max-height:39.375em) {
+        /* w:1040px 
+           h: 630px */
+        .modal__group {
+            position:fixed;
+            top:0.75em; left:1.5em; right:1.5em; bottom:0.75em;
+            background:#fff;
+            width:auto; height:auto;
+            border-radius:0.25em; margin:0;
+        }
+        .modal__group .modalBody__group {
+            overflow: auto;
+            right:0.5em; top:3.0625em !important;
+            padding-right:1em; padding-top:1.5em;
+        }
+        .modalBody__fineprint {
+            position: static;
+            bottom:auto; left:auto;
+            margin:4rem 0;
+        }
+    }
