@@ -27,6 +27,19 @@ define(['angular', 'app'], function(angular, appModule) {
                 MiniReelService = $injector.get('MiniReelService');
 
                 $scope = $rootScope.$new();
+                $scope.MiniReelCtrl = {
+                    model: {
+                        data: {
+                            campaigns: {
+                                pricing: {
+                                    dailyLimit: {},
+                                    budget: {},
+                                    cost: {}
+                                }
+                            }
+                        }
+                    }
+                };
                 $scope.$apply(function() {
                     CampaignCtrl = $scope.CampaignCtrl = $controller('CampaignController', {
                         $scope: $scope

@@ -8,7 +8,8 @@ define(['app'], function(appModule) {
             cinema6,
             $scope,
             ConfirmDialogService,
-            CampaignCtrl;
+            CampaignCtrl,
+            MiniReelCtrl;
 
         var campaign, debouncedFns;
 
@@ -37,6 +38,29 @@ define(['app'], function(appModule) {
                 $q = $injector.get('$q');
                 cinema6 = $injector.get('cinema6');
                 ConfirmDialogService = $injector.get('ConfirmDialogService');
+
+                MiniReelCtrl = {
+                    model: {
+                        data: {
+                            campaigns: {
+                                pricing: {
+                                    dailyLimit: {
+                                        min: 0,
+                                        max: 999999999999.9999
+                                    },
+                                    budget: {
+                                        min: 0,
+                                        max: 999999999999.9999
+                                    },
+                                    cost: {
+                                        min: 0,
+                                        max: 9999.9999
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
 
                 campaign = cinema6.db.create('campaign', {
                     id: 'e-48eec2c6b81060',
@@ -69,6 +93,7 @@ define(['app'], function(appModule) {
 
                 $scope = $rootScope.$new();
                 $scope.AppCtrl = $controller('AppController', { cState: {} });
+                $scope.MiniReelCtrl = MiniReelCtrl;
                 $scope.$apply(function() {
                     CampaignCtrl = $controller('CampaignController', {
                         $scope: $scope,
@@ -171,6 +196,81 @@ define(['app'], function(appModule) {
                         campaign.logos.square = 'example.com/image.png';
                         expect(CampaignCtrl.validLogo).toBe(false);
                     });
+                });
+            });
+
+            describe('validBudget', function() {
+                it('should be false if budget is not set', function() {
+                    campaign.pricing.budget = null;
+                    expect(CampaignCtrl.validBudget).toBe(false);
+
+                    campaign.pricing.budget = 3000;
+                    expect(CampaignCtrl.validBudget).toBe(true);
+                });
+
+                it('should be true if budget is 0', function() {
+                    campaign.pricing.budget = 0;
+                    expect(CampaignCtrl.validBudget).toBe(true);
+                });
+
+                it('should be true if it is between 0 and 999999999999.9999, false otherwise', function() {
+                    campaign.pricing.budget = 0;
+                    expect(CampaignCtrl.validBudget).toBe(true);
+
+                    campaign.pricing.budget = 999999;
+                    expect(CampaignCtrl.validBudget).toBe(true);
+
+                    campaign.pricing.budget = 99999999999999999999;
+                    expect(CampaignCtrl.validBudget).toBe(false);
+                });
+            });
+
+            describe('validLimit', function() {
+                it('should be true if limit is not set', function() {
+                    campaign.pricing.dailyLimit = null;
+                    expect(CampaignCtrl.validLimit).toBe(true);
+                });
+
+                it('should be true if limit is 0', function() {
+                    campaign.pricing.dailyLimit = 0;
+                    expect(CampaignCtrl.validLimit).toBe(true);
+                });
+
+                it('should be true if it is between 0 and 999999999999.9999, false otherwise', function() {
+                    campaign.pricing.dailyLimit = 0;
+                    expect(CampaignCtrl.validLimit).toBe(true);
+
+                    campaign.pricing.dailyLimit = 999999;
+                    expect(CampaignCtrl.validLimit).toBe(true);
+
+                    campaign.pricing.dailyLimit = 99999999999999999999;
+                    expect(CampaignCtrl.validLimit).toBe(false);
+                });
+            });
+
+            describe('validCost', function() {
+                it('should be false if cost is not set', function() {
+                    campaign.pricing.cost = null;
+                    expect(CampaignCtrl.validCost).toBe(false);
+
+                    campaign.pricing.cost = 3000;
+                    expect(CampaignCtrl.validCost).toBe(true);
+                });
+
+                it('should be true if cost is 0', function() {
+                    campaign.pricing.cost = 0;
+                    expect(CampaignCtrl.validCost).toBe(true);
+                });
+
+                it('should be true if it is between 0 and 9999.9999, false otherwise', function() {
+                    campaign.pricing.cost = 0;
+                    expect(CampaignCtrl.validCost).toBe(true);
+
+                    campaign.pricing.cost = 9999;
+                    expect(CampaignCtrl.validCost).toBe(true);
+
+                    campaign.pricing.cost = 99999999999999999;
+                    expect(CampaignCtrl.validCost).toBe(false);
                 });
             });
 
