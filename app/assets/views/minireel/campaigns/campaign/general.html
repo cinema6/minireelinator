@@ -29,7 +29,7 @@
         <span class="forms__name" > Budget:</span>
         <span class="forms__inputHolder forms__inputHolder--fluid 
         forms__inputHolder--maxMed">
-            <input class="forms__textField forms__textField--padded forms__textField--block" ng-model="campaign.pricing.budget" type="number" ng-class="{ 'forms__textField--danger': !campaign.pricing.budget }"></input>
+            <input class="forms__textField forms__textField--padded forms__textField--block" ng-model="campaign.pricing.budget" type="number" ng-class="{ 'forms__textField--danger': !CampaignCtrl.validBudget }"></input>
         </span>
     </label>
 
@@ -37,7 +37,7 @@
         <span class="forms__name" > Daily Limit:</span>
         <span class="forms__inputHolder forms__inputHolder--fluid 
         forms__inputHolder--maxMed">
-            <input class="forms__textField forms__textField--padded forms__textField--block" ng-model="campaign.pricing.dailyLimit" type="number"></input>
+            <input class="forms__textField forms__textField--padded forms__textField--block" ng-model="campaign.pricing.dailyLimit" type="number" ng-class="{ 'forms__textField--danger': !CampaignCtrl.validLimit }"></input>
         </span>
     </label>
 
@@ -45,7 +45,7 @@
         <span class="forms__name" > Cost:</span>
         <span class="forms__inputHolder forms__inputHolder--fluid 
         forms__inputHolder--maxMed">
-            <input class="forms__textField forms__textField--padded forms__textField--block" ng-model="campaign.pricing.cost" type="number" ng-class="{ 'forms__textField--danger': !campaign.pricing.cost }"></input>
+            <input class="forms__textField forms__textField--padded forms__textField--block" ng-model="campaign.pricing.cost" type="number" ng-class="{ 'forms__textField--danger': !CampaignCtrl.validCost }"></input>
         </span>
     </label>
 

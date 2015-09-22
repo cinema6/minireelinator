@@ -50,6 +50,19 @@ define(['app'], function(appModule) {
                 });
 
                 $scope = $rootScope.$new();
+                $scope.MiniReelCtrl = {
+                    model: {
+                        data: {
+                            campaigns: {
+                                pricing: {
+                                    dailyLimit: {},
+                                    budget: {},
+                                    cost: {}
+                                }
+                            }
+                        }
+                    }
+                };
                 $scope.$apply(function() {
                     CampaignCtrl = $scope.CampaignCtrl = $controller('CampaignController', {
                         $scope: $scope

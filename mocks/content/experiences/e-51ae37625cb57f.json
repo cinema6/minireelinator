@@ -102,6 +102,22 @@
         "blacklists": {
             "customers": ["cus-93f875djh67df6"],
             "advertisers": ["a-127sju4hvb5v62"]
+        },
+        "campaigns": {
+            "pricing": {
+                "dailyLimit": {
+                    "min": 0,
+                    "max": 999999999999.9999
+                },
+                "budget": {
+                    "min": 0,
+                    "max": 999999999999.9999
+                },
+                "cost": {
+                    "min": 0,
+                    "max": 9999.9999
+                }
+            }
         }
     }
 }

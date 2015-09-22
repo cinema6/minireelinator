@@ -232,7 +232,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         function                          ( $scope , $q , ConfirmDialogService , c6AsyncQueue ) {
             var queue = c6AsyncQueue(),
                 CampaignCtrl = this,
-                AppCtrl = $scope.AppCtrl;
+                AppCtrl = $scope.AppCtrl,
+                MiniReelCtrl = $scope.MiniReelCtrl,
+                pricingLimits = MiniReelCtrl.model.data.campaigns.pricing;
 
             function createModelLinks(uiLinks) {
                 return uiLinks.filter(function(link) {
@@ -289,11 +291,39 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         return !logo || AppCtrl.validImgSrc.test(logo);
                     }
                 },
+                validBudget: {
+                    get: function() {
+                        var pricing = this.model.pricing,
+                            max = pricingLimits.budget.max,
+                            min = pricingLimits.budget.min;
+
+                        return (!!pricing.budget || pricing.budget === min) &&
+                            (pricing.budget < max && pricing.budget >= min);
+                    }
+                },
+                validLimit: {
+                    get: function() {
+                        var pricing = this.model.pricing,
+                            max = pricingLimits.dailyLimit.max,
+                            min = pricingLimits.dailyLimit.min;
+
+                        return !pricing.dailyLimit ||
+                            (pricing.dailyLimit < max && pricing.dailyLimit >= min);
+                    }
+                },
+                validCost: {
+                    get: function() {
+                        var pricing = this.model.pricing,
+                            max = pricingLimits.dailyLimit.max,
+                            min = pricingLimits.dailyLimit.min;
+
+                        return (!!pricing.cost || pricing.cost === min) &&
+                            (pricing.cost < max && pricing.cost >= min);
+                    }
+                },
                 validPricing: {
                     get: function() {
-                        var pricing = this.model.pricing;
-
-                        return !!pricing.budget && !!pricing.cost;
+                        return this.validBudget && this.validLimit && this.validCost;
                     }
                 }
             });
