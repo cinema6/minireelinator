@@ -61,28 +61,18 @@
                     });
 
                     describe('fetchVzaarThumbs(videoid)', function() {
-                        var success;
+                        var result;
 
                         beforeEach(function() {
-                            success = jasmine.createSpy('fetchVzaarThumbs()');
-                            var request = 'https://vzaar.com/api/videos/12345.json?callback=JSON_CALLBACK'
-                            $httpBackend.whenJSONP(request).respond({
-                                thumbnail_url: 'https://view.vzaar.com/12345/thumb'
-                            });
-                            _private.fetchVzaarThumbs('12345').then(success);
+                            result = _private.fetchVzaarThumbs('12345');
                         });
 
                         it('should resolve to an object with small and large thumbs', function() {
-                            expect(success).not.toHaveBeenCalled();
-
-                            $httpBackend.flush();
-
-                            expect(success).toHaveBeenCalledWith({
+                            expect(result).toEqual({
                                 small: 'https://view.vzaar.com/12345/thumb',
                                 large: 'https://view.vzaar.com/12345/thumb'
                             });
                         });
-
                     });
 
                     describe('fetchVimeoThumbs(videoid)', function() {
