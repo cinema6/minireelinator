@@ -136,6 +136,21 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
                 });
             };
+
+            this.confirm = function() {
+                ConfirmDialogService.display({
+                    prompt: 'Are you sure you want to do the thing you\'re doing?',
+                    affirm: 'Yes',
+                    cancel: 'Cancel',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: function() {
+                        ConfirmDialogService.close();
+                    }
+                });
+            };
         }])
 
         .config(['c6StateProvider',
