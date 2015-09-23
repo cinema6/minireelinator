@@ -57,7 +57,7 @@ function(angular ) {
                 }
             }
         });
-        copyProps(['filter', 'limit', 'page'], cState, this);
+        copyProps(['filter', 'filterBy', 'limit', 'page'], cState, this);
 
         $scope.$watch(ctrlProp('page'), nonInitializingWatchFn(function(page) {
             var model = PaginatedListCtrl.model;
@@ -73,6 +73,17 @@ function(angular ) {
             if (isUndefined(limit)) { return; }
 
             model.update(model.query, limit);
+            PaginatedListCtrl.page = 1;
+        }));
+
+        $scope.$watch(ctrlProp('filter'), nonInitializingWatchFn(function(filter) {
+            var model = PaginatedListCtrl.model;
+
+            if (filter === model.query.filter || isUndefined(filter)) { return; }
+
+            model.query[PaginatedListCtrl.filterBy] = filter;
+
+            model.update(model.query, model.limit);
             PaginatedListCtrl.page = 1;
         }));
     }

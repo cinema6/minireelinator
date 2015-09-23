@@ -8,7 +8,8 @@ function( angular , c6State  , PaginatedListState                    ,
     var copy = angular.copy,
         equals = angular.equals,
         forEach = angular.forEach,
-        isObject = angular.isObject;
+        isObject = angular.isObject,
+        extend = angular.extend;
 
     function deepExtend(target, extension) {
         forEach(extension, function(extensionValue, prop) {
@@ -37,8 +38,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Campaigns', ['c6State','$injector','paginatedDbList',
-            function                                  ( c6State , $injector , paginatedDbList ) {
+            c6StateProvider.state('Selfie:Campaigns', ['c6State','$injector','$location',
+                                                       'paginatedDbList',
+            function                                  ( c6State , $injector , $location ,
+                                                        paginatedDbList ) {
                 var SelfieState = c6State.get('Selfie');
 
                 $injector.invoke(PaginatedListState, this);
@@ -47,6 +50,15 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.controller = 'SelfieCampaignsController';
                 this.controllerAs = 'SelfieCampaignsCtrl';
 
+                this.filter = $location.search().filter ||
+                    'draft,pendingApproval,approved,active,paused,error';
+                this.filterBy = $location.search().filterBy || 'status';
+
+                extend(this.queryParams, {
+                    filter: '=',
+                    filterBy: '='
+                });
+
                 this.title = function() {
                     return 'Selfie Campaign Manager';
                 };
@@ -54,17 +66,19 @@ function( angular , c6State  , PaginatedListState                    ,
                     return paginatedDbList('selfieCampaign', {
                         sort: 'lastUpdated,-1',
                         org: SelfieState.cModel.org.id,
-                        application: 'selfie'
+                        application: 'selfie',
+                        status: this.filter,
                     }, this.limit, this.page).ensureResolution();
                 };
             }]);
         }])
 
-        .controller('SelfieCampaignsController', ['$injector','$scope','$q','cState',
+        .controller('SelfieCampaignsController', ['$injector','$scope','$q','cState','c6Computed',
                                                   'ConfirmDialogService','ThumbnailService',
-        function                                 ( $injector , $scope , $q , cState ,
+        function                                 ( $injector , $scope , $q , cState , c6Computed,
                                                    ConfirmDialogService , ThumbnailService ) {
-            var SelfieCampaignsCtrl = this;
+            var SelfieCampaignsCtrl = this,
+                c = c6Computed($scope);
 
             $injector.invoke(PaginatedListController, this, {
                 cState: cState,
@@ -89,25 +103,24 @@ function( angular , c6State  , PaginatedListState                    ,
                 return $q.when(null);
             }
 
-            this.initWithModel = function(campaigns) {
-                var metaData = {};
-
-                this.metaData = metaData;
-                this.model = campaigns;
-
-                campaigns.items.value.forEach(function(campaign) {
+            c(this, 'metaData', function() {
+                return this.model.items.value.reduce(function(result, campaign) {
                     var card = campaign.cards && campaign.cards[0] && campaign.cards[0].item;
 
-                    metaData[campaign.id] = {
+                    if (!card) { return result; }
+
+                    result[campaign.id] = {
                         sponsor: card.params.sponsor,
                         logo: card.collateral.logo
                     };
 
                     thumbFor(card).then(function(thumb) {
-                        metaData[campaign.id].thumb = thumb;
+                        result[campaign.id].thumb = thumb;
                     });
-                });
-            };
+
+                    return result;
+                },{});
+            }, ['SelfieCampaignsCtrl.model.items.value']);
 
             this.editStateFor = function(campaign) {
                 return campaign.status === 'draft' ?

@@ -24,16 +24,16 @@
                 <li class="sortBar__item sortBar__item--sortable column__status">
                     <button class="sortBar__btn" type="button">Status</button><span class="faa fa-caret-down ui__clickDrop sortBar__btn--Dropdown"> </span>
                     <div class="ui__clickDropMenu">
-                    <button class="ui__clickDropBtn" type="button" title="Select All">
+                    <button class="ui__clickDropBtn" type="button" ng-click="SelfieCampaignsCtrl.filter = 'active'">
                         Active
                     </button>
-                    <button class="ui__clickDropBtn" type="button">
+                    <button class="ui__clickDropBtn" type="button" ng-click="SelfieCampaignsCtrl.filter = 'canceled'">
                         Cancelled
                     </button>
-                    <button class="ui__clickDropBtn" type="button">
+                    <button class="ui__clickDropBtn" type="button" ng-click="SelfieCampaignsCtrl.filter = 'paused'">
                         Paused
                     </button>
-                    <button class="ui__clickDropBtn ng-hide" type="button">
+                    <button class="ui__clickDropBtn ng-hide" type="button" ng-click="SelfieCampaignsCtrl.filter = 'pendingApproval'">
                         Pending Approval
                     </button>
                 </div>
@@ -156,7 +156,7 @@
 
     <footer class="dockedFooter__group">
         <div class="paginator__group clearfix">
- <paginator-controls page="SelfieCampaignsCtrl.model.page" limit="SelfieCampaignsCtrl.limit" limits="SelfieCampaignsCtrl.limits" total="SelfieCampaignsCtrl.model.items.page.total"></paginator-controls>
+ <paginator-controls page="SelfieCampaignsCtrl.page" limit="SelfieCampaignsCtrl.limit" limits="SelfieCampaignsCtrl.limits" total="SelfieCampaignsCtrl.model.items.page.total"></paginator-controls>
              <div class="paginator__readout" c6-alias="SelfieCampaignsCtrl.model.items.value.meta.items as items">
                 <span ng-show="campaigns.length">Displaying <strong>{{items.start}} &ndash; {{items.end}}</strong> &nbsp;of&nbsp; {{items.total}} Campaigns</span>
                 <span ng-show="!campaigns.length">0 Campaigns</span>

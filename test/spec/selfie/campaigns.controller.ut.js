@@ -70,9 +70,9 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
             })));
         }));
 
-        describe('methods', function() {
-            describe('initWithModel(model)', function() {
-                beforeEach(function() {
+        describe('properties', function() {
+            describe('metaData', function() {
+                it('should contain metaData for each campaign', function() {
                     model.items.value = [
                         {
                             id: 'cam-1',
@@ -107,16 +107,6 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             ]
                         }
                     ];
-                });
-
-                it('should add the model', function() {
-                    SelfieCampaignsCtrl.initWithModel(model);
-
-                    expect(SelfieCampaignsCtrl.model).toEqual(model);
-                });
-
-                it('should add metaData for each campaign', function() {
-                    SelfieCampaignsCtrl.initWithModel(model);
 
                     $scope.$digest();
 
@@ -141,9 +131,39 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
 
                         spyOn(ThumbnailService, 'getThumbsFor').and.returnValue(promise);
 
-                        delete model.items.value[1].cards[0].item.thumb;
-
-                        SelfieCampaignsCtrl.initWithModel(model);
+                        model.items.value = [
+                            {
+                                id: 'cam-1',
+                                cards: [
+                                    {
+                                        item: {
+                                            params: {},
+                                            collateral: {},
+                                            data: {}
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                id: 'cam-2',
+                                cards: [
+                                    {
+                                        item: {
+                                            params: {
+                                                sponsor: 'Diageo'
+                                            },
+                                            collateral: {
+                                                logo: 'diageo.jpg'
+                                            },
+                                            data: {
+                                                service: 'youtube',
+                                                videoid: '123'
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ];
 
                         $scope.$digest();
 
@@ -156,7 +176,9 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     });
                 });
             });
+        });
 
+        describe('methods', function() {
             describe('remove(campaigns)', function() {
                 var campaigns,
                     campaign1EraseDeferred, campaign2EraseDeferred,
