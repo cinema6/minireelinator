@@ -16,6 +16,7 @@ define(['angular', 'minireel/services', 'minireel/mixins/PaginatedListController
 
         beforeEach(function() {
             state = {
+                filterBy: null,
                 filter: null,
                 limit: 50,
                 page: 1
@@ -70,6 +71,12 @@ define(['angular', 'minireel/services', 'minireel/mixins/PaginatedListController
             describe('filter', function() {
                 it('should be initialized as the state\'s filter', function() {
                     expect(PaginatedListCtrl.filter).toBe(state.filter);
+                });
+            });
+
+            describe('filterBy', function() {
+                it('should be initialized as the state\'s filterBy', function() {
+                    expect(PaginatedListCtrl.filterBy).toBe(state.filterBy);
                 });
             });
 
@@ -261,6 +268,44 @@ define(['angular', 'minireel/services', 'minireel/mixins/PaginatedListController
 
                         it('should not goTo a new page', function() {
                             expect(model.goTo).not.toHaveBeenCalled();
+                        });
+                    });
+                });
+
+                describe('this.filter', function() {
+                    beforeEach(function() {
+                        model.goTo.calls.reset();
+
+                        $scope.$apply(function() {
+                            PaginatedListCtrl.page = 3;
+                            PaginatedListCtrl.filterBy = 'status';
+                            PaginatedListCtrl.filter = 'active';
+                        });
+                    });
+
+                    it('should update the model with new query', function() {
+                        model.query[PaginatedListCtrl.filterBy] = PaginatedListCtrl.filter;
+                        expect(model.update).toHaveBeenCalledWith(model.query, 50);
+                    });
+
+                    it('should set the PaginatedListCtrl.page back to 1', function() {
+                        expect(PaginatedListCtrl.page).toBe(1);
+                    });
+
+                    it('should not call goTo again', function() {
+                        expect(cinema6.db.findAll.calls.count()).toBe(1);
+                    });
+
+                    describe('if set to undefined', function() {
+                        beforeEach(function() {
+                            model.update.calls.reset();
+                            $scope.$apply(function() {
+                                PaginatedListCtrl.filter = undefined;
+                            });
+                        });
+
+                        it('should not update the model', function() {
+                            expect(model.update).not.toHaveBeenCalled();
                         });
                     });
                 });

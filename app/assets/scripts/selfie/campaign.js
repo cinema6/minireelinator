@@ -73,12 +73,11 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieCampaignsController', ['$injector','$scope','$q','cState','c6Computed',
+        .controller('SelfieCampaignsController', ['$injector','$scope','$q','cState',
                                                   'ConfirmDialogService','ThumbnailService',
-        function                                 ( $injector , $scope , $q , cState , c6Computed,
+        function                                 ( $injector , $scope , $q , cState ,
                                                    ConfirmDialogService , ThumbnailService ) {
-            var SelfieCampaignsCtrl = this,
-                c = c6Computed($scope);
+            var SelfieCampaignsCtrl = this;
 
             $injector.invoke(PaginatedListController, this, {
                 cState: cState,
@@ -102,25 +101,6 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 return $q.when(null);
             }
-
-            c(this, 'metaData', function() {
-                return this.model.items.value.reduce(function(result, campaign) {
-                    var card = campaign.cards && campaign.cards[0] && campaign.cards[0].item;
-
-                    if (!card) { return result; }
-
-                    result[campaign.id] = {
-                        sponsor: card.params.sponsor,
-                        logo: card.collateral.logo
-                    };
-
-                    thumbFor(card).then(function(thumb) {
-                        result[campaign.id].thumb = thumb;
-                    });
-
-                    return result;
-                },{});
-            }, ['SelfieCampaignsCtrl.model.items.value']);
 
             this.editStateFor = function(campaign) {
                 return campaign.status === 'draft' ?
@@ -149,6 +129,29 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
                 });
             };
+
+            $scope.$watch(function() {
+                return SelfieCampaignsCtrl.model.items.value;
+            }, function(model) {
+
+                SelfieCampaignsCtrl.metaData = model.reduce(function(result, campaign) {
+                    var card = campaign.cards && campaign.cards[0] && campaign.cards[0].item;
+
+                    if (!card) { return result; }
+
+                    result[campaign.id] = {
+                        sponsor: card.params.sponsor,
+                        logo: card.collateral.logo
+                    };
+
+                    thumbFor(card).then(function(thumb) {
+                        result[campaign.id].thumb = thumb;
+                    });
+
+                    return result;
+                },{});
+            });
+
         }])
 
         .config(['c6StateProvider',

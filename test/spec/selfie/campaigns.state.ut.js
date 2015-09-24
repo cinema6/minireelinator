@@ -5,7 +5,9 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
         var c6State,
             paginatedDbList,
             selfie,
-            campaigns;
+            campaigns,
+            $location,
+            $injector;
 
         var dbList,
             promise;
@@ -25,9 +27,14 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
 
             module(appModule.name);
 
-            inject(function($injector) {
+            inject(function(_$injector_) {
+                $injector = _$injector_;
+                spyOn($injector, 'invoke').and.callThrough();
+
                 c6State = $injector.get('c6State');
                 paginatedDbList = $injector.get('paginatedDbList');
+                $location = $injector.get('$location');
+                spyOn($location,'search').and.returnValue({});
 
                 selfie = c6State.get('Selfie');
                 selfie.cModel = {
@@ -43,9 +50,48 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
             expect(campaigns).toEqual(jasmine.any(Object));
         });
 
-        it('should apply the PaginatedListState mixin', inject(function($injector) {
-            expect(campaigns).toEqual(jasmine.objectContaining($injector.instantiate(PaginatedListState)));
-        }));
+        it('should apply the PaginatedListState mixin', function() {
+            expect($injector.invoke).toHaveBeenCalledWith(PaginatedListState, campaigns);
+        });
+
+        describe('properties', function() {
+            describe('filter', function() {
+                it('should be the filter query param from the url, or default to all statuses', function() {
+                    expect(campaigns.filter).toBe('draft,pendingApproval,approved,active,paused,error');
+
+                    $location.search.and.returnValue({
+                        filter: 'active,draft',
+                        filterBy: 'status'
+                    });
+                    campaigns = $injector.instantiate(campaigns.constructor);
+
+                    expect(campaigns.filter).toBe('active,draft');
+                });
+            });
+
+            describe('filterBy', function() {
+                it('should be the filterBy query param from the url, or default to "status"', function() {
+                    expect(campaigns.filterBy).toBe('status');
+
+                    $location.search.and.returnValue({
+                        filter: 'active,draft',
+                        filterBy: 'budget'
+                    });
+                    campaigns = $injector.instantiate(campaigns.constructor);
+
+                    expect(campaigns.filterBy).toBe('budget');
+                });
+            });
+
+            describe('queryParams', function() {
+                it('should add the filter and filterBy bindings', function() {
+                    expect(campaigns.queryParams).toEqual(jasmine.objectContaining({
+                        filter: '=',
+                        filterBy: '='
+                    }));
+                });
+            });
+        });
 
         describe('model()', function() {
             var result;
@@ -64,7 +110,8 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                 expect(paginatedDbList).toHaveBeenCalledWith('selfieCampaign', {
                     sort: 'lastUpdated,-1',
                     org: 'o-123456',
-                    application: 'selfie'
+                    application: 'selfie',
+                    status: 'draft,pendingApproval,approved,active,paused,error'
                 }, campaigns.limit, campaigns.page);
             });
         });
