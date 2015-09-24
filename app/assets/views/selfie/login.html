@@ -1,0 +1,54 @@
+<div class="prelogin__gridHolder">
+    <div class="grid grid--center grid--middle">
+        <div class="grid__item one-whole">
+        <div class="brandingHead">
+            <h1 class="text--center tk--hdr"><img src="styles/selfie/img/cinema6-logo.png" /><span class="ir">Cinema6</span></h1>
+        </div>
+            <form class="login__form" ng-submit="LoginCtrl.submit()">
+                <fieldset class="form__item">
+                    <input class="form__textBox form__fillCheck" type="email" name="email" id="c6-username" ng-model="LoginCtrl.model.email" autofocus autocomplete="off">
+                    <label class="form__label" for="c6-username">
+                        <i class="fa fa-times ui--error"></i> 
+                        Email
+                    </label>
+                    <div class="form__helpBox form__helpBox--right">
+                        <div class="form__helpText">
+                            Please enter your email associated with the account 
+                        </div>
+                    </div>
+                    <div class="form__errorBox">
+                        <p class="form__errorMsg">
+                            <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                        </p>
+                    </div>
+                </fieldset>
+                <fieldset class="form__item">
+                    <input class="form__textBox form__fillCheck" type="password" name="password" id="c6-password" ng-model="LoginCtrl.model.password" autocomplete="off">
+                    <label class="form__label" for="c6-password">
+                        <i class="fa fa-times ui--error"></i> 
+                        Password
+                    </label>
+                    <div class="form__helpBox form__helpBox--right">
+                        <div class="form__helpText">
+                            Please enter your password
+                        </div>
+                    </div>
+                    <div class="form__errorBox">
+                        <p class="form__errorMsg">
+                            <i class="fa fa-exclamation-triangle"></i> {{LoginCtrl.error}}
+                        </p>
+                    </div>
+                </fieldset>
+                <div class="ui__btnHolder">
+                    <button class="action__btn action__btn--full">Login</button>
+                </div>
+                <div class="subActions__box">
+                    <p class="subAction text--center"><a c6-sref="Selfie:ForgotPassword">Forgot Password?</a></p>
+                </div>
+                <div class="subActions__box">
+                    <p class="subAction text--center">Don't have a Selfie account? <a c6-sref="Selfie:SignUp">Sign up Now!</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
