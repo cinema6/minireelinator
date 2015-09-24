@@ -3,6 +3,7 @@
 * *[v1.20.1.rc1]*
   * [FEATURE]: Add validation for Campaign budget, daily limit and cost
   * Hide Sponsorship Manager
+  * [FEATURE]: (Selfie) Add filtering, sorting and pagination in Campaign Dashboard
 
 ## v1.20.0 (September 17, 2015)
 * *[v1.20.0.rc2]*
