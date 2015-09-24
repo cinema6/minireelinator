@@ -22,8 +22,8 @@
 
 * *[v1.19.0.rc3]*
   * [FEATURE]: Add social sharing for video sponsored cards
-  * [FEATURE]: Add tabbed management screen for non-draft campaigns
-  * [DEV]: Modularize campaign editing tools: categories, geo-targeting, budget, preview
+  * [FEATURE]: (Selfie) Add tabbed management screen for non-draft campaigns
+  * [DEV]: (Selfie) Modularize campaign editing tools: categories, geo-targeting, budget, preview
   * [FIX]: Fix for an issue where refreshing the page when creating a new campaign
     caused an error and blocked the loading of the app
   * [FIX]: Fix for an issue where a deleted sponsored card placeholder that was targeted
