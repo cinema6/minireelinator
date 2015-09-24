@@ -53,10 +53,12 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.filter = $location.search().filter ||
                     'draft,pendingApproval,approved,active,paused,error';
                 this.filterBy = $location.search().filterBy || 'status';
+                this.sort = $location.search().sort || 'lastUpdated,-1';
 
                 extend(this.queryParams, {
                     filter: '=',
-                    filterBy: '='
+                    filterBy: '=',
+                    sort: '='
                 });
 
                 this.title = function() {
@@ -64,7 +66,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
                 this.model = function() {
                     return paginatedDbList('selfieCampaign', {
-                        sort: 'lastUpdated,-1',
+                        sort: this.sort,
                         org: SelfieState.cModel.org.id,
                         application: 'selfie',
                         status: this.filter,
@@ -128,6 +130,10 @@ function( angular , c6State  , PaginatedListState                    ,
                         });
                     }
                 });
+            };
+
+            this.toggleSort = function(prop) {
+                this.sort = prop + ',' + (parseInt(this.sort.split(',')[1]) === -1 ? 1 : -1);
             };
 
             $scope.$watch(function() {

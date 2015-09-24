@@ -83,11 +83,27 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                 });
             });
 
+            describe('sort', function() {
+                it('should be the filterBy query param from the url, or default to "status"', function() {
+                    expect(campaigns.sort).toBe('lastUpdated,-1');
+
+                    $location.search.and.returnValue({
+                        filter: 'active,draft',
+                        filterBy: 'budget',
+                        sort: 'name,-1'
+                    });
+                    campaigns = $injector.instantiate(campaigns.constructor);
+
+                    expect(campaigns.sort).toBe('name,-1');
+                });
+            });
+
             describe('queryParams', function() {
                 it('should add the filter and filterBy bindings', function() {
                     expect(campaigns.queryParams).toEqual(jasmine.objectContaining({
                         filter: '=',
-                        filterBy: '='
+                        filterBy: '=',
+                        sort: '='
                     }));
                 });
             });
