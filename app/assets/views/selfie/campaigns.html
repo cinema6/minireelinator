@@ -9,15 +9,21 @@
 
     <header class="pageHeader__group">
         <div class="mainHeader__group">
+         <div class="grid">
+            <div class="grid__item one-third">
             <h1 class="mainHeader__breadcrumbs tk--hdr">
                 Campaigns
             </h1>
-            <div class="pageHeader__actions">
-                <button c6-sref="Selfie:NewCampaign" title="New Campaign" class="action__btn action__btn--small" type="button">
-                    <i class="fa fa-plus"></i>
-                    New Campaign
-                </button>
             </div>
+            <div class="grid__item one-third search__group">            
+                <input type="text" placeholder="Search" class="form__textBox">
+                <select class="form__selectBox form__selectBox--single">
+                    <option>Campaigns</option>
+                    <option>Sponsors</option>
+                </select>
+                    <button class="searchBtn action__btnSecondary action__btnSecondary--small">Go</button>
+            </div>
+        </div>
         </div><!--.mainHeader__group-->
         <div class="sortBar__group">
             <ul class="sortBar__list clearfix">
@@ -25,16 +31,19 @@
                     <button class="sortBar__btn" type="button">Status</button><span class="faa fa-caret-down ui__clickDrop sortBar__btn--Dropdown"> </span>
                     <div class="ui__clickDropMenu" style="display: none;">
                     <button class="ui__clickDropBtn" type="button" title="Select All">
-                        Active
-                    </button>
-                    <button class="ui__clickDropBtn" type="button">
-                        Cancelled
-                    </button>
-                    <button class="ui__clickDropBtn" type="button">
-                        Paused
+                        <label><input type="checkbox" name="statusFilter" value="Active" checked> Active</label>
                     </button>
                     <button class="ui__clickDropBtn ng-hide" type="button">
-                        Pending Approval
+                        <label><input type="checkbox" name="statusFilter" value="Draft" checked>Draft</label>
+                    </button>
+                    <button class="ui__clickDropBtn" type="button">
+                        <label><input type="checkbox" name="statusFilter" value="Paused" checked>Paused</label>
+                    </button>
+                    <button class="ui__clickDropBtn" type="button">
+                        <label><input type="checkbox" name="statusFilter" value="PendingApproval" checked>Pending Approval</label>
+                    </button>
+                    <button class="ui__clickDropBtn" type="button">
+                        <label><input type="checkbox" name="statusFilter" value="Expired" checked>Expired</label>
                     </button>
                 </div>
                 </li>

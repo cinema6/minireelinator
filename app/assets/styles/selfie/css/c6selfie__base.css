@@ -1111,6 +1111,10 @@ fa,
                     width:10em;
                     text-align: left;
                 }
+                    .ui__clickDropBtn label {
+                        width: 100%;
+                        display: block;
+                    }
                     .miniReel__status--wide .ui__clickDropBtn {
                         width:20em;
                         font-size:1em;
@@ -1420,7 +1424,7 @@ fa,
             margin-left:22%;
         }
             .form__item--shortInput .form__label {
-                top:0.875rem;
+                top:0.75rem;
             }
             .form__item--shortInput .form__helpBox--right {
                 width:80%;
@@ -1717,9 +1721,6 @@ fa,
             border-radius:2px;
             padding:0 8px 1px;
         }
-
-
-
 
 /*  ================================================
     sponsor logo wizard
@@ -2162,4 +2163,35 @@ fa,
             bottom:auto; left:auto;
             margin:4rem 0;
         }
+    }
+/***Temp styles Dashboard- Dhaval Search form***/
+ .search__group {
+        margin-top: 0.5em;
+    }
+    .search__group  .form__textBox {
+        /*vertical-align: middle;
+        margin-top: 0.45em;*/
+        border-bottom: 2px solid #fff;
+        border-bottom-left-radius: 3px;
+        border-top-left-radius: 3px;
+        width: 50%;
+    }
+    .search__group .select2-container {
+        display: inline-block;
+        /*width: auto;
+        margin-top: 0.535em;*/
+        vertical-align: top;
+        margin-left: -4px;
+        border-bottom: 2px solid #fff;
+    }
+    .search__group .select2-container--default .select2-selection--single {
+        border-bottom: 2px solid #fff;
+    }
+    .search__group .searchBtn {
+        padding: 0.25em 1em 0.3em 1em;
+        vertical-align: top;        
+        margin-bottom: 0;
+        margin-left: -4px;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
     }
