@@ -52,6 +52,19 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
 
                 $scope = $rootScope.$new();
                 $scope.AppCtrl = $controller('AppController', { cState:{} });
+                $scope.MiniReelCtrl = {
+                    model: {
+                        data: {
+                            campaigns: {
+                                pricing: {
+                                    dailyLimit: {},
+                                    budget: {},
+                                    cost: {}
+                                }
+                            }
+                        }
+                    }
+                };
                 $scope.$apply(function() {
                     CampaignCtrl = $scope.CampaignCtrl = $controller('CampaignController', {
                         $scope: $scope
