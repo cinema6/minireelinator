@@ -74,5 +74,51 @@ function( angular , c6State  ) {
             }]);
         }])
 
-        .controller('SelfieSignUpController', [function() {}]);
+        .controller('SelfieSignUpController', [function() {}])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:ResendActivation', [function() {
+                this.templateUrl = 'views/selfie/resend_activation.html';
+                this.controller = 'SelfieResendActivationController';
+                this.controllerAs = 'SelfieResendActivationCtrl';
+            }]);
+        }])
+
+        .controller('SelfieResendActivationController', ['c6State','AuthService',
+        function                                        ( c6State , AuthService ) {
+            this.logout = function() {
+                return AuthService.logout()
+                    .then(function transition() {
+                        return c6State.goTo('Selfie:Login', null, {});
+                    });
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:ConfirmAccount', ['$location','c6State',
+                                                            'AccountService',
+            function                                       ( $location , c6State ,
+                                                             AccountService ) {
+                var id = $location.search().userId,
+                    token = $location.search().token;
+
+                this.model = function() {
+                    return AccountService.confirmUser(id, token)
+                        .catch(function(err) {
+                            // if the confirmation fails go to Login page with message
+                            // telling the user that confirmation has failed, but that
+                            // they can login and resend an activation link
+                            return c6State.goTo('Selfie:Login', [err]);
+                        });
+                };
+
+                this.enter = function() {
+                    // confirmation was a success, so being them to login screen
+                    // for initial login.
+                    return c6State.goTo('Selfie:Login', null, null, true);
+                };
+            }]);
+        }]);
 });
