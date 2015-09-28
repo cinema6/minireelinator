@@ -73,6 +73,16 @@
                         expect(scope.disableTrimmer()).toBe(true);
                     });
                 });
+
+                describe('for Wistia', function() {
+                    beforeEach(function() {
+                        scope.service = 'wistia';
+                    });
+                    
+                    it('should be true', function() {
+                        expect(scope.disableTrimmer()).toBe(true);
+                    });
+                });
             });
 
             describe('scope.embedCode', function() {

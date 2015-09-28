@@ -231,6 +231,39 @@
                                     large: 'images.vzaar.com/video/1380051/large.jpg'
                                 }
                             }
+                        },
+                        wistia: {
+                            id: 'rc-5c404f4aedc7',
+                            type: 'wistia',
+                            title: 'Wistia Card',
+                            note: 'This is a Wistia card.',
+                            source: 'Wistia',
+                            placementId: null,
+                            templateUrl: null,
+                            sponsored: false,
+                            campaign: {
+                                campaignId: null,
+                                advertiserId: null,
+                                minViewTime: null,
+                                countUrls: [],
+                                clickUrls: []
+                            },
+                            thumbs: null,
+                            collateral: {},
+                            links: {},
+                            shareLinks: {},
+                            params: {},
+                            modules: [],
+                            data: {
+                                skip: true,
+                                service: 'wistia',
+                                videoid: '9iqvphjp4u',
+                                href: 'https://cinema6.wistia.com/medias/9iqvphjp4u?preview=true',
+                                thumbs: {
+                                    small: 'images.wistia.com/video/9iqvphjp4u/small.jpg',
+                                    large: 'images.wistia.com/video/9iqvphjp4u/large.jpg'
+                                }
+                            }
                         }
                     }
                 };
@@ -878,6 +911,7 @@
                             mocks.playerCards.vine,
                             mocks.playerCards.instagram,
                             mocks.playerCards.vzaar,
+                            mocks.playerCards.wistia,
                             {
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
@@ -1035,6 +1069,7 @@
                                     survey: null,
                                     service: null,
                                     videoid: null,
+                                    hostname: null,
                                     start: null,
                                     end: null,
                                     moat: null
@@ -1098,6 +1133,7 @@
                                     survey: null,
                                     service: null,
                                     videoid: null,
+                                    hostname: null,
                                     start: null,
                                     end: null,
                                     ballot: {
@@ -1874,6 +1910,7 @@
                         	        survey: null,
                         	        service: 'vine',
                                     videoid: 'erUbKHDX6Ug',
+                                    hostname: null,
                         	        start: null,
                         	        end: null,
                         	        moat: null
@@ -1943,6 +1980,7 @@
                         	        survey: null,
                         	        service: 'vzaar',
                                     videoid: '1380051',
+                                    hostname: null,
                         	        start: null,
                         	        end: null,
                         	        moat: null
@@ -1951,6 +1989,46 @@
                         	    type: 'video',
                         	    title: 'Vzaar Card',
                         	    note: 'This is a Vzaar card.',
+                        	    label: 'Video',
+                        	    view: 'video',
+                        	    ad: false,
+                        	    placementId: null,
+                        	    templateUrl: null,
+                        	    sponsored: false,
+                        	    campaign: {
+                        	        campaignId: null,
+                        	        advertiserId: null,
+                        	        minViewTime: null,
+                        	        countUrls: [],
+                        	        clickUrls: []
+                        	    },
+                        	    collateral: {},
+                        	    thumb: null,
+                        	    links: {},
+                                shareLinks: {},
+                        	    params: {}
+                            });
+                        });
+
+                        it('should transpile the wistia card', function() {
+                            expect(deck[20]).toEqual({
+                                data: {
+                        	       skip: 'anytime',
+                        	        controls: true,
+                        	        autoplay: null,
+                        	        autoadvance: null,
+                        	        survey: null,
+                        	        service: 'wistia',
+                                    videoid: '9iqvphjp4u',
+                                    hostname: 'cinema6.wistia.com',
+                        	        start: null,
+                        	        end: null,
+                        	        moat: null
+                        	    },
+                        	    id: 'rc-5c404f4aedc7',
+                        	    type: 'video',
+                        	    title: 'Wistia Card',
+                        	    note: 'This is a Wistia card.',
                         	    label: 'Video',
                         	    view: 'video',
                         	    ad: false,
@@ -2004,6 +2082,7 @@
                                     survey: null,
                                     service: 'youtube',
                                     videoid: '47tfg8734',
+                                    hostname: null,
                                     start: 10,
                                     end: 40,
                                     moat: {
@@ -2045,6 +2124,7 @@
                                     survey: null,
                                     service: 'vimeo',
                                     videoid: '48hfrei49',
+                                    hostname: null,
                                     start: null,
                                     end: null,
                                     ballot: {
@@ -2089,6 +2169,7 @@
                                     survey: null,
                                     service: 'dailymotion',
                                     videoid: 'vfu85f5',
+                                    hostname: null,
                                     start: undefined,
                                     end: undefined,
                                     ballot: {
@@ -2156,6 +2237,7 @@
                                     },
                                     service: 'youtube',
                                     videoid: 'fn4378r4d',
+                                    hostname: null,
                                     start: 0,
                                     end: 40,
                                     moat: null
@@ -2196,6 +2278,7 @@
                                         vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
                                         vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
                                     }),
+                                    hostname: null,
                                     start: null,
                                     end: null,
                                     moat: {
@@ -2237,6 +2320,7 @@
                                     survey: null,
                                     service: 'yahoo',
                                     videoid: 'teen-tries-drain-pond-lost-221030513',
+                                    hostname: null,
                                     start: null,
                                     end: null,
                                     moat: null
@@ -2274,6 +2358,7 @@
                                     survey: null,
                                     service: 'aol',
                                     videoid: 'arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876',
+                                    hostname: null,
                                     start: null,
                                     end: null,
                                     moat: null
@@ -2311,6 +2396,7 @@
                                     survey: null,
                                     service: 'rumble',
                                     videoid: 'v2z8ro-willie-perfoming-at-school-talent-show',
+                                    hostname: null,
                                     start: null,
                                     end: null,
                                     moat: null

@@ -75,6 +75,41 @@
                         });
                     });
 
+                    describe('fetchWistiaThumbs', function() {
+                        beforeEach(function() {
+                            spyOn(VideoService, 'urlFromData').and.callThrough();
+                            $httpBackend.expectGET('https://fast.wistia.com/oembed?url=https%3A%2F%2Fwistia.com%2Fmedias%2F12345%3Fpreview%3Dtrue')
+                                .respond(200, {
+                                    /* jshint quotmark:false */
+                                    "version":"1.0",
+                                    "type":"video",
+                                    "html":"&lt;iframe src=\"http://fast.wistia.net/embed/iframe/e4a27b971d?version=v1&videoHeight=360&videoWidth=640\" allowtransparency=\"true\" frameborder=\"0\" scrolling=\"no\" class=\"wistia_embed\" name=\"wistia_embed\" width=\"640\" height=\"360\"&gt;&lt;/iframe&gt;",
+                                    "width":640,
+                                    "height":360,
+                                    "provider_name":"Wistia, Inc.",
+                                    "provider_url":"http://wistia.com",
+                                    "title":"Brendan - Make It Clap",
+                                    "thumbnail_url":"http://embed.wistia.com/deliveries/2d2c14e15face1e0cc7aac98ebd5b6f040b950b5.jpg?image_crop_resized=100x60",
+                                    "thumbnail_width":100,
+                                    "thumbnail_height":60
+                                    /* jshint quotmark:single */
+                                });
+                            _private.fetchWistiaThumbs('12345', 'cinema6.wistia.com').then(success, failure);
+                        });
+
+                        it('should get the video url from the video service', function() {
+                            expect(VideoService.urlFromData).toHaveBeenCalled();
+                        });
+
+                        it('should request using oembed', function() {
+                            $httpBackend.flush();
+                            expect(success).toHaveBeenCalledWith({
+                                small: 'http://embed.wistia.com/deliveries/2d2c14e15face1e0cc7aac98ebd5b6f040b950b5.jpg?image_crop_resized=100x60',
+                                large: 'http://embed.wistia.com/deliveries/2d2c14e15face1e0cc7aac98ebd5b6f040b950b5.jpg?image_crop_resized=100x60'
+                            });
+                        });
+                    });
+
                     describe('fetchVimeoThumbs(videoid)', function() {
                         var success;
 
@@ -388,7 +423,7 @@
                      describe('getThumbsFor(data)', function() {
                          var result;
 
-                         ['instagram', 'flickr', 'getty', 'web', 'yahoo', 'aol', 'rumble', 'vzaar'].forEach(function(service) {
+                         ['instagram', 'flickr', 'getty', 'web', 'yahoo', 'aol', 'rumble', 'vzaar', 'wistia'].forEach(function(service) {
                              describe('when the service is ' + service, function() {
                                  beforeEach(function() {
                                      result = ThumbnailService.getThumbsFor(service, '12345');
@@ -620,6 +655,25 @@
                                 expect(_private.fetchVzaarThumbs).toHaveBeenCalledWith('12345');
                                 $rootScope.$digest();
 
+                                expect(result.small).toBe('small.jpg');
+                                expect(result.large).toBe('large.jpg');
+                            });
+                        });
+
+                        describe('wistia', function() {
+                            beforeEach(function() {
+                                spyOn(_private, 'fetchWistiaThumbs').and.returnValue(
+                                    $q.when({
+                                        small: 'small.jpg',
+                                        large: 'large.jpg'
+                                    })
+                                );
+                                result = ThumbnailService.getThumbsFor('wistia', 'cinema6|12345');
+                            });
+
+                            it('should set the small and large properties when the promise resolves', function() {
+                                expect(_private.fetchWistiaThumbs).toHaveBeenCalledWith('cinema6|12345');
+                                $rootScope.$digest();
                                 expect(result.small).toBe('small.jpg');
                                 expect(result.large).toBe('large.jpg');
                             });
