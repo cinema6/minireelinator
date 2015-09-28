@@ -7,7 +7,8 @@ module.exports = function(http) {
     var fn = require('../utils/fn'),
         db = require('../utils/db'),
         idFromPath = db.idFromPath,
-        extend = fn.extend;
+        extend = fn.extend,
+        genId = require('../../tasks/resources/helpers').genId;
 
     function objectPath(type, id) {
         return path.resolve(__dirname, './' + type + '/' + id + '.json');
@@ -75,6 +76,20 @@ module.exports = function(http) {
         } else {
             this.respond(403, 'Forbidden');
         }
+    });
+
+    http.whenPOST('/api/account/users/signup', function(request) {
+        var id = genId('u'),
+            currentTime = (new Date()).toISOString(),
+            user = extend(request.body, {
+                created: currentTime,
+                lastUpdated: currentTime,
+                status: 'new'
+            });
+
+        grunt.file.write(objectPath('users', id), JSON.stringify(user, null, '    '));
+
+        this.respond(201, extend(user, { id: id }));
     });
 
     /***********************************************************************************************

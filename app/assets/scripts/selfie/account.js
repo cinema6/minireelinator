@@ -74,7 +74,23 @@ function( angular , c6State  ) {
             }]);
         }])
 
-        .controller('SelfieSignUpController', [function() {}])
+        .controller('SelfieSignUpController', ['AccountService',
+        function                              ( AccountService ) {
+            var SelfieSignUpCtrl = this;
+
+            this.submit = function() {
+                AccountService.signUp(this.model)
+                    .then(function(user) {
+                        // success, we should tell the user to check their email
+                        SelfieSignUpCtrl.message = 'Success! ' + user.email + 'was created';
+                    })
+                    .catch(function(err) {
+                        // failure, we should tell the user why
+                        // and highlight bad fields
+                        SelfieSignUpCtrl.message = 'Failed, ' + err;
+                    });
+            };
+        }])
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
@@ -87,11 +103,13 @@ function( angular , c6State  ) {
 
         .controller('SelfieResendActivationController', ['c6State','AuthService','AccountService',
         function                                        ( c6State , AuthService , AccountService) {
+            var SelfieResendActivationCtrl = this;
             this.resend = function() {
                 return AccountService.resendActivation()
                     .then(function() {
                         // probably want to put a success message on the Ctrl
                         // and tell the user to check their email
+                        SelfieResendActivationCtrl.message = 'Success!';
                     });
             };
 

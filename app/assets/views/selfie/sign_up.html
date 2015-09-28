@@ -1,14 +1,14 @@
-<div class="signup__gridHolder">
+<div class="signup__gridHolder" c6-alias="SelfieSignUpCtrl.model as user">
     <div class="grid one-whole">
         <div class="grid__item">
             <h1 class="tk--hdr"><img src="styles/selfie/img/cinema6-logo.png" /><span class="ir">Cinema6</span></h1>
         </div>
-        <div class="grid__item one-half">
+        <div class="grid__item one-half" style="display: block;margin: 0 auto;">
             <h2 class="tk--hdr">Sign up</h2>
             <div class="grid grid--center">
                 <div class="form__items form--narrow">
                     <fieldset class="form__item">
-                        <input class="form__textBox form__fillCheck" type="text" id="c6-name">
+                        <input class="form__textBox form__fillCheck" type="text" id="c6-name" ng-model="user.firstName">
                         <label class="form__label" for="c6-password">
                             <i class="fa fa-times ui--error"></i>
                             Name
@@ -25,7 +25,7 @@
                         </div>
                     </fieldset>
                     <fieldset class="form__item">
-                        <input class="form__textBox form__fillCheck" type="text" id="c6-company">
+                        <input class="form__textBox form__fillCheck" type="text" id="c6-company" ng-model="user.company">
                         <label class="form__label" for="c6-company">
                             <i class="fa fa-times ui--error"></i>
                             Company
@@ -42,7 +42,7 @@
                         </div>
                     </fieldset>
                     <fieldset class="form__item">
-                        <input class="form__textBox form__fillCheck" type="telephone" id="c6-phone">
+                        <input class="form__textBox form__fillCheck" type="telephone" id="c6-phone" ng-model="user.phone">
                         <label class="form__label" for="c6-phone">
                             <i class="fa fa-times ui--error"></i>
                             Phone
@@ -59,7 +59,7 @@
                         </div>
                     </fieldset>
                     <fieldset class="form__item">
-                        <input class="form__textBox form__fillCheck" type="email" id="c6-username">
+                        <input class="form__textBox form__fillCheck" type="email" id="c6-username" ng-model="user.email">
                         <label class="form__label" for="c6-username">
                             <i class="fa fa-times ui--error"></i>
                             Email
@@ -76,7 +76,7 @@
                         </div>
                     </fieldset>
                     <fieldset class="form__item">
-                        <input class="form__textBox form__fillCheck" type="password" id="c6-password">
+                        <input class="form__textBox form__fillCheck" type="password" id="c6-password" ng-model="user.password">
                         <label class="form__label" for="c6-password">
                             <i class="fa fa-times ui--error"></i>
                             Password
@@ -93,7 +93,7 @@
                         </div>
                     </fieldset>
                     <div class="ui__btnHolder">
-                        <button class="action__btn action__btn--full">Sign up</button>
+                        <button class="action__btn action__btn--full" ng-click="SelfieSignUpCtrl.submit()">Sign up</button>
                     </div>
                 </div>
             </div>

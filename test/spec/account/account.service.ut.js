@@ -226,5 +226,47 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
             });
         });
+
+        describe('signUp', function() {
+            var mockUser;
+
+            beforeEach(function(){
+                successSpy = jasmine.createSpy('signup.success');
+                failureSpy = jasmine.createSpy('signup.failure');
+                c6UrlMaker.and.returnValue('/api/account/users/signup');
+                spyOn($timeout,'cancel');
+
+                mockUser = { email: 'fake@email.com' };
+            });
+
+            it('will resolve promise if successfull',function(){
+                $httpBackend.expectPOST('/api/account/users/signup')
+                    .respond(200,mockUser);
+                AccountService.signUp(mockUser).then(successSpy,failureSpy);
+                $httpBackend.flush();
+                expect(successSpy).toHaveBeenCalledWith(mockUser);
+                expect(failureSpy).not.toHaveBeenCalled();
+                expect($timeout.cancel).toHaveBeenCalled();
+            });
+
+            it('will reject promise if not successful',function(){
+                $httpBackend.expectPOST('/api/account/users/signup')
+                    .respond(404,'Unable to create user.');
+                AccountService.signUp(mockUser).then(successSpy,failureSpy);
+                $httpBackend.flush();
+                expect(successSpy).not.toHaveBeenCalled();
+                expect(failureSpy).toHaveBeenCalledWith('Unable to create user.');
+                expect($timeout.cancel).toHaveBeenCalled();
+            });
+
+            it('will reject promise if times out',function(){
+                $httpBackend.expectPOST('/api/account/users/signup')
+                    .respond(200,'');
+                AccountService.signUp(mockUser).then(successSpy,failureSpy);
+                $timeout.flush(60000);
+                expect(successSpy).not.toHaveBeenCalled();
+                expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
+            });
+        });
     });
 });
