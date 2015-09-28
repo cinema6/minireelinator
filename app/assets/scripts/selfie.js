@@ -18,8 +18,22 @@ function( angular , c6State  , c6uilib , account   ) {
                             return $q.reject(reason);
                         });
                 };
+                this.afterModel = function(user) {
+                    // we need the status === 'new' check in afterModel() and enter()
+                    // because there are multiple ways to enter the state,
+                    // sometimes it's from another state/url, sometimes it's
+                    // a page refresh...
+
+                    if (user.status === 'new') {
+                        c6State.goTo('Selfie:ResendActivation', ['You are a new user']);
+                    }
+                };
                 this.enter = function() {
-                    c6State.goTo('Selfie:Apps', null, null, true);
+                    if (this.cModel.status === 'new') {
+                        c6State.goTo('Selfie:ResendActivation',['You are a new user']);
+                    } else {
+                        c6State.goTo('Selfie:Apps', null, null, true);
+                    }
                 };
             }]);
         }])

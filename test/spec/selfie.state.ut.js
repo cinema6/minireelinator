@@ -75,6 +75,20 @@ define(['app'], function(appModule) {
             });
         });
 
+        describe('afterModel()', function() {
+            it('should go to Selfie:ResendActivation if the user has status of "new"', function() {
+                spyOn(c6State,'goTo');
+
+                selfie.afterModel({status: 'active'});
+
+                expect(c6State.goTo).not.toHaveBeenCalled();
+
+                selfie.afterModel({status: 'new'});
+
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:ResendActivation', ['You are a new user']);
+            });
+        });
+
         describe('enter()', function() {
             var user;
 
@@ -84,15 +98,23 @@ define(['app'], function(appModule) {
                 };
 
                 spyOn(c6State, 'goTo');
+            });
 
+            it('should go to the "Selfie:Apps" state', function() {
                 selfie.cModel = user;
                 $rootScope.$apply(function() {
                     selfie.enter();
                 });
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Apps', null, null, true);
             });
 
-            it('should go to the "Selfie:Apps" state', function() {
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Apps', null, null, true);
+            it('should go to the Selfie:ResendActivation if the user has status of "new"', function() {
+                selfie.cModel = user;
+                selfie.cModel.status = 'new';
+                $rootScope.$apply(function() {
+                    selfie.enter();
+                });
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:ResendActivation', ['You are a new user']);
             });
         });
     });
