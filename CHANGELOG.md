@@ -1,6 +1,7 @@
 # MiniReelinator
 
-* *[v1.20.1.rc1]*
+* *[v1.21.0.rc1]*
+  * [FEATURE]: Added the ability to create Wistia video cards
   * [FEATURE]: Add validation for Campaign budget, daily limit and cost
   * Hide Sponsorship Manager
   * [FEATURE]: (Selfie) Add filtering, sorting and pagination in Campaign Dashboard
