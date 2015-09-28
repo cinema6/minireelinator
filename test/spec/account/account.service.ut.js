@@ -153,7 +153,7 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
             beforeEach(function(){
                 successSpy = jasmine.createSpy('confirmUser.success');
                 failureSpy = jasmine.createSpy('confirmUser.failure');
-                c6UrlMaker.and.returnValue('/api/account/users/confirm/u-111'); 
+                c6UrlMaker.and.returnValue('/api/account/users/confirm/u-111');
                 spyOn($timeout,'cancel');
             });
 
@@ -182,6 +182,45 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 $httpBackend.expectPOST('/api/account/users/confirm/u-111')
                     .respond(200,'');
                 AccountService.confirmUser('u-111', '1234567').then(successSpy,failureSpy);
+                $timeout.flush(60000);
+                expect(successSpy).not.toHaveBeenCalled();
+                expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
+            });
+        });
+
+        describe('resendActivation', function() {
+            beforeEach(function(){
+                successSpy = jasmine.createSpy('resendActivation.success');
+                failureSpy = jasmine.createSpy('resendActivation.failure');
+                c6UrlMaker.and.returnValue('/api/account/users/resendActivation');
+                spyOn($timeout,'cancel');
+            });
+
+            it('will resolve promise if successfull',function(){
+                var mockUser = { id: 'u-111' };
+                $httpBackend.expectPOST('/api/account/users/resendActivation')
+                    .respond(200,mockUser);
+                AccountService.resendActivation().then(successSpy,failureSpy);
+                $httpBackend.flush();
+                expect(successSpy).toHaveBeenCalledWith(mockUser);
+                expect(failureSpy).not.toHaveBeenCalled();
+                expect($timeout.cancel).toHaveBeenCalled();
+            });
+
+            it('will reject promise if not successful',function(){
+                $httpBackend.expectPOST('/api/account/users/resendActivation')
+                    .respond(404,'Unable to confirm user.');
+                AccountService.resendActivation().then(successSpy,failureSpy);
+                $httpBackend.flush();
+                expect(successSpy).not.toHaveBeenCalled();
+                expect(failureSpy).toHaveBeenCalledWith('Unable to confirm user.');
+                expect($timeout.cancel).toHaveBeenCalled();
+            });
+
+            it('will reject promise if times out',function(){
+                $httpBackend.expectPOST('/api/account/users/resendActivation')
+                    .respond(200,'');
+                AccountService.resendActivation().then(successSpy,failureSpy);
                 $timeout.flush(60000);
                 expect(successSpy).not.toHaveBeenCalled();
                 expect(failureSpy).toHaveBeenCalledWith('Request timed out.');

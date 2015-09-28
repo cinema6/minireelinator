@@ -85,8 +85,16 @@ function( angular , c6State  ) {
             }]);
         }])
 
-        .controller('SelfieResendActivationController', ['c6State','AuthService',
-        function                                        ( c6State , AuthService ) {
+        .controller('SelfieResendActivationController', ['c6State','AuthService','AccountService',
+        function                                        ( c6State , AuthService , AccountService) {
+            this.resend = function() {
+                return AccountService.resendActivation()
+                    .then(function() {
+                        // probably want to put a success message on the Ctrl
+                        // and tell the user to check their email
+                    });
+            };
+
             this.logout = function() {
                 return AuthService.logout()
                     .then(function transition() {

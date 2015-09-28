@@ -6,6 +6,7 @@ define(['app'], function(appModule) {
             $controller,
             c6State,
             AuthService,
+            AccountService,
             $q,
             $scope,
             SelfieResendActivationCtrl;
@@ -18,6 +19,7 @@ define(['app'], function(appModule) {
                 $controller = $injector.get('$controller');
                 c6State = $injector.get('c6State');
                 AuthService = $injector.get('AuthService');
+                AccountService = $injector.get('AccountService');
                 $q = $injector.get('$q');
             });
 
@@ -48,6 +50,16 @@ define(['app'], function(appModule) {
 
                 it('should transition back to the login state', function() {
                     expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Login', null, {});
+                });
+            });
+
+            describe('resend()', function() {
+                it('should resend activation link', function() {
+                    spyOn(AccountService, 'resendActivation').and.returnValue($q.when(null));
+
+                    SelfieResendActivationCtrl.resend();
+
+                    expect(AccountService.resendActivation).toHaveBeenCalled();
                 });
             });
         });

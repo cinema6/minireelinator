@@ -161,5 +161,36 @@ function( angular , c6State  , password         , email         ) {
                 return deferred.promise;
             };
 
+            this.resendActivation = function() {
+                var deferred = $q.defer(),
+                    deferredTimeout = $q.defer(),
+                    cancelTimeout;
+
+                $http({
+                    method: 'POST',
+                    url: c6UrlMaker('account/users/resendActivation','api'),
+                    data: {},
+                    timeout: deferredTimeout.promise
+                })
+                .success(function(data) {
+                    $timeout.cancel(cancelTimeout);
+                    deferred.resolve(data);
+                })
+                .error(function(data, status) {
+                    if (!data){
+                        data = status;
+                    }
+                    $timeout.cancel(cancelTimeout);
+                    deferred.reject(data);
+                });
+
+                cancelTimeout = $timeout(function(){
+                    deferredTimeout.resolve();
+                    deferred.reject('Request timed out.');
+                },10000);
+
+                return deferred.promise;
+            };
+
         }]);
 });
