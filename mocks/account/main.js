@@ -52,6 +52,31 @@ module.exports = function(http) {
         }
     });
 
+    http.whenPOST('/api/account/users/confirm/**', function(request) {
+        var id = idFromPath(request.pathname),
+            filePath = objectPath('users', id),
+            token = request.body.token,
+            user = {
+                applications: ["e-99263e70058290"],
+                config: {},
+                firstName: "Sammy",
+                lastName: "Selfie",
+                advertiser: "a-282824b8bb40a2",
+                customer: "cus-71e725f8bf33d5",
+                created: "2014-08-21T19:45:54.572Z",
+                lastUpdated: "2014-08-21T19:45:54.572Z",
+                org: "o-a6fd7298acb6fa",
+                status: "active"
+            };
+
+        if (token) {
+            grunt.file.write(filePath, JSON.stringify(user, null, '    '));
+            this.respond(200, extend(grunt.file.readJSON(filePath), { id: id }));
+        } else {
+            this.respond(403, 'Forbidden');
+        }
+    });
+
     /***********************************************************************************************
      * Org Endpoints
      **********************************************************************************************/
