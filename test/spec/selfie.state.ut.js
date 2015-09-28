@@ -70,7 +70,7 @@ define(['app'], function(appModule) {
                 });
 
                 it('should transition to the login state', function() {
-                    expect(c6State.goTo).toHaveBeenCalledWith('Login', null, null, true);
+                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Login', null, null, true);
                 });
             });
         });
