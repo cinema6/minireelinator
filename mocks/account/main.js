@@ -57,22 +57,25 @@ module.exports = function(http) {
         var id = idFromPath(request.pathname),
             filePath = objectPath('users', id),
             token = request.body.token,
-            user = {
-                applications: ["e-99263e70058290"],
-                config: {},
-                firstName: "Sammy",
-                lastName: "Selfie",
-                advertiser: "a-282824b8bb40a2",
-                customer: "cus-71e725f8bf33d5",
-                created: "2014-08-21T19:45:54.572Z",
-                lastUpdated: "2014-08-21T19:45:54.572Z",
-                org: "o-a6fd7298acb6fa",
-                status: "active"
-            };
+            currentTime = (new Date()).toISOString(),
+            user;
 
         if (token) {
-            grunt.file.write(filePath, JSON.stringify(user, null, '    '));
-            this.respond(200, extend(grunt.file.readJSON(filePath), { id: id }));
+            try {
+                user = extend(grunt.file.readJSON(filePath), {
+                    advertiser: "a-282824b8bb40a2",
+                    customer: "cus-71e725f8bf33d5",
+                    created: currentTime,
+                    lastUpdated: currentTime,
+                    org: "o-a6fd7298acb6fa",
+                    status: "active"
+                });
+
+                grunt.file.write(filePath, JSON.stringify(user, null, '    '));
+                this.respond(200, extend(grunt.file.readJSON(filePath), { id: id }));
+            } catch(e) {
+                this.respond(401, 'Not Authorized');
+            }
         } else {
             this.respond(403, 'Forbidden');
         }
@@ -82,6 +85,8 @@ module.exports = function(http) {
         var id = genId('u'),
             currentTime = (new Date()).toISOString(),
             user = extend(request.body, {
+                applications: ["e-99263e70058290"],
+                config: {},
                 created: currentTime,
                 lastUpdated: currentTime,
                 status: 'new'

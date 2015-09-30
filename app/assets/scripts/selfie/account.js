@@ -109,7 +109,8 @@ function( angular , c6State  ) {
                     .then(function() {
                         // probably want to put a success message on the Ctrl
                         // and tell the user to check their email
-                        SelfieResendActivationCtrl.message = 'Success!';
+                        SelfieResendActivationCtrl.model = 'We have sent you an email with '+
+                            'a new confirmation link!';
                     });
             };
 
@@ -136,7 +137,7 @@ function( angular , c6State  ) {
                             // if the confirmation fails go to Login page with message
                             // telling the user that confirmation has failed, but that
                             // they can login and resend an activation link
-                            return c6State.goTo('Selfie:Login', [err]);
+                            c6State.goTo('Selfie:Login', [err]);
                         });
                 };
 
