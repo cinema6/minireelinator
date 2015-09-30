@@ -30,8 +30,8 @@ function( angular , c6State  , password         , email         ) {
 
         .controller('AccountController', [function() {}])
 
-        .service('AccountService', ['c6UrlMaker','$http','$q','$timeout',
-        function                   ( c6UrlMaker , $http , $q , $timeout ) {
+        .service('AccountService', ['c6UrlMaker','$http','$q',
+        function                   ( c6UrlMaker , $http , $q ) {
 
             function handleError(err) {
                 return $q.reject((err && err.data) || err || 'Unable to complete request');
