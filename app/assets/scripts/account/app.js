@@ -43,29 +43,6 @@ function( angular , c6State  , password         , email         ) {
                 };
             }
 
-            function requestWrapper(promise) {
-                var deferred = $q.defer(),
-                    cancelTimeout;
-
-                (promise || $q.reject('Unable to resolve request'))
-                    .then(function(data) {
-                        $timeout.cancel(cancelTimeout);
-                        deferred.resolve(data);
-                    }, function(err) {
-                        if (!err) {
-                            err = 'Unable to locate failed';
-                        }
-                        $timeout.cancel(cancelTimeout);
-                        deferred.reject(err);
-                    });
-
-                cancelTimeout = $timeout(function() {
-                    deferred.reject('Request timed out.');
-                },10000);
-
-                return deferred.promise;
-            }
-
             this.changeEmail = function(email,password,newEmail){
                 var body = {
                     email       : email,
@@ -73,11 +50,12 @@ function( angular , c6State  , password         , email         ) {
                     newEmail    : newEmail
                 };
 
-                return requestWrapper($http({
+                return $http({
                     method       : 'POST',
                     url          : c6UrlMaker('account/user/email','api'),
-                    data         : body
-                })).then(pick('data'))
+                    data         : body,
+                    timeout      : 10000
+                }).then(pick('data'))
                 .catch(handleError);
             };
 
@@ -88,46 +66,42 @@ function( angular , c6State  , password         , email         ) {
                     newPassword : newPassword
                 };
 
-                return requestWrapper($http({
+                return $http({
                     method       : 'POST',
                     url          : c6UrlMaker('account/user/password','api'),
-                    data         : body
-                })).then(pick('data'))
-                .catch(handleError);
-            };
-
-            this.getOrg = function(orgId){
-                return requestWrapper($http({
-                    method: 'GET',
-                    url: c6UrlMaker('account/org/' + orgId,'api')
-                })).then(pick('data'))
+                    data         : body,
+                    timeout      : 10000
+                }).then(pick('data'))
                 .catch(handleError);
             };
 
             this.confirmUser = function(id, token) {
-                return requestWrapper($http({
+                return $http({
                     method: 'POST',
                     url: c6UrlMaker('account/users/confirm/'+id,'api'),
-                    data: { token: token }
-                })).then(pick('data'))
+                    data: { token: token },
+                    timeout: 10000
+                }).then(pick('data'))
                 .catch(handleError);
             };
 
             this.resendActivation = function() {
-                return requestWrapper($http({
+                return $http({
                     method: 'POST',
                     url: c6UrlMaker('account/users/resendActivation','api'),
-                    data: {}
-                })).then(pick('data'))
+                    data: {},
+                    timeout: 10000
+                }).then(pick('data'))
                 .catch(handleError);
             };
 
             this.signUp = function(user) {
-                return requestWrapper($http({
+                return $http({
                     method: 'POST',
                     url: c6UrlMaker('account/users/signup','api'),
-                    data: user
-                })).then(pick('data'))
+                    data: user,
+                    timeout: 10000
+                }).then(pick('data'))
                 .catch(handleError);
             };
 

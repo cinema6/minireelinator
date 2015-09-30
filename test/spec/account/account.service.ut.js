@@ -2,7 +2,7 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
     'use strict';
 
     describe('account', function() {
-        var $httpBackend, $timeout, AccountService, successSpy, failureSpy,
+        var $httpBackend, $timeout, $http, AccountService, successSpy, failureSpy,
             c6UrlMaker;
 
         beforeEach(function(){
@@ -15,15 +15,21 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                     };
                 });
             }]);
-            module(accountModule.name);
+            module(accountModule.name, ['$provide', function($provide) {
+                $provide.decorator('$http', function($delegate) {
+                    return jasmine.createSpy('$http').and.callFake(function() {
+                        return $delegate.apply(null, arguments);
+                    });
+                });
+            }]);
 
             inject(['$injector',function($injector){
                 AccountService      = $injector.get('AccountService');
                 $timeout     = $injector.get('$timeout');
                 $httpBackend = $injector.get('$httpBackend');
+                $http = $injector.get('$http');
                 c6UrlMaker   = $injector.get('c6UrlMaker');
             }]);
-
         });
 
         describe('changeEmail method', function(){
@@ -31,7 +37,6 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
             beforeEach(function(){
                 successSpy = jasmine.createSpy('changeEmail.success');
                 failureSpy = jasmine.createSpy('changeEmail.failure');
-                spyOn($timeout,'cancel');
                 c6UrlMaker.and.returnValue('/api/account/user/email');
             });
 
@@ -43,7 +48,6 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 $httpBackend.flush();
                 expect(successSpy).toHaveBeenCalledWith('Successfully changed email');
                 expect(failureSpy).not.toHaveBeenCalled();
-                expect($timeout.cancel).toHaveBeenCalled();
             });
 
             it('will reject promise if not successful',function(){
@@ -54,17 +58,21 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 $httpBackend.flush();
                 expect(successSpy).not.toHaveBeenCalled();
                 expect(failureSpy).toHaveBeenCalledWith('Unable to find user.');
-                expect($timeout.cancel).toHaveBeenCalled();
             });
 
-            it('will reject promise if times out',function(){
-                $httpBackend.expectPOST('/api/account/user/email')
-                    .respond(200,{});
-                AccountService.changeEmail('userX','foobar','x')
-                    .then(successSpy,failureSpy);
-                $timeout.flush(60000);
-                expect(successSpy).not.toHaveBeenCalled();
-                expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
+            it('should use the $http service', function() {
+                AccountService.changeEmail('userX','foobar','xx');
+
+                expect($http).toHaveBeenCalledWith({
+                    method: 'POST',
+                    url: '/api/account/user/email',
+                    data: {
+                        email: 'userX',
+                        password: 'foobar',
+                        newEmail: 'xx'
+                    },
+                    timeout: 10000
+                });
             });
 
         });
@@ -73,7 +81,6 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
             beforeEach(function(){
                 successSpy = jasmine.createSpy('changePassword.success');
                 failureSpy = jasmine.createSpy('changePassword.failure');
-                spyOn($timeout,'cancel');
                 c6UrlMaker.and.returnValue('/api/account/user/password');
             });
 
@@ -85,7 +92,6 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 $httpBackend.flush();
                 expect(successSpy).toHaveBeenCalledWith("Success");
                 expect(failureSpy).not.toHaveBeenCalled();
-                expect($timeout.cancel).toHaveBeenCalled();
             });
 
             it('will reject promise if not successfull',function(){
@@ -96,57 +102,23 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 $httpBackend.flush();
                 expect(successSpy).not.toHaveBeenCalled();
                 expect(failureSpy).toHaveBeenCalledWith('There was an error.');
-                expect($timeout.cancel).toHaveBeenCalled();
             });
 
-            it('will reject promise if times out',function(){
-                $httpBackend.expectPOST('/api/account/user/password').respond(200,{});
-                AccountService.changePassword('a','b','c')
-                    .then(successSpy,failureSpy);
-                $timeout.flush(60000);
-                expect(successSpy).not.toHaveBeenCalled();
-                expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
+            it('should use the $http service', function() {
+                AccountService.changePassword('a','b','c');
+
+                expect($http).toHaveBeenCalledWith({
+                    method: 'POST',
+                    url: '/api/account/user/password',
+                    data: {
+                        email: 'a',
+                        password: 'b',
+                        newPassword: 'c'
+                    },
+                    timeout: 10000
+                });
             });
 
-        });
-
-        describe('getOrg', function(){
-            beforeEach(function(){
-                successSpy = jasmine.createSpy('getOrg.success');
-                failureSpy = jasmine.createSpy('getOrg.failure');
-                c6UrlMaker.and.returnValue('/api/account/org/o-1');
-                spyOn($timeout,'cancel');
-            });
-
-            it('will resolve promise if successfull',function(){
-                var mockOrg = { id: 'o-1' };
-                $httpBackend.expectGET('/api/account/org/o-1')
-                    .respond(200,mockOrg);
-                AccountService.getOrg('o-1').then(successSpy,failureSpy);
-                $httpBackend.flush();
-                expect(successSpy).toHaveBeenCalledWith(mockOrg);
-                expect(failureSpy).not.toHaveBeenCalled();
-                expect($timeout.cancel).toHaveBeenCalled();
-            });
-
-            it('will reject promise if not successful',function(){
-                $httpBackend.expectGET('/api/account/org/o-1')
-                    .respond(404,'Unable to find org.');
-                AccountService.getOrg('o-1').then(successSpy,failureSpy);
-                $httpBackend.flush();
-                expect(successSpy).not.toHaveBeenCalled();
-                expect(failureSpy).toHaveBeenCalledWith('Unable to find org.');
-                expect($timeout.cancel).toHaveBeenCalled();
-            });
-
-            it('will reject promise if times out',function(){
-                $httpBackend.expectGET('/api/account/org/o-1')
-                    .respond(200,'');
-                AccountService.getOrg('o-1').then(successSpy,failureSpy);
-                $timeout.flush(60000);
-                expect(successSpy).not.toHaveBeenCalled();
-                expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
-            });
         });
 
         describe('confirmUser', function() {
@@ -154,7 +126,6 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 successSpy = jasmine.createSpy('confirmUser.success');
                 failureSpy = jasmine.createSpy('confirmUser.failure');
                 c6UrlMaker.and.returnValue('/api/account/users/confirm/u-111');
-                spyOn($timeout,'cancel');
             });
 
             it('will resolve promise if successfull',function(){
@@ -165,7 +136,6 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 $httpBackend.flush();
                 expect(successSpy).toHaveBeenCalledWith(mockUser);
                 expect(failureSpy).not.toHaveBeenCalled();
-                expect($timeout.cancel).toHaveBeenCalled();
             });
 
             it('will reject promise if not successful',function(){
@@ -175,16 +145,19 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 $httpBackend.flush();
                 expect(successSpy).not.toHaveBeenCalled();
                 expect(failureSpy).toHaveBeenCalledWith('Unable to confirm user.');
-                expect($timeout.cancel).toHaveBeenCalled();
             });
 
-            it('will reject promise if times out',function(){
-                $httpBackend.expectPOST('/api/account/users/confirm/u-111')
-                    .respond(200,'');
-                AccountService.confirmUser('u-111', '1234567').then(successSpy,failureSpy);
-                $timeout.flush(60000);
-                expect(successSpy).not.toHaveBeenCalled();
-                expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
+            it('should use the $http service', function() {
+                AccountService.confirmUser('u-111', '1234567');
+
+                expect($http).toHaveBeenCalledWith({
+                    method: 'POST',
+                    url: '/api/account/users/confirm/u-111',
+                    data: {
+                        token: '1234567'
+                    },
+                    timeout: 10000
+                });
             });
         });
 
@@ -193,7 +166,6 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 successSpy = jasmine.createSpy('resendActivation.success');
                 failureSpy = jasmine.createSpy('resendActivation.failure');
                 c6UrlMaker.and.returnValue('/api/account/users/resendActivation');
-                spyOn($timeout,'cancel');
             });
 
             it('will resolve promise if successfull',function(){
@@ -204,7 +176,6 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 $httpBackend.flush();
                 expect(successSpy).toHaveBeenCalledWith(mockUser);
                 expect(failureSpy).not.toHaveBeenCalled();
-                expect($timeout.cancel).toHaveBeenCalled();
             });
 
             it('will reject promise if not successful',function(){
@@ -214,16 +185,17 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 $httpBackend.flush();
                 expect(successSpy).not.toHaveBeenCalled();
                 expect(failureSpy).toHaveBeenCalledWith('Unable to confirm user.');
-                expect($timeout.cancel).toHaveBeenCalled();
             });
 
-            it('will reject promise if times out',function(){
-                $httpBackend.expectPOST('/api/account/users/resendActivation')
-                    .respond(200,'');
-                AccountService.resendActivation().then(successSpy,failureSpy);
-                $timeout.flush(60000);
-                expect(successSpy).not.toHaveBeenCalled();
-                expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
+            it('should use the $http service', function() {
+                AccountService.resendActivation('u-111', '1234567');
+
+                expect($http).toHaveBeenCalledWith({
+                    method: 'POST',
+                    url: '/api/account/users/resendActivation',
+                    data: {},
+                    timeout: 10000
+                });
             });
         });
 
@@ -234,7 +206,6 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 successSpy = jasmine.createSpy('signup.success');
                 failureSpy = jasmine.createSpy('signup.failure');
                 c6UrlMaker.and.returnValue('/api/account/users/signup');
-                spyOn($timeout,'cancel');
 
                 mockUser = { email: 'fake@email.com' };
             });
@@ -246,7 +217,6 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 $httpBackend.flush();
                 expect(successSpy).toHaveBeenCalledWith(mockUser);
                 expect(failureSpy).not.toHaveBeenCalled();
-                expect($timeout.cancel).toHaveBeenCalled();
             });
 
             it('will reject promise if not successful',function(){
@@ -256,16 +226,17 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 $httpBackend.flush();
                 expect(successSpy).not.toHaveBeenCalled();
                 expect(failureSpy).toHaveBeenCalledWith('Unable to create user.');
-                expect($timeout.cancel).toHaveBeenCalled();
             });
 
-            it('will reject promise if times out',function(){
-                $httpBackend.expectPOST('/api/account/users/signup')
-                    .respond(200,'');
-                AccountService.signUp(mockUser).then(successSpy,failureSpy);
-                $timeout.flush(60000);
-                expect(successSpy).not.toHaveBeenCalled();
-                expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
+            it('should use the $http service', function() {
+                AccountService.signUp(mockUser);
+
+                expect($http).toHaveBeenCalledWith({
+                    method: 'POST',
+                    url: '/api/account/users/signup',
+                    data: mockUser,
+                    timeout: 10000
+                });
             });
         });
     });
