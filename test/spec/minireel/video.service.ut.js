@@ -69,6 +69,11 @@
                             expect(fromData('vzaar', '54321')).toBe('http://vzaar.tv/54321');
                             expect(fromData('vzaar', '1380051')).toBe('http://vzaar.tv/1380051');
                         });
+
+                        it('should create a wistia url', function() {
+                            expect(fromData('wistia', '12345', 'cinema6.wistia.com')).toBe('https://cinema6.wistia.com/medias/12345?preview=true');
+                            expect(fromData('wistia', '12345', 'home.wistia.com')).toBe('https://home.wistia.com/medias/12345?preview=true');
+                        });
                     });
 
                     describe('dataFromText(url)', function() {
@@ -79,91 +84,112 @@
                         it('should parse a youtube url', function() {
                             expect(fromUrl('https://www.youtube.com/watch?v=jFJUz1DO20Q&list=PLFD1E8B0910A73A12&index=11')).toEqual({
                                 service: 'youtube',
-                                id: 'jFJUz1DO20Q'
+                                id: 'jFJUz1DO20Q',
+                                hostname: 'www.youtube.com'
                             });
                         });
 
                         it('should parse a youtu.be url', function() {
                             expect(fromUrl('https://www.youtube.com/watch?v=jFJUz1DO20Q&list=PLFD1E8B0910A73A12&index=11')).toEqual({
                                 service: 'youtube',
-                                id: 'jFJUz1DO20Q'
+                                id: 'jFJUz1DO20Q',
+                                hostname: 'www.youtube.com'
                             });
                         });
 
                         it('should parse a youtube embed code', function() {
                             expect(fromUrl('<iframe width="560" height="315" src="https://www.youtube.com/embed/jFJUz1DO20Q?list=PLFD1E8B0910A73A12" frameborder="0" allowfullscreen></iframe>')).toEqual({
                                 service: 'youtube',
-                                id: 'jFJUz1DO20Q'
+                                id: 'jFJUz1DO20Q',
+                                hostname: null
                             });
                         });
 
                         it('should parse a vimeo url', function() {
                             expect(fromUrl('http://vimeo.com/89495751')).toEqual({
                                 service: 'vimeo',
-                                id: '89495751'
+                                id: '89495751',
+                                hostname: 'vimeo.com'
                             });
                         });
 
                         it('should parse a vimeo embed code', function() {
                             expect(fromUrl('<iframe src="https://player.vimeo.com/video/89495751?color=ffffff" width="500" height="192" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="https://vimeo.com/89495751">molt.</a> from <a href="https://vimeo.com/user13462546">▲Bipolar Spider▲</a> on <a href="https://vimeo.com">Vimeo</a>.</p>')).toEqual({
                                 service: 'vimeo',
-                                id: '89495751'
+                                id: '89495751',
+                                hostname: null
                             });
                         });
 
                         it('should parse a dailymotion url', function() {
                             expect(fromUrl('http://www.dailymotion.com/video/x120oui_vincent-and-the-doctor-vincent-van-gogh-visits-the-museum-doctor-who-museum-scene_shortfilms?search_algo=2')).toEqual({
                                 service: 'dailymotion',
-                                id: 'x120oui'
+                                id: 'x120oui',
+                                hostname: 'www.dailymotion.com'
                             });
                         });
 
                         it('should parse a dai.ly url', function() {
                             expect(fromUrl('http://dai.ly/x120oui')).toEqual({
                                 service: 'dailymotion',
-                                id: 'x120oui'
+                                id: 'x120oui',
+                                hostname: 'dai.ly'
                             });
                         });
 
                         it('should parse a dailymotion embed code', function() {
                             expect(fromUrl('<iframe frameborder="0" width="480" height="270" src="//www.dailymotion.com/embed/video/x120oui" allowfullscreen></iframe><br /><a href="http://www.dailymotion.com/video/x120oui_vincent-van-gogh-visits-the-museum-doctor-who-museum-scene-vincent-and-the-doctor_shortfilms" target="_blank">Vincent van Gogh visits the Museum (Doctor Who...</a> <i>by <a href="http://www.dailymotion.com/PuertoLibre" target="_blank">PuertoLibre</a></i>')).toEqual({
                                 service: 'dailymotion',
-                                id: 'x120oui'
+                                id: 'x120oui',
+                                hostname: null
                             });
                         });
 
                         it('should parse an aol url', function() {
                             expect(fromUrl('http://on.aol.com/video/nurses-ebola-quarantine-leads-to-lawsuit-for-christie-518484285?icid=OnNewsC2Wide_Img')).toEqual({
                                 service: 'aol',
-                                id: 'nurses-ebola-quarantine-leads-to-lawsuit-for-christie-518484285'
+                                id: 'nurses-ebola-quarantine-leads-to-lawsuit-for-christie-518484285',
+                                hostname: 'on.aol.com'
                             });
                         });
 
                         it('should parse a yahoo url', function() {
                             expect(fromUrl('https://screen.yahoo.com/editor-picks/emotions-run-high-claw-machine-160803280.html')).toEqual({
                                 service: 'yahoo',
-                                id: 'emotions-run-high-claw-machine-160803280'
+                                id: 'emotions-run-high-claw-machine-160803280',
+                                hostname: 'screen.yahoo.com'
                             });
                         });
 
                         it('should parse a rumble url', function() {
                             expect(fromUrl('https://rumble.com/v2zfax-my-cat-dog-meets-mac-n-cheese-for-the-first-time.html')).toEqual({
                                 service: 'rumble',
-                                id: 'v2zfax-my-cat-dog-meets-mac-n-cheese-for-the-first-time'
+                                id: 'v2zfax-my-cat-dog-meets-mac-n-cheese-for-the-first-time',
+                                hostname: 'rumble.com'
                             });
                         });
 
                         it('should parse a vine url', function() {
                             expect(fromUrl('https://vine.co/v/12345')).toEqual({
                                 service: 'vine',
-                                id: '12345'
+                                id: '12345',
+                                hostname: 'vine.co'
                             });
                         });
 
                         it('should parse a vzaar url', function() {
                             expect(fromUrl('http://vzaar.tv/1380051')).toEqual({
                                 service: 'vzaar',
-                                id: '1380051'
+                                id: '1380051',
+                                hostname: 'vzaar.tv'
+                            });
+                        });
+
+                        it('should parse a wistia url', function() {
+                            expect(fromUrl('https://cinema6.wistia.com/medias/12345')).toEqual({
+                                service: 'wistia',
+                                id: '12345',
+                                hostname: 'cinema6.wistia.com'
                             });
                         });
 
@@ -181,7 +207,7 @@
                     describe('embedIdFromVideoId(service, videoid)', function() {
                         var ids = ['8439htf4', '8394tr8u394r', '2984ru43', '4892ur43', 'r892ur4'];
 
-                        ['yahoo', 'vimeo', 'dailymotion', 'aol', 'yahoo'].forEach(function(service, index) {
+                        ['yahoo', 'vimeo', 'dailymotion', 'aol', 'yahoo', 'wistia'].forEach(function(service, index) {
                             describe('for ' + service, function() {
                                 var result;
 
@@ -243,6 +269,21 @@
                                 ' mozallowfullscreen name="vzvd-12345"' +
                                 ' src="//view.vzaar.com/12345/player" title="vzaar video player"' +
                                 ' type="text/html" webkitAllowFullScreen width="768"></iframe>'
+                            );
+                        });
+
+                        it('should create Wistia embed code', function() {
+                            expect(VideoService.embedCodeFromData('wistia', '12345')).toBe(
+                                '<div class="wistia_responsive_padding"' +
+                                ' style="padding:56.25% 0 0 0;position:relative;">' +
+                                '<div class="wistia_responsive_wrapper"' +
+                                ' style="height:100%;left:0;position:absolute;top:0;width:100%;">' +
+                                '<iframe src="//fast.wistia.net/embed/iframe/12345?videoFoam=true" allowtransparency="true"' +
+                                ' frameborder="0" scrolling="no" class="wistia_embed"' +
+                                ' name="wistia_embed" allowfullscreen mozallowfullscreen' +
+                                ' webkitallowfullscreen oallowfullscreen msallowfullscreen' +
+                                ' width="100%" height="100%"></iframe></div></div>' +
+                                '<script src="//fast.wistia.net/assets/external/E-v1.js" async></script>'
                             );
                         });
                     });
