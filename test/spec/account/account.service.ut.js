@@ -23,18 +23,18 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 $httpBackend = $injector.get('$httpBackend');
                 c6UrlMaker   = $injector.get('c6UrlMaker');
             }]);
-            
+
         });
 
         describe('changeEmail method', function(){
-            
+
             beforeEach(function(){
                 successSpy = jasmine.createSpy('changeEmail.success');
                 failureSpy = jasmine.createSpy('changeEmail.failure');
                 spyOn($timeout,'cancel');
-                c6UrlMaker.and.returnValue('/api/account/user/email'); 
+                c6UrlMaker.and.returnValue('/api/account/user/email');
             });
-            
+
             it('will resolve promise if successfull',function(){
                 $httpBackend.expectPOST('/api/account/user/email')
                     .respond(200,'Successfully changed email');
@@ -74,9 +74,9 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 successSpy = jasmine.createSpy('changePassword.success');
                 failureSpy = jasmine.createSpy('changePassword.failure');
                 spyOn($timeout,'cancel');
-                c6UrlMaker.and.returnValue('/api/account/user/password'); 
+                c6UrlMaker.and.returnValue('/api/account/user/password');
             });
-            
+
             it('will resolve promise if successfull',function(){
                 $httpBackend.expectPOST('/api/account/user/password')
                     .respond(200,"Success");
@@ -107,14 +107,14 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 expect(successSpy).not.toHaveBeenCalled();
                 expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
             });
-            
+
         });
 
         describe('getOrg', function(){
             beforeEach(function(){
                 successSpy = jasmine.createSpy('getOrg.success');
                 failureSpy = jasmine.createSpy('getOrg.failure');
-                c6UrlMaker.and.returnValue('/api/account/org/o-1'); 
+                c6UrlMaker.and.returnValue('/api/account/org/o-1');
                 spyOn($timeout,'cancel');
             });
 
@@ -128,7 +128,7 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 expect(failureSpy).not.toHaveBeenCalled();
                 expect($timeout.cancel).toHaveBeenCalled();
             });
-            
+
             it('will reject promise if not successful',function(){
                 $httpBackend.expectGET('/api/account/org/o-1')
                     .respond(404,'Unable to find org.');
@@ -138,7 +138,7 @@ define(['account/app','c6uilib'], function(accountModule, c6uiModule) {
                 expect(failureSpy).toHaveBeenCalledWith('Unable to find org.');
                 expect($timeout.cancel).toHaveBeenCalled();
             });
-            
+
             it('will reject promise if times out',function(){
                 $httpBackend.expectGET('/api/account/org/o-1')
                     .respond(200,'');

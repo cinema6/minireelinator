@@ -33,194 +33,102 @@ function( angular , c6State  , password         , email         ) {
         .service('AccountService', ['c6UrlMaker','$http','$q','$timeout',
         function                   ( c6UrlMaker , $http , $q , $timeout ) {
 
-            this.changeEmail = function(email,password,newEmail){
-                var deferred = $q.defer(), deferredTimeout = $q.defer(), cancelTimeout,
-                    body = {
-                        email    : email,
-                        password    : password,
-                        newEmail    : newEmail,
-                    };
+            function handleError(err) {
+                return $q.reject((err && err.data) || err || 'Unable to complete request');
+            }
 
-                $http({
-                    method       : 'POST',
-                    url          : c6UrlMaker('account/user/email','api'),
-                    data         : body,
-                    timeout      : deferredTimeout.promise
-                })
-                .success(function(data ){
-                    $timeout.cancel(cancelTimeout);
-                    deferred.resolve(data);
-                })
-                .error(function(data,status){
-                    if (!data){
-                        data = status;
-                    }
-                    $timeout.cancel(cancelTimeout);
-                    deferred.reject(data);
-                });
+            function pick(prop) {
+                return function(object) {
+                    return object[prop];
+                };
+            }
 
-                cancelTimeout = $timeout(function(){
-                    deferredTimeout.resolve();
+            function requestWrapper(promise) {
+                var deferred = $q.defer(),
+                    cancelTimeout;
+
+                (promise || $q.reject('Unable to resolve request'))
+                    .then(function(data) {
+                        $timeout.cancel(cancelTimeout);
+                        deferred.resolve(data);
+                    }, function(err) {
+                        if (!err) {
+                            err = 'Unable to locate failed';
+                        }
+                        $timeout.cancel(cancelTimeout);
+                        deferred.reject(err);
+                    });
+
+                cancelTimeout = $timeout(function() {
                     deferred.reject('Request timed out.');
                 },10000);
 
                 return deferred.promise;
+            }
+
+            this.changeEmail = function(email,password,newEmail){
+                var body = {
+                    email       : email,
+                    password    : password,
+                    newEmail    : newEmail
+                };
+
+                return requestWrapper($http({
+                    method       : 'POST',
+                    url          : c6UrlMaker('account/user/email','api'),
+                    data         : body
+                })).then(pick('data'))
+                .catch(handleError);
             };
 
             this.changePassword = function(email,password,newPassword) {
-                var deferred = $q.defer(), deferredTimeout = $q.defer(), cancelTimeout,
-                    body = {
-                        email       : email,
-                        password    : password,
-                        newPassword : newPassword
-                    };
+                var body = {
+                    email       : email,
+                    password    : password,
+                    newPassword : newPassword
+                };
 
-                $http({
+                return requestWrapper($http({
                     method       : 'POST',
                     url          : c6UrlMaker('account/user/password','api'),
-                    data         : body,
-                    timeout      : deferredTimeout.promise
-                })
-                .success(function(data ){
-                    $timeout.cancel(cancelTimeout);
-                    deferred.resolve(data);
-                })
-                .error(function(data, status){
-                    if (!data){
-                        data = status;
-                    }
-                    $timeout.cancel(cancelTimeout);
-                    deferred.reject(data);
-                });
-
-                cancelTimeout = $timeout(function(){
-                    deferredTimeout.resolve();
-                    deferred.reject('Request timed out.');
-                },10000);
-
-                return deferred.promise;
+                    data         : body
+                })).then(pick('data'))
+                .catch(handleError);
             };
-            
+
             this.getOrg = function(orgId){
-                var deferred = $q.defer(), deferredTimeout = $q.defer(), cancelTimeout,
-                    url = c6UrlMaker('account/org/' + orgId,'api');
-
-                $http({
-                    method       : 'GET',
-                    url          : url,
-                    timeout      : deferredTimeout.promise
-                })
-                .success(function(data){
-                    $timeout.cancel(cancelTimeout);
-                    deferred.resolve(data);
-                })
-                .error(function(data){
-                    if (!data){
-                        data = 'Unable to locate failed';
-                    }
-                    $timeout.cancel(cancelTimeout);
-                    deferred.reject(data);
-                });
-
-                cancelTimeout = $timeout(function(){
-                    deferredTimeout.resolve();
-                    deferred.reject('Request timed out.');
-                },10000);
-
-                return deferred.promise;
+                return requestWrapper($http({
+                    method: 'GET',
+                    url: c6UrlMaker('account/org/' + orgId,'api')
+                })).then(pick('data'))
+                .catch(handleError);
             };
 
             this.confirmUser = function(id, token) {
-                var deferred = $q.defer(),
-                    deferredTimeout = $q.defer(),
-                    cancelTimeout;
-
-                $http({
+                return requestWrapper($http({
                     method: 'POST',
                     url: c6UrlMaker('account/users/confirm/'+id,'api'),
-                    data: { token: token },
-                    timeout: deferredTimeout.promise
-                })
-                .success(function(data) {
-                    $timeout.cancel(cancelTimeout);
-                    deferred.resolve(data);
-                })
-                .error(function(data, status) {
-                    if (!data){
-                        data = status;
-                    }
-                    $timeout.cancel(cancelTimeout);
-                    deferred.reject(data);
-                });
-
-                cancelTimeout = $timeout(function(){
-                    deferredTimeout.resolve();
-                    deferred.reject('Request timed out.');
-                },10000);
-
-                return deferred.promise;
+                    data: { token: token }
+                })).then(pick('data'))
+                .catch(handleError);
             };
 
             this.resendActivation = function() {
-                var deferred = $q.defer(),
-                    deferredTimeout = $q.defer(),
-                    cancelTimeout;
-
-                $http({
+                return requestWrapper($http({
                     method: 'POST',
                     url: c6UrlMaker('account/users/resendActivation','api'),
-                    data: {},
-                    timeout: deferredTimeout.promise
-                })
-                .success(function(data) {
-                    $timeout.cancel(cancelTimeout);
-                    deferred.resolve(data);
-                })
-                .error(function(data, status) {
-                    if (!data){
-                        data = status;
-                    }
-                    $timeout.cancel(cancelTimeout);
-                    deferred.reject(data);
-                });
-
-                cancelTimeout = $timeout(function(){
-                    deferredTimeout.resolve();
-                    deferred.reject('Request timed out.');
-                },10000);
-
-                return deferred.promise;
+                    data: {}
+                })).then(pick('data'))
+                .catch(handleError);
             };
 
             this.signUp = function(user) {
-                var deferred = $q.defer(),
-                    deferredTimeout = $q.defer(),
-                    cancelTimeout;
-
-                $http({
+                return requestWrapper($http({
                     method: 'POST',
                     url: c6UrlMaker('account/users/signup','api'),
-                    data: user,
-                    timeout: deferredTimeout.promise
-                })
-                .success(function(data) {
-                    $timeout.cancel(cancelTimeout);
-                    deferred.resolve(data);
-                })
-                .error(function(data, status) {
-                    if (!data){
-                        data = status;
-                    }
-                    $timeout.cancel(cancelTimeout);
-                    deferred.reject(data);
-                });
-
-                cancelTimeout = $timeout(function(){
-                    deferredTimeout.resolve();
-                    deferred.reject('Request timed out.');
-                },10000);
-
-                return deferred.promise;
+                    data: user
+                })).then(pick('data'))
+                .catch(handleError);
             };
 
         }]);
