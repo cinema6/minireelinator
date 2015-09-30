@@ -944,6 +944,23 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 };
             };
 
+            _private.fetchWistiaThumbs = function(id) {
+                var videoUrl = VideoService.urlFromData('wistia', id, 'wistia.com');
+                var request = 'https://fast.wistia.com/oembed?url=' + encodeURIComponent(videoUrl);
+                return $http.get(request, {cache: true})
+                    .then(function(json) {
+                        if(json.status === 200) {
+                            return {
+                                /* jshint camelcase:false */
+                                small: json.data.thumbnail_url,
+                                large: json.data.thumbnail_url
+                                /* jshint camelcase:true */
+                            };
+                        }
+                        return $q.reject();
+                    });
+            };
+
             _private.fetchInstagramThumbs = function(id) {
                 var instagramKey = c6Defines.kInstagramDataApiKey;
                 var request = 'https://api.instagram.com/v1/media/shortcode/' + id +
@@ -1081,6 +1098,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return new ThumbModel(_private.fetchDailyMotionThumbs(id));
                         case 'vzaar':
                             return new ThumbModel($q.when(_private.fetchVzaarThumbs(id)));
+                        case 'wistia':
+                            return new ThumbModel(_private.fetchWistiaThumbs(id));
                         case 'yahoo':
                         case 'aol':
                         case 'vine':
@@ -1151,7 +1170,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
         .service('VideoService', ['c6UrlParser',
         function                 ( c6UrlParser ) {
-            this.urlFromData = function(service, id) {
+            this.urlFromData = function(service, id, hostname) {
                 switch (service) {
 
                 case 'youtube':
@@ -1170,6 +1189,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     return 'https://vine.co/v/' + id;
                 case 'vzaar':
                     return 'http://vzaar.tv/' + id;
+                case 'wistia':
+                    return 'https://' + hostname + '/medias/' + id + '?preview=true';
                 }
             };
 
@@ -1177,7 +1198,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 var parsedUrl = c6UrlParser(text),
                     urlService = (parsedUrl.hostname.match(
                         new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|aol|yahoo|' +
-                            'rumble|vine|vzaar\\.tv')
+                            'rumble|vine|vzaar\\.tv|wistia')
                     ) || [])[0],
                     embedService = (text.match(
                         /youtube|youtu\.be|dailymotion|dai\.ly|vimeo/
@@ -1231,6 +1252,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 return (url.pathname
                                     .replace(/\//, '')
                                     .match(/\d+/) || [null])[0];
+                            },
+                            wistia: function(url) {
+                                return (url.pathname
+                                    .replace(/\/medias\//, '')
+                                    .match(/[a-zA-Z\d]+/) || [null])[0];
                             }
                         },
                         embed: {
@@ -1281,7 +1307,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 return {
                     service: service,
-                    id: id
+                    id: id,
+                    hostname: (type === 'url') ? parsed.hostname : null
                 };
             };
 
@@ -1290,7 +1317,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 case 'rumble':
                     return videoid.match(/^[^-]+/)[0]
                         .replace(/^v/, '8.');
-
                 default:
                     return videoid;
                 }
@@ -1313,6 +1339,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 function vzaarSrc(id) {
                     return '//view.vzaar.com/' + id + '/player';
+                }
+
+                function wistiaSrc(id) {
+                    return '//fast.wistia.net/embed/iframe/' + id + '?videoFoam=true';
                 }
 
                 switch (service) {
@@ -1352,6 +1382,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         ' mozallowfullscreen name="vzvd-' + id + '"' +
                         ' src="' + vzaarSrc(id) + '" title="vzaar video player"' +
                         ' type="text/html" webkitAllowFullScreen width="768"></iframe>';
+                case 'wistia':
+                    return '<div class="wistia_responsive_padding"' +
+                        ' style="padding:56.25% 0 0 0;position:relative;">' +
+                        '<div class="wistia_responsive_wrapper"' +
+                        ' style="height:100%;left:0;position:absolute;top:0;width:100%;">' +
+                        '<iframe src="' + wistiaSrc(id) + '" allowtransparency="true"' +
+                        ' frameborder="0" scrolling="no" class="wistia_embed"' +
+                        ' name="wistia_embed" allowfullscreen mozallowfullscreen' +
+                        ' webkitallowfullscreen oallowfullscreen msallowfullscreen' +
+                        ' width="100%" height="100%"></iframe></div></div>' +
+                        '<script src="//fast.wistia.net/assets/external/E-v1.js" async></script>';
                 }
             };
         }])
@@ -1852,10 +1893,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                      'SettingsService','VideoService', 'ThumbnailService',
                                      'ImageService', 'OpenGraphService',
                                      'CollateralUploadService', 'InstagramService',
+                                     'c6UrlParser',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
                                       SettingsService , VideoService ,  ThumbnailService,
                                       ImageService,   OpenGraphService,
-                                      CollateralUploadService ,  InstagramService ) {
+                                      CollateralUploadService ,  InstagramService,
+                                      c6UrlParser ) {
             var ngCopy = angular.copy;
 
             var self = this,
@@ -1937,6 +1980,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'embedded':
                         case 'vine':
                         case 'vzaar':
+                        case 'wistia':
                             return 'video' + ((card.modules.indexOf('ballot') > -1) ?
                                 'Ballot' : '');
                         default:
@@ -2135,6 +2179,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         default:
                             return data.videoid || null;
                         }
+                    },
+                    hostname: function(data) {
+                        if (data.service === 'wistia') {
+                            if(data.hostname) {
+                                return data.hostname;
+                            } else if(data.href) {
+                                var parsedUrl = c6UrlParser(data.href);
+                                return parsedUrl.hostname;
+                            }
+                        }
+                        return null;
                     },
                     start: trimmer(),
                     end: trimmer(),
@@ -2593,7 +2648,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 function hrefValue() {
                     return function(data) {
-                        return VideoService.urlFromData(data.service, data.videoid);
+                        return VideoService.urlFromData(data.service, data.videoid, data.hostname);
                     };
                 }
 
@@ -2847,6 +2902,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         moat: copy(null)
                     },
                     vzaar: {
+                        hideSource: hideSourceValue(),
+                        autoplay: copy(null),
+                        autoadvance: copy(null),
+                        skip: skipValue(),
+                        service: copy(),
+                        videoid: copy(null),
+                        href: hrefValue(),
+                        thumbs: videoThumbsValue(),
+                        moat: copy(null)
+                    },
+                    wistia: {
                         hideSource: hideSourceValue(),
                         autoplay: copy(null),
                         autoadvance: copy(null),
