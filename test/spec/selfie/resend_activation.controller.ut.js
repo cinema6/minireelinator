@@ -1,36 +1,17 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    describe('SelfieController', function() {
+    describe('SelfieResendActivationController', function() {
         var $rootScope,
             $controller,
             c6State,
             AuthService,
+            AccountService,
             $q,
             $scope,
-            SelfieCtrl;
-
-        var user;
-
-        function instantiate() {
-            $scope = $rootScope.$new();
-            $scope.$apply(function() {
-                SelfieCtrl = $controller('SelfieController', { $scope: $scope });
-                SelfieCtrl.initWithModel(user);
-            });
-
-            return SelfieCtrl;
-        }
+            SelfieResendActivationCtrl;
 
         beforeEach(function() {
-            user = {
-                id: 'u-22edfa1071d94b',
-                permissions: {
-                    experiences: {},
-                    orgs: {}
-                }
-            };
-
             module(appModule.name);
 
             inject(function($injector) {
@@ -38,22 +19,18 @@ define(['app'], function(appModule) {
                 $controller = $injector.get('$controller');
                 c6State = $injector.get('c6State');
                 AuthService = $injector.get('AuthService');
+                AccountService = $injector.get('AccountService');
                 $q = $injector.get('$q');
             });
 
-            SelfieCtrl = instantiate();
+            $scope = $rootScope.$new();
+            $scope.$apply(function() {
+                SelfieResendActivationCtrl = $controller('SelfieResendActivationController');
+            });
         });
 
         it('should exist', function() {
-            expect(SelfieCtrl).toEqual(jasmine.any(Object));
-        });
-
-        describe('properties', function() {
-            describe('model', function() {
-                it('should be the user', function() {
-                    expect(SelfieCtrl.model).toBe(user);
-                });
-            });
+            expect(SelfieResendActivationCtrl).toEqual(jasmine.any(Object));
         });
 
         describe('methods', function() {
@@ -63,7 +40,7 @@ define(['app'], function(appModule) {
                     spyOn(c6State, 'goTo');
 
                     $scope.$apply(function() {
-                        SelfieCtrl.logout();
+                        SelfieResendActivationCtrl.logout();
                     });
                 });
 
@@ -73,6 +50,16 @@ define(['app'], function(appModule) {
 
                 it('should transition back to the login state', function() {
                     expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Login', null, {});
+                });
+            });
+
+            describe('resend()', function() {
+                it('should resend activation link', function() {
+                    spyOn(AccountService, 'resendActivation').and.returnValue($q.when(null));
+
+                    SelfieResendActivationCtrl.resend();
+
+                    expect(AccountService.resendActivation).toHaveBeenCalled();
                 });
             });
         });

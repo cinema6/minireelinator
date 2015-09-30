@@ -8,7 +8,8 @@ define(['forgot_password'], function(forgotPasswordModule) {
             AuthService,
             c6State,
             $scope,
-            ResetPasswordCtrl;
+            ResetPasswordCtrl,
+            ApplicationState;
 
         var model;
 
@@ -25,6 +26,8 @@ define(['forgot_password'], function(forgotPasswordModule) {
                 $q = $injector.get('$q');
                 AuthService = $injector.get('AuthService');
                 c6State = $injector.get('c6State');
+
+                ApplicationState = c6State.get('Application');
 
                 $scope = $rootScope.$new();
                 $scope.$apply(function() {
@@ -125,18 +128,42 @@ define(['forgot_password'], function(forgotPasswordModule) {
                         };
 
                         spyOn(c6State, 'goTo');
+                    });
 
-                        $scope.$apply(function() {
-                            resetPasswordDeferred.resolve(user);
+                    describe('when the Application name is Selfie', function() {
+                        beforeEach(function() {
+                            ApplicationState.name = 'Selfie';
+
+                            $scope.$apply(function() {
+                                resetPasswordDeferred.resolve(user);
+                            });
+                        });
+
+                        it('should redirect to the portal', function() {
+                            expect(c6State.goTo).toHaveBeenCalledWith('Selfie', [user], null, true);
+                        });
+
+                        it('should resolve to the user', function() {
+                            expect(success).toHaveBeenCalledWith(user);
                         });
                     });
 
-                    it('should redirect to the portal', function() {
-                        expect(c6State.goTo).toHaveBeenCalledWith('Portal', [user], null, true);
-                    });
+                    describe('when the Application name is Portal', function() {
+                        beforeEach(function() {
+                            ApplicationState.name = 'Portal';
 
-                    it('should resolve to the user', function() {
-                        expect(success).toHaveBeenCalledWith(user);
+                            $scope.$apply(function() {
+                                resetPasswordDeferred.resolve(user);
+                            });
+                        });
+
+                        it('should redirect to the portal', function() {
+                            expect(c6State.goTo).toHaveBeenCalledWith('Portal', [user], null, true);
+                        });
+
+                        it('should resolve to the user', function() {
+                            expect(success).toHaveBeenCalledWith(user);
+                        });
                     });
                 });
 

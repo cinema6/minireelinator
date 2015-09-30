@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.22.0.rc1]*
+  * [FEATURE]: (Selfie) User sign up, confirmation link, resend activation link,
+    login, forgot password, reset password
+
 ## v1.21.0 (September 30, 2015)
 * *[v1.21.0.rc1]*
   * [FEATURE]: Added the ability to create Wistia video cards
