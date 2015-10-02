@@ -3,6 +3,9 @@
 * *[v1.22.0.rc1]*
   * [FEATURE]: (Selfie) User sign up, confirmation link, resend activation link,
     login, forgot password, reset password
+  * [FIX]: (Selfie) Fix for an issue where the link to the "go to login screen"
+    on the Sign Up page wasn't working
+  * [DEV]: (Selfie) Move the main navigation container div to the outermost template
 
 ## v1.21.0 (September 30, 2015)
 * *[v1.21.0.rc1]*
