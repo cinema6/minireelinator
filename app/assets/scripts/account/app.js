@@ -30,104 +30,79 @@ function( angular , c6State  , password         , email         ) {
 
         .controller('AccountController', [function() {}])
 
-        .service('AccountService', ['c6UrlMaker','$http','$q','$timeout',
-        function                   ( c6UrlMaker , $http , $q , $timeout ) {
+        .service('AccountService', ['c6UrlMaker','$http','$q',
+        function                   ( c6UrlMaker , $http , $q ) {
+
+            function handleError(err) {
+                return $q.reject((err && err.data) || err || 'Unable to complete request');
+            }
+
+            function pick(prop) {
+                return function(object) {
+                    return object[prop];
+                };
+            }
 
             this.changeEmail = function(email,password,newEmail){
-                var deferred = $q.defer(), deferredTimeout = $q.defer(), cancelTimeout,
-                    body = {
-                        email    : email,
-                        password    : password,
-                        newEmail    : newEmail,
-                    };
+                var body = {
+                    email       : email,
+                    password    : password,
+                    newEmail    : newEmail
+                };
 
-                $http({
+                return $http({
                     method       : 'POST',
                     url          : c6UrlMaker('account/user/email','api'),
                     data         : body,
-                    timeout      : deferredTimeout.promise
-                })
-                .success(function(data ){
-                    $timeout.cancel(cancelTimeout);
-                    deferred.resolve(data);
-                })
-                .error(function(data,status){
-                    if (!data){
-                        data = status;
-                    }
-                    $timeout.cancel(cancelTimeout);
-                    deferred.reject(data);
-                });
-
-                cancelTimeout = $timeout(function(){
-                    deferredTimeout.resolve();
-                    deferred.reject('Request timed out.');
-                },10000);
-
-                return deferred.promise;
+                    timeout      : 10000
+                }).then(pick('data'))
+                .catch(handleError);
             };
 
             this.changePassword = function(email,password,newPassword) {
-                var deferred = $q.defer(), deferredTimeout = $q.defer(), cancelTimeout,
-                    body = {
-                        email       : email,
-                        password    : password,
-                        newPassword : newPassword
-                    };
+                var body = {
+                    email       : email,
+                    password    : password,
+                    newPassword : newPassword
+                };
 
-                $http({
+                return $http({
                     method       : 'POST',
                     url          : c6UrlMaker('account/user/password','api'),
                     data         : body,
-                    timeout      : deferredTimeout.promise
-                })
-                .success(function(data ){
-                    $timeout.cancel(cancelTimeout);
-                    deferred.resolve(data);
-                })
-                .error(function(data, status){
-                    if (!data){
-                        data = status;
-                    }
-                    $timeout.cancel(cancelTimeout);
-                    deferred.reject(data);
-                });
-
-                cancelTimeout = $timeout(function(){
-                    deferredTimeout.resolve();
-                    deferred.reject('Request timed out.');
-                },10000);
-
-                return deferred.promise;
+                    timeout      : 10000
+                }).then(pick('data'))
+                .catch(handleError);
             };
-            
-            this.getOrg = function(orgId){
-                var deferred = $q.defer(), deferredTimeout = $q.defer(), cancelTimeout,
-                    url = c6UrlMaker('account/org/' + orgId,'api');
 
-                $http({
-                    method       : 'GET',
-                    url          : url,
-                    timeout      : deferredTimeout.promise
-                })
-                .success(function(data){
-                    $timeout.cancel(cancelTimeout);
-                    deferred.resolve(data);
-                })
-                .error(function(data){
-                    if (!data){
-                        data = 'Unable to locate failed';
-                    }
-                    $timeout.cancel(cancelTimeout);
-                    deferred.reject(data);
-                });
+            this.confirmUser = function(id, token) {
+                return $http({
+                    method: 'POST',
+                    url: c6UrlMaker('account/users/confirm/'+id,'api'),
+                    data: { token: token },
+                    timeout: 10000
+                }).then(pick('data'))
+                .catch(handleError);
+            };
 
-                cancelTimeout = $timeout(function(){
-                    deferredTimeout.resolve();
-                    deferred.reject('Request timed out.');
-                },10000);
+            this.resendActivation = function() {
+                return $http({
+                    method: 'POST',
+                    url: c6UrlMaker('account/users/resendActivation','api'),
+                    data: {},
+                    timeout: 10000
+                }).then(pick('data'))
+                .catch(handleError);
+            };
 
-                return deferred.promise;
+            this.signUp = function(user) {
+                return $http({
+                    method: 'POST',
+                    url: c6UrlMaker('account/users/signup','api'),
+                    data: user,
+                    timeout: 10000
+                }).then(pick('data'))
+                .catch(handleError);
             };
 
         }]);

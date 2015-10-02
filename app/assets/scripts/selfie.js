@@ -1,8 +1,8 @@
-define( ['angular','c6_state','c6uilib'],
-function( angular , c6State  , c6uilib ) {
+define( ['angular','c6_state','c6uilib','./selfie/account'],
+function( angular , c6State  , c6uilib , account   ) {
     'use strict';
 
-    return angular.module('c6.app.selfie', [c6State.name, c6uilib.name])
+    return angular.module('c6.app.selfie', [c6State.name, c6uilib.name, account.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie', ['$q','cinema6','c6State','AuthService',
@@ -14,12 +14,26 @@ function( angular , c6State  , c6uilib ) {
                 this.model = function() {
                     return AuthService.checkStatus()
                         .catch(function redirect(reason) {
-                            c6State.goTo('Login', null, null, true);
+                            c6State.goTo('Selfie:Login', null, null, true);
                             return $q.reject(reason);
                         });
                 };
+                this.afterModel = function(user) {
+                    // we need the status === 'new' check in afterModel() and enter()
+                    // because there are multiple ways to enter the state,
+                    // sometimes it's from another state/url, sometimes it's
+                    // a page refresh...
+
+                    if (user.status === 'new') {
+                        c6State.goTo('Selfie:ResendActivation', ['You are a new user']);
+                    }
+                };
                 this.enter = function() {
-                    c6State.goTo('Selfie:Apps', null, null, true);
+                    if (this.cModel.status === 'new') {
+                        c6State.goTo('Selfie:ResendActivation',['You are a new user']);
+                    } else {
+                        c6State.goTo('Selfie:Apps', null, null, true);
+                    }
                 };
             }]);
         }])
@@ -33,7 +47,7 @@ function( angular , c6State  , c6uilib ) {
             this.logout = function() {
                 return AuthService.logout()
                     .then(function transition() {
-                        return c6State.goTo('Login', null, {});
+                        return c6State.goTo('Selfie:Login', null, {});
                     });
             };
         }])

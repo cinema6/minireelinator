@@ -70,7 +70,8 @@ function( angular , login , c6State  ) {
 
         .controller('ResetPasswordController', ['AuthService','c6State','$q',
         function                               ( AuthService , c6State , $q ) {
-            var self = this;
+            var self = this,
+                ApplicationState = c6State.get('Application');
 
             // Set by c6State via query parameters
             this.userId = null;
@@ -84,7 +85,7 @@ function( angular , login , c6State  ) {
 
                 return AuthService.resetPassword(this.userId, this.token, this.model.passwords[0])
                     .then(function proceed(user) {
-                        c6State.goTo('Portal', [user], null, true);
+                        c6State.goTo(ApplicationState.name, [user], null, true);
                         return user;
                     })
                     .catch(function onError(error) {
