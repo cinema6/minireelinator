@@ -35,29 +35,29 @@
             <ul class="sortBar__list clearfix">
                 <li class="sortBar__item sortBar__item--sortable column__status">
                     <button class="sortBar__btn" type="button">Status</button><span class="faa fa-caret-down ui__clickDrop sortBar__btn--Dropdown"> </span>
-                    <div class="ui__clickDropMenu" style="display: none;">
-                    <button class="ui__clickDropBtn" type="button" title="Select All">
+                    <ul class="ui__clickDropMenu" style="display: none;">
+                    <li class="ui__clickDropBtn" type="button" title="Select All" ng-click="SelfieCampaignsCtrl.filter = 'active'">
                         <label><input type="checkbox" name="statusFilter" value="Active" checked> Active</label>
-                    </button>
-                    <button class="ui__clickDropBtn ng-hide" type="button">
+                    </li>
+                    <li class="ui__clickDropBtn ng-hide" type="button" ng-click="SelfieCampaignsCtrl.filter = 'draft'">
                         <label><input type="checkbox" name="statusFilter" value="Draft" checked>Draft</label>
-                    </button>
-                    <button class="ui__clickDropBtn" type="button">
+                    </li>
+                    <li class="ui__clickDropBtn" type="button" ng-click="SelfieCampaignsCtrl.filter = 'paused'">
                         <label><input type="checkbox" name="statusFilter" value="Paused" checked>Paused</label>
-                    </button>
-                    <button class="ui__clickDropBtn" type="button">
+                    </li>
+                    <li class="ui__clickDropBtn" type="button" ng-click="SelfieCampaignsCtrl.filter = 'pendingApproval'">
                         <label><input type="checkbox" name="statusFilter" value="PendingApproval" checked>Pending Approval</label>
-                    </button>
-                    <button class="ui__clickDropBtn" type="button">
+                    </li>
+                    <li class="ui__clickDropBtn" type="button" ng-click="SelfieCampaignsCtrl.filter = 'expired'">
                         <label><input type="checkbox" name="statusFilter" value="Expired" checked>Expired</label>
-                    </button>
-                </div>
+                    </li>
+                </ul>
                 </li>
                 <li class="sortBar__item sortBar__item--sortable column__sponsor">
                     <button class="sortBar__btn" type="button">Sponsor</button>
                 </li>
                 <li class="sortBar__item sortBar__item--sortable column__campaignName">
-                    <button class="sortBar__btn sortBar__btn--asc" ng-click="SelfieCampaignsCtrl.confirm()" type="button">Campaign Name</button>
+                    <button class="sortBar__btn sortBar__btn--asc" type="button" ng-click="SelfieCampaignsCtrl.toggleSort('name')">Campaign Name</button>
                 </li>
                 <li class="sortBar__item column__totalViews">
                     <button class="sortBar__colName" type="button">Total Views</button>
@@ -171,7 +171,7 @@
 
     <footer class="dockedFooter__group">
         <div class="paginator__group clearfix">
- <paginator-controls page="SelfieCampaignsCtrl.model.page" limit="SelfieCampaignsCtrl.limit" limits="SelfieCampaignsCtrl.limits" total="SelfieCampaignsCtrl.model.items.page.total"></paginator-controls>
+ <paginator-controls page="SelfieCampaignsCtrl.page" limit="SelfieCampaignsCtrl.limit" limits="SelfieCampaignsCtrl.limits" total="SelfieCampaignsCtrl.model.items.page.total"></paginator-controls>
              <div class="paginator__readout" c6-alias="SelfieCampaignsCtrl.model.items.value.meta.items as items">
                 <span ng-show="campaigns.length">Displaying <strong>{{items.start}} &ndash; {{items.end}}</strong> &nbsp;of&nbsp; {{items.total}} Campaigns</span>
                 <span ng-show="!campaigns.length">0 Campaigns</span>

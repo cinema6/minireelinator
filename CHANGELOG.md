@@ -1,8 +1,12 @@
 # MiniReelinator
 
-* *[v1.20.1.rc1]*
+## v1.21.0 (September 30, 2015)
+* *[v1.21.0.rc1]*
+  * [FEATURE]: Added the ability to create Wistia video cards
   * [FEATURE]: Add validation for Campaign budget, daily limit and cost
   * Hide Sponsorship Manager
+  * [FEATURE]: (Selfie) Add filtering, sorting and pagination in Campaign Dashboard
+* *[/v1.21.0.rc1]*
 
 ## v1.20.0 (September 17, 2015)
 * *[v1.20.0.rc2]*
@@ -21,8 +25,8 @@
 
 * *[v1.19.0.rc3]*
   * [FEATURE]: Add social sharing for video sponsored cards
-  * [FEATURE]: Add tabbed management screen for non-draft campaigns
-  * [DEV]: Modularize campaign editing tools: categories, geo-targeting, budget, preview
+  * [FEATURE]: (Selfie) Add tabbed management screen for non-draft campaigns
+  * [DEV]: (Selfie) Modularize campaign editing tools: categories, geo-targeting, budget, preview
   * [FIX]: Fix for an issue where refreshing the page when creating a new campaign
     caused an error and blocked the loading of the app
   * [FIX]: Fix for an issue where a deleted sponsored card placeholder that was targeted

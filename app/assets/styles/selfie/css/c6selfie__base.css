@@ -1091,6 +1091,7 @@ fa,
                 max-height:14.625em;
                 overflow: auto;
                 box-shadow: 0 0 10px #ccc;
+                padding-left: 0;
             }
                 .twoCol .ui__clickDropMenu {
                     width:46%;

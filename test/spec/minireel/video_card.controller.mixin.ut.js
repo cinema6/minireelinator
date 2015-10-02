@@ -39,6 +39,11 @@ define(['minireel/mixins/VideoCardController','minireel/services'], function(Vid
                         model.data.service = 'dailymotion';
                         model.data.videoid = 'x17nw7w';
                         expect(VideoCardCtrl.videoUrl).toBe('http://www.dailymotion.com/video/x17nw7w');
+
+                        model.data.service = 'wistia';
+                        model.data.videoid = '12345';
+                        model.data.hostname = 'cinema6.wistia.com';
+                        expect(VideoCardCtrl.videoUrl).toBe('https://cinema6.wistia.com/medias/12345?preview=true');
                     });
                 });
 
@@ -47,19 +52,28 @@ define(['minireel/mixins/VideoCardController','minireel/services'], function(Vid
                         VideoCardCtrl.videoUrl = 'https://www.youtube.com/watch?v=jFJUz1DO20Q&list=PLFD1E8B0910A73A12&index=11';
                         expect(model.data.service).toBe('youtube');
                         expect(model.data.videoid).toBe('jFJUz1DO20Q');
+                        expect(model.data.hostname).toBe('www.youtube.com');
 
                         VideoCardCtrl.videoUrl = 'http://vimeo.com/89495751';
                         expect(model.data.service).toBe('vimeo');
                         expect(model.data.videoid).toBe('89495751');
+                        expect(model.data.hostname).toBe('vimeo.com');
 
                         VideoCardCtrl.videoUrl = 'http://www.dailymotion.com/video/x120oui_vincent-and-the-doctor-vincent-van-gogh-visits-the-museum-doctor-who-museum-scene_shortfilms?search_algo=2';
                         expect(model.data.service).toBe('dailymotion');
                         expect(model.data.videoid).toBe('x120oui');
+                        expect(model.data.hostname).toBe('www.dailymotion.com');
 
                         VideoCardCtrl.videoUrl = 'fj8439nfc34';
                         expect(VideoCardCtrl.videoUrl).toBe('fj8439nfc34');
                         expect(model.data.service).toBeNull();
                         expect(model.data.videoid).toBeNull();
+                        expect(model.data.hostname).toBeNull();
+
+                        VideoCardCtrl.videoUrl = 'https://cinema6.wistia.com/medias/12345?preview=true';
+                        expect(model.data.service).toBe('wistia');
+                        expect(model.data.videoid).toBe('12345');
+                        expect(model.data.hostname).toBe('cinema6.wistia.com');
                     });
 
                     it('should not freak out when getting a mangled url', function() {

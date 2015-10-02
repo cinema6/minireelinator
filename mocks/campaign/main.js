@@ -35,7 +35,9 @@ module.exports = function(http) {
                 .filter(function(campaign) {
                     return Object.keys(filters)
                         .every(function(key) {
-                            return filters[key] === campaign[key];
+                            return !!filters[key].split(',').filter(function(val) {
+                                return val === campaign[key];
+                            })[0];
                         });
                 }),
             campaigns = allCampaigns
