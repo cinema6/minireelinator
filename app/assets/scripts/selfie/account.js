@@ -82,7 +82,7 @@ function( angular , c6State  ) {
                 AccountService.signUp(this.model)
                     .then(function(user) {
                         // success, we should tell the user to check their email
-                        SelfieSignUpCtrl.message = 'Success! ' + user.email + 'was created';
+                        SelfieSignUpCtrl.message = 'Success! ' + user.email + ' was created';
                     })
                     .catch(function(err) {
                         // failure, we should tell the user why

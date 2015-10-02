@@ -94,13 +94,14 @@
                     </fieldset>
                     <div class="ui__btnHolder">
                         <button class="action__btn action__btn--full" ng-click="SelfieSignUpCtrl.submit()">Sign up</button>
+                        <span>{{SelfieSignUpCtrl.message}}</span>
                     </div>
                 </div>
             </div>
         </div>
         <div class="grid__item one-half pull-right">
             <div class="subActions__box pull-right">
-                <p class="subAction text--right">Existing user? <a href="#">Login now</a></p>
+                <p class="subAction text--right">Existing user? <a c6-sref="Selfie:Login">Login now</a></p>
             </div>
             <section class="productFeatures border--left">
                 <ul class="productFeatures_list">
