@@ -183,6 +183,22 @@ fa,
         clear: both;
     }
 
+    .item--left {
+        float: left;
+    }
+    .item--right {
+        float: right;
+    }
+    .text--center {
+        text-align: center;
+    }
+    .text--left {
+        text-align: left;
+    }
+    .text--right {
+        text-align: right;
+    }
+
     .ui--error {
         display: none;
     }
@@ -240,9 +256,11 @@ fa,
             padding:1rem 1.75rem 0.875rem;
             font-size:1.5em;
         }
-
+        .action__btn--full {
+            width: 100%;
+        }
     .action__btnSecondary {
-        background:#aaaaaa;
+        background:#546475;
         color:#fff;
         border:0;
         padding:0.75rem 1.5rem 0.625rem;
@@ -254,7 +272,7 @@ fa,
         box-shadow:0 1px 3px rgba(0, 0, 0, 0.25);
     }
         .action__btnSecondary:hover {
-            background:#888888;
+            background:#384a5c;
         }
 
         .action__btnSecondary--small {
@@ -264,6 +282,13 @@ fa,
         .action__btnSecondary--big {
             padding:1rem 1.75rem 0.875rem;
             font-size:1.5em;
+            margin: 0.25rem;
+        }
+        .btn--disabled, .btn--disabled:hover {
+            background-color: #ccc;
+            color: #999;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.25);
+            cursor: auto;
         }
 
 
@@ -500,7 +525,64 @@ fa,
         }
     
 
-
+/*  ================================================
+    Sign up and Pre-Login screen styles
+    ================================================ */    
+    .signup__pagetitle {
+        padding-left: 1em;
+    }
+    /*grid layout classes for prelogin screens*/
+    .prelogin__gridHolder {
+        width: 24em;
+        max-width: 80%;
+        margin: 0 auto;
+        padding: 8em 0 0 0;
+    }
+    .signup__gridHolder {
+        width: 96%;
+        max-width: 64em;
+        min-width: 47em;
+        margin: 0 auto;
+        padding: 4em 0 0 0;        
+    }
+    .signup__gridHolder .form--narrow {
+        width: 80%;
+        margin-left: 3em;
+    }
+    /*sign up features*/
+    .productFeatures {
+        margin-top: 4.75em;
+        padding-left: 4.5em;
+    }
+    .productFeatures_list {
+        padding: 0;
+    }
+    .border--left {
+        border-left: 1px dotted #ccc;
+    }
+    .productFeatured_itemInfo ul {
+        padding-left: 1em;
+    }
+    .productFeatured_item {
+        margin-bottom: 1.5em;
+    }
+    .productFeatures_list li {
+        list-style-type: none;
+        padding: 0;
+    }
+    .productFeatured_itemIcon {
+        display: inline-block;
+        float: left;
+    }
+    .productFeatured_itemInfo {
+        display: inline-block;
+    }
+    .productFeatured_itemInfo .productFeatured_item--header {
+        font-size: 1.25em;
+        margin-top: 0;
+        margin-left: 0.5em;
+        margin-bottom: 0;
+    }
 
 
 /*  ================================================
@@ -509,7 +591,7 @@ fa,
     .mainNav__group {
         position: fixed;
         top:0; bottom:0; left:0;
-        z-index:10;
+        z-index:20;
         background:#2e3134;
         width:4em;
     }
@@ -529,7 +611,7 @@ fa,
 
     .tabContent__gridHolder {
         width: 96%;
-        max-width: 104em;
+        max-width: 84em;
         margin: 0 auto;
         padding: 4em 0 0 0;
     }
@@ -541,6 +623,68 @@ fa,
         color:#b1b1b1;
     }
 
+/*  ================================================
+    mainNav classes
+    ================================================ 
+    (Jess added)                                    */
+
+    .mainNav__settings {
+        width:100%;
+        height:4rem;
+        position:absolute;
+        bottom:0;
+    }
+        .mainNav__iconOnly {
+            font-size:2rem;
+            color:#87949f;
+            padding:1.125rem;
+        }
+        .mainNav__settings:hover .mainNav__iconOnly:hover {
+            background:#232628;
+        }
+
+        .mainNav__dropDownGroup {
+            list-style:none;
+            margin:0 0 0 -2px;
+            padding:0;
+            position:absolute;
+            z-index:11;
+            bottom:0;
+            left:4rem;
+            background:#232628;
+            color:#fff;
+            display:none;
+        }
+        .mainNav__item:hover {
+            background-color: #222;
+        }
+        .mainNav__item--active {
+            background: #222;
+            border-left: 2px solid #00c0ff;
+        }
+            .mainNav__dropDownGroup a {
+                color: #eee;
+            }
+        .mainNav__settings:hover .mainNav__dropDownGroup {
+            display:block;
+        }
+
+        .mainNav__dropDownGroup a:hover {
+            color:#fff;
+        }
+
+            .mainNav__dropDownItem {
+                margin:0;
+                padding:1.25rem 4rem;
+                display:block;
+                width:100%;
+                background:#232628;
+                transition:0.3s background;
+            }
+
+            .mainNav__dropDownItem:hover {
+                background:#29c5ff;
+            }
 
 
 
@@ -1087,7 +1231,7 @@ fa,
             .ui__clickDropMenu {
                 position:absolute; z-index: 1;
                 background:#fff;
-                border:2px solid #ddd;
+                border:1px solid #ddd;
                 max-height:14.625em;
                 overflow: auto;
                 box-shadow: 0 0 10px #ccc;
@@ -1115,6 +1259,9 @@ fa,
                     .ui__clickDropBtn label {
                         width: 100%;
                         display: block;
+                    }
+                    .ui__clickDropBtn input {
+                        vertical-align: middle;
                     }
                     .miniReel__status--wide .ui__clickDropBtn {
                         width:20em;
@@ -2021,9 +2168,333 @@ fa,
             z-index: 5;
         }
 
+/*  ================================================
+    Account Settings and Payment screen styles
+    ================================================ */    
+    
+    /*display boxes for account settings*/
+    .accountSettings__box {
+        background: #fff;
+    }
+    .card--item .tk--hdr {
+        font-weight: normal;
+    }
+    .accountSettings__box-item, .paymentOptions__box-item {
+        list-style-type: none;
+        padding: 1em 1em 2em 1em;
+        border-bottom: 1px solid #eee;
+    }
+    .accountSettings__box-item li, .paymentOptions__box-item li {
+        padding: 0;
+    }
+    .accountSettings__box-item li h2, .accountSettings__box-item li h3, .paymentOptions__box-item li h2, .paymentOptions__box-item li h3{
+        margin: 0;
+    }
+    .accountSettings__box-item li h2, .paymentOptions__box-item li h2 {
+        display: inline-block;
+        margin-right: 1em;
+    }
+    
+    /*  Payment screen sortbar classes
+        Jess
+    ================================================ */
+
+        .column__paymentDate {
+            width:10em;
+            padding:0 2em 0 0;
+        }
+
+        .column__paymentCampaign {
+            width:calc(100% - 54em);
+            padding:0 2em 0 0;
+        }
+
+        .column__paymentMethod {
+            width:18em;
+            padding:0 2em 0 0;
+        }
+
+        .column__paymentAmount {
+            width:18em;
+            padding:0 2em 0 0;
+        }
+
+        @media screen and (max-width:160em) {
+            /*
+                up to 1600px wide
+            */
+            .column__paymentDate {
+                width:5em;
+            }
+
+            .column__paymentCampaign {
+                width:calc(100% - 34em);
+                padding-right:1em;
+            }
+
+            .column__paymentMethod {
+                width:11em;
+                padding-right:1em;
+            }
+
+            .column__paymentAmount {
+                width:13em;
+                padding-right:1em;
+            }
+
+        }
+        
+/*  ================================================
+    payment history list classes
+    (Jess)
+    ================================================ */
+    .paymentHistory__list {
+        margin: 8em 1.5em 5em 1.5em;
+        padding: 0;
+        list-style: none;
+        position:relative;
+    }
+
+        .paymentHistory__item {
+            background:#fff;
+            height:4.5em;
+            padding:0.5em 1.5em 0.5625em 1.375em;
+            margin:0 0 0.5em 0;
+            display: block;
+            color:#5c5c5c;
+        }
+
+            .paymentHistory__item .fa {
+                font-size:0.875rem;
+            }
+
+            .paymentHistory__date {
+                display:block;
+                margin:0.25em 0 0.3125em;
+                line-height:1.125em;
+                color:#1c1c1c;
+                font-size:1.25em;
+                font-weight:normal;
+            }
+            
+            .paymentHistory__time {
+                display: block;
+                font-size:0.875em;
+            }
 
 
+            .paymentHistory__campaign {
+                color:#1c1c1c;
+                font-size:1.25em;
+                font-weight:normal;
+                line-height: 1.2;
+                width:100%;
+                height:2.5em;
+                overflow:hidden;
+                margin:0.2em 0 0.15em 0;
+            }
 
+            .paymentHistory__method {
+                display:block;
+                margin:0.25em 0 0.3125em;
+                line-height:1.125em;
+                color:#1c1c1c;
+                font-size:1.25em;
+                font-weight:normal;
+            }
+
+            .paymentHistory__methodOwner {
+                display: block;
+                font-size:0.875em;
+            }
+
+
+            .paymentHistory__paymentInfo {
+                margin:0.375em 0 0 0;
+                position: relative;
+            }
+
+                .paymentInfo__label {
+                    position:absolute;
+                    left:0;
+                    margin:1px 0 0 0;
+                    text-align: left;
+                    font-size:0.875em;
+                    color:#9c9c9c;
+                }
+
+                .paymentInfo__paymentNumbers {
+                    display: block;
+                    line-height:1.5em;
+                    padding-left:5em;
+                    text-align:right;
+                }
+
+                .paymentInfo__total {
+                    color:#1c1c1c;
+                    font-size:1.25em;
+                    line-height:1em;
+                    font-weight:normal;
+                }
+
+
+/*  ================================================
+    settings content classes
+    ================================================ 
+    (this is a section Jess added   */
+
+    .settingsContent{
+        margin:7em 1.5em 0 1.5em;
+    }
+    .settingsContent__header {
+        margin:0 auto 0;
+        padding:0;
+        max-width:104em;
+        width:96%;
+    }
+
+        .settingsContent__title {
+            display:block;
+            font-size:2em;
+            line-height:1.125;
+            color:#b1b1b1;
+            margin:3.8125em 0 0;
+        }
+
+        .settingsContent__subtitle{
+            color:#5c5c5c;
+            font-size: 1em;
+            margin:0;
+            padding:0 0 1.625em;
+        }
+
+
+/*  ================================================
+    manage payment classes
+    ================================================
+    (this is a section Jess added   */
+
+    .payment__group {
+        background:#fff;
+        margin:0 0 1.5em 0;
+        padding:1.25em 1.25em 1.5em;
+        position:relative;
+    }
+
+    .payment__default {
+        color:#20d783;
+        font-size:1.25em;
+        /*position:absolute;
+        top:0.25em;
+        right:0.5em; 
+        Removed by Dhaval*/
+    }
+
+    .payment__group .payment__default {
+        display:none;
+    }
+    .payment__group--info { 
+        margin-right: 2.25em;
+    }
+    .payment__group.payment__group--default .payment__default {
+        display:block;
+    }
+
+        .payment__type {
+           font-size:1.5em;
+           margin:0 0.5em 0 0;
+           font-weight: 400;
+        }
+
+        .payment__id {
+           font-size:1.5em;
+           margin:0 1em 0 0;
+           font-weight: 400;
+        }
+
+        .payment__exp {
+           font-weight:lighter;
+        }
+
+        .payment__label {
+            display:block;
+        }
+
+    .payment__btn--spacing {
+        margin:3.25em 0 0;
+    }        
+
+/*  Payment Dropdown classes
+        ================================================ */
+        .pmtDropdown .pmtDropdown__btn, .pmtDropdown .ui__clickDropMenu, .pmtDropdown .ui__clickDropBtn {
+            text-align: left;
+        }        
+        .pmtDropdown__btn, .pmtDropdown__btn:focus {
+            width: 100%;
+            border: 0;
+            border-bottom: 2px solid #eee;
+            padding: 0;
+            height: auto;
+            background-color: #fff;
+            box-shadow: inset 0 0 3px #bbb;
+            border-radius: 0;
+            font-weight: normal;
+        }
+        .pmtDropdown__btn:hover {
+            border: 0;
+            border-bottom: 2px solid #eee;
+            box-shadow: inset 0 0 3px #bbb;
+        }
+        .pmtDropdown__btn:focus {
+            border: 0;
+            border-bottom: 2px solid #00c0ff;
+            padding: 0;
+            height: auto;
+            background-color: #fff;
+            box-shadow: inset 0 0 3px #bbb;
+        }
+        .pmtDropdown__btn:after {
+            font-family: FontAwesome;            
+        }
+        .pmtDropdown__btn i.fa {
+            text-align: right;
+            float: right;
+            vertical-align: middle;
+            margin-top: -4em;
+            margin-right: 1em;
+        }
+        .pmtDropdown .ui__clickDropBtn { 
+            width: 100%;
+            padding: 0;
+        }
+        .btn.pmtDropdown__btn.default span {
+            padding-left: 1rem;
+        }
+        .pmtDropdown .ui__clickDropBtn span {
+            padding-left: 1rem;
+        }
+        .pmtDropdown .ui__clickDrop--bigText{
+            font-size: 2em;
+            line-height: 2.25em;
+            font-weight: 500;
+            display: inline-block;
+        }
+        .pmtDropdown  .ui__clickDrop--sub-label {
+            display: inline-block;
+        }
+        .pmtDropdown  .ui__clickDrop--sub-label-block {
+            display: block;
+        }
+        .pmtDropdown__menu {
+            display: none; /**hiding by default and showing with JS toggle**/
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+        }
+        .pmtDropdown__menu--item:hover {
+            background-color: #00c0ff;
+        }
 
 
 
