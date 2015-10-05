@@ -6,7 +6,10 @@
   * [FIX]: (Selfie) Fix for an issue where the link to the "go to login screen"
     on the Sign Up page wasn't working
   * [DEV]: (Selfie) Move the main navigation container div to the outermost template
-  * [DESIGN]: (Selfie) Updated styles for sign up, login, forgot password, reset password, resend link and account settings. Added side navigation.
+  * [DESIGN]: (Selfie) Updated styles for sign up, login, forgot password, reset password,
+    resend link and account settings. Added side navigation.
+  * [FEATURE]: (Selfie) Add search functionality to Campaign Dashboard
+  * [FEATURE]: (Selfie) Add multi-status filtering in Campaign Dashboard
 
 ## v1.21.0 (September 30, 2015)
 * *[v1.21.0.rc1]*
