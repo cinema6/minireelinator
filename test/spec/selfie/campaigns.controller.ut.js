@@ -294,6 +294,34 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     });
                 });
             });
+
+            describe('toggleSort(property)', function() {
+                it('should toggle the direction of the sort (-1 or 1)', function() {
+                    expect(SelfieCampaignsCtrl.sort).toBe('lastUpdated,-1');
+
+                    SelfieCampaignsCtrl.toggleSort('lastUpdated');
+
+                    expect(SelfieCampaignsCtrl.sort).toBe('lastUpdated,1');
+
+                    SelfieCampaignsCtrl.toggleSort('name');
+
+                    expect(SelfieCampaignsCtrl.sort).toBe('name,-1');
+                });
+            });
+
+            describe('doSearch(text)', function() {
+                it('should set/remove the text on the Ctrl', function() {
+                    expect(SelfieCampaignsCtrl.search).toBe(undefined);
+
+                    SelfieCampaignsCtrl.doSearch('something');
+
+                    expect(SelfieCampaignsCtrl.search).toBe('something');
+
+                    SelfieCampaignsCtrl.doSearch('');
+
+                    expect(SelfieCampaignsCtrl.search).toBe(undefined);
+                });
+            });
         });
     });
 });

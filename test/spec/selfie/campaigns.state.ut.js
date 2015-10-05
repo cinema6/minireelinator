@@ -103,7 +103,8 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                     expect(campaigns.queryParams).toEqual(jasmine.objectContaining({
                         filter: '=',
                         filterBy: '=',
-                        sort: '='
+                        sort: '=',
+                        search: '='
                     }));
                 });
             });

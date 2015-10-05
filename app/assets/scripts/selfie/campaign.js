@@ -59,8 +59,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     filter: '=',
                     filterBy: '=',
                     sort: '=',
-                    search: '=',
-                    searchBy: '='
+                    search: '='
                 });
 
                 this.title = function() {

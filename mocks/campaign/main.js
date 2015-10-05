@@ -45,8 +45,6 @@ module.exports = function(http) {
                         name = (campaign.name || '').toLowerCase(),
                         displayName = (campaign.advertiserDisplayName || '').toLowerCase();
 
-                    // console.log(text, name.indexOf(text.toLowerCase()) > -1);
-
                     return !text ||
                         (name.indexOf(text.toLowerCase()) > -1 ||
                         displayName.indexOf(text.toLowerCase()) > -1);
