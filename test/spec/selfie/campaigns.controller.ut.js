@@ -322,6 +322,45 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     expect(SelfieCampaignsCtrl.search).toBe(undefined);
                 });
             });
+
+            describe('initWithModel(model)', function() {
+                it('should put the model on the Ctrl', function() {
+                    SelfieCampaignsCtrl.initWithModel(model);
+
+                    expect(SelfieCampaignsCtrl.model).toEqual(model);
+                });
+
+                it('should add the filters to the Ctrl', function() {
+                    SelfieCampaignsCtrl.filter = 'active,error';
+                    SelfieCampaignsCtrl.initWithModel(model);
+
+                    expect(SelfieCampaignsCtrl.filters).toEqual([
+                        { name: 'Draft', id: 'draft', checked: false },
+                        { name: 'PendingApproval', id: 'pendingApproval', checked: false },
+                        { name: 'Approved', id: 'approved', checked: false },
+                        { name: 'Active', id: 'active', checked: true },
+                        { name: 'Paused', id: 'paused', checked: false },
+                        { name: 'Error', id: 'error', checked: true }
+                    ]);
+                });
+            });
+
+            describe('toggleFilter()', function() {
+                it('should update the filter query param based on which options are checked', function() {
+                    SelfieCampaignsCtrl.filters = [
+                        { name: 'Draft', id: 'draft', checked: true },
+                        { name: 'PendingApproval', id: 'pendingApproval', checked: false },
+                        { name: 'Approved', id: 'approved', checked: true },
+                        { name: 'Active', id: 'active', checked: true },
+                        { name: 'Paused', id: 'paused', checked: false },
+                        { name: 'Error', id: 'error', checked: true }
+                    ];
+
+                    SelfieCampaignsCtrl.toggleFilter();
+
+                    expect(SelfieCampaignsCtrl.filter).toEqual('draft,approved,active,error');
+                });
+            });
         });
     });
 });

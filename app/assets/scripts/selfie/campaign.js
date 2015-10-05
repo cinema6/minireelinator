@@ -160,7 +160,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.search = text || undefined;
             };
 
-            this.toggleFilter = function($index) {
+            this.toggleFilter = function() {
                 this.filter = this.filters.reduce(function(filters, filter) {
                     return filter.checked ? filters.concat(filter.id) : filters;
                 },[]).join(',');
