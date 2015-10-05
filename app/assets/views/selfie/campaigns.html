@@ -28,24 +28,12 @@
         <div class="sortBar__group">
             <ul class="sortBar__list clearfix">
                 <li class="sortBar__item sortBar__item--sortable column__status">
-                    <button class="sortBar__btn" type="button">Status</button><span class="faa fa-caret-down ui__clickDrop sortBar__btn--Dropdown"> </span>
-                    <ul class="ui__clickDropMenu" style="display: none;">
-                    <li class="ui__clickDropBtn" type="button" title="Select All" ng-click="SelfieCampaignsCtrl.filter = 'active'">
-                        <label><input type="checkbox" name="statusFilter" value="Active" checked> Active</label>
-                    </li>
-                    <li class="ui__clickDropBtn ng-hide" type="button" ng-click="SelfieCampaignsCtrl.filter = 'draft'">
-                        <label><input type="checkbox" name="statusFilter" value="Draft" checked>Draft</label>
-                    </li>
-                    <li class="ui__clickDropBtn" type="button" ng-click="SelfieCampaignsCtrl.filter = 'paused'">
-                        <label><input type="checkbox" name="statusFilter" value="Paused" checked>Paused</label>
-                    </li>
-                    <li class="ui__clickDropBtn" type="button" ng-click="SelfieCampaignsCtrl.filter = 'pendingApproval'">
-                        <label><input type="checkbox" name="statusFilter" value="PendingApproval" checked>Pending Approval</label>
-                    </li>
-                    <li class="ui__clickDropBtn" type="button" ng-click="SelfieCampaignsCtrl.filter = 'expired'">
-                        <label><input type="checkbox" name="statusFilter" value="Expired" checked>Expired</label>
-                    </li>
-                </ul>
+                    <button class="sortBar__btn" ng-click="showDropdown = !showDropdown" type="button">Status</button><span class="faa fa-caret-down ui__clickDrop sortBar__btn--Dropdown"> </span>
+                    <ul class="ui__clickDropMenu" ng-show="showDropdown">
+                        <li ng-repeat="filter in SelfieCampaignsCtrl.filters" class="ui__clickDropBtn" type="button" title="Select All">
+                            <label><input type="checkbox" name="statusFilter" value="filter.name" ng-model="filter.checked" ng-change="SelfieCampaignsCtrl.toggleFilter($index)"> {{filter.name}}</label>
+                        </li>
+                    </ul>
                 </li>
                 <li class="sortBar__item sortBar__item--sortable column__sponsor">
                     <button class="sortBar__btn" type="button">Sponsor</button>
