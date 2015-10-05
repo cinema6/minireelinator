@@ -57,7 +57,7 @@ function(angular ) {
                 }
             }
         });
-        copyProps(['filter', 'filterBy', 'limit', 'page', 'sort'], cState, this);
+        copyProps(['filter','filterBy','limit','page','sort','search'], cState, this);
 
         $scope.$watch(ctrlProp('page'), nonInitializingWatchFn(function(page) {
             var model = PaginatedListCtrl.model;
@@ -105,6 +105,21 @@ function(angular ) {
             if (sort === model.query.sort || isUndefined(sort)) { return; }
 
             model.query.sort = sort;
+
+            model.update(model.query, model.limit);
+            PaginatedListCtrl.page = 1;
+        }));
+
+        $scope.$watch(ctrlProp('search'), nonInitializingWatchFn(function(search) {
+            var model = PaginatedListCtrl.model;
+
+            if (search === model.query.text) { return; }
+
+            if (!search) {
+                delete model.query.text;
+            } else {
+                model.query.text = search;
+            }
 
             model.update(model.query, model.limit);
             PaginatedListCtrl.page = 1;

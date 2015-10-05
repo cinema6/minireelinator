@@ -58,7 +58,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 extend(this.queryParams, {
                     filter: '=',
                     filterBy: '=',
-                    sort: '='
+                    sort: '=',
+                    search: '='
                 });
 
                 this.title = function() {
@@ -104,6 +105,25 @@ function( angular , c6State  , PaginatedListState                    ,
                 return $q.when(null);
             }
 
+            this.initWithModel = function(model) {
+                this.model = model;
+
+                this.filters = [
+                    'draft',
+                    'pendingApproval',
+                    'approved',
+                    'active',
+                    'paused',
+                    'error'
+                ].map(function(filter) {
+                    return {
+                        name: filter.charAt(0).toUpperCase() + filter.slice(1),
+                        id: filter,
+                        checked: SelfieCampaignsCtrl.filter.indexOf(filter) > -1
+                    };
+                });
+            };
+
             this.editStateFor = function(campaign) {
                 return campaign.status === 'draft' ?
                     'Selfie:EditCampaign' :
@@ -134,6 +154,16 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.toggleSort = function(prop) {
                 this.sort = prop + ',' + (parseInt(this.sort.split(',')[1]) === -1 ? 1 : -1);
+            };
+
+            this.doSearch = function(text) {
+                this.search = text || undefined;
+            };
+
+            this.toggleFilter = function() {
+                this.filter = this.filters.reduce(function(filters, filter) {
+                    return filter.checked ? filters.concat(filter.id) : filters;
+                },[]).join(',');
             };
 
             $scope.$watch(function() {

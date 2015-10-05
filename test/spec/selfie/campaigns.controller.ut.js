@@ -294,6 +294,73 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     });
                 });
             });
+
+            describe('toggleSort(property)', function() {
+                it('should toggle the direction of the sort (-1 or 1)', function() {
+                    expect(SelfieCampaignsCtrl.sort).toBe('lastUpdated,-1');
+
+                    SelfieCampaignsCtrl.toggleSort('lastUpdated');
+
+                    expect(SelfieCampaignsCtrl.sort).toBe('lastUpdated,1');
+
+                    SelfieCampaignsCtrl.toggleSort('name');
+
+                    expect(SelfieCampaignsCtrl.sort).toBe('name,-1');
+                });
+            });
+
+            describe('doSearch(text)', function() {
+                it('should set/remove the text on the Ctrl', function() {
+                    expect(SelfieCampaignsCtrl.search).toBe(undefined);
+
+                    SelfieCampaignsCtrl.doSearch('something');
+
+                    expect(SelfieCampaignsCtrl.search).toBe('something');
+
+                    SelfieCampaignsCtrl.doSearch('');
+
+                    expect(SelfieCampaignsCtrl.search).toBe(undefined);
+                });
+            });
+
+            describe('initWithModel(model)', function() {
+                it('should put the model on the Ctrl', function() {
+                    SelfieCampaignsCtrl.initWithModel(model);
+
+                    expect(SelfieCampaignsCtrl.model).toEqual(model);
+                });
+
+                it('should add the filters to the Ctrl', function() {
+                    SelfieCampaignsCtrl.filter = 'active,error';
+                    SelfieCampaignsCtrl.initWithModel(model);
+
+                    expect(SelfieCampaignsCtrl.filters).toEqual([
+                        { name: 'Draft', id: 'draft', checked: false },
+                        { name: 'PendingApproval', id: 'pendingApproval', checked: false },
+                        { name: 'Approved', id: 'approved', checked: false },
+                        { name: 'Active', id: 'active', checked: true },
+                        { name: 'Paused', id: 'paused', checked: false },
+                        { name: 'Error', id: 'error', checked: true }
+                    ]);
+                });
+            });
+
+            describe('toggleFilter()', function() {
+                it('should update the filter query param based on which options are checked', function() {
+                    SelfieCampaignsCtrl.filters = [
+                        { name: 'Draft', id: 'draft', checked: true },
+                        { name: 'PendingApproval', id: 'pendingApproval', checked: false },
+                        { name: 'Approved', id: 'approved', checked: true },
+                        { name: 'Active', id: 'active', checked: true },
+                        { name: 'Paused', id: 'paused', checked: false },
+                        { name: 'Error', id: 'error', checked: true }
+                    ];
+
+                    SelfieCampaignsCtrl.toggleFilter();
+
+                    expect(SelfieCampaignsCtrl.filter).toEqual('draft,approved,active,error');
+                });
+            });
         });
     });
 });

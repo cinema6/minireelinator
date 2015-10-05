@@ -382,6 +382,54 @@ define(['angular', 'minireel/services', 'minireel/mixins/PaginatedListController
                         });
                     });
                 });
+
+                describe('this.search', function() {
+                    beforeEach(function() {
+                        model.goTo.calls.reset();
+                        model.update.calls.reset();
+
+                        $scope.$apply(function() {
+                            PaginatedListCtrl.page = 3;
+                            PaginatedListCtrl.search = 'something';
+                        });
+                    });
+
+                    it('should update the model with new query', function() {
+                        expect(model.update).toHaveBeenCalledWith(jasmine.objectContaining({text: 'something'}), 50);
+                    });
+
+                    it('should set the PaginatedListCtrl.page back to 1', function() {
+                        expect(PaginatedListCtrl.page).toBe(1);
+                    });
+
+                    it('should not call goTo again', function() {
+                        expect(cinema6.db.findAll.calls.count()).toBe(1);
+                    });
+
+                    it('should not update the model if unchanged', function() {
+                        model.update.calls.reset();
+
+                        $scope.$apply(function() {
+                            PaginatedListCtrl.search = 'something';
+                        });
+
+                        expect(model.update).not.toHaveBeenCalled();
+                    });
+
+                    describe('if set to undefined', function() {
+                        beforeEach(function() {
+                            model.update.calls.reset();
+                            $scope.$apply(function() {
+                                PaginatedListCtrl.search = undefined;
+                            });
+                        });
+
+                        it('should update the model', function() {
+                            expect(model.update).toHaveBeenCalled();
+                            expect(model.update.calls.mostRecent().args[0].text).toBe(undefined);
+                        });
+                    });
+                });
             });
         });
     });
