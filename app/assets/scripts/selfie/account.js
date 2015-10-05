@@ -28,7 +28,8 @@ function( angular , c6State  ) {
 
                 this.model = function() {
                     return {
-                        email: ''
+                        email: '',
+                        target: 'selfie'
                     };
                 };
             }]);

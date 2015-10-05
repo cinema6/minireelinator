@@ -98,10 +98,10 @@ function( angular , c6State  ) {
                 .then(handleAuthSuccess);
             };
 
-            this.requestPasswordReset = function(email) {
+            this.requestPasswordReset = function(email, targetApp) {
                 return $http.post(c6UrlMaker('auth/password/forgot', 'api'), {
                     email: email,
-                    target: 'portal'
+                    target: targetApp
                 }, {
                     timeout: 10000
                 })

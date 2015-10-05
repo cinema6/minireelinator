@@ -134,7 +134,7 @@
                 });
             });
 
-            describe('requestPasswordReset(email)', function() {
+            describe('requestPasswordReset(email, targetApp)', function() {
                 var success, failure;
 
                 beforeEach(function() {
@@ -146,7 +146,7 @@
                         target: 'portal'
                     }).respond(200, 'Successfully generated reset token');
 
-                    AuthService.requestPasswordReset('josh@cinema6.com').then(success, failure);
+                    AuthService.requestPasswordReset('josh@cinema6.com','portal').then(success, failure);
 
                     $httpBackend.flush();
                 });
@@ -162,7 +162,7 @@
                             target: 'portal'
                         }).respond(404, 'That user does not exist');
 
-                        AuthService.requestPasswordReset('evan@cinema6.com').then(success, failure);
+                        AuthService.requestPasswordReset('evan@cinema6.com','portal').then(success, failure);
 
                         $httpBackend.flush();
                     });
