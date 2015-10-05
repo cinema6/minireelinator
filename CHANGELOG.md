@@ -10,6 +10,8 @@
     resend link and account settings. Added side navigation.
   * [FEATURE]: (Selfie) Add search functionality to Campaign Dashboard
   * [FEATURE]: (Selfie) Add multi-status filtering in Campaign Dashboard
+  * [FIX]: (Selfie) Updated side navigation to use anchor tag instead of nested anchors 
+    inside divs, corrected input,select and labels to use matching "id"s and "for"s
 
 ## v1.21.0 (September 30, 2015)
 * *[v1.21.0.rc1]*
