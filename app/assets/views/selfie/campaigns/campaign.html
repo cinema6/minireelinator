@@ -53,8 +53,16 @@
             <div ng-include="'views/selfie/campaigns/edit/general.html'"></div>
             <div ng-include="'views/selfie/campaigns/edit/sponsor.html'"></div>
             <div ng-include="'views/selfie/campaigns/edit/video.html'" class="clearfix"></div>
-            <div ng-include="'views/selfie/campaigns/edit/text.html'"></div>
-            <div ng-include="'views/selfie/campaigns/edit/preview.html'"></div>
+            <div class="grid__item one-whole" id="section_4">
+                <h1 class="formSection__title">
+                <span class="formSection__number">
+                    <span class="formSection__numberText">4</span>
+                </span>
+                <span class="formSection__titleText tk--hdr">Add title, description and links</span>
+                </h1>
+            </div>
+            <div class="grid__item one-third ng-scope"><div ng-include="'views/selfie/campaigns/edit/text.html'"></div></div><!--.grid__item--><!--            
+            --><div class="grid__item two-thirds"><div ng-include="'views/selfie/campaigns/edit/preview.html'"></div></div><!--.grid__item-->
             <div ng-include="'views/selfie/campaigns/edit/targeting.html'"></div>
 
             <div class="grid__item one-half">

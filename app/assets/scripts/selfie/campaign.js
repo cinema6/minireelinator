@@ -157,7 +157,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     return result;
                 },{});
             });
-
         }])
 
         .config(['c6StateProvider',
