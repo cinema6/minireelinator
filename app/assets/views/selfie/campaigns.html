@@ -11,17 +11,15 @@
                 Campaigns
             </h1>
             </div><!--
-        --><div class="grid__item one-third search__group">            
-                <input type="text" placeholder="Search" class="form__textBox">
-                <select class="form__selectBox form__selectBox--single">
-                    <option>Campaigns</option>
-                    <option>Sponsors</option>
-                </select>
-                    <button class="searchBtn action__btnSecondary action__btnSecondary--small">Go</button>
+        --><div class="grid__item one-third search__group">
+                <form ng-submit="SelfieCampaignsCtrl.doSearch(searchText)">
+                    <input type="text" placeholder="Search" class="form__textBox" ng-model="searchText">
+                    <button class="searchBtn action__btnSecondary action__btnSecondary--small" type="submit">Go</button>
+                </form>
             </div><!--
-        --><div class="grid__item one-third search__group" style="text-align: right;">            
+        --><div class="grid__item one-third search__group" style="text-align: right;">
                <button c6-sref="Selfie:NewCampaign" title="New Campaign" class="action__btn action__btn--small" type="button">
-                <i class="fa fa-plus"></i> 
+                <i class="fa fa-plus"></i>
                     New Campaign
                 </button>
             </div>

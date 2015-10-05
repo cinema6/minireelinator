@@ -58,7 +58,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 extend(this.queryParams, {
                     filter: '=',
                     filterBy: '=',
-                    sort: '='
+                    sort: '=',
+                    search: '=',
+                    searchBy: '='
                 });
 
                 this.title = function() {
@@ -134,6 +136,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.toggleSort = function(prop) {
                 this.sort = prop + ',' + (parseInt(this.sort.split(',')[1]) === -1 ? 1 : -1);
+            };
+
+            this.doSearch = function(text) {
+                this.search = text || undefined;
             };
 
             $scope.$watch(function() {
