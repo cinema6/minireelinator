@@ -68,8 +68,7 @@ function( angular , c6State  ) {
                         password: '',
                         company: '',
                         firstName: '',
-                        lastName: '',
-                        phone: ''
+                        lastName: ''
                     };
                 };
             }]);
@@ -79,7 +78,18 @@ function( angular , c6State  ) {
         function                              ( AccountService ) {
             var SelfieSignUpCtrl = this;
 
+            this.errors = {};
+
             this.submit = function() {
+                var requiredProps = [
+                        'firstName','lastName','company','email','password'
+                    ].filter(function(prop) {
+                        SelfieSignUpCtrl.errors[prop] = !SelfieSignUpCtrl.model[prop];
+                        return SelfieSignUpCtrl.errors[prop];
+                    });
+
+                if (requiredProps.length) { return; }
+
                 AccountService.signUp(this.model)
                     .then(function(user) {
                         // success, we should tell the user to check their email
