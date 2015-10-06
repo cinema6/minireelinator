@@ -91,6 +91,26 @@ define(['app'], function(appModule) {
                         expect(AccountService.signUp).not.toHaveBeenCalled();
                     });
                 });
+
+                describe('when sign up succeeds', function() {
+                    it('should go to "Selfie:SignUpSuccess"', function() {
+                        SelfieSignUpCtrl.model = user = {
+                            firstName: 'Selfie',
+                            lastName: 'User',
+                            company: 'Brand',
+                            email: 'selfie@user.com',
+                            password: '123456'
+                        };
+                        spyOn(AccountService, 'signUp').and.returnValue($q.when(user));
+                        spyOn(c6State, 'goTo');
+
+                        $scope.$apply(function() {
+                            SelfieSignUpCtrl.submit();
+                        });
+
+                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:SignUpSuccess', [user]);
+                    });
+                });
             });
         });
     });

@@ -78,8 +78,8 @@ function( angular , c6State  ) {
             }]);
         }])
 
-        .controller('SelfieSignUpController', ['AccountService',
-        function                              ( AccountService ) {
+        .controller('SelfieSignUpController', ['AccountService','c6State',
+        function                              ( AccountService , c6State ) {
             var SelfieSignUpCtrl = this;
 
             this.errors = {};
@@ -96,8 +96,7 @@ function( angular , c6State  ) {
 
                 AccountService.signUp(this.model)
                     .then(function(user) {
-                        // success, we should tell the user to check their email
-                        SelfieSignUpCtrl.message = 'Success! ' + user.email + ' was created';
+                        c6State.goTo('Selfie:SignUpSuccess',[user]);
                     })
                     .catch(function(err) {
                         // failure, we should tell the user why
@@ -105,6 +104,15 @@ function( angular , c6State  ) {
                         SelfieSignUpCtrl.message = 'Failed, ' + err;
                     });
             };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:SignUpSuccess', [function() {
+                this.templateUrl = 'views/selfie/sign_up_success.html';
+                this.controller = 'GenericController';
+                this.controllerAs = 'SelfieSignUpSuccessCtrl';
+            }]);
         }])
 
         .config(['c6StateProvider',
