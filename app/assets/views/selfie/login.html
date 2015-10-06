@@ -16,11 +16,6 @@
                             Please enter your email associated with the account 
                         </div>
                     </div>
-                    <div class="form__errorBox">
-                        <p class="form__errorMsg">
-                            <i class="fa fa-exclamation-triangle"></i> Error message goes here
-                        </p>
-                    </div>
                 </fieldset>
                 <fieldset class="form__item">
                     <input c6-fill-check class="form__textBox form__fillCheck" type="password" name="password" id="c6-password" ng-model="LoginCtrl.model.password" autocomplete="off">
@@ -33,14 +28,12 @@
                             Please enter your password
                         </div>
                     </div>
-                    <div class="form__errorBox">
-                        <p class="form__errorMsg">
-                            <i class="fa fa-exclamation-triangle"></i> {{LoginCtrl.error}}
-                        </p>
-                    </div>
                 </fieldset>
                 <div class="ui__btnHolder">
                     <button class="action__btn action__btn--full">Login</button>
+                </div>
+                <div ng-show="LoginCtrl.error">
+                    {{LoginCtrl.error}}
                 </div>
                 <div class="subActions__box">
                     <p class="subAction text--center"><a c6-sref="Selfie:ForgotPassword">Forgot Password?</a></p>
