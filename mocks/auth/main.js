@@ -41,4 +41,12 @@ module.exports = function(http) {
             this.respond(200, userCache.user);
         }
     });
+
+    http.whenPOST('/api/auth/password/forgot', function(request) {
+        if (request.body.email === 'selfie@cinema6.com') {
+            this.respond(200, 'Successfully generated reset token');
+        } else {
+            this.respond(404, 'That user does not exist');
+        }
+    });
 };
