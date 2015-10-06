@@ -85,7 +85,7 @@ define(['app'], function(appModule) {
 
                 selfie.afterModel({status: 'new'});
 
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:ResendActivation', ['You are a new user']);
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:ResendActivation');
             });
         });
 
@@ -114,7 +114,7 @@ define(['app'], function(appModule) {
                 $rootScope.$apply(function() {
                     selfie.enter();
                 });
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:ResendActivation', ['You are a new user']);
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:ResendActivation');
             });
         });
     });

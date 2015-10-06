@@ -28,7 +28,8 @@ define(['app'], function(appModule) {
 
             it('should return an object with an email property', function() {
                 expect(result).toEqual({
-                    email: ''
+                    email: '',
+                    target: 'portal'
                 });
             });
         });

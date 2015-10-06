@@ -12,7 +12,8 @@ function( angular , login , c6State  ) {
 
                 this.model = function() {
                     return {
-                        email: ''
+                        email: '',
+                        target: 'portal'
                     };
                 };
             }]);
@@ -36,7 +37,7 @@ function( angular , login , c6State  ) {
             this.submit = function() {
                 nullify(this, ['wasSuccessful', 'errorMessage']);
 
-                return AuthService.requestPasswordReset(this.model.email)
+                return AuthService.requestPasswordReset(this.model.email, this.model.target)
                     .then(function onSuccess(message) {
                         self.wasSuccessful = true;
                         return message;

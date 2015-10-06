@@ -81,6 +81,10 @@ module.exports = function(http) {
         }
     });
 
+    http.whenPOST('/api/account/users/resendActivation', function(request) {
+        this.respond(204);
+    });
+
     http.whenPOST('/api/account/users/signup', function(request) {
         var id = genId('u'),
             currentTime = (new Date()).toISOString(),

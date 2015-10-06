@@ -131,6 +131,25 @@ function( angular ) {
             };
         }])
 
+        .directive('blurValidate', [function() {
+            return {
+                restrict: 'A',
+                link: function(scope, $element, attrs) {
+                    var input = $element.find('#' + attrs.blurValidate);
+
+                    input.on('blur', function() {
+                        var value = $(this).val();
+
+                        if (!value) {
+                            $element.addClass('ui--hasError');
+                        } else {
+                            $element.removeClass('ui--hasError');
+                        }
+                    });
+                }
+            };
+        }])
+
         .directive('selfiePreview', [function() {
             return {
                 restrict: 'E',

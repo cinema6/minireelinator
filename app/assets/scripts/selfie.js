@@ -25,12 +25,12 @@ function( angular , c6State  , c6uilib , account   ) {
                     // a page refresh...
 
                     if (user.status === 'new') {
-                        c6State.goTo('Selfie:ResendActivation', ['You are a new user']);
+                        c6State.goTo('Selfie:ResendActivation');
                     }
                 };
                 this.enter = function() {
                     if (this.cModel.status === 'new') {
-                        c6State.goTo('Selfie:ResendActivation',['You are a new user']);
+                        c6State.goTo('Selfie:ResendActivation');
                     } else {
                         c6State.goTo('Selfie:Apps', null, null, true);
                     }
