@@ -655,10 +655,15 @@ fa,
             color:#fff;
             display:none;
         }
+        .mainNav__item {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
         .mainNav__item:hover {
             background-color: #222;
         }
-        .mainNav__item--active {
+        .mainNav__item.c6-active {
             background: #222;
             border-left: 2px solid #00c0ff;
         }
