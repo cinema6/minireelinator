@@ -196,8 +196,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 var SelfieState = c6State.get('Selfie');
 
                 this.model = function() {
-                    var advertiser = SelfieState.cModel.advertiser,
-                        customer = SelfieState.cModel.customer;
+                    var user = SelfieState.cModel,
+                        advertiser = user.advertiser,
+                        customer = user.customer;
 
                     return cinema6.db.create('selfieCampaign', {
                             advertiserId: advertiser.id,
@@ -208,7 +209,8 @@ function( angular , c6State  , PaginatedListState                    ,
                             pricing: {},
                             geoTargeting: [],
                             status: 'draft',
-                            application: 'selfie'
+                            application: 'selfie',
+                            advertiserDisplayName: user.company
                         });
                 };
 
@@ -230,7 +232,6 @@ function( angular , c6State  , PaginatedListState                    ,
                             },
                             links: advertiser.defaultLinks || {},
                             params: {
-                                sponsor: advertiser.name,
                                 ad: true,
                                 action: null
                             },
@@ -382,8 +383,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
                         return [
                             campaign.name,
+                            campaign.advertiserDisplayName,
                             this.validation.budget,
-                            card.params.sponsor,
                             card.data.service,
                             card.data.videoid
                         ].filter(function(prop) {
@@ -471,11 +472,11 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 return [
                     campaign.name,
+                    campaign.advertiserDisplayName,
                     card.title,
                     card.note,
                     card.thumb,
                     card.collateral.logo,
-                    params.sponsor,
                     label,
                     actionType,
                     data.videoid,
@@ -827,6 +828,7 @@ function( angular , c6State  , PaginatedListState                    ,
         function                                       ( $scope , c6Debounce , $log ) {
             var SelfieCampaignPreviewCtrl = this,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+                campaign = SelfieCampaignCtrl.campaign,
                 card = SelfieCampaignCtrl.card;
 
             // debounce for 2 seconds then convert card for player,
@@ -835,7 +837,11 @@ function( angular , c6State  , PaginatedListState                    ,
             // add the card to the deck, then put the card and experience
             // on the Ctrl for binding in the template
             this.loadPreview = c6Debounce(function() {
+                var _card = copy(card);
                 $log.info('loading preview');
+
+                _card.params.sponsor = campaign.advertiserDisplayName;
+
                 SelfieCampaignPreviewCtrl.card = copy(card);
             }, 2000);
 
