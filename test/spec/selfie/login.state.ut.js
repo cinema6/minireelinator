@@ -23,6 +23,12 @@ define(['app'], function(appModule) {
             expect(login).toEqual(jasmine.any(Object));
         });
 
+        it('should bind the "reason" query param', function() {
+            expect(login.queryParams).toEqual({
+                reason: '&'
+            });
+        });
+
         describe('model()', function() {
             var result;
 

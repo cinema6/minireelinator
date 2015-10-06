@@ -74,7 +74,7 @@ define(['app'], function(appModule) {
 
             describe('if the user is not confirmed', function() {
                 beforeEach(function() {
-                    AccountService.confirmUser.and.returnValue($q.reject('BLEGH'));
+                    AccountService.confirmUser.and.returnValue($q.reject());
                     spyOn(c6State, 'goTo');
                     $rootScope.$apply(function() {
                         SelfieConfirmAcctState.model().then(success, failure);
@@ -82,7 +82,7 @@ define(['app'], function(appModule) {
                 });
 
                 it('should transition to the login state', function() {
-                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Login', ['BLEGH']);
+                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Login', null, {reason:0});
                 });
             });
         });
@@ -95,7 +95,7 @@ define(['app'], function(appModule) {
                     SelfieConfirmAcctState.enter();
                 });
 
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Login', null, null, true);
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Login', null, {reason:1});
             });
         });
     });

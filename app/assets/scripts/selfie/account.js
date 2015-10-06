@@ -10,6 +10,10 @@ function( angular , c6State  ) {
                 this.controller = 'LoginController';
                 this.controllerAs = 'LoginCtrl';
 
+                this.queryParams = {
+                    reason: '&'
+                };
+
                 this.model = function() {
                     return {
                         email: '',
@@ -120,8 +124,12 @@ function( angular , c6State  ) {
                     .then(function() {
                         // probably want to put a success message on the Ctrl
                         // and tell the user to check their email
-                        SelfieResendActivationCtrl.model = 'We have sent you an email with '+
+                        SelfieResendActivationCtrl.model = 'We have sent you an email with ' +
                             'a new confirmation link!';
+                    })
+                    .catch(function() {
+                        SelfieResendActivationCtrl.model = 'There was a problem resending ' +
+                            'a new activation link';
                     });
             };
 
@@ -144,18 +152,18 @@ function( angular , c6State  ) {
 
                 this.model = function() {
                     return AccountService.confirmUser(id, token)
-                        .catch(function(err) {
+                        .catch(function() {
                             // if the confirmation fails go to Login page with message
                             // telling the user that confirmation has failed, but that
                             // they can login and resend an activation link
-                            c6State.goTo('Selfie:Login', [err]);
+                            c6State.goTo('Selfie:Login', null, {reason:0});
                         });
                 };
 
                 this.enter = function() {
                     // confirmation was a success, so being them to login screen
                     // for initial login.
-                    return c6State.goTo('Selfie:Login', null, null, true);
+                    return c6State.goTo('Selfie:Login', null, {reason:1});
                 };
             }]);
         }]);
