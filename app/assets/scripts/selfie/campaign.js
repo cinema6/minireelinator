@@ -842,7 +842,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 _card.params.sponsor = campaign.advertiserDisplayName;
 
-                SelfieCampaignPreviewCtrl.card = copy(card);
+                SelfieCampaignPreviewCtrl.card = _card;
             }, 2000);
 
             // if we have what we need on initiation then load a preview
