@@ -15,8 +15,12 @@
         "budget": "1000",
         "dailyLimit": "45"
     },
-    "geoTargeting": [],
     "status": "active",
+    "targeting": {
+        "geo": {
+            "states":[]
+        }
+    },
     "advertiserDisplayName": "Nike",
     "created": "2015-08-05T16:08:51.216Z",
     "user": "u-35b096c999711b",

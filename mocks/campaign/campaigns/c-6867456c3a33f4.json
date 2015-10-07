@@ -10,8 +10,12 @@
     "name": "Another Campaign",
     "categories": [],
     "pricing": {},
-    "geoTargeting": [],
     "status": "paused",
+    "targeting": {
+        "geo": {
+            "states":[]
+        }
+    },
     "advertiserDisplayName": "Great Sponsor",
     "created": "2015-08-03T15:22:42.280Z",
     "user": "u-35b096c999711b",

@@ -10,8 +10,12 @@
     "name": "Diageo, Q4",
     "categories": [],
     "pricing": {},
-    "geoTargeting": [],
     "status": "error",
+    "targeting": {
+        "geo": {
+            "states":[]
+        }
+    },
     "advertiserDisplayName": "Diageo",
     "created": "2015-08-08T15:38:53.090Z",
     "user": "u-35b096c999711b",

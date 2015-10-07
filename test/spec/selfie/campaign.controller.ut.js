@@ -109,7 +109,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 categories: [],
                 cards: [],
                 pricing: {},
-                geoTargeting: [],
                 status: 'draft',
                 appllication: 'selfie',
                 advertiserDisplayName: 'My Company',
@@ -447,15 +446,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
                     });
 
-                    it('geoTargeting changes should trigger an autosave', function() {
-                        $scope.$apply(function() {
-                            SelfieCampaignCtrl.campaign.geoTargeting = [{state: 'Arizona'}];
-                        });
-
-                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
-                    });
-
-                    it('budget changes should trigger an autosave', function() {
+                    it('pricing.budget changes should trigger an autosave', function() {
                         $scope.$apply(function() {
                             SelfieCampaignCtrl.campaign.pricing.budget = 3000;
                         });
@@ -463,7 +454,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
                     });
 
-                    it('geoTargeting changes should trigger an autosave', function() {
+                    it('pricing.dailyLimit changes should trigger an autosave', function() {
                         $scope.$apply(function() {
                             SelfieCampaignCtrl.campaign.pricing.dailyLimit = 50;
                         });
@@ -599,15 +590,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         expect(SelfieCampaignCtrl.autoSave).not.toHaveBeenCalled();
                     });
 
-                    it('geoTargeting changes should not trigger an autosave', function() {
-                        $scope.$apply(function() {
-                            SelfieCampaignCtrl.campaign.geoTargeting = [{state: 'Arizona'}];
-                        });
-
-                        expect(SelfieCampaignCtrl.autoSave).not.toHaveBeenCalled();
-                    });
-
-                    it('budget changes should not trigger an autosave', function() {
+                    it('pricing.budget changes should not trigger an autosave', function() {
                         $scope.$apply(function() {
                             SelfieCampaignCtrl.campaign.pricing.budget = 3000;
                         });
@@ -615,7 +598,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         expect(SelfieCampaignCtrl.autoSave).not.toHaveBeenCalled();
                     });
 
-                    it('dailyLimit changes should not trigger an autosave', function() {
+                    it('pricing.dailyLimit changes should not trigger an autosave', function() {
                         $scope.$apply(function() {
                             SelfieCampaignCtrl.campaign.pricing.dailyLimit = 50;
                         });

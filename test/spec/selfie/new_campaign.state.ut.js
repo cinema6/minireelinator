@@ -83,7 +83,6 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     categories: [],
                     cards: [],
                     pricing: {},
-                    geoTargeting: [],
                     status: 'draft',
                     application: 'selfie',
                     advertiserDisplayName: selfieState.cModel.company,
