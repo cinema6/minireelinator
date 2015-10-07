@@ -8,13 +8,15 @@
         }
     ],
     "name": "Diageo, Q4",
-    "categories": [],
     "pricing": {},
     "status": "error",
     "targeting": {
         "geo": {
             "states":[]
         }
+    },
+    "contentCategories": {
+        "primary": "comedy"
     },
     "advertiserDisplayName": "Diageo",
     "created": "2015-08-08T15:38:53.090Z",

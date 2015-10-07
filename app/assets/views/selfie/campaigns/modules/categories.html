@@ -1,6 +1,6 @@
 <fieldset class="form__item" ng-controller="SelfieCategoriesController as SelfieCategoriesCtrl">
-    <select c6-select-box unselect-default="true" ng-model="SelfieCategoriesCtrl.category" ng-options="category.label for category in SelfieCategoriesCtrl.categories" class="form__selectBox form__selectBox--single" id="c6-interests"></select>
-    <label class="form__label" for="c6-interests">
+    <select c6-select-box config="{placeholder:'*'}" ng-model="SelfieCategoriesCtrl.category" ng-options="category.label for category in categories" class="form__selectBox form__selectBox--single" id="c6-categories"></select>
+    <label class="form__label" for="c6-categories">
         <i class="fa fa-times ui--error"></i>
         Campaign Categorization
     </label>

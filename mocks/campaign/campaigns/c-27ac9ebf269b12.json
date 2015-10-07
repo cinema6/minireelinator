@@ -3,7 +3,6 @@
     "application": "selfie",
     "name": "My New Product",
     "brand": "Diageo",
-    "categories": ["music"],
     "advertiserId": "a-282824b8bb40a2",
     "customerId": "cus-71e725f8bf33d5",
     "cards": [
@@ -17,6 +16,9 @@
         "geo": {
             "states":[]
         }
+    },
+    "contentCategories": {
+        "primary": "comedy"
     },
     "pricing": {},
     "advertiserDisplayName": "Cotton USA",

@@ -106,12 +106,14 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             };
             campaign = cinema6.db.create('selfieCampaign', {
                 name: null,
-                categories: [],
                 cards: [],
                 pricing: {},
                 status: 'draft',
                 appllication: 'selfie',
                 advertiserDisplayName: 'My Company',
+                contentCategories: {
+                    primary: null
+                },
                 targeting: {
                     geo: {
                         states: [],
@@ -219,6 +221,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieCampaignCtrl.canSubmit).toBe(false);
 
                     SelfieCampaignCtrl.campaign.advertiserDisplayName = 'Sponsor Name';
+                    expect(SelfieCampaignCtrl.canSubmit).toBe(false);
+
+                    SelfieCampaignCtrl.campaign.contentCategories.primary = 'comedy';
                     expect(SelfieCampaignCtrl.canSubmit).toBe(false);
 
                     SelfieCampaignCtrl.card.data.service = 'youtube';
@@ -438,9 +443,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 });
 
                 describe('when campaign should auto save', function() {
-                    it('category changes should trigger an autosave', function() {
+                    it('contentCategories.primary changes should trigger an autosave', function() {
                         $scope.$apply(function() {
-                            SelfieCampaignCtrl.campaign.categories = [{name: 'Comedy'}];
+                            SelfieCampaignCtrl.campaign.contentCategories.primary = 'comedy';
                         });
 
                         expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
@@ -582,9 +587,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         SelfieCampaignCtrl.campaign.status = 'active';
                     });
 
-                    it('category changes should not trigger an autosave', function() {
+                    it('contentCategories.primary changes should not trigger an autosave', function() {
                         $scope.$apply(function() {
-                            SelfieCampaignCtrl.campaign.categories = [{name: 'Comedy'}];
+                            SelfieCampaignCtrl.campaign.contentCategories.primary = 'comedy';
                         });
 
                         expect(SelfieCampaignCtrl.autoSave).not.toHaveBeenCalled();

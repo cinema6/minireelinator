@@ -9,7 +9,7 @@
             <span class="formSection__titleText tk--hdr">Create Your Campaign</span>
         </h1>
 
-        <div class="form__items">
+        <div class="form__items" c6-alias="SelfieCampaignCtrl.categories as categories">
 
             <fieldset class="form__item form__item--bigInput">
                 <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-campaign-name" ng-model="campaign.name" autofocus="autofocus">
@@ -29,6 +29,8 @@
                 </div>
 
             </fieldset>
+
+            <div ng-include="'views/selfie/campaigns/modules/categories.html'"></div>
 
         </div><!--.form__items -->
 

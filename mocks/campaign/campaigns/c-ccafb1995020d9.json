@@ -8,9 +8,6 @@
         }
     ],
     "name": "Nike Summer Campaign",
-    "categories": [
-        "comedy"
-    ],
     "pricing": {
         "budget": "1000",
         "dailyLimit": "45"
@@ -20,6 +17,9 @@
         "geo": {
             "states":[]
         }
+    },
+    "contentCategories": {
+        "primary": "comedy"
     },
     "advertiserDisplayName": "Nike",
     "created": "2015-08-05T16:08:51.216Z",

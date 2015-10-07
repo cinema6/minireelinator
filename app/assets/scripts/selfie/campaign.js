@@ -204,12 +204,14 @@ function( angular , c6State  , PaginatedListState                    ,
                             advertiserId: advertiser.id,
                             customerId: customer.id,
                             name: null,
-                            categories: [],
                             cards: [],
                             pricing: {},
                             status: 'draft',
                             application: 'selfie',
                             advertiserDisplayName: user.company,
+                            contentCategories: {
+                                primary: null
+                            },
                             targeting: {
                                 geo: {
                                     states: [],
@@ -395,6 +397,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         return [
                             campaign.name,
                             campaign.advertiserDisplayName,
+                            campaign.contentCategories.primary,
                             this.validation.budget,
                             card.data.service,
                             card.data.videoid
@@ -453,7 +456,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 var campaign = SelfieCampaignCtrl.campaign || {};
 
                 return [
-                    campaign.categories,
+                    campaign.contentCategories,
                     campaign.pricing,
                     campaign.targeting
                 ];
@@ -869,28 +872,16 @@ function( angular , c6State  , PaginatedListState                    ,
                 campaign = $scope.campaign,
                 categories = $scope.categories;
 
-            // we need to have a selectable item in the dropdown for 'none'
-            this.categories = [{
-                name: 'none',
-                label: 'No Category Targeting'
-            }].concat(categories);
+            this.category = categories.filter(function(category) {
+                return campaign.contentCategories.primary === category.name;
+            })[0] || null;
 
-            // we default to 'none'
-            this.category = this.categories
-                .filter(function(category) {
-                    var name = campaign.categories[0] || 'none';
-
-                    return name === category.name;
-                })[0];
-
-            // we watch the category choice and add only one to the campaign if chosen
-            // and set to empty array if 'No Categories' is chosen
             $scope.$watch(function() {
                 return SelfieCategoriesCtrl.category;
             }, function(newCat, oldCat) {
                 if (newCat === oldCat) { return; }
 
-                campaign.categories = newCat.name !== 'none' ? [newCat.name] : [];
+                campaign.contentCategories.primary = newCat.name;
             });
         }])
 

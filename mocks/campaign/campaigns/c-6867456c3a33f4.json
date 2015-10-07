@@ -8,13 +8,15 @@
         }
     ],
     "name": "Another Campaign",
-    "categories": [],
     "pricing": {},
     "status": "paused",
     "targeting": {
         "geo": {
             "states":[]
         }
+    },
+    "contentCategories": {
+        "primary": "comedy"
     },
     "advertiserDisplayName": "Great Sponsor",
     "created": "2015-08-03T15:22:42.280Z",

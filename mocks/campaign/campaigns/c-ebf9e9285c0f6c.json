@@ -8,13 +8,15 @@
         }
     ],
     "name": "American Airlines Q1",
-    "categories": [],
     "pricing": {},
     "status": "pending",
     "targeting": {
         "geo": {
             "states":[]
         }
+    },
+    "contentCategories": {
+        "primary": "comedy"
     },
     "advertiserDisplayName": "American Airlines",
     "created": "2015-08-05T14:32:13.876Z",
