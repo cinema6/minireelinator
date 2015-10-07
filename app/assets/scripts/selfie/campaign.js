@@ -454,7 +454,6 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 return [
                     campaign.categories,
-                    campaign.geoTargeting,
                     campaign.pricing,
                     campaign.targeting
                 ];
