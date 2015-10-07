@@ -1,39 +1,47 @@
 <div ng-controller="SelfieBudgetController as SelfieBudgetCtrl">
-    <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': !SelfieBudgetCtrl.validBudget }">
-        <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="text" id="c6-campaign-budget" ng-model="SelfieBudgetCtrl.budget">
-        <span class="input__unit">$</span>
-        <label class="form__label" for="c6-campaign-budget">
-            <i class="fa fa-times ui--error"></i>
-            Campaign Budget
-        </label>
-        <div class="form__helpBox form__helpBox--right">
-            <div class="form__helpText">
-                Provide a unique identifier for your campaign. This is not displayed within the ad unit and is for internal tracking purposes.
-            </div>
-        </div>
-        <div class="form__errorBox">
-            <p class="form__errorMsg">
-                <i class="fa fa-exclamation-triangle"></i> Error message goes here
-            </p>
-        </div>
-    </fieldset>
+    <h1 class="formSection__title">
+        <span class="formSection__titleText tk--hdr">Set Your Budget</span>
+    </h1>
+    <p class="formSection__introText">Your calculated cost per 1000 video plays is : <strong>${{SelfieBudgetCtrl.cpv}}</strong>. A video must play for a minimum of 3 seconds to count as a play.</p>
 
-    <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': SelfieBudgetCtrl.dailyLimitError }">
-        <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="text" id="c6-daily-limit" ng-model="SelfieBudgetCtrl.limit">
-        <span class="input__unit">$</span>
-        <label class="form__label" for="c6-daily-limit">
-            <i class="fa fa-times ui--error"></i>
-            Daily Max
-        </label>
-        <div class="form__helpBox form__helpBox--right">
-            <div class="form__helpText">
-                Provide a unique identifier for your campaign. This is not displayed within the ad unit and is for internal tracking purposes.
+    <div class="form__items">
+        <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': !SelfieBudgetCtrl.validBudget }">
+            <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="text" id="c6-campaign-budget" ng-model="SelfieBudgetCtrl.budget">
+            <span class="input__unit">$</span>
+            <label class="form__label" for="c6-campaign-budget">
+                <i class="fa fa-times ui--error"></i>
+                Campaign Budget
+            </label>
+            <div class="form__helpBox form__helpBox--right">
+                <div class="form__helpText">
+                    Provide a unique identifier for your campaign. This is not displayed within the ad unit and is for internal tracking purposes.
+                </div>
             </div>
-        </div>
-        <div class="form__errorBox">
-            <p class="form__errorMsg">
-                <i class="fa fa-exclamation-triangle"></i> {{SelfieBudgetCtrl.dailyLimitError}}
-            </p>
-        </div>
-    </fieldset>
+            <div class="form__errorBox">
+                <p class="form__errorMsg">
+                    <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                </p>
+            </div>
+        </fieldset>
+
+        <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': SelfieBudgetCtrl.dailyLimitError }">
+            <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="text" id="c6-daily-limit" ng-model="SelfieBudgetCtrl.limit">
+            <span class="input__unit">$</span>
+            <label class="form__label" for="c6-daily-limit">
+                <i class="fa fa-times ui--error"></i>
+                Daily Max
+            </label>
+            <div class="form__helpBox form__helpBox--right">
+                <div class="form__helpText">
+                    Provide a unique identifier for your campaign. This is not displayed within the ad unit and is for internal tracking purposes.
+                </div>
+            </div>
+            <div class="form__errorBox">
+                <p class="form__errorMsg">
+                    <i class="fa fa-exclamation-triangle"></i> {{SelfieBudgetCtrl.dailyLimitError}}
+                </p>
+            </div>
+        </fieldset>
+    </div>
+
 </div>

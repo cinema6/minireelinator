@@ -24,8 +24,13 @@ define(['app'], function(appModule) {
 
                 campaign = {
                     pricing: {},
-                    geoTargeting: [],
-                    categories: []
+                    targeting: {
+                        geo: {
+                            states: [],
+                            dmas: []
+                        },
+                        interests: []
+                    }
                 };
 
                 $scope = $rootScope.$new();
@@ -68,20 +73,28 @@ define(['app'], function(appModule) {
             });
 
             describe('cpv', function() {
-                it('should add $.50 each for categories and geo service', function() {
+                it('should add $.50 each for interests, states and DMAs', function() {
                     expect(SelfieBudgetCtrl.cpv).toBe(50);
 
-                    campaign.geoTargeting.push({state: 'Arizona'});
+                    campaign.targeting.geo.states.push('Arizona');
 
                     expect(SelfieBudgetCtrl.cpv).toBe(50.5);
 
-                    campaign.geoTargeting.push({state: 'Alabama'});
+                    campaign.targeting.geo.states.push('Alabama');
 
                     expect(SelfieBudgetCtrl.cpv).toBe(50.5);
 
-                    campaign.categories.push('comedy');
+                    campaign.targeting.geo.dmas.push('Chicago');
 
                     expect(SelfieBudgetCtrl.cpv).toBe(51);
+
+                    campaign.targeting.geo.dmas.push('New York City');
+
+                    expect(SelfieBudgetCtrl.cpv).toBe(51);
+
+                    campaign.targeting.interests.push('comedy');
+
+                    expect(SelfieBudgetCtrl.cpv).toBe(51.5);
                 });
             });
 

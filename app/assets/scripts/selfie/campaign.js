@@ -413,6 +413,7 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.initWithModel = function(model) {
+                // TODO: make sure campaign and card have necessary properties
                 this.card = cState.card;
                 this.campaign = cState.campaign;
                 this.categories = model.categories;
@@ -918,7 +919,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
             });
 
-            this.dmaOptions = ['Chicago','New York City','Miami','Los Angeles','Dallas'];
+            this.dmaOptions = GeoService.dmas;
 
             // we filter the options and use only the ones saved on the campaign
             this.states = this.stateOptions.filter(function(option) {
@@ -951,10 +952,11 @@ function( angular , c6State  , PaginatedListState                    ,
             Object.defineProperties(this, {
                 cpv: {
                     get: function() {
-                        var hasCategory = campaign.categories.length,
-                            hasGeos = campaign.geoTargeting.length;
+                        var hasInterests = campaign.targeting.interests.length,
+                            hasStates = campaign.targeting.geo.states.length,
+                            hasDmas = campaign.targeting.geo.dmas.length;
 
-                        return 50 + ([hasCategory, hasGeos]
+                        return 50 + ([hasInterests, hasStates, hasDmas]
                             .filter(function(bool) { return bool; }).length * 0.5);
                     }
                 },
