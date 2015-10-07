@@ -112,7 +112,19 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 geoTargeting: [],
                 status: 'draft',
                 appllication: 'selfie',
-                advertiserDisplayName: 'My Company'
+                advertiserDisplayName: 'My Company',
+                targeting: {
+                    geo: {
+                        states: [],
+                        dmas: []
+                    },
+                    demographics: {
+                        age: [],
+                        gender: [],
+                        income: []
+                    },
+                    interests: []
+                }
             });
             card = deepExtend(cinema6.db.create('card', MiniReelService.createCard('video')), {
                 id: undefined,
@@ -459,6 +471,54 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
                     });
 
+                    it('targeting.geo.states changes should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.targeting.geo.states = ['Arizona'];
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                    });
+
+                    it('targeting.geo.dmas changes should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.targeting.geo.dmas = ['Chicago'];
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                    });
+
+                    it('targeting.demographics.age changes should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.targeting.demographics.age = ['18-24'];
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                    });
+
+                    it('targeting.demographics.gender changes should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.targeting.demographics.gender = ['male'];
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                    });
+
+                    it('targeting.demographics.income changes should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.targeting.demographics.income = ['0-49000'];
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                    });
+
+                    it('targeting.interests changes should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.targeting.interests = ['Cars','Convertibles'];
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                    });
+
                     describe('name changes', function() {
                         it('should trigger an autosave', function() {
                             $scope.$apply(function() {
@@ -563,9 +623,49 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         expect(SelfieCampaignCtrl.autoSave).not.toHaveBeenCalled();
                     });
 
-                    it('advertiserDisplayName changes should not trigger an autosave', function() {
+                    it('targeting.geo.states changes should not trigger an autosave', function() {
                         $scope.$apply(function() {
-                            SelfieCampaignCtrl.campaign.advertiserDisplayName = 'Advertiser Name';
+                            SelfieCampaignCtrl.campaign.targeting.geo.states = ['Arizona'];
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).not.toHaveBeenCalled();
+                    });
+
+                    it('targeting.geo.dmas changes should not trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.targeting.geo.dmas = ['Chicago'];
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).not.toHaveBeenCalled();
+                    });
+
+                    it('targeting.demographics.age changes should not trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.targeting.demographics.age = ['18-24'];
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).not.toHaveBeenCalled();
+                    });
+
+                    it('targeting.demographics.gender changes should not trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.targeting.demographics.gender = ['male'];
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).not.toHaveBeenCalled();
+                    });
+
+                    it('targeting.demographics.income changes should not trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.targeting.demographics.income = ['0-49000'];
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).not.toHaveBeenCalled();
+                    });
+
+                    it('targeting.interests changes should not trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.campaign.targeting.interests = ['Cars','Convertibles'];
                         });
 
                         expect(SelfieCampaignCtrl.autoSave).not.toHaveBeenCalled();
@@ -597,6 +697,39 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             it('should not reload preview', function() {
                                 $scope.$apply(function() {
                                     SelfieCampaignCtrl.campaign.name = 'Campaign Name!';
+                                });
+
+                                expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                            });
+                        });
+                    });
+
+                    describe('advertiserDisplayName changes', function() {
+                        it('should not trigger an autosave', function() {
+                            $scope.$apply(function() {
+                                SelfieCampaignCtrl.campaign.advertiserDisplayName = 'Advertiser Name';
+                            });
+
+                            expect(SelfieCampaignCtrl.autoSave).not.toHaveBeenCalled();
+                        });
+
+                        describe('when the card has a service type and video id', function() {
+                            it('should reload preview', function() {
+                                SelfieCampaignCtrl.card.data.service = 'youtube';
+                                SelfieCampaignCtrl.card.data.videoid = '123';
+
+                                $scope.$apply(function() {
+                                    SelfieCampaignCtrl.campaign.advertiserDisplayName = 'Advertiser Name';
+                                });
+
+                                expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
+                            });
+                        });
+
+                        describe('when the card has no service type and video id', function() {
+                            it('should not reload preview', function() {
+                                $scope.$apply(function() {
+                                    SelfieCampaignCtrl.campaign.advertiserDisplayName = 'Advertiser Name';
                                 });
 
                                 expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');

@@ -86,7 +86,19 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     geoTargeting: [],
                     status: 'draft',
                     application: 'selfie',
-                    advertiserDisplayName: selfieState.cModel.company
+                    advertiserDisplayName: selfieState.cModel.company,
+                    targeting: {
+                        geo: {
+                            states: [],
+                            dmas: []
+                        },
+                        demographics: {
+                            age: [],
+                            gender: [],
+                            income: []
+                        },
+                        interests: []
+                    }
                 });
             });
 

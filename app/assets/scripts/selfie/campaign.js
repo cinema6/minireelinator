@@ -210,7 +210,19 @@ function( angular , c6State  , PaginatedListState                    ,
                             geoTargeting: [],
                             status: 'draft',
                             application: 'selfie',
-                            advertiserDisplayName: user.company
+                            advertiserDisplayName: user.company,
+                            targeting: {
+                                geo: {
+                                    states: [],
+                                    dmas: []
+                                },
+                                demographics: {
+                                    age: [],
+                                    gender: [],
+                                    income: []
+                                },
+                                interests: []
+                            }
                         });
                 };
 
@@ -438,23 +450,22 @@ function( angular , c6State  , PaginatedListState                    ,
             this.autoSave = c6Debounce(SelfieCampaignCtrl.save, 5000);
 
             // watch for saving only
-            $scope.$watchCollection(function() {
+            $scope.$watch(function() {
                 var campaign = SelfieCampaignCtrl.campaign || {};
 
                 return [
                     campaign.categories,
                     campaign.geoTargeting,
-                    campaign.pricing.budget,
-                    campaign.pricing.dailyLimit
+                    campaign.pricing,
+                    campaign.targeting
                 ];
             }, function(params, oldParams) {
                 if (params === oldParams) { return; }
 
-
                 if (SelfieCampaignCtrl.shouldSave) {
                     SelfieCampaignCtrl.autoSave();
                 }
-            });
+            }, true);
 
             // watch the Sponsor Links for autosaving and previewing
             $scope.$watchCollection(function() {
@@ -890,28 +901,30 @@ function( angular , c6State  , PaginatedListState                    ,
             var SelfieGeotargetingCtrl = this,
                 campaign = $scope.campaign;
 
-            this.geoOptions = GeoService.usa.map(function(state) {
+            this.stateOptions = GeoService.usa.map(function(state) {
                 return {
                     state: state,
                     country: 'usa'
                 };
             });
 
+            this.dmaOptions = ['Chicago','New York City','Miami','Los Angeles','Dallas'];
+
             // we filter the options and use only the ones saved on the campaign
-            this.geo = this.geoOptions.filter(function(option) {
-                return campaign.geoTargeting.filter(function(geo) {
-                    return option.state === geo.state;
+            this.states = this.stateOptions.filter(function(option) {
+                return campaign.targeting.geo.states.filter(function(state) {
+                    return option.state === state;
                 }).length > 0;
             });
 
             // we watch the geo choices and save an array of states
             $scope.$watch(function() {
-                return SelfieGeotargetingCtrl.geo;
-            }, function(newGeo, oldGeo) {
-                if (newGeo === oldGeo) { return; }
+                return SelfieGeotargetingCtrl.states;
+            }, function(newStates, oldStates) {
+                if (newStates === oldStates) { return; }
 
-                campaign.geoTargeting = newGeo.map(function(geo) {
-                    return { state: geo.state };
+                campaign.targeting.geo.states = newStates.map(function(state) {
+                    return state.state;
                 });
             });
         }])
