@@ -894,6 +894,27 @@ function( angular , c6State  , PaginatedListState                    ,
             });
         }])
 
+        .controller('SelfieInterestsController', ['$scope',
+        function                                 ( $scope ) {
+            var SelfieInterestsCtrl = this,
+                campaign = $scope.campaign,
+                categories = $scope.categories;
+
+            this.interests = categories.filter(function(category) {
+                return campaign.targeting.interests.indexOf(category.name) > -1;
+            });
+
+            $scope.$watch(function() {
+                return SelfieInterestsCtrl.interests;
+            }, function(newInterests, oldInterests) {
+                if (newInterests === oldInterests) { return; }
+
+                campaign.targeting.interests = newInterests.map(function(interest) {
+                    return interest.name;
+                });
+            });
+        }])
+
         .controller('SelfieGeotargetingController', ['$scope','GeoService',
         function                                    ( $scope , GeoService ) {
             var SelfieGeotargetingCtrl = this,
