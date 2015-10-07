@@ -940,6 +940,13 @@ function( angular , c6State  , PaginatedListState                    ,
             });
         }])
 
+        .controller('SelfieDemographicsController', ['DemographicsService',
+        function                                    ( DemographicsService ) {
+            this.ageOptions = DemographicsService.ages;
+            this.incomeOptions = DemographicsService.incomes;
+            this.genderOptions = ['male','female'];
+        }])
+
         .controller('SelfieBudgetController', ['$scope',
         function                              ( $scope ) {
             var SelfieBudgetCtrl = this,
