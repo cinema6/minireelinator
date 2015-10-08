@@ -174,5 +174,68 @@ function( angular , c6State  ) {
                     return c6State.goTo('Selfie:Login', null, {reason:1});
                 };
             }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:AccountDashboard', ['c6State',
+            function                                         ( c6State ) {
+                this.templateUrl = 'views/selfie/account.html';
+                this.controller = 'GenericController';
+                // need 'AccoutnCtrl' for the existing Ctrls to work
+                this.controllerAs = 'AccountCtrl';
+
+                this.model = function() {
+                    return c6State.get('Selfie').cModel;
+                };
+
+                this.enter = function() {
+                    return c6State.goTo('Selfie:Account');
+                };
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Account', ['c6State',
+            function                                ( c6State ) {
+                this.templateUrl = 'views/selfie/account/overview.html';
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Account:Email', [function() {
+                this.templateUrl = 'views/selfie/account/email.html';
+                this.controller = 'EmailController';
+                this.controllerAs = 'EmailCtrl';
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Account:Password', [function() {
+                this.templateUrl = 'views/selfie/account/password.html';
+                this.controller = 'PasswordController';
+                this.controllerAs = 'PasswordCtrl';
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Account:Details', [function() {
+                this.templateUrl = 'views/selfie/account/details.html';
+                this.controller = 'SelfieAccountDetailsController';
+                this.controllerAs = 'SelfieAccountDetailsCtrl';
+            }]);
+        }])
+
+        .controller('SelfieAccountDetailsController', ['cState',
+        function                                      ( cState ) {
+            var user = cState.cParent.cModel;
+
+            this.save = function() {
+                user.save();
+            };
         }]);
 });

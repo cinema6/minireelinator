@@ -1,0 +1,58 @@
+<div class="pageHolder">
+
+    <div class="pageHeader__group">
+        <div class="mainHeader__group">
+            <h1 class="mainHeader__breadcrumbs tk--hdr">
+                <a c6-sref="Selfie:AccountDashboard" title="Settings">Settings</a>
+            </h1>
+        </div><!--.mainHeader__group-->
+    </div><!--.pageHeader__group-->
+
+    <header class="settingsContent__header">
+        <h2 class="settingsContent__title tk--hdr">Settings</h2>
+        <span class="settingsContent__subtitle">Manage your account details and payment settings</span>
+    </header>
+
+    <div class="gridHolder">
+        <div class="grid grid--center">
+            <div class="grid__item one-half">
+                <div class="accountSettings">
+                    <h2 class="tk--hdr">Account Details</h2>
+                    <div class="accountSettings__box  card--item">
+                        <ul class="accountSettings__box-item"> 
+                            <li><span class="pull-right text-right"><a c6-sref="Selfie:Account:Details">Edit</a></span><h3 class="tk--hdr">{{AccountCtrl.model.firstName}} {{AccountCtrl.model.lastName}}</h3></li>
+                            <li><h2 class="tk--hdr">{{AccountCtrl.model.company}}</h2></li>
+                            <!-- <li><span>{{AccountCtrl.model.phone}}</span></li> -->
+                        </ul>
+                        <ul class="accountSettings__box-item"> 
+                            <li><span class="pull-right text-right"><a c6-sref="Selfie:Account:Email">Edit</a></span><span>{{AccountCtrl.model.email}}</span></li>
+                        </ul>
+                        <ul class="accountSettings__box-item"> 
+                            <li><a c6-sref="Selfie:Account:Password">Change Password</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div><!--
+        --><div class="grid__item one-half">
+                <div class="paymentOptions">
+                    <h2 class="tk--hdr">Payment Options</h2>
+                    <div class="paymentOptions__box  card--item">
+                        <ul class="paymentOptions__box-item"> 
+                            <li><h3 class="tk--hdr">Primary</h3></li>
+                            <li><h2 class="tk--hdr">Visa***3345</h2><span>Expires 07/2018</span></li>
+                            <li><span>Genesis Media</span></li>
+                        </ul>
+                        <ul class="paymentOptions__box-item"> 
+                            <li><a c6-sref="Selfie:AccountDashboard">Manage Payment Options</a></li>
+                        </ul>
+                        <ul class="paymentOptions__box-item"> 
+                            <li><a c6-sref="Selfie:AccountDashboard">Payment History</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+

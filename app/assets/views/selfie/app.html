@@ -4,17 +4,17 @@
     </div>
     <!--<div class=" mainNav__item--active"><!-- add "mainNav__item--active" class to div to highlight current nav item-->
     <a c6-sref="Selfie:Campaigns" title="Campaigns" class="mainNav__campaigns mainNav__item"><i class="fa fa-flag mainNav__iconOnly"></i></a>
-    
+
     <a href="archives.html" title="Archives" class="mainNav__archives mainNav__item"><i class="fa fa-archive mainNav__iconOnly"></i></a>
-    
+
     <div class="mainNav__settings mainNav__item" title="Settings">
         <i class="fa fa-cog mainNav__iconOnly"></i>
         <ul class="mainNav__dropDownGroup">
-            <a href="settings.html"><li class="mainNav__dropDownItem">Settings</li></a>
+            <a c6-sref="Selfie:AccountDashboard" c6-params="{}"><li class="mainNav__dropDownItem">Settings</li></a>
             <a ng-click="SelfieCtrl.logout()"><li class="mainNav__dropDownItem">Logout</li></a>
             </ul>
     </div>
-        
+
 </nav>
 <c6-view></c6-view>
 <confirm-dialog></confirm-dialog>

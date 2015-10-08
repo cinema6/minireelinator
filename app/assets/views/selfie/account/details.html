@@ -1,0 +1,103 @@
+<div class="pageHolder">
+
+    <div class="pageHeader__group">
+        <div class="mainHeader__group">
+            <h1 class="mainHeader__breadcrumbs tk--hdr">
+                <a c6-sref="Selfie:AccountDashboard" title="Settings">Settings</a> &nbsp;/&nbsp; Account Details
+            </h1>
+        </div><!--.mainHeader__group-->
+    </div><!--.pageHeader__group-->
+
+    <header class="settingsContent__header">
+        <h2 class="settingsContent__title tk--hdr">Account Details</h2>
+        <span class="settingsContent__subtitle">Manage your account details</span>
+    </header>
+
+    <div class="gridHolder">
+
+        <div class="grid grid--center">
+            <div class="grid__item one-half">
+                <div class="form__items form--narrow">
+
+                    <fieldset class="form__item">
+                        <input c6-fill-check ng-model="AccountCtrl.model.firstName" class="form__textBox form__fillCheck" type="text" id="c6-first-name">
+                        <label class="form__label" for="c6-first-name">
+                            <i class="fa fa-times ui--error"></i>
+                            First Name
+                        </label>
+                        <div class="form__helpBox form__helpBox--right">
+                            <div class="form__helpText">
+                                Please enter your First name
+                            </div>
+                        </div>
+                        <div class="form__errorBox">
+                            <p class="form__errorMsg">
+                                <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                            </p>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="form__item">
+                        <input c6-fill-check ng-model="AccountCtrl.model.lastName" class="form__textBox form__fillCheck" type="text" id="c6-last-name">
+                        <label class="form__label" for="c6-last-name">
+                            <i class="fa fa-times ui--error"></i>
+                            Last Name
+                        </label>
+                        <div class="form__helpBox form__helpBox--right">
+                            <div class="form__helpText">
+                                Please enter your Last name
+                            </div>
+                        </div>
+                        <div class="form__errorBox">
+                            <p class="form__errorMsg">
+                                <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                            </p>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="form__item">
+                        <input c6-fill-check ng-model="AccountCtrl.model.company" class="form__textBox form__fillCheck" type="text" id="c6-company">
+                        <label class="form__label" for="c6-company">
+                            <i class="fa fa-times ui--error"></i>
+                            Company
+                        </label>
+                        <div class="form__helpBox form__helpBox--right">
+                            <div class="form__helpText">
+                                Please enter the name of your Business
+                            </div>
+                        </div>
+                        <div class="form__errorBox">
+                            <p class="form__errorMsg">
+                                <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                            </p>
+                        </div>
+                    </fieldset>
+
+                    <!-- <fieldset class="form__item">
+                        <input class="form__textBox form__fillCheck" type="tel" id="c6-phone">
+                        <label class="form__label" for="c6-phone">
+                            <i class="fa fa-times ui--error"></i>
+                            Phone
+                        </label>
+                        <div class="form__helpBox form__helpBox--right">
+                            <div class="form__helpText">
+                                Please enter your contact number
+                            </div>
+                        </div>
+                        <div class="form__errorBox">
+                            <p class="form__errorMsg">
+                                <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                            </p>
+                        </div>
+                    </fieldset> -->
+
+                    <div class="ui__btnHolder">
+                        <button ng-click="SelfieAccountDetailsCtrl.save()" class="action__btn action__btn--wide">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
