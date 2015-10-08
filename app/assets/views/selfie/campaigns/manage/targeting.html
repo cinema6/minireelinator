@@ -1,6 +1,6 @@
 <div class="tabContent targeting__content container">
     <header class="tabContent__header">
-        <h2 class="tabContent__title tk--hdr">Choose Your Audience</h2>
+        <h2 class="tabContent__title tk--hdr">Target your campaign</h2>
         <span class="tabContent__subtitle">Sub heading can be entered here to explain more about the tab function</span>
     </header>
 
@@ -8,14 +8,29 @@
         <div class="grid grid--center">
             <div class="grid__item one-third">
                 <section class="formSection__group">
+                    <h1 class="formSection__title">
+                        <span class="formSection__titleText tk--hdr">Choose Your Audience</span>
+                    </h1>
+                    <p class="formSection__introText">Where do you want your ad to show up?</p>
+
                     <div class="form__items" c6-alias="SelfieManageCampaignCtrl.categories as categories">
                         <div ng-include="'views/selfie/campaigns/modules/interests.html'"></div>
                         <div ng-include="'views/selfie/campaigns/modules/geotargeting.html'"></div>
-                        <div ng-include="'views/selfie/campaigns/modules/demographics.html'"></div>
+                    </div>
+                </section>
 
-                        <div class="ui__btnHolder">
-                            <button class="action__btn action__btn--big" ng-disabled="!SelfieManageCampaignCtrl.canSubmit" ng-click="SelfieManageCampaignCtrl.update()">Save Changes</button>
-                        </div>
+                <section class="formSection__group">
+                    <h1 class="formSection__title">
+                        <span class="formSection__titleText tk--hdr">Demographics</span>
+                    </h1>
+                    <p class="formSection__introText">Who should be able to see your ads?</p>
+
+                    <div class="form__items">
+                        <div ng-include="'views/selfie/campaigns/modules/demographics.html'"></div>
+                    </div>
+
+                    <div class="ui__btnHolder">
+                        <button class="action__btn action__btn--big" ng-disabled="!SelfieManageCampaignCtrl.canSubmit" ng-click="SelfieManageCampaignCtrl.update()">Save Changes</button>
                     </div>
                 </section>
             </div>
