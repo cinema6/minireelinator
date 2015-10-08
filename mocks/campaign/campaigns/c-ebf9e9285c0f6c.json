@@ -12,8 +12,15 @@
     "status": "pending",
     "targeting": {
         "geo": {
-            "states":[]
-        }
+            "states":[],
+            "dmas": []
+        },
+        "demographics": {
+            "age":[],
+            "gender":[],
+            "income":[]
+        },
+        "interests": []
     },
     "contentCategories": {
         "primary": "comedy"

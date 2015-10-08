@@ -12,8 +12,15 @@
     "status": "draft",
     "targeting": {
         "geo": {
-            "states":[]
-        }
+            "states":[],
+            "dmas": []
+        },
+        "demographics": {
+            "age":[],
+            "gender":[],
+            "income":[]
+        },
+        "interests": []
     },
     "contentCategories": {},
     "advertiserDisplayName": "Diageo",
