@@ -178,8 +178,8 @@ function( angular , c6State  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:AccountDashboard', ['c6State',
-            function                                         ( c6State ) {
+            c6StateProvider.state('Selfie:Account', ['c6State',
+            function                                ( c6State ) {
                 this.templateUrl = 'views/selfie/account.html';
                 this.controller = 'GenericController';
                 // need 'AccoutnCtrl' for the existing Ctrls to work
@@ -190,15 +190,15 @@ function( angular , c6State  ) {
                 };
 
                 this.enter = function() {
-                    return c6State.goTo('Selfie:Account');
+                    return c6State.goTo('Selfie:Account:Overview');
                 };
             }]);
         }])
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Account', ['c6State',
-            function                                ( c6State ) {
+            c6StateProvider.state('Selfie:Account:Overview', ['c6State',
+            function                                         ( c6State ) {
                 this.templateUrl = 'views/selfie/account/overview.html';
             }]);
         }])

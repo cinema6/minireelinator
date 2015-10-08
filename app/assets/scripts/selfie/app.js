@@ -26,9 +26,8 @@ function( angular , c6State  , services   , directives   , campaign   ) {
                     });
                 });
 
-                this.route('/account', 'Selfie:AccountDashboard', function() {
-                    this.state('Selfie:Account');
-
+                this.route('/account', 'Selfie:Account', function() {
+                    this.route('/overview', 'Selfie:Account:Overview');
                     this.route('/email', 'Selfie:Account:Email');
                     this.route('/details', 'Selfie:Account:Details');
                     this.route('/password', 'Selfie:Account:Password');
