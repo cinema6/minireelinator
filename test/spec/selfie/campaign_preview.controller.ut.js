@@ -12,7 +12,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             SelfieCampaignCtrl,
             SelfieCampaignPreviewCtrl;
 
-        var card;
+        var card, campaign;
 
         function compileCtrl() {
             $scope.$apply(function() {
@@ -41,12 +41,18 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 c6Debounce = $injector.get('c6Debounce');
 
                 card = {
-                    data: {}
+                    data: {},
+                    params: {}
+                };
+
+                campaign = {
+                    advertiserDisplayName: 'My Company'
                 };
 
                 $scope = $rootScope.$new();
                 $scope.SelfieCampaignCtrl = {
-                    card: card
+                    card: card,
+                    campaign: campaign
                 };
             });
 
@@ -96,14 +102,17 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(c6Debounce.debouncedFn.calls.count()).toBe(1);
                 });
 
-                it('should put a copy of the card on the controller', function() {
+                it('should put a copy of the card on the controller and add the advertiserDisplayName', function() {
+                    var decoratedCard = copy(card);
+                    decoratedCard.params.sponsor = campaign.advertiserDisplayName;
+
                     expect(SelfieCampaignPreviewCtrl.card).toBe(undefined);
 
                     SelfieCampaignPreviewCtrl.loadPreview();
 
                     $timeout.flush(2000);
 
-                    expect(SelfieCampaignPreviewCtrl.card).toEqual(card);
+                    expect(SelfieCampaignPreviewCtrl.card).toEqual(decoratedCard);
                 });
             });
         });
