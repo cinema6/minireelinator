@@ -197,8 +197,7 @@ function( angular , c6State  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Account:Overview', ['c6State',
-            function                                         ( c6State ) {
+            c6StateProvider.state('Selfie:Account:Overview', [function() {
                 this.templateUrl = 'views/selfie/account/overview.html';
             }]);
         }])
