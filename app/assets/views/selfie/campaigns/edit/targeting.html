@@ -8,9 +8,9 @@
             <span class="formSection__titleText tk--hdr">Choose Your Audience</span>
         </h1>
 
-        <div class="form__items" c6-alias="SelfieCampaignCtrl.categories as categories">
-            <div ng-include="'views/selfie/campaigns/modules/interests.html'"></div>
-            <div ng-include="'views/selfie/campaigns/modules/geotargeting.html'"></div>
+        <div class="form__items">
+            <selfie-interests campaign="campaign" categories="SelfieCampaignCtrl.categories"></selfie-interests>
+            <selfie-geotargeting campaign="campaign"></selfie-geotargeting>
         </div>
 
     </section><!--.formSection__group-->
@@ -22,14 +22,14 @@
         </h1>
 
         <div class="form__items">
-            <div ng-include="'views/selfie/campaigns/modules/demographics.html'"></div>
+            <selfie-demographics campaign="campaign"></selfie-demographics>
         </div>
 
     </section><!--.formSection__group-->
 
     <section class="formSection__group formSection__group--sub">
 
-            <div ng-include="'views/selfie/campaigns/modules/budget.html'" c6-alias="SelfieCampaignCtrl.validation as validation"></div>
+        <selfie-budget campaign="campaign" validation="SelfieCampaignCtrl.validation"></selfie-budget>
 
     </section><!--.formSection__group-->
 

@@ -13,9 +13,9 @@
                     </h1>
                     <p class="formSection__introText">Where do you want your ad to show up?</p>
 
-                    <div class="form__items" c6-alias="SelfieManageCampaignCtrl.categories as categories">
-                        <div ng-include="'views/selfie/campaigns/modules/interests.html'"></div>
-                        <div ng-include="'views/selfie/campaigns/modules/geotargeting.html'"></div>
+                    <div class="form__items">
+                        <selfie-interests campaign="campaign" categories="SelfieManageCampaignCtrl.categories"></selfie-interests>
+                        <selfie-geotargeting campaign="campaign"></selfie-geotargeting>
                     </div>
                 </section>
 
@@ -26,7 +26,7 @@
                     <p class="formSection__introText">Who should be able to see your ads?</p>
 
                     <div class="form__items">
-                        <div ng-include="'views/selfie/campaigns/modules/demographics.html'"></div>
+                        <selfie-demographics campaign="campaign"></selfie-demographics>
                     </div>
 
                     <div class="ui__btnHolder">

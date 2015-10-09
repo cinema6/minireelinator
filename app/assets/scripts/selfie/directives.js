@@ -252,6 +252,222 @@ function( angular ) {
             });
         }])
 
+        .directive('selfieContentCategories', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    categories: '=',
+                    campaign: '='
+                },
+                templateUrl: 'views/selfie/directives/categories.html',
+                controller: 'SelfieContentCategoriesController',
+                controllerAs: 'SelfieContentCategoriesCtrl'
+            };
+        }])
+
+        .controller('SelfieContentCategoriesController', ['$scope',
+        function                                         ( $scope ) {
+            var SelfieCategoriesCtrl = this,
+                campaign = $scope.campaign,
+                categories = $scope.categories;
+
+            this.category = categories.filter(function(category) {
+                return campaign.contentCategories.primary === category.name;
+            })[0] || null;
+
+            $scope.$watch(function() {
+                return SelfieCategoriesCtrl.category;
+            }, function(newCat, oldCat) {
+                if (newCat === oldCat) { return; }
+
+                campaign.contentCategories.primary = newCat.name;
+            });
+        }])
+
+        .directive('selfieInterests', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    categories: '=',
+                    campaign: '='
+                },
+                templateUrl: 'views/selfie/directives/interests.html',
+                controller: 'SelfieInterestsController',
+                controllerAs: 'SelfieInterestsCtrl'
+            };
+        }])
+
+        .controller('SelfieInterestsController', ['$scope',
+        function                                 ( $scope ) {
+            var SelfieInterestsCtrl = this,
+                campaign = $scope.campaign,
+                categories = $scope.categories;
+
+            this.interests = categories.filter(function(category) {
+                return campaign.targeting.interests.indexOf(category.name) > -1;
+            });
+
+            $scope.$watch(function() {
+                return SelfieInterestsCtrl.interests;
+            }, function(newInterests, oldInterests) {
+                if (newInterests === oldInterests) { return; }
+
+                campaign.targeting.interests = newInterests.map(function(interest) {
+                    return interest.name;
+                });
+            });
+        }])
+
+        .directive('selfieGeotargeting', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    campaign: '='
+                },
+                templateUrl: 'views/selfie/directives/geotargeting.html',
+                controller: 'SelfieGeotargetingController',
+                controllerAs: 'SelfieGeotargetingCtrl'
+            };
+        }])
+
+        .controller('SelfieGeotargetingController', ['$scope','GeoService',
+        function                                    ( $scope , GeoService ) {
+            var SelfieGeotargetingCtrl = this,
+                campaign = $scope.campaign;
+
+            this.stateOptions = GeoService.usa.map(function(state) {
+                return {
+                    state: state,
+                    country: 'usa'
+                };
+            });
+
+            this.dmaOptions = GeoService.dmas;
+
+            // we filter the options and use only the ones saved on the campaign
+            this.states = this.stateOptions.filter(function(option) {
+                return campaign.targeting.geo.states.filter(function(state) {
+                    return option.state === state;
+                }).length > 0;
+            });
+
+            // we watch the geo choices and save an array of states
+            $scope.$watch(function() {
+                return SelfieGeotargetingCtrl.states;
+            }, function(newStates, oldStates) {
+                if (newStates === oldStates) { return; }
+
+                campaign.targeting.geo.states = newStates.map(function(state) {
+                    return state.state;
+                });
+            });
+        }])
+
+        .directive('selfieDemographics', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    campaign: '='
+                },
+                templateUrl: 'views/selfie/directives/demographics.html',
+                controller: 'SelfieDemographcisController',
+                controllerAs: 'SelfieDemographicsCtrl'
+            };
+        }])
+
+        .controller('SelfieDemographcisController', ['DemographicsService',
+        function                                    ( DemographicsService ) {
+            this.ageOptions = DemographicsService.ages;
+            this.incomeOptions = DemographicsService.incomes;
+            this.genderOptions = ['Male','Female'];
+        }])
+
+        .directive('selfieBudget', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    campaign: '='
+                },
+                templateUrl: 'views/selfie/directives/budget.html',
+                controller: 'SelfieBudgetController',
+                controllerAs: 'SelfieBudgetCtrl'
+            };
+        }])
+
+        .controller('SelfieBudgetController', ['$scope',
+        function                              ( $scope ) {
+            var SelfieBudgetCtrl = this,
+                campaign = $scope.campaign,
+                validation = $scope.validation || {};
+
+            this.budget = campaign.pricing.budget || null;
+            this.limit = campaign.pricing.dailyLimit || null;
+
+            Object.defineProperties(this, {
+                cpv: {
+                    get: function() {
+                        var hasInterests = campaign.targeting.interests.length,
+                            hasStates = campaign.targeting.geo.states.length,
+                            hasDmas = campaign.targeting.geo.dmas.length;
+
+                        return 50 + ([hasInterests, hasStates, hasDmas]
+                            .filter(function(bool) { return bool; }).length * 0.5);
+                    }
+                },
+                validBudget: {
+                    get: function() {
+                        var budget = parseInt(this.budget);
+
+                        return !budget || (budget > 50 && budget < 20000);
+                    }
+                },
+                dailyLimitError: {
+                    get: function() {
+                        var budget = parseInt(this.budget),
+                            max = parseInt(this.limit);
+
+                        if (max && !budget) {
+                            return 'Please enter your Total Budget first';
+                        }
+
+                        if (max < budget * 0.015) {
+                            return 'Must be greater than 1.5% of the Total Budget';
+                        }
+
+                        if (max > budget) {
+                            return 'Must be less than Total Budget';
+                        }
+
+                        return false;
+                    }
+                }
+            });
+
+            // watch the budget and limit but only add them to the campaign
+            // if they're valid so no bad values get autosaved
+            $scope.$watchCollection(function() {
+                return [
+                    SelfieBudgetCtrl.budget,
+                    SelfieBudgetCtrl.limit
+                ];
+            }, function(params, oldParams) {
+                if (params === oldParams) { return; }
+
+                var Ctrl = SelfieBudgetCtrl,
+                    budget = params[0],
+                    limit = params[1];
+
+                if (Ctrl.validBudget && !Ctrl.dailyLimitError) {
+                    campaign.pricing.budget = params[0];
+                    campaign.pricing.dailyLimit = params[1];
+
+                    validation.budget = !!budget && !!limit;
+                } else {
+                    validation.budget = false;
+                }
+            });
+        }])
+
         .filter('videoService', [function() {
             return function(service) {
                 switch (service) {
