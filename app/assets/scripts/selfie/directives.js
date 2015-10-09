@@ -252,7 +252,7 @@ function( angular ) {
             });
         }])
 
-        .directive('selfieContentCategories', [function() {
+        .directive('selfieCategories', [function() {
             return {
                 restrict: 'E',
                 scope: {
@@ -260,12 +260,12 @@ function( angular ) {
                     campaign: '='
                 },
                 templateUrl: 'views/selfie/directives/categories.html',
-                controller: 'SelfieContentCategoriesController',
-                controllerAs: 'SelfieContentCategoriesCtrl'
+                controller: 'SelfieCategoriesController',
+                controllerAs: 'SelfieCategoriesCtrl'
             };
         }])
 
-        .controller('SelfieContentCategoriesController', ['$scope',
+        .controller('SelfieCategoriesController', ['$scope',
         function                                         ( $scope ) {
             var SelfieCategoriesCtrl = this,
                 campaign = $scope.campaign,
