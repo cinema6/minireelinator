@@ -109,8 +109,7 @@ module.exports = function(http) {
                 created: currentTime,
                 user: user.id,
                 org: user.org,
-                lastUpdated: currentTime,
-                status: 'new'
+                lastUpdated: currentTime
             });
 
         grunt.file.write(objectPath('campaigns', id), JSON.stringify(campaign, null, '    '));

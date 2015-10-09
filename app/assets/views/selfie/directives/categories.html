@@ -1,0 +1,17 @@
+<fieldset class="form__item">
+    <select c6-select-box config="{placeholder:'*'}" ng-model="SelfieCategoriesCtrl.category" ng-options="category.label for category in categories" class="form__selectBox form__selectBox--single" id="c6-categories"></select>
+    <label class="form__label" for="c6-categories">
+        <i class="fa fa-times ui--error"></i>
+        Campaign Categorization
+    </label>
+    <div class="form__helpBox form__helpBox--right">
+        <div class="form__helpText">
+            Categorize your creative. Please choose your category preferences here. Use 'Ctl/Cmd' or 'Shift' to select multiple items.
+        </div>
+    </div>
+    <div class="form__errorBox">
+        <p class="form__errorMsg">
+            <i class="fa fa-exclamation-triangle"></i> Error message goes here
+        </p>
+    </div>
+</fieldset>

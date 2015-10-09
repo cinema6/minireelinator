@@ -12,7 +12,10 @@ define(['app'], function(appModule) {
 
         function compileCtrl() {
             $scope.$apply(function() {
-                SelfieGeotargetingCtrl = $controller('SelfieGeotargetingController', { $scope: $scope, GeoService: GeoService });
+                SelfieGeotargetingCtrl = $controller('SelfieGeotargetingController', {
+                    $scope: $scope,
+                    GeoService: GeoService
+                });
             });
         }
 
@@ -24,9 +27,12 @@ define(['app'], function(appModule) {
                 $controller = $injector.get('$controller');
 
                 campaign = {
-                    pricing: {},
-                    geoTargeting: [],
-                    categories: []
+                    targeting: {
+                        geo: {
+                            states: [],
+                            dmas: []
+                        }
+                    }
                 };
 
                 GeoService = {
@@ -50,28 +56,28 @@ define(['app'], function(appModule) {
         });
 
         describe('properties', function() {
-            describe('geoOptions', function() {
+            describe('stateOptions', function() {
                 it('should contain the U.S. States', function() {
-                    expect(SelfieGeotargetingCtrl.geoOptions).toContain({
+                    expect(SelfieGeotargetingCtrl.stateOptions).toContain({
                         state: 'Alabama', country: 'usa'
                     });
 
-                    expect(SelfieGeotargetingCtrl.geoOptions).toContain({
+                    expect(SelfieGeotargetingCtrl.stateOptions).toContain({
                         state: 'Arizona', country: 'usa'
                     });
                 });
             });
 
-            describe('geo', function() {
+            describe('states', function() {
                 it('should be the state(s) from the campaign', function() {
-                    expect(SelfieGeotargetingCtrl.geo).toEqual([]);
+                    expect(SelfieGeotargetingCtrl.states).toEqual([]);
 
-                    campaign.geoTargeting.push({state: 'Arizona'});
-                    campaign.geoTargeting.push({state: 'Alabama'});
+                    campaign.targeting.geo.states.push('Arizona');
+                    campaign.targeting.geo.states.push('Alabama');
 
                     compileCtrl();
 
-                    expect(SelfieGeotargetingCtrl.geo).toEqual([
+                    expect(SelfieGeotargetingCtrl.states).toEqual([
                         {
                             state: 'Alabama', country: 'usa'
                         },
@@ -84,21 +90,21 @@ define(['app'], function(appModule) {
         });
 
         describe('$watchers', function() {
-            describe('geo', function() {
-                it('should set the geoTargeting on the campaign', function() {
-                    expect(campaign.geoTargeting).toEqual([]);
+            describe('states', function() {
+                it('should set the states on the campaign', function() {
+                    expect(campaign.targeting.geo.states).toEqual([]);
 
                     $scope.$apply(function() {
-                        SelfieGeotargetingCtrl.geo = [ SelfieGeotargetingCtrl.geoOptions[2],  SelfieGeotargetingCtrl.geoOptions[3]];
+                        SelfieGeotargetingCtrl.states = [ SelfieGeotargetingCtrl.stateOptions[2],  SelfieGeotargetingCtrl.stateOptions[3]];
                     });
 
-                    expect(campaign.geoTargeting).toEqual([{ state: 'Arizona' }, { state: 'Arkansas' }]);
+                    expect(campaign.targeting.geo.states).toEqual(['Arizona', 'Arkansas']);
 
                     $scope.$apply(function() {
-                        SelfieGeotargetingCtrl.geo = [];
+                        SelfieGeotargetingCtrl.states = [];
                     });
 
-                    expect(campaign.geoTargeting).toEqual([]);
+                    expect(campaign.targeting.geo.states).toEqual([]);
                 });
             });
         });

@@ -57,7 +57,8 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     },
                     org: {
                         name: 'My Org'
-                    }
+                    },
+                    company: 'My Company, Inc.'
                 };
                 newCampaignState = c6State.get('Selfie:NewCampaign');
             });
@@ -79,12 +80,26 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     advertiserId: 'a-123',
                     customerId: 'cus-123',
                     name: null,
-                    categories: [],
                     cards: [],
                     pricing: {},
-                    geoTargeting: [],
                     status: 'draft',
-                    application: 'selfie'
+                    application: 'selfie',
+                    advertiserDisplayName: selfieState.cModel.company,
+                    contentCategories: {
+                        primary: null
+                    },
+                    targeting: {
+                        geo: {
+                            states: [],
+                            dmas: []
+                        },
+                        demographics: {
+                            age: [],
+                            gender: [],
+                            income: []
+                        },
+                        interests: []
+                    }
                 });
             });
 

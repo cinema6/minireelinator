@@ -16,6 +16,9 @@
   * [FEATURE]: (Selfie) Add Sign Up Success page
   * [FIX]: (Selfie) Ensure that the correct target app is sent when requesting a password reset
   * [FIX]: (Selfie) Show appropriate reason/message when redirected to Login page
+  * [FEATURE]: (Selfie) Add Content Categorization for campaign creation
+  * [FIX]: (Selfie) When creating a campaign use default the sponsor name to be the user's company name
+  * [FEATURE]: (Selfie) Add targeting for Demographics, DMAs and Interests
 
 ## v1.21.0 (September 30, 2015)
 * *[v1.21.0.rc1]*
