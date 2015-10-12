@@ -66,7 +66,24 @@
         <li class="campaign__item campaign__item--{{$this.status}} clearfix"
         ng-repeat="$this in campaigns track by $this.id"
         c6-sref="{{SelfieCampaignsCtrl.editStateFor($this)}}" c6-models="[$this]" c6-params="{}" >
-
+            
+            <!--popoverItem__group ends-->
+            <div class="popoverItem__group budget__popover fade left in editable-container editable-popup" style="top: -20px; left: auto; right: 120px; display: block;">
+               <div class="arrow"></div>
+               <div class="popoverItem__groupContent budget__popoverContent">
+                  <div class="form__items">
+                     <form class="form-inline" style="">
+                        <div class="control-group form-group budget__popoverItems">                                                         
+                                 <div class="budget__popoverItem--edit"><fieldset class="form__item"><label>Campaign Budget<input type="text" name="city" class="input-small"><span class="input__unit">$</span></label></fieldset></div>
+                                 <div class="budget__popoverItem--edit"><fieldset class="form__item"><label>Daily Max<input type="text" name="street" class="input-small"><span class="input__unit">$</span></label></fieldset></div>
+                                 <button type="submit" class="action__btn action__btn--small editable-submit">Update</button>
+                              <p style="margin: 0;">Your calculated cost per 1000 video plays is $50.00. A video must play for a minimum of 3 seconds to count as a play.</p>                           
+                        </div>
+                     </form>
+                  </div>
+               </div>
+            </div><!--popoverItem__group ends-->
+        
             <div class="campaign__column column__status">
                 <span class="campaign__status">{{$this.status}}</span>
                 <span class="campaign__date">{{$this.created | date:'M/d/yyyy'}}</span>
@@ -98,32 +115,32 @@
                 <span class="campaign__viewTotal">
                     <i class="fa fa-play-circle"></i> 1,235,032
                 </span>
-                <span class="campaign__viewDelta">
+                <!--<span class="campaign__viewDelta">
                     <i class="fa fa-arrow-circle-up"></i> 4,587
                 </span>
-                <div class="campaign__viewChart">&nbsp;</div>
+                <div class="campaign__viewChart">&nbsp;</div>-->
             </div><!--.column__totalViews-->
 
             <div class="campaign__column column__totalSpending">
                 <span class="campaign__spendTotal">
                     <strong>$</strong> 361,051.39
                 </span>
-                <span class="campaign__spendDelta">
+                <!--<span class="campaign__spendDelta">
                     <i class="fa fa-arrow-circle-up"></i> $1,239.25
                 </span>
-                <div class="campaign__viewChart">&nbsp;</div>
+                <div class="campaign__viewChart">&nbsp;</div>-->
             </div><!--.column__totalSpending-->
 
             <div class="campaign__column column__budget">
                 <div class="campaign__budgetInfo">
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">T<span class="fullText">otal</span>:</span>
-                        <span ng-if="$this.pricing.budget"><strong>$</strong> {{$this.pricing.budget | number}}</span>
+                        <span ng-if="$this.pricing.budget" class="campaign__budgetEdit"><strong>$</strong> {{$this.pricing.budget | number}}</span>
                         <span ng-if="!$this.pricing.budget">--</span>
                     </span>
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">D<span class="fullText">aily</span>:</span>
-                        <span ng-if="$this.pricing.dailyLimit"><strong>$</strong> {{$this.pricing.dailyLimit | number}}</span>
+                        <span ng-if="$this.pricing.dailyLimit" class="campaign__budgetEdit"><strong>$</strong> {{$this.pricing.dailyLimit | number}}</span>
                         <span ng-if="!$this.pricing.dailyLimit">--</span>
                     </span>
                 </div>

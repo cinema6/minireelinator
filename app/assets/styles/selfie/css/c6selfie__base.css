@@ -1064,7 +1064,135 @@ fa,
             border: 1px solid #ddd;
             padding: 0.25em 0;
         }
-        
+
+/*  ================================================
+    UI Elements classes
+    ================================================ */
+     /*  menu: clickDrop  */
+            .ui__clickDropMenu {
+                position:absolute; z-index: 1;
+                background:#fff;
+                border:1px solid #ddd;
+                max-height:14.625em;
+                overflow: auto;
+                box-shadow: 0 0 10px #ccc;
+                padding-left: 0;
+            }
+                .twoCol .ui__clickDropMenu {
+                    width:46%;
+                }
+
+                .twoCol .ui__clickDrop {
+                    width:82%;
+                    text-align: left;
+                }
+                .twoCol .ui__clickDrop:after {
+                    float:right;
+                }
+                .ui__clickDropBtn {
+                    display: block;
+                    border:0; margin:0; padding:0.5rem 1rem;
+                    font-size:0.8125em;
+                    background:none;
+                    width:10em;
+                    text-align: left;
+                }
+                    .ui__clickDropBtn label {
+                        width: 100%;
+                        display: block;
+                    }
+                    .ui__clickDropBtn input {
+                        vertical-align: middle;
+                    }
+                    .miniReel__status--wide .ui__clickDropBtn {
+                        width:20em;
+                        font-size:1em;
+                    }
+                    .twoCol .ui__clickDropBtn,
+                    .ui__clickDropBtn--full {
+                        width:100%;
+                    }
+                    .ui__clickDropBtn:hover {
+                        background:#2398db;
+                        color:#fff;
+                    }
+                    .ui__clickDropBtn--current {
+                        background:#ddd;
+                    }
+
+                    .ui__clickDropBtnAction,
+                    .ui__clickDropBtnAction:focus {
+                        width:4em;
+                        margin:0.5em;
+                    }
+
+/* filter row styles*/
+        .sortBar__btn--Dropdown:hover {
+         color: #00a2de;
+     }
+
+    /*  popover  */
+    .popoverItem__group {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1010;
+        display: none;
+        max-width: 600px;
+        padding: 1px;
+        text-align: left;
+        white-space: normal;
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        -webkit-box-shadow: 0 0 10px #ccc;
+        box-shadow: 0 0 10px #ccc;
+        background-clip: padding-box;
+    }
+        .popoverItem__group-title {
+            padding: 8px 14px;
+            margin: 0;
+            font-size: 14px;
+            font-weight: normal;
+            line-height: 18px;
+            background-color: #f7f7f7;
+            border-bottom: 1px solid #ebebeb;
+            border-radius: 5px 5px 0 0;
+        }
+        .popoverItem__groupContent {
+            padding: 10px;
+        }
+        .popoverItem__group.left {
+            margin-left: -10px;
+        }
+            .popoverItem__group.left .arrow {
+                top: 50%;
+                right: -22px;
+                margin-top: -11px;
+                border-left-color: #ccc;
+                border-left-color: rgba(115, 115, 115, 0.10);
+                border-right-width: 0;
+                border-width: 11px;
+            }
+        .popoverItem__group .arrow, .popoverItem__group .arrow:after {
+            position: absolute;
+            display: block;
+            width: 0;
+            height: 0;
+            border-color: transparent;
+            border-style: solid;
+        }
+            .popoverItem__group .arrow:after {
+                border-width: 10px;
+                content: "";
+            }
+            .popoverItem__group.left .arrow:after {
+                right: 1px;
+                bottom: -10px;
+                border-left-color: #ffffff;
+                border-right-width: 0;
+                content: " ";
+            }        
 /*  ================================================
     campaign list classes
     ================================================ */
@@ -1227,76 +1355,31 @@ fa,
                     line-height:1.5em;
                     padding-left:2.5em;
                 }
-
-                
-/*  ================================================
-    UI Elements classes
-    ================================================ */
-     /*  menu: clickDrop  */
-            .ui__clickDropMenu {
-                position:absolute; z-index: 1;
-                background:#fff;
-                border:1px solid #ddd;
-                max-height:14.625em;
-                overflow: auto;
-                box-shadow: 0 0 10px #ccc;
-                padding-left: 0;
+            .campaign__budgetEdit {
+                border-bottom: 1px dotted #444;
             }
-                .twoCol .ui__clickDropMenu {
-                    width:46%;
-                }
+            .campaign__budgetInfo:hover .campaign__budgetEdit {
+                color: #00c0ff;
+                border-bottom: 1px solid #00c0ff;
+            }
 
-                .twoCol .ui__clickDrop {
-                    width:82%;
-                    text-align: left;
-                }
-                .twoCol .ui__clickDrop:after {
-                    float:right;
-                }
-                .ui__clickDropBtn {
-                    display: block;
-                    border:0; margin:0; padding:0.5rem 1rem;
-                    font-size:0.8125em;
-                    background:none;
-                    width:10em;
-                    text-align: left;
-                }
-                    .ui__clickDropBtn label {
-                        width: 100%;
-                        display: block;
-                    }
-                    .ui__clickDropBtn input {
-                        vertical-align: middle;
-                    }
-                    .miniReel__status--wide .ui__clickDropBtn {
-                        width:20em;
-                        font-size:1em;
-                    }
-                    .twoCol .ui__clickDropBtn,
-                    .ui__clickDropBtn--full {
-                        width:100%;
-                    }
-                    .ui__clickDropBtn:hover {
-                        background:#2398db;
-                        color:#fff;
-                    }
-                    .ui__clickDropBtn--current {
-                        background:#ddd;
-                    }
-
-                    .ui__clickDropBtnAction,
-                    .ui__clickDropBtnAction:focus {
-                        width:4em;
-                        margin:0.5em;
-                    }
-
-/* filter row styles*/
-        .sortBar__btn--Dropdown:hover {
-         color: #00a2de;
-     }
-
-
-
+    /*Edit Budget Popover*/
+    .budget__popoverItem--edit {
+        display: inline-block;
+    }
+        .budget__popoverItem--edit input,.budget__popoverItem--edit input:focus {
+            width: 130px;
+            margin: 5px;
+            padding: 5px;
+            border: 0;
+            border-bottom: 2px solid #444;
+            font-size: 1.25em;
+            text-align: center;
+        }
+            .budget__popoverItem--edit input:focus, .form__item--sub .form__textBox:focus {
+                border-bottom: 2px solid #00c0ff;
+                background: #fff;
+            }
 
 /*  ================================================
     tocNav__group classes
