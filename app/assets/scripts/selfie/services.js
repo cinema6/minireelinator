@@ -7,10 +7,8 @@ function( angular , c6uilib ) {
         toJson = angular.toJson,
         isDefined = angular.isDefined,
         ngCopy = angular.copy,
-        isUndefined = angular.isUndefined,
         forEach = angular.forEach,
-        isObject = angular.isObject,
-        isFunction = angular.isFunction;
+        isObject = angular.isObject;
 
     function deepExtend(target, extension) {
         forEach(extension, function(extensionValue, prop) {
@@ -28,17 +26,11 @@ function( angular , c6uilib ) {
 
     return angular.module('c6.app.selfie.services', [c6uilib.name])
         .service('CampaignService', ['cinema6','c6State','MiniReelService','$q',
-        function                    ( cinema6 , c6State , MiniReelService , $q ) {
-            var _service = {};
-
-            function copy(def) {
-                return function(data, key) {
-                    var value = data[key];
-
-                    return isUndefined(value) ?
-                        def : ngCopy(value);
-                };
-            }
+                                     'NormalizationService',
+        function                    ( cinema6 , c6State , MiniReelService , $q ,
+                                      NormalizationService ) {
+            var _service = {},
+                copy = NormalizationService.copy;
 
             function getAppUser() {
                 var application = c6State.get('Application'),
@@ -134,22 +126,12 @@ function( angular , c6uilib ) {
                         }
                     };
 
-                function recurse(templateLayer, objLayer) {
-                    forEach(templateLayer, function(value, key) {
-
-                        if (isFunction(value)) {
-                            objLayer[key] = value(objLayer, key);
-                        } else {
-                            objLayer[key] = objLayer[key] || {};
-                            recurse(value, objLayer[key]);
-                        }
-                    });
-
-                    return objLayer;
-                }
-
                 function ensureDefaults(campaign) {
-                    return $q.all(recurse(template, campaign));
+                    // passing campaign model as data source and target because
+                    // we need to operate on the actual db model
+                    return $q.all(
+                        NormalizationService.normalize(template, campaign, campaign)
+                    );
                 }
 
                 return cinema6.db.find('selfieCampaign', id)

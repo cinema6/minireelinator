@@ -9,6 +9,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
         isDefined = angular.isDefined,
         extend = angular.extend,
         isFunction = angular.isFunction,
+        isObject = angular.isObject,
         fromJson = angular.fromJson,
         toJson = angular.toJson,
         isArray = angular.isArray;
@@ -1889,17 +1890,88 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
         }])
 
+        .service('NormalizationService', [function() {
+            var ngCopy = angular.copy;
+
+            function recurse(template, data, target, raw) {
+                forEach(template, function(value, key) {
+                    if (isFunction(value)) {
+                        target[key] = value.call(target, data, key, raw);
+                    } else if (isObject(value)) {
+                        target[key] = data[key] || {};
+                        recurse(value, data[key], target[key], raw);
+                    } else if (isArray(value)) {
+                        target[key] = data[key] || [];
+                        recurse(value, data[key], target[key], raw);
+                    }
+                });
+
+                return target;
+            }
+
+            function scrub(template, target) {
+                forEach(target, function(value, key) {
+                    if (!template.hasOwnProperty(key)) {
+                        delete target[key];
+                    }
+                });
+
+                return target;
+            }
+
+            this.copy = function(def) {
+                return function(data, key) {
+                    var value = data[key];
+
+                    return isUndefined(value) ?
+                        def : ngCopy(value);
+                };
+            };
+
+            this.value = function(val) {
+                return function() {
+                    return val;
+                };
+            };
+
+            this.normalize = function(template, data, target, prop, clean) {
+                var raw = ngCopy(data);
+
+                // ensure we have an object to build
+                target = target || {};
+
+                // you can define a specific property that you would
+                // like to operate on. However, each function property
+                // will still receive the full, raw object in case it
+                // needs data from outside the specified property
+                if (prop) {
+                    data = data[prop] || {};
+                    target = target[prop] || {};
+                }
+
+                // you can pass a boolean as the 5th param and we'll
+                // do the normalization and then delete any propeties
+                // that were not in the template. If this is false then
+                // we'll leave any properties that were on the target
+                return !clean ?
+                    recurse(template, data, target, raw) :
+                    scrub(template, recurse(template, data, target, raw));
+            };
+        }])
+
         .service('MiniReelService', ['$window','cinema6','$q','VoteService','c6State',
                                      'SettingsService','VideoService', 'ThumbnailService',
                                      'ImageService', 'OpenGraphService',
                                      'CollateralUploadService', 'InstagramService',
-                                     'c6UrlParser',
+                                     'c6UrlParser','NormalizationService',
         function                    ( $window , cinema6 , $q , VoteService , c6State ,
                                       SettingsService , VideoService ,  ThumbnailService,
                                       ImageService,   OpenGraphService,
                                       CollateralUploadService ,  InstagramService,
-                                      c6UrlParser ) {
-            var ngCopy = angular.copy;
+                                      c6UrlParser , NormalizationService ) {
+            var ngCopy = angular.copy,
+                copy = NormalizationService.copy,
+                value = NormalizationService.value;
 
             var self = this,
                 app = c6State.get('Application'),
@@ -1917,17 +1989,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             /******************************************************\
              * * * * * * * * * * HELPER FUNCTIONS * * * * * * * * *
             \******************************************************/
-            // Copy the value from the raw source with an optional
-            // default.
-            function copy(def) {
-                return function(data, key) {
-                    var value = data[key];
-
-                    return isUndefined(value) ?
-                        def : ngCopy(value);
-                };
-            }
-
             // Used for copying the start/end times off of the
             // cards. This is needed because the start/end for
             // Dailymotion must be "undefined" rather than
@@ -1943,18 +2004,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 };
             }
 
-            // Simply use the provided value.
-            function value(val) {
-                return function() {
-                    return val;
-                };
-            }
-
             function makeCard(rawData, base) {
                 var template, dataTemplates, articleDataTemplate,
                     imageDataTemplate, videoDataTemplate,
                     instagramDataTemplate,
-                    dataTemplate,
                     card = base || {
                         data: {}
                     };
@@ -2238,26 +2291,20 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     wildcard: {}
                 };
 
-                /******************************************************\
-                 * * * * * * * * * READ CONFIGURATION * * * * * * * * *
-                \******************************************************/
-                // Use the template defined above to populate the
-                // properties of the card.
-                forEach(template, function(fn, key) {
-                    card[key] = fn.call(card, rawData, key, rawData);
-                });
+                // normalize the card based on templates
+                card = NormalizationService.normalize(
+                    template,
+                    rawData,
+                    card
+                );
 
-                // Use the dataTemplates defined above to populate
-                // the data object of the card.
-                dataTemplate = dataTemplates[card.type];
-                forEach(dataTemplate, function(fn, key) {
-                    card.data[key] = fn.call(card.data, (rawData.data || {}), key, rawData);
-                });
-                forEach(card.data, function(value, key) {
-                    if (!dataTemplate.hasOwnProperty(key)) {
-                        delete card.data[key];
-                    }
-                });
+                card.data = NormalizationService.normalize(
+                    dataTemplates[card.type],
+                    rawData,
+                    card,
+                    'data',
+                    true
+                );
 
                 return card;
             }
