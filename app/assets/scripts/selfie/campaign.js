@@ -797,10 +797,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:ManageCampaign', ['cinema6','c6State',
-            function                                       ( cinema6 , c6State ) {
+            c6StateProvider.state('Selfie:ManageCampaign', ['cinema6','c6State','CampaignService',
+            function                                       ( cinema6 , c6State , CampaignService ) {
                 this.model = function(params) {
-                    return cinema6.db.find('selfieCampaign', params.campaignId);
+                    return CampaignService.find(params.campaignId);
                 };
 
                 this.afterModel = function(campaign) {
