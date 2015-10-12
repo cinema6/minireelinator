@@ -29,9 +29,6 @@ function( angular , c6uilib ) {
     return angular.module('c6.app.selfie.services', [c6uilib.name])
         .service('CampaignService', ['cinema6','c6State','MiniReelService','$q',
         function                    ( cinema6 , c6State , MiniReelService , $q ) {
-            var application = c6State.get('Application'),
-                app = c6State.get(application.name);
-
             var _service = {};
 
             function copy(def) {
@@ -43,8 +40,15 @@ function( angular , c6uilib ) {
                 };
             }
 
+            function getAppUser() {
+                var application = c6State.get('Application'),
+                    app = c6State.get(application.name);
+
+                return app.cModel;
+            }
+
             _service.campaign = function() {
-                var user = app.cModel,
+                var user = getAppUser(),
                     advertiser = user.advertiser,
                     customer = user.customer;
 
@@ -71,14 +75,12 @@ function( angular , c6uilib ) {
                             income: []
                         },
                         interests: []
-                    },
-                    categories: [],
-                    geoTargeting: []
+                    }
                 });
             };
 
             _service.card = function() {
-                var user = app.cModel,
+                var user = getAppUser(),
                     advertiser = user.advertiser,
                     card = cinema6.db.create('card', MiniReelService.createCard('video'));
 
@@ -113,7 +115,7 @@ function( angular , c6uilib ) {
             };
 
             this.find = function(id) {
-                var user = app.cModel,
+                var user = getAppUser(),
                     template = {
                         pricing: copy({}),
                         advertiserDisplayName: copy(user.company),
@@ -129,9 +131,7 @@ function( angular , c6uilib ) {
                                 income: copy([])
                             },
                             interests: copy([])
-                        },
-                        categories: copy([]),
-                        geoTargeting: copy([])
+                        }
                     };
 
                 function recurse(templateLayer, objLayer) {
