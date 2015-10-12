@@ -8,10 +8,22 @@
         }
     ],
     "name": "Captain Morgan Very Important Campaign",
-    "categories": [],
     "pricing": {},
-    "geoTargeting": [],
     "status": "draft",
+    "targeting": {
+        "geo": {
+            "states":[],
+            "dmas": []
+        },
+        "demographics": {
+            "age":[],
+            "gender":[],
+            "income":[]
+        },
+        "interests": []
+    },
+    "contentCategories": {},
+    "advertiserDisplayName": "Diageo",
     "created": "2015-08-06T15:58:40.901Z",
     "user": "u-35b096c999711b",
     "org": "o-a6fd7298acb6fa",

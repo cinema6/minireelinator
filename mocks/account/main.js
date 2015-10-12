@@ -81,6 +81,10 @@ module.exports = function(http) {
         }
     });
 
+    http.whenPOST('/api/account/users/resendActivation', function(request) {
+        this.respond(204);
+    });
+
     http.whenPOST('/api/account/users/signup', function(request) {
         var id = genId('u'),
             currentTime = (new Date()).toISOString(),
@@ -95,6 +99,38 @@ module.exports = function(http) {
         grunt.file.write(objectPath('users', id), JSON.stringify(user, null, '    '));
 
         this.respond(201, extend(user, { id: id }));
+    });
+
+    http.whenPOST('/api/account/user/email', function(request) {
+        var body = request.body,
+            email = body.email,
+            password = body.password,
+            newEmail = body.newEmail,
+            userCache = require('../auth/user_cache');
+
+        if (!email || !password || !newEmail) {
+            this.respond(403, 'Forbidden');
+        } else if (email !== 'selfie@cinema6.com') {
+            this.respond(401, 'Not Authorized');
+        } else {
+            this.respond(201, userCache.user);
+        }
+    });
+
+    http.whenPOST('/api/account/user/password', function(request) {
+        var body = request.body,
+            email = body.email,
+            password = body.password,
+            newPassword = body.newPassword,
+            userCache = require('../auth/user_cache');
+
+        if (!email || !password || !newPassword) {
+            this.respond(403, 'Forbidden');
+        } else if (email !== 'selfie@cinema6.com') {
+            this.respond(401, 'Not Authorized');
+        } else {
+            this.respond(201, userCache.user);
+        }
     });
 
     /***********************************************************************************************

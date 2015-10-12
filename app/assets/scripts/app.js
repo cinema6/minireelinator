@@ -1103,6 +1103,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 this.route('/pass/forgot', 'Selfie:ForgotPassword');
                 this.route('/pass/reset', 'Selfie:ResetPassword');
                 this.route('/signup', 'Selfie:SignUp');
+                this.route('/signup/success', 'Selfie:SignUpSuccess');
                 this.route('/confirm', 'Selfie:ConfirmAccount');
 
                 this.state('Login');

@@ -65,6 +65,7 @@ define(['forgot_password'], function(forgotPasswordModule) {
                     ForgotPasswordCtrl.errorMessage = 'FAIL FAIL FAIL!';
 
                     model.email = 'josh@cinema6.com';
+                    model.target = 'portal';
 
                     spyOn(AuthService, 'requestPasswordReset')
                         .and.returnValue(requestPasswordResetDeferred.promise);
@@ -81,7 +82,7 @@ define(['forgot_password'], function(forgotPasswordModule) {
                 });
 
                 it('should request a password reset', function() {
-                    expect(AuthService.requestPasswordReset).toHaveBeenCalledWith(model.email);
+                    expect(AuthService.requestPasswordReset).toHaveBeenCalledWith(model.email, model.target);
                 });
 
                 describe('if the request is successful', function() {

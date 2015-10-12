@@ -36,8 +36,7 @@ define(['app'], function(appModule) {
                     password: '',
                     company: '',
                     firstName: '',
-                    lastName: '',
-                    phone: ''
+                    lastName: ''
                 });
             });
         });

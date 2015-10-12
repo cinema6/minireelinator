@@ -25,6 +25,15 @@ function( angular , c6State  , services   , directives   , campaign   ) {
                         this.state('Selfie:Manage:Campaign');
                     });
                 });
+
+                this.route('/account', 'Selfie:Account', function() {
+                    this.route('/overview', 'Selfie:Account:Overview');
+                    this.route('/email', 'Selfie:Account:Email');
+                    this.route('/details', 'Selfie:Account:Details');
+                    this.route('/password', 'Selfie:Account:Password');
+                    this.route('/payment/methods', 'Selfie:Account:Payment:Methods');
+                    this.route('/payment/history', 'Selfie:Account:Payment:History');
+                });
             });
         }])
 

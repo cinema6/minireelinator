@@ -25,8 +25,9 @@ define(['app'], function(appModule) {
 
                 campaign = {
                     pricing: {},
-                    geoTargeting: [],
-                    categories: []
+                    contentCategories: {
+                        primary: null
+                    }
                 };
 
                 categories = [
@@ -54,34 +55,15 @@ define(['app'], function(appModule) {
         });
 
         describe('properties', function() {
-            describe('categories', function() {
-                it('should include a "None" option', function() {
-                    expect(SelfieCategoriesCtrl.categories[0]).toEqual({
-                        name: 'none', label: 'No Category Targeting'
-                    });
-
-                    expect(SelfieCategoriesCtrl.categories).toContain({
-                        name: 'comedy', label: 'Comedy'
-                    });
-
-                    expect(SelfieCategoriesCtrl.categories).toContain({
-                        name: 'entertainment', label: 'Entertainment'
-                    });
-                });
-            });
-
             describe('category', function() {
-                it('should come from the campaign or default to "None"', function() {
-                    expect(SelfieCategoriesCtrl.category).toEqual({
-                        name: 'none', label: 'No Category Targeting'
-                    });
-                    expect(SelfieCategoriesCtrl.category).toBe(SelfieCategoriesCtrl.categories[0]);
+                it('should come from the campaign or be null', function() {
+                    expect(SelfieCategoriesCtrl.category).toEqual(null);
 
-                    campaign.categories.push('entertainment');
+                    campaign.contentCategories.primary = 'entertainment';
 
                     compileCtrl();
 
-                    expect(SelfieCategoriesCtrl.category).toBe(SelfieCategoriesCtrl.categories[2]);
+                    expect(SelfieCategoriesCtrl.category).toBe(categories[1]);
                 });
             });
         });
@@ -89,19 +71,19 @@ define(['app'], function(appModule) {
         describe('$watchers', function() {
             describe('category', function() {
                 it('should set category on the campaign', function() {
-                    expect(campaign.categories).toEqual([]);
+                    expect(campaign.contentCategories.primary).toEqual(null);
 
                     $scope.$apply(function() {
-                        SelfieCategoriesCtrl.category = SelfieCategoriesCtrl.categories[2];
+                        SelfieCategoriesCtrl.category = categories[1];
                     });
 
-                    expect(campaign.categories).toEqual(['entertainment']);
+                    expect(campaign.contentCategories.primary).toEqual('entertainment');
 
                     $scope.$apply(function() {
-                        SelfieCategoriesCtrl.category = SelfieCategoriesCtrl.categories[0];
+                        SelfieCategoriesCtrl.category = categories[0];
                     });
 
-                    expect(campaign.categories).toEqual([]);
+                    expect(campaign.contentCategories.primary).toEqual('comedy');
                 });
             });
         });

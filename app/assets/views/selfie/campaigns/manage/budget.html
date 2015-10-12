@@ -10,7 +10,7 @@
                 <section class="formSection__group">
                     <div class="form__items">
 
-                        <div ng-include="'views/selfie/campaigns/modules/budget.html'" c6-alias="SelfieCampaignCtrl.validation as validation"></div>
+                        <selfie-budget campaign="campaign" validation="SelfieManageCampaignCtrl.validation"></selfie-budget>
 
                         <div class="ui__btnHolder">
                             <button class="action__btn action__btn--big" ng-disabled="!SelfieManageCampaignCtrl.canSubmit" ng-click="SelfieManageCampaignCtrl.update()">Save Changes</button>

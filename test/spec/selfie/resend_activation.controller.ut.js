@@ -61,6 +61,30 @@ define(['app'], function(appModule) {
 
                     expect(AccountService.resendActivation).toHaveBeenCalled();
                 });
+
+                describe('when resend is successful', function() {
+                    it('should put a success message on the Ctrl', function() {
+                        spyOn(AccountService, 'resendActivation').and.returnValue($q.when(null));
+
+                        $scope.$apply(function() {
+                            SelfieResendActivationCtrl.resend();
+                        });
+
+                        expect(SelfieResendActivationCtrl.model).toEqual('We have sent you an email with a new confirmation link!');
+                    });
+                });
+
+                describe('when resend fails', function() {
+                    it('should put a failure message on the Ctrl', function() {
+                        spyOn(AccountService, 'resendActivation').and.returnValue($q.reject());
+
+                        $scope.$apply(function() {
+                            SelfieResendActivationCtrl.resend();
+                        });
+
+                        expect(SelfieResendActivationCtrl.model).toEqual('There was a problem resending a new activation link');
+                    });
+                });
             });
         });
     });
