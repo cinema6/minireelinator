@@ -20,6 +20,7 @@
   * [FIX]: (Selfie) When creating a campaign use default the sponsor name to be the user's company name
   * [FEATURE]: (Selfie) Add targeting for Demographics, DMAs and Interests
   * [FEATURE]: (Selfie) Add Account Settings pages
+  * [DEV]: (Selfie) Add Campaign Service for normalizing campaign data
 
 ## v1.21.0 (September 30, 2015)
 * *[v1.21.0.rc1]*
