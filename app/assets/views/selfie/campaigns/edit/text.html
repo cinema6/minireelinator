@@ -1,4 +1,17 @@
-<section class="formSection__group" ng-controller="SelfieCampaignTextController as SelfieCampaignTextCtrl" c6-alias="SelfieCampaignCtrl.card as card">
+<div class="grid__item one-whole" id="section_4">
+    <section class="formSection__group">
+        <h1 class="formSection__title">
+        <span class="formSection__number">
+            <span class="formSection__numberText">4</span>
+        </span>
+        <span class="formSection__titleText tk--hdr">Add title, description and links</span>
+        </h1>
+    </section>
+</div>
+
+<div class="grid__item one-third">
+
+    <section class="formSection__group" ng-controller="SelfieCampaignTextController as SelfieCampaignTextCtrl" c6-alias="SelfieCampaignCtrl.card as card">
 
         <div class="form__items">
 
@@ -111,3 +124,9 @@
         </div><!--.ctaPreview__wizard-->
 
     </section><!--.formSection__group-->
+
+</div><!--.grid__item--><!--
+
+--><div class="grid__item two-thirds">
+    <div ng-include="'views/selfie/campaigns/edit/preview.html'"></div>
+</div><!--.grid__item-->

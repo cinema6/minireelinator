@@ -1,0 +1,94 @@
+<div class="pageHolder">
+
+    <div class="pageHeader__group">
+        <div class="mainHeader__group">
+            <h1 class="mainHeader__breadcrumbs tk--hdr">
+                <a c6-sref="Selfie:Account" title="Settings">Settings</a> &nbsp;/&nbsp; Change Email/Username
+            </h1>
+        </div><!--.mainHeader__group-->
+    </div><!--.pageHeader__group-->
+
+    <header class="settingsContent__header">
+        <h2 class="settingsContent__title tk--hdr">Change Email/Username</h2>
+        <span class="settingsContent__subtitle">Update your email</span>
+    </header>
+
+    <div class="gridHolder">
+
+         <div class="grid grid--center">
+            <div class="grid__item one-half">
+                <div class="form__items form--narrow">
+                    <form name="theForm" ng-submit="EmailCtrl.submit()">
+                        <fieldset class="form__item">
+                            <input c6-fill-check class="form__textBox form__fillCheck" ng-model="AccountCtrl.model.email" type="email" id="c6-email" autocomplete="off" ng-trim="false" ng-minlength="4" ng-maxlength="128" ng-pattern="EmailCtrl.pattern" required disabled>
+                            <label class="form__label" for="c6-email">
+                                <i class="fa fa-times ui--error"></i>
+                                Current Email
+                            </label>
+                            <div class="form__helpBox form__helpBox--right">
+                                <div class="form__helpText">
+                                    Please enter your current Email/username
+                                </div>
+                            </div>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                                </p>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="form__item" blur-validate="c6-password">
+                            <input c6-fill-check ng-model="EmailCtrl.password" class="form__textBox form__fillCheck" type="password" id="c6-password" autocomplete="off" required ng-minlength="1" ng-maxlength="128" ng-trim="false">
+                            <label class="form__label" for="c6-password">
+                                <i class="fa fa-times ui--error"></i>
+                                Password
+                            </label>
+                            <div class="form__helpBox form__helpBox--right">
+                                <div class="form__helpText">
+                                    Enter your password
+                                </div>
+                            </div>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i> Your password is required
+                                </p>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="form__item" blur-validate="c6-email-new" ng-class="{'ui--hasError': !theForm.newEmail.$valid }">
+                            <input c6-fill-check ng-model="EmailCtrl.email" class="form__textBox form__fillCheck" type="email" id="c6-email-new" autocomplete="off" ng-trim="false" ng-minlength="4" ng-maxlength="128" name="newEmail" ng-pattern="EmailCtrl.pattern">
+                            <label class="form__label" for="c6-email-new">
+                                <i class="fa fa-times ui--error"></i>
+                                New Email
+                            </label>
+                            <div class="form__helpBox form__helpBox--right">
+                                <div class="form__helpText">
+                                    Please enter the email you wish to change
+                                </div>
+                            </div>
+                            <div class="form__errorBox">
+                                <p class="form__errorMsg">
+                                    <i class="fa fa-exclamation-triangle"></i>
+                                    <span ng-show="theForm.newEmail.$valid">A new email is required</span>
+                                    <span ng-show="theForm.newEmail.$error.maxlength">Too long</span>
+                                    <span ng-show="theForm.newEmail.$error.minlength">Too short</span>
+                                    <span ng-show="theForm.newEmail.$error.pattern">Invalid email address</span>
+                                </p>
+                            </div>
+                        </fieldset>
+
+                        <div>
+                            <span>{{EmailCtrl.lastMessage}}</span>
+                        </div>
+
+                        <div class="ui__btnHolder">
+                            <button ng-disabled="(!theForm.$valid || !EmailCtrl.email || (EmailCtrl.email === AccountCtrl.model.email))" class="action__btn action__btn--wide">Update Email</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

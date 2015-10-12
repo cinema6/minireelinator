@@ -2,7 +2,6 @@
     "application": "selfie",
     "adtechId": "87654322",
     "name": "My New Shop",
-    "categories": ["film","television"],
     "advertiserId": "a-282824b8bb40a2",
     "customerId": "cus-71e725f8bf33d5",
     "cards": [
@@ -13,7 +12,22 @@
         }
     ],
     "pricing": {},
-    "geoTargeting": [],
+    "targeting": {
+        "geo": {
+            "states":[],
+            "dmas": []
+        },
+        "demographics": {
+            "age":[],
+            "gender":[],
+            "income":[]
+        },
+        "interests": []
+    },
+    "contentCategories": {
+        "primary": "comedy"
+    },
+    "advertiserDisplayName": "Cotton USA",
     "created": "2014-12-02T18:03:22.663Z",
     "user": "u-82b0123da9678c",
     "org": "o-a6fd7298acb6fa",
