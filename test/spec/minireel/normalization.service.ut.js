@@ -124,7 +124,7 @@ define(['app'], function(appModule) {
 
                 describe('when no base object is set', function() {
                     it('should set all defaults', function() {
-                        var result = NormalizationService.normalize(template);
+                        var result = NormalizationService.normalize(template, null, null, {args: {}});
 
                         expect(result).toEqual({
                             id: '12345',
@@ -160,7 +160,7 @@ define(['app'], function(appModule) {
                             name: 'My Name!'
                         };
 
-                        result = NormalizationService.normalize(template, base);
+                        result = NormalizationService.normalize(template, base, null, {args: {}});
                     });
 
                     it('should return a new object', function() {
@@ -202,7 +202,7 @@ define(['app'], function(appModule) {
                             }
                         };
 
-                        result = NormalizationService.normalize(template, null, target);
+                        result = NormalizationService.normalize(template, null, target, {args: {}});
                     });
 
                     it('should return the target', function() {
@@ -246,7 +246,7 @@ define(['app'], function(appModule) {
                             }
                         };
 
-                        var result = NormalizationService.normalize(template, rawObj.card, rawObj.card, rawObj);
+                        var result = NormalizationService.normalize(template, rawObj.card, rawObj.card, {args: rawObj});
 
                         expect(result).toBe(rawObj.card);
 
@@ -286,7 +286,7 @@ define(['app'], function(appModule) {
                             extra: 'Shoudl be removed'
                         };
 
-                        var result = NormalizationService.normalize(template, base, base, base, true);
+                        var result = NormalizationService.normalize(template, base, base, {args: {}, clean: true});
 
                         expect(result).toBe(base);
 

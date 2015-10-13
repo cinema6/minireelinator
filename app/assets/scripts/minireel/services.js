@@ -1893,16 +1893,16 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
         .service('NormalizationService', [function() {
             var ngCopy = angular.copy;
 
-            function recurse(template, base, target, raw) {
+            function recurse(template, base, target, config) {
                 forEach(template, function(value, key) {
                     if (isFunction(value)) {
-                        target[key] = value.call(target, base, key, raw);
+                        target[key] = value.apply(target, [base, key].concat(config.args));
                     } else if (isArray(value)) {
                         target[key] = base[key] || [];
-                        recurse(value, (base[key] || []), target[key], raw);
+                        recurse(value, (base[key] || []), target[key], config);
                     } else if (isObject(value)) {
                         target[key] = base[key] || {};
-                        recurse(value, (base[key] || {}), target[key], raw);
+                        recurse(value, (base[key] || {}), target[key], config);
                     }
                 });
 
@@ -1941,18 +1941,42 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 };
             };
 
-            this.normalize = function(template, base, target, raw, clean) {
+            //////////////////////////////////////////////////////////////
+            //
+            // NormalizeService.normalize(template, base, target, config);
+            //
+            //////////////////////////////////////////////////////////////
+            //
+            // template: the normalization template. Each property can be either an
+            //      object, array, or a function that sets the property value when called.
+            //      Each functional property will be called with the base data, the key,
+            //      and any other args from the config object (see below).
+            //
+            // base: the base object with data that we will be normalizing against.
+            //      This object (or properties on it) gets passed as the first argument
+            //      into each functional property defined on the template.
+            //
+            // target: the object to copy properties to. If not defined the normalization
+            //      will create and return a new object. It is possible for the base, target
+            //      and config args to be references to the same object. This can be handy
+            //      when normalizing a DB Model.
+            //
+            // config: a config object that currently supports two properties: 'clean'
+            //      and 'args'. 'clean' is a boolean that will remove all properties from
+            //      the target object that are not defined on the template. 'args' is an
+            //      an array of arguments that will be passed to the functional properties
+            //      defined on the template.
+            //
+            /////////////////////////////////////////////////////////////
+
+            this.normalize = function(template, base, target, config) {
                 base = base || {};
                 target = target || {};
-                raw = raw || {};
+                config = config || {};
 
-                // you can pass a boolean as the 5th param and we'll
-                // do the normalization and then delete any propeties
-                // that were not in the template. If this is false then
-                // we'll leave any properties that were on the target
-                return !clean ?
-                    recurse(template, base, target, raw) :
-                    scrub(template, recurse(template, base, target, raw));
+                return !config.clean ?
+                    recurse(template, base, target, config) :
+                    scrub(template, recurse(template, base, target, config));
             };
         }])
 
@@ -2299,8 +2323,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     dataTemplates[card.type],
                     rawData.data,
                     card.data,
-                    rawData,
-                    true
+                    {
+                        args: [rawData],
+                        clean: true
+                    }
                 );
 
                 return card;
