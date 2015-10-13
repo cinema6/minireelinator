@@ -24,6 +24,7 @@
   * [DESIGN]: (Selfie) Hiding charts from campaign list as they won't be a part of Beta release
   * [DEV]: (Selfie) Add Campaign Service for normalizing campaign data
   * [DEV]: (Selfie) Query campaigns by 'statuses' in the Campaign Dashboard
+  * [DESIGN]: (Selfie) Added styles for Payment Management and Payment History screens
 
 ## v1.21.0 (September 30, 2015)
 * *[v1.21.0.rc1]*
