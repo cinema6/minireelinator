@@ -20,7 +20,7 @@ module.exports = function(http) {
     }
 
     http.whenGET('/api/campaigns', function(request) {
-        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text']),
+        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text', 'statuses']),
             page = withDefaults(mapObject(pluck(request.query, ['limit', 'skip']), parseFloat), {
                 limit: Infinity,
                 skip: 0
@@ -39,6 +39,13 @@ module.exports = function(http) {
                                 return val === campaign[key];
                             })[0];
                         });
+                })
+                .filter(function(campaign) {
+                    var statuses = request.query.statuses,
+                        statusArray = (statuses || []).split(','),
+                        status = campaign.status;
+
+                    return !statuses || statusArray.indexOf(status) > -1;
                 })
                 .filter(function(campaign) {
                     var text = request.query.text,

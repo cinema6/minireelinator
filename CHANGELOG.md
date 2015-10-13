@@ -23,6 +23,7 @@
   * [DESIGN]: (Selfie) Added html/css for inline budget edit on campaign list
   * [DESIGN]: (Selfie) Hiding charts from campaign list as they won't be a part of Beta release
   * [DEV]: (Selfie) Add Campaign Service for normalizing campaign data
+  * [DEV]: (Selfie) Query campaigns by 'statuses' in the Campaign Dashboard
 
 ## v1.21.0 (September 30, 2015)
 * *[v1.21.0.rc1]*

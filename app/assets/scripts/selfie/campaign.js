@@ -36,7 +36,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.filter = $location.search().filter ||
                     'draft,pendingApproval,approved,active,paused,error';
-                this.filterBy = $location.search().filterBy || 'status';
+                this.filterBy = $location.search().filterBy || 'statuses';
                 this.sort = $location.search().sort || 'lastUpdated,-1';
 
                 extend(this.queryParams, {
@@ -54,7 +54,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         sort: this.sort,
                         org: SelfieState.cModel.org.id,
                         application: 'selfie',
-                        status: this.filter,
+                        statuses: this.filter,
                     }, this.limit, this.page).ensureResolution();
                 };
             }]);
