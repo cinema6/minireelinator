@@ -61,7 +61,7 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
 
                     $location.search.and.returnValue({
                         filter: 'active,draft',
-                        filterBy: 'status'
+                        filterBy: 'statuses'
                     });
                     campaigns = $injector.instantiate(campaigns.constructor);
 
@@ -71,7 +71,7 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
 
             describe('filterBy', function() {
                 it('should be the filterBy query param from the url, or default to "status"', function() {
-                    expect(campaigns.filterBy).toBe('status');
+                    expect(campaigns.filterBy).toBe('statuses');
 
                     $location.search.and.returnValue({
                         filter: 'active,draft',
@@ -128,7 +128,7 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                     sort: 'lastUpdated,-1',
                     org: 'o-123456',
                     application: 'selfie',
-                    status: 'draft,pendingApproval,approved,active,paused,error'
+                    statuses: 'draft,pendingApproval,approved,active,paused,error'
                 }, campaigns.limit, campaigns.page);
             });
         });
