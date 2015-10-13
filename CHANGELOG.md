@@ -20,6 +20,8 @@
   * [FIX]: (Selfie) When creating a campaign use default the sponsor name to be the user's company name
   * [FEATURE]: (Selfie) Add targeting for Demographics, DMAs and Interests
   * [FEATURE]: (Selfie) Add Account Settings pages
+  * [DESIGN]: (Selfie) Added html/css for inline budget edit on campaign list
+  * [DESIGN]: (Selfie) Hiding charts from campaign list as they won't be a part of Beta release
 
 ## v1.21.0 (September 30, 2015)
 * *[v1.21.0.rc1]*
