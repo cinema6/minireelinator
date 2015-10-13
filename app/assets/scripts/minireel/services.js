@@ -1919,7 +1919,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         }
                     } else if (!isFunction(template[key]) &&
                         (isArray(value) || isObject(value))) {
-                            scrub(template[key], value);
+                        scrub(template[key], value);
                     }
                 });
 
