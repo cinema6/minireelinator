@@ -66,24 +66,24 @@
         <li class="campaign__item campaign__item--{{$this.status}} clearfix"
         ng-repeat="$this in campaigns track by $this.id"
         c6-sref="{{SelfieCampaignsCtrl.editStateFor($this)}}" c6-models="[$this]" c6-params="{}" >
-            
+
             <!--popoverItem__group ends-->
-            <div class="popoverItem__group budget__popover fade left in editable-container editable-popup" style="top: -20px; left: auto; right: 120px; display: block;">
+            <div class="popoverItem__group budget__popover fade left in editable-container editable-popup" style="top: -20px; left: auto; right: 120px; display: none;">
                <div class="arrow"></div>
                <div class="popoverItem__groupContent budget__popoverContent">
                   <div class="form__items">
                      <form class="form-inline" style="">
-                        <div class="control-group form-group budget__popoverItems">                                                         
+                        <div class="control-group form-group budget__popoverItems">
                                  <div class="budget__popoverItem--edit"><fieldset class="form__item"><label>Campaign Budget<input type="text" name="city" class="input-small"><span class="input__unit">$</span></label></fieldset></div>
                                  <div class="budget__popoverItem--edit"><fieldset class="form__item"><label>Daily Max<input type="text" name="street" class="input-small"><span class="input__unit">$</span></label></fieldset></div>
                                  <button type="submit" class="action__btn action__btn--small editable-submit">Update</button>
-                              <p style="margin: 0;">Your calculated cost per 1000 video plays is $50.00. A video must play for a minimum of 3 seconds to count as a play.</p>                           
+                              <p style="margin: 0;">Your calculated cost per 1000 video plays is $50.00. A video must play for a minimum of 3 seconds to count as a play.</p>
                         </div>
                      </form>
                   </div>
                </div>
             </div><!--popoverItem__group ends-->
-        
+
             <div class="campaign__column column__status">
                 <span class="campaign__status">{{$this.status}}</span>
                 <span class="campaign__date">{{$this.created | date:'M/d/yyyy'}}</span>
