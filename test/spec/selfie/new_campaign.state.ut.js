@@ -1,51 +1,24 @@
-define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModule, c6uilib) {
+define(['app'], function(appModule) {
     'use strict';
 
     describe('Selfie:NewCampaign State', function() {
         var $rootScope,
             $q,
             c6State,
-            cinema6,
             selfieState,
             newCampaignState,
-            MiniReelService;
+            CampaignService;
 
-        var dbModel,
-            cardTemplate;
+        var campaign;
 
         beforeEach(function() {
-            module(c6uilib.name, function($provide) {
-                $provide.decorator('cinema6', function($delegate) {
-                    var create = $delegate.db.create;
-
-                    spyOn($delegate.db, 'create').and.callFake(function() {
-                        return (dbModel = create.apply($delegate.db, arguments));
-                    });
-
-                    return $delegate;
-                });
-            });
-
-            module(servicesModule.name, function($provide) {
-                $provide.decorator('MiniReelService', function($delegate) {
-                    var createCard = $delegate.createCard;
-
-                    spyOn($delegate, 'createCard').and.callFake(function() {
-                        return (cardTemplate = createCard.apply($delegate, arguments));
-                    });
-
-                    return $delegate;
-                });
-            });
-
             module(appModule.name);
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 $q = $injector.get('$q');
                 c6State = $injector.get('c6State');
-                cinema6 = $injector.get('cinema6');
-                MiniReelService = $injector.get('MiniReelService');
+                CampaignService = $injector.get('CampaignService');
 
                 selfieState = c6State.get('Selfie');
                 selfieState.cModel = {
@@ -62,6 +35,13 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                 };
                 newCampaignState = c6State.get('Selfie:NewCampaign');
             });
+
+            campaign = {
+                id: 'cam-c3fd97889f4fb9',
+                name: null,
+                cards: [],
+                advertiserDisplatName: selfieState.cModel.company
+            };
         });
 
         it('should exist', function() {
@@ -69,61 +49,56 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
         });
 
         describe('model()', function() {
-            var result;
+            var success, failure;
 
             beforeEach(function() {
-                result = newCampaignState.model();
-            });
+                success = jasmine.createSpy('success()');
+                failure = jasmine.createSpy('failure()');
 
-            it('should create a new campaign', function() {
-                expect(cinema6.db.create).toHaveBeenCalledWith('selfieCampaign', {
-                    advertiserId: 'a-123',
-                    customerId: 'cus-123',
-                    name: null,
-                    cards: [],
-                    pricing: {},
-                    status: 'draft',
-                    application: 'selfie',
-                    advertiserDisplayName: selfieState.cModel.company,
-                    contentCategories: {
-                        primary: null
-                    },
-                    targeting: {
-                        geo: {
-                            states: [],
-                            dmas: []
-                        },
-                        demographics: {
-                            age: [],
-                            gender: [],
-                            income: []
-                        },
-                        interests: []
-                    }
+                spyOn(CampaignService, 'create').and.returnValue($q.when(campaign));
+
+                $rootScope.$apply(function() {
+                    newCampaignState.model().then(success, failure);
                 });
             });
 
+            it('should create a new campaign', function() {
+                expect(CampaignService.create).toHaveBeenCalledWith('campaign');
+            });
+
             it('should be a new campaign object', function() {
-                expect(result).toEqual(dbModel);
+                expect(success).toHaveBeenCalledWith(campaign);
             });
         });
 
         describe('afterModel()', function() {
-            var campaign;
+            var card;
 
             beforeEach(function() {
-                campaign = newCampaignState.model();
+                card = {
+                    data: {
+                        autoadvance: false,
+                        autoplay: true
+                    },
+                    params: {
+                        ad: true,
+                        action: null
+                    }
+                };
 
-                newCampaignState.afterModel(campaign);
+                spyOn(CampaignService, 'create').and.returnValue(card);
+
+                $rootScope.$apply(function() {
+                    newCampaignState.afterModel(campaign);
+                });
             });
 
             it('should create a new card', function() {
-                expect(MiniReelService.createCard).toHaveBeenCalledWith('video');
-                expect(cinema6.db.create).toHaveBeenCalledWith('card', cardTemplate);
+                expect(CampaignService.create).toHaveBeenCalledWith('card');
             });
 
             it('should add campaign data', function() {
-                expect(newCampaignState.card).toEqual(dbModel);
+                expect(newCampaignState.card).toEqual(card);
             });
         });
 

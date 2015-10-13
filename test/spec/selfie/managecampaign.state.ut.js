@@ -5,8 +5,8 @@ define(['app'], function(appModule) {
         var $rootScope,
             $q,
             c6State,
-            cinema6,
-            manageCampaignState;
+            manageCampaignState,
+            CampaignService;
 
         beforeEach(function() {
             module(appModule.name);
@@ -15,7 +15,7 @@ define(['app'], function(appModule) {
                 $rootScope = $injector.get('$rootScope');
                 $q = $injector.get('$q');
                 c6State = $injector.get('c6State');
-                cinema6 = $injector.get('cinema6');
+                CampaignService = $injector.get('CampaignService');
 
                 manageCampaignState = c6State.get('Selfie:ManageCampaign');
             });
@@ -43,7 +43,7 @@ define(['app'], function(appModule) {
                 success = jasmine.createSpy('success()');
                 failure = jasmine.createSpy('failure()');
 
-                spyOn(cinema6.db, 'find').and.returnValue($q.when(model));
+                spyOn(CampaignService, 'find').and.returnValue($q.when(model));
 
                 $rootScope.$apply(function() {
                     manageCampaignState.model({ campaignId: model.id }).then(success, failure);
@@ -51,7 +51,7 @@ define(['app'], function(appModule) {
             });
 
             it('should return the campaign', function() {
-                expect(cinema6.db.find).toHaveBeenCalledWith('selfieCampaign', model.id);
+                expect(CampaignService.find).toHaveBeenCalledWith(model.id);
                 expect(success).toHaveBeenCalledWith(model);
             });
         });

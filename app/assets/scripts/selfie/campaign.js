@@ -7,23 +7,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
     var copy = angular.copy,
         equals = angular.equals,
-        forEach = angular.forEach,
-        isObject = angular.isObject,
         extend = angular.extend;
-
-    function deepExtend(target, extension) {
-        forEach(extension, function(extensionValue, prop) {
-            var targetValue = target[prop];
-
-            if (isObject(extensionValue) && isObject(targetValue)) {
-                deepExtend(targetValue, extensionValue);
-            } else {
-                target[prop] = copy(extensionValue);
-            }
-        });
-
-        return target;
-    }
 
     return angular.module('c6.app.selfie.campaign', [c6State.name])
         .config(['c6StateProvider',
@@ -191,70 +175,14 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:NewCampaign', ['cinema6','c6State','MiniReelService',
-            function                                    ( cinema6 , c6State , MiniReelService ) {
-                var SelfieState = c6State.get('Selfie');
-
+            c6StateProvider.state('Selfie:NewCampaign', ['cinema6','c6State','CampaignService',
+            function                                    ( cinema6 , c6State , CampaignService ) {
                 this.model = function() {
-                    var user = SelfieState.cModel,
-                        advertiser = user.advertiser,
-                        customer = user.customer;
-
-                    return cinema6.db.create('selfieCampaign', {
-                            advertiserId: advertiser.id,
-                            customerId: customer.id,
-                            name: null,
-                            cards: [],
-                            pricing: {},
-                            status: 'draft',
-                            application: 'selfie',
-                            advertiserDisplayName: user.company,
-                            contentCategories: {
-                                primary: null
-                            },
-                            targeting: {
-                                geo: {
-                                    states: [],
-                                    dmas: []
-                                },
-                                demographics: {
-                                    age: [],
-                                    gender: [],
-                                    income: []
-                                },
-                                interests: []
-                            }
-                        });
+                    return CampaignService.create('campaign');
                 };
 
                 this.afterModel = function() {
-                    var advertiser = SelfieState.cModel.advertiser,
-                        card = cinema6.db.create('card', MiniReelService.createCard('video'));
-
-                    this.card = deepExtend(card, {
-                            id: undefined,
-                            campaignId: undefined,
-                            campaign: {
-                                minViewTime: 3
-                            },
-                            sponsored: true,
-                            collateral: {
-                                logo: advertiser.defaultLogos && advertiser.defaultLogos.square ?
-                                    advertiser.defaultLogos.square :
-                                    null
-                            },
-                            links: advertiser.defaultLinks || {},
-                            params: {
-                                ad: true,
-                                action: null
-                            },
-                            data: {
-                                autoadvance: false,
-                                controls: false,
-                                autoplay: true,
-                                skip: 30
-                            }
-                        });
+                    this.card = CampaignService.create('card');
                 };
 
                 this.enter = function() {
@@ -265,10 +193,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:EditCampaign', ['cinema6','c6State',
-            function                                     ( cinema6 , c6State ) {
+            c6StateProvider.state('Selfie:EditCampaign', ['cinema6','c6State','CampaignService',
+            function                                     ( cinema6 , c6State , CampaignService ) {
                 this.model = function(params) {
-                    return cinema6.db.find('selfieCampaign', params.campaignId);
+                    return CampaignService.find(params.campaignId);
                 };
 
                 this.afterModel = function(campaign) {
@@ -869,10 +797,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:ManageCampaign', ['cinema6','c6State',
-            function                                       ( cinema6 , c6State ) {
+            c6StateProvider.state('Selfie:ManageCampaign', ['cinema6','c6State','CampaignService',
+            function                                       ( cinema6 , c6State , CampaignService ) {
                 this.model = function(params) {
-                    return cinema6.db.find('selfieCampaign', params.campaignId);
+                    return CampaignService.find(params.campaignId);
                 };
 
                 this.afterModel = function(campaign) {

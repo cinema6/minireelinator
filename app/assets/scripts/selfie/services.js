@@ -5,9 +5,141 @@ function( angular , c6uilib ) {
     var extend = angular.extend,
         fromJson = angular.fromJson,
         toJson = angular.toJson,
-        isDefined = angular.isDefined;
+        isDefined = angular.isDefined,
+        ngCopy = angular.copy,
+        forEach = angular.forEach,
+        isObject = angular.isObject;
+
+    function deepExtend(target, extension) {
+        forEach(extension, function(extensionValue, prop) {
+            var targetValue = target[prop];
+
+            if (isObject(extensionValue) && isObject(targetValue)) {
+                deepExtend(targetValue, extensionValue);
+            } else {
+                target[prop] = ngCopy(extensionValue);
+            }
+        });
+
+        return target;
+    }
 
     return angular.module('c6.app.selfie.services', [c6uilib.name])
+        .service('CampaignService', ['cinema6','c6State','MiniReelService','$q',
+                                     'NormalizationService',
+        function                    ( cinema6 , c6State , MiniReelService , $q ,
+                                      NormalizationService ) {
+            var _service = {},
+                copy = NormalizationService.copy;
+
+            function getAppUser() {
+                var application = c6State.get('Application'),
+                    app = c6State.get(application.name);
+
+                return app.cModel;
+            }
+
+            _service.campaign = function() {
+                var user = getAppUser(),
+                    advertiser = user.advertiser,
+                    customer = user.customer;
+
+                return cinema6.db.create('selfieCampaign', {
+                    advertiserId: advertiser.id,
+                    customerId: customer.id,
+                    name: null,
+                    cards: [],
+                    pricing: {},
+                    status: 'draft',
+                    application: 'selfie',
+                    advertiserDisplayName: user.company,
+                    contentCategories: {
+                        primary: null
+                    },
+                    targeting: {
+                        geo: {
+                            states: [],
+                            dmas: []
+                        },
+                        demographics: {
+                            age: [],
+                            gender: [],
+                            income: []
+                        },
+                        interests: []
+                    }
+                });
+            };
+
+            _service.card = function() {
+                var user = getAppUser(),
+                    advertiser = user.advertiser,
+                    card = cinema6.db.create('card', MiniReelService.createCard('video'));
+
+                return deepExtend(card, {
+                    id: undefined,
+                    campaignId: undefined,
+                    campaign: {
+                        minViewTime: 3
+                    },
+                    sponsored: true,
+                    collateral: {
+                        logo: advertiser.defaultLogos && advertiser.defaultLogos.square ?
+                            advertiser.defaultLogos.square :
+                            null
+                    },
+                    links: advertiser.defaultLinks || {},
+                    params: {
+                        ad: true,
+                        action: null
+                    },
+                    data: {
+                        autoadvance: false,
+                        controls: false,
+                        autoplay: true,
+                        skip: 30
+                    }
+                });
+            };
+
+            this.create = function(type) {
+                return _service[type]();
+            };
+
+            this.find = function(id) {
+                var user = getAppUser(),
+                    template = {
+                        pricing: copy({}),
+                        advertiserDisplayName: copy(user.company),
+                        contentCategories: copy({}),
+                        targeting: {
+                            geo: {
+                                states: copy([]),
+                                dmas: copy([])
+                            },
+                            demographics: {
+                                age: copy([]),
+                                gender: copy([]),
+                                income: copy([])
+                            },
+                            interests: copy([])
+                        }
+                    };
+
+                function ensureDefaults(campaign) {
+                    // passing campaign model as data source and target because
+                    // we need to operate on the actual db model
+                    return $q.all(
+                        NormalizationService.normalize(template, campaign, campaign)
+                    );
+                }
+
+                return cinema6.db.find('selfieCampaign', id)
+                    .then(ensureDefaults);
+            };
+
+        }])
+
         .service('CSSLoadingService', ['$document',
         function                      ( $document ) {
             this.load = function() {
