@@ -1893,16 +1893,16 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
         .service('NormalizationService', [function() {
             var ngCopy = angular.copy;
 
-            function recurse(template, data, target, raw) {
+            function recurse(template, base, target, raw) {
                 forEach(template, function(value, key) {
                     if (isFunction(value)) {
-                        target[key] = value.call(target, data, key, raw);
-                    } else if (isObject(value)) {
-                        target[key] = data[key] || {};
-                        recurse(value, data[key], target[key], raw);
+                        target[key] = value.call(target, base, key, raw);
                     } else if (isArray(value)) {
-                        target[key] = data[key] || [];
-                        recurse(value, data[key], target[key], raw);
+                        target[key] = base[key] || [];
+                        recurse(value, (base[key] || []), target[key], raw);
+                    } else if (isObject(value)) {
+                        target[key] = base[key] || {};
+                        recurse(value, (base[key] || {}), target[key], raw);
                     }
                 });
 
@@ -1912,7 +1912,14 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             function scrub(template, target) {
                 forEach(target, function(value, key) {
                     if (!template.hasOwnProperty(key)) {
-                        delete target[key];
+                        if (isArray(target)) {
+                            target.splice(key, 1);
+                        } else if (isObject(target)) {
+                            delete target[key];
+                        }
+                    } else if (!isFunction(template[key]) &&
+                        (isArray(value) || isObject(value))) {
+                            scrub(template[key], value);
                     }
                 });
 
@@ -1934,28 +1941,18 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 };
             };
 
-            this.normalize = function(template, data, target, prop, clean) {
-                var raw = ngCopy(data);
-
-                // ensure we have an object to build
+            this.normalize = function(template, base, target, raw, clean) {
+                base = base || {};
                 target = target || {};
-
-                // you can define a specific property that you would
-                // like to operate on. However, each function property
-                // will still receive the full, raw object in case it
-                // needs data from outside the specified property
-                if (prop) {
-                    data = data[prop] || {};
-                    target = target[prop] || {};
-                }
+                raw = raw || {};
 
                 // you can pass a boolean as the 5th param and we'll
                 // do the normalization and then delete any propeties
                 // that were not in the template. If this is false then
                 // we'll leave any properties that were on the target
                 return !clean ?
-                    recurse(template, data, target, raw) :
-                    scrub(template, recurse(template, data, target, raw));
+                    recurse(template, base, target, raw) :
+                    scrub(template, recurse(template, base, target, raw));
             };
         }])
 
@@ -2300,9 +2297,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 card.data = NormalizationService.normalize(
                     dataTemplates[card.type],
+                    rawData.data,
+                    card.data,
                     rawData,
-                    card,
-                    'data',
                     true
                 );
 
