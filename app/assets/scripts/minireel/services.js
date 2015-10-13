@@ -1896,7 +1896,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             function recurse(template, base, target, config) {
                 forEach(template, function(value, key) {
                     if (isFunction(value)) {
-                        target[key] = value.apply(target, [base, key].concat(config.args));
+                        target[key] = value.apply(target, [base, key].concat(config.args || []));
                     } else if (isArray(value)) {
                         target[key] = base[key] || [];
                         recurse(value, (base[key] || []), target[key], config);
