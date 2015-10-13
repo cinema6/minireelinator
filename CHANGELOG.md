@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## v1.21.0 (October 13, 2015)
 * *[v1.22.0.rc1]*
   * [FEATURE]: (Selfie) User sign up, confirmation link, resend activation link,
     login, forgot password, reset password
@@ -24,6 +25,7 @@
   * [DESIGN]: (Selfie) Hiding charts from campaign list as they won't be a part of Beta release
   * [DEV]: (Selfie) Add Campaign Service for normalizing campaign data
   * [DEV]: (Selfie) Query campaigns by 'statuses' in the Campaign Dashboard
+* *[/v1.22.0.rc1]*
 
 ## v1.21.0 (September 30, 2015)
 * *[v1.21.0.rc1]*
