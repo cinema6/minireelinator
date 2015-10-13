@@ -42,7 +42,7 @@ module.exports = function(http) {
                 })
                 .filter(function(campaign) {
                     var statuses = request.query.statuses,
-                        statusArray = (statuses || []).split(','),
+                        statusArray = (statuses || '').split(','),
                         status = campaign.status;
 
                     return !statuses || statusArray.indexOf(status) > -1;
