@@ -158,7 +158,7 @@ function( angular , c6uilib ) {
                         }
                     };
 
-                return $q.all(NormalizationService.normalize(template, campaign, campaign));
+                return NormalizationService.normalize(template, campaign, campaign);
             };
 
         }])
@@ -296,28 +296,35 @@ function( angular , c6uilib ) {
             };
         }])
 
-        .service('SelfieLogoService', ['cinema6',
-        function                      ( cinema6 ) {
+        .service('SelfieLogoService', ['cinema6','c6State','c6UrlMaker','$http',
+        function                      ( cinema6 , c6State , c6UrlMaker , $http ) {
             function exists(value, prop, arr) {
                 return arr.filter(function(item) {
                     return item[prop] === value;
                 }).length > 0;
             }
 
-            function findActiveCampaigns(campaigns) {
-                return campaigns.filter(function(campaign) {
-                    return (/active|paused|expired/).test(campaign.status);
-                });
+            function getCards(resp) {
+                var campaigns = resp.data,
+                    ids = campaigns.reduce(function(result, campaign) {
+                        var id = campaign.cards[0].id;
+                        return result.indexOf(id) === -1 ?
+                            result.concat(id) : result;
+                    }, []),
+                    query = {
+                        ids: ids.join(',')
+                    };
+
+                return $http.get(c6UrlMaker('content/cards', 'api'), { params: query })
             }
 
-            function generateLogoData(campaigns) {
-                var names = {};
+            function getLogoData(resp) {
+                var cards = resp.data,
+                    names = {};
 
-                return campaigns.reduce(function(result, campaign) {
-                    var card = (campaign.cards[0] && campaign.cards[0].item) || {},
-                        src = card.collateral && card.collateral.logo,
-                        name = card.params && card.params.sponsor +
-                            ' from ' + campaign.name;
+                return cards.reduce(function(result, card) {
+                    var src = card.collateral && card.collateral.logo,
+                        name = card.params && card.params.sponsor;
 
                     if (!src || exists(src, 'src', result)) {
                         return result;
@@ -330,13 +337,25 @@ function( angular , c6uilib ) {
                         name: (names[name] ? name + ' (' + names[name] + ')' : name),
                         src: src
                     });
+
                 }, []);
             }
 
-            this.getLogos = function(query) {
-                return cinema6.db.findAll('selfieCampaign', query)
-                    .then(findActiveCampaigns)
-                    .then(generateLogoData);
+            this.getLogos = function() {
+                var SelfieState = c6State.get('Selfie'),
+                    query = {
+                        org: SelfieState.cModel.org.id,
+                        statuses: 'active,paused,error',
+                        sort: 'lastUpdated,-1',
+                        application: 'selfie',
+                        fields: 'cards',
+                        limit: 50,
+                        skip: 0
+                    };
+
+                return $http.get(c6UrlMaker('campaigns','api'), { params: query })
+                    .then(getCards)
+                    .then(getLogoData);
             };
         }])
 
