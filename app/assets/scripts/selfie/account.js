@@ -151,27 +151,41 @@ function( angular , c6State  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:ConfirmAccount', ['$location','c6State',
-                                                            'AccountService',
-            function                                       ( $location , c6State ,
-                                                             AccountService ) {
+            c6StateProvider.state('Selfie:ConfirmAccount', ['$location','c6State','cinema6',
+                                                            'AccountService','$q',
+            function                                       ( $location , c6State , cinema6 ,
+                                                             AccountService , $q ) {
                 var id = $location.search().id,
                     token = $location.search().token;
 
                 this.model = function() {
                     return AccountService.confirmUser(id, token)
+                        .then(function(user) {
+                            return $q.all({
+                                user: user,
+                                org: cinema6.db.find('org', user.org),
+                                advertiser: cinema6.db.find('advertiser', user.advertiser),
+                                customer: cinema6.db.find('customer', user.customer)
+                            });
+                        })
+                        .then(function(decoration) {
+                            var user = decoration.user;
+                            user.org = decoration.org;
+                            user.advertiser = decoration.advertiser;
+                            user.customer = decoration.customer;
+
+                            c6State.goTo('Selfie', [user]);
+
+                            return user;
+                        })
                         .catch(function() {
                             // if the confirmation fails go to Login page with message
                             // telling the user that confirmation has failed, but that
                             // they can login and resend an activation link
-                            c6State.goTo('Selfie:Login', null, {reason:0});
-                        });
-                };
+                            c6State.goTo('Selfie:Login', null, {reason:1});
 
-                this.enter = function() {
-                    // confirmation was a success, so being them to login screen
-                    // for initial login.
-                    return c6State.goTo('Selfie:Login', null, {reason:1});
+                            return $q.reject();
+                        });
                 };
             }]);
         }])
@@ -231,10 +245,15 @@ function( angular , c6State  ) {
 
         .controller('SelfieAccountDetailsController', ['cState',
         function                                      ( cState ) {
-            var user = cState.cParent.cModel;
+            var user = cState.cParent.cModel,
+                SelfieAccountDetailsCtrl = this;
+
+            this.message = null;
 
             this.save = function() {
-                user.save();
+                user.save().then(function() {
+                    SelfieAccountDetailsCtrl.message = 'Successfully updated your details!';
+                });
             };
         }]);
 });

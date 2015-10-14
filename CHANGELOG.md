@@ -1,6 +1,12 @@
 # MiniReelinator
 
 ## v1.21.0 (October 14, 2015)
+* *[v1.22.0.rc3]*
+  * [FIX]: (Selfie) Fix for an issue where a failure to confirm a new user is not properly
+    communicated to the user.
+  * [FEATURE]: (Selfie) When a new user is confirmed redirect them to the Selfie Dashboard
+* *[/v1.22.0.rc3]*
+
 * *[v1.22.0.rc2]*
   * [FIX]: (Selfie) Fix for an issue where the user ID was not found on the confirmation page
   * [FIX]: (Selfie) Fix for an issue where an attempt was made to find a 'new' user's Org
