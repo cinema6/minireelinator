@@ -7,6 +7,7 @@ define(['app'], function(appModule) {
             c6State,
             cState,
             $scope,
+            $q,
             SelfieAccountDetailsCtrl;
 
         var user;
@@ -17,6 +18,7 @@ define(['app'], function(appModule) {
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
+                $q = $injector.get('$q');
                 c6State = $injector.get('c6State');
             });
 
@@ -26,7 +28,7 @@ define(['app'], function(appModule) {
                 company: '',
                 email: '',
                 password: '',
-                save: jasmine.createSpy('user.save()')
+                save: jasmine.createSpy('user.save()').and.returnValue($q.when(user))
             };
 
             cState = {
@@ -51,6 +53,14 @@ define(['app'], function(appModule) {
                     SelfieAccountDetailsCtrl.save();
 
                     expect(user.save).toHaveBeenCalled();
+                });
+
+                it('should set a message if successful', function() {
+                    $scope.$apply(function() {
+                        SelfieAccountDetailsCtrl.save();
+                    });
+
+                    expect(SelfieAccountDetailsCtrl.message).toBe('Successfully updated your details!');
                 });
             });
         });
