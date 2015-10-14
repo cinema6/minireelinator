@@ -23,7 +23,7 @@ define(['app'], function(appModule) {
             });
 
             spyOn($location, 'search').and.returnValue({
-                userId: 'u-111',
+                id: 'u-111',
                 token: '1234567'
             });
 
