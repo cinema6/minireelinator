@@ -106,38 +106,6 @@ function( angular , c6uilib ) {
                 return _service[type]();
             };
 
-            this.find = function(id) {
-                var user = getAppUser(),
-                    template = {
-                        pricing: copy({}),
-                        advertiserDisplayName: copy(user.company),
-                        contentCategories: copy({}),
-                        targeting: {
-                            geo: {
-                                states: copy([]),
-                                dmas: copy([])
-                            },
-                            demographics: {
-                                age: copy([]),
-                                gender: copy([]),
-                                income: copy([])
-                            },
-                            interests: copy([])
-                        }
-                    };
-
-                function ensureDefaults(campaign) {
-                    // passing campaign model as data source and target because
-                    // we need to operate on the actual db model
-                    return $q.all(
-                        NormalizationService.normalize(template, campaign, campaign)
-                    );
-                }
-
-                return cinema6.db.find('selfieCampaign', id)
-                    .then(ensureDefaults);
-            };
-
             this.normalize = function(campaign) {
                 var user = getAppUser(),
                     template = {
@@ -296,8 +264,8 @@ function( angular , c6uilib ) {
             };
         }])
 
-        .service('SelfieLogoService', ['cinema6','c6State','c6UrlMaker','$http',
-        function                      ( cinema6 , c6State , c6UrlMaker , $http ) {
+        .service('SelfieLogoService', ['c6State','c6UrlMaker','$http',
+        function                      ( c6State , c6UrlMaker , $http ) {
             function exists(value, prop, arr) {
                 return arr.filter(function(item) {
                     return item[prop] === value;
@@ -315,7 +283,7 @@ function( angular , c6uilib ) {
                         ids: ids.join(',')
                     };
 
-                return $http.get(c6UrlMaker('content/cards', 'api'), { params: query })
+                return $http.get(c6UrlMaker('content/cards', 'api'), { params: query });
             }
 
             function getLogoData(resp) {
