@@ -69,9 +69,10 @@ function( angular , c6State  ) {
             }
 
             function handleAuthSuccess(user) {
-                var requests = [cinema6.db.find('org', user.org)];
+                var requests = [];
 
-                if (user.advertiser && user.customer) {
+                if (user.advertiser && user.customer && user.org) {
+                    requests.push(cinema6.db.find('org', user.org));
                     requests.push(cinema6.db.find('advertiser', user.advertiser));
                     requests.push(cinema6.db.find('customer', user.customer));
                 }
