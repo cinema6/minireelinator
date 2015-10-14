@@ -148,8 +148,8 @@ module.exports = function(http) {
             }
         }
 
-        campaign.miniReels.forEach(handleDate);
-        campaign.cards.forEach(handleDate);
+        (campaign.miniReels || []).forEach(handleDate);
+        (campaign.cards || []).forEach(handleDate);
 
         if (badDate) {
             this.respond(400, 'BAD REQUEST');
