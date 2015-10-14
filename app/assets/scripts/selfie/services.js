@@ -138,6 +138,29 @@ function( angular , c6uilib ) {
                     .then(ensureDefaults);
             };
 
+            this.normalize = function(campaign) {
+                var user = getAppUser(),
+                    template = {
+                        pricing: copy({}),
+                        advertiserDisplayName: copy(user.company),
+                        contentCategories: copy({}),
+                        targeting: {
+                            geo: {
+                                states: copy([]),
+                                dmas: copy([])
+                            },
+                            demographics: {
+                                age: copy([]),
+                                gender: copy([]),
+                                income: copy([])
+                            },
+                            interests: copy([])
+                        }
+                    };
+
+                return $q.all(NormalizationService.normalize(template, campaign, campaign));
+            };
+
         }])
 
         .service('CSSLoadingService', ['$document',
