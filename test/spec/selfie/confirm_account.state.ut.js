@@ -84,6 +84,10 @@ define(['app'], function(appModule) {
                 it('should transition to the login state', function() {
                     expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Login', null, {reason:0});
                 });
+
+                it('should reject the promise', function() {
+                    expect(failure).toHaveBeenCalled();
+                });
             });
         });
 

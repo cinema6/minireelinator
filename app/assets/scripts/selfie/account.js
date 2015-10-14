@@ -152,9 +152,9 @@ function( angular , c6State  ) {
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:ConfirmAccount', ['$location','c6State',
-                                                            'AccountService',
+                                                            'AccountService','$q',
             function                                       ( $location , c6State ,
-                                                             AccountService ) {
+                                                             AccountService , $q ) {
                 var id = $location.search().id,
                     token = $location.search().token;
 
@@ -165,6 +165,8 @@ function( angular , c6State  ) {
                             // telling the user that confirmation has failed, but that
                             // they can login and resend an activation link
                             c6State.goTo('Selfie:Login', null, {reason:0});
+
+                            return $q.reject();
                         });
                 };
 
