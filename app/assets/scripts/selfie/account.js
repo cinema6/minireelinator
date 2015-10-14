@@ -155,7 +155,7 @@ function( angular , c6State  ) {
                                                             'AccountService',
             function                                       ( $location , c6State ,
                                                              AccountService ) {
-                var id = $location.search().userId,
+                var id = $location.search().id,
                     token = $location.search().token;
 
                 this.model = function() {
