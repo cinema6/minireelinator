@@ -7,6 +7,7 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
             c6State,
             MiniReelService,
             CampaignService,
+            NormalizationService,
             $q;
 
         var dbModel,
@@ -49,6 +50,7 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                 MiniReelService = $injector.get('MiniReelService');
                 $q = $injector.get('$q');
                 CampaignService = $injector.get('CampaignService');
+                NormalizationService = $injector.get('NormalizationService');
 
                 application = c6State.get('Application');
                 application.name = 'Selfie';
@@ -148,54 +150,29 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                 });
             });
 
-            describe('find(id)', function() {
-                var model,
-                    success, failure;
+            describe('normalize(campaign)', function() {
+                var campaign;
 
                 beforeEach(function() {
-                    model = {
-                        id: 'cam-c3fd97889f4fb9',
-                        name: 'My Campaign',
-                        cards: [{
-                            item: {
-                                id: 'rc-123'
-                            }
-                        }]
+                    campaign = {
+                        id: 'c-123',
+                        status: 'active',
+                        name: 'My Campaign'
                     };
 
-                    success = jasmine.createSpy('success()');
-                    failure = jasmine.createSpy('failure()');
-
-                    spyOn(cinema6.db, 'find').and.returnValue($q.when(model));
-
-                    $rootScope.$apply(function() {
-                        CampaignService.find(model.id).then(success, failure);
-                    });
+                    spyOn(NormalizationService, 'normalize').and.callThrough();
                 });
 
-                it('should find the campaign', function() {
-                    expect(cinema6.db.find).toHaveBeenCalledWith('selfieCampaign', model.id);
+                it('should use the NormalizationService', function() {
+                    CampaignService.normalize(campaign);
+
+                    expect(NormalizationService.normalize).toHaveBeenCalledWith(jasmine.any(Object), campaign, campaign);
                 });
 
-                it('should ensure that properties are defined with defualt values', function() {
-                    expect(success).toHaveBeenCalledWith(jasmine.objectContaining(model));
-                    expect(success).toHaveBeenCalledWith(jasmine.objectContaining({
-                        pricing: {},
-                        advertiserDisplayName: selfie.cModel.company,
-                        contentCategories: {},
-                        targeting: {
-                            geo: {
-                                states: [],
-                                dmas: []
-                            },
-                            demographics: {
-                                age: [],
-                                gender: [],
-                                income: []
-                            },
-                            interests: []
-                        }
-                    }));
+                it('should default the advertiserDisplayName to the users company name ', function() {
+                    var result = CampaignService.normalize(campaign);
+
+                    expect(result.advertiserDisplayName).toBe('My Company, Inc.');
                 });
             });
         });

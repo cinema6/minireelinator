@@ -196,10 +196,11 @@ function( angular , c6State  , PaginatedListState                    ,
             c6StateProvider.state('Selfie:EditCampaign', ['cinema6','c6State','CampaignService',
             function                                     ( cinema6 , c6State , CampaignService ) {
                 this.model = function(params) {
-                    return CampaignService.find(params.campaignId);
+                    return cinema6.db.find('selfieCampaign', params.campaignId);
                 };
 
                 this.afterModel = function(campaign) {
+                    this.campaign = CampaignService.normalize(campaign);
                     this.card = campaign.cards[0].item;
                 };
 
@@ -226,20 +227,14 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.beforeModel = function() {
                     this.card = this.cParent.card;
-                    this.campaign = this.cParent.cModel;
+                    this.campaign = this.cParent.campaign;
                     this.advertiser = SelfieState.cModel.advertiser;
                 };
 
                 this.model = function() {
                     return $q.all({
                         categories: cinema6.db.findAll('category'),
-                        logos: SelfieLogoService.getLogos({
-                            sort: 'lastUpdated,-1',
-                            org: SelfieState.cModel.org.id,
-                            application: 'selfie',
-                            limit: 50,
-                            skip: 0
-                        })
+                        logos: SelfieLogoService.getLogos()
                     });
                 };
             }]);
@@ -800,10 +795,11 @@ function( angular , c6State  , PaginatedListState                    ,
             c6StateProvider.state('Selfie:ManageCampaign', ['cinema6','c6State','CampaignService',
             function                                       ( cinema6 , c6State , CampaignService ) {
                 this.model = function(params) {
-                    return CampaignService.find(params.campaignId);
+                    return cinema6.db.find('selfieCampaign', params.campaignId);
                 };
 
                 this.afterModel = function(campaign) {
+                    this.campaign = CampaignService.normalize(campaign);
                     this.card = campaign.cards[0].item;
                 };
 
@@ -826,7 +822,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.beforeModel = function() {
                     this.card = this.cParent.card;
-                    this.campaign = this.cParent.cModel;
+                    this.campaign = this.cParent.campaign;
                 };
 
                 this.model = function() {

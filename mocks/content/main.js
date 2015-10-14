@@ -158,17 +158,26 @@ module.exports = function(http) {
      **********************************************************************************************/
 
     http.whenGET('/api/content/cards', function(request) {
-        this.respond(200, grunt.file.expand(path.resolve(__dirname, './cards/*.json'))
-            .map(function(path) {
-                var id = path.match(/[^\/]+(?=\.json)/)[0];
+        var filters = pluckExcept(request.query, ['ids']),
+            allCards = grunt.file.expand(path.resolve(__dirname, './cards/*.json'))
+                .map(function(path) {
+                    var id = path.match(/[^\/]+(?=\.json)/)[0];
 
-                return extend(grunt.file.readJSON(path), { id: id });
-            }).filter(function(card) {
-                return Object.keys(request.query)
-                    .every(function(key) {
-                        return request.query[key] === card[key];
-                    });
-            }));
+                    return extend(grunt.file.readJSON(path), { id: id });
+                }).filter(function(card) {
+                    return Object.keys(filters)
+                        .every(function(key) {
+                            return filters[key] === card[key];
+                        });
+                }).filter(function(card) {
+                    var ids = request.query.ids,
+                        idArray = (ids || '').split(',');
+
+                    return !ids || idArray.indexOf(card.id) > -1;
+                });
+
+
+        this.respond(200, allCards);
     });
 
     http.whenGET('/api/content/card/**', function(request) {

@@ -72,7 +72,7 @@ define(['app'], function(appModule) {
 
         describe('beforeModel()', function() {
             it('should put the card and campaign on the state object', function() {
-                campaignState.cParent.cModel = campaign;
+                campaignState.cParent.campaign = campaign;
                 campaignState.cParent.card = card;
 
                 campaignState.beforeModel();
