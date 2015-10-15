@@ -37,7 +37,7 @@ define(['app'], function(appModule) {
         });
 
         describe('model()', function() {
-            var user, success, failure;
+            var user, decoratedUser, success, failure;
 
             beforeEach(function() {
                 user = {
@@ -45,6 +45,19 @@ define(['app'], function(appModule) {
                     org: 'o-123',
                     advertiser: 'a-123',
                     customer: 'cus-123'
+                };
+
+                decoratedUser = {
+                    email: 'josh@cinema6.com',
+                    org: {
+                        id: 'o-123'
+                    },
+                    advertiser: {
+                        id: 'a-123'
+                    },
+                    customer: {
+                        id: 'cus-123'
+                    }
                 };
 
                 success = jasmine.createSpy('success');
@@ -66,6 +79,7 @@ define(['app'], function(appModule) {
                             };
                     }
                 });
+                spyOn(cinema6.db, 'push').and.returnValue(decoratedUser);
 
                 spyOn(AccountService, 'confirmUser');
             });
