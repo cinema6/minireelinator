@@ -167,7 +167,7 @@ module.exports = function(http) {
      * Advertiser Endpoints
      **********************************************************************************************/
 
-    http.whenGET('/api/account/advertisers', function(request) {
+    http.whenGET('/api/account/advrs', function(request) {
         this.respond(200, grunt.file.expand(path.resolve(__dirname, './advertisers/*.json'))
             .map(function(path) {
                 var id = path.match(/[^\/]+(?=\.json)/)[0];
@@ -181,7 +181,7 @@ module.exports = function(http) {
             }));
     });
 
-    http.whenGET('/api/account/advertiser/**', function(request) {
+    http.whenGET('/api/account/advrs/**', function(request) {
         var id = idFromPath(request.pathname),
             filePath = objectPath('advertisers', id),
             advertiser = grunt.file.exists(filePath) ? grunt.file.readJSON(filePath) : null;

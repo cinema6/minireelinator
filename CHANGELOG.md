@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.22.0 (October 15, 2015)
+* *[v1.22.0.rc7]*
+  * [FIX]: Make Advertiser API calls to /advrs instead of /advertisers
+* *[/v1.22.0.rc7]*
+
 * *[v1.22.0.rc6]*
   * [FIX]: Fix for an issue where new campaigns weren't created correctly
 * *[/v1.22.0.rc6]*
