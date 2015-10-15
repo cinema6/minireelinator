@@ -1,5 +1,5 @@
-define( ['angular','select2'],
-function( angular ) {
+define( ['angular','select2','braintree'],
+function( angular , select2 , braintree ) {
     'use strict';
 
     var $ = angular.element,
@@ -466,6 +466,52 @@ function( angular ) {
                     validation.budget = false;
                 }
             });
+        }])
+
+        .directive('c6Payment', ['$http','c6UrlMaker',
+        function                ( $http , c6UrlMaker ) {
+            return {
+                restrict: 'E',
+                templateUrl: 'views/selfie/directives/payment.html',
+                link: function() {
+                    $http.get(c6UrlMaker('payments/clientToken', 'api'))
+                        .then(function(resp) {
+                            braintree.setup(resp.data.clientToken, 'custom', {
+                                id: 'c6-payment-method',
+                                hostedFields: {
+                                    number: {
+                                        selector: '#c6-addCard-number'
+                                    },
+                                    cvv: {
+                                        selector: '#c6-cvv'
+                                    },
+                                    expirationDate: {
+                                        selector: '#c6-expiration-date'
+                                    },
+                                    expirationYear: {
+                                        selector: '#c6-expiration-year'
+                                    },
+                                    onFieldEvent: function(event) {
+                                        var fieldSet = event.target.container,
+                                            isFocused = event.isFocused,
+                                            isEmpty = event.isEmpty;
+
+                                        console.log(event);
+
+                                        if (isFocused) {
+                                            $(fieldSet).addClass('form__fillCheck--filled');
+                                        } else if (isEmpty) {
+                                            $(fieldSet).removeClass('form__fillCheck--filled');
+                                        }
+                                    }
+                                },
+                                onPaymentMethodReceived: function(method) {
+                                    console.log(method);
+                                }
+                            });
+                        });
+                }
+            };
         }])
 
         .filter('videoService', [function() {
