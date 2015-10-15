@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.21.0 (October 14, 2015)
+* *[v1.22.0.rc4]*
+  * [DEV]: (Selfie) Ensure newly confirmed user is added to c6 DB
+* *[/v1.22.0.rc4]*
+
 * *[v1.22.0.rc3]*
   * [FIX]: (Selfie) Fix for an issue where a failure to confirm a new user is not properly
     communicated to the user.
