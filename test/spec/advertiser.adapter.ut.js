@@ -52,7 +52,7 @@ define(['app'], function(appModule) {
                     }
                 ];
 
-                $httpBackend.expectGET('/api/account/advertisers')
+                $httpBackend.expectGET('/api/account/advrs')
                     .respond(200, advertisers);
 
                 adapter.findAll('advertiser').then(success, failure);
@@ -81,7 +81,7 @@ define(['app'], function(appModule) {
                     }
                 ];
 
-                $httpBackend.expectGET('/api/account/advertisers?org=o-d09f44a70348b1&sort=created,1')
+                $httpBackend.expectGET('/api/account/advrs?org=o-d09f44a70348b1&sort=created,1')
                     .respond(200, advertisers);
 
                 adapter.findQuery('advertiser', {
@@ -100,7 +100,7 @@ define(['app'], function(appModule) {
                 beforeEach(function() {
                     success.calls.reset();
 
-                    $httpBackend.expectGET('/api/account/advertisers?user=u-c680b577e3eb9d')
+                    $httpBackend.expectGET('/api/account/advrs?user=u-c680b577e3eb9d')
                         .respond(404, 'NOT FOUND');
 
                     adapter.findQuery('advertiser', {
@@ -120,7 +120,7 @@ define(['app'], function(appModule) {
                     beforeEach(function() {
                         failure.calls.reset();
 
-                        $httpBackend.expectGET('/api/account/advertisers?sort=lastUpdated,-1')
+                        $httpBackend.expectGET('/api/account/advrs?sort=lastUpdated,-1')
                             .respond(status, 'IT FAILED');
 
                         adapter.findQuery('advertiser', {
@@ -147,7 +147,7 @@ define(['app'], function(appModule) {
                     id: 'a-addca077b557eb'
                 };
 
-                $httpBackend.expectGET('/api/account/advertiser/a-addca077b557eb')
+                $httpBackend.expectGET('/api/account/advrs/a-addca077b557eb')
                     .respond(200, advertiser);
 
                 adapter.find('advertiser', 'a-addca077b557eb').then(success, failure);

@@ -554,18 +554,18 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 }
 
                 this.findAll = function() {
-                    return $http.get(url('advertisers'))
+                    return $http.get(url('advrs'))
                         .then(pick('data'));
                 };
 
                 this.find = function(type, id) {
-                    return $http.get(url('advertiser/' + id), { cache: true })
+                    return $http.get(url('advrs/' + id), { cache: true })
                         .then(pick('data'))
                         .then(putInArray);
                 };
 
                 this.findQuery = function(type, query) {
-                    return $http.get(url('advertisers'), { params: query })
+                    return $http.get(url('advrs'), { params: query })
                         .then(pick('data'), function(response) {
                             return response.status === 404 ?
                                 [] : $q.reject(response);
