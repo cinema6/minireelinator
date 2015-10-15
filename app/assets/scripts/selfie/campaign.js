@@ -181,7 +181,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     return CampaignService.create('campaign');
                 };
 
-                this.afterModel = function() {
+                this.afterModel = function(campaign) {
+                    this.campaign = campaign;
                     this.card = CampaignService.create('card');
                 };
 
