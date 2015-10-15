@@ -34,7 +34,7 @@
                                 <span class="mainNav__label">Sponsorship Manager</span>
                             </a>
                         </li> -->
-                        <li class="dropNav__item" ng-if="user.permissions.campaigns.edit === 'all'">
+                        <li class="dropNav__item" ng-if="user.permissions.campaigns.read">
                             <a c6-sref="MR:Campaigns" title="Campaign Manager" class="dropNav__link">
                                 <span class="mainNav__label">Campaign Manager</span>
                             </a>
@@ -76,7 +76,7 @@
                         <span class="mainNav__label">Sponsorship Manager</span>
                     </a>
                 </li> -->
-                <li class="mainNav__item css-expanded" ng-if="user.permissions.campaigns.edit === 'all'">
+                <li class="mainNav__item css-expanded" ng-if="user.permissions.campaigns.read">
                     <a c6-sref="MR:CampaignTab" title="Campaign Manager" class="mainNav__link">
                         <span class="mainNav__label">Campaign Manager</span>
                     </a>

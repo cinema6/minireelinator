@@ -98,6 +98,7 @@ define(['app'], function(appModule) {
             });
 
             it('should add campaign data', function() {
+                expect(newCampaignState.campaign).toEqual(campaign);
                 expect(newCampaignState.card).toEqual(card);
             });
         });

@@ -805,6 +805,8 @@ function( angular , c6uilib ) {
                         true
                     );
 
+                    lastPath = path;
+
                     return true;
                 }
 

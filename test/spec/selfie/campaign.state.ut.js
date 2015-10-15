@@ -86,7 +86,7 @@ define(['app'], function(appModule) {
 
             describe('beforeModel()', function() {
                 it('should put the card and campaign on the state object', function() {
-                    campaignState.cParent.cModel = campaign;
+                    campaignState.cParent.campaign = campaign;
                     campaignState.cParent.card = card;
 
                     campaignState.beforeModel();
@@ -108,13 +108,7 @@ define(['app'], function(appModule) {
                         campaignState.model().then(success, failure);
                     });
                     expect(cinema6.db.findAll).toHaveBeenCalledWith('category');
-                    expect(SelfieLogoService.getLogos).toHaveBeenCalledWith({
-                        sort: 'lastUpdated,-1',
-                        org: 'o-123',
-                        application: 'selfie',
-                        limit: 50,
-                        skip: 0
-                    });
+                    expect(SelfieLogoService.getLogos).toHaveBeenCalled();
                     expect(success).toHaveBeenCalledWith({
                         categories: categories,
                         logos: logos

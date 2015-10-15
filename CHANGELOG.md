@@ -1,5 +1,38 @@
 # MiniReelinator
 
+## v1.22.0 (October 15, 2015)
+* *[v1.22.0.rc6]*
+  * [FIX]: Fix for an issue where new campaigns weren't created correctly
+* *[/v1.22.0.rc6]*
+
+* *[v1.22.0.rc5]*
+  * [FIX]: (Selfie) Fix for an issue that caused account confirmation to
+    fail catastrophically
+  * [FIX]: On login and auth check ensure that a user is decorated with their Org
+    if they have one
+  * [FIX]: Fix link to Login page on the sign up success page
+* *[/v1.22.0.rc5]*
+
+* *[v1.22.0.rc4]*
+  * [DEV]: (Selfie) Ensure newly confirmed user is added to c6 DB
+* *[/v1.22.0.rc4]*
+
+* *[v1.22.0.rc3]*
+  * [FIX]: (Selfie) Fix for an issue where a failure to confirm a new user is not properly
+    communicated to the user.
+  * [FEATURE]: (Selfie) When a new user is confirmed redirect them to the Selfie Dashboard
+* *[/v1.22.0.rc3]*
+
+* *[v1.22.0.rc2]*
+  * [FIX]: (Selfie) Fix for an issue where the user ID was not found on the confirmation page
+  * [FIX]: (Selfie) Fix for an issue where an attempt was made to find a 'new' user's Org
+    even though they don't have one yet.
+  * [FIX]: (Selfie) Fix for an where campaign data was not being properly normalized/defaulted
+  * [FIX]: (Selfie) Optimize the Logo Service so it makes fewer calls for less data
+  * [FIX]: Fix for an issue where the Campaign Manager was inaccessible even when user's had
+    permission to see it.
+* *[/v1.22.0.rc2]*
+
 * *[v1.22.0.rc1]*
   * [FEATURE]: (Selfie) User sign up, confirmation link, resend activation link,
     login, forgot password, reset password
@@ -24,7 +57,8 @@
   * [DESIGN]: (Selfie) Hiding charts from campaign list as they won't be a part of Beta release
   * [DEV]: (Selfie) Add Campaign Service for normalizing campaign data
   * [DEV]: (Selfie) Query campaigns by 'statuses' in the Campaign Dashboard
-  * [DESIGN]: (Selfie) Added styles for Payment Management and Payment History screens
+* *[/v1.22.0.rc1]*
+
 
 ## v1.21.0 (September 30, 2015)
 * *[v1.21.0.rc1]*
