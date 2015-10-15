@@ -1,9 +1,13 @@
 # MiniReelinator
 
-## v1.21.0 (October 14, 2015)
+## v1.22.0 (October 15, 2015)
 * *[v1.22.0.rc5]*
   * [FIX]: (Selfie) Fix for an issue that caused account confirmation to
     fail catastrophically
+  * [FIX]: On login and auth check ensure that a user is decorated with their Org
+    if they have one
+  * [FIX]: Fix link to Login page on the sign up success page
+* *[/v1.22.0.rc5]*
 
 * *[v1.22.0.rc4]*
   * [DEV]: (Selfie) Ensure newly confirmed user is added to c6 DB
