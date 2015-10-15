@@ -31,7 +31,7 @@ function( angular , c6State  , services   , directives   , campaign   ) {
                     this.route('/email', 'Selfie:Account:Email');
                     this.route('/details', 'Selfie:Account:Details');
                     this.route('/password', 'Selfie:Account:Password');
-                    this.route('/payment/methods', 'Selfie:Account:Payment:Methods');
+                    this.route('/payment/options', 'Selfie:Account:PaymentOptions');
                     this.route('/payment/history', 'Selfie:Account:Payment:History');
                 });
             });
