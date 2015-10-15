@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.23.0.rc1]*
+  * [DESIGN]: (Selfie) Added styles for Payment Management and Payment History screens
+  
 ## v1.22.0 (October 15, 2015)
 * *[v1.22.0.rc7]*
   * [FIX]: Make Advertiser API calls to /advrs instead of /advertisers
@@ -62,7 +65,6 @@
   * [DEV]: (Selfie) Add Campaign Service for normalizing campaign data
   * [DEV]: (Selfie) Query campaigns by 'statuses' in the Campaign Dashboard
 * *[/v1.22.0.rc1]*
-
 
 ## v1.21.0 (September 30, 2015)
 * *[v1.21.0.rc1]*
