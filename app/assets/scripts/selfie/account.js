@@ -257,5 +257,12 @@ function( angular , c6State  ) {
                     SelfieAccountDetailsCtrl.message = 'Successfully updated your details!';
                 });
             };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Account:PaymentOptions', [function() {
+                this.templateUrl = 'views/selfie/account/payment_options.html';
+            }]);
         }]);
 });
