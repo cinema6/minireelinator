@@ -8,11 +8,13 @@
         <p class="subAction text--center">Please check your email for activation link.</p>
         <p class="subAction text--center">Didn't get the email? <a ng-click="SelfieResendActivationCtrl.resend()">Resend Account Activation link</a>.</p>
 
-<p>
-{{SelfieResendActivationCtrl.model}}
-</p>
+        <p>
+        {{SelfieResendActivationCtrl.model}}
+        </p>
 
-<p class="subAction text--center"> <a ng-click="SelfieResendActivationCtrl.logout()">Return to login screen</a></p>
+        <p class="subAction text--center">
+            <button ng-click="SelfieResendActivationCtrl.logout()">Return to login screen</button>
+        </p>
         </div>
     </div>
 </div>
