@@ -256,7 +256,7 @@ fa,
             padding:1rem 1.75rem 0.875rem;
             font-size:1.5em;
         }
-        .action__btn--full {
+        .action__btn--full, .action__btn--wide {
             width: 100%;
         }
     .action__btnSecondary {
@@ -2261,6 +2261,9 @@ fa,
     ================================================ */    
     
     /*display boxes for account settings*/
+    .card--item {
+        background: #fff;
+    }
     .accountSettings__box {
         background: #fff;
     }
@@ -2510,7 +2513,133 @@ fa,
 
     .payment__btn--spacing {
         margin:3.25em 0 0;
-    }        
+    }
+
+/*  ================================================
+    action menu styles
+    ================================================ */
+    .action__row {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin-top: 0;
+    }
+        .action__row--item {
+            display: inline-block;
+            /*width: 1.5em;
+            height: 1.75em;*/
+            text-align: center;
+            vertical-align: middle;
+            margin-right: 0.25em;
+        }
+
+        .action__selection {
+            display:block;
+            position:absolute;
+            top:0.875em;
+            right:5.25em;
+            color:#5c5c5c;
+            font-weight:bold;
+        }
+
+        .action__selection:hover {
+            color:#5c5c5c;
+        }
+
+        .action__dropdown {
+            margin-top: 0.25em;
+        }
+
+        .action__selection ~ .action__dropdown {
+            position:absolute;
+            top:0.5em;
+            right:3em;
+        }
+
+
+        .action__dropdown ul {
+            list-style:none;
+            position:relative;
+            float:left;
+            margin:0;
+            padding:0
+        }
+
+        .action__dropdownSelection {
+            position:absolute;
+            left:0;
+        }
+
+
+
+        .action__dropdown ul a {
+            display:block;
+            color:#333;
+            text-decoration:none;
+            font-weight:normal;
+            font-size:0.875em;
+            line-height:2em;
+            padding:0 15px;
+        }
+
+
+
+        .action__dropdown ul li {
+            position:relative;
+            float:left;
+            margin:0;
+            padding:0
+        }
+
+
+
+        .action__dropdown ul li.current-menu-item {
+            background:#ddd
+        }
+
+        .action__dropdown ul ul li:hover {
+            background:#f6f6f6;
+        }
+
+        .action__dropdown ul ul {
+            display:none;
+            position:absolute;
+            top:100%;
+            right:0;
+            background:#fff;
+            padding:0;
+            z-index: 100;
+            box-shadow: 0 0 5px #ccc;
+        }
+
+        .action__dropdown ul ul li {
+            float:none;
+            width:120px;
+            text-align: left;
+        }
+        .action__dropdown ul ul li:hover {
+            background: #f5f5f5;
+        }
+
+        .action__dropdown ul ul a {
+            line-height:120%;
+            padding:10px 15px
+        }
+
+        .action__dropdown ul ul ul {
+            top:0;
+            left:100%
+        }
+
+        .action__dropdown ul li:hover > ul {
+            display:block
+        }
+
+        .action__dropdownItem--selected {
+            position:absolute;
+            right:1em;
+            color:#5c5c5c;
+        }
 
 /*  Payment Dropdown classes
         ================================================ */
@@ -2724,6 +2853,117 @@ fa,
             margin:4rem 0;
         }
     }
+/*  ================================================
+    payment history list classes
+    (Jess)
+    ================================================ */
+    .paymentHistory__group .sortBar__list {
+        padding: 0;
+    }
+    .paymentHistory__list {
+        margin: 2px 0;
+        padding: 0;
+        list-style: none;
+        position:relative;
+    }
+
+        .paymentHistory__item {
+            background:#fff;
+            padding:0.5em 1.5em 0.5625em 1.375em;
+            margin:0 0 2px 0;
+            display: block;
+            color:#5c5c5c;
+        }
+
+            .paymentHistory__item .fa {
+                font-size:0.875rem;
+            }
+
+            .paymentHistory__date {
+                display:block;
+                margin:0.25em 0 0.3125em;
+                line-height:1.125em;
+                color:#1c1c1c;
+                font-size:1.25em;
+                font-weight:normal;
+            }
+            
+            .paymentHistory__time {
+                display: block;
+                font-size:0.875em;
+            }
+
+
+            .paymentHistory__campaign {
+                color:#1c1c1c;
+                font-size:1.25em;
+                font-weight:normal;
+                line-height: 1.2;
+                width:100%;
+                overflow:hidden;
+                margin:0.2em 0 0.15em 0;
+            }
+
+            .paymentHistory__method {
+                display:block;
+                margin:0.25em 0 0.3125em;
+                line-height:1.125em;
+                color:#1c1c1c;
+                font-size:1.25em;
+                font-weight:normal;
+            }
+
+            .paymentHistory__methodOwner {
+                display: block;
+                font-size:0.875em;
+            }
+
+
+            .paymentHistory__paymentInfo {
+                margin:0.375em 0 0 0;
+                position: relative;
+            }
+
+                .paymentInfo__label {
+                    /*position:absolute;
+                    left:0;*/
+                    margin:1px 0 0 0;
+                    text-align: left;
+                    font-size:0.875em;
+                    color:#9c9c9c;
+                }
+
+                .paymentInfo__paymentNumbers {
+                    display: block;
+                    line-height:1.5em;
+                    padding-left:1em;
+                    text-align:right;
+                }
+
+                .paymentInfo__total {
+                    color:#1c1c1c;
+                    font-size:1.25em;
+                    line-height:1em;
+                    font-weight:normal;
+                }
+
+        .creditTransaction .paymentInfo__total {
+            color: #20d783;
+        }
+        .creditTransaction__note {
+            font-size: 0.865em;
+        }        
+        .creditTransaction__type {
+            background-color: #20d783;
+            color: #fff;
+            font-size: 0.75em;
+            line-height: 1em;
+            padding: 0.25em;
+            border-radius: 3px;
+            margin: 0 0.25em 0 0;
+        }
+
+        
 /***Temp styles Dashboard- Dhaval Search form***/
  .search__group {
         margin-top: 0.5em;
