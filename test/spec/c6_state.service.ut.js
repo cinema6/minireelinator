@@ -1228,6 +1228,14 @@
                                 c6State._registerView(childView);
                                 expect(c6State.goTo).not.toHaveBeenCalled();
                             });
+
+                            it('should only goTo the state once if a $locationChangeSuccess is fired', function() {
+                                c6State._registerView(parentView);
+                                $rootScope.$emit('$locationChangeSuccess');
+
+                                expect(c6State.goTo).toHaveBeenCalledWith('Child', null, null, true);
+                                expect(c6State.goTo.calls.count()).toBe(1);
+                            });
                         });
 
                         describe('_deregisterView(viewDelegate)', function() {
