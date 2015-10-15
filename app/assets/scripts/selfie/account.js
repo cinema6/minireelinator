@@ -174,8 +174,10 @@ function( angular , c6State  ) {
                             user.advertiser = decoration.advertiser;
                             user.customer = decoration.customer;
 
+                            return cinema6.db.push('user', user.id, user);
+                        })
+                        .then(function(user) {
                             c6State.goTo('Selfie', [user]);
-
                             return user;
                         })
                         .catch(function() {
