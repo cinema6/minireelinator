@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.22.0 (October 15, 2015)
+* *[v1.22.0.rc6]*
+  * [FIX]: Fix for an issue where new campaigns weren't created correctly
+* *[/v1.22.0.rc6]*
+
 * *[v1.22.0.rc5]*
   * [FIX]: (Selfie) Fix for an issue that caused account confirmation to
     fail catastrophically
