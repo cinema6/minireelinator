@@ -32,7 +32,7 @@
                 <div class="ui__btnHolder">
                     <button class="action__btn action__btn--full">Login</button>
                 </div>
-                <div ng-show="LoginCtrl.error">
+                <div ng-show="LoginCtrl.error" class="alertMessage alert__failure text--center">
                     {{LoginCtrl.error}}
                 </div>
                 <div ng-show="LoginCtrl.reason" ng-switch="LoginCtrl.reason">
