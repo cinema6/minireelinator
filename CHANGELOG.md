@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.23.0.rc1]*
+  * [DESIGN]: (Selfie) Added styles for Payment Management and Payment History screens
+  
 ## v1.22.0 (October 15, 2015)
 * *[v1.22.0.rc7]*
   * [FIX]: Make Advertiser API calls to /advrs instead of /advertisers
