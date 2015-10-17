@@ -848,6 +848,75 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
             }]);
 
+            $provide.constant('PaymentMethodAdapter', ['config','$http','$q',
+            function                                  ( config , $http , $q ) {
+                function url(end) {
+                    return config.apiBase + '/payments/methods' + (end || '');
+                }
+
+                function undecoratePayment(payment) {
+                    return extend(payment, {
+                        makeDefault: payment.makeDefault,
+                        id: undefined,
+                        token: undefined,
+                        createdAt: undefined,
+                        updatedAt: undefined,
+                        imageUrl: undefined,
+                        default: undefined,
+                        type: undefined,
+                        cardType: undefined,
+                        email: undefined,
+                        expirationDate: undefined,
+                        last4: undefined
+                    });
+                }
+
+                function decoratePayments(payments) {
+                    return payments.map(decoratePayment);
+                }
+
+                function decoratePayment(payment) {
+                    return extend(payment, {
+                        id: payment.token
+                    });
+                }
+
+                this.findAll = function() {
+                    return $http.get(url())
+                        .then(pick('data'))
+                        .then(decoratePayments);
+                };
+
+                this.find = function(type, id) {
+                    return $q.reject('PaymentMethodAdapter.find() is not implemented.');
+                };
+
+                this.findQuery = function(type, query) {
+                    return $http.get(url(), { params: query })
+                        .then(pick('data'));
+                };
+
+                this.create = function(type, data) {
+                    return $http.post(url(), data)
+                        .then(pick('data'))
+                        .then(decoratePayment)
+                        .then(putInArray);
+                };
+
+                this.erase = function(type, payment) {
+                    return $http.delete(url('/' + payment.token))
+                        .then(value(null));
+                };
+
+                this.update = function(type, payment) {
+                    console.log(payment);
+                    return $http.put(url('/' + payment.token), undecoratePayment(payment))
+                        .then(pick('data'))
+                        .then(decoratePayment)
+                        .then(putInArray);
+                };
+            }])
+
             $provide.constant('ExpGroupAdapter', ['config','$http','$q',
             function                             ( config , $http , $q ) {
                 function url() {
@@ -899,9 +968,11 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         .config(['cinema6Provider','ContentAdapter','CWRXAdapter','CampaignAdapter',
                  'VoteAdapter','OrgAdapter','UserAdapter','CardAdapter','CustomerAdapter',
                  'CategoryAdapter','AdvertiserAdapter','ExpGroupAdapter','SelfieCampaignAdapter',
+                 'PaymentMethodAdapter',
         function( cinema6Provider , ContentAdapter , CWRXAdapter , CampaignAdapter ,
                   VoteAdapter , OrgAdapter , UserAdapter , CardAdapter , CustomerAdapter ,
-                  CategoryAdapter , AdvertiserAdapter , ExpGroupAdapter , SelfieCampaignAdapter ) {
+                  CategoryAdapter , AdvertiserAdapter , ExpGroupAdapter , SelfieCampaignAdapter ,
+                  PaymentMethodAdapter ) {
 
             [
                 ContentAdapter,
@@ -913,6 +984,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 ExpGroupAdapter,
                 CampaignAdapter,
                 SelfieCampaignAdapter,
+                PaymentMethodAdapter,
                 AdvertiserAdapter,
                 CustomerAdapter
             ].forEach(function(Adapter) {
@@ -932,6 +1004,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 expGroup: ExpGroupAdapter,
                 campaign: CampaignAdapter,
                 selfieCampaign: SelfieCampaignAdapter,
+                paymentMethod: PaymentMethodAdapter,
                 customer: CustomerAdapter
             };
 
