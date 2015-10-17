@@ -261,8 +261,85 @@ function( angular , c6State  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Account:PaymentOptions', [function() {
-                this.templateUrl = 'views/selfie/account/payment_options.html';
+            c6StateProvider.state('Selfie:Account:Payment', ['cinema6',
+            function                                        ( cinema6 ) {
+                this.templateUrl = 'views/selfie/account/payment.html';
+                this.controller = 'SelfieAccountPaymentController';
+                this.controllerAs = 'SelfieAccountPaymentCtrl';
+
+                this.model = function() {
+                    return cinema6.db.findAll('paymentMethod');
+                };
             }]);
+        }])
+
+        .controller('SelfieAccountPaymentController', ['c6State','cinema6','cState','$scope',
+        function                                      ( c6State , cinema6 , cState , $scope ) {
+            var SelfieAccountPaymentCtrl = this;
+
+            function refreshModel() {
+                cinema6.db.findAll('paymentMethod')
+                    .then(function(methods) {
+                        SelfieAccountPaymentCtrl.model = methods;
+                    })
+            }
+
+            this.initWithModel = function(model) {
+                this.model = model;
+            };
+
+            this.makeDefault = function(method) {
+                // this doesn't work because we need a nonce in order to edit the method
+
+                // method.makeDefault = true;
+                // method.save().then(refreshModel);
+            };
+
+            this.edit = function(method) {
+                c6State.goTo('Selfie:Account:Payment:New', [method]);
+            };
+
+            this.delete = function(method) {
+                method.erase().then(refreshModel);
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Account:Payment:New', ['cinema6',
+            function                                            ( cinema6 ) {
+                this.templateUrl = 'views/selfie/account/payment/new.html';
+                this.controller = 'SelfieAccountPaymentNewController';
+                this.controllerAs = 'SelfieAccountPaymentNewCtrl';
+
+                this.model = function() {
+                    return cinema6.db.create('paymentMethod', {
+                        paymentMethodNonce: null,
+                        cardholderName: null,
+                        makeDefault: false
+                    });
+                };
+            }]);
+        }])
+
+        .controller('SelfieAccountPaymentNewController', ['c6State','cinema6','cState','$scope',
+        function                                         ( c6State , cinema6 , cState , $scope ) {
+            var SelfieAccountPaymentCtrl = $scope.SelfieAccountPaymentCtrl,
+                paymentMethods = SelfieAccountPaymentCtrl.model;
+
+            this.success = function() {
+                this.model.save()
+                    .then(function(method) {
+                        if (paymentMethods.indexOf(method) < 0) {
+                            paymentMethods.unshift(method);
+                        }
+
+                        return c6State.goTo('Selfie:Account:Payment');
+                    });
+            };
+
+            this.cancel = function() {
+                return c6State.goTo('Selfie:Account:Payment');
+            };
         }]);
 });
