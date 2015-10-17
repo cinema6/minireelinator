@@ -1,3 +1,8 @@
+<style>
+    .form__item--lrg { margin: 0 0 0.0625em 0; width: 100%; }
+    .form__item--half { width: 50%; float: left; }
+    .modal__copy { margin: 0 0 2em; text-align: center; }
+</style>
 <div class="gridHolder modal__group modalPayment__group">
 
     <div class="grid grid--center">
@@ -34,8 +39,8 @@
                                 </div>
                             </fieldset>
 
-                            <!-- <fieldset class="form__item form__item--lrg">
-                                <input class="form__textBox form__textBox--lrg form__fillCheck" type="text" id="c6-addCard-name">
+                            <fieldset class="form__item form__item--lrg">
+                                <input c6-fill-check class="form__textBox form__textBox--lrg form__fillCheck" type="text" id="c6-addCard-name" ng-model="name">
                                 <label class="form__label form__label--lrg" for="c6-addCard-name">
                                     <i class="fa fa-times ui--error"></i>
                                     Name on the Card
@@ -50,75 +55,21 @@
                                         <i class="fa fa-exclamation-triangle"></i> Your card number is invalid.
                                     </p>
                                 </div>
-                            </fieldset> -->
+                            </fieldset>
 
                             <fieldset class="form__item form__item--lrg form__item--half">
                                 <div style="height:42px" class="form__textBox form__textBox--lrg form__fillCheck" id="c6-expiration-date"></div>
 
                                 <label class="form__label form__label--lrg" for="c6-expiration-date">
                                     <i class="fa fa-times ui--error"></i>
-                                    Expiration Date
+                                    Expiration Date (MM/YYYY)
                                 </label>
                                 <div class="form__errorBox">
                                     <p class="form__errorMsg">
-                                        <i class="fa fa-exclamation-triangle"></i> The month is incorrect.
+                                        <i class="fa fa-exclamation-triangle"></i> The date is incorrect.
                                     </p>
                                 </div>
                             </fieldset>
-
-                            <fieldset class="form__item form__item--lrg form__item--half">
-                                <div style="height:42px" class="form__textBox form__textBox--lrg form__fillCheck" id="c6-expiration-year"></div>
-
-                                <label class="form__label form__label--lrg" for="c6-expiration-year">
-                                    <i class="fa fa-times ui--error"></i>
-                                    Expiration Year
-                                </label>
-                                <div class="form__errorBox">
-                                    <p class="form__errorMsg">
-                                        <i class="fa fa-exclamation-triangle"></i> The year is incorrect.
-                                    </p>
-                                </div>
-                            </fieldset>
-
-                            <!-- <fieldset class="form__item form__item--lrg">
-                                <input class="form__textBox form__textBox--lrg form__fillCheck" type="text" id="c6-addCard-zip">
-                                <label class="form__label form__label--lrg" for="c6-addCard-zip">
-                                    <i class="fa fa-times ui--error"></i>
-                                    Billing Zip Code
-                                </label>
-
-                                <div class="form__helpBox form__helpBox--right form__helpBox--rightLrg">
-                                    <div class="form__helpText">
-                                        Provide the billing zip code for your credit card. It may be different than your home address zip code.
-                                    </div>
-                                </div>
-                                <div class="form__errorBox">
-                                    <p class="form__errorMsg">
-                                        <i class="fa fa-exclamation-triangle"></i> Your zip code is not recognized.
-                                    </p>
-                                </div>
-                            </fieldset> -->
-
-                            <!-- <fieldset class="form__item form__item--lrg ui--hasError">
-                                <select class="form__selectBox form__selectBox--single select2-hidden-accessible" tabindex="-1" aria-hidden="true">
-                                    <option>Yes</option>
-                                    <option>No, thanks</option>
-                                </select><span class="select2 select2-container select2-container--default" dir="ltr" style="width: 86px;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-autocomplete="list" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-labelledby="select2-xhme-container"><span class="select2-selection__rendered" id="select2-xhme-container" title="Yes">Yes</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
-                                <label class="form__label form__label--lrg" for="c6-sponsor-name">
-                                    <i class="fa fa-times ui--error"></i>
-                                    Make this a Primary Card
-                                </label>
-                                <div class="form__helpBox form__helpBox--right form__helpBox--rightLrg">
-                                    <div class="form__helpText">
-                                        If you make this your primary card, all future campaigns will automatically use this card first.
-                                    </div>
-                                </div>
-                                <div class="form__errorBox">
-                                    <p class="form__errorMsg">
-                                        <i class="fa fa-exclamation-triangle"></i> You need to select yes or no.
-                                    </p>
-                                </div>
-                            </fieldset> -->
 
                             <fieldset class="form__item form__item--lrg form__item--half">
                                 <div style="height:42px" class="form__textBox form__textBox--lrg form__fillCheck" id="c6-cvv"></div>
@@ -134,6 +85,44 @@
                                 </div>
                             </fieldset>
 
+                            <fieldset class="form__item form__item--lrg">
+                                <input c6-fill-check class="form__textBox form__textBox--lrg form__fillCheck" type="text" id="c6-addCard-zip">
+                                <label class="form__label form__label--lrg" for="c6-addCard-zip">
+                                    <i class="fa fa-times ui--error"></i>
+                                    Billing Zip Code
+                                </label>
+
+                                <div class="form__helpBox form__helpBox--right form__helpBox--rightLrg">
+                                    <div class="form__helpText">
+                                        Provide the billing zip code for your credit card. It may be different than your home address zip code.
+                                    </div>
+                                </div>
+                                <div class="form__errorBox">
+                                    <p class="form__errorMsg">
+                                        <i class="fa fa-exclamation-triangle"></i> Your zip code is not recognized.
+                                    </p>
+                                </div>
+                            </fieldset>
+
+                            <fieldset class="form__item form__item--lrg ui--hasError">
+                                <select c6-select-box class="form__selectBox form__selectBox--single" ng-model="makeDefault" ng-options="option for option in ['Yes','No']" id="c6-make-default"></select>
+
+                                <label class="form__label form__label--lrg" for="c6-make-default">
+                                    <i class="fa fa-times ui--error"></i>
+                                    Make this a Primary Card
+                                </label>
+                                <div class="form__helpBox form__helpBox--right form__helpBox--rightLrg">
+                                    <div class="form__helpText">
+                                        If you make this your primary card, all future campaigns will automatically use this card first.
+                                    </div>
+                                </div>
+                                <div class="form__errorBox">
+                                    <p class="form__errorMsg">
+                                        <i class="fa fa-exclamation-triangle"></i> You need to select yes or no.
+                                    </p>
+                                </div>
+                            </fieldset>
+
                             <div class="ui__btnHolder--sub">
                                 <button class="action__btn action__btn--wide">Save</button>
                             </div>
@@ -145,7 +134,7 @@
             </div><!--.grid .grid--center-->
         </section><!--.grid__item .five-sixths-->
 
-
+        <button ng-click="onCancel()">Cancel</button>
 
     </div><!--.grid grid--center-->
 

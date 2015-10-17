@@ -472,8 +472,18 @@ function( angular , select2 , braintree ) {
         function                ( $http , c6UrlMaker ) {
             return {
                 restrict: 'E',
+                scope: {
+                    // clientToken: '=', // maybe the parent state creates this and passes it in?
+                    onSuccess: '&',
+                    onFailure: '&',
+                    onCancel: '&',
+                    method: '='
+                },
                 templateUrl: 'views/selfie/directives/payment.html',
-                link: function() {
+                link: function(scope, $element, atts, ctrl) {
+                    scope.makeDefault = scope.method.makeDefault ? 'Yes' : 'No';
+                    scope.name = scope.method.cardholderName;
+
                     $http.get(c6UrlMaker('payments/clientToken', 'api'))
                         .then(function(resp) {
                             braintree.setup(resp.data.clientToken, 'custom', {
@@ -488,15 +498,10 @@ function( angular , select2 , braintree ) {
                                     expirationDate: {
                                         selector: '#c6-expiration-date'
                                     },
-                                    expirationYear: {
-                                        selector: '#c6-expiration-year'
-                                    },
                                     onFieldEvent: function(event) {
                                         var fieldSet = event.target.container,
                                             isFocused = event.isFocused,
                                             isEmpty = event.isEmpty;
-
-                                        console.log(event);
 
                                         if (isFocused) {
                                             $(fieldSet).addClass('form__fillCheck--filled');
@@ -506,7 +511,16 @@ function( angular , select2 , braintree ) {
                                     }
                                 },
                                 onPaymentMethodReceived: function(method) {
-                                    console.log(method);
+                                    scope.method.paymentMethodNonce = method.nonce;
+                                    scope.method.cardholderName = scope.name;
+                                    scope.method.makeDefault = scope.makeDefault === 'Yes';
+
+                                    scope.onSuccess();
+
+                                    // we got the nonce, make call to payment service to add it
+                                    // or maybe we just call the onSuccess() function passed
+                                    // on the scope. That way the state/controller gets to decide
+                                    // what to do with the info
                                 }
                             });
                         });
