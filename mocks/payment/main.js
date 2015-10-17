@@ -50,4 +50,72 @@ module.exports = function(http) {
 
         this.respond(200, { clientToken: token });
     });
+
+    function randomNum(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    http.whenPOST('/api/payments/methods', function(request) {
+        var token = genId('pay'),
+            type = ['creditCard', 'paypal'][randomNum(0,1)],
+            currentTime = (new Date()).toISOString(),
+            paymentMethod = {
+                token: token,
+                createdAt: currentTime,
+                updatedAt: currentTime,
+                imageUrl: null,
+                default: request.body.makeDefault,
+                type: type
+            };
+
+        if (!request.body.paymentMethodNonce) {
+            return this.respond(403, 'Forbidden');
+        }
+
+        paymentMethod = extend(paymentMethod, (type === 'creditCard' ? {
+            cardType: ['Visa','AmEx'][randomNum(0,1)],
+            cardholderName: request.body.cardholderName,
+            expirationDate: '11/2019',
+            last4: randomNum(1000,9999)
+        } : {
+            email: 'selfie' + randomNum(100,999) + '@' + ['gmail','aol','cinema6'][randomNum(0,2)] + '.com'
+        }));
+        
+        grunt.file.write(objectPath('payments', token), JSON.stringify(paymentMethod, null, '    '));
+
+        this.respond(201, paymentMethod);
+    });
+
+    http.whenGET('/api/payments/methods', function(request) {
+        var allPayments = grunt.file.expand(path.resolve(__dirname, './payments/*.json'))
+            .map(function(path) {
+                    return grunt.file.readJSON(path);
+                });
+
+        this.respond(200, allPayments);
+    });
+
+    http.whenPUT('/api/payments/methods/**', function(request) {
+        var id = idFromPath(request.pathname),
+            filePath = objectPath('payments', id),
+            payment = grunt.file.readJSON(filePath);
+
+        if (!request.body.paymentMethodNonce) {
+            return this.respond(403, 'Forbidden');
+        }
+
+        payment.default = request.body.makeDefault;
+        payment.cardholderName = request.body.cardholderName;
+        payment.updatedAt = (new Date()).toISOString();
+
+        grunt.file.write(filePath, JSON.stringify(payment, null, '    '));
+
+        this.respond(200, payment);
+    });
+
+    http.whenDELETE('/api/payments/methods/**', function(request) {
+        grunt.file.delete(objectPath('payments', idFromPath(request.pathname)));
+
+        this.respond(204, '');
+    });
 };
