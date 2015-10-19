@@ -167,7 +167,7 @@ fa,
 
 
 /*  ================================================
-    helper classes
+    UI Elements and Helper classes
     ================================================ */
     .ir {
         background-color: transparent;
@@ -523,7 +523,22 @@ fa,
         .btnAction--danger:focus {
             background-color:#dc4141;
         }
-    
+    /*Alert messages*/
+    .alertMessage {
+        display: block;
+        background-color: #FBE4AB;
+        color: #775B17;
+        border-radius: 3px;
+        padding: 0.25em;
+    }
+        .alertMessage.alert__success {
+            background-color: #DBFFEF;
+            color: #00BC65;
+        }
+        .alertMessage.alert__failure {
+            background-color: #FFC0C0;
+            color: #ED0000;
+        }
 
 /*  ================================================
     Sign up and Pre-Login screen styles
@@ -627,24 +642,47 @@ fa,
     mainNav classes
     ================================================ 
     (Jess added)                                    */
-
-    .mainNav__settings {
-        width:100%;
-        height:4rem;
-        position:absolute;
-        bottom:0;
+    .mainNav__dashboard {
+        border-bottom: 1px solid #222;
     }
-        .mainNav__iconOnly {
-            font-size:2rem;
-            color:#87949f;
-            padding:1.125rem;
+        .mainNav__item {
+            width: 100%;
+            height: auto;
+            display: block;
+            text-align: center;
+            border-bottom: 1px solid #222;
         }
-        .mainNav__settings:hover .mainNav__iconOnly:hover {
-            background:#232628;
+            .mainNav__item:hover {
+                background-color: #222;
+            }
+            .mainNav__iconOnly {
+                font-size:1.75rem;
+                color:#87949f;
+                padding:0.75rem 0 0 0;
+                display: block;
+            }
+            .mainNav__label {
+               font-size: 0.625em;
+                color: #87949f;
+                margin-top: 0;
+                padding-top: 0;
+                display: inline-block;
+                padding-bottom: 0.5rem;   
+            }
+        .mainNav__settings {
+            width:100%;
+            height:4.5rem;
+            position:absolute;
+            bottom:0;
+            border-bottom: 0;
+            cursor: pointer;
         }
+            .mainNav__settings:hover {
+                background:#232628;
+            }
 
         .mainNav__dropDownGroup {
-            list-style:none;
+            list-style:none !important;
             margin:0 0 0 -2px;
             padding:0;
             position:absolute;
@@ -655,14 +693,7 @@ fa,
             color:#fff;
             display:none;
         }
-        .mainNav__item {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        .mainNav__item:hover {
-            background-color: #222;
-        }
+        
         .mainNav__item.c6-active {
             background: #222;
             border-left: 2px solid #00c0ff;
@@ -672,19 +703,23 @@ fa,
             }
         .mainNav__settings:hover .mainNav__dropDownGroup {
             display:block;
+            list-style-type: none;
         }
 
         .mainNav__dropDownGroup a:hover {
             color:#fff;
+            list-style-type:none;
         }
 
             .mainNav__dropDownItem {
+                list-style-type:none;
                 margin:0;
                 padding:1.25rem 4rem;
                 display:block;
                 width:100%;
                 background:#232628;
                 transition:0.3s background;
+                cursor: pointer;
             }
 
             .mainNav__dropDownItem:hover {
