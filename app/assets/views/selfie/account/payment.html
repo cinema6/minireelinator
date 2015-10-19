@@ -1,3 +1,8 @@
+<style>
+    #braintree-paypal-loggedin { display: none !important; }
+    #braintree-paypal-loggedout { display: none !important; }
+</style>
+
 <div class="pageHolder">
 
     <div class="pageHeader__group">
@@ -6,9 +11,9 @@
                 <a c6-sref="Selfie:Account">Settings</a>  /  Manage Payment Methods
             </h1>
         </div><!--.mainHeader__group-->
-        
+
     </div><!--.pageHeader__group-->
-    
+
     <div class="grid grid--center">
         <div class="grid__item">
             <header class="settingsContent__header">
@@ -16,7 +21,7 @@
                 <span class="settingsContent__subtitle">Your campaigns would use the primary payment method provided in the account settings unless you choose to use a different option.</span>
             </header>
         </div>
-        
+
     </div> 
     <div class="settingsContent__gridHolder">
 
@@ -34,10 +39,11 @@
                               <li><a href="#"><i class="fa fa-ellipsis-v"></i><span class="ir">Menu</span></a>
                                 <ul>
                                   <li><button ng-click="SelfieAccountPaymentCtrl.makeDefault(method)">Make Primary</button></li>
-                                  <li><button ng-click="SelfieAccountPaymentCtrl.edit(method)">Edit</button></li>
-                                  <li><button ng-click="SelfieAccountPaymentCtrl.delete(method)">Delete</button></li>
+                                  <li><button ng-if="method.type === 'creditCard'" ng-click="SelfieAccountPaymentCtrl.edit(method)">Edit</button></li>
+                                  <li><button ng-if="method.type === 'paypal'" hidden-input-click="braintree-paypal-button" ng-click="SelfieAccountPaymentCtrl.editPaypal(method)">Edit</button></li>
+                                  <li ng-if="!method.default"><button ng-click="SelfieAccountPaymentCtrl.delete(method)">Delete</button></li>
                                 </ul>
-                              </li>                              
+                              </li>
                             </ul>
                         </nav>
                         </li>
@@ -58,8 +64,12 @@
             <div class="grid grid--center payment__btn--spacing">
                 <div class="grid__item one-whole">
                 <div class="text--center">
-                    <button class="action__btnSecondary action__btnSecondary--big palm--one-whole">
-                        <a href="https://www.paypal.com/signin/?country.x=US&locale.x=en_US" target="_blank"style="color: #fff;"><i class="faa fa-plus"></i>
+                    <selfie-paypal client-token="{{SelfieAccountPaymentCtrl.token}}" on-success="SelfieAccountPaymentCtrl.paypalSuccess(method)">
+                        <div id="c6-paypal"></div>
+                    </selfie-paypal>
+
+                    <button class="action__btnSecondary action__btnSecondary--big palm--one-whole" hidden-input-click="braintree-paypal-button">
+                        <i class="faa fa-plus"></i>
                         PayPal
                     </button><!--
                 -->
@@ -70,11 +80,11 @@
                 </div>
                 </div>
             </div>
-                
+
         </div>
         </div><!--.grid one-whole-->
 
-            
+
         </div><!--.grid .grid--center-->
     </div><!--.settingsContent__gridHolder-->
 </div><!--.pageHolder-->

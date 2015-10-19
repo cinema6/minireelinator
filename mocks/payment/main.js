@@ -80,7 +80,11 @@ module.exports = function(http) {
         } : {
             email: 'selfie' + randomNum(100,999) + '@' + ['gmail','aol','cinema6'][randomNum(0,2)] + '.com'
         }));
-        
+
+        if (paymentMethod.default) {
+            makeDefault(token);
+        }
+
         grunt.file.write(objectPath('payments', token), JSON.stringify(paymentMethod, null, '    '));
 
         this.respond(201, paymentMethod);
@@ -95,17 +99,44 @@ module.exports = function(http) {
         this.respond(200, allPayments);
     });
 
+    function makeDefault(id) {
+        grunt.file.expand(path.resolve(__dirname, './payments/*.json'))
+            .filter(function(path) {
+                return path.indexOf(id) === -1;
+            })
+            .map(function(path) {
+                return grunt.file.readJSON(path);
+            })
+            .map(function(method) {
+                method.default = false;
+
+                grunt.file.write(objectPath('payments', method.token), JSON.stringify(method, null, '    '));
+            });
+    }
+
     http.whenPUT('/api/payments/methods/**', function(request) {
         var id = idFromPath(request.pathname),
             filePath = objectPath('payments', id),
-            payment = grunt.file.readJSON(filePath);
+            payment = grunt.file.readJSON(filePath),
+            propCount = 0;
 
-        if (!request.body.paymentMethodNonce) {
+        for (var prop in request.body) {
+            propCount++;
+        }
+
+        if (!request.body.paymentMethodNonce && propCount > 1) {
             return this.respond(403, 'Forbidden');
         }
 
-        payment.default = request.body.makeDefault;
-        payment.cardholderName = request.body.cardholderName;
+        if (request.body.cardholderName) {
+            payment.cardholderName = request.body.cardholderName;
+        }
+
+        if (request.body.makeDefault) {
+            makeDefault(id);
+        }
+
+        payment.default = payment.default || request.body.makeDefault;
         payment.updatedAt = (new Date()).toISOString();
 
         grunt.file.write(filePath, JSON.stringify(payment, null, '    '));

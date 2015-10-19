@@ -1,0 +1,9 @@
+{
+    "token": "pay-733569ee634394",
+    "createdAt": "2015-10-19T15:38:46.153Z",
+    "updatedAt": "2015-10-19T22:10:11.196Z",
+    "imageUrl": null,
+    "type": "paypal",
+    "email": "selfie880@cinema6.com",
+    "default": false
+}

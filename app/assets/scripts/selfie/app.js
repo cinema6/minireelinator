@@ -33,6 +33,7 @@ function( angular , c6State  , services   , directives   , campaign   ) {
                     this.route('/password', 'Selfie:Account:Password');
                     this.route('/payment', 'Selfie:Account:Payment', function() {
                         this.route('/new', 'Selfie:Account:Payment:New');
+                        this.route('/edit/:id', 'Selfie:Account:Payment:Edit');
                     });
                     this.route('/payment/history', 'Selfie:Account:Payment:History');
                 });

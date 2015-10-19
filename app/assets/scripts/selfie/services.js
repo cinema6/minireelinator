@@ -131,6 +131,13 @@ function( angular , c6uilib ) {
 
         }])
 
+        .service('PaymentService', ['$http','c6UrlMaker',
+        function                   ( $http , c6UrlMaker ) {
+            this.getToken = function(method) {
+                return $http.get(c6UrlMaker('payments/clientToken', 'api'));
+            };
+        }])
+
         .service('CSSLoadingService', ['$document',
         function                      ( $document ) {
             this.load = function() {

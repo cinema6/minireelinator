@@ -122,10 +122,13 @@ function( angular , select2 , braintree ) {
             return {
                 restrict: 'A',
                 link: function(scope, $element, attrs) {
-                    var input = $document[0].getElementById(attrs.hiddenInputClick);
 
                     $element.on('click', function() {
-                        angular.element(input).trigger('click');
+                        var input = $document[0].getElementById(attrs.hiddenInputClick);
+
+                        if (input && input.click) {
+                            input.click();
+                        }
                     });
                 }
             };
@@ -468,12 +471,12 @@ function( angular , select2 , braintree ) {
             });
         }])
 
-        .directive('c6Payment', ['$http','c6UrlMaker',
-        function                ( $http , c6UrlMaker ) {
+        .directive('selfieCreditCard', ['$http','c6UrlMaker',
+        function                       ( $http , c6UrlMaker ) {
             return {
                 restrict: 'E',
                 scope: {
-                    // clientToken: '=', // maybe the parent state creates this and passes it in?
+                    clientToken: '=',
                     onSuccess: '&',
                     onFailure: '&',
                     onCancel: '&',
@@ -481,49 +484,60 @@ function( angular , select2 , braintree ) {
                 },
                 templateUrl: 'views/selfie/directives/payment.html',
                 link: function(scope, $element, atts, ctrl) {
-                    scope.makeDefault = scope.method.makeDefault ? 'Yes' : 'No';
+                    scope.makeDefault = scope.method.default ? 'Yes' : 'No';
                     scope.name = scope.method.cardholderName;
 
-                    $http.get(c6UrlMaker('payments/clientToken', 'api'))
-                        .then(function(resp) {
-                            braintree.setup(resp.data.clientToken, 'custom', {
-                                id: 'c6-payment-method',
-                                hostedFields: {
-                                    number: {
-                                        selector: '#c6-addCard-number'
-                                    },
-                                    cvv: {
-                                        selector: '#c6-cvv'
-                                    },
-                                    expirationDate: {
-                                        selector: '#c6-expiration-date'
-                                    },
-                                    onFieldEvent: function(event) {
-                                        var fieldSet = event.target.container,
-                                            isFocused = event.isFocused,
-                                            isEmpty = event.isEmpty;
+                    braintree.setup(scope.clientToken, 'custom', {
+                        id: 'c6-payment-method',
+                        hostedFields: {
+                            number: {
+                                selector: '#c6-addCard-number'
+                            },
+                            cvv: {
+                                selector: '#c6-cvv'
+                            },
+                            expirationDate: {
+                                selector: '#c6-expiration-date'
+                            },
+                            onFieldEvent: function(event) {
+                                var fieldSet = event.target.container,
+                                    isFocused = event.isFocused,
+                                    isEmpty = event.isEmpty;
 
-                                        if (isFocused) {
-                                            $(fieldSet).addClass('form__fillCheck--filled');
-                                        } else if (isEmpty) {
-                                            $(fieldSet).removeClass('form__fillCheck--filled');
-                                        }
-                                    }
-                                },
-                                onPaymentMethodReceived: function(method) {
-                                    scope.method.paymentMethodNonce = method.nonce;
-                                    scope.method.cardholderName = scope.name;
-                                    scope.method.makeDefault = scope.makeDefault === 'Yes';
-
-                                    scope.onSuccess();
-
-                                    // we got the nonce, make call to payment service to add it
-                                    // or maybe we just call the onSuccess() function passed
-                                    // on the scope. That way the state/controller gets to decide
-                                    // what to do with the info
+                                if (isFocused) {
+                                    $(fieldSet).addClass('form__fillCheck--filled');
+                                } else if (isEmpty) {
+                                    $(fieldSet).removeClass('form__fillCheck--filled');
                                 }
-                            });
-                        });
+                            }
+                        },
+                        onPaymentMethodReceived: function(method) {
+                            method.makeDefault = scope.makeDefault === 'Yes';
+                            method.cardholderName = scope.name;
+
+                            scope.onSuccess({ method: method });
+                        }
+                    });
+                }
+            };
+        }])
+
+        .directive('selfiePaypal', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    clientToken: '@',
+                    onSuccess: '&',
+                    onFailure: '&',
+                    onCancel: '&'
+                },
+                link: function(scope, $element, atts, ctrl) {
+                    braintree.setup(scope.clientToken, 'paypal', {
+                        container: 'c6-paypal',
+                        onPaymentMethodReceived: function(method) {
+                            scope.onSuccess({ method: method });
+                        }
+                    });
                 }
             };
         }])
