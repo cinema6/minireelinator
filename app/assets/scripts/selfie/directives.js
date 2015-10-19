@@ -272,7 +272,7 @@ function( angular ) {
                 categories = $scope.categories;
 
             this.category = categories.filter(function(category) {
-                return campaign.contentCategories.primary === category.name;
+                return campaign.contentCategories.primary === category.id;
             })[0] || null;
 
             $scope.$watch(function() {
@@ -280,7 +280,7 @@ function( angular ) {
             }, function(newCat, oldCat) {
                 if (newCat === oldCat) { return; }
 
-                campaign.contentCategories.primary = newCat.name;
+                campaign.contentCategories.primary = newCat.id;
             });
         }])
 
@@ -304,7 +304,7 @@ function( angular ) {
                 categories = $scope.categories;
 
             this.interests = categories.filter(function(category) {
-                return campaign.targeting.interests.indexOf(category.name) > -1;
+                return campaign.targeting.interests.indexOf(category.id) > -1;
             });
 
             $scope.$watch(function() {
@@ -313,7 +313,7 @@ function( angular ) {
                 if (newInterests === oldInterests) { return; }
 
                 campaign.targeting.interests = newInterests.map(function(interest) {
-                    return interest.name;
+                    return interest.id;
                 });
             });
         }])
