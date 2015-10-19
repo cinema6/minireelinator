@@ -5,7 +5,7 @@
 
 <div class="form__items">
     <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': !SelfieBudgetCtrl.validBudget }">
-        <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="text" id="c6-campaign-budget" ng-model="SelfieBudgetCtrl.budget">
+        <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="number" id="c6-campaign-budget" ng-model="SelfieBudgetCtrl.budget">
         <span class="input__unit">$</span>
         <label class="form__label" for="c6-campaign-budget">
             <i class="fa fa-times ui--error"></i>
@@ -24,7 +24,7 @@
     </fieldset>
 
     <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': SelfieBudgetCtrl.dailyLimitError }">
-        <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="text" id="c6-daily-limit" ng-model="SelfieBudgetCtrl.limit">
+        <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="number" id="c6-daily-limit" ng-model="SelfieBudgetCtrl.limit">
         <span class="input__unit">$</span>
         <label class="form__label" for="c6-daily-limit">
             <i class="fa fa-times ui--error"></i>

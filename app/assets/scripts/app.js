@@ -778,7 +778,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         created: undefined,
                         // advertiserId: undefined,
                         // customerId: undefined,
-                        cards: campaign.cards.map(makeCreativeWrapper)
+                        cards: campaign.cards ?
+                            campaign.cards.map(makeCreativeWrapper) :
+                            undefined
                     });
                 }
 
@@ -795,12 +797,12 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         });
                     }
 
-                    return $q.all(campaign.cards.map(function(data) {
+                    return $q.all((campaign.cards || []).map(function(data) {
                         return $q.all(extend(parseWrapper(data), {
                             item: getDbModel('card')(data.id)
                         }));
                     })).then(function(cards) {
-                        campaign.cards = cards;
+                        campaign.cards = cards.length ? cards : undefined;
                         return campaign;
                     });
                 };

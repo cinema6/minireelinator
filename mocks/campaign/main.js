@@ -124,8 +124,7 @@ module.exports = function(http) {
             user = require('../auth/user_cache').user,
             currentTime = (new Date()).toISOString(),
             campaign = extend({
-                miniReels: [],
-                cards: []
+                miniReels: []
             }, request.body, {
                 created: currentTime,
                 user: user.id,

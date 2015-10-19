@@ -238,6 +238,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         c6Debounce.debouncedFn(['']);
 
                         expect(SelfieCampaignVideoCtrl.video).toBe(null);
+                        expect(SelfieCampaignVideoCtrl.videoError).toBe(false);
                     });
                 });
 
