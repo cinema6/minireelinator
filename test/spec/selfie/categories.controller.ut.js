@@ -32,10 +32,12 @@ define(['app'], function(appModule) {
 
                 categories = [
                     {
+                        id: 'cat-111',
                         name: 'comedy',
                         label: 'Comedy'
                     },
                     {
+                        id: 'cat-112',
                         name: 'entertainment',
                         label: 'Entertainment'
                     }
@@ -59,7 +61,7 @@ define(['app'], function(appModule) {
                 it('should come from the campaign or be null', function() {
                     expect(SelfieCategoriesCtrl.category).toEqual(null);
 
-                    campaign.contentCategories.primary = 'entertainment';
+                    campaign.contentCategories.primary = 'cat-112';
 
                     compileCtrl();
 
@@ -77,13 +79,13 @@ define(['app'], function(appModule) {
                         SelfieCategoriesCtrl.category = categories[1];
                     });
 
-                    expect(campaign.contentCategories.primary).toEqual('entertainment');
+                    expect(campaign.contentCategories.primary).toEqual('cat-112');
 
                     $scope.$apply(function() {
                         SelfieCategoriesCtrl.category = categories[0];
                     });
 
-                    expect(campaign.contentCategories.primary).toEqual('comedy');
+                    expect(campaign.contentCategories.primary).toEqual('cat-111');
                 });
             });
         });

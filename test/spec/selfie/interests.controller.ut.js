@@ -33,18 +33,22 @@ define(['app'], function(appModule) {
 
                 categories = [
                     {
+                        id: 'int-111',
                         name: 'comedy',
                         label: 'Comedy'
                     },
                     {
+                        id: 'int-112',
                         name: 'cars',
                         label: 'Cars'
                     },
                     {
+                        id: 'int-113',
                         name: 'entertainment',
                         label: 'Entertainment'
                     },
                     {
+                        id: 'int-114',
                         name: 'food',
                         label: 'Food'
                     }
@@ -67,17 +71,19 @@ define(['app'], function(appModule) {
                 it('should be the interest(s) from the campaign', function() {
                     expect(SelfieInterestsCtrl.interests).toEqual([]);
 
-                    campaign.targeting.interests.push('entertainment');
-                    campaign.targeting.interests.push('comedy');
+                    campaign.targeting.interests.push('int-113');
+                    campaign.targeting.interests.push('int-111');
 
                     compileCtrl();
 
                     expect(SelfieInterestsCtrl.interests).toEqual([
                         {
+                            id: 'int-111',
                             name: 'comedy',
                             label: 'Comedy'
                         },
                         {
+                            id: 'int-113',
                             name: 'entertainment',
                             label: 'Entertainment'
                         }
@@ -95,7 +101,7 @@ define(['app'], function(appModule) {
                         SelfieInterestsCtrl.interests = [ categories[2],  categories[3]];
                     });
 
-                    expect(campaign.targeting.interests).toEqual(['entertainment', 'food']);
+                    expect(campaign.targeting.interests).toEqual(['int-113', 'int-114']);
 
                     $scope.$apply(function() {
                         SelfieInterestsCtrl.interests = [];
