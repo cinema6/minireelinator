@@ -1,11 +1,15 @@
 # MiniReelinator
 
+## v1.23.0 (October 19, 2015)
 * *[v1.23.0.rc1]*
   * [DESIGN]: (Selfie) Added styles for Payment Management and Payment History screens
   * [DESIGN]: (Selfie) Added styles notification alerts and added main navigation labels
   * [FIX]: (Selfie) Do not show video input error when there is no video source
   * [DEV]: (Selfie) Do not save empty cards array on new campaigns
   * [FIX]: (Selfie) Ensure that campaign budget and daily limit are saved as Numbers
+  * [FIX]: (Selfie) Save categories (ie. Interests and Content Categories) by ID
+    instead of by name
+* *[/v1.23.0.rc1]*
 
 ## v1.22.0 (October 15, 2015)
 * *[v1.22.0.rc7]*
