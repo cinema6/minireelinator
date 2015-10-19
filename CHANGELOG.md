@@ -2,6 +2,7 @@
 
 * *[v1.23.0.rc1]*
   * [DESIGN]: (Selfie) Added styles for Payment Management and Payment History screens
+  * [DESIGN]: (Selfie) Added styles notification alerts and added main navigation labels
   
 ## v1.22.0 (October 15, 2015)
 * *[v1.22.0.rc7]*
