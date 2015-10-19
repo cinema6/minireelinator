@@ -639,6 +639,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 if (!url) {
                     SelfieCampaignVideoCtrl.video = null;
+                    SelfieCampaignVideoCtrl.videoError = false;
                     return;
                 }
 
