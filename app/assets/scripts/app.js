@@ -778,7 +778,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         created: undefined,
                         // advertiserId: undefined,
                         // customerId: undefined,
-                        cards: campaign.cards.map(makeCreativeWrapper)
+                        cards: campaign.cards ?
+                            campaign.cards.map(makeCreativeWrapper) :
+                            undefined
                     });
                 }
 

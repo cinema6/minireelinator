@@ -48,7 +48,6 @@ function( angular , c6uilib ) {
                     advertiserId: advertiser.id,
                     customerId: customer.id,
                     name: null,
-                    cards: [],
                     pricing: {},
                     status: 'draft',
                     application: 'selfie',
