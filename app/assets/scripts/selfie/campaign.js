@@ -235,7 +235,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.model = function() {
                     return $q.all({
                         categories: cinema6.db.findAll('category'),
-                        logos: SelfieLogoService.getLogos()
+                        logos: SelfieLogoService.getLogos(),
+                        paymentMethods: cinema6.db.findAll('paymentMethod')
                     });
                 };
             }]);
@@ -343,6 +344,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.categories = model.categories;
                 this.logos = model.logos;
                 this.advertiser = cState.advertiser;
+                this.paymentMethods = model.paymentMethods;
 
                 this._proxyCard = copy(this.card);
                 this._proxyCampaign = copy(this.campaign);
@@ -813,8 +815,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6',
-            function                                        ( cinema6 ) {
+            c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6','$q',
+            function                                        ( cinema6 , $q ) {
                 this.templateUrl = 'views/selfie/campaigns/manage.html';
                 this.controller = 'SelfieManageCampaignController';
                 this.controllerAs = 'SelfieManageCampaignCtrl';
@@ -828,7 +830,10 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.model = function() {
-                    return cinema6.db.findAll('category');
+                    return $q.all({
+                        categories: cinema6.db.findAll('category'),
+                        paymentMethods: cinema6.db.findAll('paymentMethod')
+                    });
                 };
             }]);
         }])
@@ -855,10 +860,11 @@ function( angular , c6State  , PaginatedListState                    ,
             };
             this.tab = 'manage';
 
-            this.initWithModel = function(categories) {
+            this.initWithModel = function(model) {
                 this.card = cState.card;
                 this.campaign = cState.campaign;
-                this.categories = categories;
+                this.categories = model.categories;
+                this.paymentMethods = model.paymentMethods;
             };
 
             this.update = queue.debounce(function() {
