@@ -1,1 +1,27 @@
-Payments
+<div class="tabContent targeting__content container">
+    <header class="tabContent__header">
+        <h2 class="tabContent__title tk--hdr">Payment Options</h2>
+        <span class="tabContent__subtitle">Your campaign would use the primary payment method provided in the account settings unless you choose a different option</span>
+    </header>
+
+    <div class="tabContent__gridHolder">
+        <div class="grid grid--center">
+            <div class="grid__item one-third">
+                <section class="formSection__group">
+                    <h1 class="formSection__title">
+                        <span class="formSection__titleText tk--hdr">Choose Your Payment Method</span>
+                    </h1>
+                    <p class="formSection__introText">Something goes here</p>
+
+                    <div class="form__items">
+                        <selfie-payment-methods methods="SelfieManageCampaignCtrl.paymentMethods" campaign="SelfieManageCampaignCtrl.campaign"></selfie-payment-methods>
+                    </div>
+
+                    <div class="ui__btnHolder">
+                        <button class="action__btn action__btn--big" ng-disabled="!SelfieManageCampaignCtrl.canSubmit" ng-click="SelfieManageCampaignCtrl.update()">Save Changes</button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
