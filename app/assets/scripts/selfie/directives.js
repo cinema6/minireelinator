@@ -560,22 +560,59 @@ function( angular , select2 , braintree ) {
         .controller('SelfiePaymentMethodsController', ['$scope',
         function                                      ( $scope ) {
             var campaign = $scope.campaign,
-                methods = $scope.methods;
+                methods = $scope.methods,
+                SelfiePaymentMethodsCtrl = this;
 
             function getPrimaryMethod() {
                 return methods.filter(function(method) {
-                    return method.default;
+                    return !!method.default;
                 })[0];
             }
+
+            function getMethodById(token) {
+                return methods.filter(function(method) {
+                    return token === method.token;
+                })[0];
+            }
+
+            Object.defineProperties(this, {
+                methods: {
+                    get: function() {
+                        var current = SelfiePaymentMethodsCtrl.currentMethod || {};
+
+                        return (methods || []).filter(function(method) {
+                            return method.token !== current.token;
+                        });
+                    }
+                }
+            });
 
             this.currentMethod = methods.filter(function(method) {
                 return campaign.paymentMethod === method.token;
             })[0] || getPrimaryMethod();
 
+            if (!campaign.paymentMethod && this.currentMethod) {
+                campaign.paymentMethod = this.currentMethod.token;
+            }
+
             this.setCurrentMethod = function(method) {
                 this.currentMethod = method;
                 campaign.paymentMethod = method.token;
             };
+
+            this.toggleDropdown = function() {
+                if (methods.length < 2) { return; }
+
+                this.showDropdown = !this.showDropdown;
+            };
+
+            $scope.$watch(function() {
+                return $scope.campaign.paymentMethod;
+            }, function(newToken, oldToken) {
+                if (newToken === oldToken) { return; }
+
+                SelfiePaymentMethodsCtrl.setCurrentMethod(getMethodById(newToken));
+            });
         }])
 
         .filter('videoService', [function() {

@@ -323,6 +323,7 @@ function( angular , c6State  , PaginatedListState                    ,
                             campaign.name,
                             campaign.advertiserDisplayName,
                             campaign.contentCategories.primary,
+                            campaign.paymentMethod,
                             this.validation.budget,
                             card.data.service,
                             card.data.videoid
@@ -385,7 +386,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 return [
                     campaign.contentCategories,
                     campaign.pricing,
-                    campaign.targeting
+                    campaign.targeting,
+                    campaign.paymentMethod
                 ];
             }, function(params, oldParams) {
                 if (params === oldParams) { return; }
@@ -792,6 +794,43 @@ function( angular , c6State  , PaginatedListState                    ,
 
             $scope.$on('loadPreview', SelfieCampaignPreviewCtrl.loadPreview);
 
+        }])
+
+        .controller('SelfieCampaignPaymentController', ['PaymentService','$scope','cinema6',
+        function                                       ( PaymentService , $scope , cinema6 ) {
+            var SelfieCampaignPaymentCtrl = this,
+                methods = $scope.SelfieCampaignCtrl.paymentMethods,
+                campaign = $scope.SelfieCampaignCtrl.campaign;
+
+            PaymentService.getToken().then(function(token) {
+                SelfieCampaignPaymentCtrl.paypalToken = token;
+            });
+
+            this.addCard = function() {
+                PaymentService.getToken().then(function(token) {
+                    SelfieCampaignPaymentCtrl.creditCardToken = token;
+                    SelfieCampaignPaymentCtrl.showModal = true;
+                });
+            };
+
+            this.cancel = function() {
+                this.showModal = false;
+            };
+
+            this.success = function(method) {
+                var newMethod = cinema6.db.create('paymentMethod', {
+                    paymentMethodNonce: method.nonce,
+                    cardholderName: method.cardholderName,
+                    makeDefault: method.makeDefault
+                });
+
+                newMethod.save()
+                    .then(function(method) {
+                        methods.unshift(method);
+                        campaign.paymentMethod = method.token;
+                        SelfieCampaignPaymentCtrl.showModal = false;
+                    });
+            };
         }])
 
         .config(['c6StateProvider',

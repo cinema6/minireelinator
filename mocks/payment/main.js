@@ -145,6 +145,22 @@ module.exports = function(http) {
     });
 
     http.whenDELETE('/api/payments/methods/**', function(request) {
+        var id = idFromPath(request.pathname),
+            filePath = objectPath('payments', id),
+            payment = grunt.file.readJSON(filePath),
+            allCampaigns = grunt.file.expand(path.resolve(__dirname, '../campaign/campaigns/*.json'))
+                .map(function(path) {
+                    return grunt.file.readJSON(path);
+                })
+                .filter(function(campaign) {
+                    console.log(campaign);
+                    return campaign.paymentMethod === payment.token;
+                });
+
+        if (allCampaigns.length) {
+            return this.respond(403, 'Forbidden');
+        }
+
         grunt.file.delete(objectPath('payments', idFromPath(request.pathname)));
 
         this.respond(204, '');
