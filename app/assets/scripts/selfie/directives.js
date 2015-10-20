@@ -481,7 +481,7 @@ function( angular , select2 , braintree ) {
                     onCancel: '&',
                     method: '='
                 },
-                templateUrl: 'views/selfie/directives/payment.html',
+                templateUrl: 'views/selfie/directives/credit_card.html',
                 link: function(scope) {
                     scope.makeDefault = scope.method.default ? 'Yes' : 'No';
                     scope.name = scope.method.cardholderName;
@@ -541,6 +541,40 @@ function( angular , select2 , braintree ) {
                         }
                     });
                 }
+            };
+        }])
+
+        .directive('selfiePaymentMethods', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    campaign: '=',
+                    methods: '='
+                },
+                templateUrl: 'views/selfie/directives/payment_methods.html',
+                controller: 'SelfiePaymentMethodsController',
+                controllerAs: 'SelfiePaymentMethodsCtrl'
+            };
+        }])
+
+        .controller('SelfiePaymentMethodsController', ['$scope',
+        function                                      ( $scope ) {
+            var campaign = $scope.campaign,
+                methods = $scope.methods;
+
+            function getPrimaryMethod() {
+                return methods.filter(function(method) {
+                    return method.default;
+                })[0];
+            }
+
+            this.currentMethod = methods.filter(function(method) {
+                return campaign.paymentMethod === method.token;
+            })[0] || getPrimaryMethod();
+
+            this.setCurrentMethod = function(method) {
+                this.currentMethod = method;
+                campaign.paymentMethod = method.token;
             };
         }])
 

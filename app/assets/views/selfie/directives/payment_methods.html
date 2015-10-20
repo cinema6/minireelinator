@@ -1,0 +1,24 @@
+<fieldset class="form__item form__item--shortInput">
+    <div class="pmtDropdown">
+    <!-- current payment method-->
+        <button ng-click="SelfiePaymentMethodsCtrl.showDropdown = !SelfiePaymentMethodsCtrl.showDropdown" class="btn pmtDropdown__btn default" c6-alias="SelfiePaymentMethodsCtrl.currentMethod as current">
+            <span ng-if="current.type === 'creditCard'" class="ui__clickDrop--bigText">{{current.cardType}} ***{{current.last4}} </span>
+            <span ng-if="current.type === 'paypal'" class="ui__clickDrop--bigText">PayPal </span>
+            <span ng-if="current.type === 'creditCard'" class="ui__clickDrop--sub-label"> Expires {{current.expirationDate}}</span>
+            <span ng-if="current.type === 'creditCard'" class="ui__clickDrop--sub-label-block">{{current.cardholderName}}<p></p><i class="fa fa-chevron-down"> </i></span>
+            <span ng-if="current.type === 'paypal'" class="ui__clickDrop--sub-label-block">{{current.email}}<p></p><i class="fa fa-chevron-down"> </i></span>
+        </button>
+            <!-- all payment method options-->
+        <ul class="pmtDropdown__menu" ng-show="SelfiePaymentMethodsCtrl.showDropdown" style="display:inherit;">
+            <li class="pmtDropdown__menu--item" ng-repeat="method in methods">
+                <button ng-click="SelfiePaymentMethodsCtrl.setCurrentMethod(method)" class="ui__clickDropBtn" type="button" title="">
+                    <span ng-if="method.type === 'creditCard'" class="ui__clickDrop--bigText">{{method.cardType}} ***{{method.last4}} </span>
+                    <span ng-if="method.type === 'paypal'" class="ui__clickDrop--bigText">PayPal </span>
+                    <span ng-if="method.type === 'creditCard'" class="ui__clickDrop--sub-label"> Expires {{method.expirationDate}}</span>
+                    <span ng-if="method.type === 'creditCard'" class="ui__clickDrop--sub-label-block">{{method.cardholderName}}<p></p></span>
+                    <span ng-if="method.type === 'paypal'" class="ui__clickDrop--sub-label-block">{{method.email}}<p></p></span>
+                </button>
+            </li>
+        </ul>
+    </div><!--pmtDropdown-->
+</fieldset>
