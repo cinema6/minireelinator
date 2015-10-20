@@ -265,6 +265,8 @@ function( angular , c6State  ) {
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Account:Payment', ['cinema6','PaymentService',
             function                                        ( cinema6 , PaymentService ) {
+                var SelfieAccountPaymentState = this;
+
                 this.templateUrl = 'views/selfie/account/payment.html';
                 this.controller = 'SelfieAccountPaymentController';
                 this.controllerAs = 'SelfieAccountPaymentCtrl';
@@ -274,15 +276,13 @@ function( angular , c6State  ) {
                 };
 
                 this.afterModel = function() {
-                    var self = this;
-
                     return PaymentService.getToken()
-                        .then(function(resp) {
+                        .then(function(token) {
                             // this token is for the paypal button that needs to be initialized
                             // with braintree as soon as the page is page loaded. Nothing needs
                             // to be initialized yet for Credit Card UI, that happens when a user
                             // "edits" or "adds" a credit card payment method
-                            self.token = resp.data.clientToken;
+                            SelfieAccountPaymentState.token = token;
                         });
                 };
             }]);
@@ -315,32 +315,16 @@ function( angular , c6State  ) {
                 c6State.goTo('Selfie:Account:Payment:Edit', [method]);
             };
 
-            this.editPaypal = function(method) {
-                // this adds the method to the Ctrl so that the
-                // paypalSuccess() method updates the correct method
-
-                this.paypalToEdit = method;
-            };
-
             this.delete = function(method) {
                 method.erase().then(refreshModel);
             };
 
             this.paypalSuccess = function(method) {
-                // if we're editing an existing PayPal method then
-                // this.paypalToEdit will be a payment method DB model.
-                // After we save the method we remove the updated PayPal
-                // method from the controller
-
-                var paypalMethod = this.paypalToEdit ||
-                    cinema6.db.create('paymentMethod', {});
-
-                paypalMethod.paymentMethodNonce = method.nonce;
-
-                paypalMethod.save().then(function() {
-                    SelfieAccountPaymentCtrl.paypalToEdit = null;
-                    refreshModel();
+                var paypalMethod = cinema6.db.create('paymentMethod', {
+                    paymentMethodNonce: method.nonce
                 });
+
+                paypalMethod.save().then(refreshModel);
             };
         }])
 
@@ -364,8 +348,8 @@ function( angular , c6State  ) {
 
                 this.afterModel = function() {
                     return PaymentService.getToken()
-                        .then(function(resp) {
-                            SelfieAccountPaymentNewState.token = resp.data.clientToken;
+                        .then(function(token) {
+                            SelfieAccountPaymentNewState.token = token;
                         });
                 };
             }]);
@@ -408,8 +392,8 @@ function( angular , c6State  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Account:Payment:Edit', ['cinema6','c6State','PaymentService',
-            function                                             ( cinema6 , c6State , PaymentService ) {
+            c6StateProvider.state('Selfie:Account:Payment:Edit', ['cinema6','c6State','PaymentService','$q',
+            function                                             ( cinema6 , c6State , PaymentService , $q ) {
                 var SelfieAccountPaymentEditState = this;
 
                 this.templateUrl = 'views/selfie/account/payment/edit.html';
@@ -417,16 +401,17 @@ function( angular , c6State  ) {
                 this.controllerAs = 'SelfieAccountPaymentEditCtrl';
 
                 this.model = function(params) {
-                    // might need to do some checks to make sure cParent is defined
-                    return this.cParent.cModel.filter(function(method) {
+                    var allMethods = this.cParent.cModel;
+
+                    return allMethods.filter(function(method) {
                         return method.id === params.id;
-                    })[0];
+                    })[0] || $q.reject();
                 };
 
                 this.afterModel = function() {
                     return PaymentService.getToken()
-                        .then(function(resp) {
-                            SelfieAccountPaymentEditState.token = resp.data.clientToken;
+                        .then(function(token) {
+                            SelfieAccountPaymentEditState.token = token;
                         });
                 };
             }]);
