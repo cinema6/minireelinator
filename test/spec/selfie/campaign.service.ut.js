@@ -85,7 +85,6 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                             advertiserId: selfie.cModel.advertiser.id,
                             customerId: selfie.cModel.customer.id,
                             name: null,
-                            cards: [],
                             pricing: {},
                             status: 'draft',
                             application: 'selfie',

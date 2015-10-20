@@ -48,7 +48,6 @@ function( angular , c6uilib ) {
                     advertiserId: advertiser.id,
                     customerId: customer.id,
                     name: null,
-                    cards: [],
                     pricing: {},
                     status: 'draft',
                     application: 'selfie',
@@ -182,7 +181,7 @@ function( angular , c6uilib ) {
                 return $http.get(url)
                     .then(function(response) {
                         var isVast = /VAST/.test(response.data),
-                            isXml = response.headers()['content-type'] === 'text/xml';
+                            isXml = /text\/xml/.test(response.headers()['content-type']);
 
                         if (!isVast || !isXml) {
                             return $q.reject('Not a valid VAST tag');

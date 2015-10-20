@@ -119,6 +119,16 @@ define(['app', 'angular'], function(appModule, angular) {
                     };
                 }));
             });
+
+            it('should handle a campaign with no cards', function() {
+                delete campaign.cards;
+
+                $rootScope.$apply(function() {
+                    adapter.decorateCampaign(campaign).then(success, failure);
+                });
+
+                expect(success).toHaveBeenCalledWith(campaign);
+            });
         });
 
         describe('findAll(type)', function() {
@@ -348,6 +358,27 @@ define(['app', 'angular'], function(appModule, angular) {
 
             it('should decorate the campaign', function() {
                 expect(adapter.decorateCampaign).toHaveBeenCalledWith(response);
+            });
+
+            it('should handle a campaign with no cards array', function() {
+                delete postData.cards;
+                delete campaign.cards;
+
+                response = extend(postData, {
+                    id: 'c-b2532a42ea21d6',
+                    created: (new Date()).toISOString()
+                });
+
+                adapter.decorateCampaign.and.returnValue($q.when(response));
+
+                $httpBackend.expectPOST('/api/campaign', postData)
+                    .respond(201, response);
+
+                adapter.create('campaign', campaign).then(success, failure);
+
+                $httpBackend.flush();
+
+                expect(success).toHaveBeenCalledWith([response]);
             });
         });
 
