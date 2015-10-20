@@ -288,8 +288,8 @@ function( angular , c6State  ) {
             }]);
         }])
 
-        .controller('SelfieAccountPaymentController', ['c6State','cinema6','cState','$scope',
-        function                                      ( c6State , cinema6 , cState , $scope ) {
+        .controller('SelfieAccountPaymentController', ['c6State','cinema6','cState',
+        function                                      ( c6State , cinema6 , cState ) {
             var SelfieAccountPaymentCtrl = this;
 
             function refreshModel() {
@@ -387,8 +387,10 @@ function( angular , c6State  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Account:Payment:Edit', ['cinema6','c6State','PaymentService','$q',
-            function                                             ( cinema6 , c6State , PaymentService , $q ) {
+            c6StateProvider.state('Selfie:Account:Payment:Edit', ['cinema6','c6State',
+                                                                  'PaymentService',
+            function                                             ( cinema6 , c6State ,
+                                                                   PaymentService ) {
                 var SelfieAccountPaymentEditState = this;
 
                 this.templateUrl = 'views/selfie/account/payment/edit.html';
@@ -412,8 +414,8 @@ function( angular , c6State  ) {
             }]);
         }])
 
-        .controller('SelfieAccountPaymentEditController', ['c6State','cinema6','cState','$scope',
-        function                                          ( c6State , cinema6 , cState , $scope ) {
+        .controller('SelfieAccountPaymentEditController', ['c6State','cinema6','cState',
+        function                                          ( c6State , cinema6 , cState ) {
             this.initWithModel = function(model) {
                 this.model = model;
                 this.token = cState.token;
@@ -427,7 +429,7 @@ function( angular , c6State  ) {
                 });
 
                 this.model.save()
-                    .then(function(method) {
+                    .then(function() {
                         return c6State.goTo('Selfie:Account:Payment');
                     });
             };

@@ -63,9 +63,9 @@
             <div class="grid grid--center payment__btn--spacing">
                 <div class="grid__item one-whole">
                 <div class="text--center">
-                    <selfie-paypal client-token="{{SelfieAccountPaymentCtrl.token}}" on-success="SelfieAccountPaymentCtrl.paypalSuccess(method)">
+                    <braintree-paypal client-token="{{SelfieAccountPaymentCtrl.token}}" on-success="SelfieAccountPaymentCtrl.paypalSuccess(method)">
                         <div id="c6-paypal"></div>
-                    </selfie-paypal>
+                    </braintree-paypal>
 
                     <button class="action__btnSecondary action__btnSecondary--big palm--one-whole" hidden-input-click="braintree-paypal-button">
                         <i class="faa fa-plus"></i>

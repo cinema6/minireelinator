@@ -889,7 +889,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         .then(decoratePayments);
                 };
 
-                this.find = function(type, id) {
+                this.find = function() {
                     return $q.reject('PaymentMethodAdapter.find() is not implemented.');
                 };
 
@@ -920,7 +920,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         .then(decoratePayment)
                         .then(putInArray);
                 };
-            }])
+            }]);
 
             $provide.constant('ExpGroupAdapter', ['config','$http','$q',
             function                             ( config , $http , $q ) {

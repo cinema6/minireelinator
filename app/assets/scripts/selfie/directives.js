@@ -471,19 +471,18 @@ function( angular , select2 , braintree ) {
             });
         }])
 
-        .directive('selfieCreditCard', ['$http','c6UrlMaker',
-        function                       ( $http , c6UrlMaker ) {
+        .directive('braintreeCreditCard', [function() {
             return {
                 restrict: 'E',
                 scope: {
-                    clientToken: '=',
+                    clientToken: '@',
                     onSuccess: '&',
                     onFailure: '&',
                     onCancel: '&',
                     method: '='
                 },
                 templateUrl: 'views/selfie/directives/payment.html',
-                link: function(scope, $element, atts, ctrl) {
+                link: function(scope) {
                     scope.makeDefault = scope.method.default ? 'Yes' : 'No';
                     scope.name = scope.method.cardholderName;
 
@@ -507,7 +506,7 @@ function( angular , select2 , braintree ) {
                                     isFocused = event.isFocused,
                                     isEmpty = event.isEmpty;
 
-                                if (isFocused) {
+                                if (isFocused || !isEmpty) {
                                     $(fieldSet).addClass('form__fillCheck--filled');
                                 } else if (isEmpty) {
                                     $(fieldSet).removeClass('form__fillCheck--filled');
@@ -525,7 +524,7 @@ function( angular , select2 , braintree ) {
             };
         }])
 
-        .directive('selfiePaypal', [function() {
+        .directive('braintreePaypal', [function() {
             return {
                 restrict: 'E',
                 scope: {
@@ -534,7 +533,7 @@ function( angular , select2 , braintree ) {
                     onFailure: '&',
                     onCancel: '&'
                 },
-                link: function(scope, $element, atts, ctrl) {
+                link: function(scope) {
                     braintree.setup(scope.clientToken, 'paypal', {
                         container: 'c6-paypal',
                         onPaymentMethodReceived: function(method) {

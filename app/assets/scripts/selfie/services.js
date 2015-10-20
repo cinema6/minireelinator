@@ -132,7 +132,7 @@ function( angular , c6uilib ) {
 
         .service('PaymentService', ['$http','c6UrlMaker',
         function                   ( $http , c6UrlMaker ) {
-            this.getToken = function(method) {
+            this.getToken = function() {
                 return $http.get(c6UrlMaker('payments/clientToken', 'api'))
                     .then(function(response) {
                         return response.data.clientToken;
