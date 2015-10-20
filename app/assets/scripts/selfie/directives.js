@@ -499,6 +499,9 @@ function( angular , select2 , braintree ) {
                             expirationDate: {
                                 selector: '#c6-expiration-date'
                             },
+                            postalCode: {
+                                selector: '#c6-zip'
+                            },
                             onFieldEvent: function(event) {
                                 var fieldSet = event.target.container,
                                     isFocused = event.isFocused,
