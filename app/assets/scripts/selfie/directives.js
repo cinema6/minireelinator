@@ -607,7 +607,7 @@ function( angular , select2 , braintree ) {
             };
 
             $scope.$watch(function() {
-                return $scope.campaign.paymentMethod;
+                return campaign.paymentMethod;
             }, function(newToken, oldToken) {
                 if (newToken === oldToken) { return; }
 

@@ -799,8 +799,9 @@ function( angular , c6State  , PaginatedListState                    ,
         .controller('SelfieCampaignPaymentController', ['PaymentService','$scope','cinema6',
         function                                       ( PaymentService , $scope , cinema6 ) {
             var SelfieCampaignPaymentCtrl = this,
-                methods = $scope.SelfieCampaignCtrl.paymentMethods,
-                campaign = $scope.SelfieCampaignCtrl.campaign;
+                SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+                methods = SelfieCampaignCtrl.paymentMethods,
+                campaign = SelfieCampaignCtrl.campaign;
 
             PaymentService.getToken().then(function(token) {
                 SelfieCampaignPaymentCtrl.paypalToken = token;

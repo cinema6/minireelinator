@@ -19,6 +19,25 @@ module.exports = function(http) {
         return path.resolve(__dirname, './' + type + '/' + id + '.json');
     }
 
+    function randomNum(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function makeDefault(id) {
+        grunt.file.expand(path.resolve(__dirname, './payments/*.json'))
+            .filter(function(path) {
+                return path.indexOf(id) === -1;
+            })
+            .map(function(path) {
+                return grunt.file.readJSON(path);
+            })
+            .map(function(method) {
+                method.default = false;
+
+                grunt.file.write(objectPath('payments', method.token), JSON.stringify(method, null, '    '));
+            });
+    }
+
     http.whenGET('/api/payments/clientToken', function(request) {
         var token = 'eyJ2ZXJzaW9uIjoyLCJhdXRob3JpemF0aW9uRmluZ2VycHJpbnQiOiJ'+
             'mZTA4YmFlODE2ZTY4NjhhOWRjNWQ5ZGI4YmY5YzNmMTczZDA2NjdlM2UzY2ZmOD'+
@@ -50,10 +69,6 @@ module.exports = function(http) {
 
         this.respond(200, { clientToken: token });
     });
-
-    function randomNum(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
 
     http.whenPOST('/api/payments/methods', function(request) {
         var token = genId('pay'),
@@ -98,21 +113,6 @@ module.exports = function(http) {
 
         this.respond(200, allPayments);
     });
-
-    function makeDefault(id) {
-        grunt.file.expand(path.resolve(__dirname, './payments/*.json'))
-            .filter(function(path) {
-                return path.indexOf(id) === -1;
-            })
-            .map(function(path) {
-                return grunt.file.readJSON(path);
-            })
-            .map(function(method) {
-                method.default = false;
-
-                grunt.file.write(objectPath('payments', method.token), JSON.stringify(method, null, '    '));
-            });
-    }
 
     http.whenPUT('/api/payments/methods/**', function(request) {
         var id = idFromPath(request.pathname),

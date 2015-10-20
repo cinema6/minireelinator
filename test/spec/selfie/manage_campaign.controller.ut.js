@@ -31,7 +31,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         var cState,
             campaign,
             card,
-            categories;
+            categories,
+            paymentMethods;
 
         var debouncedFns;
 
@@ -109,6 +110,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 }
             });
             categories = [];
+            paymentMethods = [];
 
             cState = {
                 campaign: campaign,
@@ -116,7 +118,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             };
 
             compileCtrl(cState, {
-                categories: categories
+                categories: categories,
+                paymentMethods: paymentMethods
             });
         });
 
@@ -147,13 +150,15 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         SelfieManageCampaignCtrl.card = null;
                         SelfieManageCampaignCtrl.campaign = null;
                         SelfieManageCampaignCtrl.categories = null;
+                        SelfieManageCampaignCtrl.paymentMethods = null;
 
-                        SelfieManageCampaignCtrl.initWithModel(categories);
+                        SelfieManageCampaignCtrl.initWithModel({categories: categories, paymentMethods: paymentMethods});
                     });
 
                     expect(SelfieManageCampaignCtrl.card).toEqual(card);
                     expect(SelfieManageCampaignCtrl.campaign).toEqual(campaign);
                     expect(SelfieManageCampaignCtrl.categories).toEqual(categories);
+                    expect(SelfieManageCampaignCtrl.paymentMethods).toEqual(paymentMethods);
                 });
             });
 
