@@ -36,22 +36,19 @@ define(['app','angular'], function(appModule, angular) {
                 return hiddenInput;
             });
 
-            spyOn(angular, 'element').and.callThrough();
-
             $span = $compile('<span hidden-input-click="input_1">Click Here</span>')($scope);
         });
 
-        describe('initiation', function() {
+        describe('when element is clicked on', function() {
+            beforeEach(function() {
+                $span.trigger('click');
+            });
+
             it('should find the hidden input', function() {
                 expect($document[0].getElementById).toHaveBeenCalledWith('input_1');
             });
-        });
 
-        describe('when element is clicked on', function() {
             it('should trigger a click on the hidden input', function() {
-                $span.trigger('click');
-
-                expect(angular.element).toHaveBeenCalledWith(hiddenInput);
                 expect(hiddenClickSpy).toHaveBeenCalled();
             });
         });

@@ -895,7 +895,11 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 this.findQuery = function(type, query) {
                     return $http.get(url(), { params: query })
-                        .then(pick('data'));
+                        .then(pick('data'), function(response) {
+                            return response.status === 404 ?
+                                [] : $q.reject(response);
+                        })
+                        .then(decoratePayments);
                 };
 
                 this.create = function(type, data) {
@@ -911,7 +915,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
 
                 this.update = function(type, payment) {
-                    console.log(payment);
                     return $http.put(url('/' + payment.token), undecoratePayment(payment))
                         .then(pick('data'))
                         .then(decoratePayment)

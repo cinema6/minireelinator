@@ -374,13 +374,8 @@ function( angular , c6State  ) {
 
                 this.model.save()
                     .then(function(method) {
-                        if (paymentMethods.indexOf(method) < 0) {
-                            paymentMethods.unshift(method);
-                        }
+                        paymentMethods.unshift(method);
 
-                        // after a new Primary method is added we aren't seeing
-                        // the old one update when transitioning back to the Payment list.
-                        // Somehow we need to get the list to refresh!
                         return c6State.goTo('Selfie:Account:Payment');
                     });
             };
@@ -405,7 +400,7 @@ function( angular , c6State  ) {
 
                     return allMethods.filter(function(method) {
                         return method.id === params.id;
-                    })[0] || $q.reject();
+                    })[0];
                 };
 
                 this.afterModel = function() {
