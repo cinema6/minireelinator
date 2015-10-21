@@ -78,69 +78,32 @@ define(['app'], function(appModule) {
         });
 
         describe('methods', function() {
-            describe('addCard()', function() {
-                beforeEach(function() {
-                    PaymentService.getToken.calls.reset();
-
-                    $scope.$apply(function() {
-                        SelfieCampaignPaymentCtrl.addCard();
-                    });
-                });
-
-                it('should get a token for the credit card modal', function() {
-                    expect(PaymentService.getToken).toHaveBeenCalled();
-                });
-
-                it('when token is fetched it should be added to the Ctrl and show the modal', function() {
-                    expect(SelfieCampaignPaymentCtrl.creditCardToken).toBe('1234-4321');
-                    expect(SelfieCampaignPaymentCtrl.showModal).toBe(true);
-                });
-            });
-
-            describe('cancel()', function() {
-                it('should hide the modal', function() {
-                    SelfieCampaignPaymentCtrl.showModal = true;
-
-                    SelfieCampaignPaymentCtrl.cancel();
-
-                    expect(SelfieCampaignPaymentCtrl.showModal).toBe(false);
-                });
-            });
-
-            describe('success(method)', function() {
+            describe('paypalSuccess(method)', function() {
                 var braintreeObject, savedMethod;
 
                 beforeEach(function() {
                     braintreeObject = {
-                        nonce: '888-888-888',
-                        cardholderName: 'Johnny Testmonkey',
-                        makeDefault: true
+                        nonce: '888-888-888'
                     };
 
                     savedMethod = {
                         token: '111-111-111',
-                        cardholderName: 'Johnny Testmonkey',
-                        default: true,
-                        last4: '1234'
+                        email: 'selfie@gmail.com'
                     };
 
                     spyOn(newMethod, 'save').and.returnValue($q.when(savedMethod));
 
                     $scope.$apply(function() {
-                        SelfieCampaignPaymentCtrl.success(braintreeObject);
+                        SelfieCampaignPaymentCtrl.paypalSuccess(braintreeObject);
                     });
                 });
 
                 it('should create a new payment method DB model', function() {
                     expect(cinema6.db.create).toHaveBeenCalledWith('paymentMethod', {
-                        paymentMethodNonce: braintreeObject.nonce,
-                        cardholderName: braintreeObject.cardholderName,
-                        makeDefault: braintreeObject.makeDefault
+                        paymentMethodNonce: braintreeObject.nonce
                     });
                     expect(newMethod).toEqual(jasmine.objectContaining({
-                        paymentMethodNonce: braintreeObject.nonce,
-                        cardholderName: braintreeObject.cardholderName,
-                        makeDefault: braintreeObject.makeDefault
+                        paymentMethodNonce: braintreeObject.nonce
                     }));
                 });
 
@@ -156,10 +119,6 @@ define(['app'], function(appModule) {
                 it('should add the new method to the campaign', function() {
                     expect($scope.SelfieCampaignCtrl.campaign.paymentMethod).toBe(savedMethod.token);
                     expect(campaign.paymentMethod).toBe(savedMethod.token);
-                });
-
-                it('should remove the modal', function() {
-                    expect(SelfieCampaignPaymentCtrl.showModal).toBe(false);
                 });
             });
         });

@@ -28,17 +28,13 @@
                     PayPal
                 </button><!--
             -->
-                <button class="action__btnSecondary action__btnSecondary--big palm--one-whole" ng-click="SelfieCampaignPaymentCtrl.addCard()">
-                    <i class="faa fa-plus"></i>
-                    Credit Card
+                <button class="action__btnSecondary action__btnSecondary--big palm--one-whole">
+                    <a c6-sref="Selfie:Campaign:Payment:New" style="color: #fff;"><i class="faa fa-plus"></i>
+                        Credit Card</a>
                 </button>
             </div>
 
         </div><!--.form__items -->
-
-        <div ng-if="SelfieCampaignPaymentCtrl.showModal">
-            <braintree-credit-card client-token="{{SelfieCampaignPaymentCtrl.creditCardToken}}" method="{}" on-success="SelfieCampaignPaymentCtrl.success(method)" on-cancel="SelfieCampaignPaymentCtrl.cancel()"></braintree-credit-card>
-        </div>
 
     </section><!--.formSection__group #section_1 -->
 

@@ -807,30 +807,75 @@ function( angular , c6State  , PaginatedListState                    ,
                 SelfieCampaignPaymentCtrl.paypalToken = token;
             });
 
-            this.addCard = function() {
-                PaymentService.getToken().then(function(token) {
-                    SelfieCampaignPaymentCtrl.creditCardToken = token;
-                    SelfieCampaignPaymentCtrl.showModal = true;
-                });
-            };
-
-            this.cancel = function() {
-                this.showModal = false;
-            };
-
-            this.success = function(method) {
+            this.paypalSuccess = function(method) {
                 var newMethod = cinema6.db.create('paymentMethod', {
-                    paymentMethodNonce: method.nonce,
-                    cardholderName: method.cardholderName,
-                    makeDefault: method.makeDefault
+                    paymentMethodNonce: method.nonce
                 });
 
                 newMethod.save()
                     .then(function(method) {
                         methods.unshift(method);
                         campaign.paymentMethod = method.token;
-                        SelfieCampaignPaymentCtrl.showModal = false;
                     });
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Campaign:Payment:New', ['cinema6','PaymentService',
+            function                                             ( cinema6 , PaymentService ) {
+                var SelfieCampaignPaymentNewState = this;
+
+                this.templateUrl = 'views/selfie/campaigns/edit/payment_new.html';
+                this.controller = 'SelfieCampaignPaymentNewController';
+                this.controllerAs = 'SelfieCampaignPaymentNewCtrl';
+
+                this.model = function() {
+                    return cinema6.db.create('paymentMethod', {
+                        paymentMethodNonce: null,
+                        cardholderName: null,
+                        makeDefault: false
+                    });
+                };
+
+                this.afterModel = function() {
+                    return PaymentService.getToken()
+                        .then(function(token) {
+                            SelfieCampaignPaymentNewState.token = token;
+                        });
+                };
+            }]);
+        }])
+
+        .controller('SelfieCampaignPaymentNewController', ['c6State','cinema6','cState','$scope',
+        function                                          ( c6State , cinema6 , cState , $scope ) {
+            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+                paymentMethods = SelfieCampaignCtrl.paymentMethods,
+                campaign = SelfieCampaignCtrl.campaign;
+
+            this.initWithModel = function(model) {
+                this.model = model;
+                this.token = cState.token;
+            };
+
+            this.success = function(method) {
+                extend(this.model, {
+                    cardholderName: method.cardholderName,
+                    paymentMethodNonce: method.nonce,
+                    makeDefault: method.makeDefault
+                });
+
+                this.model.save()
+                    .then(function(method) {
+                        paymentMethods.unshift(method);
+                        campaign.paymentMethod = method.token;
+
+                        return c6State.goTo('Selfie:Campaign');
+                    });
+            };
+
+            this.cancel = function() {
+                return c6State.goTo('Selfie:Campaign');
             };
         }])
 
