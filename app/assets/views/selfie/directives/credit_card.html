@@ -1,7 +1,13 @@
 <style>
+    .modalPayment__group {
+        background-color: #eee;
+        border: 1px solid #ccc;
+        padding-top: 0;
+    }
     .form__item--lrg { margin: 0 0 0.0625em 0; width: 100%; }
     .form__item--half { width: 50%; float: left; }
     .modal__copy { margin: 0 0 2em; text-align: center; }
+    button.item--right {padding: 10px;}
 </style>
 <div class="gridHolder modal__group modalPayment__group">
 
@@ -17,7 +23,7 @@
             <div class="grid grid--center">
 
                 <div class="grid__item three-fifths">
-                    <div class="form__items">
+                    <div class="form__items addPayment__method">
                         <form id="c6-payment-method">
                             <fieldset class="form__item form__item--lrg">
                                 <!-- <input class="form__textBox form__textBox--lrg form__fillCheck" type="text" id="c6-addCard-number"> -->
@@ -139,7 +145,7 @@
             </div><!--.grid .grid--center-->
         </section><!--.grid__item .five-sixths-->
 
-        <button ng-click="onCancel()">Cancel</button>
+        <button ng-click="onCancel()" class="item--right"><i class="fa fa-close"></i></button>
 
     </div><!--.grid grid--center-->
 

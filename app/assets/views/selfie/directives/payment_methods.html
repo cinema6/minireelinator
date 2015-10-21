@@ -3,7 +3,7 @@
     .pmtDropdown__btn:focus.no_cursor { border-bottom: 2px solid #eee; }
 </style>
 
-<fieldset class="form__item form__item--shortInput" c6-alias="SelfiePaymentMethodsCtrl.currentMethod as current">
+<fieldset class="form__item" c6-alias="SelfiePaymentMethodsCtrl.currentMethod as current">
     <div class="pmtDropdown">
     <!-- current payment method-->
         <button ng-click="SelfiePaymentMethodsCtrl.toggleDropdown()" class="btn pmtDropdown__btn default" ng-class="{ 'no_cursor': methods.length < 2 }">
