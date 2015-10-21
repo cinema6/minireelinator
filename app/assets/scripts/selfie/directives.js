@@ -502,16 +502,32 @@ function( angular , select2 , braintree ) {
                                 selector: '#c6-zip'
                             },
                             onFieldEvent: function(event) {
-                                var fieldSet = event.target.container,
+                                var container = event.target.container,
+                                    fieldSet = container.parentElement,
                                     isFocused = event.isFocused,
-                                    isEmpty = event.isEmpty;
+                                    isEmpty = event.isEmpty,
+                                    isValid = event.isValid,
+                                    isPotentiallyValid = event.isPotentiallyValid;
+
+                                scope.errorMessage = null;
 
                                 if (isFocused || !isEmpty) {
-                                    $(fieldSet).addClass('form__fillCheck--filled');
+                                    $(container).addClass('form__fillCheck--filled');
                                 } else if (isEmpty) {
-                                    $(fieldSet).removeClass('form__fillCheck--filled');
+                                    $(container).removeClass('form__fillCheck--filled');
+                                }
+
+                                if (!isFocused && !isValid) {
+                                    $(fieldSet).addClass('ui--hasError');
+                                }
+
+                                if (isFocused && isPotentiallyValid) {
+                                    $(fieldSet).removeClass('ui--hasError');
                                 }
                             }
+                        },
+                        onError: function(event) {
+                            scope.errorMessage = event.message;
                         },
                         onPaymentMethodReceived: function(method) {
                             method.makeDefault = scope.makeDefault === 'Yes';

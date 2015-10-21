@@ -103,20 +103,25 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
         });
 
         describe('when braintree sends onFieldEvents', function() {
-            var container;
+            var container, parentElement;
 
             function fireEvent(options) {
                 var handler = config.hostedFields.onFieldEvent,
                     fieldEvent;
 
+                parentElement = $('<div>');
                 container = $('<div>');
+
+                parentElement.append(container);
 
                 fieldEvent = {
                     target: {
-                        container: container
+                        container: container[0]
                     },
                     isFocused: options.isFocused,
-                    isEmpty: options.isEmpty
+                    isEmpty: options.isEmpty,
+                    isValid: options.isValid,
+                    isPotentiallyValid: options.isPotentiallyValid
                 };
 
                 handler(fieldEvent);
@@ -156,6 +161,28 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
                     expect(container.hasClass('form__fillCheck--filled')).toBe(false);
                 })
             });
+
+            describe('when a field is not in focus and is not valid', function() {
+                it('the parent should have the ui--hasError class', function() {
+                    fireEvent({
+                        isFocused: false,
+                        isValid: false
+                    });
+
+                    expect(parentElement.hasClass('ui--hasError')).toBe(true);
+                });
+            });
+
+            describe('when a field is in focus and is potentially valid', function() {
+                it('the parent should not have the ui--hasError class', function() {
+                    fireEvent({
+                        isFocused: true,
+                        isPotentiallyValid: true
+                    });
+
+                    expect(parentElement.hasClass('ui--hasError')).toBe(false);
+                });
+            });
         });
 
         describe('when braintree sends onPaymentMethodReceived event', function() {
@@ -182,6 +209,18 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
                         nonce: braintreeObject.nonce
                     }
                 });
+            });
+        });
+
+        describe('when braintree sends an onError event', function() {
+            it('should put the message on the scope', function() {
+                var error = {
+                    message: 'There was a problem'
+                };
+
+                config.onError(error);
+
+                expect(scope.errorMessage).toEqual(error.message);
             });
         });
     });
