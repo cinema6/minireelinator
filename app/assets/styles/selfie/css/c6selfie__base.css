@@ -624,11 +624,15 @@ fa,
         padding:4em 0 0 0;
     }
 
-    .tabContent__gridHolder {
+    .tabContent__gridHolder,
+    .settingsContent__gridHolder,.supportContent__gridHolder {
         width: 96%;
         max-width: 84em;
         margin: 0 auto;
         padding: 4em 0 0 0;
+    }
+    .settingsContent__gridHolder,.supportContent__gridHolder {
+        padding:5em 0 0 0;
     }
 
     .footer__group {
@@ -937,7 +941,8 @@ fa,
     /*  data column classes
         ================================================ */
         .sortBar__item,
-        .campaign__column {
+        .campaign__column,
+        .paymentHistory__column {
             float:left;
             padding-right:1em;
             box-sizing:content-box;
@@ -1626,7 +1631,7 @@ fa,
         }
         
             .form__textBox:focus,
-            .form__item--sub .form__textBox:focus { 
+            .form__item--sub .form__textBox:focus, .form__textBox.in--focus { 
                 border-bottom:2px solid #00c0ff;
                 background:#fff;
             }
@@ -2350,24 +2355,28 @@ fa,
                 up to 1600px wide
             */
             .column__paymentDate {
-                width:5em;
+                width:6em;
             }
 
             .column__paymentCampaign {
-                width:calc(100% - 34em);
+                width:calc(100% - 40em);
                 padding-right:1em;
+                padding-left:3em;
             }
 
             .column__paymentMethod {
                 width:11em;
                 padding-right:1em;
             }
-
+            .column__discountAmount {
+                width: 4em;
+                padding-right: 1em;
+            }
             .column__paymentAmount {
-                width:13em;
+                width:8em;
+                text-align: center;
                 padding-right:1em;
             }
-
         }
         
 /*  ================================================
@@ -2415,7 +2424,6 @@ fa,
                 font-weight:normal;
                 line-height: 1.2;
                 width:100%;
-                height:2.5em;
                 overflow:hidden;
                 margin:0.2em 0 0.15em 0;
             }
@@ -2541,6 +2549,10 @@ fa,
         .payment__exp {
            font-weight:lighter;
         }
+        .payment__email {
+           font-weight:lighter;
+           display: block;
+        }
 
         .payment__label {
             display:block;
@@ -2549,6 +2561,9 @@ fa,
     .payment__btn--spacing {
         margin:3.25em 0 0;
     }
+    /*Braintree Paypal button/account information styles*/    
+    #braintree-paypal-loggedin { display: none !important; }
+    #braintree-paypal-loggedout { display: none !important; }
 
 /*  ================================================
     action menu styles
@@ -2607,7 +2622,7 @@ fa,
 
 
 
-        .action__dropdown ul a {
+        .action__dropdown ul li button {
             display:block;
             color:#333;
             text-decoration:none;
@@ -2814,13 +2829,14 @@ fa,
                 fill:#fff;
             }
         .modal__title {
-            color:#626262; 
-            font-size:1.25em; font-weight:500;
+            font-size: 2em;
+            color: #b1b1b1;
             text-align: center;
             margin:0 3rem; padding:0.45em 0 0 0;
             overflow: hidden; text-overflow:ellipsis;
             white-space: nowrap;
         }
+
     .modalTabs__group {
         width:10.5em;
         position:absolute; left:1.5em; top:4.5em; z-index:1;
