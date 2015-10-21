@@ -1,11 +1,12 @@
 # MiniReelinator
 
-## v1.23.0 (October 19, 2015)
+## v1.23.0 (October 21, 2015)
 * *[v1.23.0.rc2]*
   * [FEATURE]: (Selfie) Add Payment Method manager in Account Settings
   * [FEATURE]: (Selfie) Add Payment History page in Account Settings
   * [FEATURE]: (Selfie) Add Payment options in Campaign creation and management areas
   * [DESIGN]: (Selfie) Added styles for Payment options screens
+* *[/v1.23.0.rc2]*
 
 * *[v1.23.0.rc1]*
   * [DESIGN]: (Selfie) Added styles for Payment Management and Payment History screens
