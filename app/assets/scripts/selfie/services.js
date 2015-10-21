@@ -130,12 +130,48 @@ function( angular , c6uilib ) {
 
         }])
 
-        .service('PaymentService', ['$http','c6UrlMaker',
-        function                   ( $http , c6UrlMaker ) {
+        .service('PaymentService', ['$http','c6UrlMaker','cinema6','$q',
+        function                   ( $http , c6UrlMaker , cinema6 , $q ) {
+            function getById(arr, id) {
+                return arr.filter(function(item) {
+                    return item.id === id;
+                })[0];
+            }
+
             this.getToken = function() {
                 return $http.get(c6UrlMaker('payments/clientToken', 'api'))
                     .then(function(response) {
                         return response.data.clientToken;
+                    });
+            };
+
+            this.getHistory = function() {
+                return $http.get(c6UrlMaker('payments', 'api'))
+                    .then(function(response) {
+                        return response.data;
+                    })
+                    .then(function(transactions) {
+                        var deferred = $q.defer(),
+                            campaignIds = transactions.reduce(function(result, transaction) {
+                                return result.indexOf(transaction.campaign) < 0 ?
+                                    result.concat(transaction.campaign) :
+                                    result;
+                            }, []).join(',');
+
+                        cinema6.db.findAll('selfieCampaign', { ids: campaignIds })
+                            .then(function(campaigns) {
+                                var decorated = transactions.map(function(trans) {
+                                    var id = trans.campaign;
+
+                                    trans.campaign = getById(campaigns, id);
+
+                                    return trans;
+                                });
+
+                                deferred.resolve(decorated);
+                            });
+
+                        return deferred.promise;
                     });
             };
         }])

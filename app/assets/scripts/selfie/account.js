@@ -437,5 +437,19 @@ function( angular , c6State  ) {
             this.cancel = function() {
                 return c6State.goTo('Selfie:Account:Payment');
             };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Account:Payment:History', ['PaymentService',
+            function                                                ( PaymentService ) {
+                this.templateUrl = 'views/selfie/account/payment/history.html';
+                this.controller = 'GenericController';
+                this.controllerAs = 'SelfieAccountPaymentHistoryCtrl';
+
+                this.model = function() {
+                    return PaymentService.getHistory();
+                };
+            }]);
         }]);
 });
