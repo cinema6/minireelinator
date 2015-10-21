@@ -24,7 +24,7 @@ module.exports = function(http) {
     }
 
     function makeDefault(id) {
-        grunt.file.expand(path.resolve(__dirname, './payments/*.json'))
+        grunt.file.expand(path.resolve(__dirname, './methods/*.json'))
             .filter(function(path) {
                 return path.indexOf(id) === -1;
             })
@@ -34,7 +34,7 @@ module.exports = function(http) {
             .map(function(method) {
                 method.default = false;
 
-                grunt.file.write(objectPath('payments', method.token), JSON.stringify(method, null, '    '));
+                grunt.file.write(objectPath('methods', method.token), JSON.stringify(method, null, '    '));
             });
     }
 
@@ -100,13 +100,13 @@ module.exports = function(http) {
             makeDefault(token);
         }
 
-        grunt.file.write(objectPath('payments', token), JSON.stringify(paymentMethod, null, '    '));
+        grunt.file.write(objectPath('methods', token), JSON.stringify(paymentMethod, null, '    '));
 
         this.respond(201, paymentMethod);
     });
 
     http.whenGET('/api/payments/methods', function(request) {
-        var allPayments = grunt.file.expand(path.resolve(__dirname, './payments/*.json'))
+        var allPayments = grunt.file.expand(path.resolve(__dirname, './methods/*.json'))
             .map(function(path) {
                     return grunt.file.readJSON(path);
                 });
@@ -116,7 +116,7 @@ module.exports = function(http) {
 
     http.whenPUT('/api/payments/methods/**', function(request) {
         var id = idFromPath(request.pathname),
-            filePath = objectPath('payments', id),
+            filePath = objectPath('methods', id),
             payment = grunt.file.readJSON(filePath),
             propCount = 0;
 
@@ -146,7 +146,7 @@ module.exports = function(http) {
 
     http.whenDELETE('/api/payments/methods/**', function(request) {
         var id = idFromPath(request.pathname),
-            filePath = objectPath('payments', id),
+            filePath = objectPath('methods', id),
             payment = grunt.file.readJSON(filePath),
             allCampaigns = grunt.file.expand(path.resolve(__dirname, '../campaign/campaigns/*.json'))
                 .map(function(path) {
@@ -161,8 +161,17 @@ module.exports = function(http) {
             return this.respond(403, 'Forbidden');
         }
 
-        grunt.file.delete(objectPath('payments', idFromPath(request.pathname)));
+        grunt.file.delete(objectPath('methods', idFromPath(request.pathname)));
 
         this.respond(204, '');
+    });
+
+    http.whenGET('/api/payments', function(request) {
+        var allTransactions = grunt.file.expand(path.resolve(__dirname, './payments/*.json'))
+            .map(function(path) {
+                    return grunt.file.readJSON(path);
+                });
+
+        this.respond(200, allTransactions);
     });
 };
