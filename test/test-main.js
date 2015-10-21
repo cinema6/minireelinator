@@ -62,6 +62,9 @@
                 'helpers/drag': '/base/test/helpers/drag'
             },
             shim: {
+                braintree: {
+                    exports: 'braintree'
+                },
                 modernizr: {
                     exports: 'Modernizr'
                 },
