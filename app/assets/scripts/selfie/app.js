@@ -16,10 +16,20 @@ function( angular , c6State  , services   , directives   , campaign   ) {
                     this.state('Selfie:Campaigns');
 
                     this.route('/new', 'Selfie:NewCampaign', function() {
-                        this.state('Selfie:Campaign', 'Selfie:New:Campaign');
+                        this.state('Selfie:Campaign', 'Selfie:New:Campaign', function() {
+                            this.state(
+                                'Selfie:Campaign:Payment:New',
+                                'Selfie:New:Campaign:Payment:New'
+                            );
+                        });
                     });
                     this.route('/edit/:campaignId', 'Selfie:EditCampaign', function() {
-                        this.state('Selfie:Campaign', 'Selfie:Edit:Campaign');
+                        this.state('Selfie:Campaign', 'Selfie:Edit:Campaign', function() {
+                            this.state(
+                                'Selfie:Campaign:Payment:New',
+                                'Selfie:Edit:Campaign:Payment:New'
+                            );
+                        });
                     });
                     this.route('/manage/:campaignId', 'Selfie:ManageCampaign', function() {
                         this.state('Selfie:Manage:Campaign');
