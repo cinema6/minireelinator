@@ -2,6 +2,8 @@ define( ['angular','c6_state'],
 function( angular , c6State  ) {
     'use strict';
 
+    var extend = angular.extend;
+
     return angular.module('c6.app.selfie.account', [c6State.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
@@ -257,5 +259,197 @@ function( angular , c6State  ) {
                     SelfieAccountDetailsCtrl.message = 'Successfully updated your details!';
                 });
             };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Account:Payment', ['cinema6','PaymentService',
+            function                                        ( cinema6 , PaymentService ) {
+                var SelfieAccountPaymentState = this;
+
+                this.templateUrl = 'views/selfie/account/payment.html';
+                this.controller = 'SelfieAccountPaymentController';
+                this.controllerAs = 'SelfieAccountPaymentCtrl';
+
+                this.model = function() {
+                    return cinema6.db.findAll('paymentMethod');
+                };
+
+                this.afterModel = function() {
+                    return PaymentService.getToken()
+                        .then(function(token) {
+                            // this token is for the paypal button that needs to be initialized
+                            // with braintree as soon as the page is page loaded. Nothing needs
+                            // to be initialized yet for Credit Card UI, that happens when a user
+                            // "edits" or "adds" a credit card payment method
+                            SelfieAccountPaymentState.token = token;
+                        });
+                };
+            }]);
+        }])
+
+        .controller('SelfieAccountPaymentController', ['c6State','cinema6','cState',
+        function                                      ( c6State , cinema6 , cState ) {
+            var SelfieAccountPaymentCtrl = this;
+
+            function refreshModel() {
+                cinema6.db.findAll('paymentMethod')
+                    .then(function(methods) {
+                        SelfieAccountPaymentCtrl.model = methods;
+                    });
+            }
+
+            this.initWithModel = function(model) {
+                this.model = model;
+                this.token = cState.token;
+            };
+
+            this.makeDefault = function(method) {
+                method.makeDefault = true;
+                method.cardholderName = undefined;
+
+                method.save().then(refreshModel);
+            };
+
+            this.edit = function(method) {
+                c6State.goTo('Selfie:Account:Payment:Edit', [method]);
+            };
+
+            this.delete = function(method) {
+                method.erase().then(refreshModel);
+            };
+
+            this.paypalSuccess = function(method) {
+                var paypalMethod = cinema6.db.create('paymentMethod', {
+                    paymentMethodNonce: method.nonce
+                });
+
+                paypalMethod.save().then(refreshModel);
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Account:Payment:New', ['cinema6','PaymentService',
+            function                                            ( cinema6 , PaymentService ) {
+                var SelfieAccountPaymentNewState = this;
+
+                this.templateUrl = 'views/selfie/account/payment/new.html';
+                this.controller = 'SelfieAccountPaymentNewController';
+                this.controllerAs = 'SelfieAccountPaymentNewCtrl';
+
+                this.model = function() {
+                    return cinema6.db.create('paymentMethod', {
+                        paymentMethodNonce: null,
+                        cardholderName: null,
+                        makeDefault: false
+                    });
+                };
+
+                this.afterModel = function() {
+                    return PaymentService.getToken()
+                        .then(function(token) {
+                            SelfieAccountPaymentNewState.token = token;
+                        });
+                };
+            }]);
+        }])
+
+        .controller('SelfieAccountPaymentNewController', ['c6State','cinema6','cState','$scope',
+        function                                         ( c6State , cinema6 , cState , $scope ) {
+            var SelfieAccountPaymentCtrl = $scope.SelfieAccountPaymentCtrl,
+                paymentMethods = SelfieAccountPaymentCtrl.model;
+
+            this.initWithModel = function(model) {
+                this.model = model;
+                this.token = cState.token;
+            };
+
+            this.success = function(method) {
+                extend(this.model, {
+                    cardholderName: method.cardholderName,
+                    paymentMethodNonce: method.nonce,
+                    makeDefault: method.makeDefault
+                });
+
+                this.model.save()
+                    .then(function(method) {
+                        paymentMethods.unshift(method);
+
+                        return c6State.goTo('Selfie:Account:Payment');
+                    });
+            };
+
+            this.cancel = function() {
+                return c6State.goTo('Selfie:Account:Payment');
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Account:Payment:Edit', ['cinema6','c6State',
+                                                                  'PaymentService',
+            function                                             ( cinema6 , c6State ,
+                                                                   PaymentService ) {
+                var SelfieAccountPaymentEditState = this;
+
+                this.templateUrl = 'views/selfie/account/payment/edit.html';
+                this.controller = 'SelfieAccountPaymentEditController';
+                this.controllerAs = 'SelfieAccountPaymentEditCtrl';
+
+                this.model = function(params) {
+                    var allMethods = this.cParent.cModel;
+
+                    return allMethods.filter(function(method) {
+                        return method.id === params.id;
+                    })[0];
+                };
+
+                this.afterModel = function() {
+                    return PaymentService.getToken()
+                        .then(function(token) {
+                            SelfieAccountPaymentEditState.token = token;
+                        });
+                };
+            }]);
+        }])
+
+        .controller('SelfieAccountPaymentEditController', ['c6State','cinema6','cState',
+        function                                          ( c6State , cinema6 , cState ) {
+            this.initWithModel = function(model) {
+                this.model = model;
+                this.token = cState.token;
+            };
+
+            this.success = function(method) {
+                extend(this.model, {
+                    cardholderName: method.cardholderName,
+                    paymentMethodNonce: method.nonce,
+                    makeDefault: method.makeDefault
+                });
+
+                this.model.save()
+                    .then(function() {
+                        return c6State.goTo('Selfie:Account:Payment');
+                    });
+            };
+
+            this.cancel = function() {
+                return c6State.goTo('Selfie:Account:Payment');
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Account:Payment:History', ['PaymentService',
+            function                                                ( PaymentService ) {
+                this.templateUrl = 'views/selfie/account/payment/history.html';
+                this.controller = 'GenericController';
+                this.controllerAs = 'SelfieAccountPaymentHistoryCtrl';
+
+                this.model = function() {
+                    return PaymentService.getHistory();
+                };
+            }]);
         }]);
 });

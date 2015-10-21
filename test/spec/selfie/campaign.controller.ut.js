@@ -36,6 +36,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             card,
             categories,
             logos,
+            paymentMethods,
             advertiser;
 
         var saveCardDeferred,
@@ -153,6 +154,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
             categories = [];
             logos = [];
+            paymentMethods = [];
 
             cState = {
                 campaign: campaign,
@@ -162,7 +164,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
             compileCtrl(cState, {
                 categories: categories,
-                logos: logos
+                logos: logos,
+                paymentMethods: paymentMethods
             });
         });
 
@@ -226,6 +229,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     SelfieCampaignCtrl.campaign.contentCategories.primary = 'comedy';
                     expect(SelfieCampaignCtrl.canSubmit).toBe(false);
 
+                    SelfieCampaignCtrl.campaign.paymentMethod = 'pay-8987628376786';
+                    expect(SelfieCampaignCtrl.canSubmit).toBe(false);
+
                     SelfieCampaignCtrl.card.data.service = 'youtube';
                     expect(SelfieCampaignCtrl.canSubmit).toBe(false);
 
@@ -247,8 +253,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         SelfieCampaignCtrl.categories = null;
                         SelfieCampaignCtrl.logos = null;
                         SelfieCampaignCtrl.advertiser = null;
+                        SelfieCampaignCtrl.paymentMethods = null;
 
-                        SelfieCampaignCtrl.initWithModel({ categories: categories, logos: logos });
+                        SelfieCampaignCtrl.initWithModel({ categories: categories, logos: logos, paymentMethods: paymentMethods });
                     });
 
                     expect(SelfieCampaignCtrl.card).toEqual(card);
@@ -256,6 +263,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieCampaignCtrl.advertiser).toEqual(advertiser);
                     expect(SelfieCampaignCtrl.logos).toEqual(logos);
                     expect(SelfieCampaignCtrl.categories).toEqual(categories);
+                    expect(SelfieCampaignCtrl.paymentMethods).toEqual(paymentMethods);
                     expect(SelfieCampaignCtrl._proxyCard).toEqual(copy(card));
                     expect(SelfieCampaignCtrl._proxyCampaign).toEqual(copy(campaign));
                 });

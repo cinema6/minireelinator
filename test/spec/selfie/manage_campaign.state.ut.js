@@ -13,7 +13,8 @@ define(['app'], function(appModule) {
 
         var card,
             categories,
-            campaign;
+            campaign,
+            paymentMethods;
 
         beforeEach(function() {
             module(appModule.name);
@@ -42,6 +43,20 @@ define(['app'], function(appModule) {
                     cards: [],
                     links: {}
                 };
+                paymentMethods = [
+                    {
+                        id: 'pay-1',
+                        token: 'pay-1'
+                    },
+                    {
+                        id: 'pay-2',
+                        token: 'pay-2'
+                    },
+                    {
+                        id: 'pay-3',
+                        token: 'pay-3'
+                    }
+                ];
 
                 selfieState = c6State.get('Selfie');
                 selfieState.cModel = {
@@ -87,13 +102,21 @@ define(['app'], function(appModule) {
                 var success = jasmine.createSpy('success()'),
                     failure = jasmine.createSpy('failure()');
 
-                spyOn(cinema6.db, 'findAll').and.returnValue($q.when(categories));
+                spyOn(cinema6.db, 'findAll').and.callFake(function(type) {
+                    if (type === 'category') {
+                        return $q.when(categories);
+                    }
+                    if (type === 'paymentMethod') {
+                        return $q.when(paymentMethods);
+                    }
+                });
 
                 $rootScope.$apply(function() {
                     campaignState.model().then(success, failure);
                 });
                 expect(cinema6.db.findAll).toHaveBeenCalledWith('category');
-                expect(success).toHaveBeenCalledWith(categories);
+                expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod');
+                expect(success).toHaveBeenCalledWith({ categories: categories, paymentMethods: paymentMethods });
             });
         });
     });

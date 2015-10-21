@@ -1,5 +1,5 @@
-define( ['angular','select2'],
-function( angular ) {
+define( ['angular','select2','braintree'],
+function( angular , select2 , braintree ) {
     'use strict';
 
     var $ = angular.element,
@@ -122,10 +122,13 @@ function( angular ) {
             return {
                 restrict: 'A',
                 link: function(scope, $element, attrs) {
-                    var input = $document[0].getElementById(attrs.hiddenInputClick);
 
                     $element.on('click', function() {
-                        angular.element(input).trigger('click');
+                        var input = $document[0].getElementById(attrs.hiddenInputClick);
+
+                        if (input && input.click) {
+                            input.click();
+                        }
                     });
                 }
             };
@@ -465,6 +468,166 @@ function( angular ) {
                 } else {
                     validation.budget = false;
                 }
+            });
+        }])
+
+        .directive('braintreeCreditCard', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    clientToken: '@',
+                    onSuccess: '&',
+                    onFailure: '&',
+                    onCancel: '&',
+                    method: '='
+                },
+                templateUrl: 'views/selfie/directives/credit_card.html',
+                link: function(scope) {
+                    scope.makeDefault = scope.method.default ? 'Yes' : 'No';
+                    scope.name = scope.method.cardholderName;
+
+                    braintree.setup(scope.clientToken, 'custom', {
+                        id: 'c6-payment-method',
+                        hostedFields: {
+                            number: {
+                                selector: '#c6-addCard-number'
+                            },
+                            cvv: {
+                                selector: '#c6-cvv'
+                            },
+                            expirationDate: {
+                                selector: '#c6-expiration-date'
+                            },
+                            postalCode: {
+                                selector: '#c6-zip'
+                            },
+                            onFieldEvent: function(event) {
+                                var container = event.target.container,
+                                    fieldSet = container.parentElement,
+                                    isFocused = event.isFocused,
+                                    isEmpty = event.isEmpty,
+                                    isValid = event.isValid,
+                                    isPotentiallyValid = event.isPotentiallyValid;
+
+                                scope.errorMessage = null;
+
+                                if (isFocused || !isEmpty) {
+                                    $(container).addClass('form__fillCheck--filled');
+                                } else if (isEmpty) {
+                                    $(container).removeClass('form__fillCheck--filled');
+                                }
+
+                                if (!isFocused && !isValid) {
+                                    $(fieldSet).addClass('ui--hasError');
+                                }
+
+                                if (isFocused && isPotentiallyValid) {
+                                    $(fieldSet).removeClass('ui--hasError');
+                                }
+                            }
+                        },
+                        onError: function(event) {
+                            scope.errorMessage = event.message;
+                        },
+                        onPaymentMethodReceived: function(method) {
+                            method.makeDefault = scope.makeDefault === 'Yes';
+                            method.cardholderName = scope.name;
+
+                            scope.onSuccess({ method: method });
+                        }
+                    });
+                }
+            };
+        }])
+
+        .directive('braintreePaypal', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    clientToken: '@',
+                    onSuccess: '&',
+                    onFailure: '&',
+                    onCancel: '&'
+                },
+                link: function(scope) {
+                    braintree.setup(scope.clientToken, 'paypal', {
+                        container: 'c6-paypal',
+                        onPaymentMethodReceived: function(method) {
+                            scope.onSuccess({ method: method });
+                        }
+                    });
+                }
+            };
+        }])
+
+        .directive('selfiePaymentMethods', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    campaign: '=',
+                    methods: '='
+                },
+                templateUrl: 'views/selfie/directives/payment_methods.html',
+                controller: 'SelfiePaymentMethodsController',
+                controllerAs: 'SelfiePaymentMethodsCtrl'
+            };
+        }])
+
+        .controller('SelfiePaymentMethodsController', ['$scope',
+        function                                      ( $scope ) {
+            var campaign = $scope.campaign,
+                methods = $scope.methods,
+                SelfiePaymentMethodsCtrl = this;
+
+            function getPrimaryMethod() {
+                return methods.filter(function(method) {
+                    return !!method.default;
+                })[0];
+            }
+
+            function getMethodById(token) {
+                return methods.filter(function(method) {
+                    return token === method.token;
+                })[0];
+            }
+
+            Object.defineProperties(this, {
+                methods: {
+                    get: function() {
+                        var current = SelfiePaymentMethodsCtrl.currentMethod || {};
+
+                        return (methods || []).filter(function(method) {
+                            return method.token !== current.token;
+                        });
+                    }
+                }
+            });
+
+            this.currentMethod = methods.filter(function(method) {
+                return campaign.paymentMethod === method.token;
+            })[0] || getPrimaryMethod();
+
+            if (!campaign.paymentMethod && this.currentMethod) {
+                campaign.paymentMethod = this.currentMethod.token;
+            }
+
+            this.setCurrentMethod = function(method) {
+                this.currentMethod = method;
+                campaign.paymentMethod = method.token;
+            };
+
+            this.toggleDropdown = function() {
+                if (methods.length < 2) { return; }
+
+                this.showDropdown = !this.showDropdown;
+            };
+
+            $scope.$watch(function() {
+                return campaign.paymentMethod;
+            }, function(newToken, oldToken) {
+                if (newToken === oldToken) { return; }
+
+                SelfiePaymentMethodsCtrl.setCurrentMethod(getMethodById(newToken));
             });
         }])
 

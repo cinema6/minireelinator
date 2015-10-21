@@ -1,0 +1,91 @@
+<style>
+    #braintree-paypal-loggedin { display: none !important; }
+    #braintree-paypal-loggedout { display: none !important; }
+</style>
+
+<div class="pageHolder">
+
+    <div class="pageHeader__group">
+        <div class="mainHeader__group">
+            <h1 class="mainHeader__breadcrumbs tk--hdr">
+                <a c6-sref="Selfie:Account">Settings</a>  /  Manage Payment Methods
+            </h1>
+        </div><!--.mainHeader__group-->
+
+    </div><!--.pageHeader__group-->
+
+    <div class="grid grid--center">
+        <div class="grid__item">
+            <header class="settingsContent__header">
+                <h2 class="settingsContent__title tk--hdr">Payment Methods</h2>
+                <span class="settingsContent__subtitle">Your campaigns would use the primary payment method provided in the account settings unless you choose to use a different option.</span>
+            </header>
+        </div>
+
+    </div> 
+    <div class="settingsContent__gridHolder">
+
+        <div class="grid grid--center">
+        <div class="grid__item one-whole">
+        <div class="grid">
+        	<div ng-repeat="method in SelfieAccountPaymentCtrl.model" class="grid__item one-third lap--one-third palm--one-whole">
+        		<div ng-class="{'payment__group--default' : method.default }" class="payment__group"><!--.payment__group--default class added when the payment option is the default method-->
+                    <ul class="action__row">
+                        <li class="action__row--item"><i class="faa fa-check-circle payment__default"></i></li>
+                        <!-- Right aligned menu on top of button  -->
+                        <li class="action__row--item">
+                        <nav class="action__dropdown">
+                            <ul>
+                              <li><a href="#"><i class="fa fa-ellipsis-v"></i><span class="ir">Menu</span></a>
+                                <ul>
+                                  <li><button ng-click="SelfieAccountPaymentCtrl.makeDefault(method)">Make Primary</button></li>
+                                  <li><button ng-if="method.type === 'creditCard'" ng-click="SelfieAccountPaymentCtrl.edit(method)">Edit</button></li>
+                                  <li ng-if="!method.default"><button ng-click="SelfieAccountPaymentCtrl.delete(method)">Delete</button></li>
+                                </ul>
+                              </li>
+                            </ul>
+                        </nav>
+                        </li>
+                    </ul>
+                    <div ng-if="method.type === 'creditCard'" class="payment__group--info">
+                        <span class="tk--hdr payment__type">{{method.cardType}}</span>
+                        <span class="tk--hdr payment__id">*** {{method.last4}}</span>
+                        <span class="tk--copy payment__exp">Expires {{method.expirationDate}}</span>
+                        <span class="tk--copy payment__label">{{method.cardholderName}}</span>
+                    </div>
+                    <div ng-if="method.type === 'paypal'" class="payment__group--info">
+                        <span class="tk--hdr payment__type">PayPal</span>
+                        <span class="tk--copy payment__exp">{{method.email}}</span>
+                    </div>
+                </div>
+        	</div>
+
+            <div class="grid grid--center payment__btn--spacing">
+                <div class="grid__item one-whole">
+                <div class="text--center">
+                    <braintree-paypal client-token="{{SelfieAccountPaymentCtrl.token}}" on-success="SelfieAccountPaymentCtrl.paypalSuccess(method)">
+                        <div id="c6-paypal"></div>
+                    </braintree-paypal>
+
+                    <button class="action__btnSecondary action__btnSecondary--big palm--one-whole" hidden-input-click="braintree-paypal-button">
+                        <i class="faa fa-plus"></i>
+                        PayPal
+                    </button><!--
+                -->
+                    <button class="action__btnSecondary action__btnSecondary--big palm--one-whole">
+                        <a c6-sref="Selfie:Account:Payment:New" style="color: #fff;"><i class="faa fa-plus"></i>
+                        Credit Card</a>
+                    </button>
+                </div>
+                </div>
+            </div>
+
+        </div>
+        </div><!--.grid one-whole-->
+
+
+        </div><!--.grid .grid--center-->
+    </div><!--.settingsContent__gridHolder-->
+</div><!--.pageHolder-->
+
+<c6-view><c6-view>

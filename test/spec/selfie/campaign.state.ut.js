@@ -16,7 +16,8 @@ define(['app'], function(appModule) {
             var card,
                 categories,
                 campaign,
-                logos;
+                logos,
+                paymentMethods;
 
             beforeEach(function() {
                 module(appModule.name);
@@ -54,6 +55,20 @@ define(['app'], function(appModule) {
                         {
                             name: 'logo2',
                             src: 'logo2.png'
+                        }
+                    ];
+                    paymentMethods = [
+                        {
+                            id: 'pay-1',
+                            token: 'pay-1'
+                        },
+                        {
+                            id: 'pay-2',
+                            token: 'pay-2'
+                        },
+                        {
+                            id: 'pay-3',
+                            token: 'pay-3'
                         }
                     ];
 
@@ -101,17 +116,26 @@ define(['app'], function(appModule) {
                     var success = jasmine.createSpy('success()'),
                         failure = jasmine.createSpy('failure()');
 
-                    spyOn(cinema6.db, 'findAll').and.returnValue($q.when(categories));
+                    spyOn(cinema6.db, 'findAll').and.callFake(function(type) {
+                        if (type === 'category') {
+                            return $q.when(categories);
+                        }
+                        if (type === 'paymentMethod') {
+                            return $q.when(paymentMethods);
+                        }
+                    });
                     spyOn(SelfieLogoService, 'getLogos').and.returnValue($q.when(logos));
 
                     $rootScope.$apply(function() {
                         campaignState.model().then(success, failure);
                     });
                     expect(cinema6.db.findAll).toHaveBeenCalledWith('category');
+                    expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod');
                     expect(SelfieLogoService.getLogos).toHaveBeenCalled();
                     expect(success).toHaveBeenCalledWith({
                         categories: categories,
-                        logos: logos
+                        logos: logos,
+                        paymentMethods: paymentMethods
                     });
                 });
             });

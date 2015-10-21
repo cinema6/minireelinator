@@ -1,0 +1,146 @@
+<style>
+    .form__item--lrg { margin: 0 0 0.0625em 0; width: 100%; }
+    .form__item--half { width: 50%; float: left; }
+    .modal__copy { margin: 0 0 2em; text-align: center; }
+</style>
+<div class="gridHolder modal__group modalPayment__group">
+
+    <div class="grid grid--center">
+
+        <section class="grid__item five-sixths">
+
+            <header>
+                <h1 class="tk--hdr modal__title">Add a credit card</h1>
+                <p class="tk--copy modal__copy">Your campaign would use the primary payment method provided in the account settings unless you choose to use a different option.</p>
+            </header>
+
+            <div class="grid grid--center">
+
+                <div class="grid__item three-fifths">
+                    <div class="form__items">
+                        <form id="c6-payment-method">
+                            <fieldset class="form__item form__item--lrg">
+                                <!-- <input class="form__textBox form__textBox--lrg form__fillCheck" type="text" id="c6-addCard-number"> -->
+                                <div style="height:42px" class="form__textBox form__textBox--lrg form__fillCheck" id="c6-addCard-number"></div>
+
+                                <label class="form__label form__label--lrg" for="c6-addCard-number">
+                                    <i class="fa fa-times ui--error"></i>
+                                    Card Number
+                                </label>
+                                <div class="form__helpBox form__helpBox--right form__helpBox--rightLrg">
+                                    <div class="form__helpText">
+                                        Provide the credit card number.
+                                    </div>
+                                </div>
+                                <div class="form__errorBox">
+                                    <p class="form__errorMsg">
+                                        <i class="fa fa-exclamation-triangle"></i> Your card number is invalid.
+                                    </p>
+                                </div>
+                            </fieldset>
+
+                            <fieldset class="form__item form__item--lrg">
+                                <input c6-fill-check class="form__textBox form__textBox--lrg form__fillCheck" type="text" id="c6-addCard-name" ng-model="name">
+                                <label class="form__label form__label--lrg" for="c6-addCard-name">
+                                    <i class="fa fa-times ui--error"></i>
+                                    Name on the Card
+                                </label>
+                                <div class="form__helpBox form__helpBox--right form__helpBox--rightLrg">
+                                    <div class="form__helpText">
+                                        Provide the name, as you see it exactly, on the credit card.
+                                    </div>
+                                </div>
+                                <div class="form__errorBox">
+                                    <p class="form__errorMsg">
+                                        <i class="fa fa-exclamation-triangle"></i> Your card number is invalid.
+                                    </p>
+                                </div>
+                            </fieldset>
+
+                            <fieldset class="form__item form__item--lrg form__item--half">
+                                <div style="height:42px" class="form__textBox form__textBox--lrg form__fillCheck" id="c6-expiration-date"></div>
+
+                                <label class="form__label form__label--lrg" for="c6-expiration-date">
+                                    <i class="fa fa-times ui--error"></i>
+                                    Expiration Date (MM/YYYY)
+                                </label>
+                                <div class="form__errorBox">
+                                    <p class="form__errorMsg">
+                                        <i class="fa fa-exclamation-triangle"></i> The date is incorrect.
+                                    </p>
+                                </div>
+                            </fieldset>
+
+                            <fieldset class="form__item form__item--lrg form__item--half">
+                                <div style="height:42px" class="form__textBox form__textBox--lrg form__fillCheck" id="c6-cvv"></div>
+
+                                <label class="form__label form__label--lrg" for="c6-cvv">
+                                    <i class="fa fa-times ui--error"></i>
+                                    CVV
+                                </label>
+                                <div class="form__errorBox">
+                                    <p class="form__errorMsg">
+                                        <i class="fa fa-exclamation-triangle"></i> Invalid.
+                                    </p>
+                                </div>
+                            </fieldset>
+
+                            <fieldset class="form__item form__item--lrg">
+                               <!--  <input c6-fill-check class="form__textBox form__textBox--lrg form__fillCheck" type="text" id="c6-addCard-zip"> -->
+
+                                <div style="height:42px" class="form__textBox form__textBox--lrg form__fillCheck" id="c6-zip"></div>
+
+                                <label class="form__label form__label--lrg" for="c6-zip">
+                                    <i class="fa fa-times ui--error"></i>
+                                    Billing Zip Code
+                                </label>
+
+                                <div class="form__helpBox form__helpBox--right form__helpBox--rightLrg">
+                                    <div class="form__helpText">
+                                        Provide the billing zip code for your credit card. It may be different than your home address zip code.
+                                    </div>
+                                </div>
+                                <div class="form__errorBox">
+                                    <p class="form__errorMsg">
+                                        <i class="fa fa-exclamation-triangle"></i> Your zip code is not recognized.
+                                    </p>
+                                </div>
+                            </fieldset>
+
+                            <fieldset class="form__item form__item--lrg">
+                                <select c6-select-box class="form__selectBox form__selectBox--single" ng-model="makeDefault" ng-options="option for option in ['Yes','No']" id="c6-make-default"></select>
+
+                                <label class="form__label form__label--lrg" for="c6-make-default">
+                                    <i class="fa fa-times ui--error"></i>
+                                    Make this a Primary Card
+                                </label>
+                                <div class="form__helpBox form__helpBox--right form__helpBox--rightLrg">
+                                    <div class="form__helpText">
+                                        If you make this your primary card, all future campaigns will automatically use this card first.
+                                    </div>
+                                </div>
+                                <div class="form__errorBox">
+                                    <p class="form__errorMsg">
+                                        <i class="fa fa-exclamation-triangle"></i> You need to select yes or no.
+                                    </p>
+                                </div>
+                            </fieldset>
+
+                            <div class="ui__btnHolder--sub">
+                                <button class="action__btn action__btn--wide">Save</button>
+                            </div>
+
+                            <span>{{scope.errorMessage}}</span>
+
+                        </form>
+
+                    </div><!--.form__items-->
+                </div><!--.grid__item .three-fifths-->
+            </div><!--.grid .grid--center-->
+        </section><!--.grid__item .five-sixths-->
+
+        <button ng-click="onCancel()">Cancel</button>
+
+    </div><!--.grid grid--center-->
+
+</div>

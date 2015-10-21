@@ -1,0 +1,9 @@
+{
+    "token": "pay-9394fa392df488",
+    "createdAt": "2015-10-19T22:34:28.229Z",
+    "updatedAt": "2015-10-19T22:34:28.229Z",
+    "imageUrl": null,
+    "default": true,
+    "type": "paypal",
+    "email": "selfie880@aol.com"
+}

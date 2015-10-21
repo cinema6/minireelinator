@@ -1,0 +1,42 @@
+<style>
+    #braintree-paypal-loggedin { display: none !important; }
+    #braintree-paypal-loggedout { display: none !important; }
+</style>
+
+<div class="grid__item three-quarters">
+
+    <section class="formSection__group" id="section_6" ng-controller="SelfieCampaignPaymentController as SelfieCampaignPaymentCtrl">
+
+        <h1 class="formSection__title">
+            <span class="formSection__number">
+                <span class="formSection__numberText">6</span>
+            </span>
+            <span class="formSection__titleText tk--hdr">Payment Options</span>
+        </h1>
+
+        <div class="form__items">
+
+            <selfie-payment-methods campaign="campaign" methods="SelfieCampaignCtrl.paymentMethods"></selfie-payment-methods>
+
+            <div class="text--center" ng-if="SelfieCampaignPaymentCtrl.paypalToken">
+                <braintree-paypal client-token="{{SelfieCampaignPaymentCtrl.paypalToken}}" on-success="SelfieCampaignPaymentCtrl.paypalSuccess(method)">
+                    <div id="c6-paypal"></div>
+                </braintree-paypal>
+
+                <button class="action__btnSecondary action__btnSecondary--big palm--one-whole" hidden-input-click="braintree-paypal-button">
+                    <i class="faa fa-plus"></i>
+                    PayPal
+                </button><!--
+            -->
+                <button class="action__btnSecondary action__btnSecondary--big palm--one-whole">
+                    <a c6-sref="Selfie:Campaign:Payment:New" style="color: #fff;"><i class="faa fa-plus"></i>
+                        Credit Card</a>
+                </button>
+            </div>
+
+        </div><!--.form__items -->
+
+    </section><!--.formSection__group #section_1 -->
+
+</div><!--.grid__item-->
+

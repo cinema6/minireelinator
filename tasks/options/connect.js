@@ -45,7 +45,8 @@
                             '/api/content': 'mocks/content/main.js',
                             '/api/election': 'mocks/vote/main.js',
                             '/api/campaign': 'mocks/campaign/main.js',
-                            '/api/expgroup': 'mocks/expgroup/main.js'
+                            '/api/expgroup': 'mocks/expgroup/main.js',
+                            '/api/payments': 'mocks/payment/main.js'
                         }),
                         require('grunt-connect-proxy/lib/utils').proxyRequest,
                         require('connect-livereload')({
