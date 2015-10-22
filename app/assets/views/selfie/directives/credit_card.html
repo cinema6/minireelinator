@@ -1,33 +1,23 @@
-<style>
-    .modalPayment__group {
-        background-color: #eee;
-        border: 1px solid #ccc;
-        padding-top: 0;
-    }
-    .form__item--lrg { margin: 0 0 0.0625em 0; width: 100%; }
-    .form__item--half { width: 50%; float: left; }
-    .modal__copy { margin: 0 0 2em; text-align: center; }
-    button.item--right {padding: 10px;}
-</style>
+<div class="modal__overlay"></div>
 <div class="gridHolder modal__group modalPayment__group">
 
     <div class="grid grid--center">
+        <button ng-click="onCancel()" class="modal__closeBtn"><i class="fa fa-close"></i></button>
+        <section class="grid__item two-thirds">
 
-        <section class="grid__item five-sixths">
-
-            <header>
+            <header class="text--center">
                 <h1 class="tk--hdr modal__title">Add a credit card</h1>
                 <p class="tk--copy modal__copy">Your campaign would use the primary payment method provided in the account settings unless you choose to use a different option.</p>
             </header>
 
             <div class="grid grid--center">
 
-                <div class="grid__item three-fifths">
+                <div class="grid__item two-thirds">
                     <div class="form__items addPayment__method">
                         <form id="c6-payment-method">
-                            <fieldset class="form__item form__item--lrg">
-                                <!-- <input class="form__textBox form__textBox--lrg form__fillCheck" type="text" id="c6-addCard-number"> -->
-                                <div style="height:42px" class="form__textBox form__textBox--lrg form__fillCheck" id="c6-addCard-number"></div>
+                            <fieldset class="form__item">
+                                <!-- <input class="form__textBox form__fillCheck" type="text" id="c6-addCard-number"> -->
+                                <div class="form__textBox form__fillCheck" id="c6-addCard-number"></div>
 
                                 <label class="form__label form__label--lrg" for="c6-addCard-number">
                                     <i class="fa fa-times ui--error"></i>
@@ -45,8 +35,8 @@
                                 </div>
                             </fieldset>
 
-                            <fieldset class="form__item form__item--lrg">
-                                <input c6-fill-check class="form__textBox form__textBox--lrg form__fillCheck" type="text" id="c6-addCard-name" ng-model="name">
+                            <fieldset class="form__item">
+                                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-addCard-name" ng-model="name">
                                 <label class="form__label form__label--lrg" for="c6-addCard-name">
                                     <i class="fa fa-times ui--error"></i>
                                     Name on the Card
@@ -63,8 +53,8 @@
                                 </div>
                             </fieldset>
 
-                            <fieldset class="form__item form__item--lrg form__item--half">
-                                <div style="height:42px" class="form__textBox form__textBox--lrg form__fillCheck" id="c6-expiration-date"></div>
+                            <fieldset class="form__item">
+                                <div class="form__textBox form__fillCheck" id="c6-expiration-date"></div>
 
                                 <label class="form__label form__label--lrg" for="c6-expiration-date">
                                     <i class="fa fa-times ui--error"></i>
@@ -77,8 +67,8 @@
                                 </div>
                             </fieldset>
 
-                            <fieldset class="form__item form__item--lrg form__item--half">
-                                <div style="height:42px" class="form__textBox form__textBox--lrg form__fillCheck" id="c6-cvv"></div>
+                            <fieldset class="form__item">
+                                <div class="form__textBox form__fillCheck" id="c6-cvv"></div>
 
                                 <label class="form__label form__label--lrg" for="c6-cvv">
                                     <i class="fa fa-times ui--error"></i>
@@ -91,10 +81,10 @@
                                 </div>
                             </fieldset>
 
-                            <fieldset class="form__item form__item--lrg">
-                               <!--  <input c6-fill-check class="form__textBox form__textBox--lrg form__fillCheck" type="text" id="c6-addCard-zip"> -->
+                            <fieldset class="form__item">
+                               <!--  <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-addCard-zip"> -->
 
-                                <div style="height:42px" class="form__textBox form__textBox--lrg form__fillCheck" id="c6-zip"></div>
+                                <div class="form__textBox form__fillCheck" id="c6-zip"></div>
 
                                 <label class="form__label form__label--lrg" for="c6-zip">
                                     <i class="fa fa-times ui--error"></i>
@@ -113,7 +103,7 @@
                                 </div>
                             </fieldset>
 
-                            <fieldset class="form__item form__item--lrg">
+                            <fieldset class="form__item">
                                 <select c6-select-box class="form__selectBox form__selectBox--single" ng-model="makeDefault" ng-options="option for option in ['Yes','No']" id="c6-make-default"></select>
 
                                 <label class="form__label form__label--lrg" for="c6-make-default">
@@ -144,8 +134,6 @@
                 </div><!--.grid__item .three-fifths-->
             </div><!--.grid .grid--center-->
         </section><!--.grid__item .five-sixths-->
-
-        <button ng-click="onCancel()" class="item--right"><i class="fa fa-close"></i></button>
 
     </div><!--.grid grid--center-->
 

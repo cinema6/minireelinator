@@ -43,6 +43,14 @@
         background:none;
         font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
     }
+    input[type='number'] {
+        -moz-appearance:textfield;
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+    }
 
 /*  ================================================
     c6 copy classes : general type and color styles
@@ -75,7 +83,7 @@
         color:#ff8a00;
     }
     .tk--alert {
-        color:#ff1e1e;
+        color:#C90000;
     }
     .tk--fineprint {
         font-size:0.875em; line-height:1rem;
@@ -265,6 +273,7 @@ fa,
         border:0;
         padding:0.75rem 1.5rem 0.625rem;
         margin:0 0 1.125rem;
+        display: inline-block;
         font-size:1.125em;
         line-height:1.5rem;
         transition:color 0.3s, background 0.3s;
@@ -273,6 +282,7 @@ fa,
     }
         .action__btnSecondary:hover {
             background:#384a5c;
+            color: #fff;
         }
 
         .action__btnSecondary--small {
@@ -718,7 +728,7 @@ fa,
             .mainNav__dropDownItem {
                 list-style-type:none;
                 margin:0;
-                padding:1.25rem 4rem;
+                padding:1.5rem 4rem;
                 display:block;
                 width:100%;
                 background:#232628;
@@ -1857,7 +1867,7 @@ fa,
         .form__errorMsg {
             font-size:0.8125em;
             margin:0;
-            background:#ff1e1e;
+            background:#C90000;
             color:#fff;
             padding:0.125em 0.75em 0.25em 0.75em;
             -webkit-transition:-webkit-transform 0.3s 0.2s;
@@ -1880,11 +1890,11 @@ fa,
 
         .ui--hasError .form__textBox,
         .ui--hasError .thumbnail__customBtn {
-            border-color:#ff1e1e;
+            border-color:#C90000;
         }
         .ui--hasError .form__label,
         .ui--hasError .thumbnail__label {
-            color:#ff1e1e;
+            color:#C90000;
         }
 
 
@@ -2164,7 +2174,7 @@ fa,
                 .ui--hasError .thumbnail__label:before,
                 .ui--hasError .thumbnail__btn--selected:hover .thumbnail__label:before  {
                     content:'\f00d';
-                    color:#ff1e1e;
+                    color:#C90000;
                 }
                 .thumbnail__btn--selected .thumbnail__label:before {
                     opacity:1;
@@ -2561,9 +2571,14 @@ fa,
     .payment__btn--spacing {
         margin:3.25em 0 0;
     }
+
     /*Braintree Paypal button/account information styles*/    
-    #braintree-paypal-loggedin { display: none !important; }
-    #braintree-paypal-loggedout { display: none !important; }
+    #braintree-paypal-loggedin { 
+        display: none !important; 
+    }
+    #braintree-paypal-loggedout { 
+        display: none !important; 
+    }
 
 /*  ================================================
     action menu styles
@@ -2762,8 +2777,12 @@ fa,
         .pmtDropdown__menu--item:hover {
             background-color: #00c0ff;
         }
-
-
+        .pmtDropdown__single {
+            cursor: default; 
+        }
+        .pmtDropdown__btn:focus.pmtDropdown__single { 
+            border-bottom: 2px solid #eee; 
+        }
 
 
 
@@ -2814,19 +2833,19 @@ fa,
     }
         .modal__closeBtn,
         .modal__closeBtn:focus {
-            width:3em; height:100%;
+            width:3em; height:3em;
+            color:#888;
             position: absolute; right:0; top:0;
-            border-left:1px solid #ddd;
             -webkit-transition:background 0.25s; transition:background 0.25s;
         }
             .modal__closeBtn .ui__icon {
                 fill:#d94040;
             }
             .modal__closeBtn:hover {
-                background:#d94040;
+                color: #000;
             }
-            .modal__closeBtn:hover .ui__icon {
-                fill:#fff;
+            .modal__closeBtn .fa {
+                font-size: 1em;
             }
         .modal__title {
             font-size: 2em;
@@ -2904,6 +2923,20 @@ fa,
             margin:4rem 0;
         }
     }
+    /*payment modal*/
+    .modalPayment__group {
+        background-color: #eee;
+        border: 1px solid #ccc;
+        padding-top: 2em;
+    }
+    .modalPayment__group .form__item { 
+        margin: 0 0 0.125em 0; 
+        width: 100%;
+    }
+    .addPayment__method .form__textBox {
+        height: 42px;
+    }
+    
 /*  ================================================
     payment history list classes
     (Jess)
