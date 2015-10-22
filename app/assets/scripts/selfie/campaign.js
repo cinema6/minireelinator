@@ -797,10 +797,27 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignPaymentController', ['PaymentService','$scope','cinema6',
-        function                                       ( PaymentService , $scope , cinema6 ) {
+                                                        'ConfirmDialogService','c6AsyncQueue',
+        function                                       ( PaymentService , $scope , cinema6 ,
+                                                         ConfirmDialogService , c6AsyncQueue ) {
             var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 methods = SelfieCampaignCtrl.paymentMethods,
-                campaign = SelfieCampaignCtrl.campaign;
+                campaign = SelfieCampaignCtrl.campaign,
+                queue = c6AsyncQueue();
+
+            function handleError(error) {
+                ConfirmDialogService.display({
+                    prompt: 'There was an a problem saving your payment method: ' + error.data,
+                    affirm: 'OK',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: queue.debounce(function() {
+                        ConfirmDialogService.close();
+                    })
+                });
+            }
 
             this.paypalSuccess = function(method) {
                 var newMethod = cinema6.db.create('paymentMethod', {
@@ -811,7 +828,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     .then(function(method) {
                         methods.unshift(method);
                         campaign.paymentMethod = method.token;
-                    });
+                    }, handleError);
             };
         }])
 
@@ -860,7 +877,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     makeDefault: method.makeDefault
                 });
 
-                this.model.save()
+                return this.model.save()
                     .then(function(method) {
                         paymentMethods.unshift(method);
                         campaign.paymentMethod = method.token;
