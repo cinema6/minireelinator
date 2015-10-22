@@ -657,9 +657,15 @@ function( angular , select2 , braintree ) {
             return function(type) {
                 switch (type) {
                 case 'American Express':
-                    return 'AmEx';
+                    return 'AMEX';
+                case 'Diners Club':
+                    return 'DCI';
                 case 'MasterCard':
                     return 'MC';
+                case 'Discover':
+                    return 'DISC';
+                case 'Visa':
+                    return 'VISA';
                 default:
                     return type;
                 }
