@@ -1,8 +1,3 @@
-<style>
-    #braintree-paypal-loggedin { display: none !important; }
-    #braintree-paypal-loggedout { display: none !important; }
-</style>
-
 <div class="grid__item one-half">
 
     <section class="formSection__group" id="section_6" ng-controller="SelfieCampaignPaymentController as SelfieCampaignPaymentCtrl">
@@ -27,11 +22,8 @@
                     <i class="faa fa-plus"></i>
                     PayPal
                 </button><!--
-            -->
-                <button class="action__btnSecondary action__btnSecondary--big palm--one-whole">
-                    <a c6-sref="Selfie:Campaign:Payment:New" style="color: #fff;"><i class="faa fa-plus"></i>
-                        Credit Card</a>
-                </button>
+            --><a c6-sref="Selfie:Campaign:Payment:New" class="action__btnSecondary action__btnSecondary--big palm--one-whole"><i class="faa fa-plus"></i>
+                    Credit Card</a>                
             </div>
 
         </div><!--.form__items -->
