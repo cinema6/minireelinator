@@ -614,6 +614,7 @@ function( angular , select2 , braintree ) {
             this.setCurrentMethod = function(method) {
                 this.currentMethod = method;
                 campaign.paymentMethod = method.token;
+                this.showDropdown = false;
             };
 
             this.toggleDropdown = function() {
