@@ -509,8 +509,6 @@ function( angular , select2 , braintree ) {
                                     isValid = event.isValid,
                                     isPotentiallyValid = event.isPotentiallyValid;
 
-                                scope.errorMessage = null;
-
                                 if (isFocused || !isEmpty) {
                                     $(container).addClass('form__fillCheck--filled');
                                 } else if (isEmpty) {
@@ -530,6 +528,12 @@ function( angular , select2 , braintree ) {
                                 } else {
                                     $(container).removeClass('in--focus');
                                 }
+
+                                if (scope.errorMessage) {
+                                    scope.$apply(function() {
+                                        scope.errorMessage = null;
+                                    });
+                                }
                             }
                         },
                         onError: function(event) {
@@ -539,7 +543,10 @@ function( angular , select2 , braintree ) {
                             method.makeDefault = scope.makeDefault === 'Yes';
                             method.cardholderName = scope.name;
 
-                            scope.onSuccess({ method: method });
+                            scope.onSuccess({ method: method })
+                                .catch(function(err) {
+                                    scope.errorMessage = err.data;
+                                });
                         }
                     });
                 }
@@ -673,6 +680,6 @@ function( angular , select2 , braintree ) {
                 default:
                     return type;
                 }
-            }
+            };
         }]);
 });

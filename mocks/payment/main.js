@@ -153,7 +153,6 @@ module.exports = function(http) {
                     return grunt.file.readJSON(path);
                 })
                 .filter(function(campaign) {
-                    console.log(campaign);
                     return campaign.paymentMethod === payment.token;
                 });
 

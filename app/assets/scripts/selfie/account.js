@@ -263,10 +263,8 @@ function( angular , c6State  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Account:Payment', ['cinema6','PaymentService',
-            function                                        ( cinema6 , PaymentService ) {
-                var SelfieAccountPaymentState = this;
-
+            c6StateProvider.state('Selfie:Account:Payment', ['cinema6',
+            function                                        ( cinema6 ) {
                 this.templateUrl = 'views/selfie/account/payment.html';
                 this.controller = 'SelfieAccountPaymentController';
                 this.controllerAs = 'SelfieAccountPaymentCtrl';
@@ -277,9 +275,12 @@ function( angular , c6State  ) {
             }]);
         }])
 
-        .controller('SelfieAccountPaymentController', ['c6State','cinema6',
-        function                                      ( c6State , cinema6 ) {
-            var SelfieAccountPaymentCtrl = this;
+        .controller('SelfieAccountPaymentController', ['c6State','cinema6','c6AsyncQueue',
+                                                       'ConfirmDialogService',
+        function                                      ( c6State , cinema6 , c6AsyncQueue ,
+                                                        ConfirmDialogService ) {
+            var SelfieAccountPaymentCtrl = this,
+                queue = c6AsyncQueue();
 
             function refreshModel() {
                 cinema6.db.findAll('paymentMethod')
@@ -288,23 +289,77 @@ function( angular , c6State  ) {
                     });
             }
 
+            function handleError(action, error) {
+                ConfirmDialogService.display({
+                    prompt: 'There was an a problem '+action+' your payment method: '+error.data,
+                    affirm: 'OK',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: queue.debounce(function() {
+                        ConfirmDialogService.close();
+                    })
+                });
+            }
+
             this.initWithModel = function(model) {
                 this.model = model;
+            };
+
+            this.confirmPrimary = function(method) {
+                ConfirmDialogService.display({
+                    prompt: 'Are you sure you want to make this your primary payment method?',
+                    affirm: 'Yes',
+                    cancel: 'Cancel',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: queue.debounce(function() {
+                        ConfirmDialogService.close();
+
+                        SelfieAccountPaymentCtrl.makeDefault(method);
+                    })
+                });
             };
 
             this.makeDefault = function(method) {
                 method.makeDefault = true;
                 method.cardholderName = undefined;
 
-                method.save().then(refreshModel);
+                method.save()
+                    .then(refreshModel, function(err) {
+                        handleError('updating', err);
+                    });
             };
 
             this.edit = function(method) {
                 c6State.goTo('Selfie:Account:Payment:Edit', [method]);
             };
 
+            this.confirmDelete = function(method) {
+                ConfirmDialogService.display({
+                    prompt: 'Are you sure you want to delete this payment method?',
+                    affirm: 'Delete',
+                    cancel: 'Keep',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: queue.debounce(function() {
+                        ConfirmDialogService.close();
+
+                        SelfieAccountPaymentCtrl.delete(method);
+                    })
+                });
+            };
+
             this.delete = function(method) {
-                method.erase().then(refreshModel);
+                method.erase()
+                    .then(refreshModel, function(err) {
+                        handleError('deleting', err);
+                    });
             };
 
             this.paypalSuccess = function(method) {
@@ -312,7 +367,10 @@ function( angular , c6State  ) {
                     paymentMethodNonce: method.nonce
                 });
 
-                paypalMethod.save().then(refreshModel);
+                paypalMethod.save()
+                    .then(refreshModel, function(err) {
+                        handleError('saving', err);
+                    });
             };
         }])
 
@@ -360,7 +418,7 @@ function( angular , c6State  ) {
                     makeDefault: method.makeDefault
                 });
 
-                this.model.save()
+                return this.model.save()
                     .then(function(method) {
                         paymentMethods.unshift(method);
 
@@ -416,7 +474,7 @@ function( angular , c6State  ) {
                     makeDefault: method.makeDefault
                 });
 
-                this.model.save()
+                return this.model.save()
                     .then(function() {
                         return c6State.goTo('Selfie:Account:Payment');
                     });
