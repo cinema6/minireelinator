@@ -524,6 +524,12 @@ function( angular , select2 , braintree ) {
                                 if (isFocused && isPotentiallyValid) {
                                     $(fieldSet).removeClass('ui--hasError');
                                 }
+
+                                if (isFocused) {
+                                    $(container).addClass('in--focus');
+                                } else {
+                                    $(container).removeClass('in--focus');
+                                }
                             }
                         },
                         onError: function(event) {
