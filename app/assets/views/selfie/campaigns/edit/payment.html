@@ -18,8 +18,8 @@
 
             <selfie-payment-methods campaign="campaign" methods="SelfieCampaignCtrl.paymentMethods"></selfie-payment-methods>
 
-            <div class="text--center" ng-if="SelfieCampaignPaymentCtrl.paypalToken">
-                <braintree-paypal client-token="{{SelfieCampaignPaymentCtrl.paypalToken}}" on-success="SelfieCampaignPaymentCtrl.paypalSuccess(method)">
+            <div class="text--center">
+                <braintree-paypal on-success="SelfieCampaignPaymentCtrl.paypalSuccess(method)">
                     <div id="c6-paypal"></div>
                 </braintree-paypal>
 

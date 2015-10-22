@@ -58,7 +58,7 @@
             <div class="grid grid--center payment__btn--spacing">
                 <div class="grid__item one-whole">
                 <div class="text--center">
-                    <braintree-paypal client-token="{{SelfieAccountPaymentCtrl.token}}" on-success="SelfieAccountPaymentCtrl.paypalSuccess(method)">
+                    <braintree-paypal on-success="SelfieAccountPaymentCtrl.paypalSuccess(method)">
                         <div id="c6-paypal"></div>
                     </braintree-paypal>
 

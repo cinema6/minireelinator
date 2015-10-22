@@ -798,14 +798,9 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignPaymentController', ['PaymentService','$scope','cinema6',
         function                                       ( PaymentService , $scope , cinema6 ) {
-            var SelfieCampaignPaymentCtrl = this,
-                SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 methods = SelfieCampaignCtrl.paymentMethods,
                 campaign = SelfieCampaignCtrl.campaign;
-
-            PaymentService.getToken().then(function(token) {
-                SelfieCampaignPaymentCtrl.paypalToken = token;
-            });
 
             this.paypalSuccess = function(method) {
                 var newMethod = cinema6.db.create('paymentMethod', {

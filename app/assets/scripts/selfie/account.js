@@ -274,22 +274,11 @@ function( angular , c6State  ) {
                 this.model = function() {
                     return cinema6.db.findAll('paymentMethod');
                 };
-
-                this.afterModel = function() {
-                    return PaymentService.getToken()
-                        .then(function(token) {
-                            // this token is for the paypal button that needs to be initialized
-                            // with braintree as soon as the page is page loaded. Nothing needs
-                            // to be initialized yet for Credit Card UI, that happens when a user
-                            // "edits" or "adds" a credit card payment method
-                            SelfieAccountPaymentState.token = token;
-                        });
-                };
             }]);
         }])
 
-        .controller('SelfieAccountPaymentController', ['c6State','cinema6','cState',
-        function                                      ( c6State , cinema6 , cState ) {
+        .controller('SelfieAccountPaymentController', ['c6State','cinema6',
+        function                                      ( c6State , cinema6 ) {
             var SelfieAccountPaymentCtrl = this;
 
             function refreshModel() {
@@ -301,7 +290,6 @@ function( angular , c6State  ) {
 
             this.initWithModel = function(model) {
                 this.model = model;
-                this.token = cState.token;
             };
 
             this.makeDefault = function(method) {

@@ -546,21 +546,25 @@ function( angular , select2 , braintree ) {
             };
         }])
 
-        .directive('braintreePaypal', [function() {
+        .directive('braintreePaypal', ['PaymentService',
+        function                      ( PaymentService ) {
             return {
                 restrict: 'E',
                 scope: {
-                    clientToken: '@',
                     onSuccess: '&',
                     onFailure: '&',
                     onCancel: '&'
                 },
                 link: function(scope) {
-                    braintree.setup(scope.clientToken, 'paypal', {
-                        container: 'c6-paypal',
-                        onPaymentMethodReceived: function(method) {
-                            scope.onSuccess({ method: method });
-                        }
+                    PaymentService.getToken().then(function(token) {
+
+                        braintree.setup(token, 'paypal', {
+                            container: 'c6-paypal',
+                            onPaymentMethodReceived: function(method) {
+                                scope.onSuccess({ method: method });
+                            }
+                        });
+
                     });
                 }
             };
