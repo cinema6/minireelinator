@@ -644,5 +644,18 @@ function( angular , select2 , braintree ) {
                     return 'VAST';
                 }
             };
+        }])
+
+        .filter('paymentType', [function() {
+            return function(type) {
+                switch (type) {
+                case 'American Express':
+                    return 'AmEx';
+                case 'MasterCard':
+                    return 'MC';
+                default:
+                    return type;
+                }
+            }
         }]);
 });

@@ -55,7 +55,7 @@
                         </div><!--.column__paymentCampaign-->
 
                         <div class="paymentHistory__column column__paymentMethod">
-                            <span ng-if="transaction.method.type === 'creditCard'" class="paymentHistory__method tk--hdr">{{transaction.method.cardType}} *** {{transaction.method.last4}}</span>
+                            <span ng-if="transaction.method.type === 'creditCard'" class="paymentHistory__method tk--hdr">{{transaction.method.cardType | paymentType}} *** {{transaction.method.last4}}</span>
                             <span ng-if="transaction.method.type === 'creditCard'" class="paymentHistory__methodOwner">{{transaction.method.cardholderName}}</span>
                             <span ng-if="transaction.method.type === 'paypal'" class="paymentHistory__method tk--hdr">PayPal</span>
                             <span ng-if="transaction.method.type === 'paypal'" class="paymentHistory__methodOwner">{{transaction.method.email}}</span>
