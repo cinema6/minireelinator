@@ -5,7 +5,8 @@
     "amount": "520.13",
     "createdAt": "2015-09-22T22:34:28.229Z",
     "updatedAt": "2015-09-22T22:34:28.229Z",
-    "campaign": "c-b76ecf45af71cd",
+    "campaignId": "c-b76ecf45af71cd",
+    "campaignName": "My New Shop",
     "method": {
         "token": "pay-9394fa392df488",
         "createdAt": "2015-10-19T22:34:28.229Z",

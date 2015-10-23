@@ -196,10 +196,12 @@ function( angular , c6State  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Account', ['c6State',
-            function                                ( c6State ) {
+            c6StateProvider.state('Selfie:Account', ['c6State','cinema6',
+            function                                ( c6State , cinema6 ) {
+                var SelfieAccountState = this;
+
                 this.templateUrl = 'views/selfie/account.html';
-                this.controller = 'GenericController';
+                this.controller = 'SelfieAccountController';
                 // need 'AccoutnCtrl' for the existing Ctrls to work
                 this.controllerAs = 'AccountCtrl';
 
@@ -207,10 +209,35 @@ function( angular , c6State  ) {
                     return c6State.get('Selfie').cModel;
                 };
 
+                this.afterModel = function() {
+                    return cinema6.db.findAll('paymentMethod')
+                        .then(function(methods) {
+                            SelfieAccountState.paymentMethods = methods;
+                        });
+                };
+
                 this.enter = function() {
                     return c6State.goTo('Selfie:Account:Overview');
                 };
             }]);
+        }])
+
+        .controller('SelfieAccountController', ['cState',
+        function                               ( cState ) {
+            this.initWithModel = function(model) {
+                this.model = model;
+                this.paymentMethods = cState.paymentMethods;
+            };
+
+            Object.defineProperties(this, {
+                primaryMethod: {
+                    get: function() {
+                        return (this.paymentMethods || []).filter(function(method) {
+                            return method.default;
+                        })[0];
+                    }
+                }
+            });
         }])
 
         .config(['c6StateProvider',
@@ -270,7 +297,7 @@ function( angular , c6State  ) {
                 this.controllerAs = 'SelfieAccountPaymentCtrl';
 
                 this.model = function() {
-                    return cinema6.db.findAll('paymentMethod');
+                    return this.cParent.paymentMethods;
                 };
             }]);
         }])

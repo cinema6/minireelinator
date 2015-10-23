@@ -149,29 +149,6 @@ function( angular , c6uilib ) {
                 return $http.get(c6UrlMaker('payments', 'api'))
                     .then(function(response) {
                         return response.data;
-                    })
-                    .then(function(transactions) {
-                        var deferred = $q.defer(),
-                            campaignIds = transactions.reduce(function(result, transaction) {
-                                return result.indexOf(transaction.campaign) < 0 ?
-                                    result.concat(transaction.campaign) :
-                                    result;
-                            }, []).join(',');
-
-                        cinema6.db.findAll('selfieCampaign', { ids: campaignIds })
-                            .then(function(campaigns) {
-                                var decorated = transactions.map(function(trans) {
-                                    var id = trans.campaign;
-
-                                    trans.campaign = getById(campaigns, id);
-
-                                    return trans;
-                                });
-
-                                deferred.resolve(decorated);
-                            });
-
-                        return deferred.promise;
                     });
             };
         }])
