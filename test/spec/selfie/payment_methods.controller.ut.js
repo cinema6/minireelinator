@@ -109,6 +109,7 @@ define(['app'], function(appModule) {
         describe('methods', function() {
             describe('setCurrentMethod(method)', function() {
                 beforeEach(function() {
+                    SelfiePaymentMethodsCtrl.showDropdown = true;
                     SelfiePaymentMethodsCtrl.setCurrentMethod(paymentMethods[0]);
                 });
 
@@ -118,6 +119,10 @@ define(['app'], function(appModule) {
 
                 it('should set the property on the campaign', function() {
                     expect(campaign.paymentMethod).toBe('pay-1');
+                });
+
+                it('should hide the drop down', function() {
+                    expect(SelfiePaymentMethodsCtrl.showDropdown).toBe(false);
                 });
             });
 

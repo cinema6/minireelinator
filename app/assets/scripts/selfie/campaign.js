@@ -797,13 +797,12 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignPaymentController', ['PaymentService','$scope','cinema6',
-                                                        'ConfirmDialogService','c6AsyncQueue',
+                                                        'ConfirmDialogService',
         function                                       ( PaymentService , $scope , cinema6 ,
-                                                         ConfirmDialogService , c6AsyncQueue ) {
+                                                         ConfirmDialogService ) {
             var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 methods = SelfieCampaignCtrl.paymentMethods,
-                campaign = SelfieCampaignCtrl.campaign,
-                queue = c6AsyncQueue();
+                campaign = SelfieCampaignCtrl.campaign;
 
             function handleError(error) {
                 ConfirmDialogService.display({
@@ -813,9 +812,9 @@ function( angular , c6State  , PaginatedListState                    ,
                     onCancel: function() {
                         return ConfirmDialogService.close();
                     },
-                    onAffirm: queue.debounce(function() {
-                        ConfirmDialogService.close();
-                    })
+                    onAffirm: function() {
+                        return ConfirmDialogService.close();
+                    }
                 });
             }
 

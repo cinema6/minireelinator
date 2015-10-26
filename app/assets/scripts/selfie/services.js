@@ -130,14 +130,8 @@ function( angular , c6uilib ) {
 
         }])
 
-        .service('PaymentService', ['$http','c6UrlMaker','cinema6','$q',
-        function                   ( $http , c6UrlMaker , cinema6 , $q ) {
-            function getById(arr, id) {
-                return arr.filter(function(item) {
-                    return item.id === id;
-                })[0];
-            }
-
+        .service('PaymentService', ['$http','c6UrlMaker',
+        function                   ( $http , c6UrlMaker ) {
             this.getToken = function() {
                 return $http.get(c6UrlMaker('payments/clientToken', 'api'))
                     .then(function(response) {

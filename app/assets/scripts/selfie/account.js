@@ -290,8 +290,7 @@ function( angular , c6State  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Account:Payment', ['cinema6',
-            function                                        ( cinema6 ) {
+            c6StateProvider.state('Selfie:Account:Payment', [function() {
                 this.templateUrl = 'views/selfie/account/payment.html';
                 this.controller = 'SelfieAccountPaymentController';
                 this.controllerAs = 'SelfieAccountPaymentCtrl';
@@ -309,13 +308,6 @@ function( angular , c6State  ) {
             var SelfieAccountPaymentCtrl = this,
                 queue = c6AsyncQueue();
 
-            function refreshModel() {
-                cinema6.db.findAll('paymentMethod')
-                    .then(function(methods) {
-                        SelfieAccountPaymentCtrl.model = methods;
-                    });
-            }
-
             function handleError(action, error) {
                 ConfirmDialogService.display({
                     prompt: 'There was an a problem '+action+' your payment method: '+error.data,
@@ -324,14 +316,17 @@ function( angular , c6State  ) {
                     onCancel: function() {
                         return ConfirmDialogService.close();
                     },
-                    onAffirm: queue.debounce(function() {
-                        ConfirmDialogService.close();
-                    })
+                    onAffirm: function() {
+                        return ConfirmDialogService.close();
+                    }
                 });
             }
 
-            this.initWithModel = function(model) {
-                this.model = model;
+            this.refreshModel = function() {
+                return cinema6.db.findAll('paymentMethod')
+                    .then(function(methods) {
+                        SelfieAccountPaymentCtrl.model = methods;
+                    });
             };
 
             this.confirmPrimary = function(method) {
@@ -356,7 +351,7 @@ function( angular , c6State  ) {
                 method.cardholderName = undefined;
 
                 method.save()
-                    .then(refreshModel, function(err) {
+                    .then(this.refreshModel, function(err) {
                         handleError('updating', err);
                     });
             };
@@ -384,7 +379,7 @@ function( angular , c6State  ) {
 
             this.delete = function(method) {
                 method.erase()
-                    .then(refreshModel, function(err) {
+                    .then(this.refreshModel, function(err) {
                         handleError('deleting', err);
                     });
             };
@@ -395,7 +390,7 @@ function( angular , c6State  ) {
                 });
 
                 paypalMethod.save()
-                    .then(refreshModel, function(err) {
+                    .then(this.refreshModel, function(err) {
                         handleError('saving', err);
                     });
             };
@@ -430,8 +425,7 @@ function( angular , c6State  ) {
 
         .controller('SelfieAccountPaymentNewController', ['c6State','cinema6','cState','$scope',
         function                                         ( c6State , cinema6 , cState , $scope ) {
-            var SelfieAccountPaymentCtrl = $scope.SelfieAccountPaymentCtrl,
-                paymentMethods = SelfieAccountPaymentCtrl.model;
+            var SelfieAccountPaymentCtrl = $scope.SelfieAccountPaymentCtrl;
 
             this.initWithModel = function(model) {
                 this.model = model;
@@ -446,9 +440,8 @@ function( angular , c6State  ) {
                 });
 
                 return this.model.save()
-                    .then(function(method) {
-                        paymentMethods.unshift(method);
-
+                    .then(SelfieAccountPaymentCtrl.refreshModel)
+                    .then(function() {
                         return c6State.goTo('Selfie:Account:Payment');
                     });
             };
@@ -487,8 +480,10 @@ function( angular , c6State  ) {
             }]);
         }])
 
-        .controller('SelfieAccountPaymentEditController', ['c6State','cinema6','cState',
-        function                                          ( c6State , cinema6 , cState ) {
+        .controller('SelfieAccountPaymentEditController', ['c6State','cinema6','cState','$scope',
+        function                                          ( c6State , cinema6 , cState , $scope ) {
+            var SelfieAccountPaymentCtrl = $scope.SelfieAccountPaymentCtrl;
+
             this.initWithModel = function(model) {
                 this.model = model;
                 this.token = cState.token;
@@ -502,6 +497,7 @@ function( angular , c6State  ) {
                 });
 
                 return this.model.save()
+                    .then(SelfieAccountPaymentCtrl.refreshModel)
                     .then(function() {
                         return c6State.goTo('Selfie:Account:Payment');
                     });

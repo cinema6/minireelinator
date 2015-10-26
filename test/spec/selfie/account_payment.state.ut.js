@@ -6,6 +6,7 @@ define(['app'], function(appModule) {
             $rootScope,
             $q,
             PaymentState,
+            AccountState,
             cinema6,
             PaymentService,
             paymentMethods;
@@ -36,6 +37,9 @@ define(['app'], function(appModule) {
             spyOn(cinema6.db, 'findAll').and.returnValue($q.when(paymentMethods));
             spyOn(PaymentService, 'getToken').and.returnValue($q.when('1234-4321'));
 
+            AccountState = c6State.get('Selfie:Account');
+            AccountState.paymentMethods = paymentMethods;
+
             PaymentState = c6State.get('Selfie:Account:Payment');
         });
 
@@ -44,26 +48,9 @@ define(['app'], function(appModule) {
         });
 
         describe('model()', function() {
-            it('should find all payment methods', function() {
-                var success = jasmine.createSpy('success()'),
-                    failure = jasmine.createSpy('failure()');
-
-                $rootScope.$apply(function() {
-                    PaymentState.model().then(success, failure);
-                });
-
-                expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod');
-                expect(success).toHaveBeenCalledWith(paymentMethods);
-            });
-        });
-
-        describe('afterModel()', function() {
-            it('should fetch a payment token', function() {
-                PaymentState.afterModel();
-                $rootScope.$digest();
-
-                expect(PaymentService.getToken).toHaveBeenCalled();
-                expect(PaymentState.token).toEqual('1234-4321');
+            it('should return the payment methods from the parent state', function() {
+                expect(PaymentState.model()).toEqual(PaymentState.cParent.paymentMethods);
+                expect(PaymentState.model()).toEqual(AccountState.paymentMethods);
             });
         });
     });
