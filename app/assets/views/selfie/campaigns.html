@@ -28,7 +28,7 @@
         <div class="sortBar__group">
             <ul class="sortBar__list clearfix">
                 <li class="sortBar__item sortBar__item--sortable column__status">
-                    <button class="sortBar__btn" ng-click="showDropdown = !showDropdown" type="button">Status</button><span class="faa fa-caret-down ui__clickDrop sortBar__btn--Dropdown"> </span>
+                    <button class="sortBar__btn" ng-click="showDropdown = !showDropdown" type="button">Status <span class="faa fa-caret-down ui__clickDrop sortBar__btn--Dropdown"> </span></button>
                     <ul class="ui__clickDropMenu" ng-show="showDropdown">
                         <li ng-repeat="filter in SelfieCampaignsCtrl.filters" class="ui__clickDropBtn" type="button" title="Select All">
                             <label><input type="checkbox" name="statusFilter" value="filter.name" ng-model="filter.checked" ng-change="SelfieCampaignsCtrl.toggleFilter($index)"> {{filter.name}}</label>

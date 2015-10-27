@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.24.0.rc1]*
+  * [DESIGN]: (Selfie) Moved campaign action buttons out of the tab
+  * [DESIGN]: (Selfie) Added description for sections on create campaign
+  
 ## v1.23.0 (October 27, 2015)
 * *[v1.23.0.rc3]*
   * [DESIGN]: (Selfie) Added styles for credit card popup
