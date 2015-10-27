@@ -152,7 +152,7 @@ function( angular , c6State  , PaginatedListState                    ,
             }, function(model) {
 
                 SelfieCampaignsCtrl.metaData = model.reduce(function(result, campaign) {
-                    var card = campaign.cards && campaign.cards[0] && campaign.cards[0].item;
+                    var card = campaign.cards && campaign.cards[0];
 
                     if (!card) { return result; }
 
@@ -175,12 +175,12 @@ function( angular , c6State  , PaginatedListState                    ,
             c6StateProvider.state('Selfie:NewCampaign', ['cinema6','c6State','CampaignService',
             function                                    ( cinema6 , c6State , CampaignService ) {
                 this.model = function() {
-                    return CampaignService.create('campaign');
+                    return CampaignService.create();
                 };
 
                 this.afterModel = function(campaign) {
                     this.campaign = campaign;
-                    this.card = CampaignService.create('card');
+                    this.card = campaign.cards[0];
                 };
 
                 this.enter = function() {
@@ -199,7 +199,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.afterModel = function(campaign) {
                     this.campaign = CampaignService.normalize(campaign);
-                    this.card = campaign.cards[0].item;
+                    this.card = campaign.cards[0];
                 };
 
                 this.enter = function() {
@@ -248,24 +248,6 @@ function( angular , c6State  , PaginatedListState                    ,
 
             function saveCampaign() {
                 return SelfieCampaignCtrl.campaign.save();
-            }
-
-            function saveCard() {
-                return SelfieCampaignCtrl.card.save();
-            }
-
-            function addCardToCampaign(card) {
-                SelfieCampaignCtrl.campaign.cards = [{
-                    id: card.id
-                }];
-
-                return card;
-            }
-
-            function addCampaignToCard(campaign) {
-                SelfieCampaignCtrl.card.campaignId = campaign.id;
-
-                return campaign;
             }
 
             function updateProxy() {
@@ -319,7 +301,6 @@ function( angular , c6State  , PaginatedListState                    ,
                         return [
                             campaign.name,
                             campaign.advertiserDisplayName,
-                            campaign.contentCategories.primary,
                             campaign.paymentMethod,
                             this.validation.budget,
                             card.data.service,
@@ -336,13 +317,20 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.initWithModel = function(model) {
-                // TODO: make sure campaign and card have necessary properties
+                var primaryPaymentMethod = model.paymentMethods
+                    .filter(function(method) {
+                        return method.default;
+                    })[0] || {};
+
+                this.logos = model.logos;
+                this.categories = model.categories;
+                this.paymentMethods = model.paymentMethods;
+
                 this.card = cState.card;
                 this.campaign = cState.campaign;
-                this.categories = model.categories;
-                this.logos = model.logos;
                 this.advertiser = cState.advertiser;
-                this.paymentMethods = model.paymentMethods;
+
+                this.campaign.paymentMethod = primaryPaymentMethod.token;
 
                 this._proxyCard = copy(this.card);
                 this._proxyCampaign = copy(this.campaign);
@@ -353,20 +341,9 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 $scope.$broadcast('SelfieCampaignWillSave');
 
-                if (SelfieCampaignCtrl.card.id) {
-                    return saveCard()
-                        .then(saveCampaign)
-                        .then(updateProxy)
-                        .catch(handleError);
-                } else {
-                    return saveCampaign()
-                        .then(addCampaignToCard)
-                        .then(saveCard)
-                        .then(addCardToCampaign)
-                        .then(saveCampaign)
-                        .then(updateProxy)
-                        .catch(handleError);
-                }
+                return saveCampaign()
+                    .then(updateProxy)
+                    .catch(handleError);
             };
 
             this.submit = queue.debounce(function() {
@@ -381,7 +358,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 var campaign = SelfieCampaignCtrl.campaign || {};
 
                 return [
-                    campaign.contentCategories,
                     campaign.pricing,
                     campaign.targeting,
                     campaign.paymentMethod
@@ -897,7 +873,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.afterModel = function(campaign) {
                     this.campaign = CampaignService.normalize(campaign);
-                    this.card = campaign.cards[0].item;
+                    this.card = campaign.cards[0];
                 };
 
                 this.enter = function() {
@@ -985,8 +961,10 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieManageCampaignManageController', ['$scope','cState','c6AsyncQueue','c6State',
-        function                                            ( $scope , cState , c6AsyncQueue , c6State ) {
+        .controller('SelfieManageCampaignManageController', ['$scope','cState','c6State',
+                                                             'c6AsyncQueue',
+        function                                            ( $scope , cState , c6State ,
+                                                              c6AsyncQueue ) {
             var queue = c6AsyncQueue();
 
             this.initWithModel = function() {
@@ -999,7 +977,6 @@ function( angular , c6State  , PaginatedListState                    ,
             }, this);
 
             this.edit = function(campaign) {
-                console.log(campaign);
                 c6State.goTo('Selfie:EditCampaign', [campaign]);
             };
         }]);
