@@ -3,8 +3,58 @@
     "miniReels": [],
     "cards": [
         {
-            "id": "rc-6263b64fa6f334",
-            "endDate": "2016-08-05T15:58:43.421Z"
+            "endDate": "2016-10-27T20:36:45.620Z",
+            "campaign": {
+                "campaignId": null,
+                "advertiserId": null,
+                "minViewTime": -1,
+                "countUrls": [],
+                "clickUrls": []
+            },
+            "campaignId": "cam-532cbc1fa1108e",
+            "collateral": {
+                "logo": "https://yt3.ggpht.com/-8oIPx6X34Vo/AAAAAAAAAAI/AAAAAAAAAAA/sB_DZXeHerA/s100-c-k-no/photo.jpg"
+            },
+            "data": {
+                "hideSource": true,
+                "controls": true,
+                "autoadvance": true,
+                "skip": true,
+                "modestbranding": 0,
+                "rel": 0,
+                "videoid": "UF0EEYNtU64",
+                "href": "https://www.youtube.com/watch?v=UF0EEYNtU64",
+                "thumbs": {
+                    "small": "//img.youtube.com/vi/UF0EEYNtU64/2.jpg",
+                    "large": "//img.youtube.com/vi/UF0EEYNtU64/0.jpg"
+                }
+            },
+            "links": {
+                "Website": "http://www.cottonusa.org/",
+                "Facebook": "https://www.facebook.com/cottonusa.global",
+                "Twitter": "https://twitter.com/COTTONUSAglobal",
+                "YouTube": "https://www.youtube.com/user/cottonusaglobal",
+                "Action": "http://buythis.com"
+            },
+            "modules": [],
+            "note": "Simple tips for a hotel quality bedroom that will dazzle your special guest(s).",
+            "org": "o-a61cbc73256d22",
+            "params": {
+                "sponsor": "Cotton USA",
+                "ad": false,
+                "action": {
+                    "type": "button",
+                    "label": "Buy this"
+                }
+            },
+            "placementId": null,
+            "source": "YouTube",
+            "sponsored": true,
+            "status": "active",
+            "templateUrl": null,
+            "title": "How to make-up your house for that special guest",
+            "type": "youtube",
+            "user": "u-86e21912d40ab4"
         }
     ],
     "name": "Captain Morgan Very Important Campaign",
@@ -12,21 +62,21 @@
     "status": "draft",
     "targeting": {
         "geo": {
-            "states":[],
+            "states": [],
             "dmas": []
         },
         "demographics": {
-            "age":[],
-            "gender":[],
-            "income":[]
+            "age": [],
+            "gender": [],
+            "income": []
         },
         "interests": []
     },
-    "contentCategories": {},
     "advertiserDisplayName": "Diageo",
     "created": "2015-08-06T15:58:40.901Z",
     "user": "u-35b096c999711b",
     "org": "o-a6fd7298acb6fa",
-    "lastUpdated": "2015-08-06T15:58:43.421Z",
-    "id": "c-c38222a7fb71a3"
+    "lastUpdated": "2015-10-27T20:36:45.620Z",
+    "id": "c-c38222a7fb71a3",
+    "paymentMethod": "pay-9394fa392df488"
 }

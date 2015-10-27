@@ -3,8 +3,68 @@
     "miniReels": [],
     "cards": [
         {
+            "endDate": "2016-08-05T16:08:53.739Z",
+            "data": {
+                "hideSource": true,
+                "controls": true,
+                "skip": true,
+                "modestbranding": 0,
+                "rel": 0,
+                "videoid": "gqyw_jPzoEA",
+                "href": "https://www.youtube.com/watch?v=gqyw_jPzoEA",
+                "thumbs": {
+                    "small": "//img.youtube.com/vi/gqyw_jPzoEA/2.jpg",
+                    "large": "//img.youtube.com/vi/gqyw_jPzoEA/0.jpg"
+                },
+                "moat": {
+                    "campaign": "Summer Nike Campaign",
+                    "advertiser": "Nike",
+                    "creative": "Summer Nike Campaign"
+                }
+            },
+            "type": "youtube",
+            "title": "Air Jordan's Are the Best",
+            "note": "These are great shoes for every occassion",
+            "modules": [],
+            "thumbs": {
+                "small": "http://www.keenthemes.com/preview/metronic/theme/assets/global/plugins/jcrop/demos/demo_files/image1.jpg",
+                "large": "http://www.keenthemes.com/preview/metronic/theme/assets/global/plugins/jcrop/demos/demo_files/image1.jpg"
+            },
+            "placementId": null,
+            "templateUrl": null,
+            "sponsored": true,
+            "campaign": {
+                "campaignId": null,
+                "advertiserId": null,
+                "minViewTime": 3,
+                "countUrls": [],
+                "clickUrls": []
+            },
+            "collateral": {
+                "logo": "http://static.festisite.com/static/partylogo/img/logos/nike.png",
+                "logoType": "url"
+            },
+            "links": {
+                "Facebook": "https://www.facebook.com/pages/Diageo/108265212535624",
+                "Twitter": "https://twitter.com/Diageo_News",
+                "Website": "http://mywebsite.com",
+                "Action": "http://nike.com"
+            },
+            "params": {
+                "sponsor": "Nike",
+                "ad": true,
+                "action": {
+                    "type": "button",
+                    "label": "Buy this"
+                }
+            },
+            "campaignId": "c-ccafb1995020d9",
+            "created": "2015-08-05T16:08:53.728Z",
+            "user": "u-35b096c999711b",
+            "org": "o-a6fd7298acb6fa",
+            "lastUpdated": "2015-08-05T16:51:22.242Z",
             "id": "rc-5099327e1418af",
-            "endDate": "2016-08-05T16:08:53.739Z"
+            "source": "YouTube"
         }
     ],
     "name": "Nike Summer Campaign",
@@ -24,9 +84,6 @@
             "income":[]
         },
         "interests": []
-    },
-    "contentCategories": {
-        "primary": "cat-c24ab3e52f62d5"
     },
     "advertiserDisplayName": "Nike",
     "created": "2015-08-05T16:08:51.216Z",

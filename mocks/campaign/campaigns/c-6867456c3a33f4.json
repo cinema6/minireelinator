@@ -4,7 +4,59 @@
     "cards": [
         {
             "id": "rc-bd96e9f53b3dda",
-            "endDate": "2016-08-05T15:22:44.799Z"
+            "endDate": "2016-08-05T15:22:44.799Z",
+            "data": {
+                "hideSource": true,
+                "controls": true,
+                "skip": true,
+                "modestbranding": 0,
+                "rel": 0,
+                "videoid": "AqsxfKIzjts",
+                "href": "https://www.youtube.com/watch?v=AqsxfKIzjts",
+                "thumbs": {
+                    "small": "//img.youtube.com/vi/AqsxfKIzjts/2.jpg",
+                    "large": "//img.youtube.com/vi/AqsxfKIzjts/0.jpg"
+                },
+                "moat": {
+                    "campaign": "Another Campaign",
+                    "advertiser": "Great Sponsor",
+                    "creative": "Another Campaign"
+                }
+            },
+            "type": "youtube",
+            "title": "This is the video title",
+            "note": null,
+            "modules": [],
+            "thumbs": null,
+            "placementId": null,
+            "templateUrl": null,
+            "sponsored": true,
+            "campaign": {
+                "campaignId": null,
+                "advertiserId": null,
+                "minViewTime": 3,
+                "countUrls": [],
+                "clickUrls": []
+            },
+            "collateral": {
+                "logo": "http://i.imgur.com/YbBIFZv.png"
+            },
+            "links": {
+                "Facebook": "https://www.facebook.com/pages/Diageo/108265212535624",
+                "Twitter": "https://twitter.com/Diageo_News"
+            },
+            "params": {
+                "sponsor": "Great Sponsor",
+                "ad": true,
+                "action": null
+            },
+            "campaignId": "c-6867456c3a33f4",
+            "created": "2015-08-05T15:22:44.790Z",
+            "user": "u-35b096c999711b",
+            "org": "o-a6fd7298acb6fa",
+            "lastUpdated": "2015-08-05T16:52:33.310Z",
+            "id": "rc-bd96e9f53b3dda",
+            "source": "YouTube"
         }
     ],
     "name": "Another Campaign",
@@ -21,9 +73,6 @@
             "income":[]
         },
         "interests": []
-    },
-    "contentCategories": {
-        "primary": "cat-c24ab3e52f62d5"
     },
     "advertiserDisplayName": "Great Sponsor",
     "created": "2015-08-03T15:22:42.280Z",
