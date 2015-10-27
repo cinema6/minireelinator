@@ -537,7 +537,9 @@ function( angular , select2 , braintree ) {
                             }
                         },
                         onError: function(event) {
-                            scope.errorMessage = event.message;
+                            scope.$apply(function() {
+                                scope.errorMessage = event.message;
+                            });
                         },
                         onPaymentMethodReceived: function(method) {
                             method.makeDefault = scope.makeDefault === 'Yes';
