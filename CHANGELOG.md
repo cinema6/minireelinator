@@ -1,7 +1,7 @@
 # MiniReelinator
 
-## v1.23.0 (October 21, 2015)
-* *[v1.23.0.rc2]*
+## v1.23.0 (October 27, 2015)
+* *[v1.23.0.rc3]*
   * [DESIGN]: (Selfie) Added styles for credit card popup
   * [FIX]: (Selfie) Abbreviate credit card types (ie. AMEX, DISC)
   * [FIX]: (Selfie) Close payment option dropdown after making selection or when
@@ -9,6 +9,7 @@
   * [FIX]: (Selfie) Add blue border to Credit Card inputs when in focus
   * [FIX]: (Selfie) Ask for confirmation before deleting a payment method or
     making it primary
+* *[/v1.23.0.rc3]*
 
 * *[v1.23.0.rc2]*
   * [FEATURE]: (Selfie) Add Payment Method manager in Account Settings
