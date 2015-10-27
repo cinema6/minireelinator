@@ -7,6 +7,7 @@ define(['app'], function(appModule) {
             $scope,
             $q,
             SelfieCampaignPaymentCtrl,
+            ConfirmDialogService,
             PaymentService,
             cinema6;
 
@@ -28,6 +29,7 @@ define(['app'], function(appModule) {
                 $controller = $injector.get('$controller');
                 $q = $injector.get('$q');
                 PaymentService = $injector.get('PaymentService');
+                ConfirmDialogService = $injector.get('ConfirmDialogService');
                 cinema6 = $injector.get('cinema6');
 
                 campaign = {
@@ -72,14 +74,9 @@ define(['app'], function(appModule) {
             expect(SelfieCampaignPaymentCtrl).toEqual(jasmine.any(Object));
         });
 
-        it('should get a token for Paypal button and put it on the Ctrl', function() {
-            expect(PaymentService.getToken).toHaveBeenCalled();
-            expect(SelfieCampaignPaymentCtrl.paypalToken).toBe('1234-4321');
-        });
-
         describe('methods', function() {
             describe('paypalSuccess(method)', function() {
-                var braintreeObject, savedMethod;
+                var braintreeObject, savedMethod, saveDeferred;
 
                 beforeEach(function() {
                     braintreeObject = {
@@ -91,7 +88,9 @@ define(['app'], function(appModule) {
                         email: 'selfie@gmail.com'
                     };
 
-                    spyOn(newMethod, 'save').and.returnValue($q.when(savedMethod));
+                    saveDeferred = $q.defer();
+
+                    spyOn(newMethod, 'save').and.returnValue(saveDeferred.promise);
 
                     $scope.$apply(function() {
                         SelfieCampaignPaymentCtrl.paypalSuccess(braintreeObject);
@@ -111,14 +110,34 @@ define(['app'], function(appModule) {
                     expect(newMethod.save).toHaveBeenCalled();
                 });
 
-                it('should add the method to Campaign Ctl', function() {
-                    expect($scope.SelfieCampaignCtrl.paymentMethods.indexOf(savedMethod) > -1).toBe(true);
-                    expect(paymentMethods.indexOf(savedMethod) > -1).toBe(true);
+                describe('if the save succeeds', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            saveDeferred.resolve(savedMethod);
+                        });
+                    });
+
+                    it('should add the method to Campaign Ctl', function() {
+                        expect($scope.SelfieCampaignCtrl.paymentMethods.indexOf(savedMethod) > -1).toBe(true);
+                        expect(paymentMethods.indexOf(savedMethod) > -1).toBe(true);
+                    });
+
+                    it('should add the new method to the campaign', function() {
+                        expect($scope.SelfieCampaignCtrl.campaign.paymentMethod).toBe(savedMethod.token);
+                        expect(campaign.paymentMethod).toBe(savedMethod.token);
+                    });
                 });
 
-                it('should add the new method to the campaign', function() {
-                    expect($scope.SelfieCampaignCtrl.campaign.paymentMethod).toBe(savedMethod.token);
-                    expect(campaign.paymentMethod).toBe(savedMethod.token);
+                describe('if the save fails', function() {
+                    it('should display a dialog', function() {
+                        spyOn(ConfirmDialogService, 'display');
+
+                        $scope.$apply(function() {
+                            saveDeferred.reject({data: 'There was an error!'});
+                        });
+
+                        expect(ConfirmDialogService.display).toHaveBeenCalled();
+                    });
                 });
             });
         });

@@ -37,10 +37,18 @@
                 <div class="paymentOptions">
                     <h2 class="tk--hdr">Payment Options</h2>
                     <div class="paymentOptions__box  card--item">
-                        <ul class="paymentOptions__box-item"> 
+                        <ul ng-if="AccountCtrl.primaryMethod && AccountCtrl.primaryMethod.type === 'creditCard'" class="paymentOptions__box-item"> 
                             <li><h3 class="tk--hdr">Primary</h3></li>
-                            <li><h2 class="tk--hdr">Visa***3345</h2><span>Expires 07/2018</span></li>
-                            <li><span>Genesis Media</span></li>
+                            <li><h2 class="tk--hdr">{{AccountCtrl.primaryMethod.cardType | paymentType}} ***{{AccountCtrl.primaryMethod.last4}}</h2><span>Expires {{AccountCtrl.primaryMethod.expirationDate}}</span></li>
+                            <li><span>{{AccountCtrl.primaryMethod.cardholderName}}</span></li>
+                        </ul>
+                        <ul ng-if="AccountCtrl.primaryMethod && AccountCtrl.primaryMethod.type === 'paypal'" class="paymentOptions__box-item"> 
+                            <li><h3 class="tk--hdr">Primary</h3></li>
+                            <li><h2 class="tk--hdr">PayPal</h2></li>
+                            <li><span>{{AccountCtrl.primaryMethod.email}}</span></li>
+                        </ul>
+                        <ul ng-if="!AccountCtrl.primaryMethod" class="paymentOptions__box-item"> 
+                            <li><h3 class="tk--hdr">No Payment Options</h3></li>
                         </ul>
                         <ul class="paymentOptions__box-item"> 
                             <li><a c6-sref="Selfie:Account:Payment">Manage Payment Options</a></li>
