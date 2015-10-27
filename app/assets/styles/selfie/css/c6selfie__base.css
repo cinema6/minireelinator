@@ -300,7 +300,35 @@ fa,
             box-shadow: 0 1px 1px rgba(0,0,0,0.25);
             cursor: auto;
         }
+    .action__btnDefault {
+        background:#fff;
+        color:#666;
+        border:0;
+        padding:0.75rem 1.5rem 0.625rem;
+        margin:0 0 1.125rem;
+        font-size:1.125em;
+        line-height:1.5rem;
+        transition:color 0.3s, background 0.3s;
+        border: 1px solid #ccc;
+        border-color: rgba(0, 0, 0, 0.25);
+        border-radius:3px;
+        display:inline-block;
+    }
+        .action__btnDefault:hover {
+            background:#f5f5f5;
+        }
 
+        .action__btnDefault--small {
+            font-size:1em;
+            padding:0.5rem 1rem 0.375rem;
+        }
+        .action__btnDefault--big {
+            padding:1rem 1.75rem 0.875rem;
+            font-size:1.5em;
+        }
+        .action__btnDefault--full, .action__btnDefault--wide {
+            width: 100%;
+        }
 
     .ui__tab {
         border:0;
@@ -372,7 +400,7 @@ fa,
             .btn--primary .ui__icon {
                 fill:#2398db;
             }
-        .btn--info, .btn--info:focus {
+     /*   .btn--info, .btn--info:focus {
             background-color:#eaf7ff; color:#2398db;
             border:1px solid #bfe7ff; 
         }
@@ -387,7 +415,7 @@ fa,
         .btn--danger, .btn--danger:focus {
             background-color:#ffeaea; color:#dc4141;
             border:1px solid #ffcbcb; 
-        }
+        }*/
         .btn--small, .btn--small:focus {
             font-size:1em;
             padding:0.5rem 1rem 0.375rem;
@@ -2684,6 +2712,8 @@ fa,
             font-size:0.875em;
             line-height:2em;
             padding:0 15px;
+            width:100%;
+            text-align: left;
         }
 
 
@@ -2877,11 +2907,15 @@ fa,
             position: absolute; right:0; top:0;
             -webkit-transition:background 0.25s; transition:background 0.25s;
         }
-            .modal__closeBtn .ui__icon {
-                fill:#d94040;
+            .modal__closeBtn svg {
+                height: 14px;
+                width: 14px;
             }
-            .modal__closeBtn:hover {
-                color: #000;
+            .modal__closeBtn .ui__icon {
+                fill: #888;                
+            }
+            .modal__closeBtn:hover .ui__icon{
+                fill: #000;
             }
             .modal__closeBtn .fa {
                 font-size: 1em;
@@ -2975,7 +3009,60 @@ fa,
     .addPayment__method .form__textBox {
         height: 42px;
     }
-    
+    /*alert modal*/
+    .selfieModal.modalDialog__group {
+        background: #fff;
+    }
+        .selfieModal .modalHeader__group {
+            border: 0;
+            background: #fff;
+        }
+        .selfieModal .modalFooter__group  {
+            background: #fff;
+        }
+            .selfieModal .modal__title {
+                font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;
+                font-weight: 300;
+                text-align: center;
+            }
+            .selfieModal .modalBody__title {
+                font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
+                font-weight: 300;
+                text-align: center;
+            }
+        .selfieModal .modalBody__group {
+            padding-bottom: 0.5em;
+        }
+        .selfieModal .modalFooter__group .btnAction--first, .selfieModal .modalFooter__group .btnAction--last {
+            top: 0.325em;
+        }
+       .selfieModal .btnAction, .btnAction:focus {
+            background-color: #fff;
+            color: #666;
+            border: 1px solid #ccc;
+            border-color: rgba(0, 0, 0, 0.25);
+            border-radius: 3px;
+            margin: 0 0 1.125rem;
+            font-size: 1.125em;
+            font-weight: normal;
+            line-height: 1.5rem;
+            display: inline-block;
+            -webkit-box-shadow: none;
+            box-shadow: none; 
+        }
+        .selfieModal .btnAction--success {
+            background-color: #20d783;
+            border-color: #1FC176;
+            color: #fff;
+        }
+        .selfieModal .btnAction:hover {
+            background: #f5f5f5 linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(255,255,255,0) 100%);
+            color: #666;
+        }
+        .selfieModal .btnAction--success:hover {
+            background-color: #1FC176;
+            color: #fff;
+        }
 /*  ================================================
     payment history list classes
     (Jess)
