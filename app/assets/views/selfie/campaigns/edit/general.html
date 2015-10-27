@@ -1,4 +1,4 @@
-<div class="grid__item three-quarters">
+<div class="grid__item two-thirds">
 
     <section class="formSection__group" id="section_1">
 
@@ -8,7 +8,7 @@
             </span>
             <span class="formSection__titleText tk--hdr">Create Your Campaign</span>
         </h1>
-
+        <p class="formSection__introText">This is for your reference only. It will not be added to the video card.</p>
         <div class="form__items">
 
             <fieldset class="form__item form__item--bigInput">
@@ -30,10 +30,14 @@
 
             </fieldset>
 
-            <selfie-categories campaign="campaign" categories="SelfieCampaignCtrl.categories"></selfie-categories>
+            
 
         </div><!--.form__items -->
+        
 
     </section><!--.formSection__group #section_1 -->
 
 </div><!--.grid__item-->
+        <div class="grid__item one-half ng-scope">
+            <selfie-categories campaign="campaign" categories="SelfieCampaignCtrl.categories"></selfie-categories>
+        </div>

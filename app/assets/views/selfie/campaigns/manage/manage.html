@@ -7,16 +7,13 @@
     <div class="tabContent__gridHolder">
         <div class="grid">
             <!--left column-->
-            <div class="grid__item adManage one-third palm--one-whole">
-                <div class="grid">
-                    <div class="grid__item  one--whole grid--center">
-                        <div class="action__btnGroup">
-                          <button class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-copy"></i>  Copy</button>
-                          <button class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-ban"></i>  Cancel</button>
-                          <button class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-trash-o"></i>  Delete</button>
-                        </div>                    
-                    </div>
-                    
+            <div class="grid__item two-thirds palm--one-whole">
+                <section class="campaignPreview__group">
+                    <selfie-preview card="SelfieManageCampaignCtrl.card"></selfie-preview>
+                </section>
+            </div><!--left column ends--><!--
+            --><div class="grid__item adManage one-third palm--one-whole">
+                <div class="grid">                    
                     <div class="grid__item grid--center lockedMsg">
                         <img src="styles/selfie/img/lock-icon.png" class="lockedMsg__icon"/>
                         <h3 class="lockedMsg__icon--text tk--hdr">Locked</h3>
@@ -24,17 +21,12 @@
                         <p class="lockedMsg__info">You cannot make changes to the campaign once it's approved. If you want to make changes, create a copy of the campaign and cancel this one.</p>
                     </div>
                     <div class="grid__item one--whole grid--center">
-                        <div class="action__btnGroup">                          
+                        <div class="action__btnGroup">
                           <button class="action__btnSecondary action__btnSecondary--small btn--disabled" disabled><i class="fa fa-pause"></i>  Pause</button> <!--  For disabled buttons add ""btn--disabled" class and also add "disabled" property to the button element -->
                           <button class="action__btnSecondary action__btnSecondary--small btn--disabled" disabled><i class="fa fa-pencil-square-o"></i>  Edit</button>
                         </div>
                     </div>
                 </div>
-            </div><!--left column ends--><!--
-            --><div class="grid__item two-thirds palm--one-whole">
-                <section class="campaignPreview__group">
-                    <selfie-preview card="SelfieManageCampaignCtrl.card"></selfie-preview>
-                </section>
             </div><!--.grid__item-->
         </div>
     </div>
