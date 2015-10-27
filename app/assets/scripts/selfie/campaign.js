@@ -22,12 +22,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Campaigns', ['c6State','$injector','$location',
+            c6StateProvider.state('Selfie:Campaigns', ['$injector','$location',
                                                        'paginatedDbList',
-            function                                  ( c6State , $injector , $location ,
+            function                                  ( $injector , $location ,
                                                         paginatedDbList ) {
-                var SelfieState = c6State.get('Selfie');
-
                 $injector.invoke(PaginatedListState, this);
 
                 this.templateUrl = 'views/selfie/campaigns.html';
@@ -52,7 +50,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.model = function() {
                     return paginatedDbList('selfieCampaign', {
                         sort: this.sort,
-                        org: SelfieState.cModel.org.id,
                         application: 'selfie',
                         statuses: this.filter,
                     }, this.limit, this.page).ensureResolution();

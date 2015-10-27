@@ -4,7 +4,6 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
     describe('Selfie:Campaigns state', function() {
         var c6State,
             paginatedDbList,
-            selfie,
             campaigns,
             $location,
             $injector;
@@ -36,12 +35,6 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                 $location = $injector.get('$location');
                 spyOn($location,'search').and.returnValue({});
 
-                selfie = c6State.get('Selfie');
-                selfie.cModel = {
-                    org: {
-                        id: 'o-123456'
-                    }
-                };
                 campaigns = c6State.get('Selfie:Campaigns');
             });
         });
@@ -126,7 +119,6 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
             it('should be for a list of campaigns', function() {
                 expect(paginatedDbList).toHaveBeenCalledWith('selfieCampaign', {
                     sort: 'lastUpdated,-1',
-                    org: 'o-123456',
                     application: 'selfie',
                     statuses: 'draft,pendingApproval,approved,active,paused,error'
                 }, campaigns.limit, campaigns.page);
