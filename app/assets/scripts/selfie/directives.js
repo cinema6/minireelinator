@@ -509,8 +509,6 @@ function( angular , select2 , braintree ) {
                                     isValid = event.isValid,
                                     isPotentiallyValid = event.isPotentiallyValid;
 
-                                scope.errorMessage = null;
-
                                 if (isFocused || !isEmpty) {
                                     $(container).addClass('form__fillCheck--filled');
                                 } else if (isEmpty) {
@@ -524,37 +522,62 @@ function( angular , select2 , braintree ) {
                                 if (isFocused && isPotentiallyValid) {
                                     $(fieldSet).removeClass('ui--hasError');
                                 }
+
+                                if (isFocused) {
+                                    $(container).addClass('in--focus');
+                                } else {
+                                    $(container).removeClass('in--focus');
+                                }
+
+                                if (scope.errorMessage) {
+                                    scope.$apply(function() {
+                                        scope.errorMessage = null;
+                                    });
+                                }
                             }
                         },
                         onError: function(event) {
-                            scope.errorMessage = event.message;
+                            scope.$apply(function() {
+                                scope.errorMessage = event.message;
+                            });
                         },
                         onPaymentMethodReceived: function(method) {
                             method.makeDefault = scope.makeDefault === 'Yes';
                             method.cardholderName = scope.name;
 
-                            scope.onSuccess({ method: method });
+                            scope.$apply(function() {
+                                scope.onSuccess({ method: method })
+                                    .catch(function(err) {
+                                        scope.errorMessage = err.data;
+                                    });
+                            });
                         }
                     });
                 }
             };
         }])
 
-        .directive('braintreePaypal', [function() {
+        .directive('braintreePaypal', ['PaymentService',
+        function                      ( PaymentService ) {
             return {
                 restrict: 'E',
                 scope: {
-                    clientToken: '@',
                     onSuccess: '&',
                     onFailure: '&',
                     onCancel: '&'
                 },
                 link: function(scope) {
-                    braintree.setup(scope.clientToken, 'paypal', {
-                        container: 'c6-paypal',
-                        onPaymentMethodReceived: function(method) {
-                            scope.onSuccess({ method: method });
-                        }
+                    PaymentService.getToken().then(function(token) {
+
+                        braintree.setup(token, 'paypal', {
+                            container: 'c6-paypal',
+                            onPaymentMethodReceived: function(method) {
+                                scope.$apply(function() {
+                                    scope.onSuccess({ method: method });
+                                });
+                            }
+                        });
+
                     });
                 }
             };
@@ -614,6 +637,7 @@ function( angular , select2 , braintree ) {
             this.setCurrentMethod = function(method) {
                 this.currentMethod = method;
                 campaign.paymentMethod = method.token;
+                this.showDropdown = false;
             };
 
             this.toggleDropdown = function() {
@@ -642,6 +666,25 @@ function( angular , select2 , braintree ) {
                     return 'DailyMotion';
                 case 'adUnit':
                     return 'VAST';
+                }
+            };
+        }])
+
+        .filter('paymentType', [function() {
+            return function(type) {
+                switch (type) {
+                case 'American Express':
+                    return 'AMEX';
+                case 'Diners Club':
+                    return 'DCI';
+                case 'MasterCard':
+                    return 'MC';
+                case 'Discover':
+                    return 'DISC';
+                case 'Visa':
+                    return 'VISA';
+                default:
+                    return type;
                 }
             };
         }]);

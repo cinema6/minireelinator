@@ -7,7 +7,9 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
             $scope,
             $timeout,
             $form,
-            scope;
+            $q,
+            scope,
+            PaymentService;
 
         var token,
             config;
@@ -16,7 +18,6 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
             options = options || {};
 
             $scope.Ctrl = {
-                token: '1234-4321',
                 success: options.success,
                 failure: options.failure,
                 cancel: options.cancel
@@ -25,7 +26,6 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
             $scope.$apply(function() {
                 $form = $compile(
                     '<braintree-paypal ' +
-                        'client-token="{{Ctrl.token}}" ' +
                         'on-success="Ctrl.success" '+
                         'on-cancel="Ctrl.cancel" ' +
                         'on-failure="Ctrl.failure">' +
@@ -43,9 +43,13 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
                 $rootScope = $injector.get('$rootScope');
                 $compile = $injector.get('$compile');
                 $timeout = $injector.get('$timeout');
+                $q = $injector.get('$q');
+                PaymentService = $injector.get('PaymentService');
 
                 $scope = $rootScope.$new();
             });
+
+            spyOn(PaymentService, 'getToken').and.returnValue($q.when('1234-4321'));
 
             spyOn(braintree, 'setup').and.callFake(function(_token, _type, _config) {
                 token = _token;
@@ -54,10 +58,16 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
         });
 
         describe('initialization', function() {
-            it('should initialize braintree', function() {
+            beforeEach(function() {
                 compileDirective();
+            });
 
-                expect(braintree.setup).toHaveBeenCalledWith($scope.Ctrl.token, 'paypal', jasmine.any(Object));
+            it('should request a token', function() {
+                expect(PaymentService.getToken).toHaveBeenCalled();
+            });
+
+            it('should initialize braintree', function() {
+                expect(braintree.setup).toHaveBeenCalledWith('1234-4321', 'paypal', jasmine.any(Object));
             });
         });
 

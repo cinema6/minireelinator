@@ -43,7 +43,7 @@ define(['app'], function(appModule) {
 
             $scope = $rootScope.$new();
             $scope.SelfieAccountPaymentCtrl = {
-                model: paymentMethods
+                refreshModel: jasmine.createSpy('refreshModel()').and.returnValue($q.when(paymentMethods))
             };
             $scope.$apply(function() {
                 SelfieAccountPaymentEditCtrl = $controller('SelfieAccountPaymentEditController', {cState: cState, $scope: $scope});
@@ -98,6 +98,10 @@ define(['app'], function(appModule) {
 
                 it('should save the model', function() {
                     expect(model.save).toHaveBeenCalled();
+                });
+
+                it('should refresh the parent model', function() {
+                    expect($scope.SelfieAccountPaymentCtrl.refreshModel).toHaveBeenCalled();
                 });
 
                 it('should go to the Selfie:Account:Payment state', function() {

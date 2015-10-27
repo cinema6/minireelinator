@@ -5,7 +5,8 @@
     "amount": "15.98",
     "createdAt": "2015-10-02T22:34:28.229Z",
     "updatedAt": "2015-10-02T22:34:28.229Z",
-    "campaign": "c-6867456c3a33f4",
+    "campaignId": "c-6867456c3a33f4",
+    "campaignName": "Another Campaign",
     "method": {
         "token": "pay-733569ee634394",
         "createdAt": "2015-10-19T15:38:46.153Z",

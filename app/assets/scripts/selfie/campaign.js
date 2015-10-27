@@ -797,15 +797,26 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignPaymentController', ['PaymentService','$scope','cinema6',
-        function                                       ( PaymentService , $scope , cinema6 ) {
-            var SelfieCampaignPaymentCtrl = this,
-                SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+                                                        'ConfirmDialogService',
+        function                                       ( PaymentService , $scope , cinema6 ,
+                                                         ConfirmDialogService ) {
+            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 methods = SelfieCampaignCtrl.paymentMethods,
                 campaign = SelfieCampaignCtrl.campaign;
 
-            PaymentService.getToken().then(function(token) {
-                SelfieCampaignPaymentCtrl.paypalToken = token;
-            });
+            function handleError(error) {
+                ConfirmDialogService.display({
+                    prompt: 'There was an a problem saving your payment method: ' + error.data,
+                    affirm: 'OK',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: function() {
+                        return ConfirmDialogService.close();
+                    }
+                });
+            }
 
             this.paypalSuccess = function(method) {
                 var newMethod = cinema6.db.create('paymentMethod', {
@@ -816,7 +827,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     .then(function(method) {
                         methods.unshift(method);
                         campaign.paymentMethod = method.token;
-                    });
+                    }, handleError);
             };
         }])
 
@@ -865,7 +876,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     makeDefault: method.makeDefault
                 });
 
-                this.model.save()
+                return this.model.save()
                     .then(function(method) {
                         paymentMethods.unshift(method);
                         campaign.paymentMethod = method.token;

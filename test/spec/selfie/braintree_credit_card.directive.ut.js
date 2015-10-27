@@ -8,6 +8,7 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
             $timeout,
             $form,
             scope,
+            $q,
             $;
 
         var token,
@@ -48,6 +49,7 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
                 $rootScope = $injector.get('$rootScope');
                 $compile = $injector.get('$compile');
                 $timeout = $injector.get('$timeout');
+                $q = $injector.get('$q');
 
                 $scope = $rootScope.$new();
             });
@@ -131,6 +133,17 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
                 compileDirective();
             });
 
+            it('should clear any error message', function() {
+                scope.errorMessage = 'Something happened';
+
+                fireEvent({
+                    isFocused: true,
+                    isEmpty: true
+                });
+
+                expect(scope.errorMessage).toBe(null);
+            });
+
             describe('when a field is in focus', function() {
                 it('should have the filled class', function() {
                     fireEvent({
@@ -139,6 +152,7 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
                     });
 
                     expect(container.hasClass('form__fillCheck--filled')).toBe(true);
+                    expect(container.hasClass('in--focus')).toBe(true);
                 });
             });
 
@@ -150,6 +164,7 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
                     });
 
                     expect(container.hasClass('form__fillCheck--filled')).toBe(true);
+                    expect(container.hasClass('in--focus')).toBe(false);
                 });
 
                 it('should not have the filled class if empty', function() {
@@ -159,7 +174,8 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
                     });
 
                     expect(container.hasClass('form__fillCheck--filled')).toBe(false);
-                })
+                    expect(container.hasClass('in--focus')).toBe(false);
+                });
             });
 
             describe('when a field is not in focus and is not valid', function() {
@@ -170,6 +186,7 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
                     });
 
                     expect(parentElement.hasClass('ui--hasError')).toBe(true);
+                    expect(container.hasClass('in--focus')).toBe(false);
                 });
             });
 
@@ -181,22 +198,29 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
                     });
 
                     expect(parentElement.hasClass('ui--hasError')).toBe(false);
+                    expect(container.hasClass('in--focus')).toBe(true);
                 });
             });
         });
 
         describe('when braintree sends onPaymentMethodReceived event', function() {
-            it('should call the onSuccess function that was passed in on the scope', function() {
-                var braintreeObject = {
+            var braintreeObject, deferred;
+
+            beforeEach(function() {
+                braintreeObject = {
                     nonce: '8888-9999'
                 };
+
+                deferred = $q.defer();
 
                 compileDirective({
                     success: function() {}
                 });
 
-                spyOn(scope, 'onSuccess');
+                spyOn(scope, 'onSuccess').and.returnValue(deferred.promise);
+            });
 
+            it('should call the onSuccess function that was passed in on the scope', function() {
                 scope.makeDefault = 'Yes';
                 scope.name = 'Moneybags McGee';
 
@@ -209,6 +233,16 @@ define(['app','braintree','angular'], function(appModule, braintree, angular) {
                         nonce: braintreeObject.nonce
                     }
                 });
+            });
+
+            it('should set an error maessage if onSuccess fails', function() {
+                config.onPaymentMethodReceived(braintreeObject);
+
+                $scope.$apply(function() {
+                    deferred.reject({data: 'There was an error!'});
+                });
+
+                expect(scope.errorMessage).toEqual('There was an error!');
             });
         });
 
