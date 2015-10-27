@@ -29,8 +29,7 @@ function( angular , c6uilib ) {
                                      'NormalizationService',
         function                    ( cinema6 , c6State , MiniReelService , $q ,
                                       NormalizationService ) {
-            var _service = {},
-                copy = NormalizationService.copy;
+            var copy = NormalizationService.copy;
 
             function getAppUser() {
                 var application = c6State.get('Application'),
@@ -39,22 +38,21 @@ function( angular , c6uilib ) {
                 return app.cModel;
             }
 
-            _service.campaign = function() {
+            this.create = function() {
                 var user = getAppUser(),
                     advertiser = user.advertiser,
-                    customer = user.customer;
+                    customer = user.customer,
+                    card = MiniReelService.createCard('video');
 
                 return cinema6.db.create('selfieCampaign', {
                     advertiserId: advertiser.id,
                     customerId: customer.id,
-                    name: null,
+                    name: undefined,
                     pricing: {},
                     status: 'draft',
                     application: 'selfie',
                     advertiserDisplayName: user.company,
-                    contentCategories: {
-                        primary: null
-                    },
+                    paymentMethod: undefined,
                     targeting: {
                         geo: {
                             states: [],
@@ -66,43 +64,34 @@ function( angular , c6uilib ) {
                             income: []
                         },
                         interests: []
-                    }
+                    },
+                    cards: [
+                        deepExtend(card, {
+                            id: undefined,
+                            campaignId: undefined,
+                            campaign: {
+                                minViewTime: 3
+                            },
+                            sponsored: true,
+                            collateral: {
+                                logo: advertiser.defaultLogos && advertiser.defaultLogos.square ?
+                                    advertiser.defaultLogos.square :
+                                    undefined
+                            },
+                            links: advertiser.defaultLinks || {},
+                            params: {
+                                ad: true,
+                                action: null
+                            },
+                            data: {
+                                autoadvance: false,
+                                controls: false,
+                                autoplay: true,
+                                skip: 30
+                            }
+                        })
+                    ]
                 });
-            };
-
-            _service.card = function() {
-                var user = getAppUser(),
-                    advertiser = user.advertiser,
-                    card = cinema6.db.create('card', MiniReelService.createCard('video'));
-
-                return deepExtend(card, {
-                    id: undefined,
-                    campaignId: undefined,
-                    campaign: {
-                        minViewTime: 3
-                    },
-                    sponsored: true,
-                    collateral: {
-                        logo: advertiser.defaultLogos && advertiser.defaultLogos.square ?
-                            advertiser.defaultLogos.square :
-                            null
-                    },
-                    links: advertiser.defaultLinks || {},
-                    params: {
-                        ad: true,
-                        action: null
-                    },
-                    data: {
-                        autoadvance: false,
-                        controls: false,
-                        autoplay: true,
-                        skip: 30
-                    }
-                });
-            };
-
-            this.create = function(type) {
-                return _service[type]();
             };
 
             this.normalize = function(campaign) {
@@ -110,7 +99,6 @@ function( angular , c6uilib ) {
                     template = {
                         pricing: copy({}),
                         advertiserDisplayName: copy(user.company),
-                        contentCategories: copy({}),
                         targeting: {
                             geo: {
                                 states: copy([]),
