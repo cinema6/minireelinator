@@ -543,10 +543,12 @@ function( angular , select2 , braintree ) {
                             method.makeDefault = scope.makeDefault === 'Yes';
                             method.cardholderName = scope.name;
 
-                            scope.onSuccess({ method: method })
-                                .catch(function(err) {
-                                    scope.errorMessage = err.data;
-                                });
+                            scope.$apply(function() {
+                                scope.onSuccess({ method: method })
+                                    .catch(function(err) {
+                                        scope.errorMessage = err.data;
+                                    });
+                            });
                         }
                     });
                 }
@@ -568,7 +570,9 @@ function( angular , select2 , braintree ) {
                         braintree.setup(token, 'paypal', {
                             container: 'c6-paypal',
                             onPaymentMethodReceived: function(method) {
-                                scope.onSuccess({ method: method });
+                                scope.$apply(function() {
+                                    scope.onSuccess({ method: method });
+                                });
                             }
                         });
 
