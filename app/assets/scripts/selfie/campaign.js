@@ -908,8 +908,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6','$q',
-            function                                        ( cinema6 , $q ) {
+            c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6','$q','c6State',
+            function                                        ( cinema6 , $q , c6State ) {
                 this.templateUrl = 'views/selfie/campaigns/manage.html';
                 this.controller = 'SelfieManageCampaignController';
                 this.controllerAs = 'SelfieManageCampaignCtrl';
@@ -924,9 +924,13 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.model = function() {
                     return $q.all({
-                        categories: cinema6.db.findAll('category'),
                         paymentMethods: cinema6.db.findAll('paymentMethod')
                     });
+                };
+
+                this.enter = function() {
+                    // if user is Admin go to Selfie:Manage:Campaign:Admin
+                    return c6State.goTo('Selfie:Manage:Campaign:Manage');
                 };
             }]);
         }])
@@ -951,7 +955,6 @@ function( angular , c6State  , PaginatedListState                    ,
             this.validation = {
                 budget: true
             };
-            this.tab = 'manage';
 
             this.initWithModel = function(model) {
                 this.card = cState.card;
@@ -963,5 +966,41 @@ function( angular , c6State  , PaginatedListState                    ,
             this.update = queue.debounce(function() {
                 return this.campaign.save();
             }, this);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Manage:Campaign:Manage', [function() {
+                this.templateUrl = 'views/selfie/campaigns/manage/manage.html';
+                this.controller = 'SelfieManageCampaignManageController';
+                this.controllerAs = 'SelfieManageCampaignManageCtrl';
+
+                this.card = null;
+                this.campaign = null;
+
+                this.beforeModel = function() {
+                    this.card = this.cParent.card;
+                    this.campaign = this.cParent.campaign;
+                };
+            }]);
+        }])
+
+        .controller('SelfieManageCampaignManageController', ['$scope','cState','c6AsyncQueue','c6State',
+        function                                            ( $scope , cState , c6AsyncQueue , c6State ) {
+            var queue = c6AsyncQueue();
+
+            this.initWithModel = function() {
+                this.card = cState.card;
+                this.campaign = cState.campaign;
+            };
+
+            this.copy = queue.debounce(function() {
+                return this.campaign.save();
+            }, this);
+
+            this.edit = function(campaign) {
+                console.log(campaign);
+                c6State.goTo('Selfie:EditCampaign', [campaign]);
+            };
         }]);
 });

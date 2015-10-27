@@ -19,10 +19,10 @@
         </div><!--.mainHeader__group-->
         <div class="tabBar__group">
             <ul class="tabBar__list clearfix">
-                <li class="tabBar__item" ng-class="{ 'tabBar__item--active': SelfieManageCampaignCtrl.tab === 'manage' }">
-                    <button class="tabBar__btn" type="button" ng-click="SelfieManageCampaignCtrl.tab = 'manage'">Manage Campaign</button>
+                <li class="tabBar__item">
+                    <a class="tabBar__btn" type="button" c6-sref="Selfie:Manage:Campaign:Manage">Manage Campaign</a>
                 </li>
-                <li class="tabBar__item" ng-class="{ 'tabBar__item--active': SelfieManageCampaignCtrl.tab === 'payment' }">
+                <li class="tabBar__item">
                     <button class="tabBar__btn" type="button" ng-click="SelfieManageCampaignCtrl.tab = 'payment'">Payment Options</button>
                 </li>
                 <!-- <li class="tabBar__item" ng-class="{ 'tabBar__item--active': SelfieManageCampaignCtrl.tab === 'stats' }">
@@ -38,8 +38,10 @@
         </div><!--.tabBar__group-->
     </div><!--.pageHeader__group-->
 
-    <div ng-if="SelfieManageCampaignCtrl.tab === 'manage'" ng-include="'views/selfie/campaigns/manage/manage.html'"></div>
-    <div ng-if="SelfieManageCampaignCtrl.tab === 'payment'"ng-include="'views/selfie/campaigns/manage/payment.html'"></div>
+    <c6-view></c6-view>
+    <!-- <div ng-if="SelfieManageCampaignCtrl.tab === 'manage'" ng-include="'views/selfie/campaigns/manage/manage.html'"></div> -->
+    <!-- <div ng-if="SelfieManageCampaignCtrl.tab === 'payment'"ng-include="'views/selfie/campaigns/manage/payment.html'"></div> -->
+
     <!-- <div ng-if="SelfieManageCampaignCtrl.tab === 'stats'" ng-include="'views/selfie/campaigns/manage/stats.html'"></div> -->
     <!-- <div ng-if="SelfieManageCampaignCtrl.tab === 'targeting'" ng-include="'views/selfie/campaigns/manage/targeting.html'"></div> -->
     <!-- <div ng-if="SelfieManageCampaignCtrl.tab === 'budget'" ng-include="'views/selfie/campaigns/manage/budget.html'" c6-alias="SelfieManageCampaignCtrl.validation as validation"></div> -->
