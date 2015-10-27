@@ -6,6 +6,7 @@
         </span>
         <span class="formSection__titleText tk--hdr">Add title, description and links</span>
         </h1>
+        <p class="formSection__introText">Your card will be delivered in multiple sizes and layouts optimized for device and performance. This preview shows one of the many variations.</p>
     </section>
 </div>
 
@@ -15,7 +16,7 @@
 
         <div class="form__items">
 
-            <fieldset class="form__item">
+            <fieldset class="form__item form__item--stackedInput">
                 <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-title" ng-model="card.title" ng-class="{'form__fillCheck--filled' : card.title }" ng-focus="SelfieCampaignCtrl.disableVideoTitleOverwrite = 'true'">
                 <label class="form__label" for="c6-video-title">
                     <i class="fa fa-times ui--error"></i>
@@ -33,7 +34,7 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form__item">
+            <fieldset class="form__item form__item--stackedInput">
                 <textarea c6-fill-check class="form__textBox form__textArea form__textArea--large form__fillCheck" type="text" id="c6-video-description" ng-model="card.note"></textarea>
                 <label class="form__label" for="c6-video-description">
                     <i class="fa fa-times ui--error"></i>
@@ -51,7 +52,7 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form__item">
+            <fieldset class="form__item form__item--stackedInput">
                 <select c6-select-box preselected="true" ng-model="SelfieCampaignTextCtrl.actionType" ng-options="option.name for option in SelfieCampaignTextCtrl.actionTypeOptions" class="form__selectBox form__selectBox--single"></select>
                 <label class="form__label" for="c6-call-to-action">
                     <i class="fa fa-times ui--error"></i>
