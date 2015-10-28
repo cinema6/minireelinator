@@ -29,7 +29,8 @@ function( angular , c6uilib ) {
                                      'NormalizationService',
         function                    ( cinema6 , c6State , MiniReelService , $q ,
                                       NormalizationService ) {
-            var copy = NormalizationService.copy;
+            var copy = NormalizationService.copy,
+                value = NormalizationService.value;
 
             function getAppUser() {
                 var application = c6State.get('Application'),
@@ -38,60 +39,88 @@ function( angular , c6uilib ) {
                 return app.cModel;
             }
 
-            this.create = function() {
+            this.create = function(campaign) {
                 var user = getAppUser(),
                     advertiser = user.advertiser,
                     customer = user.customer,
-                    card = MiniReelService.createCard('video');
 
-                return cinema6.db.create('selfieCampaign', {
-                    advertiserId: advertiser.id,
-                    customerId: customer.id,
-                    name: undefined,
-                    pricing: {},
-                    status: 'draft',
-                    application: 'selfie',
-                    advertiserDisplayName: user.company,
-                    paymentMethod: undefined,
-                    targeting: {
-                        geo: {
-                            states: [],
-                            dmas: []
+                    // set up a full default card in case we aren't copying
+                    rawCard = MiniReelService.createCard('video'),
+                    card = deepExtend(rawCard, {
+                        id: undefined,
+                        campaignId: undefined,
+                        campaign: {
+                            minViewTime: 3
                         },
-                        demographics: {
-                            age: [],
-                            gender: [],
-                            income: []
+                        sponsored: true,
+                        collateral: {
+                            logo: advertiser.defaultLogos && advertiser.defaultLogos.square ?
+                                advertiser.defaultLogos.square :
+                                undefined
                         },
-                        interests: []
-                    },
-                    cards: [
-                        deepExtend(card, {
-                            id: undefined,
-                            campaignId: undefined,
-                            campaign: {
-                                minViewTime: 3
-                            },
-                            sponsored: true,
-                            collateral: {
-                                logo: advertiser.defaultLogos && advertiser.defaultLogos.square ?
-                                    advertiser.defaultLogos.square :
-                                    undefined
-                            },
-                            links: advertiser.defaultLinks || {},
-                            params: {
-                                ad: true,
-                                action: null
-                            },
-                            data: {
-                                autoadvance: false,
-                                controls: false,
-                                autoplay: true,
-                                skip: 30
+                        links: advertiser.defaultLinks || {},
+                        params: {
+                            ad: true,
+                            action: null
+                        },
+                        data: {
+                            autoadvance: false,
+                            controls: false,
+                            autoplay: true,
+                            skip: 30
+                        }
+                    }),
+
+                    // initialize the new campaign DB Model
+                    target = cinema6.db.create('selfieCampaign', {}),
+
+                    // this sets up only the necessary campaign props that should
+                    // be copied or initialized
+                    campaignTemplate = {
+                        advertiserId: copy(advertiser.id),
+                        customerId: copy(customer.id),
+                        name: function(base) {
+                            if (base.name) {
+                                return base.name + ' (Copy)';
                             }
+                        },
+                        pricing: copy({}),
+                        status: value('draft'),
+                        application: value('selfie'),
+                        advertiserDisplayName: copy(user.company),
+                        paymentMethod: copy(),
+                        targeting: {
+                            geo: {
+                                states: copy([]),
+                                dmas: copy([])
+                            },
+                            demographics: {
+                                age: copy([]),
+                                gender: copy([]),
+                                income: copy([])
+                            },
+                            interests: copy([])
+                        },
+                        cards: copy([card])
+                    },
+
+                    // this is used to remove values when copying a campaign
+                    cardTemplate = {
+                        id: value(undefined),
+                        campaignId: value(undefined),
+                        campaign: value({
+                            minViewTime: 3
                         })
-                    ]
-                });
+                    },
+
+                    // normalize the new campaign based on the campaign passed in,
+                    // if we aren't copying then all the necessary props will be defaulted
+                    newCampaign = NormalizationService.normalize(campaignTemplate, campaign, target);
+
+                    // now update the card, normalizing will remove bad props so they aren't copied
+                    newCampaign.cards[0] = extend(newCampaign.cards[0], NormalizationService.normalize(cardTemplate, newCampaign.cards[0]));
+
+                return newCampaign;
             };
 
             this.normalize = function(campaign) {
