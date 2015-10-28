@@ -30,7 +30,7 @@ define(['app'], function(appModule) {
                     MiniReelService = $injector.get('MiniReelService');
                     SelfieLogoService = $injector.get('SelfieLogoService');
 
-                    card = cinema6.db.create('card', MiniReelService.createCard('video'));
+                    card = MiniReelService.createCard('video');
                     categories = [
                         {
                             id: 'cat-1'
@@ -42,11 +42,11 @@ define(['app'], function(appModule) {
                             id: 'cat-3'
                         }
                     ];
-                    campaign = {
+                    campaign = cinema6.db.create('selfieCampaign', {
                         id: 'cam-123',
-                        cards: [],
+                        cards: [card],
                         links: {}
-                    };
+                    });
                     logos = [
                         {
                             name: 'logo1',
@@ -99,15 +99,24 @@ define(['app'], function(appModule) {
                 });
             });
 
+            describe('_campaign', function() {
+                it('should be null', function() {
+                    expect(campaignState._campaign).toBe(null);
+                });
+            });
+
             describe('beforeModel()', function() {
                 it('should put the card and campaign on the state object', function() {
+                    var pojo = campaign.pojoify();
+
                     campaignState.cParent.campaign = campaign;
-                    campaignState.cParent.card = card;
 
                     campaignState.beforeModel();
 
-                    expect(campaignState.card).toEqual(card);
-                    expect(campaignState.campaign).toEqual(campaign);
+                    expect(campaignState.card).toEqual(pojo.cards[0]);
+                    expect(campaignState.campaign).toEqual(pojo);
+                    expect(campaignState.advertiser).toEqual(selfieState.cModel.advertiser);
+                    expect(campaignState._campaign).toEqual(campaign);
                 });
             });
 
@@ -181,6 +190,27 @@ define(['app'], function(appModule) {
 
                         expect(campaignState.campaign.paymentMethod).toEqual(paymentMethods[2].token);
                     });
+                });
+            });
+
+            describe('saveCampaign()', function() {
+                it('should update the campaign DB Model with the current campaign data and save', function() {
+                    var success = jasmine.createSpy('success()'),
+                        failure = jasmine.createSpy('failure()');
+
+                    spyOn(campaign, 'save').and.returnValue($q.when(campaign));
+                    spyOn(campaign, '_update').and.returnValue(campaign);
+
+                    campaignState._campaign = campaign;
+                    campaignState.campaign = campaign.pojoify();
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveCampaign().then(success, failure);
+                    });
+
+                    expect(campaign._update).toHaveBeenCalledWith(campaignState.campaign);
+                    expect(campaign.save).toHaveBeenCalled();
+                    expect(success).toHaveBeenCalledWith(campaign);
                 });
             });
         });

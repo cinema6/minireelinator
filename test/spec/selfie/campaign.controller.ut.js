@@ -50,7 +50,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     cState: {
                         card: cState.card,
                         campaign: cState.campaign,
-                        advertiser: cState.advertiser
+                        advertiser: cState.advertiser,
+                        saveCampaign: cState.saveCampaign
                     }
                 });
                 SelfieCampaignCtrl.initWithModel(model);
@@ -159,9 +160,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             ];
 
             cState = {
-                campaign: campaign,
-                card: card,
-                advertiser: advertiser
+                campaign: campaign.pojoify(),
+                card: campaign.cards[0],
+                advertiser: advertiser,
+                saveCampaign: jasmine.createSpy('cState.saveCampaign()')
             };
 
             compileCtrl(cState, {
@@ -257,14 +259,14 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         SelfieCampaignCtrl.initWithModel({ categories: categories, logos: logos, paymentMethods: paymentMethods });
                     });
 
-                    expect(SelfieCampaignCtrl.card).toEqual(card);
-                    expect(SelfieCampaignCtrl.campaign).toEqual(campaign);
-                    expect(SelfieCampaignCtrl.advertiser).toEqual(advertiser);
+                    expect(SelfieCampaignCtrl.card).toEqual(cState.card);
+                    expect(SelfieCampaignCtrl.campaign).toEqual(cState.campaign);
+                    expect(SelfieCampaignCtrl.advertiser).toEqual(cState.advertiser);
                     expect(SelfieCampaignCtrl.logos).toEqual(logos);
                     expect(SelfieCampaignCtrl.categories).toEqual(categories);
                     expect(SelfieCampaignCtrl.paymentMethods).toEqual(paymentMethods);
-                    expect(SelfieCampaignCtrl._proxyCard).toEqual(copy(card));
-                    expect(SelfieCampaignCtrl._proxyCampaign).toEqual(copy(campaign));
+                    expect(SelfieCampaignCtrl._proxyCard).toEqual(copy(cState.card));
+                    expect(SelfieCampaignCtrl._proxyCampaign).toEqual(copy(cState.campaign));
                 });
             });
 
@@ -272,7 +274,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 beforeEach(function() {
                     saveCampaignDeferred = $q.defer();
 
-                    spyOn(SelfieCampaignCtrl.campaign, 'save').and.returnValue(saveCampaignDeferred.promise);
+                    cState.saveCampaign.and.returnValue(saveCampaignDeferred.promise);
 
                     SelfieCampaignCtrl.save();
                 });
@@ -286,24 +288,21 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 });
 
                 it('should save the campaign', function() {
-                    expect(SelfieCampaignCtrl.campaign.save).toHaveBeenCalled();
+                    expect(cState.saveCampaign).toHaveBeenCalled();
                 });
 
-
                 describe('after the campaign saves', function() {
-                    beforeEach(function() {
-                        SelfieCampaignCtrl.campaign.id = 'cam-123';
+                    it('should update the proxy cards and campaigns', function() {
+                        campaign.id = 'cam-123';
+
+                        var updatedCampaign = campaign.pojoify();
 
                         $scope.$apply(function() {
-                            saveCampaignDeferred.resolve(SelfieCampaignCtrl.campaign);
+                            saveCampaignDeferred.resolve(campaign);
                         });
-                    });
 
-                    describe('after the card is saved', function() {
-                        it('should update the proxy cards and campaigns', function() {
-                            expect(SelfieCampaignCtrl._proxyCard).toEqual(copy(SelfieCampaignCtrl.card));
-                            expect(SelfieCampaignCtrl._proxyCampaign).toEqual(copy(SelfieCampaignCtrl.campaign));
-                        });
+                        expect(SelfieCampaignCtrl._proxyCard).toEqual(updatedCampaign.cards[0]);
+                        expect(SelfieCampaignCtrl._proxyCampaign).toEqual(updatedCampaign);
                     });
                 });
             });

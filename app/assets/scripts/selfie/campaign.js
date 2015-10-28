@@ -180,7 +180,6 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.afterModel = function(campaign) {
                     this.campaign = campaign;
-                    this.card = campaign.cards[0];
                 };
 
                 this.enter = function() {
@@ -191,15 +190,20 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:EditCampaign', ['cinema6','c6State','CampaignService',
-            function                                     ( cinema6 , c6State , CampaignService ) {
+            c6StateProvider.state('Selfie:EditCampaign', ['cinema6','c6State','$q',
+                                                          'CampaignService',
+            function                                     ( cinema6 , c6State , $q ,
+                                                           CampaignService ) {
                 this.model = function(params) {
-                    return cinema6.db.find('selfieCampaign', params.campaignId);
+                    return cinema6.db.find('selfieCampaign', params.campaignId)
+                        .catch(function() {
+                            c6State.goTo('Selfie:CampaignDashboard');
+                            return $q.reject();
+                        });
                 };
 
                 this.afterModel = function(campaign) {
                     this.campaign = CampaignService.normalize(campaign);
-                    this.card = campaign.cards[0];
                 };
 
                 this.enter = function() {
@@ -222,10 +226,13 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.card = null;
                 this.campaign = null;
+                this._campaign = null;
 
                 this.beforeModel = function() {
-                    this.card = this.cParent.card;
-                    this.campaign = this.cParent.campaign;
+                    this._campaign = this.cParent.campaign;
+
+                    this.campaign = this.cParent.campaign.pojoify();
+                    this.card = this.campaign.cards[0];
                     this.advertiser = SelfieState.cModel.advertiser;
                 };
 
@@ -234,6 +241,9 @@ function( angular , c6State  , PaginatedListState                    ,
                         categories: cinema6.db.findAll('category'),
                         logos: SelfieLogoService.getLogos(),
                         paymentMethods: cinema6.db.findAll('paymentMethod')
+                    }).catch(function() {
+                        c6State.goTo('Selfie:CampaignDashboard');
+                        return $q.reject();
                     });
                 };
 
@@ -246,6 +256,10 @@ function( angular , c6State  , PaginatedListState                    ,
                     this.campaign.paymentMethod = this.campaign.paymentMethod ||
                         primaryPaymentMethod.token;
                 };
+
+                this.saveCampaign = function() {
+                    return this._campaign._update(this.campaign).save();
+                };
             }]);
         }])
 
@@ -257,12 +271,14 @@ function( angular , c6State  , PaginatedListState                    ,
                 queue = c6AsyncQueue();
 
             function saveCampaign() {
-                return SelfieCampaignCtrl.campaign.save();
+                return cState.saveCampaign();
             }
 
-            function updateProxy() {
-                SelfieCampaignCtrl._proxyCard = copy(SelfieCampaignCtrl.card);
-                SelfieCampaignCtrl._proxyCampaign = copy(SelfieCampaignCtrl.campaign);
+            function updateProxy(campaign) {
+                var updatedCampaign = campaign.pojoify();
+
+                SelfieCampaignCtrl._proxyCard = updatedCampaign.cards[0];
+                SelfieCampaignCtrl._proxyCampaign = updatedCampaign;
             }
 
             function returnToDashboard() {
@@ -500,6 +516,8 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.uploadFromUri = function(uri) {
+                if (!uri) { return; }
+
                 CollateralService.uploadFromUri(uri)
                     .then(handleUpload)
                     .catch(handleUploadError);

@@ -85,14 +85,6 @@ define(['app'], function(appModule) {
                 expect(CampaignService.normalize).toHaveBeenCalled();
                 expect(editCampaignState.campaign).toEqual(campaign);
             });
-
-            it('should put the card on the state object', function() {
-                $rootScope.$apply(function() {
-                    editCampaignState.afterModel(campaign);
-                });
-
-                expect(editCampaignState.card).toEqual(card);
-            });
         });
 
         describe('enter()', function() {

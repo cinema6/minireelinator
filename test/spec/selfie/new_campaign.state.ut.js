@@ -88,7 +88,6 @@ define(['app'], function(appModule) {
                 newCampaignState.afterModel(campaign);
 
                 expect(newCampaignState.campaign).toEqual(campaign);
-                expect(newCampaignState.card).toEqual(card);
             });
         });
 
