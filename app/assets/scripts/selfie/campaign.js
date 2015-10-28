@@ -9,7 +9,10 @@ function( angular , c6State  , PaginatedListState                    ,
         equals = angular.equals,
         extend = angular.extend,
         forEach = angular.forEach,
-        isObject = angular.isObject;
+        isObject = angular.isObject,
+        isArray = angular.isArray,
+        isFunction = angular.isFunction,
+        isDate = angular.isDate;
 
     function deepExtend(target, extension) {
         forEach(extension, function(extensionValue, prop) {
@@ -24,6 +27,36 @@ function( angular , c6State  , PaginatedListState                    ,
 
         return target;
     }
+
+        function baseExtend(dst, objs, deep) {
+
+          for (var i = 0, ii = objs.length; i < ii; ++i) {
+            var obj = objs[i];
+            if (!isObject(obj) && !isFunction(obj)) continue;
+            var keys = Object.keys(obj);
+            for (var j = 0, jj = keys.length; j < jj; j++) {
+              var key = keys[j];
+              var src = obj[key];
+
+              if (deep && isObject(src)) {
+                if (isDate(src)) {
+                  dst[key] = new Date(src.valueOf());
+                } else {
+                  if (!isObject(dst[key])) dst[key] = isArray(src) ? [] : {};
+                  baseExtend(dst[key], [src], true);
+                }
+              } else {
+                dst[key] = src;
+              }
+            }
+          }
+
+          return dst;
+        }
+
+        function merge(dst) {
+          return baseExtend(dst, [].slice.call(arguments, 1), true);
+        }
 
     return angular.module('c6.app.selfie.campaign', [c6State.name])
         .config(['c6StateProvider',
@@ -955,10 +988,10 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieManageCampaignController', ['$scope','cState','c6State',
-                                                       'c6AsyncQueue','CampaignService',
-        function                                      ( $scope , cState , c6State ,
-                                                        c6AsyncQueue , CampaignService ) {
+        .controller('SelfieManageCampaignController', ['$scope','cState','c6AsyncQueue',
+                                                       'UserService',
+        function                                      ( $scope , cState , c6AsyncQueue,
+                                                        UserService ) {
             var queue = c6AsyncQueue();
 
             Object.defineProperties(this, {
@@ -984,6 +1017,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.campaign = cState.campaign;
                 this.categories = model.categories;
                 this.paymentMethods = model.paymentMethods;
+                this.showAdminTab = UserService.isAdmin();
             };
 
             this.update = queue.debounce(function() {
@@ -1028,5 +1062,87 @@ function( angular , c6State  , PaginatedListState                    ,
             c6StateProvider.state('Selfie:Manage:Campaign:Payment', [function() {
                 this.templateUrl = 'views/selfie/campaigns/manage/payment.html';
             }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Manage:Campaign:Admin', ['cinema6', '$q',
+            function                                              ( cinema6 ,  $q ) {
+                this.templateUrl = 'views/selfie/campaigns/manage/admin.html';
+                this.controller = 'SelfieCampaignAdminController';
+                this.controllerAs = 'SelfieCampaignAdminCtrl';
+
+                this.card = null;
+                this.campaign = null;
+
+                this.beforeModel = function() {
+                    this.card = this.cParent.card;
+                    this.campaign = this.cParent.campaign;
+                };
+
+                this.model = function() {
+                    var model = {
+                        initialRequest: null,
+                        updateRequest: null
+                    };
+                    if(this.campaign.updateRequest) {
+                        var updateHash = this.campaign.id + ':' + this.campaign.updateRequest;
+                        model.initialRequest = (this.campaign.status === 'pendingApproval');
+                        model.updateRequest = cinema6.db.find('updateRequest', updateHash);
+                    }
+                    return $q.all(model);
+                };
+            }]);
+        }])
+
+        .controller('SelfieCampaignAdminController', ['c6State', 'cState', 'cinema6', '$scope', '$q',
+        function                                     ( c6State ,  cState ,  cinema6 ,  $scope ,  $q ){
+            var self = this;
+
+            self.rejectionReason = '';
+
+            $scope.$parent.$parent.SelfieManageCampaignCtrl.tab = 'admin';
+
+            this.initWithModel = function(model) {
+                self.campaign = cState.campaign;
+                self.card = cState.card;
+                self.showApproval = false;
+                var updateRequest = model.updateRequest;
+                if(updateRequest) {
+                    self.updateRequest = updateRequest;
+                    var updates = updateRequest.data;
+                    var firstUpdate = model.initialRequest;
+                    self.showApproval = true;
+                    self.firstUpdate = firstUpdate;
+                    self.updatedCampaign = copy(self.campaign);
+                    merge(self.updatedCampaign, updates);
+                    self.updatedCard = copy(self.card);
+                    merge(self.updatedCard, (updates.cards || [{}])[0]);
+                }
+            };
+
+            this.approveCampaign = function() {
+                self.updatedCampaign.cards[0] = self.updatedCard.pojoify();
+                self.updateRequest.data = self.updatedCampaign.pojoify();
+                self.updateRequest.status = 'approved';
+                self.updateRequest.save()
+                    .then(function() {
+                        c6State.goTo('Selfie:CampaignDashboard');
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                    });
+            };
+
+            this.rejectCampaign = function() {
+                extend(self.updateRequest, {
+                    status: 'rejected',
+                    rejectionReason: self.rejectionReason
+                }).save().then(function() {
+                    c6State.goTo('Selfie:CampaignDashboard');
+                }).catch(function(error) {
+                    console.log(error);
+                });
+            };
         }]);
 });

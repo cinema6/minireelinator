@@ -842,6 +842,48 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
             }]);
 
+            $provide.constant('UpdateRequestAdapter', ['config','$http', '$q',
+            function                                  ( config , $http ,  $q ) {
+                function url(end) {
+                    return config.apiBase + '/' + end;
+                }
+
+                this.find = function(type, id) {
+                    var parts = id.split(':');
+                    var campId = parts[0];
+                    var updateId = parts[1];
+                    var endpoint = url('campaigns/' + campId + '/updates/' + updateId);
+                    return $http.get(endpoint, { cache: true })
+                        .then(pick('data'))
+                        .then(putInArray);
+                };
+
+                this.update = function(type, updateRequest) {
+                    var campId = updateRequest.campaign;
+                    var updateId = updateRequest.id;
+                    var endpoint = url('campaigns/' + campId + '/updates/' + updateId);
+                    var requestBody = {
+                        status: updateRequest.status
+                    };
+                    if(updateRequest.status === 'rejected') {
+                        requestBody.rejectionReason = updateRequest.rejectionReason;
+                    } else {
+                        requestBody.data = updateRequest.data;
+                    }
+                    return $http.put(endpoint, requestBody)
+                        .then(pick('data'))
+                        .then(putInArray);
+                };
+
+                ['findAll', 'findQuery', 'create', 'erase'].forEach(function(method) {
+                    this[method] = function() {
+                        return $q.reject(
+                            new Error('UpdateRequestAdapter.' + method + '() is not implemented.')
+                        );
+                    };
+                }, this);
+            }]);
+
             $provide.constant('PaymentMethodAdapter', ['config','$http','$q',
             function                                  ( config , $http , $q ) {
                 function url(end) {
@@ -965,11 +1007,11 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         .config(['cinema6Provider','ContentAdapter','CWRXAdapter','CampaignAdapter',
                  'VoteAdapter','OrgAdapter','UserAdapter','CardAdapter','CustomerAdapter',
                  'CategoryAdapter','AdvertiserAdapter','ExpGroupAdapter','SelfieCampaignAdapter',
-                 'PaymentMethodAdapter',
+                 'PaymentMethodAdapter', 'UpdateRequestAdapter',
         function( cinema6Provider , ContentAdapter , CWRXAdapter , CampaignAdapter ,
                   VoteAdapter , OrgAdapter , UserAdapter , CardAdapter , CustomerAdapter ,
                   CategoryAdapter , AdvertiserAdapter , ExpGroupAdapter , SelfieCampaignAdapter ,
-                  PaymentMethodAdapter ) {
+                  PaymentMethodAdapter, UpdateRequestAdapter ) {
 
             [
                 ContentAdapter,
@@ -983,7 +1025,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 SelfieCampaignAdapter,
                 PaymentMethodAdapter,
                 AdvertiserAdapter,
-                CustomerAdapter
+                CustomerAdapter,
+                UpdateRequestAdapter
             ].forEach(function(Adapter) {
                 Adapter.config = {
                     apiBase: '/api'
@@ -1002,7 +1045,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 campaign: CampaignAdapter,
                 selfieCampaign: SelfieCampaignAdapter,
                 paymentMethod: PaymentMethodAdapter,
-                customer: CustomerAdapter
+                customer: CustomerAdapter,
+                updateRequest: UpdateRequestAdapter
             };
 
             cinema6Provider.useAdapter(CWRXAdapter);

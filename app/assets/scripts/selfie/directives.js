@@ -6,7 +6,10 @@ function( angular , select2 , braintree ) {
         extend = angular.extend,
         copy = angular.copy,
         forEach = angular.forEach,
-        isObject = angular.isObject;
+        isObject = angular.isObject,
+        isArray = angular.isArray,
+        equals = angular.equals,
+        isString = angular.isString;
 
     function deepExtend(target, extension) {
         forEach(extension, function(extensionValue, prop) {
@@ -231,7 +234,7 @@ function( angular , select2 , braintree ) {
             $scope.device = $scope.device || 'desktop';
 
             // watch for changes to the campaign's card
-            $scope.$watch('card', loadPreview);
+            $scope.$watch('card', loadPreview, true);
 
             // watch for changes to the experience in case
             // the consumer wants to mess with mode or whatnot
@@ -686,6 +689,173 @@ function( angular , select2 , braintree ) {
                 default:
                     return type;
                 }
+            }
+        }])
+
+        .directive('updatesSummary', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    campaign: '=',
+                    card: '=',
+                    updatedCampaign: '=',
+                    updatedCard: '='
+                },
+                templateUrl: 'views/selfie/directives/updatesSummary.html',
+                controller: 'SelfieUpdatesSummaryController',
+                controllerAs: 'SelfieUpdatesSummaryCtrl'
             };
+        }])
+
+        .controller('SelfieUpdatesSummaryController', ['$scope', '$filter',
+        function                                      ( $scope ,  $filter ) {
+            var self = this;
+            self.edits = {};
+            self.firstUpdate = false;
+
+            var CARD_EDITABLE_FIELDS = ['title', 'note', 'links.*', 'shareLinks.*'];
+            var CARD_APPROVAL_FIELDS = ['data\.(service|videoid)', 'id', 'type', 'title', 'note', 'collateral\.logo', 'thumb', 'links.*', 'shareLinks.*', 'params\.action.*', 'campaign\.adtechName'];
+
+            var CAMPAIGN_EDITABLE_FIELDS = ['name', 'advertiserDisplayName'];
+            var CAMPAIGN_APPROVAL_FIELDS = ['adtechId', 'name', 'targeting.*', 'advertiserDisplayName', 'created', 'user', 'org', 'lastUpdated', 'status', 'updateRequest', 'id', 'pricing\.(budget|dailyLimit|cost)'];
+
+            var CARD_PREFIX = 'Card';
+            var CAMPAIGN_PREFIX = 'Campaign';
+
+            function loadSummary(campaign, card, updatedCampaign, updatedCard) {
+                var firstUpdate = (campaign.status === 'pendingApproval');
+                self.firstUpdate = firstUpdate;
+                var originalCampaign = (firstUpdate) ? {} : campaign;
+                var originalCard = (firstUpdate) ? {} : card;
+                var campaignSummary = generateSummary(originalCampaign, updatedCampaign, CAMPAIGN_PREFIX, CAMPAIGN_APPROVAL_FIELDS, CAMPAIGN_EDITABLE_FIELDS);
+                var cardSummary = generateSummary(originalCard, updatedCard, CARD_PREFIX, CARD_APPROVAL_FIELDS, CARD_EDITABLE_FIELDS);
+                self.summary = cardSummary.concat(campaignSummary);
+            }
+
+            function generateSummary(originalObj, updatedObj, prefix, whitelistedFields, editableFields) {
+                var summary = [];
+
+                var origObj = flatten(originalObj);
+                var updaObj = flatten(updatedObj);
+
+                Object.keys(updaObj)
+                .filter(function(keysHash) {
+                    return isWhitelisted(whitelistedFields, keysHash);
+                })
+                .forEach(function(keysHash) {
+                    var origVal = origObj[keysHash];
+                    var updatedVal = updaObj[keysHash];
+                    var keys = keysHash.split('.');
+                    var title = keys.reduce(function(acc, key) {
+                        return acc + ' ' + readableKey(key);
+                    }, prefix);
+                    if(!equals(origVal, updatedVal)) {
+                        var tableEntry = {
+                            title: title,
+                            originalValue: readableVal(origVal),
+                            updatedValue: readableVal(updatedVal),
+                            editable: isWhitelisted(editableFields, keysHash),
+                            isLink: isString(updatedVal) && updatedVal.match(/^(http:\/\/|https:\/\/|\/\/)/) !== null,
+                            key: prefix + '.' + keysHash
+                        };
+                        if(tableEntry.editable) {
+                            self.edits[tableEntry.key] = updatedVal;
+                        }
+                        summary.push(tableEntry);
+                    }
+                });
+                return summary;
+            }
+
+            function isWhitelisted(whitelist, value) {
+                for(var i=0;i<whitelist.length;i++) {
+                    var regExp = whitelist[i];
+                    var match = value.match(regExp);
+                    if(match && match[0] === value ) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            function readableKey(key) {
+                var strings = {
+                    'data': 'Data:',
+                    'videoid': 'Video ID',
+                    'id': 'ID',
+                    'note': 'Copy',
+                    'campaign': 'Campaign:',
+                    'adtechName': 'Adtech Name',
+                    'collateral': 'Collateral:',
+                    'thumb': 'Custom Thumbnail',
+                    'links': 'Links:',
+                    'shareLinks': 'Sharing Links:',
+                    'params': 'Params:',
+                    'action': 'Call-To-Action',
+                    'adtechid': 'Adtech ID',
+                    'demographics': 'Demographics:',
+                    'advertiserDisplayName': 'Advertiser Display Name',
+                    'user': 'User ID',
+                    'org': 'Organization ID',
+                    'lastUpdated': 'Last Updated',
+                    'updateRequest': 'Update Request ID'
+                };
+                return strings[key] || capitalize(key);
+            }
+
+            function capitalize(string) {
+                return string[0].toUpperCase() + string.slice(1);
+            }
+
+            function readableVal(val) {
+                if(val === null) {
+                    return '';
+                }
+                if(isArray(val)) {
+                    if(val.length === 0) {
+                        return '';
+                    }
+                    return val.join(', ');
+                }
+                if(new Date(val) !== 'Invalid Date' && !isNaN(new Date(val)) && String(val).indexOf('-') === 4) {
+                    var date = new Date(val);
+                    return $filter('date')(date, 'medium', 'EST');
+                }
+                return String(val);
+            }
+
+            function flatten(obj, path, result) {
+                var key, val, _path;
+                path = path || [];
+                result = result || {};
+                for (key in obj) {
+                    val = obj[key];
+                    _path = path.concat([key]);
+                    if (isObject(val) && !isArray(val)) {
+                        flatten(val, _path, result);
+                    } else {
+                        result[_path.join('.')] = val;
+                    }
+                }
+                return result;
+            }
+
+            $scope.$watch(function() {
+                return JSON.stringify(self.edits);
+            }, function() {
+                Object.keys(self.edits).forEach(function(keysHash) {
+                    var keys = keysHash.split('.');
+                    var editedValue = self.edits[keysHash];
+                    var baseObj = $scope[(keys[0] === CARD_PREFIX) ? 'updatedCard' : 'updatedCampaign'];
+                    keys = keys.slice(1);
+                    var prop = keys.pop();
+                    var tailObj = keys.reduce(function(acc, key) {
+                        return acc[key];
+                    }, baseObj)
+                    tailObj[prop] = editedValue;
+                });
+            });
+
+            loadSummary($scope.campaign.pojoify(), $scope.card, $scope.updatedCampaign.pojoify(), $scope.updatedCard);
         }]);
 });
