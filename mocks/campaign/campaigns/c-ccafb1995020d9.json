@@ -69,8 +69,8 @@
     ],
     "name": "Nike Summer Campaign",
     "pricing": {
-        "budget": "1000",
-        "dailyLimit": "45"
+        "budget": 1000,
+        "dailyLimit": 45
     },
     "status": "active",
     "targeting": {
