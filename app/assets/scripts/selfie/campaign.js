@@ -945,7 +945,7 @@ function( angular , c6State  , PaginatedListState                    ,
             this.update = queue.debounce(function() {
                 // this needs to send a campaign update request now
                 // the only valid thing to send is payment method
-                // return this.campaign.save();
+                return this.campaign.save();
             }, this);
 
             this.pause = queue.debounce(function() {
@@ -976,6 +976,13 @@ function( angular , c6State  , PaginatedListState                    ,
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Manage:Campaign:Manage', [function() {
                 this.templateUrl = 'views/selfie/campaigns/manage/manage.html';
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Manage:Campaign:Payment', [function() {
+                this.templateUrl = 'views/selfie/campaigns/manage/payment.html';
             }]);
         }]);
 });

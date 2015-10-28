@@ -47,11 +47,6 @@ function( angular , c6uilib ) {
                     // set up a full default card in case we aren't copying
                     rawCard = MiniReelService.createCard('video'),
                     card = deepExtend(rawCard, {
-                        id: undefined,
-                        campaignId: undefined,
-                        campaign: {
-                            minViewTime: 3
-                        },
                         sponsored: true,
                         collateral: {
                             logo: advertiser.defaultLogos && advertiser.defaultLogos.square ?
@@ -104,21 +99,18 @@ function( angular , c6uilib ) {
                         cards: copy([card])
                     },
 
-                    // this is used to remove values when copying a campaign
-                    cardTemplate = {
-                        id: value(undefined),
-                        campaignId: value(undefined),
-                        campaign: value({
-                            minViewTime: 3
-                        })
-                    },
-
                     // normalize the new campaign based on the campaign passed in,
                     // if we aren't copying then all the necessary props will be defaulted
                     newCampaign = NormalizationService.normalize(campaignTemplate, campaign, target);
 
-                    // now update the card, normalizing will remove bad props so they aren't copied
-                    newCampaign.cards[0] = extend(newCampaign.cards[0], NormalizationService.normalize(cardTemplate, newCampaign.cards[0]));
+                    // make sure all bad props are reset
+                    extend(newCampaign.cards[0], {
+                        id: undefined,
+                        campaignId: undefined,
+                        campaign: {
+                            minViewTime: 3
+                        }
+                    });
 
                 return newCampaign;
             };

@@ -111,5 +111,15 @@ define(['app'], function(appModule) {
                 expect(success).toHaveBeenCalledWith({ paymentMethods: paymentMethods });
             });
         });
+
+        describe('enter()', function() {
+            it('shoud go to the Selfie:Manage:Campaign:Manage state', function() {
+                spyOn(c6State, 'goTo');
+
+                campaignState.enter();
+
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage');
+            });
+        });
     });
 });
