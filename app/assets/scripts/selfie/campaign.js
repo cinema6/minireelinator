@@ -348,6 +348,7 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.submit = queue.debounce(function() {
+                // this will be an update request!
                 return this.save().then(returnToDashboard);
             }, this);
 
@@ -912,16 +913,17 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieManageCampaignController', ['$scope','cState','c6AsyncQueue',
-        function                                      ( $scope , cState , c6AsyncQueue ) {
+        .controller('SelfieManageCampaignController', ['$scope','cState','c6AsyncQueue','CampaignService','c6State',
+        function                                      ( $scope , cState , c6AsyncQueue , CampaignService , c6State ) {
             var queue = c6AsyncQueue();
 
             Object.defineProperties(this, {
                 canSubmit: {
                     get: function() {
                         return [
-                            this.campaign.name,
-                            this.validation.budget
+                            // this.campaign.name,
+                            // this.validation.budget
+                            this.campaign.paymentMethod
                         ].filter(function(prop) {
                             return !prop;
                         }).length === 0;
@@ -929,9 +931,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
             });
 
-            this.validation = {
-                budget: true
-            };
+            // this.validation = {
+            //     budget: true
+            // };
 
             this.initWithModel = function(model) {
                 this.card = cState.card;
@@ -941,44 +943,39 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.update = queue.debounce(function() {
-                return this.campaign.save();
+                // this needs to send a campaign update request now
+                // the only valid thing to send is payment method
+                // return this.campaign.save();
             }, this);
+
+            this.pause = queue.debounce(function() {
+                this.campaign.status = 'paused';
+                // now send campaign update request
+                // return this.campaign.save();
+            }, this);
+
+            this.cancel = queue.debounce(function() {
+                this.campaign.status = 'canceled';
+                // now send campaign update request
+                // return this.campaign.save();
+            }, this);
+
+            this.copy = queue.debounce(function() {
+                return CampaignService.create(this.campaign.pojoify())
+                    .save().then(function(campaign) {
+                        return c6State.goTo('Selfie:EditCampaign', [campaign]);
+                    });
+            }, this);
+
+            this.edit = function(campaign) {
+                c6State.goTo('Selfie:EditCampaign', [campaign]);
+            };
         }])
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Manage:Campaign:Manage', [function() {
                 this.templateUrl = 'views/selfie/campaigns/manage/manage.html';
-                this.controller = 'SelfieManageCampaignManageController';
-                this.controllerAs = 'SelfieManageCampaignManageCtrl';
-
-                this.card = null;
-                this.campaign = null;
-
-                this.beforeModel = function() {
-                    this.card = this.cParent.card;
-                    this.campaign = this.cParent.campaign;
-                };
             }]);
-        }])
-
-        .controller('SelfieManageCampaignManageController', ['$scope','cState','c6State',
-                                                             'c6AsyncQueue',
-        function                                            ( $scope , cState , c6State ,
-                                                              c6AsyncQueue ) {
-            var queue = c6AsyncQueue();
-
-            this.initWithModel = function() {
-                this.card = cState.card;
-                this.campaign = cState.campaign;
-            };
-
-            this.copy = queue.debounce(function() {
-                return this.campaign.save();
-            }, this);
-
-            this.edit = function(campaign) {
-                c6State.goTo('Selfie:EditCampaign', [campaign]);
-            };
         }]);
 });
