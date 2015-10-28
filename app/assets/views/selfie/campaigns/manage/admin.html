@@ -1,4 +1,4 @@
-<div class="tabContent targeting__content container" c6-alias="SelfieCampaignAdminCtrl as Ctrl">
+<div class="tabContent targeting__content container" c6-alias="SelfieManageCampaignAdminCtrl as Ctrl">
     <header class="tabContent__header">
         <h2 class="tabContent__title tk--hdr">Campaign Administration</h2>
         <span class="tabContent__subtitle">Here you can perform administrative actions on a campaign.</span>
@@ -14,8 +14,8 @@
                     <p ng-if="!Ctrl.showApproval" class="formSection__introText">There are no updates waiting to be approved.</p>
 
                     <div ng-if="Ctrl.showApproval">
-                        <updates-summary campaign="Ctrl.campaign" card="Ctrl.card" updated-campaign="Ctrl.updatedCampaign" updated-card="Ctrl.updatedCard"></updates-summary>
-                        <selfie-preview card="Ctrl.updatedCard"></selfie-preview>
+                        <selfie-campaign-updates-summary campaign="Ctrl.campaign" card="Ctrl.card" updated-campaign="Ctrl.updatedCampaign" updated-card="Ctrl.updatedCard"></selfie-campaign-updates-summary>
+                        <selfie-preview card="Ctrl.previewCard"></selfie-preview>
                         <input type="text" ng-model="Ctrl.rejectionReason"></input>
                         <div class="action__btnGroup ui__btnHolder">
                             <button ng-click="Ctrl.approveCampaign()" class="action__btn action__btn--big">Approve</button>

@@ -992,9 +992,9 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieManageCampaignController', ['$scope','cState','c6AsyncQueue',
-                                                       'UserService',
-        function                                      ( $scope , cState , c6AsyncQueue,
-                                                        UserService ) {
+                                                       'c6State',
+        function                                      ( $scope , cState , c6AsyncQueue ,
+                                                        c6State ) {
             var queue = c6AsyncQueue();
 
             Object.defineProperties(this, {
@@ -1020,7 +1020,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.campaign = cState.campaign;
                 this.categories = model.categories;
                 this.paymentMethods = model.paymentMethods;
-                this.showAdminTab = UserService.isAdmin();
+                var user = c6State.get('Selfie').cModel;
+                this.showAdminTab = (user.entitlements.adminCampaigns === true);
             };
 
             this.update = queue.debounce(function() {
@@ -1072,8 +1073,8 @@ function( angular , c6State  , PaginatedListState                    ,
             c6StateProvider.state('Selfie:Manage:Campaign:Admin', ['cinema6', '$q',
             function                                              ( cinema6 ,  $q ) {
                 this.templateUrl = 'views/selfie/campaigns/manage/admin.html';
-                this.controller = 'SelfieCampaignAdminController';
-                this.controllerAs = 'SelfieCampaignAdminCtrl';
+                this.controller = 'SelfieManageCampaignAdminController';
+                this.controllerAs = 'SelfieManageCampaignAdminCtrl';
 
                 this.card = null;
                 this.campaign = null;
@@ -1098,8 +1099,10 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieCampaignAdminController', ['c6State', 'cState', 'cinema6', '$scope',
-        function                                     ( c6State ,  cState ,  cinema6 ,  $scope ){
+        .controller('SelfieManageCampaignAdminController', ['c6State', 'cState', 'cinema6',
+                                                            '$scope', 'c6Debounce',
+        function                                           ( c6State ,  cState ,  cinema6 ,
+                                                             $scope ,  c6Debounce ){
             var self = this;
 
             self.rejectionReason = '';
@@ -1121,6 +1124,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     merge(self.updatedCampaign, updates);
                     self.updatedCard = copy(self.card);
                     merge(self.updatedCard, (updates.cards || [{}])[0]);
+                    self.previewCard = copy(self.updatedCard);
                 }
             };
 
@@ -1141,5 +1145,17 @@ function( angular , c6State  , PaginatedListState                    ,
                     c6State.goTo('Selfie:CampaignDashboard');
                 });
             };
+
+            this.loadPreview = c6Debounce(function() {
+                var _card = copy(self.updatedCard);
+                _card.params.sponsor = self.updatedCampaign.advertiserDisplayName;
+                self.previewCard = _card;
+            }, 2000);
+
+            $scope.$watch(function() {
+                return self.updatedCard;
+            }, function() {
+                self.loadPreview();
+            }, true);
         }]);
 });

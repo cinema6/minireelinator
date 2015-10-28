@@ -8,7 +8,10 @@ function( angular , c6uilib ) {
         isDefined = angular.isDefined,
         ngCopy = angular.copy,
         forEach = angular.forEach,
-        isObject = angular.isObject;
+        isObject = angular.isObject,
+        equals = angular.equals,
+        isString = angular.isString,
+        isArray = angular.isArray;
 
     function deepExtend(target, extension) {
         forEach(extension, function(extensionValue, prop) {
@@ -25,23 +28,6 @@ function( angular , c6uilib ) {
     }
 
     return angular.module('c6.app.selfie.services', [c6uilib.name])
-
-        .service('UserService', [
-        function                () {
-            var user = null;
-
-            this.getUser = function() {
-                return user;
-            };
-
-            this.setUser = function(newUser) {
-                user = newUser;
-            };
-
-            this.isAdmin = function() {
-                return (user.entitlements.adminCampaigns === true);
-            };
-        }])
 
         .service('CampaignService', ['cinema6','c6State','MiniReelService','$q',
                                      'NormalizationService',
@@ -157,6 +143,48 @@ function( angular , c6uilib ) {
                 return NormalizationService.normalize(template, campaign, campaign);
             };
 
+            this.campaignDiffSummary = function(originalCampaign, originalCard, updatedCampaign, updatedCard, campaignPrefix, cardPrefix) {
+                var campaignSummary = generateSummary(originalCampaign, updatedCampaign, campaignPrefix);
+                var cardSummary = generateSummary(originalCard, updatedCard, cardPrefix);
+                return cardSummary.concat(campaignSummary);
+            };
+
+            function generateSummary(originalObj, updatedObj, prefix) {
+                var summary = [];
+
+                var origObj = flatten(originalObj);
+                var updaObj = flatten(updatedObj);
+
+                Object.keys(updaObj).forEach(function(keysHash) {
+                    var origVal = origObj[keysHash];
+                    var updatedVal = updaObj[keysHash];
+                    if(!equals(origVal, updatedVal)) {
+                        summary.push({
+                            originalValue: origVal,
+                            updatedValue: updatedVal,
+                            key: keysHash,
+                            type: prefix
+                        });
+                    }
+                });
+                return summary;
+            }
+
+            function flatten(obj, path, result) {
+                var key, val, _path;
+                path = path || [];
+                result = result || {};
+                for (key in obj) {
+                    val = obj[key];
+                    _path = path.concat([key]);
+                    if (isObject(val) && !isArray(val)) {
+                        flatten(val, _path, result);
+                    } else {
+                        result[_path.join('.')] = val;
+                    }
+                }
+                return result;
+            }
         }])
 
         .service('PaymentService', ['$http','c6UrlMaker',

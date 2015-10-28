@@ -58,8 +58,8 @@ function( angular , c6State  ) {
             };
         }])
 
-        .service('AuthService',['c6UrlMaker','$http','$q','$timeout','cinema6', 'UserService',
-        function               ( c6UrlMaker , $http , $q , $timeout , cinema6 ,  UserService ) {
+        .service('AuthService',['c6UrlMaker','$http','$q','$timeout','cinema6',
+        function               ( c6UrlMaker , $http , $q , $timeout , cinema6 ) {
             function returnData(response) {
                 return response.data;
             }
@@ -70,9 +70,7 @@ function( angular , c6State  ) {
 
             function handleAuthSuccess(user) {
                 var requests = [];
-                
-                UserService.setUser(user);
-                
+
                 if (user.org) {
                     requests.push(cinema6.db.find('org', user.org));
                 }
