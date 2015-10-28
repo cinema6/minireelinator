@@ -25,23 +25,24 @@ function( angular , c6uilib ) {
     }
 
     return angular.module('c6.app.selfie.services', [c6uilib.name])
+
         .service('UserService', [
-        function                    () {
+        function                () {
             var user = null;
-            
+
             this.getUser = function() {
                 return user;
             };
-            
+
             this.setUser = function(newUser) {
                 user = newUser;
             };
-            
+
             this.isAdmin = function() {
                 return (user.entitlements.adminCampaigns === true);
             };
         }])
-        
+
         .service('CampaignService', ['cinema6','c6State','MiniReelService','$q',
                                      'NormalizationService',
         function                    ( cinema6 , c6State , MiniReelService , $q ,

@@ -689,7 +689,7 @@ function( angular , select2 , braintree ) {
                 default:
                     return type;
                 }
-            }
+            };
         }])
 
         .directive('updatesSummary', [function() {
@@ -713,26 +713,41 @@ function( angular , select2 , braintree ) {
             self.edits = {};
             self.firstUpdate = false;
 
-            var CARD_EDITABLE_FIELDS = ['title', 'note', 'links.*', 'shareLinks.*'];
-            var CARD_APPROVAL_FIELDS = ['data\.(service|videoid)', 'id', 'type', 'title', 'note', 'collateral\.logo', 'thumb', 'links.*', 'shareLinks.*', 'params\.action.*', 'campaign\.adtechName'];
-
-            var CAMPAIGN_EDITABLE_FIELDS = ['name', 'advertiserDisplayName'];
-            var CAMPAIGN_APPROVAL_FIELDS = ['adtechId', 'name', 'targeting.*', 'advertiserDisplayName', 'created', 'user', 'org', 'lastUpdated', 'status', 'updateRequest', 'id', 'pricing\.(budget|dailyLimit|cost)'];
-
+            // Card Constants
             var CARD_PREFIX = 'Card';
-            var CAMPAIGN_PREFIX = 'Campaign';
+            var CARD_EDITABLE_FIELDS = ['title', 'note', 'links.*', 'shareLinks.*'];
+            var CARD_APPROVAL_FIELDS = [
+                'id', 'type', 'title', 'note', 'thumb',
+                'data\\.(service|videoid)', 'collateral\\.logo',
+                'links.*', 'shareLinks.*',
+                'params\\.action.*', 'campaign\\.adtechName'
+            ];
 
+            // Campaign Constants
+            var CAMPAIGN_PREFIX = 'Campaign';
+            var CAMPAIGN_EDITABLE_FIELDS = ['name', 'advertiserDisplayName'];
+            var CAMPAIGN_APPROVAL_FIELDS = [
+                'adtechId', 'name', 'advertiserDisplayName',
+                'created', 'user', 'org', 'lastUpdated',
+                'status', 'updateRequest', 'id',
+                'targeting.*', 'pricing\\.(budget|dailyLimit|cost)'
+            ];
+
+            // Constructs the summary object used to generate the table
             function loadSummary(campaign, card, updatedCampaign, updatedCard) {
                 var firstUpdate = (campaign.status === 'pendingApproval');
                 self.firstUpdate = firstUpdate;
                 var originalCampaign = (firstUpdate) ? {} : campaign;
                 var originalCard = (firstUpdate) ? {} : card;
-                var campaignSummary = generateSummary(originalCampaign, updatedCampaign, CAMPAIGN_PREFIX, CAMPAIGN_APPROVAL_FIELDS, CAMPAIGN_EDITABLE_FIELDS);
-                var cardSummary = generateSummary(originalCard, updatedCard, CARD_PREFIX, CARD_APPROVAL_FIELDS, CARD_EDITABLE_FIELDS);
+                var campaignSummary = generateSummary(originalCampaign, updatedCampaign,
+                    CAMPAIGN_PREFIX, CAMPAIGN_APPROVAL_FIELDS, CAMPAIGN_EDITABLE_FIELDS);
+                var cardSummary = generateSummary(originalCard, updatedCard,
+                    CARD_PREFIX, CARD_APPROVAL_FIELDS, CARD_EDITABLE_FIELDS);
                 self.summary = cardSummary.concat(campaignSummary);
             }
 
-            function generateSummary(originalObj, updatedObj, prefix, whitelistedFields, editableFields) {
+            function generateSummary(originalObj, updatedObj,
+                                     prefix, whitelistedFields, editableFields) {
                 var summary = [];
 
                 var origObj = flatten(originalObj);
@@ -755,7 +770,8 @@ function( angular , select2 , braintree ) {
                             originalValue: readableVal(origVal),
                             updatedValue: readableVal(updatedVal),
                             editable: isWhitelisted(editableFields, keysHash),
-                            isLink: isString(updatedVal) && updatedVal.match(/^(http:\/\/|https:\/\/|\/\/)/) !== null,
+                            isLink: isString(updatedVal) &&
+                                updatedVal.match(/^(http:\/\/|https:\/\/|\/\/)/) !== null,
                             key: prefix + '.' + keysHash
                         };
                         if(tableEntry.editable) {
@@ -817,7 +833,9 @@ function( angular , select2 , braintree ) {
                     }
                     return val.join(', ');
                 }
-                if(new Date(val) !== 'Invalid Date' && !isNaN(new Date(val)) && String(val).indexOf('-') === 4) {
+                var isDate = (new Date(val) !== 'Invalid Date' && !isNaN(new Date(val)) &&
+                    String(val).indexOf('-') === 4);
+                if (isDate) {
                     var date = new Date(val);
                     return $filter('date')(date, 'medium', 'EST');
                 }
@@ -846,16 +864,18 @@ function( angular , select2 , braintree ) {
                 Object.keys(self.edits).forEach(function(keysHash) {
                     var keys = keysHash.split('.');
                     var editedValue = self.edits[keysHash];
-                    var baseObj = $scope[(keys[0] === CARD_PREFIX) ? 'updatedCard' : 'updatedCampaign'];
+                    var baseObj = $scope[(keys[0] === CARD_PREFIX) ?
+                        'updatedCard' : 'updatedCampaign'];
                     keys = keys.slice(1);
                     var prop = keys.pop();
                     var tailObj = keys.reduce(function(acc, key) {
                         return acc[key];
-                    }, baseObj)
+                    }, baseObj);
                     tailObj[prop] = editedValue;
                 });
             });
 
-            loadSummary($scope.campaign.pojoify(), $scope.card, $scope.updatedCampaign.pojoify(), $scope.updatedCard);
+            loadSummary($scope.campaign.pojoify(), $scope.card,
+                $scope.updatedCampaign.pojoify(), $scope.updatedCard);
         }]);
 });

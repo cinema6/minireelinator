@@ -28,35 +28,38 @@ function( angular , c6State  , PaginatedListState                    ,
         return target;
     }
 
-        function baseExtend(dst, objs, deep) {
-
-          for (var i = 0, ii = objs.length; i < ii; ++i) {
+    // Adapted from a newer version of Angular
+    function baseExtend(dst, objs, deep) {
+        for (var i = 0, ii = objs.length; i < ii; ++i) {
             var obj = objs[i];
-            if (!isObject(obj) && !isFunction(obj)) continue;
+            if (!isObject(obj) && !isFunction(obj)) {
+                continue;
+            }
             var keys = Object.keys(obj);
             for (var j = 0, jj = keys.length; j < jj; j++) {
-              var key = keys[j];
-              var src = obj[key];
-
-              if (deep && isObject(src)) {
-                if (isDate(src)) {
-                  dst[key] = new Date(src.valueOf());
+                var key = keys[j];
+                var src = obj[key];
+                if (deep && isObject(src)) {
+                    if (isDate(src)) {
+                        dst[key] = new Date(src.valueOf());
+                    } else {
+                        if (!isObject(dst[key])) {
+                            dst[key] = isArray(src) ? [] : {};
+                        }
+                        baseExtend(dst[key], [src], true);
+                    }
                 } else {
-                  if (!isObject(dst[key])) dst[key] = isArray(src) ? [] : {};
-                  baseExtend(dst[key], [src], true);
+                    dst[key] = src;
                 }
-              } else {
-                dst[key] = src;
-              }
             }
-          }
-
-          return dst;
         }
+        return dst;
+    }
 
-        function merge(dst) {
-          return baseExtend(dst, [].slice.call(arguments, 1), true);
-        }
+    // Adapted from a newer version of Angular
+    function merge(dst) {
+        return baseExtend(dst, [].slice.call(arguments, 1), true);
+    }
 
     return angular.module('c6.app.selfie.campaign', [c6State.name])
         .config(['c6StateProvider',
@@ -1095,8 +1098,8 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieCampaignAdminController', ['c6State', 'cState', 'cinema6', '$scope', '$q',
-        function                                     ( c6State ,  cState ,  cinema6 ,  $scope ,  $q ){
+        .controller('SelfieCampaignAdminController', ['c6State', 'cState', 'cinema6', '$scope',
+        function                                     ( c6State ,  cState ,  cinema6 ,  $scope ){
             var self = this;
 
             self.rejectionReason = '';
@@ -1125,13 +1128,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 self.updatedCampaign.cards[0] = self.updatedCard.pojoify();
                 self.updateRequest.data = self.updatedCampaign.pojoify();
                 self.updateRequest.status = 'approved';
-                self.updateRequest.save()
-                    .then(function() {
-                        c6State.goTo('Selfie:CampaignDashboard');
-                    })
-                    .catch(function(error) {
-                        console.log(error);
-                    });
+                self.updateRequest.save().then(function() {
+                    c6State.goTo('Selfie:CampaignDashboard');
+                });
             };
 
             this.rejectCampaign = function() {
@@ -1140,8 +1139,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     rejectionReason: self.rejectionReason
                 }).save().then(function() {
                     c6State.goTo('Selfie:CampaignDashboard');
-                }).catch(function(error) {
-                    console.log(error);
                 });
             };
         }]);
