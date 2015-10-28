@@ -875,13 +875,28 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         .then(putInArray);
                 };
 
-                ['findAll', 'findQuery', 'create', 'erase'].forEach(function(method) {
-                    this[method] = function() {
-                        return $q.reject(
-                            new Error('UpdateRequestAdapter.' + method + '() is not implemented.')
-                        );
-                    };
-                }, this);
+                this.findAll = function(type, id) {
+                    var campId = id;
+                    var endpoint = url('campaigns/' + campId + '/updates');
+                    return $http.get(endpoint)
+                        .then(pick('data'));
+                };
+
+                this.findQuery = function(type, id, query) {
+                    var endpoint = url('campaigns/' + id + '/updates');
+                    return $http.get(endpoint, { params: query })
+                        .then(pick('data'));
+                };
+
+                this.create = function(type, id, data) {
+                    var endpoint = url('campaigns/' + id + '/updates');
+                    return $http.post(endpoint, data)
+                        .then(pick('data'));
+                };
+
+                this.erase = function() {
+                    return $q.reject('UpdateRequestAdapter.erase() is not implemented.');
+                };
             }]);
 
             $provide.constant('PaymentMethodAdapter', ['config','$http','$q',
