@@ -263,9 +263,77 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieCampaignCtrl.logos).toEqual(logos);
                     expect(SelfieCampaignCtrl.categories).toEqual(categories);
                     expect(SelfieCampaignCtrl.paymentMethods).toEqual(paymentMethods);
-                    expect(SelfieCampaignCtrl.campaign.paymentMethod).toEqual(paymentMethods[0].token);
                     expect(SelfieCampaignCtrl._proxyCard).toEqual(copy(card));
                     expect(SelfieCampaignCtrl._proxyCampaign).toEqual(copy(campaign));
+                });
+            });
+
+            describe('backToDashboard()', function() {
+                describe('when it should save', function() {
+                    beforeEach(function() {
+                        saveCampaignDeferred = $q.defer();
+
+                        spyOn(c6State, 'goTo');
+                        spyOn(SelfieCampaignCtrl, 'save');
+                        spyOn(campaign, 'save').and.returnValue(saveCampaignDeferred.promise);
+
+                        // trigger 'shouldSave' true
+                        SelfieCampaignCtrl.campaign.name = 'Something Else';
+
+                        SelfieCampaignCtrl.backToDashboard();
+                    });
+
+                    it('should save the campaign', function() {
+                        expect(campaign.save).toHaveBeenCalled();
+                    });
+
+                    it('should set an autosave blocker', function() {
+                        expect(SelfieCampaignCtrl.blockSave).toBe(true);
+                    });
+
+                    describe('when the save completes', function() {
+                        it('should return to dashboard', function() {
+                            expect(c6State.goTo).not.toHaveBeenCalledWith('Selfie:CampaignDashboard');
+
+                            $scope.$apply(function() {
+                                saveCampaignDeferred.resolve();
+                            });
+
+                            expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                        });
+                    });
+
+                    describe('when the save fails', function() {
+                        it('should not return to dashboard and should reset save blocker', function() {
+                            $scope.$apply(function() {
+                                saveCampaignDeferred.reject();
+                            });
+
+                            expect(c6State.goTo).not.toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                        });
+
+                        it('should reset the autosave blocker', function() {
+                            $scope.$apply(function() {
+                                saveCampaignDeferred.reject();
+                            });
+
+                            expect(SelfieCampaignCtrl.blockSave).toBe(false);
+                        });
+                    });
+                });
+
+                describe('when it should not auto save', function() {
+                    it('should return to dashboard', function() {
+                        campaign.status = 'active';
+
+                        spyOn(c6State, 'goTo');
+                        spyOn(campaign, 'save');
+
+                        SelfieCampaignCtrl.backToDashboard();
+
+                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                        expect(campaign.save).not.toHaveBeenCalled();
+                    });
                 });
             });
 

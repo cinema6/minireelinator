@@ -101,16 +101,18 @@ function( angular , c6uilib ) {
 
                     // normalize the new campaign based on the campaign passed in,
                     // if we aren't copying then all the necessary props will be defaulted
-                    newCampaign = NormalizationService.normalize(campaignTemplate, campaign, target);
+                    newCampaign = NormalizationService.normalize(
+                        campaignTemplate, campaign, target
+                    );
 
-                    // make sure all bad props are reset
-                    extend(newCampaign.cards[0], {
-                        id: undefined,
-                        campaignId: undefined,
-                        campaign: {
-                            minViewTime: 3
-                        }
-                    });
+                // make sure all bad props are reset
+                extend(newCampaign.cards[0], {
+                    id: undefined,
+                    campaignId: undefined,
+                    campaign: {
+                        minViewTime: 3
+                    }
+                });
 
                 return newCampaign;
             };

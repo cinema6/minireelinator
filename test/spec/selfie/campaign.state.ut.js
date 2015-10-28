@@ -139,6 +139,50 @@ define(['app'], function(appModule) {
                     });
                 });
             });
+
+            describe('afterModel()', function() {
+                describe('when there is a Primary Payment Method', function() {
+                    it('should add it to the campaign if the campaign does not have one', function() {
+                        campaignState.campaign = campaign;
+
+                        paymentMethods[1].default = true;
+
+                        campaignState.afterModel({ paymentMethods: paymentMethods });
+
+                        expect(campaignState.campaign.paymentMethod).toEqual('pay-2');
+                    });
+
+                    it('should not overwrite an existing payment on the campaign', function() {
+                        campaign.paymentMethod = paymentMethods[2].token;
+                        campaignState.campaign = campaign;
+
+                        paymentMethods[1].default = true;
+
+                        campaignState.afterModel({ paymentMethods: paymentMethods });
+
+                        expect(campaignState.campaign.paymentMethod).toEqual(paymentMethods[2].token);
+                    });
+                });
+
+                describe('when there is no Primary Payment Method', function() {
+                    it('should leave paymentMethod undefined', function() {
+                        campaignState.campaign = campaign;
+
+                        campaignState.afterModel({ paymentMethods: [] });
+
+                        expect(campaignState.campaign.paymentMethod).toEqual(undefined);
+                    });
+
+                    it('should not overwrite an existing payment on the campaign', function() {
+                        campaign.paymentMethod = paymentMethods[2].token;
+                        campaignState.campaign = campaign;
+
+                        campaignState.afterModel({ paymentMethods: [] });
+
+                        expect(campaignState.campaign.paymentMethod).toEqual(paymentMethods[2].token);
+                    });
+                });
+            });
         });
     });
 });

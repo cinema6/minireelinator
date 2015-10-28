@@ -236,6 +236,16 @@ function( angular , c6State  , PaginatedListState                    ,
                         paymentMethods: cinema6.db.findAll('paymentMethod')
                     });
                 };
+
+                this.afterModel = function(model) {
+                    var primaryPaymentMethod = model.paymentMethods
+                        .filter(function(method) {
+                            return method.default;
+                        })[0] || {};
+
+                    this.campaign.paymentMethod = this.campaign.paymentMethod ||
+                        primaryPaymentMethod.token;
+                };
             }]);
         }])
 
@@ -262,6 +272,7 @@ function( angular , c6State  , PaginatedListState                    ,
             function handleError(err) {
                 // Show alert? Show indicator?
                 $log.error('Could not save the Campaign', err);
+                SelfieCampaignCtrl.blockSave = false;
             }
 
             function watchForPreview(params, oldParams) {
@@ -318,11 +329,6 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.initWithModel = function(model) {
-                var primaryPaymentMethod = model.paymentMethods
-                    .filter(function(method) {
-                        return method.default;
-                    })[0] || {};
-
                 this.logos = model.logos;
                 this.categories = model.categories;
                 this.paymentMethods = model.paymentMethods;
@@ -331,10 +337,19 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.campaign = cState.campaign;
                 this.advertiser = cState.advertiser;
 
-                this.campaign.paymentMethod = primaryPaymentMethod.token;
-
                 this._proxyCard = copy(this.card);
                 this._proxyCampaign = copy(this.campaign);
+            };
+
+            this.backToDashboard = function() {
+                if (this.shouldSave) {
+                    this.blockSave = true;
+                    saveCampaign()
+                        .then(returnToDashboard)
+                        .catch(handleError);
+                } else {
+                    returnToDashboard();
+                }
             };
 
             this.save = function() {
@@ -353,7 +368,11 @@ function( angular , c6State  , PaginatedListState                    ,
             }, this);
 
             // debounce the auto-save
-            this.autoSave = c6Debounce(SelfieCampaignCtrl.save, 5000);
+            this.autoSave = c6Debounce(function() {
+                if (SelfieCampaignCtrl.blockSave) { return; }
+
+                SelfieCampaignCtrl.save();
+            }, 5000);
 
             // watch for saving only
             $scope.$watch(function() {
@@ -913,8 +932,10 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieManageCampaignController', ['$scope','cState','c6AsyncQueue','CampaignService','c6State',
-        function                                      ( $scope , cState , c6AsyncQueue , CampaignService , c6State ) {
+        .controller('SelfieManageCampaignController', ['$scope','cState','c6State',
+                                                       'c6AsyncQueue','CampaignService',
+        function                                      ( $scope , cState , c6State ,
+                                                        c6AsyncQueue , CampaignService ) {
             var queue = c6AsyncQueue();
 
             Object.defineProperties(this, {
