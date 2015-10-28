@@ -272,7 +272,6 @@ function( angular , c6State  , PaginatedListState                    ,
             function handleError(err) {
                 // Show alert? Show indicator?
                 $log.error('Could not save the Campaign', err);
-                SelfieCampaignCtrl.blockSave = false;
             }
 
             function watchForPreview(params, oldParams) {
@@ -341,17 +340,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 this._proxyCampaign = copy(this.campaign);
             };
 
-            this.backToDashboard = function() {
-                if (this.shouldSave) {
-                    this.blockSave = true;
-                    saveCampaign()
-                        .then(returnToDashboard)
-                        .catch(handleError);
-                } else {
-                    returnToDashboard();
-                }
-            };
-
             this.save = function() {
                 $log.info('saving');
 
@@ -368,11 +356,7 @@ function( angular , c6State  , PaginatedListState                    ,
             }, this);
 
             // debounce the auto-save
-            this.autoSave = c6Debounce(function() {
-                if (SelfieCampaignCtrl.blockSave) { return; }
-
-                SelfieCampaignCtrl.save();
-            }, 5000);
+            this.autoSave = c6Debounce(SelfieCampaignCtrl.save, 5000);
 
             // watch for saving only
             $scope.$watch(function() {
