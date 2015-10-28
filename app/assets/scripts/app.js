@@ -753,9 +753,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
             }]);
 
-            $provide.constant('SelfieCampaignAdapter', ['config','$http','$q','cinema6',
+            $provide.constant('SelfieCampaignAdapter', ['config','$http','$q',
                                                         'MiniReelService',
-            function                                   ( config , $http , $q , cinema6 ,
+            function                                   ( config , $http , $q ,
                                                          MiniReelService ) {
                 var adapter = this,
                     convertCardForEditor = MiniReelService.convertCardForEditor,
@@ -772,23 +772,25 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 }
 
                 function undecorateCampaign(campaign) {
-                    return $q.all((campaign.cards || []).map(convertCardForPlayer))
-                        .then(function(cards) {
-                            return extend(campaign, {
-                                created: undefined,
-                                // advertiserId: undefined,
-                                // customerId: undefined,
-                                cards: campaign.cards ? cards : undefined
-                            });
+                    return $q.all((campaign.cards || []).map(function(card) {
+                        return convertCardForPlayer(card);
+                    })).then(function(cards) {
+                        return extend(campaign, {
+                            created: undefined,
+                            // advertiserId: undefined,
+                            // customerId: undefined,
+                            cards: campaign.cards ? cards : undefined
                         });
+                    });
                 }
 
                 this.decorateCampaign = function(campaign) {
-                    return $q.all((campaign.cards || []).map(convertCardForEditor))
-                        .then(function(cards) {
-                            campaign.cards = cards.length ? cards : undefined;
-                            return campaign;
-                        });
+                    return $q.all((campaign.cards || []).map(function(card) {
+                        return convertCardForEditor(card);
+                    })).then(function(cards) {
+                        campaign.cards = cards.length ? cards : undefined;
+                        return campaign;
+                    });
                 };
 
                 this.findAll = function() {

@@ -78,11 +78,9 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             id: 'cam-1',
                             cards: [
                                 {
-                                    item: {
-                                        params: {},
-                                        collateral: {},
-                                        data: {}
-                                    }
+                                    params: {},
+                                    collateral: {},
+                                    data: {}
                                 }
                             ]
                         },
@@ -90,19 +88,17 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             id: 'cam-2',
                             cards: [
                                 {
-                                    item: {
-                                        params: {
-                                            sponsor: 'Diageo'
-                                        },
-                                        collateral: {
-                                            logo: 'diageo.jpg'
-                                        },
-                                        data: {
-                                            service: 'youtube',
-                                            videoid: '123'
-                                        },
-                                        thumb: 'thumb.jpg'
-                                    }
+                                    params: {
+                                        sponsor: 'Diageo'
+                                    },
+                                    collateral: {
+                                        logo: 'diageo.jpg'
+                                    },
+                                    data: {
+                                        service: 'youtube',
+                                        videoid: '123'
+                                    },
+                                    thumb: 'thumb.jpg'
                                 }
                             ]
                         }
@@ -136,11 +132,9 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                 id: 'cam-1',
                                 cards: [
                                     {
-                                        item: {
-                                            params: {},
-                                            collateral: {},
-                                            data: {}
-                                        }
+                                        params: {},
+                                        collateral: {},
+                                        data: {}
                                     }
                                 ]
                             },
@@ -148,17 +142,15 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                 id: 'cam-2',
                                 cards: [
                                     {
-                                        item: {
-                                            params: {
-                                                sponsor: 'Diageo'
-                                            },
-                                            collateral: {
-                                                logo: 'diageo.jpg'
-                                            },
-                                            data: {
-                                                service: 'youtube',
-                                                videoid: '123'
-                                            }
+                                        params: {
+                                            sponsor: 'Diageo'
+                                        },
+                                        collateral: {
+                                            logo: 'diageo.jpg'
+                                        },
+                                        data: {
+                                            service: 'youtube',
+                                            videoid: '123'
                                         }
                                     }
                                 ]

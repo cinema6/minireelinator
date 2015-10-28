@@ -72,80 +72,65 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
         });
 
         describe('methods', function() {
-            describe('create(type)', function() {
-                describe('when type === campaign', function() {
-                    var result;
+            describe('create()', function() {
+                var result, cardResult;
 
-                    beforeEach(function() {
-                        result = CampaignService.create('campaign');
-                    });
+                beforeEach(function() {
+                    result = CampaignService.create();
+                    cardResult = result.cards[0];
+                });
 
-                    it('should create a new campaign', function() {
-                        expect(cinema6.db.create).toHaveBeenCalledWith('selfieCampaign', {
-                            advertiserId: selfie.cModel.advertiser.id,
-                            customerId: selfie.cModel.customer.id,
-                            name: null,
-                            pricing: {},
-                            status: 'draft',
-                            application: 'selfie',
-                            advertiserDisplayName: selfie.cModel.company,
-                            contentCategories: {
-                                primary: null
+                it('should create a new card', function() {
+                    expect(MiniReelService.createCard).toHaveBeenCalledWith('video');
+                });
+
+                it('should create a new campaign', function() {
+                    expect(cinema6.db.create).toHaveBeenCalledWith('selfieCampaign', {
+                        advertiserId: selfie.cModel.advertiser.id,
+                        customerId: selfie.cModel.customer.id,
+                        name: undefined,
+                        pricing: {},
+                        status: 'draft',
+                        application: 'selfie',
+                        advertiserDisplayName: selfie.cModel.company,
+                        paymentMethod: undefined,
+                        targeting: {
+                            geo: {
+                                states: [],
+                                dmas: []
                             },
-                            targeting: {
-                                geo: {
-                                    states: [],
-                                    dmas: []
-                                },
-                                demographics: {
-                                    age: [],
-                                    gender: [],
-                                    income: []
-                                },
-                                interests: []
-                            }
-                        });
-                    });
-
-                    it('should be a new campaign object', function() {
-                        expect(result).toEqual(dbModel);
+                            demographics: {
+                                age: [],
+                                gender: [],
+                                income: []
+                            },
+                            interests: []
+                        },
+                        cards: [cardResult]
                     });
                 });
 
-                describe('when type === card', function() {
-                    var result;
-
-                    beforeEach(function() {
-                        result = CampaignService.create('card');
+                it('should add Selfie default values to the card', function() {
+                    expect(cardResult.id).toBe(undefined);
+                    expect(cardResult.campaignId).toBe(undefined);
+                    expect(cardResult.campaign.minViewTime).toBe(3);
+                    expect(cardResult.sponsored).toBe(true);
+                    expect(cardResult.collateral.logo).toBe(undefined);
+                    expect(cardResult.links).toEqual({});
+                    expect(cardResult.params).toEqual({
+                        ad: true,
+                        action: null
                     });
+                    expect(cardResult.data).toEqual(jasmine.objectContaining({
+                        autoadvance: false,
+                        controls: false,
+                        autoplay: true,
+                        skip: 30
+                    }));
+                });
 
-                    it('should create a new card', function() {
-                        expect(MiniReelService.createCard).toHaveBeenCalledWith('video');
-                        expect(cinema6.db.create).toHaveBeenCalledWith('card', cardTemplate);
-                    });
-
-                    it('should add Selfie default values', function() {
-                        expect(result.id).toBe(undefined);
-                        expect(result.campaignId).toBe(undefined);
-                        expect(result.campaign.minViewTime).toBe(3);
-                        expect(result.sponsored).toBe(true);
-                        expect(result.collateral.logo).toBe(null);
-                        expect(result.links).toEqual({});
-                        expect(result.params).toEqual({
-                            ad: true,
-                            action: null
-                        });
-                        expect(result.data).toEqual(jasmine.objectContaining({
-                            autoadvance: false,
-                            controls: false,
-                            autoplay: true,
-                            skip: 30
-                        }));
-                    });
-
-                    it('should add campaign data', function() {
-                        expect(result).toEqual(dbModel);
-                    });
+                it('should be a new campaign object', function() {
+                    expect(result).toEqual(dbModel);
                 });
             });
 

@@ -260,6 +260,7 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function handleError(err) {
+                // Show alert? Show indicator?
                 $log.error('Could not save the Campaign', err);
             }
 

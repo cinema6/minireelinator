@@ -35,9 +35,7 @@ define(['app'], function(appModule) {
             campaign = {
                 id: 'cam-c3fd97889f4fb9',
                 name: '$$$',
-                cards: [{
-                    item: card
-                }]
+                cards: [card]
             };
 
             spyOn(CampaignService, 'normalize').and.returnValue(campaign);

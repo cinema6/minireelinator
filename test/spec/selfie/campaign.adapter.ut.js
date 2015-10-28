@@ -31,7 +31,8 @@ define(['app', 'angular'], function(appModule, angular) {
             $rootScope,
             $q,
             $httpBackend,
-            cinema6;
+            cinema6,
+            MiniReelService;
 
         var success, failure;
 
@@ -47,6 +48,14 @@ define(['app', 'angular'], function(appModule, angular) {
                 $q = $injector.get('$q');
                 $httpBackend = $injector.get('$httpBackend');
                 cinema6 = $injector.get('cinema6');
+                MiniReelService = $injector.get('MiniReelService');
+
+                spyOn(MiniReelService, 'convertCardForEditor').and.callFake(function(card) {
+                    return card;
+                });
+                spyOn(MiniReelService, 'convertCardForPlayer').and.callFake(function(card) {
+                    return card;
+                });
 
                 CampaignAdapter.config = {
                     apiBase: '/api'
@@ -62,7 +71,7 @@ define(['app', 'angular'], function(appModule, angular) {
         });
 
         describe('decorateCampaign(campaign)', function() {
-            var campaign, sponsoredCards, cards;
+            var campaign;
 
             beforeEach(function() {
                 campaign = {
@@ -81,26 +90,6 @@ define(['app', 'angular'], function(appModule, angular) {
                     ]
                 };
 
-                sponsoredCards = campaign.cards.slice().map(function(item) { return copy(item); });
-
-                cards = {
-                    'rc-223a31e4d985c4': {
-                        id: 'rc-223a31e4d985c4',
-                        title: 'You NEED to Buy This Thing!'
-                    },
-                    'rc-06f6db8ba1877f': {
-                        id: 'rc-06f6db8ba1877f',
-                        title: 'This Product Will Fix EVERYTHING in Your Life!'
-                    }
-                };
-
-                spyOn(cinema6.db, 'find').and.callFake(function(type, id) {
-                    return cards[id] ? $q.when(cards[id]) : $q.reject({
-                        data: '404 NOT FOUND',
-                        code: 404
-                    });
-                });
-
                 $rootScope.$apply(function() {
                     adapter.decorateCampaign(campaign).then(success, failure);
                 });
@@ -110,14 +99,9 @@ define(['app', 'angular'], function(appModule, angular) {
                 expect(success).toHaveBeenCalledWith(campaign);
             });
 
-            it('should decorate references to cards and minireels with actual objects', function() {
-                expect(campaign.cards).toEqual(sponsoredCards.map(function(data) {
-                    return {
-                        endDate: data.endDate && new Date(data.endDate),
-                        item: cards[data.id],
-                        id: data.id
-                    };
-                }));
+            it('should convert the cards for editor', function() {
+                expect(MiniReelService.convertCardForEditor).toHaveBeenCalledWith(campaign.cards[0]);
+                expect(MiniReelService.convertCardForEditor).toHaveBeenCalledWith(campaign.cards[1]);
             });
 
             it('should handle a campaign with no cards', function() {
@@ -302,23 +286,16 @@ define(['app', 'angular'], function(appModule, angular) {
                         {
                             endDate: null,
                             id: 'rc-e7d87387399afb',
-                            item: {
-                                id: 'rc-e7d87387399afb',
-                                type: 'vimeo',
-                                endDate: null,
-                                data: {
-                                    autoplay: true
-                                }
+                            type: 'vimeo',
+                            data: {
+                                autoplay: true
                             }
                         },
                         {
                             endDate: new Date().toISOString(),
                             id: 'rc-eba4ebd9796e24',
-                            item: {
-                                id: 'rc-eba4ebd9796e24',
-                                type: 'youtube',
-                                data: {}
-                            }
+                            type: 'youtube',
+                            data: {}
                         }
                     ],
                     categories: [],
@@ -328,28 +305,24 @@ define(['app', 'angular'], function(appModule, angular) {
                     customerId: 'cus-5156b33a6f834c',
                 };
 
-                postData = extend(campaign, {
-                    cards: campaign.cards.map(function(data) {
-                        return {
-                            endDate: data.endDate,
-                            id: data.id
-                        };
-                    })
-                });
-
-                response = extend(postData, {
+                response = extend(campaign, {
                     id: 'c-b2532a42ea21d6',
                     created: (new Date()).toISOString()
                 });
 
                 spyOn(adapter, 'decorateCampaign').and.returnValue($q.when(response));
 
-                $httpBackend.expectPOST('/api/campaign', postData)
+                $httpBackend.expectPOST('/api/campaign', campaign)
                     .respond(201, response);
 
                 adapter.create('campaign', campaign).then(success, failure);
 
                 $httpBackend.flush();
+            });
+
+            it('should convert the cards for the player', function() {
+                expect(MiniReelService.convertCardForPlayer).toHaveBeenCalledWith(campaign.cards[0]);
+                expect(MiniReelService.convertCardForPlayer).toHaveBeenCalledWith(campaign.cards[1]);
             });
 
             it('should return the response in an array', function() {
@@ -361,10 +334,10 @@ define(['app', 'angular'], function(appModule, angular) {
             });
 
             it('should handle a campaign with no cards array', function() {
-                delete postData.cards;
+                // delete postData.cards;
                 delete campaign.cards;
 
-                response = extend(postData, {
+                response = extend(campaign, {
                     id: 'c-b2532a42ea21d6',
                     created: (new Date()).toISOString()
                 });
@@ -404,10 +377,10 @@ define(['app', 'angular'], function(appModule, angular) {
         });
 
         describe('update(type, model)', function() {
-            var rawCampaign, campaign, response;
+            var campaign, response;
 
             beforeEach(function() {
-                rawCampaign = {
+                campaign = {
                     id: 'c-2d56941fa19b69',
                     created: '2014-12-01T23:26:46.182Z',
                     advertiserId: 'a-6d54ea5400aa8e',
@@ -420,31 +393,22 @@ define(['app', 'angular'], function(appModule, angular) {
                     ]
                 };
 
-                spyOn(cinema6.db, 'find').and.callFake(function(type, id) {
-                    return $q.when({
-                        id: id,
-                        title: type
-                    });
-                });
-
-                $rootScope.$apply(function() {
-                    adapter.decorateCampaign(copy(rawCampaign)).then(function(_campaign) {
-                        campaign = _campaign;
-                    });
-                });
-
-                response = extend(rawCampaign, {
+                response = extend(campaign, {
                     lastUpdated: (new Date()).toISOString()
                 });
 
                 spyOn(adapter, 'decorateCampaign').and.returnValue($q.when(response));
 
-                $httpBackend.expectPUT('/api/campaign/' + campaign.id, without(['created'], rawCampaign))
+                $httpBackend.expectPUT('/api/campaign/' + campaign.id, without(['created'], campaign))
                     .respond(200, response);
 
                 adapter.update('campaign', campaign).then(success, failure);
 
                 $httpBackend.flush();
+            });
+
+            it('should convert the cards for the player', function() {
+                expect(MiniReelService.convertCardForPlayer).toHaveBeenCalledWith(campaign.cards[0]);
             });
 
             it('should resolve to the response in an array', function() {
