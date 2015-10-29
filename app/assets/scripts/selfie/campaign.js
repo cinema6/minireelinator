@@ -258,9 +258,9 @@ function( angular , c6State  , PaginatedListState                    ,
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Campaign', ['cinema6','SelfieLogoService',
-                                                      'c6State','$q',
+                                                      'c6State','$q','ConfirmDialogService',
             function                                 ( cinema6 , SelfieLogoService ,
-                                                       c6State , $q ) {
+                                                       c6State , $q , ConfirmDialogService ) {
                 var SelfieState = c6State.get('Selfie');
 
                 this.templateUrl = 'views/selfie/campaigns/campaign.html';
@@ -298,6 +298,40 @@ function( angular , c6State  , PaginatedListState                    ,
 
                     this.campaign.paymentMethod = this.campaign.paymentMethod ||
                         primaryPaymentMethod.token;
+                };
+
+                this.exit = function() {
+                    var deferred = $q.defer();
+
+                    if (this._campaign.status === 'draft') {
+                        this.saveCampaign()
+                            .then(function() {
+                                deferred.resolve();
+                            })
+                            .catch(function() {
+                                ConfirmDialogService.display({
+                                    prompt: 'There was a problem saving your campaign, would you like' +
+                                        ' to stay on this page to edit the campaign?',
+                                    affirm: 'Yes, stay on this page',
+                                    cancel: 'No',
+
+                                    onCancel: function() {
+                                        deferred.resolve();
+
+                                        return ConfirmDialogService.close();
+                                    },
+                                    onAffirm: function() {
+                                        deferred.reject();
+
+                                        return ConfirmDialogService.close();
+                                    }
+                                });
+                            });
+                    } else {
+                        deferred.resolve();
+                    }
+
+                    return deferred.promise;
                 };
 
                 this.saveCampaign = function() {
