@@ -19,34 +19,33 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         return target;
     }
 
-    describe('SelfieManageCampaignController', function() {
+    describe('SelfieManageCampaignAdminController', function() {
         var $rootScope,
             $scope,
             $controller,
             c6State,
             cinema6,
             MiniReelService,
-            SelfieManageCampaignCtrl;
+            SelfieManageCampaignAdminCtrl;
 
         var cState,
             campaign,
             card,
-            categories,
-            paymentMethods;
+            updateRequest;
 
         var debouncedFns;
 
         function compileCtrl(cState, model) {
             $scope = $rootScope.$new();
             $scope.$apply(function() {
-                SelfieManageCampaignCtrl = $controller('SelfieManageCampaignController', {
+                SelfieManageCampaignAdminCtrl = $controller('SelfieManageCampaignAdminController', {
                     $scope: $scope,
                     cState: {
                         card: cState.card,
                         campaign: cState.campaign
                     }
                 });
-                SelfieManageCampaignCtrl.initWithModel(model);
+                SelfieManageCampaignAdminCtrl.initWithModel(model);
             });
         }
 
@@ -77,12 +76,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 MiniReelService = $injector.get('MiniReelService');
             });
 
-            c6State.get('Selfie').cModel = {
-                entitlements: {
-                    adminCampaigns: true
-                }
-            };
-
             campaign = cinema6.db.create('selfieCampaign', {
                 name: null,
                 categories: [],
@@ -90,8 +83,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 pricing: {},
                 geoTargeting: [],
                 status: 'draft',
-                appllication: 'selfie',
-                paymentMethod: undefined
+                appllication: 'selfie'
             });
             card = deepExtend(cinema6.db.create('card', MiniReelService.createCard('video')), {
                 id: undefined,
@@ -116,8 +108,18 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     skip: 30
                 }
             });
-            categories = [];
-            paymentMethods = [];
+            updateRequest = {
+                id: 'ur-12345',
+                status: 'pending',
+                data: {
+                    name: 'Updated Name',
+                    cards: [
+                        {
+                            title: 'Updated Title'
+                        }
+                    ]
+                }
+            };
 
             cState = {
                 campaign: campaign,
@@ -125,60 +127,61 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             };
 
             compileCtrl(cState, {
-                categories: categories,
-                paymentMethods: paymentMethods
+                updateRequest: updateRequest
             });
         });
 
         it('should exist', function() {
-            expect(SelfieManageCampaignCtrl).toEqual(jasmine.any(Object));
+            expect(SelfieManageCampaignAdminCtrl).toEqual(jasmine.any(Object));
         });
 
         describe('properties', function() {
-            describe('canSubmit', function() {
-                it('should only be true when required propeties are set', function() {
-                    expect(SelfieManageCampaignCtrl.canSubmit).toBe(false);
-
-                    SelfieManageCampaignCtrl.campaign.paymentMethod = 'pay-1234';
-                    expect(SelfieManageCampaignCtrl.canSubmit).toBe(true);
-                });
-            });
         });
 
         describe('methods', function() {
             describe('initWithModel(model)', function() {
-                it('should set properties on the Ctrl', function() {
-                    $scope.$apply(function() {
-                        SelfieManageCampaignCtrl.card = null;
-                        SelfieManageCampaignCtrl.campaign = null;
-                        SelfieManageCampaignCtrl.categories = null;
-                        SelfieManageCampaignCtrl.paymentMethods = null;
 
-                        SelfieManageCampaignCtrl.initWithModel({categories: categories, paymentMethods: paymentMethods});
+                describe('when there is an updateRequest', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            SelfieManageCampaignAdminCtrl.initWithModel({updateRequest: updateRequest});
+                        });
+                    })
+
+                    it('should set properties on the Ctrl', function() {
+                        expect(SelfieManageCampaignAdminCtrl.showApproval).toBe(true);
+                        expect(SelfieManageCampaignAdminCtrl.campaign).toBe(campaign);
+                        expect(SelfieManageCampaignAdminCtrl.card).toBe(card);
+                        expect(SelfieManageCampaignAdminCtrl.updatedCampaign).not.toBe(campaign);
+                        expect(SelfieManageCampaignAdminCtrl.updatedCampaign.name).toBe('Updated Name');
+                        expect(SelfieManageCampaignAdminCtrl.updatedCard).not.toBe(campaign);
+                        expect(SelfieManageCampaignAdminCtrl.updatedCard.title).toBe('Updated Title');
+                        expect(SelfieManageCampaignAdminCtrl.previewCard).not.toBe(SelfieManageCampaignAdminCtrl.updatedCard);
+                        expect(SelfieManageCampaignAdminCtrl.previewCard).toEqual(copy(SelfieManageCampaignAdminCtrl.updatedCard));
+                        expect(SelfieManageCampaignAdminCtrl.rejectionReason).toBe('');
                     });
-
-                    expect(SelfieManageCampaignCtrl.card).toEqual(card);
-                    expect(SelfieManageCampaignCtrl.campaign).toEqual(campaign);
-                    expect(SelfieManageCampaignCtrl.categories).toEqual(categories);
-                    expect(SelfieManageCampaignCtrl.paymentMethods).toEqual(paymentMethods);
-                    expect(SelfieManageCampaignCtrl.showAdminTab).toBe(true);
-                });
-            });
-
-            describe('update()', function() {
-                beforeEach(function() {
-                    spyOn(SelfieManageCampaignCtrl.campaign, 'save');
                 });
 
-                it('should be wrapped in a c6AsyncQueue', function() {
-                    expect(debouncedFns).toContain(SelfieManageCampaignCtrl.update);
+                describe('when there is no updateRequest', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            SelfieManageCampaignAdminCtrl.initWithModel({updateRequest: null});
+                        });
+                    })
+
+                    it('should set properties on the Ctrl', function() {
+                        expect(SelfieManageCampaignAdminCtrl.showApproval).toBe(false);
+                        expect(SelfieManageCampaignAdminCtrl.campaign).toBe(campaign);
+                        expect(SelfieManageCampaignAdminCtrl.card).toBe(card);
+                        expect(SelfieManageCampaignAdminCtrl.updatedCampaign).not.toBe(campaign);
+                        expect(SelfieManageCampaignAdminCtrl.updatedCampaign).toEqual(copy(campaign));
+                        expect(SelfieManageCampaignAdminCtrl.updatedCard).not.toBe(card);
+                        expect(SelfieManageCampaignAdminCtrl.updatedCard).toEqual(copy(card));
+                        expect(SelfieManageCampaignAdminCtrl.previewCard).toBe(null);
+                        expect(SelfieManageCampaignAdminCtrl.rejectionReason).toBe('');
+                    });
                 });
 
-                it('should save the campaign/card and return to dashboard on success', function() {
-                    SelfieManageCampaignCtrl.update();
-
-                    expect(SelfieManageCampaignCtrl.campaign.save).toHaveBeenCalled();
-                });
             });
         });
     });

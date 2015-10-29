@@ -19,34 +19,42 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         return target;
     }
 
-    describe('SelfieManageCampaignController', function() {
+    describe('SelfieCampaignAdminController', function() {
         var $rootScope,
             $scope,
             $controller,
+            $timeout,
+            $q,
             c6State,
+            c6Debounce,
             cinema6,
             MiniReelService,
-            SelfieManageCampaignCtrl;
+            SelfieCampaignCtrl;
 
         var cState,
             campaign,
             card,
             categories,
-            paymentMethods;
+            logos,
+            paymentMethods,
+            advertiser;
 
-        var debouncedFns;
+        var saveCardDeferred,
+            saveCampaignDeferred,
+            debouncedFns;
 
         function compileCtrl(cState, model) {
             $scope = $rootScope.$new();
             $scope.$apply(function() {
-                SelfieManageCampaignCtrl = $controller('SelfieManageCampaignController', {
+                SelfieCampaignCtrl = $controller('SelfieCampaignController', {
                     $scope: $scope,
                     cState: {
                         card: cState.card,
-                        campaign: cState.campaign
+                        campaign: cState.campaign,
+                        advertiser: cState.advertiser
                     }
                 });
-                SelfieManageCampaignCtrl.initWithModel(model);
+                SelfieCampaignCtrl.initWithModel(model);
             });
         }
 
@@ -69,29 +77,56 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 });
             });
 
+            module(c6uilib.name, function($provide) {
+                $provide.decorator('c6Debounce', function($delegate) {
+                    return jasmine.createSpy('c6Debounce()').and.callFake(function(fn, time) {
+                        c6Debounce.debouncedFn = fn;
+                        spyOn(c6Debounce, 'debouncedFn');
+
+                        return $delegate.call(null, c6Debounce.debouncedFn, time);
+                    });
+                });
+            });
+
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
+                $q = $injector.get('$q');
+                $timeout = $injector.get('$timeout');
                 c6State = $injector.get('c6State');
+                c6Debounce = $injector.get('c6Debounce');
                 cinema6 = $injector.get('cinema6');
                 MiniReelService = $injector.get('MiniReelService');
             });
 
-            c6State.get('Selfie').cModel = {
-                entitlements: {
-                    adminCampaigns: true
+            advertiser = {
+                id: 'a-123',
+                defaultLogos: {
+                    square: '/square-logo.jpg'
                 }
             };
-
             campaign = cinema6.db.create('selfieCampaign', {
                 name: null,
-                categories: [],
                 cards: [],
                 pricing: {},
-                geoTargeting: [],
                 status: 'draft',
                 appllication: 'selfie',
-                paymentMethod: undefined
+                advertiserDisplayName: 'My Company',
+                contentCategories: {
+                    primary: null
+                },
+                targeting: {
+                    geo: {
+                        states: [],
+                        dmas: []
+                    },
+                    demographics: {
+                        age: [],
+                        gender: [],
+                        income: []
+                    },
+                    interests: []
+                }
             });
             card = deepExtend(cinema6.db.create('card', MiniReelService.createCard('video')), {
                 id: undefined,
@@ -101,11 +136,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 },
                 sponsored: true,
                 collateral: {
-                    logo: null
+                    logo: advertiser.defaultLogos && advertiser.defaultLogos.square ?
+                        advertiser.defaultLogos.square :
+                        null
                 },
-                links: {},
+                links: advertiser.defaultLinks || {},
                 params: {
-                    sponsor: 'Advertiser Name',
                     ad: true,
                     action: null
                 },
@@ -117,69 +153,25 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 }
             });
             categories = [];
+            logos = [];
             paymentMethods = [];
 
             cState = {
                 campaign: campaign,
-                card: card
+                card: card,
+                advertiser: advertiser
             };
 
             compileCtrl(cState, {
                 categories: categories,
+                logos: logos,
                 paymentMethods: paymentMethods
             });
         });
 
         it('should exist', function() {
-            expect(SelfieManageCampaignCtrl).toEqual(jasmine.any(Object));
+            expect(SelfieCampaignCtrl).toEqual(jasmine.any(Object));
         });
 
-        describe('properties', function() {
-            describe('canSubmit', function() {
-                it('should only be true when required propeties are set', function() {
-                    expect(SelfieManageCampaignCtrl.canSubmit).toBe(false);
-
-                    SelfieManageCampaignCtrl.campaign.paymentMethod = 'pay-1234';
-                    expect(SelfieManageCampaignCtrl.canSubmit).toBe(true);
-                });
-            });
-        });
-
-        describe('methods', function() {
-            describe('initWithModel(model)', function() {
-                it('should set properties on the Ctrl', function() {
-                    $scope.$apply(function() {
-                        SelfieManageCampaignCtrl.card = null;
-                        SelfieManageCampaignCtrl.campaign = null;
-                        SelfieManageCampaignCtrl.categories = null;
-                        SelfieManageCampaignCtrl.paymentMethods = null;
-
-                        SelfieManageCampaignCtrl.initWithModel({categories: categories, paymentMethods: paymentMethods});
-                    });
-
-                    expect(SelfieManageCampaignCtrl.card).toEqual(card);
-                    expect(SelfieManageCampaignCtrl.campaign).toEqual(campaign);
-                    expect(SelfieManageCampaignCtrl.categories).toEqual(categories);
-                    expect(SelfieManageCampaignCtrl.paymentMethods).toEqual(paymentMethods);
-                    expect(SelfieManageCampaignCtrl.showAdminTab).toBe(true);
-                });
-            });
-
-            describe('update()', function() {
-                beforeEach(function() {
-                    spyOn(SelfieManageCampaignCtrl.campaign, 'save');
-                });
-
-                it('should be wrapped in a c6AsyncQueue', function() {
-                    expect(debouncedFns).toContain(SelfieManageCampaignCtrl.update);
-                });
-
-                it('should save the campaign/card and return to dashboard on success', function() {
-                    SelfieManageCampaignCtrl.update();
-
-                    expect(SelfieManageCampaignCtrl.campaign.save).toHaveBeenCalled();
-                });
-            });
-        });
     });
 });

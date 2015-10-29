@@ -28,7 +28,8 @@ function( angular , c6State  , PaginatedListState                    ,
         return target;
     }
 
-    // Adapted from a newer version of Angular
+    /* Adapted from Angular 1.4.7, modified to not handle regular expressions.
+        Used for merging objects. */
     function baseExtend(dst, objs, deep) {
         for (var i = 0, ii = objs.length; i < ii; ++i) {
             var obj = objs[i];
@@ -56,7 +57,8 @@ function( angular , c6State  , PaginatedListState                    ,
         return dst;
     }
 
-    // Adapted from a newer version of Angular
+    /* Adapted from Angular 1.4.7 as the currently used version of Angular
+        does not include a merge function. */
     function merge(dst) {
         return baseExtend(dst, [].slice.call(arguments, 1), true);
     }
@@ -1016,11 +1018,11 @@ function( angular , c6State  , PaginatedListState                    ,
             // };
 
             this.initWithModel = function(model) {
+                var user = c6State.get('Selfie').cModel;
                 this.card = cState.card;
                 this.campaign = cState.campaign;
                 this.categories = model.categories;
                 this.paymentMethods = model.paymentMethods;
-                var user = c6State.get('Selfie').cModel;
                 this.showAdminTab = (user.entitlements.adminCampaigns === true);
             };
 
@@ -1086,12 +1088,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.model = function() {
                     var model = {
-                        initialRequest: null,
                         updateRequest: null
                     };
                     if(this.campaign.updateRequest) {
                         var updateHash = this.campaign.id + ':' + this.campaign.updateRequest;
-                        model.initialRequest = (this.campaign.status === 'pendingApproval');
                         model.updateRequest = cinema6.db.find('updateRequest', updateHash);
                     }
                     return $q.all(model);
@@ -1105,26 +1105,27 @@ function( angular , c6State  , PaginatedListState                    ,
                                                              $scope ,  c6Debounce ){
             var self = this;
 
-            self.rejectionReason = '';
-
-            $scope.$parent.$parent.SelfieManageCampaignCtrl.tab = 'admin';
+            //$scope.$parent.$parent.SelfieManageCampaignCtrl.tab = 'admin';
 
             this.initWithModel = function(model) {
-                self.campaign = cState.campaign;
-                self.card = cState.card;
-                self.showApproval = false;
                 var updateRequest = model.updateRequest;
+                extend(self, {
+                    showApproval: false,
+                    campaign: cState.campaign,
+                    card: cState.card,
+                    updatedCampaign: copy(cState.campaign),
+                    updatedCard: copy(cState.card),
+                    previewCard: null,
+                    rejectionReason: ''
+                });
                 if(updateRequest) {
-                    self.updateRequest = updateRequest;
                     var updates = updateRequest.data;
-                    var firstUpdate = model.initialRequest;
-                    self.showApproval = true;
-                    self.firstUpdate = firstUpdate;
-                    self.updatedCampaign = copy(self.campaign);
                     merge(self.updatedCampaign, updates);
-                    self.updatedCard = copy(self.card);
                     merge(self.updatedCard, (updates.cards || [{}])[0]);
-                    self.previewCard = copy(self.updatedCard);
+                    extend(self, {
+                        showApproval: true,
+                        previewCard: copy(self.updatedCard)
+                    });
                 }
             };
 
