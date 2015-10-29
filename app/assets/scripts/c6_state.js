@@ -734,8 +734,8 @@ function( angular , c6uilib ) {
 
                 function qSeries(fns) {
                     return fns.reduce(function(promise, fn) {
-                        return promise ? promise.then(fn) : $q.when(fn());
-                    }, null);
+                        return promise.then(fn);
+                    }, $q.when());
                 }
 
                 function routePathToState() {
@@ -837,6 +837,7 @@ function( angular , c6uilib ) {
 
                 this.goTo = queue.wrap(function(stateName, models, params, replace) {
                     var state = this.get(stateName),
+                        current = this.get(this.current) || null,
                         family = stateFamilyOf(state),
                         statesWithModels = (models && models.length) ?
                             family.slice(-models.length) : [];
@@ -845,7 +846,8 @@ function( angular , c6uilib ) {
                         state.cModel = models[index];
                     });
 
-                    return _private.resolveStates(family, params || null)
+                    return _private.exitState(current, state)
+                        .then(function() { return _private.resolveStates(family, params || null); })
                         .then(_private.renderStates)
                         .then(function syncUrl(states) {
                             return _private.syncUrl(states, !!replace);
@@ -963,6 +965,24 @@ function( angular , c6uilib ) {
                     }
 
                     return path;
+                };
+
+                _private.exitState = function(current, next) {
+                    var currentFamily = stateFamilyOf(current);
+                    var nextFamily = stateFamilyOf(next);
+                    var exiting = currentFamily.filter(function(state) {
+                        return nextFamily.indexOf(state) < 0;
+                    });
+
+                    if (!current) { return $q.when(null); }
+
+                    return qSeries(exiting.reverse().map(function(state) {
+                        return function() {
+                            return (state.exit || noop).call(state, next);
+                        };
+                    })).then(function() {
+                        return current;
+                    });
                 };
 
                 _private.resolveStates = function(states, params) {
