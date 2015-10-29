@@ -2,7 +2,7 @@
     <div class="pmtDropdown">
     <!-- current payment method-->
         <button ng-click="SelfiePaymentMethodsCtrl.toggleDropdown()" class="btn pmtDropdown__btn default" ng-class="{ 'pmtDropdown__single': methods.length < 2 }">
-            <span ng-if="current.type === 'creditCard'" class="ui__clickDrop--bigText">{{current.cardType}} ***{{current.last4}} </span>
+            <span ng-if="current.type === 'creditCard'" class="ui__clickDrop--bigText">{{current.cardType | paymentType}} ***{{current.last4}} </span>
             <span ng-if="current.type === 'paypal'" class="ui__clickDrop--bigText">PayPal </span>
             <span ng-if="current.type === 'creditCard'" class="ui__clickDrop--sub-label"> Expires {{current.expirationDate}}</span>
             <span ng-if="current.type === 'creditCard'" class="ui__clickDrop--sub-label-block">{{current.cardholderName}}<p></p><i ng-if="methods.length > 1" class="fa fa-chevron-down"> </i></span>
@@ -12,7 +12,7 @@
         <ul class="pmtDropdown__menu" ng-show="SelfiePaymentMethodsCtrl.showDropdown" style="display:inherit;">
             <li class="pmtDropdown__menu--item" ng-repeat="method in SelfiePaymentMethodsCtrl.methods">
                 <button ng-click="SelfiePaymentMethodsCtrl.setCurrentMethod(method)" class="ui__clickDropBtn" type="button" title="">
-                    <span ng-if="method.type === 'creditCard'" class="ui__clickDrop--bigText">{{method.cardType}} ***{{method.last4}} </span>
+                    <span ng-if="method.type === 'creditCard'" class="ui__clickDrop--bigText">{{method.cardType | paymentType}} ***{{method.last4}} </span>
                     <span ng-if="method.type === 'paypal'" class="ui__clickDrop--bigText">PayPal </span>
                     <span ng-if="method.type === 'creditCard'" class="ui__clickDrop--sub-label"> Expires {{method.expirationDate}}</span>
                     <span ng-if="method.type === 'creditCard'" class="ui__clickDrop--sub-label-block">{{method.cardholderName}}<p></p></span>

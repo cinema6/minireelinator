@@ -102,21 +102,23 @@ define(['app'], function(appModule) {
                 var success = jasmine.createSpy('success()'),
                     failure = jasmine.createSpy('failure()');
 
-                spyOn(cinema6.db, 'findAll').and.callFake(function(type) {
-                    if (type === 'category') {
-                        return $q.when(categories);
-                    }
-                    if (type === 'paymentMethod') {
-                        return $q.when(paymentMethods);
-                    }
-                });
+                spyOn(cinema6.db, 'findAll').and.returnValue($q.when(paymentMethods));
 
                 $rootScope.$apply(function() {
                     campaignState.model().then(success, failure);
                 });
-                expect(cinema6.db.findAll).toHaveBeenCalledWith('category');
                 expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod');
-                expect(success).toHaveBeenCalledWith({ categories: categories, paymentMethods: paymentMethods });
+                expect(success).toHaveBeenCalledWith({ paymentMethods: paymentMethods });
+            });
+        });
+
+        describe('enter()', function() {
+            it('shoud go to the Selfie:Manage:Campaign:Manage state', function() {
+                spyOn(c6State, 'goTo');
+
+                campaignState.enter();
+
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage');
             });
         });
     });

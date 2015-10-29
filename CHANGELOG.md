@@ -4,7 +4,13 @@
   * [DESIGN]: (Selfie) Moved campaign action buttons out of the tab
   * [DESIGN]: (Selfie) Added description for sections on create campaign
   * [DESIGN]: (Selfie) Added styles for alert modal
-  
+  * [DEV]: (Selfie) Campaign and card are now one entity
+  * [FIX]: (Selfie) Fix for an issue where autosaving could overwrite current UI changes
+  * [FIX]: (Selfie) Stop making a request to upload a og from a URL if no URL is defined
+  * [FIX]: (Selfie) Remove "Targeting" and "Budget" tabs from Manage Campaign screen
+  * [FEATURE]: (Selfie) Add ability to copy and edit active campaigns
+  * [FIX]: (Selfie) Remove content categorization in Campaign Creation
+
 ## v1.23.0 (October 27, 2015)
 * *[v1.23.0.rc3]*
   * [DESIGN]: (Selfie) Added styles for credit card popup

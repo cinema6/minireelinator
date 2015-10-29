@@ -841,6 +841,176 @@
                             });
                         });
 
+                        describe('exitState(current, next)', function() {
+                            var application, posts, postsNew, post, comments, pages, page;
+                            var success, failure;
+
+                            beforeEach(function() {
+                                success = jasmine.createSpy('success');
+                                failure = jasmine.createSpy('failure');
+
+                                c6StateProvider
+                                    .state('Application', function() {
+                                        this.exitDeferred = $q.defer();
+                                        this.exit = jasmine.createSpy('state.exit()').and.callFake(function() {
+                                            return this.exitDeferred.promise;
+                                        });
+                                    })
+                                        .state('Posts', function() {
+                                            this.exitDeferred = $q.defer();
+                                            this.exit = jasmine.createSpy('state.exit()').and.callFake(function() {
+                                                return this.exitDeferred.promise;
+                                            });
+                                        })
+                                            .state('Post', function() {
+                                                this.exitDeferred = $q.defer();
+                                                this.exit = jasmine.createSpy('state.exit()').and.callFake(function() {
+                                                    return this.exitDeferred.promise;
+                                                });
+                                            })
+                                                .state('Comments', function() {
+                                                    this.exitDeferred = $q.defer();
+                                                    this.exit = jasmine.createSpy('state.exit()').and.callFake(function() {
+                                                        return this.exitDeferred.promise;
+                                                    });
+                                                })
+                                            .state('Posts:New', function() {
+                                                this.exitDeferred = $q.defer();
+                                                this.exit = jasmine.createSpy('state.exit()').and.callFake(function() {
+                                                    return this.exitDeferred.promise;
+                                                });
+                                            })
+                                        .state('Pages', function() {
+                                            this.exitDeferred = $q.defer();
+                                            this.exit = jasmine.createSpy('state.exit()').and.callFake(function() {
+                                                return this.exitDeferred.promise;
+                                            });
+                                        })
+                                            .state('Page', function() {
+                                                this.exitDeferred = $q.defer();
+                                                this.exit = jasmine.createSpy('state.exit()').and.callFake(function() {
+                                                    return this.exitDeferred.promise;
+                                                });
+                                            });
+
+                                c6StateProvider.map(function() {
+                                    this.state('Posts', function() {
+                                        this.state('Post', function() {
+                                            this.state('Comments');
+                                        });
+                                        this.state('Posts:New');
+                                    });
+                                    this.state('Pages', function() {
+                                        this.state('Page');
+                                    });
+                                });
+
+                                get();
+
+                                application = c6State.get('Application');
+                                posts = c6State.get('Posts');
+                                post = c6State.get('Post');
+                                postsNew = c6State.get('Posts:New');
+                                comments = c6State.get('Comments');
+                                pages = c6State.get('Pages');
+                                page = c6State.get('Page');
+
+                                $rootScope.$apply(function() {
+                                    _private.exitState(comments, page).then(success, failure);
+                                });
+                            });
+
+                            it('should call exit on each state that is being exited starting at the child-most state', function() {
+                                expect(comments.exit).toHaveBeenCalledWith(page);
+                                expect(post.exit).not.toHaveBeenCalled();
+                                expect(posts.exit).not.toHaveBeenCalled();
+
+                                $rootScope.$apply(function() {
+                                    comments.exitDeferred.resolve();
+                                });
+                                expect(post.exit).toHaveBeenCalledWith(page);
+                                expect(posts.exit).not.toHaveBeenCalled();
+
+                                $rootScope.$apply(function() {
+                                    post.exitDeferred.resolve();
+                                });
+                                expect(posts.exit).toHaveBeenCalledWith(page);
+
+                                expect(success).not.toHaveBeenCalled();
+                                $rootScope.$apply(function() {
+                                    posts.exitDeferred.resolve();
+                                });
+                                expect(application.exit).not.toHaveBeenCalled();
+                                expect(success).toHaveBeenCalledWith(comments);
+                            });
+
+                            describe('if transitioning to a sibling', function() {
+                                beforeEach(function() {
+                                    success.calls.reset();
+                                    failure.calls.reset();
+
+                                    $rootScope.$apply(function() {
+                                        _private.exitState(post, postsNew).then(success, failure);
+                                    });
+                                });
+
+                                it('should only call exit() on the states that are being left', function() {
+                                    expect(post.exit).toHaveBeenCalledWith(postsNew);
+                                    expect(posts.exit).not.toHaveBeenCalled();
+                                    expect(application.exit).not.toHaveBeenCalled();
+
+                                    expect(success).not.toHaveBeenCalled();
+                                    $rootScope.$apply(function() {
+                                        post.exitDeferred.resolve();
+                                    });
+                                    expect(posts.exit).not.toHaveBeenCalled();
+                                    expect(application.exit).not.toHaveBeenCalled();
+                                    expect(success).toHaveBeenCalledWith(post);
+                                });
+                            });
+
+                            describe('if transitioning to a child', function() {
+                                beforeEach(function() {
+                                    success.calls.reset();
+                                    failure.calls.reset();
+
+                                    $rootScope.$apply(function() {
+                                        _private.exitState(posts, post).then(success, failure);
+                                    });
+                                });
+
+                                it('should succeed', function() {
+                                    expect(success).toHaveBeenCalledWith(posts);
+                                });
+                            });
+
+                            describe('if a state doesn\'t have an exit hook', function() {
+                                beforeEach(function() {
+                                    delete post.exit;
+
+                                    $rootScope.$apply(function() {
+                                        comments.exitDeferred.resolve();
+                                    });
+                                });
+
+                                it('should be skipped', function() {
+                                    expect(posts.exit).toHaveBeenCalledWith(page);
+                                });
+                            });
+
+                            describe('if the current state is null', function() {
+                                beforeEach(function() {
+                                    $rootScope.$apply(function() {
+                                        _private.exitState(null, postsNew).then(success, failure);
+                                    });
+                                });
+
+                                it('should fulfill with null', function() {
+                                    expect(success).toHaveBeenCalledWith(null);
+                                });
+                            });
+                        });
+
                         describe('resolveStates(states, params)', function() {
                             var applicationHTML, postsHTML, commentsHTML,
                                 application, posts, post, comments,
@@ -1284,13 +1454,14 @@
 
                         describe('goTo(state, models, params, replace)', function() {
                             var success, failure,
-                                resolveStatesDeferred, renderStatesDeferred,
+                                exitStateDeferred, resolveStatesDeferred, renderStatesDeferred,
                                 application, home, about,
                                 stateChange;
 
                             beforeEach(function() {
                                 stateChange = jasmine.createSpy('stateChange()');
 
+                                exitStateDeferred = $q.defer();
                                 resolveStatesDeferred = $q.defer();
                                 renderStatesDeferred = $q.defer();
 
@@ -1316,6 +1487,8 @@
 
                                 c6State.on('stateChange', stateChange);
 
+                                spyOn(_private, 'exitState')
+                                    .and.returnValue(exitStateDeferred.promise);
                                 spyOn(_private, 'resolveStates')
                                     .and.returnValue(resolveStatesDeferred.promise);
                                 spyOn(_private, 'renderStates')
@@ -1332,6 +1505,7 @@
                             });
 
                             it('should wait for other goTo calls to finish before start a new one', function() {
+                                exitStateDeferred.resolve(null);
                                 $rootScope.$apply(function() {
                                     c6State.goTo('Home');
                                 });
@@ -1361,66 +1535,80 @@
                                     });
                                 });
 
-                                it('should resolve the state', function() {
-                                    expect(_private.resolveStates).toHaveBeenCalledWith([application, home, about], null);
+                                it('should exit the current state', function() {
+                                    expect(_private.exitState).toHaveBeenCalledWith(null, c6State.get('About'));
                                 });
 
-                                describe('when the states are resolved', function() {
+                                describe('when the state is exited', function() {
                                     beforeEach(function() {
-                                        expect(_private.renderStates).not.toHaveBeenCalled();
+                                        expect(_private.resolveStates).not.toHaveBeenCalled();
 
                                         $rootScope.$apply(function() {
-                                            resolveStatesDeferred.resolve([application, home, about]);
+                                            exitStateDeferred.resolve(null);
                                         });
                                     });
 
-                                    it('should render the states', function() {
-                                        expect(_private.renderStates).toHaveBeenCalledWith([application, home, about]);
+                                    it('should resolve the state', function() {
+                                        expect(_private.resolveStates).toHaveBeenCalledWith([application, home, about], null);
                                     });
 
-                                    describe('when the states are rendered', function() {
+                                    describe('when the states are resolved', function() {
                                         beforeEach(function() {
+                                            expect(_private.renderStates).not.toHaveBeenCalled();
+
                                             $rootScope.$apply(function() {
-                                                renderStatesDeferred.resolve([application, home, about]);
+                                                resolveStatesDeferred.resolve([application, home, about]);
                                             });
                                         });
 
-                                        it('should sync the URL', function() {
-                                            expect(_private.syncUrl).toHaveBeenCalledWith([application, home, about], false);
+                                        it('should render the states', function() {
+                                            expect(_private.renderStates).toHaveBeenCalledWith([application, home, about]);
                                         });
 
-                                        describe('in the next $digest()', function() {
+                                        describe('when the states are rendered', function() {
                                             beforeEach(function() {
-                                                $timeout.flush();
-                                            });
-
-                                            it('should resolve to the state being transitioned to', function() {
-                                                expect(success).toHaveBeenCalledWith(about);
-                                            });
-
-                                            it('should not update the query params', function() {
-                                                expect($location.search).not.toHaveBeenCalled();
-                                            });
-
-                                            it('should emit the stateChange event', function() {
-                                                expect(stateChange).toHaveBeenCalledWith(about, null);
-
                                                 $rootScope.$apply(function() {
-                                                    c6State.goTo('Application');
+                                                    renderStatesDeferred.resolve([application, home, about]);
                                                 });
-                                                $timeout.flush();
-
-                                                expect(stateChange).toHaveBeenCalledWith(application, about);
                                             });
 
-                                            it('should call the enter() hook on the state', function() {
-                                                expect(about.enter).toHaveBeenCalled();
+                                            it('should sync the URL', function() {
+                                                expect(_private.syncUrl).toHaveBeenCalledWith([application, home, about], false);
                                             });
 
-                                            it('should set the "current" property', function() {
-                                                expect(c6State.current).toBe(about.cName);
-                                                c6State.in('foo', function() {
-                                                    expect(c6State.current).toBeNull();
+                                            describe('in the next $digest()', function() {
+                                                beforeEach(function() {
+                                                    $timeout.flush();
+                                                });
+
+                                                it('should resolve to the state being transitioned to', function() {
+                                                    expect(success).toHaveBeenCalledWith(about);
+                                                });
+
+                                                it('should not update the query params', function() {
+                                                    expect($location.search).not.toHaveBeenCalled();
+                                                });
+
+                                                it('should emit the stateChange event', function() {
+                                                    expect(stateChange).toHaveBeenCalledWith(about, null);
+
+                                                    $rootScope.$apply(function() {
+                                                        c6State.goTo('Application');
+                                                    });
+                                                    $timeout.flush();
+
+                                                    expect(stateChange).toHaveBeenCalledWith(application, about);
+                                                });
+
+                                                it('should call the enter() hook on the state', function() {
+                                                    expect(about.enter).toHaveBeenCalled();
+                                                });
+
+                                                it('should set the "current" property', function() {
+                                                    expect(c6State.current).toBe(about.cName);
+                                                    c6State.in('foo', function() {
+                                                        expect(c6State.current).toBeNull();
+                                                    });
                                                 });
                                             });
                                         });
@@ -1448,6 +1636,7 @@
 
                             describe('if called with query params', function() {
                                 beforeEach(function() {
+                                    exitStateDeferred.resolve(null);
                                     _private.resolveStates.calls.reset();
 
                                     $location.search.and.returnValue($location);
@@ -1486,6 +1675,7 @@
                             describe('if called with replace as true', function() {
                                 beforeEach(function() {
                                     $rootScope.$apply(function() {
+                                        exitStateDeferred.resolve(null);
                                         _private.syncUrl.calls.reset();
 
                                         c6State.goTo('About', null, null, true);
@@ -1497,6 +1687,23 @@
 
                                 it('should sync the url with replace as true', function() {
                                     expect(_private.syncUrl).toHaveBeenCalledWith([application, about], true);
+                                });
+                            });
+
+                            describe('if already on a state', function() {
+                                beforeEach(function() {
+                                    Object.defineProperty(c6State, 'current', {
+                                        value: 'Application'
+                                    });
+                                    _private.exitState.calls.reset();
+
+                                    $rootScope.$apply(function() {
+                                        c6State.goTo('About');
+                                    });
+                                });
+
+                                it('should call exitState() with the current state and new state', function() {
+                                    expect(_private.exitState).toHaveBeenCalledWith(c6State.get(c6State.current), c6State.get('About'));
                                 });
                             });
                         });

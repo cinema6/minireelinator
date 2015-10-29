@@ -27,7 +27,7 @@
         </div><!--.mainHeader__group-->
         <div class="sortBar__group">
             <ul class="sortBar__list clearfix">
-                <li class="sortBar__item sortBar__item--sortable column__status">
+                <li class="sortBar__item sortBar__item--sortable column__status" c6-click-outside="showDropdown = false">
                     <button class="sortBar__btn" ng-click="showDropdown = !showDropdown" type="button">Status <span class="faa fa-caret-down ui__clickDrop sortBar__btn--Dropdown"> </span></button>
                     <ul class="ui__clickDropMenu" ng-show="showDropdown">
                         <li ng-repeat="filter in SelfieCampaignsCtrl.filters" class="ui__clickDropBtn" type="button" title="Select All">
@@ -101,7 +101,7 @@
                             <img class="thumbnail__img" ng-src="{{SelfieCampaignsCtrl.metaData[$this.id].logo}}" alt="">
                         </span>
                     </div>
-                    <div class="campaign__sponsorName">{{SelfieCampaignsCtrl.metaData[$this.id].sponsor}}</div>
+                    <div class="campaign__sponsorName">{{$this.advertiserDisplayName}}</div>
                 </div>
             </div><!--.column__sponsor-->
 

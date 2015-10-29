@@ -753,9 +753,13 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
             }]);
 
-            $provide.constant('SelfieCampaignAdapter', ['config','$http','$q','cinema6',
-            function                                   ( config , $http , $q , cinema6 ) {
-                var adapter = this;
+            $provide.constant('SelfieCampaignAdapter', ['config','$http','$q',
+                                                        'MiniReelService',
+            function                                   ( config , $http , $q ,
+                                                         MiniReelService ) {
+                var adapter = this,
+                    convertCardForEditor = MiniReelService.convertCardForEditor,
+                    convertCardForPlayer = MiniReelService.convertCardForPlayer;
 
                 function url(end) {
                     return config.apiBase + '/' + end;
@@ -767,40 +771,22 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     }));
                 }
 
-                function makeCreativeWrapper(data) {
-                    return extend(data, {
-                        item: undefined
-                    });
-                }
-
                 function undecorateCampaign(campaign) {
-                    return extend(campaign, {
-                        created: undefined,
-                        // advertiserId: undefined,
-                        // customerId: undefined,
-                        cards: campaign.cards ?
-                            campaign.cards.map(makeCreativeWrapper) :
-                            undefined
+                    return $q.all((campaign.cards || []).map(function(card) {
+                        return convertCardForPlayer(card);
+                    })).then(function(cards) {
+                        return extend(campaign, {
+                            created: undefined,
+                            // advertiserId: undefined,
+                            // customerId: undefined,
+                            cards: campaign.cards ? cards : undefined
+                        });
                     });
                 }
 
                 this.decorateCampaign = function(campaign) {
-                    function getDbModel(type) {
-                        return function(id) {
-                            return cinema6.db.find(type, id);
-                        };
-                    }
-
-                    function parseWrapper(data) {
-                        return extend(data, {
-                            endDate: data.endDate && new Date(data.endDate)
-                        });
-                    }
-
-                    return $q.all((campaign.cards || []).map(function(data) {
-                        return $q.all(extend(parseWrapper(data), {
-                            item: getDbModel('card')(data.id)
-                        }));
+                    return $q.all((campaign.cards || []).map(function(card) {
+                        return convertCardForEditor(card);
                     })).then(function(cards) {
                         campaign.cards = cards.length ? cards : undefined;
                         return campaign;
@@ -831,7 +817,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
 
                 this.create = function(type, data) {
-                    return $http.post(url('campaign'), undecorateCampaign(data))
+                    return undecorateCampaign(data)
+                        .then(function(campaign) {
+                            return $http.post(url('campaign'), campaign);
+                        })
                         .then(pick('data'))
                         .then(this.decorateCampaign)
                         .then(putInArray);
@@ -843,7 +832,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
 
                 this.update = function(type, campaign) {
-                    return $http.put(url('campaign/' + campaign.id), undecorateCampaign(campaign))
+                    return undecorateCampaign(campaign)
+                        .then(function(data) {
+                            return $http.put(url('campaign/' + campaign.id), data);
+                        })
                         .then(pick('data'))
                         .then(this.decorateCampaign)
                         .then(putInArray);

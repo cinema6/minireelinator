@@ -3,8 +3,39 @@
     "miniReels": [],
     "cards": [
         {
-            "id": "rc-6263b64fa6f334",
-            "endDate": "2016-08-05T15:58:43.421Z"
+            "data": {},
+            "type": "video",
+            "title": null,
+            "note": null,
+            "modules": [],
+            "thumbs": null,
+            "placementId": null,
+            "templateUrl": null,
+            "sponsored": true,
+            "campaign": {
+                "campaignId": null,
+                "advertiserId": null,
+                "minViewTime": 3,
+                "countUrls": [],
+                "clickUrls": []
+            },
+            "collateral": {
+                "logo": "http://i.imgur.com/YbBIFZv.png"
+            },
+            "links": {
+                "Facebook": "https://www.facebook.com/pages/Diageo/108265212535624",
+                "Twitter": "https://twitter.com/Diageo_News"
+            },
+            "params": {
+                "sponsor": "Diageo",
+                "ad": true,
+                "action": null
+            },
+            "campaignId": "c-c38222a7fb71a3",
+            "created": "2015-08-05T15:58:43.412Z",
+            "user": "u-35b096c999711b",
+            "org": "o-a6fd7298acb6fa",
+            "lastUpdated": "2015-08-05T15:58:43.412Z"
         }
     ],
     "name": "Captain Morgan Very Important Campaign",
@@ -12,21 +43,21 @@
     "status": "draft",
     "targeting": {
         "geo": {
-            "states":[],
+            "states": [],
             "dmas": []
         },
         "demographics": {
-            "age":[],
-            "gender":[],
-            "income":[]
+            "age": [],
+            "gender": [],
+            "income": []
         },
         "interests": []
     },
-    "contentCategories": {},
     "advertiserDisplayName": "Diageo",
     "created": "2015-08-06T15:58:40.901Z",
     "user": "u-35b096c999711b",
     "org": "o-a6fd7298acb6fa",
-    "lastUpdated": "2015-08-06T15:58:43.421Z",
-    "id": "c-c38222a7fb71a3"
+    "lastUpdated": "2015-10-27T20:36:45.620Z",
+    "id": "c-c38222a7fb71a3",
+    "paymentMethod": "pay-9394fa392df488"
 }
