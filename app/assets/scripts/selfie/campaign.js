@@ -258,7 +258,14 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.saveCampaign = function() {
-                    return this._campaign._update(this.campaign).save();
+                    var cState = this;
+
+                    return this._campaign._update(this.campaign).save()
+                        .then(function(campaign) {
+                            cState.campaign.id = campaign.id;
+
+                            return campaign;
+                        });
                 };
             }]);
         }])

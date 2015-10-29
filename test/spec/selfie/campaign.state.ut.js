@@ -212,6 +212,28 @@ define(['app'], function(appModule) {
                     expect(campaign.save).toHaveBeenCalled();
                     expect(success).toHaveBeenCalledWith(campaign);
                 });
+
+                it('should add the campaign id to campaign object that is used for updates so that it knows to only POST once', function() {
+                    var success = jasmine.createSpy('success()'),
+                        failure = jasmine.createSpy('failure()'),
+                        withId = campaign.pojoify();
+
+                    delete campaign.id;
+
+                    spyOn(campaign, '_update').and.returnValue(campaign);
+                    spyOn(campaign, 'save').and.returnValue($q.when(withId));
+
+                    campaignState._campaign = campaign;
+                    campaignState.campaign = campaign.pojoify();
+
+                    expect(campaignState.campaign.id).toBe(undefined);
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveCampaign().then(success, failure);
+                    });
+
+                    expect(campaignState.campaign.id).toEqual(withId.id);
+                });
             });
         });
     });
