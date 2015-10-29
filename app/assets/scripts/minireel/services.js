@@ -220,8 +220,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
         }])
 
-        .factory('paginatedDbList', ['scopePromise','cinema6',
-        function                    ( scopePromise , cinema6 ) {
+        .factory('paginatedDbList', ['scopePromise','cinema6','$rootScope',
+        function                    ( scopePromise , cinema6 , $rootScope ) {
             function extend() {
                 var objects = Array.prototype.slice.call(arguments);
 
@@ -292,6 +292,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 total: Math.ceil(info.total / limit)
                             };
                             list.selectNone();
+
+                            $rootScope.$broadcast('PaginatedListHasUpdated');
                         });
 
                     return this;

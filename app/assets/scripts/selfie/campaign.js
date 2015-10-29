@@ -75,8 +75,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignsController', ['$injector','$scope','$q','cState',
                                                   'ConfirmDialogService','ThumbnailService',
+                                                  'CampaignService',
         function                                 ( $injector , $scope , $q , cState ,
-                                                   ConfirmDialogService , ThumbnailService ) {
+                                                   ConfirmDialogService , ThumbnailService ,
+                                                   CampaignService ) {
             var SelfieCampaignsCtrl = this;
 
             $injector.invoke(PaginatedListController, this, {
@@ -102,8 +104,53 @@ function( angular , c6State  , PaginatedListState                    ,
                 return $q.when(null);
             }
 
+            function addMetaData() {
+                var Ctrl = SelfieCampaignsCtrl,
+                    model = Ctrl.model.items.value,
+                    ids = model.map(function(campaign) {
+                        return campaign.id;
+                    }).join(',');
+
+                Ctrl.metaData = model.reduce(function(result, campaign) {
+                    var card = campaign.cards && campaign.cards[0];
+
+                    if (!card) { return result; }
+
+                    result[campaign.id] = {
+                        sponsor: card.params.sponsor,
+                        logo: card.collateral.logo
+                    };
+
+                    thumbFor(card).then(function(thumb) {
+                        result[campaign.id].thumb = thumb;
+                    });
+
+                    return result;
+                },{});
+
+                if (ids) {
+                    CampaignService.getAnalytics(ids)
+                        .then(function(stats) {
+                            stats.forEach(function(stat) {
+                                var campaignId = stat.campaignId;
+
+                                if (!campaignId || !Ctrl.metaData[campaignId]) {
+                                    return;
+                                }
+
+                                Ctrl.metaData[campaignId].stats = {
+                                    views: stat.summary.views,
+                                    spend: stat.summary.totalSpend
+                                };
+                            });
+                        });
+                }
+            }
+
             this.initWithModel = function(model) {
                 this.model = model;
+
+                addMetaData();
 
                 this.filters = [
                     'draft',
@@ -163,27 +210,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 },[]).join(',');
             };
 
-            $scope.$watch(function() {
-                return SelfieCampaignsCtrl.model.items.value;
-            }, function(model) {
-
-                SelfieCampaignsCtrl.metaData = model.reduce(function(result, campaign) {
-                    var card = campaign.cards && campaign.cards[0];
-
-                    if (!card) { return result; }
-
-                    result[campaign.id] = {
-                        sponsor: card.params.sponsor,
-                        logo: card.collateral.logo
-                    };
-
-                    thumbFor(card).then(function(thumb) {
-                        result[campaign.id].thumb = thumb;
-                    });
-
-                    return result;
-                },{});
-            });
+            $scope.$on('PaginatedListHasUpdated', addMetaData);
         }])
 
         .config(['c6StateProvider',
