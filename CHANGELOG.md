@@ -11,6 +11,7 @@
   * [FEATURE]: (Selfie) Add ability to copy and edit active campaigns
   * [FIX]: (Selfie) Remove content categorization in Campaign Creation
   * [FEATURE]: (Selfie) Show campaign stats (views + spend) in the dashboard
+  * [FEATURE]: (Selfie) Autosave draft campaigns when leaving the page
 
 ## v1.23.0 (October 27, 2015)
 * *[v1.23.0.rc3]*
