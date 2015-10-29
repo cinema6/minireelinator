@@ -8,8 +8,7 @@ function( angular , select2 , braintree ) {
         forEach = angular.forEach,
         isObject = angular.isObject,
         isArray = angular.isArray,
-        equals = angular.equals,
-        isString = angular.isString;
+        equals = angular.equals;
 
     function deepExtend(target, extension) {
         forEach(extension, function(extensionValue, prop) {
@@ -769,6 +768,7 @@ function( angular , select2 , braintree ) {
             var self = this;
             self.edits = {};
             self.firstUpdate = false;
+            self.summary = [];
 
             // Card Constants
             var CARD_PREFIX = 'Card';
@@ -791,11 +791,12 @@ function( angular , select2 , braintree ) {
             ];
 
             // Constructs the summary object used to generate the table
-            function loadSummary(campaign, updatedCampaign) {
+            this._loadSummary = function(campaign, updatedCampaign) {
                 var firstUpdate = (campaign.status === 'pendingApproval');
                 self.firstUpdate = firstUpdate;
                 var originalCampaign = (firstUpdate) ? {} : campaign;
-                var summary = CampaignService.campaignDiffSummary(originalCampaign, updatedCampaign, CAMPAIGN_PREFIX, CARD_PREFIX);
+                var summary = CampaignService.campaignDiffSummary(
+                    originalCampaign, updatedCampaign, CAMPAIGN_PREFIX, CARD_PREFIX);
 
                 var tableData = [];
                 summary.forEach(function(diff) {
@@ -807,14 +808,12 @@ function( angular , select2 , braintree ) {
                         approvalWhitelist = CAMPAIGN_APPROVAL_FIELDS;
                         editableWhitelist = CAMPAIGN_EDITABLE_FIELDS;
                     }
-                    if(isWhitelisted(approvalWhitelist, diff.key)) {
+                    if(self._isWhitelisted(approvalWhitelist, diff.key)) {
                         var tableEntry = {
                             originalValue: diff.originalValue,
                             updatedValue: diff.updatedValue,
                             title: diff.type + '.' + diff.key,
-                            isLink: isString(diff.updatedValue) &&
-                                diff.updatedValue.match(/^(http:\/\/|https:\/\/|\/\/)/) !== null,
-                            editable: isWhitelisted(editableWhitelist, diff.key)
+                            editable: self._isWhitelisted(editableWhitelist, diff.key)
                         };
                         if(tableEntry.editable) {
                             self.edits[tableEntry.title] = diff.updatedValue;
@@ -823,9 +822,9 @@ function( angular , select2 , braintree ) {
                     }
                 });
                 self.tableData = tableData;
-            }
+            };
 
-            function isWhitelisted(whitelist, value) {
+            this._isWhitelisted = function(whitelist, value) {
                 for(var i=0;i<whitelist.length;i++) {
                     var regExp = whitelist[i];
                     var match = value.match(regExp);
@@ -834,7 +833,7 @@ function( angular , select2 , braintree ) {
                     }
                 }
                 return false;
-            }
+            };
 
             $scope.$watch(function() {
                 return self.edits;
@@ -857,6 +856,6 @@ function( angular , select2 , braintree ) {
                 }
             }, true);
 
-            loadSummary($scope.campaign.pojoify(), $scope.updatedCampaign.pojoify());
+            this._loadSummary($scope.campaign, $scope.updatedCampaign);
         }]);
 });

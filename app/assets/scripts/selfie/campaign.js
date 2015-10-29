@@ -994,9 +994,9 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieManageCampaignController', ['$scope','cState','c6AsyncQueue',
-                                                       'c6State',
+                                                       'c6State', 'CampaignService',
         function                                      ( $scope , cState , c6AsyncQueue ,
-                                                        c6State ) {
+                                                        c6State ,  CampaignService ) {
             var queue = c6AsyncQueue();
 
             Object.defineProperties(this, {
@@ -1108,8 +1108,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 updateRequest = model.updateRequest;
                 extend(self, {
                     showApproval: false,
-                    campaign: cState.campaign,
-                    updatedCampaign: copy(cState.campaign),
+                    campaign: cState.campaign.pojoify(),
+                    updatedCampaign: cState.campaign.pojoify(),
                     previewCard: null,
                     rejectionReason: ''
                 });
@@ -1124,7 +1124,7 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.approveCampaign = function() {
-                updateRequest.data = self.updatedCampaign.pojoify();
+                updateRequest.data = self.updatedCampaign;
                 updateRequest.status = 'approved';
                 updateRequest.save().then(function() {
                     c6State.goTo('Selfie:CampaignDashboard');
@@ -1140,7 +1140,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 });
             };
 
-            this.loadPreview = c6Debounce(function(args) {
+            this._loadPreview = c6Debounce(function(args) {
                 var _card = copy(args[0]);
                 _card.params.sponsor = self.updatedCampaign.advertiserDisplayName;
                 self.previewCard = _card;
@@ -1149,7 +1149,7 @@ function( angular , c6State  , PaginatedListState                    ,
             $scope.$watch(function() {
                 return self.updatedCampaign.cards[0];
             }, function(card) {
-                self.loadPreview(card);
+                self._loadPreview(card);
             }, true);
         }]);
 });

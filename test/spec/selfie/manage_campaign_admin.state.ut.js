@@ -67,12 +67,6 @@ define(['app'], function(appModule) {
             expect(campaignState).toEqual(jasmine.any(Object));
         });
 
-        describe('card', function() {
-            it('should be null', function() {
-                expect(campaignState.card).toBe(null);
-            });
-        });
-
         describe('campaign', function() {
             it('should be null', function() {
                 expect(campaignState.campaign).toBe(null);
@@ -82,11 +76,7 @@ define(['app'], function(appModule) {
         describe('beforeModel()', function() {
             it('should put the card and campaign on the state object', function() {
                 campaignState.cParent.campaign = campaign;
-                campaignState.cParent.card = card;
-
                 campaignState.beforeModel();
-
-                expect(campaignState.card).toEqual(card);
                 expect(campaignState.campaign).toEqual(campaign);
             });
         });

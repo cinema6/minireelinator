@@ -10,7 +10,6 @@ function( angular , c6uilib ) {
         forEach = angular.forEach,
         isObject = angular.isObject,
         equals = angular.equals,
-        isString = angular.isString,
         isArray = angular.isArray;
 
     function deepExtend(target, extension) {
@@ -143,7 +142,10 @@ function( angular , c6uilib ) {
                 return NormalizationService.normalize(template, campaign, campaign);
             };
 
-            this.campaignDiffSummary = function(originalCampaign, updatedCampaign, campaignPrefix, cardPrefix) {
+            /* Creates a diff summary of two campaigns with special handling for the first entry in
+                the cards array. Does not compare individual elements of arrays. */
+            this.campaignDiffSummary = function(originalCampaign, updatedCampaign,
+                                                campaignPrefix, cardPrefix) {
                 var origCamp = ngCopy(originalCampaign);
                 var origCard = {};
                 if(origCamp.cards) {
@@ -158,16 +160,16 @@ function( angular , c6uilib ) {
                     delete updatedCamp.cards;
                 }
 
-                var campaignSummary = generateSummary(origCamp, updatedCamp, campaignPrefix);
-                var cardSummary = generateSummary(origCard, updatedCard, cardPrefix);
+                var campaignSummary = this._generateSummary(origCamp, updatedCamp, campaignPrefix);
+                var cardSummary = this._generateSummary(origCard, updatedCard, cardPrefix);
                 return campaignSummary.concat(cardSummary);
             };
 
-            function generateSummary(originalObj, updatedObj, prefix) {
+            this._generateSummary = function(originalObj, updatedObj, prefix) {
                 var summary = [];
 
-                var origObj = flatten(originalObj);
-                var updaObj = flatten(updatedObj);
+                var origObj = this._flatten(originalObj);
+                var updaObj = this._flatten(updatedObj);
 
                 Object.keys(updaObj).forEach(function(keysHash) {
                     var origVal = origObj[keysHash];
@@ -182,9 +184,9 @@ function( angular , c6uilib ) {
                     }
                 });
                 return summary;
-            }
+            };
 
-            function flatten(obj, path, result) {
+            this._flatten = function(obj, path, result) {
                 var key, val, _path;
                 path = path || [];
                 result = result || {};
@@ -192,13 +194,13 @@ function( angular , c6uilib ) {
                     val = obj[key];
                     _path = path.concat([key]);
                     if (isObject(val) && !isArray(val)) {
-                        flatten(val, _path, result);
+                        this._flatten(val, _path, result);
                     } else {
                         result[_path.join('.')] = val;
                     }
                 }
                 return result;
-            }
+            };
         }])
 
         .service('PaymentService', ['$http','c6UrlMaker',

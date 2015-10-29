@@ -288,6 +288,56 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     expect(result.advertiserDisplayName).toBe('My Company, Inc.');
                 });
             });
+
+            describe('campaignDiffSummary', function() {
+                var originalCampaign, updatedCampaign, result;
+
+                beforeEach(function() {
+                    spyOn(CampaignService, '_generateSummary').and.callThrough();
+                    originalCampaign = {
+                        id: 'c-123',
+                        cards: [
+                            {
+                                title: 'original title'
+                            }
+                        ]
+                    };
+                    updatedCampaign = {
+                        id: 'c-123',
+                        cards: [
+                            {
+                                title: 'updated title'
+                            }
+                        ]
+                    };
+                    result = CampaignService.campaignDiffSummary(originalCampaign, updatedCampaign, 'Campaign', 'Card');
+                });
+
+                it('should generate a summary of campaign differences', function() {
+                    expect(CampaignService._generateSummary).toHaveBeenCalledWith({
+                        id: 'c-123'
+                    }, {
+                        id: 'c-123'
+                    }, 'Campaign');
+                });
+
+                it('should generate a summary of card differences', function() {
+                    expect(CampaignService._generateSummary).toHaveBeenCalledWith({
+                        title: 'original title'
+                    }, {
+                        title: 'updated title'
+                    }, 'Card');
+                });
+
+                it('should return a summary of changes', function() {
+                    expect(result).toEqual([{
+                        originalValue: 'original title',
+                        updatedValue: 'updated title',
+                        key: 'title',
+                        type: 'Card'
+                    }]);
+                });
+            });
         });
     });
 });
