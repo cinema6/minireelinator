@@ -989,7 +989,7 @@ fa,
                 vertical-align: middle;
                 border-bottom: 3px solid transparent;
             }
-            .tabBar__list .tabBar__item--active {
+            .tabBar__list .c6-active {
                 background-color: #eee;
                 border-bottom: 3px solid #eee;
                 padding: 0 3em;
@@ -999,6 +999,8 @@ fa,
             }
             .tabBar__btn {
                 transition: color 0.3s;
+                display: inline-block;
+                color: #1c1c1c;
             }
             .tabBar__btn:hover {
                 color: #00c0ff;
