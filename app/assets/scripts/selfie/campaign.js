@@ -7,7 +7,23 @@ function( angular , c6State  , PaginatedListState                    ,
 
     var copy = angular.copy,
         equals = angular.equals,
-        extend = angular.extend;
+        extend = angular.extend,
+        forEach = angular.forEach,
+        isObject = angular.isObject;
+
+    function deepExtend(target, extension) {
+        forEach(extension, function(extensionValue, prop) {
+            var targetValue = target[prop];
+
+            if (isObject(extensionValue) && isObject(targetValue)) {
+                deepExtend(targetValue, extensionValue);
+            } else {
+                target[prop] = copy(extensionValue);
+            }
+        });
+
+        return target;
+    }
 
     return angular.module('c6.app.selfie.campaign', [c6State.name])
         .config(['c6StateProvider',
@@ -258,14 +274,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.saveCampaign = function() {
-                    var cState = this;
-
-                    return this._campaign._update(this.campaign).save()
-                        .then(function(campaign) {
-                            cState.campaign.id = campaign.id;
-
-                            return campaign;
-                        });
+                    return deepExtend(this._campaign, this.campaign).save();
                 };
             }]);
         }])

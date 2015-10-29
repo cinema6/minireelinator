@@ -194,45 +194,65 @@ define(['app'], function(appModule) {
             });
 
             describe('saveCampaign()', function() {
-                it('should update the campaign DB Model with the current campaign data and save', function() {
-                    var success = jasmine.createSpy('success()'),
-                        failure = jasmine.createSpy('failure()');
+                var success, failure;
 
-                    spyOn(campaign, 'save').and.returnValue($q.when(campaign));
-                    spyOn(campaign, '_update').and.returnValue(campaign);
-
-                    campaignState._campaign = campaign;
-                    campaignState.campaign = campaign.pojoify();
-
-                    $rootScope.$apply(function() {
-                        campaignState.saveCampaign().then(success, failure);
-                    });
-
-                    expect(campaign._update).toHaveBeenCalledWith(campaignState.campaign);
-                    expect(campaign.save).toHaveBeenCalled();
-                    expect(success).toHaveBeenCalledWith(campaign);
+                beforeEach(function() {
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
                 });
 
-                it('should add the campaign id to campaign object that is used for updates so that it knows to only POST once', function() {
-                    var success = jasmine.createSpy('success()'),
-                        failure = jasmine.createSpy('failure()'),
-                        withId = campaign.pojoify();
-
-                    delete campaign.id;
-
-                    spyOn(campaign, '_update').and.returnValue(campaign);
-                    spyOn(campaign, 'save').and.returnValue($q.when(withId));
+                it('should update the campaign DB Model with the current campaign data and save', function() {
+                    spyOn(campaign, 'save').and.returnValue($q.when(campaign));
 
                     campaignState._campaign = campaign;
                     campaignState.campaign = campaign.pojoify();
-
-                    expect(campaignState.campaign.id).toBe(undefined);
+                    campaignState.campaign.name = 'New Campaign';
 
                     $rootScope.$apply(function() {
                         campaignState.saveCampaign().then(success, failure);
                     });
 
-                    expect(campaignState.campaign.id).toEqual(withId.id);
+                    expect(campaign.save).toHaveBeenCalled();
+                    expect(success).toHaveBeenCalledWith(campaign);
+                    expect(campaignState._campaign.name).toEqual('New Campaign');
+                });
+
+                it('should maintain data returned from the server in addition to UI updates', function() {
+                    var serverChange = 0;
+
+                    spyOn(campaign, 'save').and.callFake(function() {
+                        campaign.change = ++serverChange;
+
+                        return $q.when(campaign);
+                    });
+
+                    campaignState._campaign = campaign;
+                    campaignState.campaign = campaign.pojoify();
+                    campaignState.campaign.name = 'New Campaign';
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveCampaign().then(success, failure);
+                    });
+
+                    expect(campaign.save).toHaveBeenCalled();
+                    expect(success).toHaveBeenCalledWith(campaign);
+                    expect(campaignState._campaign.name).toEqual('New Campaign');
+                    expect(campaignState._campaign.change).toEqual(1);
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveCampaign().then(success, failure);
+                    });
+                    expect(campaignState._campaign.change).toEqual(2);
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveCampaign().then(success, failure);
+                    });
+                    expect(campaignState._campaign.change).toEqual(3);
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveCampaign().then(success, failure);
+                    });
+                    expect(campaignState._campaign.change).toEqual(4);
                 });
             });
         });
