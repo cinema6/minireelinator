@@ -274,7 +274,12 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.saveCampaign = function() {
-                    return deepExtend(this._campaign, this.campaign).save();
+                    var cState = this;
+
+                    return deepExtend(this._campaign, this.campaign).save()
+                        .then(function() {
+                            return cState.campaign;
+                        });
                 };
             }]);
         }])

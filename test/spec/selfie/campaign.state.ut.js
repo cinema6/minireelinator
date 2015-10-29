@@ -194,40 +194,29 @@ define(['app'], function(appModule) {
             });
 
             describe('saveCampaign()', function() {
-                var success, failure;
+                var success, failure, serverChange;
 
                 beforeEach(function() {
                     success = jasmine.createSpy('success()');
                     failure = jasmine.createSpy('failure()');
-                });
 
-                it('should update the campaign DB Model with the current campaign data and save', function() {
-                    spyOn(campaign, 'save').and.returnValue($q.when(campaign));
-
-                    campaignState._campaign = campaign;
-                    campaignState.campaign = campaign.pojoify();
-                    campaignState.campaign.name = 'New Campaign';
-
-                    $rootScope.$apply(function() {
-                        campaignState.saveCampaign().then(success, failure);
-                    });
-
-                    expect(campaign.save).toHaveBeenCalled();
-                    expect(success).toHaveBeenCalledWith(campaign);
-                    expect(campaignState._campaign.name).toEqual('New Campaign');
-                });
-
-                it('should maintain data returned from the server in addition to UI updates', function() {
-                    var serverChange = 0;
+                    serverChange = 0;
 
                     spyOn(campaign, 'save').and.callFake(function() {
+                        // make some change to the DB Model that the UI doesn't know about
                         campaign.change = ++serverChange;
 
                         return $q.when(campaign);
                     });
 
+                    // put the DB Model on the state
                     campaignState._campaign = campaign;
+
+                    // put the pojo on the state for the Ctrl to use
                     campaignState.campaign = campaign.pojoify();
+                });
+
+                it('should update the campaign DB Model with the current campaign data and save', function() {
                     campaignState.campaign.name = 'New Campaign';
 
                     $rootScope.$apply(function() {
@@ -235,24 +224,39 @@ define(['app'], function(appModule) {
                     });
 
                     expect(campaign.save).toHaveBeenCalled();
-                    expect(success).toHaveBeenCalledWith(campaign);
                     expect(campaignState._campaign.name).toEqual('New Campaign');
+                });
+
+                it('should maintain data returned from the server in addition to UI updates', function() {
+                    $rootScope.$apply(function() {
+                        campaignState.saveCampaign();
+                    });
                     expect(campaignState._campaign.change).toEqual(1);
 
                     $rootScope.$apply(function() {
-                        campaignState.saveCampaign().then(success, failure);
+                        campaignState.saveCampaign();
                     });
                     expect(campaignState._campaign.change).toEqual(2);
 
                     $rootScope.$apply(function() {
-                        campaignState.saveCampaign().then(success, failure);
+                        campaignState.saveCampaign();
                     });
                     expect(campaignState._campaign.change).toEqual(3);
 
                     $rootScope.$apply(function() {
-                        campaignState.saveCampaign().then(success, failure);
+                        campaignState.saveCampaign();
                     });
                     expect(campaignState._campaign.change).toEqual(4);
+                });
+
+                it('should return the pojoified campaign without the server updates', function() {
+                    campaignState.campaign.name = 'New Campaign';
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveCampaign().then(success, failure);
+                    });
+
+                    expect(success).toHaveBeenCalledWith(campaignState.campaign);
                 });
             });
         });
