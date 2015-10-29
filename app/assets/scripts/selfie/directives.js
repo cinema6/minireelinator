@@ -791,12 +791,11 @@ function( angular , select2 , braintree ) {
             ];
 
             // Constructs the summary object used to generate the table
-            function loadSummary(campaign, card, updatedCampaign, updatedCard) {
+            function loadSummary(campaign, updatedCampaign) {
                 var firstUpdate = (campaign.status === 'pendingApproval');
                 self.firstUpdate = firstUpdate;
                 var originalCampaign = (firstUpdate) ? {} : campaign;
-                var originalCard = (firstUpdate) ? {} : card;
-                var summary = CampaignService.campaignDiffSummary(originalCampaign, originalCard, updatedCampaign, updatedCard, CAMPAIGN_PREFIX, CARD_PREFIX);
+                var summary = CampaignService.campaignDiffSummary(originalCampaign, updatedCampaign, CAMPAIGN_PREFIX, CARD_PREFIX);
 
                 var tableData = [];
                 summary.forEach(function(diff) {
@@ -844,8 +843,10 @@ function( angular , select2 , braintree ) {
                     Object.keys(self.edits).forEach(function(keysHash) {
                         var keys = keysHash.split('.');
                         var editedValue = self.edits[keysHash];
-                        var baseObj = $scope[(keys[0] === CARD_PREFIX) ?
-                            'updatedCard' : 'updatedCampaign'];
+                        var baseObj = $scope.updatedCampaign;
+                        if(keys[0] === CARD_PREFIX) {
+                            baseObj = baseObj.cards[0];
+                        }
                         keys = keys.slice(1);
                         var prop = keys.pop();
                         var tailObj = keys.reduce(function(acc, key) {
@@ -856,7 +857,6 @@ function( angular , select2 , braintree ) {
                 }
             }, true);
 
-            loadSummary($scope.campaign.pojoify(), $scope.card,
-                $scope.updatedCampaign.pojoify(), $scope.updatedCard);
+            loadSummary($scope.campaign.pojoify(), $scope.updatedCampaign.pojoify());
         }]);
 });

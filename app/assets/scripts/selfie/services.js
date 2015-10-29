@@ -143,10 +143,24 @@ function( angular , c6uilib ) {
                 return NormalizationService.normalize(template, campaign, campaign);
             };
 
-            this.campaignDiffSummary = function(originalCampaign, originalCard, updatedCampaign, updatedCard, campaignPrefix, cardPrefix) {
-                var campaignSummary = generateSummary(originalCampaign, updatedCampaign, campaignPrefix);
-                var cardSummary = generateSummary(originalCard, updatedCard, cardPrefix);
-                return cardSummary.concat(campaignSummary);
+            this.campaignDiffSummary = function(originalCampaign, updatedCampaign, campaignPrefix, cardPrefix) {
+                var origCamp = ngCopy(originalCampaign);
+                var origCard = {};
+                if(origCamp.cards) {
+                    origCard = origCamp.cards[0];
+                    delete origCamp.cards;
+                }
+
+                var updatedCamp = ngCopy(updatedCampaign);
+                var updatedCard = {};
+                if(updatedCamp.cards) {
+                    updatedCard = updatedCamp.cards[0];
+                    delete updatedCamp.cards;
+                }
+
+                var campaignSummary = generateSummary(origCamp, updatedCamp, campaignPrefix);
+                var cardSummary = generateSummary(origCard, updatedCard, cardPrefix);
+                return campaignSummary.concat(cardSummary);
             };
 
             function generateSummary(originalObj, updatedObj, prefix) {

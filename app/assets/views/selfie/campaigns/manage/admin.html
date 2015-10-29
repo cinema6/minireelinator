@@ -14,7 +14,7 @@
                     <p ng-if="!Ctrl.showApproval" class="formSection__introText">There are no updates waiting to be approved.</p>
 
                     <div ng-if="Ctrl.showApproval">
-                        <selfie-campaign-updates-summary campaign="Ctrl.campaign" card="Ctrl.card" updated-campaign="Ctrl.updatedCampaign" updated-card="Ctrl.updatedCard"></selfie-campaign-updates-summary>
+                        <selfie-campaign-updates-summary campaign="Ctrl.campaign" updated-campaign="Ctrl.updatedCampaign"></selfie-campaign-updates-summary>
                         <selfie-preview card="Ctrl.previewCard"></selfie-preview>
                         <input type="text" ng-model="Ctrl.rejectionReason"></input>
                         <div class="action__btnGroup ui__btnHolder">

@@ -1078,11 +1078,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.controller = 'SelfieManageCampaignAdminController';
                 this.controllerAs = 'SelfieManageCampaignAdminCtrl';
 
-                this.card = null;
                 this.campaign = null;
 
                 this.beforeModel = function() {
-                    this.card = this.cParent.card;
                     this.campaign = this.cParent.campaign;
                 };
 
@@ -1104,42 +1102,37 @@ function( angular , c6State  , PaginatedListState                    ,
         function                                           ( c6State ,  cState ,  cinema6 ,
                                                              $scope ,  c6Debounce ){
             var self = this;
-
-            //$scope.$parent.$parent.SelfieManageCampaignCtrl.tab = 'admin';
+            var updateRequest;
 
             this.initWithModel = function(model) {
-                var updateRequest = model.updateRequest;
+                updateRequest = model.updateRequest;
                 extend(self, {
                     showApproval: false,
                     campaign: cState.campaign,
-                    card: cState.card,
                     updatedCampaign: copy(cState.campaign),
-                    updatedCard: copy(cState.card),
                     previewCard: null,
                     rejectionReason: ''
                 });
                 if(updateRequest) {
                     var updates = updateRequest.data;
                     merge(self.updatedCampaign, updates);
-                    merge(self.updatedCard, (updates.cards || [{}])[0]);
                     extend(self, {
                         showApproval: true,
-                        previewCard: copy(self.updatedCard)
+                        previewCard: copy(self.updatedCampaign.cards[0])
                     });
                 }
             };
 
             this.approveCampaign = function() {
-                self.updatedCampaign.cards[0] = self.updatedCard.pojoify();
-                self.updateRequest.data = self.updatedCampaign.pojoify();
-                self.updateRequest.status = 'approved';
-                self.updateRequest.save().then(function() {
+                updateRequest.data = self.updatedCampaign.pojoify();
+                updateRequest.status = 'approved';
+                updateRequest.save().then(function() {
                     c6State.goTo('Selfie:CampaignDashboard');
                 });
             };
 
             this.rejectCampaign = function() {
-                extend(self.updateRequest, {
+                extend(updateRequest, {
                     status: 'rejected',
                     rejectionReason: self.rejectionReason
                 }).save().then(function() {
@@ -1147,16 +1140,16 @@ function( angular , c6State  , PaginatedListState                    ,
                 });
             };
 
-            this.loadPreview = c6Debounce(function() {
-                var _card = copy(self.updatedCard);
+            this.loadPreview = c6Debounce(function(args) {
+                var _card = copy(args[0]);
                 _card.params.sponsor = self.updatedCampaign.advertiserDisplayName;
                 self.previewCard = _card;
             }, 2000);
 
             $scope.$watch(function() {
-                return self.updatedCard;
-            }, function() {
-                self.loadPreview();
+                return self.updatedCampaign.cards[0];
+            }, function(card) {
+                self.loadPreview(card);
             }, true);
         }]);
 });
