@@ -2,7 +2,13 @@
 <div class="gridHolder modal__group modalPayment__group">
 
     <div class="grid grid--center">
-        <button ng-click="onCancel()" class="modal__closeBtn"><i class="fa fa-close"></i></button>
+        <button class="modal__closeBtn btnInvis" ng-click="onCancel()"><span class="ir">Close</span>
+            <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M16.5,0L9,7.5L1.5,0L0,1.5L7.5,9L0,16.5L1.5,18L9,10.5l7.5,7.5l1.5-1.5L10.5,9
+                L18,1.5L16.5,0z"/>
+            </svg>
+        </button>
         <section class="grid__item two-thirds">
 
             <header class="text--center">
@@ -126,7 +132,7 @@
                                 <button class="action__btn action__btn--wide">Save</button>
                             </div>
 
-                            <span>{{errorMessage}}</span>
+                            <span class="alertMessage alert__failure text--center" ng-show="!!errorMessage">{{errorMessage}}</span>
 
                         </form>
 

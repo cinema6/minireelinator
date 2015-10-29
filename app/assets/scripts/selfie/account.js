@@ -332,8 +332,8 @@ function( angular , c6State  ) {
             this.confirmPrimary = function(method) {
                 ConfirmDialogService.display({
                     prompt: 'Are you sure you want to make this your primary payment method?',
-                    affirm: 'Yes',
-                    cancel: 'Cancel',
+                    affirm: 'Yes, Make primary',
+                    cancel: 'No',
 
                     onCancel: function() {
                         return ConfirmDialogService.close();
@@ -363,8 +363,8 @@ function( angular , c6State  ) {
             this.confirmDelete = function(method) {
                 ConfirmDialogService.display({
                     prompt: 'Are you sure you want to delete this payment method?',
-                    affirm: 'Delete',
-                    cancel: 'Keep',
+                    affirm: 'Yes, Delete',
+                    cancel: 'No',
 
                     onCancel: function() {
                         return ConfirmDialogService.close();
