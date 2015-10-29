@@ -43,7 +43,7 @@
                         </li>
                     </ul>
                     <div ng-if="method.type === 'creditCard'" class="payment__group--info">
-                        <span class="tk--hdr payment__type">{{method.cardType}}</span>
+                        <span class="tk--hdr payment__type">{{method.cardType | paymentType}}</span>
                         <span class="tk--hdr payment__id">*** {{method.last4}}</span>
                         <span class="tk--copy payment__exp">Expires {{method.expirationDate}}</span>
                         <span class="tk--copy payment__label">{{method.cardholderName}}</span>

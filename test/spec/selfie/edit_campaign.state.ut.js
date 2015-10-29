@@ -35,9 +35,7 @@ define(['app'], function(appModule) {
             campaign = {
                 id: 'cam-c3fd97889f4fb9',
                 name: '$$$',
-                cards: [{
-                    item: card
-                }]
+                cards: [card]
             };
 
             spyOn(CampaignService, 'normalize').and.returnValue(campaign);
@@ -55,11 +53,11 @@ define(['app'], function(appModule) {
                 model = {
                     id: 'cam-c3fd97889f4fb9',
                     name: '$$$',
-                    cards: [{
-                        item: {
+                    cards: [
+                        {
                             id: 'rc-123'
                         }
-                    }]
+                    ]
                 };
 
                 success = jasmine.createSpy('success()');
@@ -86,14 +84,6 @@ define(['app'], function(appModule) {
 
                 expect(CampaignService.normalize).toHaveBeenCalled();
                 expect(editCampaignState.campaign).toEqual(campaign);
-            });
-
-            it('should put the card on the state object', function() {
-                $rootScope.$apply(function() {
-                    editCampaignState.afterModel(campaign);
-                });
-
-                expect(editCampaignState.card).toEqual(card);
             });
         });
 

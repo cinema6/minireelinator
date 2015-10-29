@@ -7,7 +7,23 @@ function( angular , c6State  , PaginatedListState                    ,
 
     var copy = angular.copy,
         equals = angular.equals,
-        extend = angular.extend;
+        extend = angular.extend,
+        forEach = angular.forEach,
+        isObject = angular.isObject;
+
+    function deepExtend(target, extension) {
+        forEach(extension, function(extensionValue, prop) {
+            var targetValue = target[prop];
+
+            if (isObject(extensionValue) && isObject(targetValue)) {
+                deepExtend(targetValue, extensionValue);
+            } else {
+                target[prop] = copy(extensionValue);
+            }
+        });
+
+        return target;
+    }
 
     return angular.module('c6.app.selfie.campaign', [c6State.name])
         .config(['c6StateProvider',
@@ -22,12 +38,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Campaigns', ['c6State','$injector','$location',
+            c6StateProvider.state('Selfie:Campaigns', ['$injector','$location',
                                                        'paginatedDbList',
-            function                                  ( c6State , $injector , $location ,
+            function                                  ( $injector , $location ,
                                                         paginatedDbList ) {
-                var SelfieState = c6State.get('Selfie');
-
                 $injector.invoke(PaginatedListState, this);
 
                 this.templateUrl = 'views/selfie/campaigns.html';
@@ -52,7 +66,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.model = function() {
                     return paginatedDbList('selfieCampaign', {
                         sort: this.sort,
-                        org: SelfieState.cModel.org.id,
                         application: 'selfie',
                         statuses: this.filter,
                     }, this.limit, this.page).ensureResolution();
@@ -155,7 +168,7 @@ function( angular , c6State  , PaginatedListState                    ,
             }, function(model) {
 
                 SelfieCampaignsCtrl.metaData = model.reduce(function(result, campaign) {
-                    var card = campaign.cards && campaign.cards[0] && campaign.cards[0].item;
+                    var card = campaign.cards && campaign.cards[0];
 
                     if (!card) { return result; }
 
@@ -178,12 +191,11 @@ function( angular , c6State  , PaginatedListState                    ,
             c6StateProvider.state('Selfie:NewCampaign', ['cinema6','c6State','CampaignService',
             function                                    ( cinema6 , c6State , CampaignService ) {
                 this.model = function() {
-                    return CampaignService.create('campaign');
+                    return CampaignService.create();
                 };
 
                 this.afterModel = function(campaign) {
                     this.campaign = campaign;
-                    this.card = CampaignService.create('card');
                 };
 
                 this.enter = function() {
@@ -194,15 +206,20 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:EditCampaign', ['cinema6','c6State','CampaignService',
-            function                                     ( cinema6 , c6State , CampaignService ) {
+            c6StateProvider.state('Selfie:EditCampaign', ['cinema6','c6State','$q',
+                                                          'CampaignService',
+            function                                     ( cinema6 , c6State , $q ,
+                                                           CampaignService ) {
                 this.model = function(params) {
-                    return cinema6.db.find('selfieCampaign', params.campaignId);
+                    return cinema6.db.find('selfieCampaign', params.campaignId)
+                        .catch(function() {
+                            c6State.goTo('Selfie:CampaignDashboard');
+                            return $q.reject();
+                        });
                 };
 
                 this.afterModel = function(campaign) {
                     this.campaign = CampaignService.normalize(campaign);
-                    this.card = campaign.cards[0].item;
                 };
 
                 this.enter = function() {
@@ -225,10 +242,13 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.card = null;
                 this.campaign = null;
+                this._campaign = null;
 
                 this.beforeModel = function() {
-                    this.card = this.cParent.card;
-                    this.campaign = this.cParent.campaign;
+                    this._campaign = this.cParent.campaign;
+
+                    this.campaign = this.cParent.campaign.pojoify();
+                    this.card = this.campaign.cards[0];
                     this.advertiser = SelfieState.cModel.advertiser;
                 };
 
@@ -237,7 +257,29 @@ function( angular , c6State  , PaginatedListState                    ,
                         categories: cinema6.db.findAll('category'),
                         logos: SelfieLogoService.getLogos(),
                         paymentMethods: cinema6.db.findAll('paymentMethod')
+                    }).catch(function() {
+                        c6State.goTo('Selfie:CampaignDashboard');
+                        return $q.reject();
                     });
+                };
+
+                this.afterModel = function(model) {
+                    var primaryPaymentMethod = model.paymentMethods
+                        .filter(function(method) {
+                            return method.default;
+                        })[0] || {};
+
+                    this.campaign.paymentMethod = this.campaign.paymentMethod ||
+                        primaryPaymentMethod.token;
+                };
+
+                this.saveCampaign = function() {
+                    var cState = this;
+
+                    return deepExtend(this._campaign, this.campaign).save()
+                        .then(function() {
+                            return cState.campaign;
+                        });
                 };
             }]);
         }])
@@ -250,30 +292,14 @@ function( angular , c6State  , PaginatedListState                    ,
                 queue = c6AsyncQueue();
 
             function saveCampaign() {
-                return SelfieCampaignCtrl.campaign.save();
+                return cState.saveCampaign();
             }
 
-            function saveCard() {
-                return SelfieCampaignCtrl.card.save();
-            }
+            function updateProxy(campaign) {
+                var updatedCampaign = campaign.pojoify();
 
-            function addCardToCampaign(card) {
-                SelfieCampaignCtrl.campaign.cards = [{
-                    id: card.id
-                }];
-
-                return card;
-            }
-
-            function addCampaignToCard(campaign) {
-                SelfieCampaignCtrl.card.campaignId = campaign.id;
-
-                return campaign;
-            }
-
-            function updateProxy() {
-                SelfieCampaignCtrl._proxyCard = copy(SelfieCampaignCtrl.card);
-                SelfieCampaignCtrl._proxyCampaign = copy(SelfieCampaignCtrl.campaign);
+                SelfieCampaignCtrl._proxyCard = updatedCampaign.cards[0];
+                SelfieCampaignCtrl._proxyCampaign = updatedCampaign;
             }
 
             function returnToDashboard() {
@@ -281,6 +307,7 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function handleError(err) {
+                // Show alert? Show indicator?
                 $log.error('Could not save the Campaign', err);
             }
 
@@ -322,7 +349,6 @@ function( angular , c6State  , PaginatedListState                    ,
                         return [
                             campaign.name,
                             campaign.advertiserDisplayName,
-                            campaign.contentCategories.primary,
                             campaign.paymentMethod,
                             this.validation.budget,
                             card.data.service,
@@ -339,13 +365,13 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.initWithModel = function(model) {
-                // TODO: make sure campaign and card have necessary properties
+                this.logos = model.logos;
+                this.categories = model.categories;
+                this.paymentMethods = model.paymentMethods;
+
                 this.card = cState.card;
                 this.campaign = cState.campaign;
-                this.categories = model.categories;
-                this.logos = model.logos;
                 this.advertiser = cState.advertiser;
-                this.paymentMethods = model.paymentMethods;
 
                 this._proxyCard = copy(this.card);
                 this._proxyCampaign = copy(this.campaign);
@@ -356,23 +382,13 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 $scope.$broadcast('SelfieCampaignWillSave');
 
-                if (SelfieCampaignCtrl.card.id) {
-                    return saveCard()
-                        .then(saveCampaign)
-                        .then(updateProxy)
-                        .catch(handleError);
-                } else {
-                    return saveCampaign()
-                        .then(addCampaignToCard)
-                        .then(saveCard)
-                        .then(addCardToCampaign)
-                        .then(saveCampaign)
-                        .then(updateProxy)
-                        .catch(handleError);
-                }
+                return saveCampaign()
+                    .then(updateProxy)
+                    .catch(handleError);
             };
 
             this.submit = queue.debounce(function() {
+                // this will be an update request!
                 return this.save().then(returnToDashboard);
             }, this);
 
@@ -384,7 +400,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 var campaign = SelfieCampaignCtrl.campaign || {};
 
                 return [
-                    campaign.contentCategories,
                     campaign.pricing,
                     campaign.targeting,
                     campaign.paymentMethod
@@ -522,6 +537,8 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.uploadFromUri = function(uri) {
+                if (!uri) { return; }
+
                 CollateralService.uploadFromUri(uri)
                     .then(handleUpload)
                     .catch(handleUploadError);
@@ -900,7 +917,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.afterModel = function(campaign) {
                     this.campaign = CampaignService.normalize(campaign);
-                    this.card = campaign.cards[0].item;
+                    this.card = campaign.cards[0];
                 };
 
                 this.enter = function() {
@@ -911,8 +928,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6','$q',
-            function                                        ( cinema6 , $q ) {
+            c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6','$q','c6State',
+            function                                        ( cinema6 , $q , c6State ) {
                 this.templateUrl = 'views/selfie/campaigns/manage.html';
                 this.controller = 'SelfieManageCampaignController';
                 this.controllerAs = 'SelfieManageCampaignCtrl';
@@ -927,23 +944,30 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.model = function() {
                     return $q.all({
-                        categories: cinema6.db.findAll('category'),
                         paymentMethods: cinema6.db.findAll('paymentMethod')
                     });
+                };
+
+                this.enter = function() {
+                    // if user is Admin go to Selfie:Manage:Campaign:Admin
+                    return c6State.goTo('Selfie:Manage:Campaign:Manage');
                 };
             }]);
         }])
 
-        .controller('SelfieManageCampaignController', ['$scope','cState','c6AsyncQueue',
-        function                                      ( $scope , cState , c6AsyncQueue ) {
+        .controller('SelfieManageCampaignController', ['$scope','cState','c6State',
+                                                       'c6AsyncQueue','CampaignService',
+        function                                      ( $scope , cState , c6State ,
+                                                        c6AsyncQueue , CampaignService ) {
             var queue = c6AsyncQueue();
 
             Object.defineProperties(this, {
                 canSubmit: {
                     get: function() {
                         return [
-                            this.campaign.name,
-                            this.validation.budget
+                            // this.campaign.name,
+                            // this.validation.budget
+                            this.campaign.paymentMethod
                         ].filter(function(prop) {
                             return !prop;
                         }).length === 0;
@@ -951,10 +975,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
             });
 
-            this.validation = {
-                budget: true
-            };
-            this.tab = 'manage';
+            // this.validation = {
+            //     budget: true
+            // };
 
             this.initWithModel = function(model) {
                 this.card = cState.card;
@@ -964,7 +987,46 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.update = queue.debounce(function() {
+                // this needs to send a campaign update request now
+                // the only valid thing to send is payment method
                 return this.campaign.save();
             }, this);
+
+            this.pause = queue.debounce(function() {
+                this.campaign.status = 'paused';
+                // now send campaign update request
+                // return this.campaign.save();
+            }, this);
+
+            this.cancel = queue.debounce(function() {
+                this.campaign.status = 'canceled';
+                // now send campaign update request
+                // return this.campaign.save();
+            }, this);
+
+            this.copy = queue.debounce(function() {
+                return CampaignService.create(this.campaign.pojoify())
+                    .save().then(function(campaign) {
+                        return c6State.goTo('Selfie:EditCampaign', [campaign]);
+                    });
+            }, this);
+
+            this.edit = function(campaign) {
+                c6State.goTo('Selfie:EditCampaign', [campaign]);
+            };
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Manage:Campaign:Manage', [function() {
+                this.templateUrl = 'views/selfie/campaigns/manage/manage.html';
+            }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Manage:Campaign:Payment', [function() {
+                this.templateUrl = 'views/selfie/campaigns/manage/payment.html';
+            }]);
         }]);
 });

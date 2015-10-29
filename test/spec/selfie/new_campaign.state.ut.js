@@ -9,7 +9,8 @@ define(['app'], function(appModule) {
             newCampaignState,
             CampaignService;
 
-        var campaign;
+        var campaign,
+            card;
 
         beforeEach(function() {
             module(appModule.name);
@@ -36,10 +37,21 @@ define(['app'], function(appModule) {
                 newCampaignState = c6State.get('Selfie:NewCampaign');
             });
 
+            card = {
+                data: {
+                    autoadvance: false,
+                    autoplay: true
+                },
+                params: {
+                    ad: true,
+                    action: null
+                }
+            };
+
             campaign = {
                 id: 'cam-c3fd97889f4fb9',
                 name: null,
-                cards: [],
+                cards: [card],
                 advertiserDisplatName: selfieState.cModel.company
             };
         });
@@ -63,7 +75,7 @@ define(['app'], function(appModule) {
             });
 
             it('should create a new campaign', function() {
-                expect(CampaignService.create).toHaveBeenCalledWith('campaign');
+                expect(CampaignService.create).toHaveBeenCalled();
             });
 
             it('should be a new campaign object', function() {
@@ -72,34 +84,10 @@ define(['app'], function(appModule) {
         });
 
         describe('afterModel()', function() {
-            var card;
-
-            beforeEach(function() {
-                card = {
-                    data: {
-                        autoadvance: false,
-                        autoplay: true
-                    },
-                    params: {
-                        ad: true,
-                        action: null
-                    }
-                };
-
-                spyOn(CampaignService, 'create').and.returnValue(card);
-
-                $rootScope.$apply(function() {
-                    newCampaignState.afterModel(campaign);
-                });
-            });
-
-            it('should create a new card', function() {
-                expect(CampaignService.create).toHaveBeenCalledWith('card');
-            });
-
             it('should add campaign data', function() {
+                newCampaignState.afterModel(campaign);
+
                 expect(newCampaignState.campaign).toEqual(campaign);
-                expect(newCampaignState.card).toEqual(card);
             });
         });
 

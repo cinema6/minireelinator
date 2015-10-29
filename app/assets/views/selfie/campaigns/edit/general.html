@@ -12,7 +12,7 @@
         <div class="form__items">
 
             <fieldset class="form__item form__item--bigInput">
-                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-campaign-name" ng-model="campaign.name" autofocus="autofocus">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-campaign-name" name="c6-campaign-name" ng-model="campaign.name" autofocus="autofocus">
                 <label class="form__label" for="c6-campaign-name">
                     <i class="fa fa-times ui--error"></i>
                     Enter a Campaign Name
@@ -30,14 +30,11 @@
 
             </fieldset>
 
-            
-
         </div><!--.form__items -->
-        
 
     </section><!--.formSection__group #section_1 -->
 
 </div><!--.grid__item-->
-        <div class="grid__item one-half ng-scope">
-            <selfie-categories campaign="campaign" categories="SelfieCampaignCtrl.categories"></selfie-categories>
-        </div>
+<!-- <div class="grid__item one-half ng-scope">
+    <selfie-categories campaign="campaign" categories="SelfieCampaignCtrl.categories"></selfie-categories>
+</div> -->

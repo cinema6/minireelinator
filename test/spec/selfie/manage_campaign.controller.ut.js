@@ -84,7 +84,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 pricing: {},
                 geoTargeting: [],
                 status: 'draft',
-                appllication: 'selfie'
+                appllication: 'selfie',
+                paymentMethod: undefined
             });
             card = deepExtend(cinema6.db.create('card', MiniReelService.createCard('video')), {
                 id: undefined,
@@ -132,12 +133,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 it('should only be true when required propeties are set', function() {
                     expect(SelfieManageCampaignCtrl.canSubmit).toBe(false);
 
-                    SelfieManageCampaignCtrl.validation.budget = false;
-
-                    SelfieManageCampaignCtrl.campaign.name = 'Campaign Name';
-                    expect(SelfieManageCampaignCtrl.canSubmit).toBe(false);
-
-                    SelfieManageCampaignCtrl.validation.budget = true;
+                    SelfieManageCampaignCtrl.campaign.paymentMethod = 'pay-1234';
                     expect(SelfieManageCampaignCtrl.canSubmit).toBe(true);
                 });
             });

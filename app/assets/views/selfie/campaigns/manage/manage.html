@@ -13,7 +13,7 @@
                 </section>
             </div><!--left column ends--><!--
             --><div class="grid__item adManage one-third palm--one-whole">
-                <div class="grid">                    
+                <div class="grid">
                     <div class="grid__item grid--center lockedMsg">
                         <img src="styles/selfie/img/lock-icon.png" class="lockedMsg__icon"/>
                         <h3 class="lockedMsg__icon--text tk--hdr">Locked</h3>
@@ -22,8 +22,8 @@
                     </div>
                     <div class="grid__item one--whole grid--center">
                         <div class="action__btnGroup">
-                          <button class="action__btnSecondary action__btnSecondary--small btn--disabled" disabled><i class="fa fa-pause"></i>  Pause</button> <!--  For disabled buttons add ""btn--disabled" class and also add "disabled" property to the button element -->
-                          <button class="action__btnSecondary action__btnSecondary--small btn--disabled" disabled><i class="fa fa-pencil-square-o"></i>  Edit</button>
+                          <button ng-click="SelfieManageCampaignCtrl.pause(campaign)" ng-class="{'btn--disabled' : !!campaign.updateRequest }" ng-disabled="!!campaign.updateRequest" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-pause"></i>  Pause</button> <!--  For disabled buttons add ""btn--disabled" class and also add "disabled" property to the button element -->
+                          <button ng-click="SelfieManageCampaignCtrl.edit(campaign)" ng-class="{'btn--disabled' : !!campaign.updateRequest }" ng-disabled="!!campaign.updateRequest" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-pencil-square-o"></i>  Edit</button>
                         </div>
                     </div>
                 </div>

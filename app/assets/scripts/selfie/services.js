@@ -29,8 +29,8 @@ function( angular , c6uilib ) {
                                      'NormalizationService',
         function                    ( cinema6 , c6State , MiniReelService , $q ,
                                       NormalizationService ) {
-            var _service = {},
-                copy = NormalizationService.copy;
+            var copy = NormalizationService.copy,
+                value = NormalizationService.value;
 
             function getAppUser() {
                 var application = c6State.get('Application'),
@@ -39,70 +39,82 @@ function( angular , c6uilib ) {
                 return app.cModel;
             }
 
-            _service.campaign = function() {
+            this.create = function(campaign) {
                 var user = getAppUser(),
                     advertiser = user.advertiser,
-                    customer = user.customer;
+                    customer = user.customer,
 
-                return cinema6.db.create('selfieCampaign', {
-                    advertiserId: advertiser.id,
-                    customerId: customer.id,
-                    name: null,
-                    pricing: {},
-                    status: 'draft',
-                    application: 'selfie',
-                    advertiserDisplayName: user.company,
-                    contentCategories: {
-                        primary: null
+                    // set up a full default card in case we aren't copying
+                    rawCard = MiniReelService.createCard('video'),
+                    card = deepExtend(rawCard, {
+                        sponsored: true,
+                        collateral: {
+                            logo: advertiser.defaultLogos && advertiser.defaultLogos.square ?
+                                advertiser.defaultLogos.square :
+                                undefined
+                        },
+                        links: advertiser.defaultLinks || {},
+                        params: {
+                            ad: true,
+                            action: null
+                        },
+                        data: {
+                            autoadvance: false,
+                            controls: false,
+                            autoplay: true,
+                            skip: 30
+                        }
+                    }),
+
+                    // initialize the new campaign DB Model
+                    target = cinema6.db.create('selfieCampaign', {}),
+
+                    // this sets up only the necessary campaign props that should
+                    // be copied or initialized
+                    campaignTemplate = {
+                        advertiserId: copy(advertiser.id),
+                        customerId: copy(customer.id),
+                        name: function(base) {
+                            if (base.name) {
+                                return base.name + ' (Copy)';
+                            }
+                        },
+                        pricing: copy({}),
+                        status: value('draft'),
+                        application: value('selfie'),
+                        advertiserDisplayName: copy(user.company),
+                        paymentMethod: copy(),
+                        targeting: {
+                            geo: {
+                                states: copy([]),
+                                dmas: copy([])
+                            },
+                            demographics: {
+                                age: copy([]),
+                                gender: copy([]),
+                                income: copy([])
+                            },
+                            interests: copy([])
+                        },
+                        cards: copy([card])
                     },
-                    targeting: {
-                        geo: {
-                            states: [],
-                            dmas: []
-                        },
-                        demographics: {
-                            age: [],
-                            gender: [],
-                            income: []
-                        },
-                        interests: []
-                    }
-                });
-            };
 
-            _service.card = function() {
-                var user = getAppUser(),
-                    advertiser = user.advertiser,
-                    card = cinema6.db.create('card', MiniReelService.createCard('video'));
+                    // normalize the new campaign based on the campaign passed in,
+                    // if we aren't copying then all the necessary props will be defaulted
+                    newCampaign = NormalizationService.normalize(
+                        campaignTemplate, campaign, target
+                    );
 
-                return deepExtend(card, {
+                // make sure all bad props are reset
+                extend(newCampaign.cards[0], {
                     id: undefined,
                     campaignId: undefined,
                     campaign: {
                         minViewTime: 3
-                    },
-                    sponsored: true,
-                    collateral: {
-                        logo: advertiser.defaultLogos && advertiser.defaultLogos.square ?
-                            advertiser.defaultLogos.square :
-                            null
-                    },
-                    links: advertiser.defaultLinks || {},
-                    params: {
-                        ad: true,
-                        action: null
-                    },
-                    data: {
-                        autoadvance: false,
-                        controls: false,
-                        autoplay: true,
-                        skip: 30
                     }
                 });
-            };
 
-            this.create = function(type) {
-                return _service[type]();
+                return newCampaign;
             };
 
             this.normalize = function(campaign) {
@@ -110,7 +122,6 @@ function( angular , c6uilib ) {
                     template = {
                         pricing: copy({}),
                         advertiserDisplayName: copy(user.company),
-                        contentCategories: copy({}),
                         targeting: {
                             geo: {
                                 states: copy([]),
