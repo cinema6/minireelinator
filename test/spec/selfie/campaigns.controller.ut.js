@@ -11,7 +11,8 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
             ThumbnailService,
             paginatedDbList,
             $scope,
-            SelfieCampaignsCtrl;
+            SelfieCampaignsCtrl,
+            CampaignService;
 
         var campaigns,
             model;
@@ -28,6 +29,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 ConfirmDialogService = $injector.get('ConfirmDialogService');
                 paginatedDbList = $injector.get('paginatedDbList');
                 ThumbnailService = $injector.get('ThumbnailService');
+                CampaignService = $injector.get('CampaignService');
 
                 campaigns = c6State.get('Selfie:Campaigns');
 
@@ -69,106 +71,6 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 cState: campaigns
             })));
         }));
-
-        describe('properties', function() {
-            describe('metaData', function() {
-                it('should contain metaData for each campaign', function() {
-                    model.items.value = [
-                        {
-                            id: 'cam-1',
-                            cards: [
-                                {
-                                    params: {},
-                                    collateral: {},
-                                    data: {}
-                                }
-                            ]
-                        },
-                        {
-                            id: 'cam-2',
-                            cards: [
-                                {
-                                    params: {
-                                        sponsor: 'Diageo'
-                                    },
-                                    collateral: {
-                                        logo: 'diageo.jpg'
-                                    },
-                                    data: {
-                                        service: 'youtube',
-                                        videoid: '123'
-                                    },
-                                    thumb: 'thumb.jpg'
-                                }
-                            ]
-                        }
-                    ];
-
-                    $scope.$digest();
-
-                    expect(SelfieCampaignsCtrl.metaData['cam-1']).toEqual({
-                        sponsor: undefined,
-                        logo: undefined,
-                        thumb: null
-                    });
-
-                    expect(SelfieCampaignsCtrl.metaData['cam-2']).toEqual({
-                        sponsor: 'Diageo',
-                        logo: 'diageo.jpg',
-                        thumb: 'thumb.jpg'
-                    });
-                });
-
-                describe('when the card does not have a custom thumb', function() {
-                    it('should get thumbs from Thumbnail Service', function() {
-                        var promise = {
-                            ensureFulfillment: jasmine.createSpy('ensureFulfillment').and.returnValue($q.when({large: 'large-thumb.jpg'}))
-                        };
-
-                        spyOn(ThumbnailService, 'getThumbsFor').and.returnValue(promise);
-
-                        model.items.value = [
-                            {
-                                id: 'cam-1',
-                                cards: [
-                                    {
-                                        params: {},
-                                        collateral: {},
-                                        data: {}
-                                    }
-                                ]
-                            },
-                            {
-                                id: 'cam-2',
-                                cards: [
-                                    {
-                                        params: {
-                                            sponsor: 'Diageo'
-                                        },
-                                        collateral: {
-                                            logo: 'diageo.jpg'
-                                        },
-                                        data: {
-                                            service: 'youtube',
-                                            videoid: '123'
-                                        }
-                                    }
-                                ]
-                            }
-                        ];
-
-                        $scope.$digest();
-
-                        expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', '123');
-                        expect(SelfieCampaignsCtrl.metaData['cam-2']).toEqual({
-                            sponsor: 'Diageo',
-                            logo: 'diageo.jpg',
-                            thumb: 'large-thumb.jpg'
-                        });
-                    });
-                });
-            });
-        });
 
         describe('methods', function() {
             describe('remove(campaigns)', function() {
@@ -335,6 +237,153 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                         { name: 'Error', id: 'error', checked: true }
                     ]);
                 });
+
+                describe('adding the metaData', function() {
+                    var statsDeferred, thumbDeferred;
+
+                    beforeEach(function() {
+                        statsDeferred = $q.defer();
+                        thumbDeferred = {
+                            ensureFulfillment: jasmine.createSpy('ensureFulfillment')
+                                .and.returnValue($q.when({large: 'large-thumb.jpg'}))
+                        };
+
+                        spyOn(CampaignService, 'getAnalytics').and.returnValue(statsDeferred.promise);
+                        spyOn(ThumbnailService, 'getThumbsFor').and.returnValue(thumbDeferred);
+
+                        model.items.value = [
+                            {
+                                id: 'cam-1',
+                                cards: [
+                                    {
+                                        params: {},
+                                        collateral: {},
+                                        data: {}
+                                    }
+                                ]
+                            },
+                            {
+                                id: 'cam-2',
+                                cards: [
+                                    {
+                                        params: {
+                                            sponsor: 'Diageo'
+                                        },
+                                        collateral: {
+                                            logo: 'diageo.jpg'
+                                        },
+                                        data: {
+                                            service: 'youtube',
+                                            videoid: '123'
+                                        },
+                                        thumb: 'thumb.jpg'
+                                    }
+                                ]
+                            },
+                            {
+                                id: 'cam-3',
+                                cards: [
+                                    {
+                                        params: {
+                                            sponsor: 'Diageo'
+                                        },
+                                        collateral: {
+                                            logo: 'diageo.jpg'
+                                        },
+                                        data: {
+                                            service: 'youtube',
+                                            videoid: '123'
+                                        }
+                                    }
+                                ]
+                            }
+                        ];
+
+                        $scope.$apply(function() {
+                            SelfieCampaignsCtrl.initWithModel(model);
+                        });
+                    });
+
+                    it('should contain metaData for each campaign', function() {
+                        expect(SelfieCampaignsCtrl.metaData['cam-1']).toEqual({
+                            sponsor: undefined,
+                            logo: undefined,
+                            thumb: null
+                        });
+
+                        expect(SelfieCampaignsCtrl.metaData['cam-2']).toEqual({
+                            sponsor: 'Diageo',
+                            logo: 'diageo.jpg',
+                            thumb: 'thumb.jpg'
+                        });
+                    });
+
+                    describe('when the card does not have a custom thumb', function() {
+                        it('should get thumbs from Thumbnail Service', function() {
+                            expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', '123');
+                            expect(SelfieCampaignsCtrl.metaData['cam-3']).toEqual({
+                                sponsor: 'Diageo',
+                                logo: 'diageo.jpg',
+                                thumb: 'large-thumb.jpg'
+                            });
+                        });
+                    });
+
+                    describe('adding campaign stats', function() {
+                        it('should call the campaign service', function() {
+                            expect(CampaignService.getAnalytics).toHaveBeenCalledWith('cam-1,cam-2,cam-3');
+                        });
+
+                        describe('when stats are returned', function() {
+                            it('should add data for each campaign', function() {
+                                var stats = [
+                                    {
+                                        campaignId: 'cam-1',
+                                        summary: {
+                                            views: 100,
+                                            totalSpend: '10.00'
+                                        }
+                                    },
+                                    {
+                                        campaignId: 'cam-3',
+                                        summary: {
+                                            views: 2000,
+                                            totalSpend: '500.50'
+                                        }
+                                    }
+                                ];
+
+                                $scope.$apply(function() {
+                                    statsDeferred.resolve(stats)
+                                });
+
+                                expect(SelfieCampaignsCtrl.metaData['cam-1']).toEqual({
+                                    sponsor: undefined,
+                                    logo: undefined,
+                                    thumb: null,
+                                    stats: {
+                                        views: 100,
+                                        spend: '10.00'
+                                    }
+                                });
+                                expect(SelfieCampaignsCtrl.metaData['cam-2']).toEqual({
+                                    sponsor: 'Diageo',
+                                    logo: 'diageo.jpg',
+                                    thumb: 'thumb.jpg'
+                                });
+                                expect(SelfieCampaignsCtrl.metaData['cam-3']).toEqual({
+                                    sponsor: 'Diageo',
+                                    logo: 'diageo.jpg',
+                                    thumb: 'large-thumb.jpg',
+                                    stats: {
+                                        views: 2000,
+                                        spend: '500.50'
+                                    }
+                                });
+                            });
+                        });
+                    });
+                });
             });
 
             describe('toggleFilter()', function() {
@@ -351,6 +400,80 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     SelfieCampaignsCtrl.toggleFilter();
 
                     expect(SelfieCampaignsCtrl.filter).toEqual('draft,approved,active,error');
+                });
+            });
+        });
+
+        describe('$scope events', function() {
+            describe('$on PaginatedListHasUpdated', function() {
+                describe('adding the metaData', function() {
+                    var statsDeferred, thumbDeferred;
+
+                    beforeEach(function() {
+                        statsDeferred = $q.defer();
+                        thumbDeferred = {
+                            ensureFulfillment: jasmine.createSpy('ensureFulfillment')
+                                .and.returnValue($q.when({large: 'large-thumb.jpg'}))
+                        };
+
+                        spyOn(CampaignService, 'getAnalytics').and.returnValue(statsDeferred.promise);
+                        spyOn(ThumbnailService, 'getThumbsFor').and.returnValue(thumbDeferred);
+
+                        model.items.value = [
+                            {
+                                id: 'cam-1',
+                                cards: [
+                                    {
+                                        params: {},
+                                        collateral: {},
+                                        data: {}
+                                    }
+                                ]
+                            },
+                            {
+                                id: 'cam-2',
+                                cards: [
+                                    {
+                                        params: {
+                                            sponsor: 'Diageo'
+                                        },
+                                        collateral: {
+                                            logo: 'diageo.jpg'
+                                        },
+                                        data: {
+                                            service: 'youtube',
+                                            videoid: '123'
+                                        },
+                                        thumb: 'thumb.jpg'
+                                    }
+                                ]
+                            }
+                        ];
+
+                        expect(SelfieCampaignsCtrl.metaData).toBe(undefined);
+
+                        $rootScope.$broadcast('PaginatedListHasUpdated');
+
+                        $scope.$digest();
+                    });
+
+                    it('should contain metaData for each campaign', function() {
+                        expect(SelfieCampaignsCtrl.metaData['cam-1']).toEqual({
+                            sponsor: undefined,
+                            logo: undefined,
+                            thumb: null
+                        });
+
+                        expect(SelfieCampaignsCtrl.metaData['cam-2']).toEqual({
+                            sponsor: 'Diageo',
+                            logo: 'diageo.jpg',
+                            thumb: 'thumb.jpg'
+                        });
+                    });
+
+                    it('should call for stats', function() {
+                        expect(CampaignService.getAnalytics).toHaveBeenCalledWith('cam-1,cam-2');
+                    });
                 });
             });
         });
