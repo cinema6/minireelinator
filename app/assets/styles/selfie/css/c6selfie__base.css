@@ -15,9 +15,9 @@
         font-weight:normal; 
         color:#1c1c1c;
         line-height: 1.5;
-
         background:#eee; 
         margin:0;
+        min-width: 1024px;
     }
 
     ::-moz-selection {
@@ -76,6 +76,12 @@
         font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif; 
     }
 
+    .tk--fineprint {
+        font-size:0.875em; line-height:1rem;
+        font-weight: normal;
+        color: #5c5c5c;
+        margin:0.5em 0 0.0625rem 0;
+    }
     .tk--active {
         color:#00c0ff;
     }
@@ -84,10 +90,6 @@
     }
     .tk--alert {
         color:#C90000;
-    }
-    .tk--fineprint {
-        font-size:0.875em; line-height:1rem;
-        margin:0.5em 0 0.0625rem 0;
     }
 
     .tk--facebook {
@@ -678,7 +680,14 @@ fa,
         margin: 0 auto;
         padding:4em 0 0 0;
     }
-
+    @media screen and (max-width:75em) {
+        .gridHolder {
+            width:90%;
+            max-width:64em;
+            margin: 0 auto;
+            padding:4em 0 0 0;
+        }   
+    }
     .tabContent__gridHolder,
     .settingsContent__gridHolder,.supportContent__gridHolder {
         width: 96%;
@@ -709,7 +718,9 @@ fa,
             height: auto;
             display: block;
             text-align: center;
+            border-top: 1px solid #222;
             border-bottom: 1px solid #222;
+            margin-top: -1px;
         }
             .mainNav__item:hover {
                 background-color: #222;
@@ -770,7 +781,7 @@ fa,
             list-style-type:none;
         }
 
-            .mainNav__dropDownItem {
+            .mainNav__dropDownItem a{
                 list-style-type:none;
                 margin:0;
                 padding:1.5rem 4rem;
@@ -781,8 +792,9 @@ fa,
                 cursor: pointer;
             }
 
-            .mainNav__dropDownItem:hover {
+            .mainNav__dropDownItem a:hover {
                 background:#29c5ff;
+                color: #fff;
             }
 
 
@@ -857,7 +869,7 @@ fa,
     .pageHeader__group {
         position:fixed;
         top:0; left:4em; right:0;
-        z-index: 10;
+        z-index: 2000;
         background:#eee;
     }
         .pageHeader__group:after {
@@ -894,7 +906,7 @@ fa,
                 margin:0; padding:0.75rem 0 0;
             }
                 .mainHeader__breadcrumbs a {
-                    color:#444;
+                    color:#00a2de;
                 }
                 .mainHeader__breadcrumbs a:hover {
                     color:#de0073;
@@ -1453,6 +1465,7 @@ fa,
                     line-height:1.5em;
                     padding-left:2.5em;
                 }
+    /*Hiding styles for budget popover for beta
             .campaign__budgetEdit {
                 border-bottom: 1px dotted #444;
             }
@@ -1461,7 +1474,7 @@ fa,
                 border-bottom: 1px solid #00c0ff;
             }
 
-    /*Edit Budget Popover*/
+    /Edit Budget Popover/
     .budget__popoverItem--edit {
         display: inline-block;
     }
@@ -1478,6 +1491,7 @@ fa,
                 border-bottom: 2px solid #00c0ff;
                 background: #fff;
             }
+    */
 
 /*  ================================================
     tocNav__group classes
@@ -1543,7 +1557,10 @@ fa,
         margin: 8em 1.5em 0 1.5em;
     }
     .tabContent__header {
-        padding: 0 0 0 4.5em;
+        width: 96%;
+        max-width: 104em;
+        margin: 0 auto;
+        padding: 0;        
     }
         .tabContent__title {
             display: block;
@@ -2053,7 +2070,9 @@ fa,
             text-transform: capitalize;
         }
 
-
+        .select2-container--default .select2-search--inline .select2-search__field {
+            display: none;
+        }
 
 
     /*  select form classes : multiple selection
@@ -2292,6 +2311,7 @@ fa,
                 border-radius:3px;
             }
 
+
             .ctaPreview__link {
                 font-size:1em;
                 
@@ -2306,7 +2326,7 @@ fa,
         text-align: left;
     }
     .adPreview__panel {
-        padding:2em 2em 2.25em;
+        padding:1em 0.9em;
         background-color:#fff;
         box-shadow:0 1px 3px rgba(0, 0, 0, 0.25);
     }
@@ -2334,16 +2354,23 @@ fa,
                 top:0;
                 left:0;
                 height:100%;
-                border:2px solid #e1e1e1;
+                /*border:2px solid #e1e1e1;*/
                 z-index:5;
             }
 
-
+    @media screen and (max-width:75em) { 
+        .adPreview__desktop {
+            width:100%;
+            background-color:#e1e1e1;
+            position:relative;
+            min-height:26em;
+        }
+    }
 
         .adPreview__mobile {
             background:url('../img/mobile-wireframe.svg') no-repeat center;
-            width:40%;
-            height:90%;
+            width:340px;
+            height:640px;
             padding-bottom:84%;
             margin:0 auto;
             position:relative;
@@ -2558,7 +2585,7 @@ fa,
         margin:7em 1.5em 0 1.5em;
     }
     .settingsContent__header {
-        margin:0 auto 0;
+        margin:0 auto;
         padding:0;
         max-width:104em;
         width:96%;
