@@ -54,6 +54,7 @@ function( angular , c6uilib ) {
                                 undefined
                         },
                         links: advertiser.defaultLinks || {},
+                        shareLinks: {},
                         params: {
                             ad: true,
                             action: null

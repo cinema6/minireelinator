@@ -411,9 +411,12 @@ function( angular , c6State  , PaginatedListState                    ,
             }, true);
 
             // watch the Sponsor Links for autosaving and previewing
-            $scope.$watchCollection(function() {
-                return SelfieCampaignCtrl.card.links;
-            }, watchForPreview);
+            $scope.$watch(function() {
+                return [
+                    SelfieCampaignCtrl.card.links,
+                    SelfieCampaignCtrl.card.shareLinks
+                ];
+            }, watchForPreview, true);
 
             // watch the necessary card properties
             $scope.$watchCollection(function() {
@@ -523,7 +526,12 @@ function( angular , c6State  , PaginatedListState                    ,
                     };
                 });
 
+            this.sharing = card.shareLinks.facebook;
+
             this.updateLinks = function() {
+                var sharing = SelfieCampaignSponsorCtrl.sharing,
+                    shareLink = AppCtrl.validUrl.test(sharing) ? sharing : 'http://' + sharing;
+
                 SelfieCampaignSponsorCtrl.links.forEach(function(link) {
                     if (link.href && link.href === card.links[link.name]) { return; }
 
@@ -534,6 +542,14 @@ function( angular , c6State  , PaginatedListState                    ,
                         card.links[link.name] = undefined;
                     }
                 });
+
+                if (sharing === card.shareLinks.facebook) { return; }
+
+                card.shareLinks = {
+                    facebook: sharing ? shareLink : undefined,
+                    twitter: sharing ? shareLink : undefined,
+                    pinterest: sharing ? shareLink : undefined
+                };
             };
 
             this.uploadFromUri = function(uri) {
