@@ -12,6 +12,9 @@
   * [FIX]: (Selfie) Remove content categorization in Campaign Creation
   * [FEATURE]: (Selfie) Show campaign stats (views + spend) in the dashboard
   * [FEATURE]: (Selfie) Autosave draft campaigns when leaving the page
+  * [DESIGN]: (Selfie) Updated styles for Create and Manage campaign, added sidebar
+    navigation item for "waiting approval"
+  * [FIX]: (Selfie) Fixed styles for Manage Campaign tabs
 
 ## v1.23.0 (October 27, 2015)
 * *[v1.23.0.rc3]*
