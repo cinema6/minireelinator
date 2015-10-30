@@ -310,8 +310,8 @@ function( angular , c6State  , PaginatedListState                    ,
                             })
                             .catch(function() {
                                 ConfirmDialogService.display({
-                                    prompt: 'There was a problem saving your campaign, would you like' +
-                                        ' to stay on this page to edit the campaign?',
+                                    prompt: 'There was a problem saving your campaign, would ' +
+                                        'you like to stay on this page to edit the campaign?',
                                     affirm: 'Yes, stay on this page',
                                     cancel: 'No',
 
