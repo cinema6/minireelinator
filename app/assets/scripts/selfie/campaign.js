@@ -296,10 +296,8 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function updateProxy(campaign) {
-                var updatedCampaign = campaign.pojoify();
-
-                SelfieCampaignCtrl._proxyCard = updatedCampaign.cards[0];
-                SelfieCampaignCtrl._proxyCampaign = updatedCampaign;
+                SelfieCampaignCtrl._proxyCard = copy(campaign.cards[0]);
+                SelfieCampaignCtrl._proxyCampaign = copy(campaign);
             }
 
             function returnToDashboard() {
@@ -443,7 +441,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignSponsorController', ['$scope','CollateralService',
         function                                       ( $scope , CollateralService ) {
-            var SelfieCampaignSponsorCtrl = this,
+            var AppCtrl = $scope.AppCtrl,
+                SelfieCampaignSponsorCtrl = this,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 advertiser = SelfieCampaignCtrl.advertiser,
                 defaultLogo = advertiser.defaultLogos && advertiser.defaultLogos.square,
@@ -529,9 +528,10 @@ function( angular , c6State  , PaginatedListState                    ,
                     if (link.href && link.href === card.links[link.name]) { return; }
 
                     if (link.href) {
-                        card.links[link.name] = link.href;
+                        card.links[link.name] = AppCtrl.validUrl.test(link.href) ?
+                            link.href : 'http://' + link.href;
                     } else if (card.links[link.name]) {
-                        delete card.links[link.name];
+                        card.links[link.name] = undefined;
                     }
                 });
             };
