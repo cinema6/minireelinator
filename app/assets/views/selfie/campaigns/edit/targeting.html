@@ -1,28 +1,50 @@
-<div class="grid__item one-half">
-    <section class="formSection__group" id="section_6">
+<div class="grid__item one-half"  id="section_5">
+    <section class="formSection__group">
 
         <h1 class="formSection__title">
             <span class="formSection__number">
-                <span class="formSection__numberText">6</span>
+                <span class="formSection__numberText">5</span>
             </span>
             <span class="formSection__titleText tk--hdr">Choose Your Audience</span>
         </h1>
-        <p class="formSection__introText">Reach the relevant audience by targeting people based on Interests, Location and Demographics </p>
+        <p class="formSection__introText">Reach the relevant audience by targeting people based on Demographics, Interests and Location</p>
+        <h1 class="formSection__title">
+            <span class="formSection__titleText tk--hdr">Interests</span>
+            <span class="tk--fineprint">
+                <i class="fa fa-asterisk"></i> Using this feature will add an additional cost of $0.50 per 1000 video plays.
+            </span>
+        </h1>
+
         <div class="form__items">
             <selfie-interests campaign="campaign" categories="SelfieCampaignCtrl.categories"></selfie-interests>
-            <selfie-geotargeting campaign="campaign"></selfie-geotargeting>
         </div>
 
     </section><!--.formSection__group-->
 
-    <section class="formSection__group">
+     <section class="formSection__group formSection__group--sub">
 
         <h1 class="formSection__title">
             <span class="formSection__titleText tk--hdr">Demographics</span>
+            <span class="tk--fineprint">
+                <i class="fa fa-asterisk"></i> Using this feature will add an additional cost of $0.50 per 1000 video plays.
+            </span>
         </h1>
-
+        
         <div class="form__items">
             <selfie-demographics campaign="campaign"></selfie-demographics>
+        </div>
+    </section><!--.formSection__group-->
+    
+    <section class="formSection__group formSection__group--sub">
+
+        <h1 class="formSection__title">
+            <span class="formSection__titleText tk--hdr">Location</span>
+            <span class="tk--fineprint">
+                <i class="fa fa-asterisk"></i> Using this feature will add an additional cost of $0.50 per 1000 video plays.
+            </span>
+        </h1>
+        <div class="form__items">
+            <selfie-geotargeting campaign="campaign"></selfie-geotargeting>
         </div>
 
     </section><!--.formSection__group-->

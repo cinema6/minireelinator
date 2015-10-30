@@ -10,6 +10,9 @@
   * [FIX]: (Selfie) Remove "Targeting" and "Budget" tabs from Manage Campaign screen
   * [FEATURE]: (Selfie) Add ability to copy and edit active campaigns
   * [FIX]: (Selfie) Remove content categorization in Campaign Creation
+  * [DESIGN]: (Selfie) Updated styles for Create and Manage campaign, added sidebar 
+  navigation item for "waiting approval"
+  * [FIX]: (Selfie) Fixed styles for Manage Campaign tabs
 
 ## v1.23.0 (October 27, 2015)
 * *[v1.23.0.rc3]*

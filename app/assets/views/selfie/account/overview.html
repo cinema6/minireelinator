@@ -38,17 +38,21 @@
                     <h2 class="tk--hdr">Payment Options</h2>
                     <div class="paymentOptions__box  card--item">
                         <ul ng-if="AccountCtrl.primaryMethod && AccountCtrl.primaryMethod.type === 'creditCard'" class="paymentOptions__box-item"> 
-                            <li><h3 class="tk--hdr">Primary</h3></li>
-                            <li><h2 class="tk--hdr">{{AccountCtrl.primaryMethod.cardType | paymentType}} ***{{AccountCtrl.primaryMethod.last4}}</h2><span>Expires {{AccountCtrl.primaryMethod.expirationDate}}</span></li>
-                            <li><span>{{AccountCtrl.primaryMethod.cardholderName}}</span></li>
+                            <!--<li><h3 class="tk--hdr">Primary</h3></li>-->
+                            <li>
+                                <h2 class="tk--hdr">{{AccountCtrl.primaryMethod.cardType | paymentType}} ***{{AccountCtrl.primaryMethod.last4}}</h2>
+                                <span>Expires {{AccountCtrl.primaryMethod.expirationDate}}</span>
+                                <span class="pull-right" title="Primary Payment Method"><i class="faa fa-check-circle payment__default"></i></span>
+                            </li>
+                            <li><h3 class="tk--hdr">{{AccountCtrl.primaryMethod.cardholderName}}</span></h3>
                         </ul>
                         <ul ng-if="AccountCtrl.primaryMethod && AccountCtrl.primaryMethod.type === 'paypal'" class="paymentOptions__box-item"> 
-                            <li><h3 class="tk--hdr">Primary</h3></li>
-                            <li><h2 class="tk--hdr">PayPal</h2></li>
-                            <li><span>{{AccountCtrl.primaryMethod.email}}</span></li>
+                            <!--<li><h3 class="tk--hdr">Primary</h3></li>-->
+                            <li><h2 class="tk--hdr">PayPal</h2><span class="pull-right" title="Primary Payment Method"><i class="faa fa-check-circle payment__default"></i></span></li>
+                            <li><h3 class="tk--hdr">{{AccountCtrl.primaryMethod.email}}</h3></li>
                         </ul>
                         <ul ng-if="!AccountCtrl.primaryMethod" class="paymentOptions__box-item"> 
-                            <li><h3 class="tk--hdr">No Payment Options</h3></li>
+                            <li><h3 class="tk--hdr">You don't have any payment methods setup</h3></li>
                         </ul>
                         <ul class="paymentOptions__box-item"> 
                             <li><a c6-sref="Selfie:Account:Payment">Manage Payment Options</a></li>
