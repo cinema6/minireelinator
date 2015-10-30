@@ -739,22 +739,33 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignTextController', ['$scope',
         function                                    ( $scope ) {
-            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+            var AppCtrl = $scope.AppCtrl,
+                SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 SelfieCampaignTextCtrl = this,
                 card = SelfieCampaignCtrl.card;
+
+            function validLink(link) {
+                return link && link !== 'http://';
+            }
 
             // we only set the action object if we have
             // an action link and a valid type
             function updateActionLink() {
                 var type = SelfieCampaignTextCtrl.actionType.type,
                     actionLink = SelfieCampaignTextCtrl.actionLink,
-                    actionLabel = SelfieCampaignTextCtrl.actionLabel;
+                    actionLabel = SelfieCampaignTextCtrl.actionLabel,
+                    isValid = validLink(actionLink);
 
-                if (actionLink) {
-                    card.links.Action = actionLink;
+                if (isValid) {
+                    card.links.Action = AppCtrl.validUrl.test(actionLink) ?
+                        actionLink : 'http://' + actionLink;
                 }
 
-                card.params.action = actionLink && type !== 'none' ? {
+                if (type === 'none' || !isValid) {
+                    card.links.Action = undefined;
+                }
+
+                card.params.action = isValid && type !== 'none' ? {
                     type: type,
                     label: actionLabel
                 } : null;
@@ -763,13 +774,13 @@ function( angular , c6State  , PaginatedListState                    ,
             this.actionLink = card.links.Action;
             this.actionLabel = (card.params.action && card.params.action.label) || 'Learn More';
 
-            // there are only two valid types: 'button' or 'text'
-            // but in the UI we want the choice to read 'Link' instead of 'text'
-            this.actionTypeOptions = ['None','Button', 'Link']
+            // there's only one valid type: 'button'
+            // if the user chooses 'none' then we null out the 'action' prop
+            this.actionTypeOptions = ['None','Button']
                 .map(function(option) {
                     return {
                         name: option,
-                        type: option === 'Link' ? 'text' : option.toLowerCase()
+                        type: option.toLowerCase()
                     };
                 });
 
@@ -782,10 +793,20 @@ function( angular , c6State  , PaginatedListState                    ,
                     return option.type === type;
                 })[0];
 
+            $scope.$watchCollection(function() {
+                return SelfieCampaignTextCtrl.actionType.type;
+            }, function(type, oldType) {
+                if (type === oldType) { return; }
+
+                if (type !== 'none') {
+                    SelfieCampaignTextCtrl.actionLink = card.links.Website || 'http://';
+                }
+
+                updateActionLink();
+            });
 
             $scope.$watchCollection(function() {
                 return [
-                    SelfieCampaignTextCtrl.actionType.type,
                     SelfieCampaignTextCtrl.actionLink,
                     SelfieCampaignTextCtrl.actionLabel
                 ];
