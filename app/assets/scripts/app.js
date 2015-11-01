@@ -875,16 +875,14 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         .then(putInArray);
                 };
 
-                this.findAll = function(type, id) {
-                    var campId = id;
+                this.findQuery = function(type, data) {
+                    var campId = data.campaignId;
+                    if(!campId) {
+                        return $q.reject('Must provide a campaign id');
+                    }
+                    delete data.campaignId;
                     var endpoint = url('campaigns/' + campId + '/updates');
-                    return $http.get(endpoint)
-                        .then(pick('data'));
-                };
-
-                this.findQuery = function(type, id, query) {
-                    var endpoint = url('campaigns/' + id + '/updates');
-                    return $http.get(endpoint, { params: query })
+                    return $http.get(endpoint, { params: data })
                         .then(pick('data'));
                 };
 
@@ -900,9 +898,12 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         .then(putInArray);
                 };
 
-                this.erase = function() {
-                    return $q.reject('UpdateRequestAdapter.erase() is not implemented.');
-                };
+                ['erase', 'findAll'].forEach(function(method) {
+                    this[method] = function() {
+                        return $q.reject('UpdateRequestAdapter.' + method +
+                            '() is not implemented.');
+                    };
+                }, this);
             }]);
 
             $provide.constant('PaymentMethodAdapter', ['config','$http','$q',

@@ -44,33 +44,16 @@
                 expect(adapter).toEqual(jasmine.any(Object));
             });
 
-            describe('findAll', function() {
-                var updateRequests;
-
+            describe('findAll(type, id)', function() {
                 beforeEach(function() {
-                    updateRequests = [
-                        {
-                            id: 'ur-12345'
-                        },
-                        {
-                            id: 'ur-54321'
-                        },
-                        {
-                            id: 'ur-31524'
-                        }
-                    ];
-
-                    $httpBackend.expectGET('/api/campaigns/c-123/updates')
-                        .respond(200, updateRequests);
-
-                    adapter.findAll('updateRequest', 'c-123').then(success, failure);
-
-                    $httpBackend.flush();
+                    $rootScope.$apply(function() {
+                        adapter.findAll('updateRequest', 'c-123').then(success, failure);
+                    });
                 });
 
-                it('should resolve to the update requests', function() {
-                    expect(success).toHaveBeenCalledWith(updateRequests);
-                    expect(failure).not.toHaveBeenCalled();
+                it('should reject the promise', function() {
+                    expect(success).not.toHaveBeenCalled();
+                    expect(failure).toHaveBeenCalledWith('UpdateRequestAdapter.findAll() is not implemented.');
                 });
             });
 
@@ -98,7 +81,7 @@
             });
 
             describe('findQuery(type, id, query)', function() {
-                var updateRequests, query;
+                var updateRequests, data;
 
                 beforeEach(function() {
                     updateRequests = [
@@ -115,22 +98,29 @@
                             status: 'rejected'
                         }
                     ];
-                    query = {
+                    data = {
+                        campaignId: 'c-123',
                         ids: 'ur-12345,ur-54321',
                         statuses: 'pending'
                     };
 
                     $httpBackend.expectGET('/api/campaigns/c-123/updates?ids=ur-12345,ur-54321&statuses=pending')
                         .respond(200, [{id:'ur-12345'},{id:'ur-54321'}]);
-
-                    adapter.findQuery('updateRequest', 'c-123', query).then(success, failure);
-
-                    $httpBackend.flush();
                 });
 
                 it('should return the updateRequests with the given filters', function() {
+                    adapter.findQuery('updateRequest', data).then(success, failure);
+                    $httpBackend.flush();
                     expect(success).toHaveBeenCalledWith([{id:'ur-12345'},{id:'ur-54321'}]);
                     expect(failure).not.toHaveBeenCalled();
+                });
+
+                it('should reject if not provided a campaign id', function() {
+                    delete data.campaignId;
+                    adapter.findQuery('updateRequest', data).then(success, failure);
+                    $rootScope.$apply();
+                    expect(success).not.toHaveBeenCalled();
+                    expect(failure).toHaveBeenCalledWith('Must provide a campaign id');
                 });
             });
 
@@ -168,13 +158,7 @@
             });
 
             describe('erase(type, model)', function() {
-                var updateRequest;
-
-            beforeEach(function() {
-                    var updateRequest = {
-                        id: 'ur-12345'
-                    };
-
+                beforeEach(function() {
                     $rootScope.$apply(function() {
                         adapter.erase('updateRequest', 'c-123:ur-12345').then(success, failure);
                     });
