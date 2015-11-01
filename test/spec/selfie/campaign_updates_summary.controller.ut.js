@@ -89,7 +89,7 @@ define(['app'], function(appModule) {
         describe('methods', function() {
             describe('_loadSummary', function() {
                 it('should set firstUpdate to true for pending campaigns', function() {
-                    campaign.status = 'pendingApproval';
+                    campaign.status = 'pending';
                     Ctrl._loadSummary(campaign, updatedCampaign);
                     expect(Ctrl.firstUpdate).toBe(true);
                 });
@@ -108,7 +108,7 @@ define(['app'], function(appModule) {
             });
 
             it('should compare with an empty object for first-time update approvals', function() {
-                campaign.status = 'pendingApproval';
+                campaign.status = 'pending';
                 Ctrl._loadSummary(campaign, updatedCampaign);
                 expect(CampaignService.campaignDiffSummary).toHaveBeenCalledWith({}, updatedCampaign, 'Campaign', 'Card');
             });

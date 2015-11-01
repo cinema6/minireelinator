@@ -792,7 +792,7 @@ function( angular , select2 , braintree ) {
 
             // Constructs the summary object used to generate the table
             this._loadSummary = function(campaign, updatedCampaign) {
-                var firstUpdate = (campaign.status === 'pendingApproval');
+                var firstUpdate = (campaign.status === 'pending');
                 self.firstUpdate = firstUpdate;
                 var originalCampaign = (firstUpdate) ? {} : campaign;
                 var summary = CampaignService.campaignDiffSummary(
