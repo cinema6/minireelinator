@@ -888,10 +888,16 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         .then(pick('data'));
                 };
 
-                this.create = function(type, id, data) {
-                    var endpoint = url('campaigns/' + id + '/updates');
+                this.create = function(type, data) {
+                    var campId = data.campaignId;
+                    if(!campId) {
+                        return $q.reject('Must provide a campaign id');
+                    }
+                    delete data.campaignId;
+                    var endpoint = url('campaigns/' + campId + '/updates');
                     return $http.post(endpoint, data)
-                        .then(pick('data'));
+                        .then(pick('data'))
+                        .then(putInArray);
                 };
 
                 this.erase = function() {

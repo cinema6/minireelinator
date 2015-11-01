@@ -134,25 +134,36 @@
                 });
             });
 
-            describe('create(type, id, data)', function() {
+            describe('create(type, data)', function() {
                 var updateRequest;
 
                 beforeEach(function() {
                     updateRequest = {
-                        status: 'pending'
+                        status: 'pending',
+                        campaignId: 'c-123'
                     };
 
                     $httpBackend.expectPOST('/api/campaigns/c-123/updates')
-                        .respond(200, updateRequest);
-
-                    adapter.create('updateRequest', 'c-123', updateRequest).then(success, failure);
-
-                    $httpBackend.flush();
+                        .respond(function(method, url, data) {
+                            return [200, data];
+                        });
                 });
 
                 it('should return the created updateRequest', function() {
-                    expect(success).toHaveBeenCalledWith(updateRequest);
+                    adapter.create('updateRequest', updateRequest).then(success, failure);
+                    $httpBackend.flush();
+                    expect(success).toHaveBeenCalledWith([{
+                        status: 'pending'
+                    }]);
                     expect(failure).not.toHaveBeenCalled();
+                });
+
+                it('should reject if not provided a campaignId', function() {
+                    delete updateRequest.campaignId;
+                    adapter.create('updateRequest', updateRequest).then(success, failure);
+                    $rootScope.$apply();
+                    expect(success).not.toHaveBeenCalled();
+                    expect(failure).toHaveBeenCalledWith('Must provide a campaign id');
                 });
             });
 
