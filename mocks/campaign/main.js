@@ -27,8 +27,42 @@ module.exports = function(http) {
     });
 
     http.whenPUT('/api/campaigns/**/updates/**', function(request) {
-        console.log(request.body);
-        this.respond(200, {});
+        var id = idFromPath(request.pathname),
+            filePath = objectPath('updates', id),
+            current = grunt.file.readJSON(filePath),
+            updateRequest = extend(current, request.body, {
+                lastUpdated: (new Date()).toISOString()
+            });
+
+        grunt.file.write(filePath, JSON.stringify(updateRequest, null, '    '));
+
+        this.respond(200, extend(updateRequest, {
+            id: id
+        }));
+    });
+
+    http.whenPOST('/api/campaigns/**/updates', function(request) {
+        var id = genId('ur'),
+            campaign = grunt.file.readJSON(objectPath('campaigns', request.body.campaign)),
+            user = require('../auth/user_cache').user,
+            currentTime = (new Date()).toISOString(),
+            updateRequest = extend({
+                status: 'pending'
+            }, request.body, {
+                created: currentTime,
+                user: user.id,
+                org: user.org,
+                lastUpdated: currentTime
+            });
+
+        campaign.lastUpdated = currentTime;
+        campaign.updateRequest = id;
+        campaign.status = campaign.status === 'draft' ? 'pending' : campaign.status;
+        grunt.file.write(objectPath('campaigns', updateRequest.campaign), JSON.stringify(campaign, null, '    '));
+
+        grunt.file.write(objectPath('updates', id), JSON.stringify(updateRequest, null, '    '));
+
+        this.respond(201, extend(updateRequest, { id: id }));
     });
 
     http.whenGET('/api/campaigns', function(request) {

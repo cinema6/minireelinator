@@ -18,7 +18,7 @@
                     </div>
 
                     <div class="ui__btnHolder">
-                        <button class="action__btn action__btn--wide" ng-disabled="!SelfieManageCampaignCtrl.canSubmit" ng-click="SelfieManageCampaignCtrl.update()">Save Changes</button>
+                        <button class="action__btn action__btn--wide" ng-class="{ 'btn--disabled' : !SelfieManageCampaignCtrl.canSubmit }" ng-disabled="!SelfieManageCampaignCtrl.canSubmit" ng-click="SelfieManageCampaignCtrl.update()">Save Changes</button>
                     </div>
                 </section>
             </div>

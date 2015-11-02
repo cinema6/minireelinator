@@ -87,7 +87,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.controllerAs = 'SelfieCampaignsCtrl';
 
                 this.filter = $location.search().filter ||
-                    'draft,pendingApproval,approved,active,paused,error';
+                    'draft,pending,approved,active,paused,error';
                 this.filterBy = $location.search().filterBy || 'statuses';
                 this.sort = $location.search().sort || 'lastUpdated,-1';
 
@@ -193,7 +193,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.filters = [
                     'draft',
-                    'pendingApproval',
+                    'pending',
                     'approved',
                     'active',
                     'paused',
@@ -338,34 +338,39 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.exit = function() {
-                    if (this._campaign.status === 'draft' && !this._campaign._erased) {
-                        return this.saveCampaign()
-                            .catch(function() {
-                                var deferred = $q.defer();
+                    var masterCampaign = this._campaign,
+                        currentCampaign = this.campaign,
+                        editable = currentCampaign.status === 'draft' &&
+                            masterCampaign.status === 'draft' && !masterCampaign._erased;
 
-                                ConfirmDialogService.display({
-                                    prompt: 'There was a problem saving your campaign, would ' +
-                                        'you like to stay on this page to edit the campaign?',
-                                    affirm: 'Yes, stay on this page',
-                                    cancel: 'No',
-
-                                    onCancel: function() {
-                                        deferred.resolve();
-
-                                        return ConfirmDialogService.close();
-                                    },
-                                    onAffirm: function() {
-                                        deferred.reject();
-
-                                        return ConfirmDialogService.close();
-                                    }
-                                });
-
-                                return deferred.promise;
-                            });
-                    } else {
+                    if (!editable) {
                         return $q.when(null);
                     }
+
+                    return this.saveCampaign()
+                        .catch(function() {
+                            var deferred = $q.defer();
+
+                            ConfirmDialogService.display({
+                                prompt: 'There was a problem saving your campaign, would ' +
+                                    'you like to stay on this page to edit the campaign?',
+                                affirm: 'Yes, stay on this page',
+                                cancel: 'No',
+
+                                onCancel: function() {
+                                    deferred.resolve();
+
+                                    return ConfirmDialogService.close();
+                                },
+                                onAffirm: function() {
+                                    deferred.reject();
+
+                                    return ConfirmDialogService.close();
+                                }
+                            });
+
+                            return deferred.promise;
+                        });
                 };
 
                 this.saveCampaign = function() {
@@ -379,9 +384,9 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieCampaignController', ['$scope','$log','c6State','cState',
+        .controller('SelfieCampaignController', ['$scope','$log','c6State','cState','cinema6',
                                                  'c6Debounce','c6AsyncQueue','CampaignService',
-        function                                ( $scope , $log , c6State , cState ,
+        function                                ( $scope , $log , c6State , cState , cinema6 ,
                                                   c6Debounce , c6AsyncQueue , CampaignService ) {
             var SelfieCampaignCtrl = this,
                 queue = c6AsyncQueue();
@@ -391,10 +396,8 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function updateProxy(campaign) {
-                var updatedCampaign = campaign.pojoify();
-
-                SelfieCampaignCtrl._proxyCard = updatedCampaign.cards[0];
-                SelfieCampaignCtrl._proxyCampaign = updatedCampaign;
+                SelfieCampaignCtrl._proxyCard = copy(campaign.cards[0]);
+                SelfieCampaignCtrl._proxyCampaign = copy(campaign);
             }
 
             function returnToDashboard() {
@@ -483,8 +486,21 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.submit = queue.debounce(function() {
-                // this will be an update request!
-                return this.save().then(returnToDashboard);
+                return saveCampaign().then(function() {
+                    var campaign = extend(cState._campaign.pojoify(), {
+                        status: 'active'
+                    });
+
+                    cinema6.db.create('updateRequest', {
+                        data: campaign,
+                        campaign: campaign.id
+                    }).save()
+                        .then(function() {
+                            SelfieCampaignCtrl.campaign.status = 'pending';
+                        })
+                        .then(returnToDashboard)
+                        .catch(handleError);
+                });
             }, this);
 
             // debounce the auto-save
@@ -1076,7 +1092,8 @@ function( angular , c6State  , PaginatedListState                    ,
                         return [
                             // this.campaign.name,
                             // this.validation.budget
-                            this.campaign.paymentMethod
+                            this.campaign.paymentMethod,
+                            !this.campaign.updateRequest
                         ].filter(function(prop) {
                             return !prop;
                         }).length === 0;

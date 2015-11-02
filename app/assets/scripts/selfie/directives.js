@@ -391,7 +391,8 @@ function( angular , select2 , braintree ) {
             return {
                 restrict: 'E',
                 scope: {
-                    campaign: '='
+                    campaign: '=',
+                    validation: '='
                 },
                 templateUrl: 'views/selfie/directives/budget.html',
                 controller: 'SelfieBudgetController',
