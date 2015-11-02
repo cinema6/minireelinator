@@ -28,11 +28,24 @@ module.exports = function(http) {
 
     http.whenPUT('/api/campaigns/**/updates/**', function(request) {
         var id = idFromPath(request.pathname),
+            campaign = grunt.file.readJSON(objectPath('campaigns', request.body.campaign)),
             filePath = objectPath('updates', id),
             current = grunt.file.readJSON(filePath),
             updateRequest = extend(current, request.body, {
                 lastUpdated: (new Date()).toISOString()
             });
+
+        if (request.body.status === 'rejected') {
+            campaign.rejectionReason = request.body.rejectionReason;
+            campaign.status = campaign.status === 'pending' ? 'draft' : campaign.status;
+        } else {
+            campaign = updateRequest.campaign;
+        }
+
+        campaign.lastUpdated = currentTime;
+        delete campaign.updateRequest;
+        grunt.file.write(objectPath('campaigns', updateRequest.campaign), JSON.stringify(campaign, null, '    '));
+
 
         grunt.file.write(filePath, JSON.stringify(updateRequest, null, '    '));
 
@@ -182,7 +195,8 @@ module.exports = function(http) {
                 created: currentTime,
                 user: user.id,
                 org: user.org,
-                lastUpdated: currentTime
+                lastUpdated: currentTime,
+                status: 'draft'
             });
 
         grunt.file.write(objectPath('campaigns', id), JSON.stringify(campaign, null, '    '));

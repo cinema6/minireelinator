@@ -424,6 +424,26 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
             }
 
+            function createUpdateRequest() {
+                var campaign = extend(cState._campaign.pojoify(), {
+                        status: 'active'
+                    });
+
+                return cinema6.db.create('updateRequest', {
+                    data: campaign,
+                    campaign: campaign.id
+                }).save();
+            }
+
+            function setPending() {
+                var currentCampaign = SelfieCampaignCtrl.campaign;
+
+                currentCampaign.status = currentCampaign.status === 'draft' ?
+                    'pending' : currentCampaign.status;
+
+                return currentCampaign;
+            }
+
             // this gets set to 'true' when a user clicks into
             // the video title input field, at which point we don't
             // want changes in videos to overwrite the video title.
@@ -459,7 +479,7 @@ function( angular , c6State  , PaginatedListState                    ,
             });
 
             this.validation = {
-                budget: true
+                budget: false
             };
 
             this.initWithModel = function(model) {
@@ -486,21 +506,11 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.submit = queue.debounce(function() {
-                return saveCampaign().then(function() {
-                    var campaign = extend(cState._campaign.pojoify(), {
-                        status: 'active'
-                    });
-
-                    cinema6.db.create('updateRequest', {
-                        data: campaign,
-                        campaign: campaign.id
-                    }).save()
-                        .then(function() {
-                            SelfieCampaignCtrl.campaign.status = 'pending';
-                        })
-                        .then(returnToDashboard)
-                        .catch(handleError);
-                });
+                return saveCampaign()
+                    .then(createUpdateRequest)
+                    .then(setPending)
+                    .then(returnToDashboard)
+                    .catch(handleError);
             }, this);
 
             // debounce the auto-save
