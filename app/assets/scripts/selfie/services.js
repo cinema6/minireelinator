@@ -29,9 +29,9 @@ function( angular , c6uilib ) {
     return angular.module('c6.app.selfie.services', [c6uilib.name])
 
         .service('CampaignService', ['cinema6','c6State','MiniReelService','$q',
-                                     'NormalizationService',
+                                     'NormalizationService','$http','c6UrlMaker',
         function                    ( cinema6 , c6State , MiniReelService , $q ,
-                                      NormalizationService ) {
+                                      NormalizationService , $http , c6UrlMaker ) {
             var copy = NormalizationService.copy,
                 value = NormalizationService.value;
 
@@ -140,6 +140,16 @@ function( angular , c6uilib ) {
                     };
 
                 return NormalizationService.normalize(template, campaign, campaign);
+            };
+
+            this.getAnalytics = function(ids) {
+                var multi = (ids || '').split(',').length > 1,
+                    url = c6UrlMaker('analytics/campaigns/' + (multi ? ('?id='+ids) : ids), 'api');
+
+                return $http.get(url)
+                    .then(function(response) {
+                        return multi ? response.data : [response.data];
+                    });
             };
 
             /* Creates a diff summary of two campaigns with special handling for the first entry in

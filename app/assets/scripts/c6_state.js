@@ -224,15 +224,7 @@ function( angular , c6uilib ) {
                     $element
                         .on('click', function(event) {
                             c6State.in(attrs.c6Context || 'main', function() {
-                                var state = attrs.c6Sref,
-                                    sameState = c6State.current === state,
-                                    sameUrl = sameState ||
-                                        ((c6State.get(c6State.current) || {}).cUrl ===
-                                            c6State.get(state).cUrl);
-
-                                if (isAnchor && !sameUrl) {
-                                    return;
-                                }
+                                var state = attrs.c6Sref;
 
                                 event.preventDefault();
 

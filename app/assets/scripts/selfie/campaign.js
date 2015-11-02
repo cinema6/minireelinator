@@ -113,8 +113,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignsController', ['$injector','$scope','$q','cState',
                                                   'ConfirmDialogService','ThumbnailService',
+                                                  'CampaignService',
         function                                 ( $injector , $scope , $q , cState ,
-                                                   ConfirmDialogService , ThumbnailService ) {
+                                                   ConfirmDialogService , ThumbnailService ,
+                                                   CampaignService ) {
             var SelfieCampaignsCtrl = this;
 
             $injector.invoke(PaginatedListController, this, {
@@ -140,8 +142,54 @@ function( angular , c6State  , PaginatedListState                    ,
                 return $q.when(null);
             }
 
+            function addMetaData() {
+                var Ctrl = SelfieCampaignsCtrl,
+                    model = Ctrl.model.items.value,
+                    ids = model.map(function(campaign) {
+                        return campaign.id;
+                    }).join(',');
+
+                Ctrl.metaData = model.reduce(function(result, campaign) {
+                    var card = campaign.cards && campaign.cards[0];
+
+                    if (!card) { return result; }
+
+                    result[campaign.id] = {
+                        sponsor: card.params.sponsor,
+                        logo: card.collateral.logo
+                    };
+
+                    thumbFor(card).then(function(thumb) {
+                        result[campaign.id].thumb = thumb;
+                    });
+
+                    return result;
+                },{});
+
+                if (ids) {
+                    CampaignService.getAnalytics(ids)
+                        .then(function(stats) {
+                            stats.forEach(function(stat) {
+                                var campaignId = stat.campaignId;
+
+                                if (!campaignId || !Ctrl.metaData[campaignId]) {
+                                    return;
+                                }
+
+                                Ctrl.metaData[campaignId].stats = {
+                                    views: stat.summary.views,
+                                    spend: stat.summary.totalSpend
+                                };
+                            });
+                        });
+                }
+            }
+
             this.initWithModel = function(model) {
                 this.model = model;
+
+                addMetaData();
+                model.on('PaginatedListHasUpdated', addMetaData);
 
                 this.filters = [
                     'draft',
@@ -200,28 +248,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     return filter.checked ? filters.concat(filter.id) : filters;
                 },[]).join(',');
             };
-
-            $scope.$watch(function() {
-                return SelfieCampaignsCtrl.model.items.value;
-            }, function(model) {
-
-                SelfieCampaignsCtrl.metaData = model.reduce(function(result, campaign) {
-                    var card = campaign.cards && campaign.cards[0];
-
-                    if (!card) { return result; }
-
-                    result[campaign.id] = {
-                        sponsor: card.params.sponsor,
-                        logo: card.collateral.logo
-                    };
-
-                    thumbFor(card).then(function(thumb) {
-                        result[campaign.id].thumb = thumb;
-                    });
-
-                    return result;
-                },{});
-            });
         }])
 
         .config(['c6StateProvider',
@@ -269,9 +295,9 @@ function( angular , c6State  , PaginatedListState                    ,
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Campaign', ['cinema6','SelfieLogoService',
-                                                      'c6State','$q',
+                                                      'c6State','$q','ConfirmDialogService',
             function                                 ( cinema6 , SelfieLogoService ,
-                                                       c6State , $q ) {
+                                                       c6State , $q , ConfirmDialogService ) {
                 var SelfieState = c6State.get('Selfie');
 
                 this.templateUrl = 'views/selfie/campaigns/campaign.html';
@@ -309,6 +335,37 @@ function( angular , c6State  , PaginatedListState                    ,
 
                     this.campaign.paymentMethod = this.campaign.paymentMethod ||
                         primaryPaymentMethod.token;
+                };
+
+                this.exit = function() {
+                    if (this._campaign.status === 'draft') {
+                        return this.saveCampaign()
+                            .catch(function() {
+                                var deferred = $q.defer();
+
+                                ConfirmDialogService.display({
+                                    prompt: 'There was a problem saving your campaign, would ' +
+                                        'you like to stay on this page to edit the campaign?',
+                                    affirm: 'Yes, stay on this page',
+                                    cancel: 'No',
+
+                                    onCancel: function() {
+                                        deferred.resolve();
+
+                                        return ConfirmDialogService.close();
+                                    },
+                                    onAffirm: function() {
+                                        deferred.reject();
+
+                                        return ConfirmDialogService.close();
+                                    }
+                                });
+
+                                return deferred.promise;
+                            });
+                    } else {
+                        return $q.when(null);
+                    }
                 };
 
                 this.saveCampaign = function() {

@@ -11,7 +11,8 @@ define(['app'], function(appModule) {
                 c6State,
                 cinema6,
                 MiniReelService,
-                SelfieLogoService;
+                SelfieLogoService,
+                ConfirmDialogService;
 
             var card,
                 categories,
@@ -29,6 +30,7 @@ define(['app'], function(appModule) {
                     cinema6 = $injector.get('cinema6');
                     MiniReelService = $injector.get('MiniReelService');
                     SelfieLogoService = $injector.get('SelfieLogoService');
+                    ConfirmDialogService = $injector.get('ConfirmDialogService');
 
                     card = MiniReelService.createCard('video');
                     categories = [
@@ -189,6 +191,97 @@ define(['app'], function(appModule) {
                         campaignState.afterModel({ paymentMethods: [] });
 
                         expect(campaignState.campaign.paymentMethod).toEqual(paymentMethods[2].token);
+                    });
+                });
+            });
+
+            describe('exit()', function() {
+                var success, failure, saveDeferred;
+
+                beforeEach(function() {
+                    saveDeferred = $q.defer();
+
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
+
+                    spyOn(campaignState, 'saveCampaign').and.returnValue(saveDeferred.promise);
+                    spyOn(ConfirmDialogService, 'display');
+                });
+
+                describe('when campaign is not in draft', function() {
+                    it('should resolve the promise', function() {
+                        campaign.status = 'active';
+                        campaignState._campaign = campaign;
+
+                        $rootScope.$apply(function() {
+                            campaignState.exit().then(success, failure);
+                        });
+
+                        expect(success).toHaveBeenCalled();
+                        expect(campaignState.saveCampaign).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe('when the campaign is a draft', function() {
+                    beforeEach(function() {
+                        campaign.status = 'draft';
+                        campaignState._campaign = campaign;
+
+                        $rootScope.$apply(function() {
+                            campaignState.exit().then(success, failure);
+                        });
+
+                    });
+
+                    it('should call saveCampaign', function() {
+                        expect(campaignState.saveCampaign).toHaveBeenCalled();
+                    });
+
+                    describe('if the save succeeds', function() {
+                        it('should return the promise', function() {
+                            $rootScope.$apply(function() {
+                                saveDeferred.resolve();
+                            });
+
+                            expect(success).toHaveBeenCalled();
+                        });
+                    });
+
+                    describe('if the save fails', function() {
+                        var onAffirm, onCancel;
+
+                        beforeEach(function() {
+                            $rootScope.$apply(function() {
+                                saveDeferred.reject();
+                            });
+
+                            onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
+                            onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
+                        });
+
+                        it('should display an alert', function() {
+                            expect(ConfirmDialogService.display).toHaveBeenCalled();
+                        });
+
+                        describe('onAffirm', function() {
+                            it('should reject the exit() promise, keeping the user in this state', function() {
+                                $rootScope.$apply(function() {
+                                    onAffirm();
+                                });
+
+                                expect(failure).toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('onAffirm', function() {
+                            it('should resolve the promise, causing the user to proceed to the desired state', function() {
+                                $rootScope.$apply(function() {
+                                    onCancel();
+                                });
+
+                                expect(success).toHaveBeenCalled();
+                            });
+                        });
                     });
                 });
             });
