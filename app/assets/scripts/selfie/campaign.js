@@ -391,10 +391,8 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function updateProxy(campaign) {
-                var updatedCampaign = campaign.pojoify();
-
-                SelfieCampaignCtrl._proxyCard = updatedCampaign.cards[0];
-                SelfieCampaignCtrl._proxyCampaign = updatedCampaign;
+                SelfieCampaignCtrl._proxyCard = copy(campaign.cards[0]);
+                SelfieCampaignCtrl._proxyCampaign = copy(campaign);
             }
 
             function returnToDashboard() {
@@ -508,9 +506,12 @@ function( angular , c6State  , PaginatedListState                    ,
             }, true);
 
             // watch the Sponsor Links for autosaving and previewing
-            $scope.$watchCollection(function() {
-                return SelfieCampaignCtrl.card.links;
-            }, watchForPreview);
+            $scope.$watch(function() {
+                return [
+                    SelfieCampaignCtrl.card.links,
+                    SelfieCampaignCtrl.card.shareLinks
+                ];
+            }, watchForPreview, true);
 
             // watch the necessary card properties
             $scope.$watchCollection(function() {
@@ -538,7 +539,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignSponsorController', ['$scope','CollateralService',
         function                                       ( $scope , CollateralService ) {
-            var SelfieCampaignSponsorCtrl = this,
+            var AppCtrl = $scope.AppCtrl,
+                SelfieCampaignSponsorCtrl = this,
                 SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 advertiser = SelfieCampaignCtrl.advertiser,
                 defaultLogo = advertiser.defaultLogos && advertiser.defaultLogos.square,
@@ -619,16 +621,30 @@ function( angular , c6State  , PaginatedListState                    ,
                     };
                 });
 
+            this.sharing = card.shareLinks.facebook;
+
             this.updateLinks = function() {
+                var sharing = SelfieCampaignSponsorCtrl.sharing,
+                    shareLink = AppCtrl.validUrl.test(sharing) ? sharing : 'http://' + sharing;
+
                 SelfieCampaignSponsorCtrl.links.forEach(function(link) {
                     if (link.href && link.href === card.links[link.name]) { return; }
 
                     if (link.href) {
-                        card.links[link.name] = link.href;
+                        card.links[link.name] = AppCtrl.validUrl.test(link.href) ?
+                            link.href : 'http://' + link.href;
                     } else if (card.links[link.name]) {
-                        delete card.links[link.name];
+                        card.links[link.name] = undefined;
                     }
                 });
+
+                if (sharing === card.shareLinks.facebook) { return; }
+
+                card.shareLinks = {
+                    facebook: sharing ? shareLink : undefined,
+                    twitter: sharing ? shareLink : undefined,
+                    pinterest: sharing ? shareLink : undefined
+                };
             };
 
             this.uploadFromUri = function(uri) {
@@ -818,22 +834,33 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignTextController', ['$scope',
         function                                    ( $scope ) {
-            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+            var AppCtrl = $scope.AppCtrl,
+                SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 SelfieCampaignTextCtrl = this,
                 card = SelfieCampaignCtrl.card;
+
+            function validLink(link) {
+                return link && link !== 'http://';
+            }
 
             // we only set the action object if we have
             // an action link and a valid type
             function updateActionLink() {
                 var type = SelfieCampaignTextCtrl.actionType.type,
                     actionLink = SelfieCampaignTextCtrl.actionLink,
-                    actionLabel = SelfieCampaignTextCtrl.actionLabel;
+                    actionLabel = SelfieCampaignTextCtrl.actionLabel,
+                    isValid = validLink(actionLink);
 
-                if (actionLink) {
-                    card.links.Action = actionLink;
+                if (isValid) {
+                    card.links.Action = AppCtrl.validUrl.test(actionLink) ?
+                        actionLink : 'http://' + actionLink;
                 }
 
-                card.params.action = actionLink && type !== 'none' ? {
+                if (type === 'none' || !isValid) {
+                    card.links.Action = undefined;
+                }
+
+                card.params.action = isValid && type !== 'none' ? {
                     type: type,
                     label: actionLabel
                 } : null;
@@ -842,13 +869,13 @@ function( angular , c6State  , PaginatedListState                    ,
             this.actionLink = card.links.Action;
             this.actionLabel = (card.params.action && card.params.action.label) || 'Learn More';
 
-            // there are only two valid types: 'button' or 'text'
-            // but in the UI we want the choice to read 'Link' instead of 'text'
-            this.actionTypeOptions = ['None','Button', 'Link']
+            // there's only one valid type: 'button'
+            // if the user chooses 'none' then we null out the 'action' prop
+            this.actionTypeOptions = ['None','Button']
                 .map(function(option) {
                     return {
                         name: option,
-                        type: option === 'Link' ? 'text' : option.toLowerCase()
+                        type: option.toLowerCase()
                     };
                 });
 
@@ -861,15 +888,22 @@ function( angular , c6State  , PaginatedListState                    ,
                     return option.type === type;
                 })[0];
 
-
             $scope.$watchCollection(function() {
                 return [
                     SelfieCampaignTextCtrl.actionType.type,
                     SelfieCampaignTextCtrl.actionLink,
                     SelfieCampaignTextCtrl.actionLabel
                 ];
-            }, function(type, oldType) {
-                if (type === oldType) { return; }
+            }, function(newProps, oldProps) {
+                if (newProps === oldProps) { return; }
+
+                var newType = newProps[0],
+                    oldType = oldProps[0];
+
+                if (newType !== oldType && newType !== 'none') {
+                    SelfieCampaignTextCtrl.actionLink = SelfieCampaignTextCtrl.actionLink ||
+                        card.links.Website || 'http://';
+                }
 
                 updateActionLink();
             });
