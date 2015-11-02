@@ -1,0 +1,17 @@
+<div c6-alias="SelfieCampaignUpdatesSummaryCtrl as Ctrl">
+    <table border="1">
+        <tr>
+            <td>Property</td>
+            <td ng-if="!Ctrl.firstUpdate">Current Value</td>
+            <td>Proposed Change</td>
+        </tr>
+        <tr ng-repeat="row in Ctrl.tableData">
+            <td>{{row.title | readableTableKey}}</td>
+            <td ng-if="!Ctrl.firstUpdate">{{row.originalValue | readableTableValue}}</td>
+            <td>
+                <input ng-if="row.editable" type="text" ng-model="Ctrl.edits[row.title]"></input>
+                <div ng-if="!row.editable">{{row.updatedValue | readableTableValue}}</div>
+            </td>
+        </tr>
+    </table>
+</div>

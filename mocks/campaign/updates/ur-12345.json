@@ -1,0 +1,12 @@
+{
+    "id"          : "ur-12345",
+    "created"     : "2015-08-08T16:49:53.645Z",
+    "lastUpdated" : "2015-08-08T16:49:53.645Z",
+    "status"      : "pending",
+    "user"        : "u-82b0123da9678c",
+    "org"         : "o-a6fd7298acb6fa",
+    "campaign"    : "c-27ac9ebf269b12",
+    "data": {
+        
+    }
+}

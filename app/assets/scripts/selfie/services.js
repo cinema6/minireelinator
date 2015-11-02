@@ -8,7 +8,9 @@ function( angular , c6uilib ) {
         isDefined = angular.isDefined,
         ngCopy = angular.copy,
         forEach = angular.forEach,
-        isObject = angular.isObject;
+        isObject = angular.isObject,
+        equals = angular.equals,
+        isArray = angular.isArray;
 
     function deepExtend(target, extension) {
         forEach(extension, function(extensionValue, prop) {
@@ -25,6 +27,7 @@ function( angular , c6uilib ) {
     }
 
     return angular.module('c6.app.selfie.services', [c6uilib.name])
+
         .service('CampaignService', ['cinema6','c6State','MiniReelService','$q',
                                      'NormalizationService','$http','c6UrlMaker',
         function                    ( cinema6 , c6State , MiniReelService , $q ,
@@ -149,6 +152,65 @@ function( angular , c6uilib ) {
                     });
             };
 
+            /* Creates a diff summary of two campaigns with special handling for the first entry in
+                the cards array. Does not compare individual elements of arrays. */
+            this.campaignDiffSummary = function(originalCampaign, updatedCampaign,
+                                                campaignPrefix, cardPrefix) {
+                var origCamp = ngCopy(originalCampaign);
+                var origCard = {};
+                if(origCamp.cards) {
+                    origCard = origCamp.cards[0];
+                    delete origCamp.cards;
+                }
+
+                var updatedCamp = ngCopy(updatedCampaign);
+                var updatedCard = {};
+                if(updatedCamp.cards) {
+                    updatedCard = updatedCamp.cards[0];
+                    delete updatedCamp.cards;
+                }
+
+                var campaignSummary = this._generateSummary(origCamp, updatedCamp, campaignPrefix);
+                var cardSummary = this._generateSummary(origCard, updatedCard, cardPrefix);
+                return campaignSummary.concat(cardSummary);
+            };
+
+            this._generateSummary = function(originalObj, updatedObj, prefix) {
+                var summary = [];
+
+                var origObj = this._flatten(originalObj);
+                var updaObj = this._flatten(updatedObj);
+
+                Object.keys(updaObj).forEach(function(keysHash) {
+                    var origVal = origObj[keysHash];
+                    var updatedVal = updaObj[keysHash];
+                    if(!equals(origVal, updatedVal)) {
+                        summary.push({
+                            originalValue: origVal,
+                            updatedValue: updatedVal,
+                            key: keysHash,
+                            type: prefix
+                        });
+                    }
+                });
+                return summary;
+            };
+
+            this._flatten = function(obj, path, result) {
+                var key, val, _path;
+                path = path || [];
+                result = result || {};
+                for (key in obj) {
+                    val = obj[key];
+                    _path = path.concat([key]);
+                    if (isObject(val) && !isArray(val)) {
+                        this._flatten(val, _path, result);
+                    } else {
+                        result[_path.join('.')] = val;
+                    }
+                }
+                return result;
+            };
         }])
 
         .service('PaymentService', ['$http','c6UrlMaker',

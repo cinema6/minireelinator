@@ -1,6 +1,7 @@
 # MiniReelinator
 
 * *[v1.24.0.rc1]*
+  * [FEATURE]: (Selfie) Created admin tab to moderate update requests
   * [DESIGN]: (Selfie) Moved campaign action buttons out of the tab
   * [DESIGN]: (Selfie) Added description for sections on create campaign
   * [DESIGN]: (Selfie) Added styles for alert modal

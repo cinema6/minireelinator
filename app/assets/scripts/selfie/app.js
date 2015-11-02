@@ -35,6 +35,7 @@ function( angular , c6State  , services   , directives   , campaign   ) {
                         this.state('Selfie:Manage:Campaign', function() {
                             this.route('/manage', 'Selfie:Manage:Campaign:Manage');
                             this.route('/payment', 'Selfie:Manage:Campaign:Payment');
+                            this.route('/admin', 'Selfie:Manage:Campaign:Admin');
                         });
                     });
                 });

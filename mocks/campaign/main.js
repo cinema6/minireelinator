@@ -19,6 +19,18 @@ module.exports = function(http) {
         return path.resolve(__dirname, './' + type + '/' + id + '.json');
     }
 
+    http.whenGET('/api/campaigns/**/updates/**', function(request) {
+        var id = idFromPath(request.pathname);
+        var filePath = path.resolve(__dirname, './updates/' + id + '.json');
+        var json = grunt.file.readJSON(filePath);
+        this.respond(200, json);
+    });
+
+    http.whenPUT('/api/campaigns/**/updates/**', function(request) {
+        console.log(request.body);
+        this.respond(200, {});
+    });
+
     http.whenGET('/api/campaigns', function(request) {
         var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text', 'statuses', 'fields', 'ids']),
             page = withDefaults(mapObject(pluck(request.query, ['limit', 'skip']), parseFloat), {
