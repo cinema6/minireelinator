@@ -338,7 +338,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.exit = function() {
-                    if (this._campaign.status === 'draft') {
+                    if (this._campaign.status === 'draft' && !this._campaign._erased) {
                         return this.saveCampaign()
                             .catch(function() {
                                 var deferred = $q.defer();
@@ -380,9 +380,9 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignController', ['$scope','$log','c6State','cState',
-                                                 'c6Debounce','c6AsyncQueue',
+                                                 'c6Debounce','c6AsyncQueue','CampaignService',
         function                                ( $scope , $log , c6State , cState ,
-                                                  c6Debounce , c6AsyncQueue ) {
+                                                  c6Debounce , c6AsyncQueue , CampaignService ) {
             var SelfieCampaignCtrl = this,
                 queue = c6AsyncQueue();
 
@@ -489,6 +489,20 @@ function( angular , c6State  , PaginatedListState                    ,
 
             // debounce the auto-save
             this.autoSave = c6Debounce(SelfieCampaignCtrl.save, 5000);
+
+            this.copy = queue.debounce(function() {
+                return CampaignService.create(this.campaign)
+                    .save().then(function(campaign) {
+                        return c6State.goTo('Selfie:EditCampaign', [campaign]);
+                    });
+            }, this);
+
+            this.delete = queue.debounce(function() {
+                return cState._campaign.erase()
+                    .then(function() {
+                        return c6State.goTo('Selfie:CampaignDashboard');
+                    });
+            }, this);
 
             // watch for saving only
             $scope.$watch(function() {
