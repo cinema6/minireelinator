@@ -1,0 +1,29 @@
+<div class="tabContent targeting__content container" c6-alias="SelfieManageCampaignAdminCtrl as Ctrl">
+    <header class="tabContent__header">
+        <h2 class="tabContent__title tk--hdr">Campaign Administration</h2>
+        <span class="tabContent__subtitle">Here you can perform administrative actions on a campaign.</span>
+    </header>
+
+    <div class="tabContent__gridHolder">
+        <div class="grid grid--center">
+            <div class="grid__item one-half">
+                <section class="formSection__group">
+                    <h1 class="formSection__title">
+                        <span class="formSection__titleText tk--hdr">Moderate Campaign Updates</span>
+                    </h1>
+                    <p ng-if="!Ctrl.showApproval" class="formSection__introText">There are no updates waiting to be approved.</p>
+
+                    <div ng-if="Ctrl.showApproval">
+                        <selfie-campaign-updates-summary campaign="Ctrl.campaign" updated-campaign="Ctrl.updatedCampaign"></selfie-campaign-updates-summary>
+                        <selfie-preview card="Ctrl.previewCard"></selfie-preview>
+                        <input type="text" ng-model="Ctrl.rejectionReason"></input>
+                        <div class="action__btnGroup ui__btnHolder">
+                            <button ng-click="Ctrl.approveCampaign()" class="action__btn action__btn--big">Approve</button>
+                            <button ng-click="Ctrl.rejectCampaign()" class="action__btn action__btn--big">Reject</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>

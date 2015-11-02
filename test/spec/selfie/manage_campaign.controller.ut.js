@@ -77,6 +77,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 MiniReelService = $injector.get('MiniReelService');
             });
 
+            c6State.get('Selfie').cModel = {
+                entitlements: {
+                    adminCampaigns: true
+                }
+            };
+
             campaign = cinema6.db.create('selfieCampaign', {
                 name: null,
                 categories: [],
@@ -155,6 +161,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieManageCampaignCtrl.campaign).toEqual(campaign);
                     expect(SelfieManageCampaignCtrl.categories).toEqual(categories);
                     expect(SelfieManageCampaignCtrl.paymentMethods).toEqual(paymentMethods);
+                    expect(SelfieManageCampaignCtrl.showAdminTab).toBe(true);
                 });
             });
 

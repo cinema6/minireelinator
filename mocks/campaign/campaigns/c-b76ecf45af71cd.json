@@ -7,7 +7,7 @@
     "cards": [
         {
             "id": "rc-72acb4edf87aeb",
-            "endDate": "1990-06-26T00:00:00.000Z",
+            "endDate": "2016-06-26T00:00:00.000Z",
             "campaign": {
                 "campaignId": null,
                 "advertiserId": null,
@@ -64,13 +64,13 @@
     "pricing": {},
     "targeting": {
         "geo": {
-            "states":[],
+            "states": [],
             "dmas": []
         },
         "demographics": {
-            "age":[],
-            "gender":[],
-            "income":[]
+            "age": [],
+            "gender": [],
+            "income": []
         },
         "interests": []
     },
@@ -78,6 +78,8 @@
     "created": "2014-12-02T18:03:22.663Z",
     "user": "u-82b0123da9678c",
     "org": "o-a6fd7298acb6fa",
-    "lastUpdated": "2014-12-02T18:03:22.663Z",
-    "status": "active"
+    "lastUpdated": "2015-10-28T16:53:36.733Z",
+    "status": "active",
+    "updateRequest": "ur-54321",
+    "id": "c-b76ecf45af71cd"
 }
