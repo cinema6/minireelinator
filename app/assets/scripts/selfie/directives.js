@@ -757,7 +757,7 @@ function( angular , select2 , braintree ) {
                     String(val).indexOf('-') === 4);
                 if (isDate) {
                     var date = new Date(val);
-                    return $filter('date')(date, 'medium', 'EST');
+                    return $filter('date')(date, 'medium');
                 }
                 return String(val);
             };

@@ -14,7 +14,6 @@ describe('readableTableKey', function() {
             null,
             [],
             [1,2,3],
-            '1995-06-27T00:00:00.000Z',
             'u-12345',
             'value'
         ];
@@ -22,12 +21,15 @@ describe('readableTableKey', function() {
             '',
             '',
             '1, 2, 3',
-            'Jun 26, 1995 8:00:00 PM',
             'u-12345',
             'value'
         ];
         input.forEach(function(key, index) {
             expect(readableTableValue(key)).toBe(expectedOutput[index]);
         });
+    });
+
+    it('should make dates readable', function() {
+        expect(readableTableValue('1995-06-27T00:00:00.000Z')).toMatch(/Jun (26|27), 1995 .+/);
     });
 });
