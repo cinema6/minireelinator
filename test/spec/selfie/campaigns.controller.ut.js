@@ -450,9 +450,9 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             }
                         ];
 
-                        expect(SelfieCampaignsCtrl.metaData).toBe(undefined);
+                        SelfieCampaignsCtrl.initWithModel(model);
 
-                        $rootScope.$broadcast('PaginatedListHasUpdated');
+                        model.emit('PaginatedListHasUpdated');
 
                         $scope.$digest();
                     });

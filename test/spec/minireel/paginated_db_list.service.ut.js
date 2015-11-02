@@ -278,7 +278,7 @@ define(['minireel/services'], function(servicesModule) {
                                     }
                                 };
 
-                                spyOn($rootScope, '$broadcast');
+                                spyOn(result, 'emit');
 
                                 $rootScope.$apply(function() {
                                     dbDeferred.resolve(items);
@@ -297,7 +297,7 @@ define(['minireel/services'], function(servicesModule) {
                             });
 
                             it('should broadcast an event', function() {
-                                expect($rootScope.$broadcast).toHaveBeenCalledWith('PaginatedListHasUpdated');
+                                expect(result.emit).toHaveBeenCalledWith('PaginatedListHasUpdated');
                             });
                         });
                     });

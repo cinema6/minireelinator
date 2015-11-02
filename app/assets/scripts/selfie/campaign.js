@@ -151,6 +151,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.model = model;
 
                 addMetaData();
+                model.on('PaginatedListHasUpdated', addMetaData);
 
                 this.filters = [
                     'draft',
@@ -209,8 +210,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     return filter.checked ? filters.concat(filter.id) : filters;
                 },[]).join(',');
             };
-
-            $scope.$on('PaginatedListHasUpdated', addMetaData);
         }])
 
         .config(['c6StateProvider',
@@ -301,14 +300,11 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.exit = function() {
-                    var deferred = $q.defer();
-
                     if (this._campaign.status === 'draft') {
-                        this.saveCampaign()
-                            .then(function() {
-                                deferred.resolve();
-                            })
+                        return this.saveCampaign()
                             .catch(function() {
+                                var deferred = $q.defer();
+
                                 ConfirmDialogService.display({
                                     prompt: 'There was a problem saving your campaign, would ' +
                                         'you like to stay on this page to edit the campaign?',
@@ -326,12 +322,12 @@ function( angular , c6State  , PaginatedListState                    ,
                                         return ConfirmDialogService.close();
                                     }
                                 });
+
+                                return deferred.promise;
                             });
                     } else {
-                        deferred.resolve();
+                        return $q.when(null);
                     }
-
-                    return deferred.promise;
                 };
 
                 this.saveCampaign = function() {

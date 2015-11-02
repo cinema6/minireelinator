@@ -220,8 +220,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
         }])
 
-        .factory('paginatedDbList', ['scopePromise','cinema6','$rootScope',
-        function                    ( scopePromise , cinema6 , $rootScope ) {
+        .factory('paginatedDbList', ['scopePromise','cinema6','$rootScope','c6EventEmitter',
+        function                    ( scopePromise , cinema6 , $rootScope , c6EventEmitter ) {
             function extend() {
                 var objects = Array.prototype.slice.call(arguments);
 
@@ -251,6 +251,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 this.type = type;
                 this.query = extend(query);
                 this.limit = limit;
+
+                c6EventEmitter(this);
 
                 this.goTo(page);
             }
@@ -293,7 +295,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             };
                             list.selectNone();
 
-                            $rootScope.$broadcast('PaginatedListHasUpdated');
+                            list.emit('PaginatedListHasUpdated');
                         });
 
                     return this;
