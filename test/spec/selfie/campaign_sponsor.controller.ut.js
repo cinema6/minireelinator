@@ -34,10 +34,14 @@ define(['app'], function(appModule) {
                     collateral: {
                         logo: null
                     },
-                    links: {}
+                    links: {},
+                    shareLinks: {}
                 };
 
                 $scope = $rootScope.$new();
+                $scope.AppCtrl = {
+                    validUrl: /^(http:\/\/|https:\/\/|\/\/)/
+                };
                 $scope.SelfieCampaignCtrl = {
                     advertiser: advertiser,
                     logos: logos,
@@ -209,10 +213,32 @@ define(['app'], function(appModule) {
                     });
                 });
             });
+
+            describe('sharing link', function() {
+                it('should be the shareLinks.facebook url or undefined', function() {
+                    expect(SelfieCampaignSponsorCtrl.sharing).toBe(undefined);
+
+                    card.shareLinks = {
+                        facebook: 'http://facebook.com'
+                    };
+
+                    compileCtrl();
+
+                    expect(SelfieCampaignSponsorCtrl.sharing).toBe('http://facebook.com');
+                });
+            });
         });
 
         describe('methods', function() {
             describe('updateLinks()', function() {
+                it('should add http:// to links that have no protocol', function() {
+                    SelfieCampaignSponsorCtrl.links[0].href = 'cinema6.com';
+
+                    SelfieCampaignSponsorCtrl.updateLinks();
+
+                    expect(card.links.Website).toEqual('http://cinema6.com');
+                });
+
                 it('should add and remove links on the actual card', function() {
                     SelfieCampaignSponsorCtrl.links[0].href = 'http://mywebsite.com';
 
@@ -225,6 +251,42 @@ define(['app'], function(appModule) {
                     SelfieCampaignSponsorCtrl.updateLinks();
 
                     expect(card.links.Website).toBeUndefined();
+                });
+
+                describe('shareLinks', function() {
+                    it('should add the same url for Facebook, Twitter and Pinterest if defined', function() {
+                        SelfieCampaignSponsorCtrl.sharing = 'mywebsite.com';
+
+                        SelfieCampaignSponsorCtrl.updateLinks();
+
+                        expect(card.shareLinks).toEqual({
+                            facebook: 'http://mywebsite.com',
+                            twitter: 'http://mywebsite.com',
+                            pinterest: 'http://mywebsite.com'
+                        });
+                    });
+
+                    it('should remove all shareLinks if unset', function() {
+                        SelfieCampaignSponsorCtrl.sharing = 'mywebsite.com';
+
+                        SelfieCampaignSponsorCtrl.updateLinks();
+
+                        expect(card.shareLinks).toEqual({
+                            facebook: 'http://mywebsite.com',
+                            twitter: 'http://mywebsite.com',
+                            pinterest: 'http://mywebsite.com'
+                        });
+
+                        SelfieCampaignSponsorCtrl.sharing = '';
+
+                        SelfieCampaignSponsorCtrl.updateLinks();
+
+                        expect(card.shareLinks).toEqual({
+                            facebook: undefined,
+                            twitter: undefined,
+                            pinterest: undefined
+                        });
+                    });
                 });
             });
 

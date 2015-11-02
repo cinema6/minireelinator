@@ -293,16 +293,15 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                 describe('after the campaign saves', function() {
                     it('should update the proxy cards and campaigns', function() {
-                        campaign.id = 'cam-123';
-
-                        var updatedCampaign = campaign.pojoify();
-
                         $scope.$apply(function() {
-                            saveCampaignDeferred.resolve(campaign);
+                            saveCampaignDeferred.resolve(SelfieCampaignCtrl.campaign);
                         });
 
-                        expect(SelfieCampaignCtrl._proxyCard).toEqual(updatedCampaign.cards[0]);
-                        expect(SelfieCampaignCtrl._proxyCampaign).toEqual(updatedCampaign);
+                        expect(SelfieCampaignCtrl._proxyCard).toEqual(SelfieCampaignCtrl.campaign.cards[0]);
+                        expect(SelfieCampaignCtrl._proxyCampaign).toEqual(SelfieCampaignCtrl.campaign);
+
+                        expect(SelfieCampaignCtrl._proxyCard).not.toBe(SelfieCampaignCtrl.campaign.cards[0]);
+                        expect(SelfieCampaignCtrl._proxyCampaign).not.toBe(SelfieCampaignCtrl.campaign);
                     });
                 });
             });
@@ -672,6 +671,22 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                             expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
                         });
+                    });
+
+                    it('links changes should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.card.links.Facebook = 'http://facebook.com';
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                    });
+
+                    it('shareLinks changes should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.card.shareLinks.facebook = 'http://facebook.com';
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
                     });
 
                     it('logo changes should trigger an autosave', function() {

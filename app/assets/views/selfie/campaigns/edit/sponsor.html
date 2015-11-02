@@ -89,11 +89,29 @@
                 <input id="logoUpload" type="file" style="display:none;" ng-model="SelfieCampaignSponsorCtrl.logoFile"><!-- hidden file input-->
             </div><!--.sponsorLogo__wizard-->
 
-            <fieldset class="form__item" ng-class="{ 'ui--hasError': link.href && !AppCtrl.validUrl.test(link.href) }" ng-repeat="link in SelfieCampaignSponsorCtrl.links">
+            <fieldset class="form__item" ng-repeat="link in SelfieCampaignSponsorCtrl.links">
                 <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-{{link.name}}" ng-model="link.href" ng-blur="SelfieCampaignSponsorCtrl.updateLinks()">
                 <label class="form__label" for="c6-sponsor-{{link.name}}">
                     <i class="fa fa-times ui--error"></i>
                     <i class="fa fa-{{link.cssClass}} tk--active tk--{{link.cssClass}}"></i> {{link.name}}
+                </label>
+                <div class="form__helpBox form__helpBox--right">
+                    <div class="form__helpText">
+                        This link will be added to your video card.
+                    </div>
+                </div>
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                    </p>
+                </div>
+            </fieldset>
+
+            <fieldset class="form__item">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-sharing" ng-model="SelfieCampaignSponsorCtrl.sharing" ng-blur="SelfieCampaignSponsorCtrl.updateLinks()">
+                <label class="form__label" for="c6-sponsor-sharing">
+                    <i class="fa fa-times ui--error"></i>
+                    <i class="fa fa-sharingLink tk--active tk--sharingLink"></i> Share Link
                 </label>
                 <div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">
