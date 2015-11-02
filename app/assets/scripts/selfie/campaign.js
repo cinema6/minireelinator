@@ -889,24 +889,21 @@ function( angular , c6State  , PaginatedListState                    ,
                 })[0];
 
             $scope.$watchCollection(function() {
-                return SelfieCampaignTextCtrl.actionType.type;
-            }, function(type, oldType) {
-                if (type === oldType) { return; }
-
-                if (type !== 'none') {
-                    SelfieCampaignTextCtrl.actionLink = card.links.Website || 'http://';
-                }
-
-                updateActionLink();
-            });
-
-            $scope.$watchCollection(function() {
                 return [
+                    SelfieCampaignTextCtrl.actionType.type,
                     SelfieCampaignTextCtrl.actionLink,
                     SelfieCampaignTextCtrl.actionLabel
                 ];
-            }, function(type, oldType) {
-                if (type === oldType) { return; }
+            }, function(newProps, oldProps) {
+                if (newProps === oldProps) { return; }
+
+                var newType = newProps[0],
+                    oldType = oldProps[0];
+
+                if (newType !== oldType && newType !== 'none') {
+                    SelfieCampaignTextCtrl.actionLink = SelfieCampaignTextCtrl.actionLink ||
+                        card.links.Website || 'http://';
+                }
 
                 updateActionLink();
             });

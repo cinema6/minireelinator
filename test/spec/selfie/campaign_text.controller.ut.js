@@ -29,6 +29,9 @@ define(['app'], function(appModule) {
                 };
 
                 $scope = $rootScope.$new();
+                $scope.AppCtrl = {
+                    validUrl: /^(http:\/\/|https:\/\/|\/\/)/
+                };
                 $scope.SelfieCampaignCtrl = {
                     card: card
                 };
@@ -78,10 +81,6 @@ define(['app'], function(appModule) {
                         {
                             name: 'Button',
                             type: 'button'
-                        },
-                        {
-                            name: 'Link',
-                            type: 'text'
                         }
                     ]);
                 });
@@ -94,60 +93,148 @@ define(['app'], function(appModule) {
                     });
 
                     card.params.action = {
-                        type: 'text'
+                        type: 'button'
                     };
 
                     compileCtrl();
 
                     expect(SelfieCampaignTextCtrl.actionType).toEqual({
-                        name: 'Link', type: 'text'
+                        name: 'Button', type: 'button'
                     });
                 });
             });
         });
 
         describe('$watchers', function() {
-            describe('actionType, actionLink, actionLabel', function() {
-                describe('when there is an actionLink', function() {
-                    beforeEach(function() {
-                        $scope.$apply(function() {
-                            SelfieCampaignTextCtrl.actionLink = 'http://myshop.com';
-                            SelfieCampaignTextCtrl.actionLabel = 'Buy This';
-                            SelfieCampaignTextCtrl.actionType.type = 'text';
+            describe('actionType', function() {
+                describe('when set to "Button"', function() {
+                    describe('and there is an Website link on the card', function() {
+                        it('should set it on the Ctrl and default the label', function() {
+                            card.links.Website = 'http://myshop.com';
+
+                            $scope.$apply(function() {
+                                SelfieCampaignTextCtrl.actionType.type = 'button';
+                            });
+
+                            expect(card.params.action).toEqual({
+                                type: 'button', label: 'Learn More'
+                            });
+
+                            expect(SelfieCampaignTextCtrl.actionLink).toBe('http://myshop.com');
+                            expect(card.links.Action).toEqual('http://myshop.com');
                         });
                     });
 
-                    it('should add the link and action object to the card', function() {
-                        expect(card.params.action).toEqual({
-                            type: 'text', label: 'Buy This'
+                    describe('and there is no Website link on the card', function() {
+                        it('should default it to http:// but should not set it on the card', function() {
+                            $scope.$apply(function() {
+                                SelfieCampaignTextCtrl.actionType.type = 'button';
+                            });
+
+                            expect(card.params.action).toEqual(null);
+                            expect(SelfieCampaignTextCtrl.actionLink).toBe('http://');
+                            expect(card.links.Action).toBe(undefined);
+                        });
+                    });
+                });
+            });
+
+            describe('actionLink', function() {
+                describe('when the type is "none"', function() {
+                    it('should not be set on the card', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignTextCtrl.actionLink = 'http://myshop.com';
                         });
 
+                        expect(card.params.action).toBe(null);
+                        expect(card.links.Action).toBe(undefined);
+                    });
+                });
+
+                describe('when the type is "button"', function() {
+                    it('should update the link on the card', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignTextCtrl.actionType.type = 'button';
+                        });
+
+                        $scope.$apply(function() {
+                            SelfieCampaignTextCtrl.actionLink = 'http://myshop.com';
+                        });
+
+                        expect(card.params.action).toEqual({
+                            type: 'button', label: 'Learn More'
+                        });
                         expect(card.links.Action).toEqual('http://myshop.com');
                     });
                 });
 
-                describe('when there is no actionLink', function() {
-                    it('should not set the link and action object on the card', function() {
+                it('should not be reset if label or type change', function() {
+                    SelfieCampaignTextCtrl.actionLink = 'http://myshop.com';
+
+                    $scope.$apply(function() {
+                        SelfieCampaignTextCtrl.actionType.type = 'button';
+                    });
+
+                    expect(SelfieCampaignTextCtrl.actionLink).toEqual('http://myshop.com');
+
+                    $scope.$apply(function() {
+                        SelfieCampaignTextCtrl.actionType.type = 'none';
+                    });
+
+                    expect(SelfieCampaignTextCtrl.actionLink).toEqual('http://myshop.com');
+
+                    $scope.$apply(function() {
+                        SelfieCampaignTextCtrl.actionLabel = 'Buy This!';
+                    });
+
+                    expect(SelfieCampaignTextCtrl.actionLink).toEqual('http://myshop.com');
+                });
+            });
+
+            describe('actionLabel', function() {
+                describe('when the type is "none"', function() {
+                    it('should not be set on the card', function() {
                         $scope.$apply(function() {
-                            SelfieCampaignTextCtrl.actionLink = '';
-                            SelfieCampaignTextCtrl.actionLabel = 'Buy This';
-                            SelfieCampaignTextCtrl.actionType.type = 'text';
+                            SelfieCampaignTextCtrl.actionLabel = 'Buy This Here!';
                         });
 
-                        expect(card.links.Action).toBe(undefined);
                         expect(card.params.action).toBe(null);
+                        expect(card.links.Action).toBe(undefined);
                     });
                 });
 
-                describe('when the action type is "none"', function() {
-                    it('should not set the action object', function() {
-                        $scope.$apply(function() {
-                            SelfieCampaignTextCtrl.actionLink = 'http://buythis.com';
-                            SelfieCampaignTextCtrl.actionLabel = 'Buy This';
-                            SelfieCampaignTextCtrl.actionType.type = 'none';
-                        });
+                describe('when the type is "button"', function() {
+                    describe('when there is a valid action link', function() {
+                        it('should update the label on the card', function() {
+                            $scope.$apply(function() {
+                                SelfieCampaignTextCtrl.actionType.type = 'button';
+                            });
 
-                        expect(card.params.action).toBe(null);
+                            $scope.$apply(function() {
+                                SelfieCampaignTextCtrl.actionLink = 'http://myshop.com';
+                                SelfieCampaignTextCtrl.actionLabel = 'Buy This Here!';
+                            });
+
+                            expect(card.params.action).toEqual({
+                                type: 'button', label: 'Buy This Here!'
+                            });
+                            expect(card.links.Action).toEqual('http://myshop.com');
+                        });
+                    });
+
+                    describe('when there is no valid action link', function() {
+                        it('should not update the label on the card', function() {
+                            $scope.$apply(function() {
+                                SelfieCampaignTextCtrl.actionType.type = 'button';
+                            });
+
+                            $scope.$apply(function() {
+                                SelfieCampaignTextCtrl.actionLabel = 'Buy This Here!';
+                            });
+
+                            expect(card.params.action).toBe(null);
+                            expect(card.links.Action).toBe(undefined);
+                        });
                     });
                 });
             });
