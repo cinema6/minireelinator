@@ -16,6 +16,9 @@
   * [DESIGN]: (Selfie) Updated styles for Create and Manage campaign, added sidebar
     navigation item for "waiting approval"
   * [FIX]: (Selfie) Fixed styles for Manage Campaign tabs
+  * [FIX]: (Selfie) Add http:// protocol to links if user doesn't supply them
+  * [FEATURE]: (Selfie) Default the call to action to the Website link if available
+  * [FEATURE]: (Selfie) Add Social Sharing link in Campaign Creation screen
 
 ## v1.23.0 (October 27, 2015)
 * *[v1.23.0.rc3]*
