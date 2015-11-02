@@ -1,45 +1,51 @@
 {
-  "campaign": {
-    "campaignId": null,
-    "advertiserId": null,
-    "minViewTime": 3,
-    "countUrls": [],
-    "clickUrls": []
-  },
-  "campaignId": "cam-532cbc1fa1108e",
-  "collateral": {
-    "logo": "https://yt3.ggpht.com/-8oIPx6X34Vo/AAAAAAAAAAI/AAAAAAAAAAA/sB_DZXeHerA/s100-c-k-no/photo.jpg"
-  },
-  "data": {
-    "hideSource": true,
-    "controls": true,
-    "autoadvance": true,
-    "skip": 30,
-    "vast": "//ads.adaptv.advertising.com//a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl=http%3A%2F%2Fmutantplayground.com&eov=eov"
-  },
-  "links": {
-    "Website": "http://www.cottonusa.org/",
-    "Facebook": "https://www.facebook.com/cottonusa.global",
-    "Twitter": "https://twitter.com/COTTONUSAglobal",
-    "YouTube": "https://www.youtube.com/user/cottonusaglobal",
-    "Action": "http://buythis.com"
-  },
-  "modules": [],
-  "note": "Simple tips for a hotel quality bedroom that will dazzle your special guest(s).",
-  "org": "o-a61cbc73256d22",
-  "params": {
-    "sponsor": "Cotton USA",
-    "ad": false,
-    "action": {
-      "type": "button",
-      "label": "Buy this"
-    }
-  },
-  "placementId": null,
-  "sponsored": true,
-  "status": "active",
-  "templateUrl": null,
-  "title": "How to make-up your house for that special guest",
-  "type": "adUnit",
-  "user": "u-86e21912d40ab4"
+    "campaign": {
+        "adtechName": "card_rc-36bd59ae13f67b",
+        "campaignId": null,
+        "advertiserId": null,
+        "minViewTime": 3,
+        "countUrls": [],
+        "clickUrls": []
+    },
+    "campaignId": "cam-532cbc1fa1108e",
+    "collateral": {
+        "logo": "https://yt3.ggpht.com/-8oIPx6X34Vo/AAAAAAAAAAI/AAAAAAAAAAA/sB_DZXeHerA/s100-c-k-no/photo.jpg"
+    },
+    "data": {
+        "hideSource": true,
+        "autoplay": true,
+        "controls": true,
+        "autoadvance": true,
+        "skip": 30,
+        "vast": "//ads.adaptv.advertising.com//a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl=http%3A%2F%2Fmutantplayground.com&eov=eov"
+    },
+    "links": {
+        "Website": "http://www.cottonusa.org/",
+        "Facebook": "https://www.facebook.com/cottonusa.global",
+        "Twitter": "https://twitter.com/COTTONUSAglobal",
+        "YouTube": "https://www.youtube.com/user/cottonusaglobal",
+        "Action": "http://buythis.com"
+    },
+    "modules": [],
+    "note": "Simple tips for a hotel quality bedroom that will dazzle your special guest(s).",
+    "org": "o-a61cbc73256d22",
+    "params": {
+        "sponsor": "Cotton USA",
+        "ad": false,
+        "action": {
+            "type": "button",
+            "label": "Buy this"
+        }
+    },
+    "placementId": null,
+    "sponsored": true,
+    "status": "active",
+    "templateUrl": null,
+    "title": "How to make-up your house for that special guest HI",
+    "type": "adUnit",
+    "user": "u-86e21912d40ab4",
+    "id": "rc-36bd59ae13f67b",
+    "thumbs": null,
+    "shareLinks": {},
+    "lastUpdated": "2015-10-28T16:47:08.854Z"
 }

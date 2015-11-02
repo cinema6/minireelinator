@@ -8,7 +8,8 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
             MiniReelService,
             CampaignService,
             NormalizationService,
-            $q;
+            $q,
+            $httpBackend;
 
         var dbModel,
             campaign,
@@ -51,6 +52,7 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                 $q = $injector.get('$q');
                 CampaignService = $injector.get('CampaignService');
                 NormalizationService = $injector.get('NormalizationService');
+                $httpBackend = $injector.get('$httpBackend');
 
                 spyOn(NormalizationService, 'normalize').and.callThrough();
 
@@ -286,6 +288,134 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     var result = CampaignService.normalize(campaign);
 
                     expect(result.advertiserDisplayName).toBe('My Company, Inc.');
+                });
+            });
+
+            describe('getAnalytics(ids)', function() {
+                var success, failure, stats;
+
+                beforeEach(function() {
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
+
+                    stats = [
+                        {
+                            campaignId: 'cam-1',
+                            summary: {
+                                views: 100,
+                                totalSpend: '10.00'
+                            }
+                        },
+                        {
+                            campaignId: 'cam-2',
+                            summary: {
+                                views: 2000,
+                                totalSpend: '500.50'
+                            }
+                        }
+                    ];
+                });
+
+                describe('when fetching multiple campaigns', function() {
+                    it('should request stats for multiple campaigns and return an array', function() {
+                        $httpBackend.expectGET('/api/analytics/campaigns/?id=cam-1,cam-2')
+                            .respond(200, stats);
+
+                        CampaignService.getAnalytics('cam-1,cam-2').then(success, failure);
+
+                        $httpBackend.flush();
+
+                        expect(success).toHaveBeenCalledWith(stats);
+                        expect(failure).not.toHaveBeenCalled();
+                    });
+
+                    it('should reject the promise if the request fails', function() {
+                        $httpBackend.expectGET('/api/analytics/campaigns/?id=cam-1,cam-2')
+                            .respond(404, 'NOT FOUND');
+
+                        CampaignService.getAnalytics('cam-1,cam-2').then(success, failure);
+
+                        $httpBackend.flush();
+
+                        expect(success).not.toHaveBeenCalledWith(stats);
+                        expect(failure).toHaveBeenCalled();
+                    });
+                });
+
+                describe('when fetching a single campaign', function() {
+                    it('should request stats for a single campaign and return an array', function() {
+                        $httpBackend.expectGET('/api/analytics/campaigns/cam-1')
+                            .respond(200, stats[0]);
+
+                        CampaignService.getAnalytics('cam-1').then(success, failure);
+
+                        $httpBackend.flush();
+
+                        expect(success).toHaveBeenCalledWith( [ stats[0] ] );
+                        expect(failure).not.toHaveBeenCalled();
+                    });
+
+                    it('should reject the promise if the request fails', function() {
+                        $httpBackend.expectGET('/api/analytics/campaigns/cam-1')
+                            .respond(404, 'NOT FOUND');
+
+                        CampaignService.getAnalytics('cam-1').then(success, failure);
+
+                        $httpBackend.flush();
+
+                        expect(success).not.toHaveBeenCalledWith( [ stats[0] ] );
+                        expect(failure).toHaveBeenCalled();
+                    });
+                });
+            });
+
+            describe('campaignDiffSummary', function() {
+                var originalCampaign, updatedCampaign, result;
+
+                beforeEach(function() {
+                    spyOn(CampaignService, '_generateSummary').and.callThrough();
+                    originalCampaign = {
+                        id: 'c-123',
+                        cards: [
+                            {
+                                title: 'original title'
+                            }
+                        ]
+                    };
+                    updatedCampaign = {
+                        id: 'c-123',
+                        cards: [
+                            {
+                                title: 'updated title'
+                            }
+                        ]
+                    };
+                    result = CampaignService.campaignDiffSummary(originalCampaign, updatedCampaign, 'Campaign', 'Card');
+                });
+
+                it('should generate a summary of campaign differences', function() {
+                    expect(CampaignService._generateSummary).toHaveBeenCalledWith({
+                        id: 'c-123'
+                    }, {
+                        id: 'c-123'
+                    }, 'Campaign');
+                });
+
+                it('should generate a summary of card differences', function() {
+                    expect(CampaignService._generateSummary).toHaveBeenCalledWith({
+                        title: 'original title'
+                    }, {
+                        title: 'updated title'
+                    }, 'Card');
+                });
+
+                it('should return a summary of changes', function() {
+                    expect(result).toEqual([{
+                        originalValue: 'original title',
+                        updatedValue: 'updated title',
+                        key: 'title',
+                        type: 'Card'
+                    }]);
                 });
             });
         });

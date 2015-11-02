@@ -278,6 +278,8 @@ define(['minireel/services'], function(servicesModule) {
                                     }
                                 };
 
+                                spyOn(result, 'emit');
+
                                 $rootScope.$apply(function() {
                                     dbDeferred.resolve(items);
                                 });
@@ -292,6 +294,10 @@ define(['minireel/services'], function(servicesModule) {
 
                             it('should update the selected array', function() {
                                 expect(result.items.selected).toEqual([false, false, false, false, false, false, false, false, false, false]);
+                            });
+
+                            it('should broadcast an event', function() {
+                                expect(result.emit).toHaveBeenCalledWith('PaginatedListHasUpdated');
                             });
                         });
                     });

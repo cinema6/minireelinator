@@ -220,8 +220,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
         }])
 
-        .factory('paginatedDbList', ['scopePromise','cinema6',
-        function                    ( scopePromise , cinema6 ) {
+        .factory('paginatedDbList', ['scopePromise','cinema6','$rootScope','c6EventEmitter',
+        function                    ( scopePromise , cinema6 , $rootScope , c6EventEmitter ) {
             function extend() {
                 var objects = Array.prototype.slice.call(arguments);
 
@@ -251,6 +251,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 this.type = type;
                 this.query = extend(query);
                 this.limit = limit;
+
+                c6EventEmitter(this);
 
                 this.goTo(page);
             }
@@ -292,6 +294,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 total: Math.ceil(info.total / limit)
                             };
                             list.selectNone();
+
+                            list.emit('PaginatedListHasUpdated');
                         });
 
                     return this;

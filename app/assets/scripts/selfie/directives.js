@@ -6,7 +6,9 @@ function( angular , select2 , braintree ) {
         extend = angular.extend,
         copy = angular.copy,
         forEach = angular.forEach,
-        isObject = angular.isObject;
+        isObject = angular.isObject,
+        isArray = angular.isArray,
+        equals = angular.equals;
 
     function deepExtend(target, extension) {
         forEach(extension, function(extensionValue, prop) {
@@ -231,7 +233,7 @@ function( angular , select2 , braintree ) {
             $scope.device = $scope.device || 'desktop';
 
             // watch for changes to the campaign's card
-            $scope.$watch('card', loadPreview);
+            $scope.$watch('card', loadPreview, true);
 
             // watch for changes to the experience in case
             // the consumer wants to mess with mode or whatnot
@@ -687,5 +689,173 @@ function( angular , select2 , braintree ) {
                     return type;
                 }
             };
+        }])
+
+        .directive('selfieCampaignUpdatesSummary', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    campaign: '=',
+                    card: '=',
+                    updatedCampaign: '=',
+                    updatedCard: '='
+                },
+                templateUrl: 'views/selfie/directives/updatesSummary.html',
+                controller: 'SelfieCampaignUpdatesSummaryController',
+                controllerAs: 'SelfieCampaignUpdatesSummaryCtrl'
+            };
+        }])
+
+        .filter('readableTableKey', [function() {
+            function capitalize(input) {
+                if (input !== null) {
+                    input = input.toLowerCase();
+                    return input[0].toUpperCase() + input.slice(1);
+                }
+            }
+            return function(keysHash) {
+                var strings = {
+                    'data': 'Data:',
+                    'videoid': 'Video ID',
+                    'id': 'ID',
+                    'note': 'Copy',
+                    'campaign': 'Campaign:',
+                    'adtechName': 'Adtech Name',
+                    'collateral': 'Collateral:',
+                    'thumb': 'Custom Thumbnail',
+                    'links': 'Links:',
+                    'shareLinks': 'Sharing Links:',
+                    'params': 'Params:',
+                    'action': 'Call-To-Action',
+                    'adtechid': 'Adtech ID',
+                    'demographics': 'Demographics:',
+                    'advertiserDisplayName': 'Advertiser Display Name',
+                    'user': 'User ID',
+                    'org': 'Organization ID',
+                    'lastUpdated': 'Last Updated',
+                    'updateRequest': 'Update Request ID'
+                };
+                return keysHash.split('.').reduce(function(acc, key) {
+                    return acc + ' ' + (strings[key] || capitalize(key));
+                });
+            };
+        }])
+
+        .filter('readableTableValue', ['$filter',
+        function                      ( $filter ) {
+            return function(val) {
+                if(val === null) {
+                    return '';
+                }
+                if(isArray(val)) {
+                    if(val.length === 0) {
+                        return '';
+                    }
+                    return val.join(', ');
+                }
+                var isDate = (new Date(val) !== 'Invalid Date' && !isNaN(new Date(val)) &&
+                    String(val).indexOf('-') === 4);
+                if (isDate) {
+                    var date = new Date(val);
+                    return $filter('date')(date, 'medium');
+                }
+                return String(val);
+            };
+        }])
+
+        .controller('SelfieCampaignUpdatesSummaryController', ['$scope', 'CampaignService',
+        function                                              ( $scope ,  CampaignService ) {
+            var self = this;
+            self.edits = {};
+            self.firstUpdate = false;
+            self.summary = [];
+
+            // Card Constants
+            var CARD_PREFIX = 'Card';
+            var CARD_EDITABLE_FIELDS = ['title', 'note', 'links.*', 'shareLinks.*'];
+            var CARD_APPROVAL_FIELDS = [
+                'id', 'type', 'title', 'note', 'thumb',
+                'data\\.(service|videoid)', 'collateral\\.logo',
+                'links.*', 'shareLinks.*',
+                'params\\.action.*', 'campaign\\.adtechName'
+            ];
+
+            // Campaign Constants
+            var CAMPAIGN_PREFIX = 'Campaign';
+            var CAMPAIGN_EDITABLE_FIELDS = ['name', 'advertiserDisplayName'];
+            var CAMPAIGN_APPROVAL_FIELDS = [
+                'adtechId', 'name', 'advertiserDisplayName',
+                'created', 'user', 'org', 'lastUpdated',
+                'status', 'updateRequest', 'id',
+                'targeting.*', 'pricing\\.(budget|dailyLimit|cost)'
+            ];
+
+            // Constructs the summary object used to generate the table
+            this._loadSummary = function(campaign, updatedCampaign) {
+                var firstUpdate = (campaign.status === 'pending');
+                self.firstUpdate = firstUpdate;
+                var originalCampaign = (firstUpdate) ? {} : campaign;
+                var summary = CampaignService.campaignDiffSummary(
+                    originalCampaign, updatedCampaign, CAMPAIGN_PREFIX, CARD_PREFIX);
+
+                var tableData = [];
+                summary.forEach(function(diff) {
+                    var approvalWhitelist, editableWhitelist;
+                    if(diff.type === CARD_PREFIX) {
+                        approvalWhitelist = CARD_APPROVAL_FIELDS;
+                        editableWhitelist = CARD_EDITABLE_FIELDS;
+                    } else {
+                        approvalWhitelist = CAMPAIGN_APPROVAL_FIELDS;
+                        editableWhitelist = CAMPAIGN_EDITABLE_FIELDS;
+                    }
+                    if(self._isWhitelisted(approvalWhitelist, diff.key)) {
+                        var tableEntry = {
+                            originalValue: diff.originalValue,
+                            updatedValue: diff.updatedValue,
+                            title: diff.type + '.' + diff.key,
+                            editable: self._isWhitelisted(editableWhitelist, diff.key)
+                        };
+                        if(tableEntry.editable) {
+                            self.edits[tableEntry.title] = diff.updatedValue;
+                        }
+                        tableData.push(tableEntry);
+                    }
+                });
+                self.tableData = tableData;
+            };
+
+            this._isWhitelisted = function(whitelist, value) {
+                for(var i=0;i<whitelist.length;i++) {
+                    var regExp = whitelist[i];
+                    var match = value.match(regExp);
+                    if(match && match[0] === value ) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+            $scope.$watch(function() {
+                return self.edits;
+            }, function(newVal, oldVal) {
+                if(!equals(newVal, oldVal)) {
+                    Object.keys(self.edits).forEach(function(keysHash) {
+                        var keys = keysHash.split('.');
+                        var editedValue = self.edits[keysHash];
+                        var baseObj = $scope.updatedCampaign;
+                        if(keys[0] === CARD_PREFIX) {
+                            baseObj = baseObj.cards[0];
+                        }
+                        keys = keys.slice(1);
+                        var prop = keys.pop();
+                        var tailObj = keys.reduce(function(acc, key) {
+                            return acc[key];
+                        }, baseObj);
+                        tailObj[prop] = editedValue;
+                    });
+                }
+            }, true);
+
+            this._loadSummary($scope.campaign, $scope.updatedCampaign);
         }]);
 });

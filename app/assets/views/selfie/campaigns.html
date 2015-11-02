@@ -113,7 +113,8 @@
 
             <div class="campaign__column column__totalViews">
                 <span class="campaign__viewTotal">
-                    <i class="fa fa-play-circle"></i> 1,235,032
+                    <span ng-if="SelfieCampaignsCtrl.metaData[$this.id].stats.views"><i class="fa fa-play-circle"></i> {{SelfieCampaignsCtrl.metaData[$this.id].stats.views | number}}</span>
+                    <span ng-if="!SelfieCampaignsCtrl.metaData[$this.id].stats.views">--</span>
                 </span>
                 <!--<span class="campaign__viewDelta">
                     <i class="fa fa-arrow-circle-up"></i> 4,587
@@ -123,7 +124,8 @@
 
             <div class="campaign__column column__totalSpending">
                 <span class="campaign__spendTotal">
-                    <strong>$</strong> 361,051.39
+                    <span ng-if="SelfieCampaignsCtrl.metaData[$this.id].stats.spend"><strong>$</strong> {{SelfieCampaignsCtrl.metaData[$this.id].stats.spend | number}}</span>
+                    <span ng-if="!SelfieCampaignsCtrl.metaData[$this.id].stats.spend">--</span>
                 </span>
                 <!--<span class="campaign__spendDelta">
                     <i class="fa fa-arrow-circle-up"></i> $1,239.25
@@ -150,15 +152,19 @@
                 <div class="campaign__budgetInfo">
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">Views:</span>
-                        <i class="fa fa-play-circle"></i> 1,235,032
+                        <i class="fa fa-play-circle"></i>
+                        <span ng-if="SelfieCampaignsCtrl.metaData[$this.id].stats.views">{{SelfieCampaignsCtrl.metaData[$this.id].stats.views}}</span>
+                        <span ng-if="!SelfieCampaignsCtrl.metaData[$this.id].stats.views">--</span>
                     </span>
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">Spend:</span>
-                        <strong>$</strong> 361,051.39
+                        <span ng-if="SelfieCampaignsCtrl.metaData[$this.id].stats.spend"><strong>$</strong> {{SelfieCampaignsCtrl.metaData[$this.id].stats.spend}}</span>
+                        <span ng-if="!SelfieCampaignsCtrl.metaData[$this.id].stats.spend">--</span>
                     </span>
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">Budget:</span>
-                        <strong>$</strong> 950,000.00
+                        <span ng-if="$this.pricing.budget"><strong>$</strong> {{$this.pricing.budget | number}}</span>
+                        <span ng-if="!$this.pricing.budget">--</span>
                     </span>
                 </div>
             </div><!--.column__summaryTotals-->
