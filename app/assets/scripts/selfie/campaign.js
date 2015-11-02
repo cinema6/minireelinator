@@ -479,7 +479,7 @@ function( angular , c6State  , PaginatedListState                    ,
             });
 
             this.validation = {
-                budget: false
+                budget: true
             };
 
             this.initWithModel = function(model) {

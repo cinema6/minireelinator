@@ -409,6 +409,23 @@ function( angular , select2 , braintree ) {
             this.budget = campaign.pricing.budget || null;
             this.limit = campaign.pricing.dailyLimit || null;
 
+            validation.budget = !!this.budget && !!this.limit;
+
+            this.setBudget = function() {
+                var Ctrl = SelfieBudgetCtrl,
+                    budget = Ctrl.budget,
+                    limit = Ctrl.limit;
+
+                if (Ctrl.validBudget && !Ctrl.dailyLimitError) {
+                    campaign.pricing.budget = budget;
+                    campaign.pricing.dailyLimit = limit;
+
+                    validation.budget = !!budget && !!limit;
+                } else {
+                    validation.budget = false;
+                }
+            }
+
             Object.defineProperties(this, {
                 cpv: {
                     get: function() {
@@ -446,30 +463,6 @@ function( angular , select2 , braintree ) {
 
                         return false;
                     }
-                }
-            });
-
-            // watch the budget and limit but only add them to the campaign
-            // if they're valid so no bad values get autosaved
-            $scope.$watchCollection(function() {
-                return [
-                    SelfieBudgetCtrl.budget,
-                    SelfieBudgetCtrl.limit
-                ];
-            }, function(params, oldParams) {
-                if (params === oldParams) { return; }
-
-                var Ctrl = SelfieBudgetCtrl,
-                    budget = params[0],
-                    limit = params[1];
-
-                if (Ctrl.validBudget && !Ctrl.dailyLimitError) {
-                    campaign.pricing.budget = params[0];
-                    campaign.pricing.dailyLimit = params[1];
-
-                    validation.budget = !!budget && !!limit;
-                } else {
-                    validation.budget = false;
                 }
             });
         }])
