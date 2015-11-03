@@ -29,6 +29,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             c6Debounce,
             cinema6,
             MiniReelService,
+            CampaignService,
             SelfieCampaignCtrl;
 
         var cState,
@@ -48,6 +49,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 SelfieCampaignCtrl = $controller('SelfieCampaignController', {
                     $scope: $scope,
                     cState: {
+                        _campaign: cState._campaign,
                         card: cState.card,
                         campaign: cState.campaign,
                         advertiser: cState.advertiser,
@@ -97,6 +99,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 c6Debounce = $injector.get('c6Debounce');
                 cinema6 = $injector.get('cinema6');
                 MiniReelService = $injector.get('MiniReelService');
+                CampaignService = $injector.get('CampaignService');
             });
 
             advertiser = {
@@ -160,6 +163,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             ];
 
             cState = {
+                _campaign: campaign,
                 campaign: campaign.pojoify(),
                 card: campaign.cards[0],
                 advertiser: advertiser,
@@ -307,30 +311,142 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
 
             describe('submit()', function() {
-                var saveDeferred;
+                var saveDeferred, updateRequestDeferred, updateRequest;
 
                 beforeEach(function() {
+                    updateRequest = {};
                     saveDeferred = $q.defer();
+                    updateRequestDeferred = $q.defer();
+
+                    cState.saveCampaign.and.returnValue(saveDeferred.promise);
 
                     spyOn(c6State, 'goTo');
-                    spyOn(SelfieCampaignCtrl, 'save').and.returnValue(saveDeferred.promise);
+                    spyOn(campaign, 'pojoify').and.callThrough();
+                    spyOn(cinema6.db, 'create').and.callFake(function(type, obj) {
+                        updateRequest.data = obj.data;
+                        updateRequest.campaign = obj.campaign;
+                        updateRequest.save = jasmine.createSpy('update.save()').and.returnValue(updateRequestDeferred.promise);
+                        return updateRequest;
+                    });
                 });
 
                 it('should be wrapped in a c6AsyncQueue', function() {
                     expect(debouncedFns).toContain(SelfieCampaignCtrl.submit);
                 });
 
-                it('should save the campaign/card and return to dashboard on success', function() {
-                    SelfieCampaignCtrl.submit();
+                describe('when campaign is a draft', function() {
+                    it('should save the campaign', function() {
+                        cState._campaign.status = 'draft';
+                        cState.campaign.status = 'draft';
 
-                    expect(SelfieCampaignCtrl.save).toHaveBeenCalled();
-                    expect(c6State.goTo).not.toHaveBeenCalled();
+                        SelfieCampaignCtrl.submit();
 
-                    $scope.$apply(function() {
-                        saveDeferred.resolve();
+                        expect(cState.saveCampaign).toHaveBeenCalled();
                     });
 
-                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                    describe('when the save succeeds', function() {
+                        var expectedData;
+
+                        beforeEach(function() {
+                            SelfieCampaignCtrl.submit();
+
+                            cState._campaign.id = 'cam-123';
+
+                            expectedData = campaign.pojoify();
+                            expectedData.status = 'active';
+
+                            $rootScope.$apply(function() {
+                                saveDeferred.resolve();
+                            });
+                        });
+
+                        it('should pojoify the master campaign', function() {
+                            expect(campaign.pojoify).toHaveBeenCalled();
+                        });
+
+                        it('should create an update request with campaign.status = "active"', function() {
+                            expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
+                                campaign: 'cam-123',
+                                data: jasmine.objectContaining(expectedData)
+                            });
+                        });
+
+                        it('should save the update request', function() {
+                            expect(updateRequest.save).toHaveBeenCalled();
+                        });
+
+                        describe('when the update request save succeeds', function() {
+                            it('should change the status on the campaign bound in the UI', function() {
+                                expect(SelfieCampaignCtrl.campaign.status).toBe('draft');
+
+                                $rootScope.$apply(function() {
+                                    updateRequestDeferred.resolve(updateRequest);
+                                });
+
+                                expect(SelfieCampaignCtrl.campaign.status).toBe('pending');
+                            });
+
+                            it('should go to the dashboard', function() {
+                                $rootScope.$apply(function() {
+                                    updateRequestDeferred.resolve(updateRequest);
+                                });
+
+                                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                            });
+                        });
+                    });
+                });
+
+                describe('when campaign in not a draft', function() {
+                    beforeEach(function() {
+                        cState._campaign.status = 'paused';
+                        cState.campaign.id = 'cam-123';
+
+                        SelfieCampaignCtrl.submit();
+
+                        $rootScope.$apply(function() {
+                            saveDeferred.resolve();
+                        });
+                    });
+
+                    it('should not save the campaign', function() {
+                        expect(cState.saveCampaign).not.toHaveBeenCalled();
+                    });
+
+                    it('should not pojoify the master campaign', function() {
+                        expect(campaign.pojoify).not.toHaveBeenCalled();
+                    });
+
+                    it('should create an update request without modifying the current status', function() {
+                        expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
+                            campaign: 'cam-123',
+                            data: cState.campaign
+                        });
+                    });
+
+                    it('should save the update request', function() {
+                        expect(updateRequest.save).toHaveBeenCalled();
+                    });
+
+                    describe('when the update request save succeeds', function() {
+                        it('should not modify the status on the campaign bound in the UI', function() {
+                            expect(SelfieCampaignCtrl.campaign.status).toBe('paused');
+
+                            $rootScope.$apply(function() {
+                                updateRequestDeferred.resolve(updateRequest);
+                            });
+
+                            expect(SelfieCampaignCtrl.campaign.status).toBe('paused');
+                        });
+
+                        it('should go to the dashboard', function() {
+                            $rootScope.$apply(function() {
+                                updateRequestDeferred.resolve(updateRequest);
+                            });
+
+                            expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                        });
+                    });
                 });
             });
 
@@ -355,6 +471,64 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                     expect(c6Debounce.debouncedFn).toHaveBeenCalled();
                     expect(c6Debounce.debouncedFn.calls.count()).toBe(1);
+                });
+            });
+
+            describe('copy()', function() {
+                var newCampaign, newCampaignDeferred;
+
+                beforeEach(function() {
+                    newCampaignDeferred = $q.defer();
+
+                    spyOn(c6State, 'goTo');
+                    spyOn(CampaignService, 'create').and.callFake(function(_campaign) {
+                        newCampaign = angular.copy(_campaign);
+                        newCampaign.save = jasmine.createSpy('campaign.save()')
+                            .and.returnValue(newCampaignDeferred.promise);
+                        return newCampaign;
+                    });
+
+                    SelfieCampaignCtrl.copy();
+                });
+
+                it('should be wrapped in a c6AsyncQueue', function() {
+                    expect(debouncedFns).toContain(SelfieCampaignCtrl.copy);
+                });
+
+                it('should create a new campaign with the current campaign', function() {
+                    expect(CampaignService.create).toHaveBeenCalledWith(SelfieCampaignCtrl.campaign);
+                });
+
+                it('should save the new campaign', function() {
+                    expect(newCampaign.save).toHaveBeenCalled();
+                });
+
+                describe('when the new campaign is saved', function() {
+                    it('should go to EditCampaign state with the new campaign', function() {
+                        $rootScope.$apply(function() {
+                            newCampaignDeferred.resolve(newCampaign);
+                        });
+
+                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:EditCampaign', [newCampaign]);
+                    });
+                });
+            });
+
+            describe('delete()', function() {
+                it('should be wrapped in a c6AsyncQueue', function() {
+                    expect(debouncedFns).toContain(SelfieCampaignCtrl.copy);
+                });
+
+                it('should erase the campaign and go to the dashboard', function() {
+                    spyOn(campaign, 'erase').and.returnValue($q.when(null));
+                    spyOn(c6State, 'goTo');
+
+                    $rootScope.$apply(function() {
+                        SelfieCampaignCtrl.delete();
+                    });
+
+                    expect(campaign.erase).toHaveBeenCalled();
+                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
                 });
             });
         });

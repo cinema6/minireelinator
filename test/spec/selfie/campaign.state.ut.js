@@ -206,12 +206,43 @@ define(['app'], function(appModule) {
 
                     spyOn(campaignState, 'saveCampaign').and.returnValue(saveDeferred.promise);
                     spyOn(ConfirmDialogService, 'display');
+
+                    campaignState._campaign = campaign;
+                    campaignState.campaign = campaign.pojoify();
                 });
 
-                describe('when campaign is not in draft', function() {
+                describe('when master campaign is not in draft', function() {
                     it('should resolve the promise', function() {
-                        campaign.status = 'active';
-                        campaignState._campaign = campaign;
+                        campaignState._campaign.status = 'active';
+                        campaignState.campaign.status = 'draft';
+
+                        $rootScope.$apply(function() {
+                            campaignState.exit().then(success, failure);
+                        });
+
+                        expect(success).toHaveBeenCalled();
+                        expect(campaignState.saveCampaign).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe('when edited campaign is not in draft', function() {
+                    it('should resolve the promise', function() {
+                        campaignState._campaign.status = 'draft';
+                        campaignState.campaign.status = 'active';
+
+                        $rootScope.$apply(function() {
+                            campaignState.exit().then(success, failure);
+                        });
+
+                        expect(success).toHaveBeenCalled();
+                        expect(campaignState.saveCampaign).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe('when master campaign has been erased', function() {
+                    it('should resolve the promise', function() {
+                        campaignState._campaign._erased = true;
+                        campaignState.campaign.status = 'draft';
 
                         $rootScope.$apply(function() {
                             campaignState.exit().then(success, failure);
@@ -224,13 +255,12 @@ define(['app'], function(appModule) {
 
                 describe('when the campaign is a draft', function() {
                     beforeEach(function() {
-                        campaign.status = 'draft';
-                        campaignState._campaign = campaign;
+                        campaignState._campaign.status = 'draft';
+                        delete campaignState.campaign.status;
 
                         $rootScope.$apply(function() {
                             campaignState.exit().then(success, failure);
                         });
-
                     });
 
                     it('should call saveCampaign', function() {

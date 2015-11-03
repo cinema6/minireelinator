@@ -880,6 +880,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     if(!campId) {
                         return $q.reject('Must provide a campaign id');
                     }
+                    delete data.campaign;
                     var endpoint = url('campaigns/' + campId + '/updates');
                     return $http.get(endpoint, { params: data })
                         .then(pick('data'));

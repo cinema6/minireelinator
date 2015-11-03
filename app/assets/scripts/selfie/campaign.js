@@ -338,10 +338,10 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.exit = function() {
-                    var masterCampaign = this._campaign,
-                        currentCampaign = this.campaign,
-                        editable = currentCampaign.status === 'draft' &&
-                            masterCampaign.status === 'draft' && !masterCampaign._erased;
+                    var master = this._campaign,
+                        current = this.campaign,
+                        editable = (!current.status || current.status === 'draft') &&
+                            master.status === 'draft' && !master._erased;
 
                     if (!editable) {
                         return $q.when(null);
@@ -384,10 +384,10 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieCampaignController', ['$scope','$log','c6State','cState','cinema6',
-                                                 'c6Debounce','c6AsyncQueue','CampaignService','$q',
-        function                                ( $scope , $log , c6State , cState , cinema6 ,
-                                                  c6Debounce , c6AsyncQueue , CampaignService , $q ) {
+        .controller('SelfieCampaignController', ['$scope','$log','c6State','cState','cinema6','$q',
+                                                 'c6Debounce','c6AsyncQueue','CampaignService',
+        function                                ( $scope , $log , c6State , cState , cinema6 , $q ,
+                                                  c6Debounce , c6AsyncQueue , CampaignService ) {
             var SelfieCampaignCtrl = this,
                 queue = c6AsyncQueue();
 
@@ -524,14 +524,14 @@ function( angular , c6State  , PaginatedListState                    ,
                 return CampaignService.create(this.campaign)
                     .save().then(function(campaign) {
                         return c6State.goTo('Selfie:EditCampaign', [campaign]);
-                    });
+                    }).catch(handleError);
             }, this);
 
             this.delete = queue.debounce(function() {
                 return cState._campaign.erase()
                     .then(function() {
                         return c6State.goTo('Selfie:CampaignDashboard');
-                    });
+                    }).catch(handleError);
             }, this);
 
             // watch for saving only
@@ -1139,6 +1139,31 @@ function( angular , c6State  , PaginatedListState                    ,
             var SelfieManageCampaignCtrl = this,
                 queue = c6AsyncQueue();
 
+            function statusFor(action) {
+                switch (action) {
+                case 'pause':
+                    return 'paused';
+                case 'resume':
+                    return 'active';
+                case 'cancel':
+                    return 'canceled';
+                }
+            }
+
+            function handleError(error) {
+                ConfirmDialogService.display({
+                    prompt: 'There was an a problem updating your campaign: ' + error.data,
+                    affirm: 'OK',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: function() {
+                        return ConfirmDialogService.close();
+                    }
+                });
+            }
+
             function createUpdateRequest(action) {
                 var campaign = SelfieManageCampaignCtrl.campaign.pojoify();
 
@@ -1173,48 +1198,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     .catch(handleError);
             }
 
-            function handleError(error) {
-                ConfirmDialogService.display({
-                    prompt: 'There was an a problem updating your campaign: ' + error.data,
-                    affirm: 'OK',
-
-                    onCancel: function() {
-                        return ConfirmDialogService.close();
-                    },
-                    onAffirm: function() {
-                        return ConfirmDialogService.close();
-                    }
-                });
-            }
-
-            function confirmAction(action, affirmation) {
-                ConfirmDialogService.display({
-                    prompt: 'Are you sure you want to ' + action + ' your campaign?',
-                    affirm: 'Yes',
-                    cancel: 'No',
-
-                    onCancel: function() {
-                        return ConfirmDialogService.close();
-                    },
-                    onAffirm: queue.debounce(function() {
-                        ConfirmDialogService.close();
-
-                        return affirmation(action);
-                    })
-                });
-            }
-
-            function statusFor(action) {
-                switch (action) {
-                case 'pause':
-                    return 'paused';
-                case 'resume':
-                    return 'active';
-                case 'cancel':
-                    return 'canceled';
-                }
-            }
-
             Object.defineProperties(this, {
                 canSubmit: {
                     get: function() {
@@ -1242,14 +1225,29 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.update = function(action) {
-                if (action) {
-                    return confirmAction(action, submitUpdate);
-                }
+                ConfirmDialogService.display({
+                    prompt: 'Are you sure you want to ' + action + ' your campaign? ' +
+                        'Submitting this update will lock your campaign from further' +
+                        ' edits until the change is approved.',
+                    affirm: 'Yes, submit this change',
+                    cancel: 'Cancel',
 
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: queue.debounce(function() {
+                        ConfirmDialogService.close();
+
+                        return submitUpdate(action);
+                    })
+                });
+            };
+
+            this.safeUpdate = queue.debounce(function() {
                 if (this.canSubmit) {
                     return submitUpdate();
                 }
-            };
+            }, this);
 
             this.copy = queue.debounce(function() {
                 return CampaignService.create(this.campaign.pojoify())
