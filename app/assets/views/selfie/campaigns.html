@@ -109,6 +109,8 @@
                 <h1 class="campaign__name tk--hdr">
                     {{$this.name}}
                 </h1>
+                <span ng-if="$this.rejectionReason">{{$this.rejectionReason}}</span>
+                <span ng-if="$this.updateRequest">Pending update request...</span>
             </div><!--.column__campaignName-->
 
             <div class="campaign__column column__totalViews">

@@ -425,8 +425,9 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function createUpdateRequest() {
-                var campaign = extend(cState._campaign.pojoify(), {
-                        status: 'active'
+                var status = cState._campaign.status,
+                    campaign = extend(cState._campaign.pojoify(), {
+                        status: status === 'draft' ? 'active' : status
                     });
 
                 return cinema6.db.create('updateRequest', {
@@ -1127,22 +1128,98 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieManageCampaignController', ['$scope','cState','c6AsyncQueue',
-                                                       'c6State', 'CampaignService',
+                                                       'c6State', 'CampaignService','cinema6',
+                                                       'ConfirmDialogService',
         function                                      ( $scope , cState , c6AsyncQueue ,
-                                                        c6State ,  CampaignService ) {
-            var queue = c6AsyncQueue();
+                                                        c6State ,  CampaignService , cinema6 ,
+                                                        ConfirmDialogService ) {
+            var SelfieManageCampaignCtrl = this,
+                queue = c6AsyncQueue();
+
+            function createUpdateRequest(action) {
+                var campaign = SelfieManageCampaignCtrl.campaign.pojoify();
+
+                if (action) {
+                    campaign.status = statusFor(action);
+                }
+
+                return cinema6.db.create('updateRequest', {
+                    data: campaign,
+                    campaign: campaign.id
+                }).save();
+            }
+
+            function setUpdateRequest(updateRequest) {
+                if (updateRequest.status !== 'approved') {
+                    cState.campaign.updateRequest = updateRequest.id;
+                }
+                return cState.campaign;
+            }
+
+            function updateProxy(campaign) {
+                SelfieManageCampaignCtrl._proxyCampaign = copy(campaign);
+            }
+
+            function submitUpdate(action) {
+                return createUpdateRequest(action)
+                    .then(setUpdateRequest)
+                    .then(updateProxy)
+                    .catch(handleError);
+            }
+
+            function handleError(error) {
+                ConfirmDialogService.display({
+                    prompt: 'There was an a problem updating your campaign: ' + error.data,
+                    affirm: 'OK',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: function() {
+                        return ConfirmDialogService.close();
+                    }
+                });
+            }
+
+            function confirmAction(action, affirmation) {
+                ConfirmDialogService.display({
+                    prompt: 'Are you sure you want to ' + action + ' your campaign?',
+                    affirm: 'Yes',
+                    cancel: 'No',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: queue.debounce(function() {
+                        ConfirmDialogService.close();
+
+                        return affirmation(action);
+                    })
+                });
+            }
+
+            function statusFor(action) {
+                switch (action) {
+                case 'pause':
+                    return 'paused';
+                case 'resume':
+                    return 'active';
+                case 'cancel':
+                    return 'canceled';
+                }
+            }
 
             Object.defineProperties(this, {
                 canSubmit: {
                     get: function() {
-                        return [
-                            // this.campaign.name,
-                            // this.validation.budget
-                            this.campaign.paymentMethod,
-                            !this.campaign.updateRequest
-                        ].filter(function(prop) {
-                            return !prop;
-                        }).length === 0;
+                        return !equals(this.campaign, this._proxyCampaign) &&
+                            this.campaign.paymentMethod && !this.campaign.updateRequest;
+                    }
+                },
+                isLocked: {
+                    get: function() {
+                        return (/expired|canceled/).test(this.campaign.status) ||
+                            !!this.campaign.updateRequest;
                     }
                 }
             });
@@ -1158,25 +1235,19 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.categories = model.categories;
                 this.paymentMethods = model.paymentMethods;
                 this.showAdminTab = (user.entitlements.adminCampaigns === true);
+
+                this._proxyCampaign = copy(cState.campaign);
             };
 
-            this.update = queue.debounce(function() {
-                // this needs to send a campaign update request now
-                // the only valid thing to send is payment method
-                return this.campaign.save();
-            }, this);
+            this.update = function(action) {
+                if (action) {
+                    return confirmAction(action, submitUpdate);
+                }
 
-            this.pause = queue.debounce(function() {
-                this.campaign.status = 'paused';
-                // now send campaign update request
-                // return this.campaign.save();
-            }, this);
-
-            this.cancel = queue.debounce(function() {
-                this.campaign.status = 'canceled';
-                // now send campaign update request
-                // return this.campaign.save();
-            }, this);
+                if (this.canSubmit) {
+                    return submitUpdate();
+                }
+            };
 
             this.copy = queue.debounce(function() {
                 return CampaignService.create(this.campaign.pojoify())

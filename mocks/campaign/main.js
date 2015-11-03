@@ -23,28 +23,31 @@ module.exports = function(http) {
         var id = idFromPath(request.pathname);
         var filePath = path.resolve(__dirname, './updates/' + id + '.json');
         var json = grunt.file.readJSON(filePath);
-        this.respond(200, json);
+        this.respond(200, extend(json, {
+            id: id
+        }));
     });
 
     http.whenPUT('/api/campaigns/**/updates/**', function(request) {
         var id = idFromPath(request.pathname),
-            campaign = grunt.file.readJSON(objectPath('campaigns', request.body.campaign)),
+            campaign = grunt.file.readJSON(objectPath('campaigns', request.body.data.id)),
             filePath = objectPath('updates', id),
+            currentTime = (new Date()).toISOString(),
             current = grunt.file.readJSON(filePath),
             updateRequest = extend(current, request.body, {
-                lastUpdated: (new Date()).toISOString()
+                lastUpdated: currentTime
             });
 
         if (request.body.status === 'rejected') {
             campaign.rejectionReason = request.body.rejectionReason;
             campaign.status = campaign.status === 'pending' ? 'draft' : campaign.status;
         } else {
-            campaign = updateRequest.campaign;
+            campaign = updateRequest.data;
         }
 
         campaign.lastUpdated = currentTime;
         delete campaign.updateRequest;
-        grunt.file.write(objectPath('campaigns', updateRequest.campaign), JSON.stringify(campaign, null, '    '));
+        grunt.file.write(objectPath('campaigns', campaign.id), JSON.stringify(campaign, null, '    '));
 
 
         grunt.file.write(filePath, JSON.stringify(updateRequest, null, '    '));
@@ -68,9 +71,15 @@ module.exports = function(http) {
                 lastUpdated: currentTime
             });
 
+        if (request.body.data.paymentMethod !== campaign.paymentMethod) {
+            campaign.paymentMethod = request.body.data.paymentMethod;
+            updateRequest.status = 'approved';
+        } else {
+            campaign.updateRequest = id;
+            campaign.status = campaign.status === 'draft' ? 'pending' : campaign.status;
+        }
+
         campaign.lastUpdated = currentTime;
-        campaign.updateRequest = id;
-        campaign.status = campaign.status === 'draft' ? 'pending' : campaign.status;
         grunt.file.write(objectPath('campaigns', updateRequest.campaign), JSON.stringify(campaign, null, '    '));
 
         grunt.file.write(objectPath('updates', id), JSON.stringify(updateRequest, null, '    '));

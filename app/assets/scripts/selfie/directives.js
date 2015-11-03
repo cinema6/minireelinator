@@ -424,7 +424,7 @@ function( angular , select2 , braintree ) {
                 } else {
                     validation.budget = false;
                 }
-            }
+            };
 
             Object.defineProperties(this, {
                 cpv: {
