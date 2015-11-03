@@ -385,9 +385,9 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignController', ['$scope','$log','c6State','cState','cinema6',
-                                                 'c6Debounce','c6AsyncQueue','CampaignService',
+                                                 'c6Debounce','c6AsyncQueue','CampaignService','$q',
         function                                ( $scope , $log , c6State , cState , cinema6 ,
-                                                  c6Debounce , c6AsyncQueue , CampaignService ) {
+                                                  c6Debounce , c6AsyncQueue , CampaignService , $q ) {
             var SelfieCampaignCtrl = this,
                 queue = c6AsyncQueue();
 
@@ -426,8 +426,9 @@ function( angular , c6State  , PaginatedListState                    ,
 
             function createUpdateRequest() {
                 var status = cState._campaign.status,
-                    campaign = extend(cState._campaign.pojoify(), {
-                        status: status === 'draft' ? 'active' : status
+                    isDraft = status === 'draft',
+                    campaign = extend((isDraft ? cState._campaign.pojoify() : cState.campaign), {
+                        status: isDraft ? 'active' : status
                     });
 
                 return cinema6.db.create('updateRequest', {
@@ -507,7 +508,9 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.submit = queue.debounce(function() {
-                return saveCampaign()
+                var isDraft = cState._campaign.status === 'draft';
+
+                return (isDraft ? saveCampaign() : $q.when(this.campaign))
                     .then(createUpdateRequest)
                     .then(setPending)
                     .then(returnToDashboard)
@@ -1150,10 +1153,13 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function setUpdateRequest(updateRequest) {
+                var campaign = SelfieManageCampaignCtrl.campaign;
+
                 if (updateRequest.status !== 'approved') {
-                    cState.campaign.updateRequest = updateRequest.id;
+                    campaign.updateRequest = updateRequest.id;
                 }
-                return cState.campaign;
+
+                return campaign;
             }
 
             function updateProxy(campaign) {
@@ -1213,7 +1219,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 canSubmit: {
                     get: function() {
                         return !equals(this.campaign, this._proxyCampaign) &&
-                            this.campaign.paymentMethod && !this.campaign.updateRequest;
+                            !!this.campaign.paymentMethod && !this.campaign.updateRequest;
                     }
                 },
                 isLocked: {
@@ -1223,10 +1229,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
                 }
             });
-
-            // this.validation = {
-            //     budget: true
-            // };
 
             this.initWithModel = function(model) {
                 var user = c6State.get('Selfie').cModel;
@@ -1257,7 +1259,21 @@ function( angular , c6State  , PaginatedListState                    ,
             }, this);
 
             this.edit = function(campaign) {
-                c6State.goTo('Selfie:EditCampaign', [campaign]);
+                ConfirmDialogService.display({
+                    prompt: 'Are you sure you want to edit your campaign? Submitting ' +
+                        'changes will lock the campaign until they are approved.',
+                    affirm: 'Yes, take me to the editor',
+                    cancel: 'No, leave me here',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: queue.debounce(function() {
+                        ConfirmDialogService.close();
+
+                        return c6State.goTo('Selfie:EditCampaign', [campaign]);
+                    })
+                });
             };
         }])
 
