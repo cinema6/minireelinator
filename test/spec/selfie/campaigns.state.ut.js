@@ -50,7 +50,7 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
         describe('properties', function() {
             describe('filter', function() {
                 it('should be the filter query param from the url, or default to all statuses', function() {
-                    expect(campaigns.filter).toBe('draft,pendingApproval,approved,active,paused,error');
+                    expect(campaigns.filter).toBe('draft,pending,approved,active,paused,error');
 
                     $location.search.and.returnValue({
                         filter: 'active,draft',
@@ -120,7 +120,7 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                 expect(paginatedDbList).toHaveBeenCalledWith('selfieCampaign', {
                     sort: 'lastUpdated,-1',
                     application: 'selfie',
-                    statuses: 'draft,pendingApproval,approved,active,paused,error'
+                    statuses: 'draft,pending,approved,active,paused,error'
                 }, campaigns.limit, campaigns.page);
             });
         });

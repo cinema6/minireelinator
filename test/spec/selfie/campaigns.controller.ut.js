@@ -230,7 +230,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
 
                     expect(SelfieCampaignsCtrl.filters).toEqual([
                         { name: 'Draft', id: 'draft', checked: false },
-                        { name: 'PendingApproval', id: 'pendingApproval', checked: false },
+                        { name: 'Pending', id: 'pending', checked: false },
                         { name: 'Approved', id: 'approved', checked: false },
                         { name: 'Active', id: 'active', checked: true },
                         { name: 'Paused', id: 'paused', checked: false },
@@ -390,7 +390,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 it('should update the filter query param based on which options are checked', function() {
                     SelfieCampaignsCtrl.filters = [
                         { name: 'Draft', id: 'draft', checked: true },
-                        { name: 'PendingApproval', id: 'pendingApproval', checked: false },
+                        { name: 'Pending', id: 'pending', checked: false },
                         { name: 'Approved', id: 'approved', checked: true },
                         { name: 'Active', id: 'active', checked: true },
                         { name: 'Paused', id: 'paused', checked: false },

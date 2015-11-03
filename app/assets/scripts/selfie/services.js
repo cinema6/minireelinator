@@ -84,7 +84,6 @@ function( angular , c6uilib ) {
                             }
                         },
                         pricing: copy({}),
-                        status: value('draft'),
                         application: value('selfie'),
                         advertiserDisplayName: copy(user.company),
                         paymentMethod: copy(),
