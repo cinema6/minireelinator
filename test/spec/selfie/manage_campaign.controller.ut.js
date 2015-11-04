@@ -92,29 +92,15 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 }
             };
 
-            campaign = cinema6.db.create('selfieCampaign', {
-                name: null,
-                categories: [],
-                cards: [],
-                pricing: {},
-                geoTargeting: [],
-                status: 'draft',
-                application: 'selfie',
-                paymentMethod: undefined
-            });
-            card = deepExtend(cinema6.db.create('card', MiniReelService.createCard('video')), {
-                id: undefined,
-                campaignId: undefined,
+            card = deepExtend(MiniReelService.createCard('video'), {
                 campaign: {
                     minViewTime: 3
                 },
                 sponsored: true,
                 collateral: {
-                    logo: null
                 },
                 links: {},
                 params: {
-                    sponsor: 'Advertiser Name',
                     ad: true,
                     action: null
                 },
@@ -124,6 +110,26 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     autoplay: true,
                     skip: 30
                 }
+            });
+            campaign = cinema6.db.create('selfieCampaign', {
+                name: undefined,
+                pricing: {},
+                status: 'draft',
+                appllication: 'selfie',
+                advertiserDisplayName: 'My Company',
+                targeting: {
+                    geo: {
+                        states: [],
+                        dmas: []
+                    },
+                    demographics: {
+                        age: [],
+                        gender: [],
+                        income: []
+                    },
+                    interests: []
+                },
+                cards: [ card ]
             });
             categories = [];
             paymentMethods = [];
@@ -254,17 +260,17 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieManageCampaignCtrl.campaign).toEqual(campaign);
                     expect(SelfieManageCampaignCtrl.categories).toEqual(categories);
                     expect(SelfieManageCampaignCtrl.paymentMethods).toEqual(paymentMethods);
-                    expect(SelfieManageCampaignCtrl.showAdminTab).toBe(true);
                     expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(campaign));
                 });
             });
 
             describe('safeUpdate()', function() {
-                var updateRequest, updateRequestDeferred;
+                var updateRequest, updateRequestDeferred, convertCardDeferred;
 
                 beforeEach(function() {
                     updateRequest = {};
                     updateRequestDeferred = $q.defer();
+                    convertCardDeferred = $q.defer();
 
                     campaign.id = 'cam-123';
 
@@ -273,6 +279,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         paymentMethods: paymentMethods
                     });
 
+                    spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue(convertCardDeferred.promise);
                     spyOn(cinema6.db, 'create').and.callFake(function(type, obj) {
                         updateRequest.data = obj.data;
                         updateRequest.campaign = obj.campaign;
@@ -291,10 +298,22 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(cinema6.db.create).not.toHaveBeenCalled();
                 });
 
-                it('should create an update request', function() {
+                it('should convert the card for player', function() {
                     SelfieManageCampaignCtrl.campaign.paymentMethod = 'pay-8888';
 
                     SelfieManageCampaignCtrl.safeUpdate();
+
+                    expect(MiniReelService.convertCardForPlayer).toHaveBeenCalledWith(SelfieManageCampaignCtrl.campaign.cards[0]);
+                });
+
+                it('should create an update request after card conversion', function() {
+                    SelfieManageCampaignCtrl.campaign.paymentMethod = 'pay-8888';
+
+                    SelfieManageCampaignCtrl.safeUpdate();
+
+                    $rootScope.$apply(function() {
+                        convertCardDeferred.resolve(SelfieManageCampaignCtrl.campaign.cards[0]);
+                    });
 
                     expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
                         data: SelfieManageCampaignCtrl.campaign.pojoify(),
@@ -305,7 +324,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
             describe('update(action)', function() {
                 describe('action:', function() {
-                    var onAffirm, onCancel, updateRequest, updateRequestDeferred;
+                    var onAffirm, onCancel, updateRequest, updateRequestDeferred, convertCardDeferred;
 
                     function statusFor(action) {
                         switch (action) {
@@ -321,11 +340,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     beforeEach(function() {
                         updateRequest = {};
                         updateRequestDeferred = $q.defer();
+                        convertCardDeferred = $q.defer();
 
                         SelfieManageCampaignCtrl.campaign.id = 'cam-123';
 
                         spyOn(c6State, 'goTo');
                         spyOn(SelfieManageCampaignCtrl.campaign, 'pojoify').and.callThrough();
+                        spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue(convertCardDeferred.promise);
                         spyOn(cinema6.db, 'create').and.callFake(function(type, obj) {
                             updateRequest.data = obj.data;
                             updateRequest.campaign = obj.campaign;
@@ -361,55 +382,127 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                     expect(debouncedFns).toContain(onAffirm);
                                 });
 
-                                it('should create an update request with a pojoified campaign', function() {
-                                    expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
-                                        data: expectedData,
-                                        campaign: 'cam-123'
-                                    });
+                                it('should convert the card for player', function() {
+                                    expect(MiniReelService.convertCardForPlayer).toHaveBeenCalledWith(expectedData.cards[0]);
                                 });
 
-                                it('should save the updateRequest', function() {
-                                    expect(updateRequest.save).toHaveBeenCalled();
-                                });
-
-                                describe('when updateRequest status is approved', function() {
+                                describe('when the card conversion completes', function() {
                                     beforeEach(function() {
-                                        updateRequest.status = 'approved';
-
                                         $rootScope.$apply(function() {
-                                            updateRequestDeferred.resolve(updateRequest);
+                                            convertCardDeferred.resolve(campaign.cards[0]);
                                         });
                                     });
 
-                                    it('should not add the updateRequest id to the campaign', function() {
-                                        expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe(undefined);
-                                    });
-
-                                    it('should update proxy campaign', function() {
-                                        expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
-                                    });
-                                });
-
-                                describe('when updateRequest status is not approved', function() {
-                                    beforeEach(function() {
-                                        updateRequest.status = 'pending';
-                                        updateRequest.id = 'ur-1234';
-
-                                        $rootScope.$apply(function() {
-                                            updateRequestDeferred.resolve(updateRequest);
+                                    it('should create an update request with a pojoified campaign', function() {
+                                        expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
+                                            data: expectedData,
+                                            campaign: 'cam-123'
                                         });
                                     });
 
-                                    it('should add the updateRequest id to the campaign', function() {
-                                        expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe('ur-1234');
+                                    it('should save the updateRequest', function() {
+                                        expect(updateRequest.save).toHaveBeenCalled();
                                     });
 
-                                    it('should update proxy campaign', function() {
-                                        expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
+                                    describe('when updateRequest status is approved', function() {
+                                        beforeEach(function() {
+                                            updateRequest.status = 'approved';
+
+                                            $rootScope.$apply(function() {
+                                                updateRequestDeferred.resolve(updateRequest);
+                                            });
+                                        });
+
+                                        it('should not add the updateRequest id to the campaign', function() {
+                                            expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe(undefined);
+                                        });
+
+                                        it('should update proxy campaign', function() {
+                                            expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
+                                        });
+                                    });
+
+                                    describe('when updateRequest status is not approved', function() {
+                                        beforeEach(function() {
+                                            updateRequest.status = 'pending';
+                                            updateRequest.id = 'ur-1234';
+
+                                            $rootScope.$apply(function() {
+                                                updateRequestDeferred.resolve(updateRequest);
+                                            });
+                                        });
+
+                                        it('should add the updateRequest id to the campaign', function() {
+                                            expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe('ur-1234');
+                                        });
+
+                                        it('should update proxy campaign', function() {
+                                            expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
+                                        });
                                     });
                                 });
                             });
                         });
+                    });
+                });
+            });
+
+            describe('updatePaymentMethod()', function() {
+                var updateRequest, updateRequestDeferred, convertCardDeferred;
+
+                beforeEach(function() {
+                    updateRequest = {};
+                    updateRequestDeferred = $q.defer();
+                    convertCardDeferred = $q.defer();
+
+                    campaign.id = 'cam-123';
+
+                    compileCtrl(cState, {
+                        categories: categories,
+                        paymentMethods: paymentMethods
+                    });
+
+                    spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue(convertCardDeferred.promise);
+                    spyOn(cinema6.db, 'create').and.callFake(function(type, obj) {
+                        updateRequest.data = obj.data;
+                        updateRequest.campaign = obj.campaign;
+                        updateRequest.save = jasmine.createSpy('update.save()').and.returnValue(updateRequestDeferred.promise);
+                        return updateRequest;
+                    });
+                });
+
+                it('should be wrapped in a c6AsyncQueue', function() {
+                    expect(debouncedFns).toContain(SelfieManageCampaignCtrl.updatePaymentMethod);
+                });
+
+                it('should do nothing if canSubmit is false', function() {
+                    SelfieManageCampaignCtrl.updatePaymentMethod();
+
+                    expect(cinema6.db.create).not.toHaveBeenCalled();
+                });
+
+                it('should not convert the card for player', function() {
+                    SelfieManageCampaignCtrl.campaign.paymentMethod = 'pay-8888';
+
+                    SelfieManageCampaignCtrl.updatePaymentMethod();
+
+                    $scope.$digest();
+
+                    expect(MiniReelService.convertCardForPlayer).not.toHaveBeenCalled();
+                });
+
+                it('should create an update request after card conversion', function() {
+                    SelfieManageCampaignCtrl.campaign.paymentMethod = 'pay-8888';
+
+                    SelfieManageCampaignCtrl.updatePaymentMethod();
+
+                    $scope.$digest();
+
+                    expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
+                        data: {
+                            paymentMethod: 'pay-8888'
+                        },
+                        campaign: 'cam-123'
                     });
                 });
             });

@@ -30,6 +30,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             cinema6,
             MiniReelService,
             CampaignService,
+            ConfirmDialogService,
             SelfieCampaignCtrl;
 
         var cState,
@@ -100,6 +101,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 cinema6 = $injector.get('cinema6');
                 MiniReelService = $injector.get('MiniReelService');
                 CampaignService = $injector.get('CampaignService');
+                ConfirmDialogService = $injector.get('ConfirmDialogService');
             });
 
             advertiser = {
@@ -311,17 +313,19 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
 
             describe('submit()', function() {
-                var saveDeferred, updateRequestDeferred, updateRequest;
+                var saveDeferred, updateRequestDeferred, updateRequest, convertCardDeferred;
 
                 beforeEach(function() {
                     updateRequest = {};
                     saveDeferred = $q.defer();
                     updateRequestDeferred = $q.defer();
+                    convertCardDeferred = $q.defer();
 
                     cState.saveCampaign.and.returnValue(saveDeferred.promise);
 
                     spyOn(c6State, 'goTo');
                     spyOn(campaign, 'pojoify').and.callThrough();
+                    spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue(convertCardDeferred.promise);
                     spyOn(cinema6.db, 'create').and.callFake(function(type, obj) {
                         updateRequest.data = obj.data;
                         updateRequest.campaign = obj.campaign;
@@ -364,34 +368,46 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             expect(campaign.pojoify).toHaveBeenCalled();
                         });
 
-                        it('should create an update request with campaign.status = "active"', function() {
-                            expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
-                                campaign: 'cam-123',
-                                data: jasmine.objectContaining(expectedData)
-                            });
+                        it('should convert the card for player', function() {
+                            expect(MiniReelService.convertCardForPlayer).toHaveBeenCalledWith(expectedData.cards[0]);
                         });
 
-                        it('should save the update request', function() {
-                            expect(updateRequest.save).toHaveBeenCalled();
-                        });
-
-                        describe('when the update request save succeeds', function() {
-                            it('should change the status on the campaign bound in the UI', function() {
-                                expect(SelfieCampaignCtrl.campaign.status).toBe('draft');
-
+                        describe('when card conversion is complete', function() {
+                            beforeEach(function() {
                                 $rootScope.$apply(function() {
-                                    updateRequestDeferred.resolve(updateRequest);
+                                    convertCardDeferred.resolve(expectedData.cards[0]);
                                 });
-
-                                expect(SelfieCampaignCtrl.campaign.status).toBe('pending');
                             });
 
-                            it('should go to the dashboard', function() {
-                                $rootScope.$apply(function() {
-                                    updateRequestDeferred.resolve(updateRequest);
+                            it('should create an update request with campaign.status = "active"', function() {
+                                expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
+                                    campaign: 'cam-123',
+                                    data: jasmine.objectContaining(expectedData)
+                                });
+                            });
+
+                            it('should save the update request', function() {
+                                expect(updateRequest.save).toHaveBeenCalled();
+                            });
+
+                            describe('when the update request save succeeds', function() {
+                                it('should change the status on the campaign bound in the UI', function() {
+                                    expect(SelfieCampaignCtrl.campaign.status).toBe('draft');
+
+                                    $rootScope.$apply(function() {
+                                        updateRequestDeferred.resolve(updateRequest);
+                                    });
+
+                                    expect(SelfieCampaignCtrl.campaign.status).toBe('pending');
                                 });
 
-                                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                                it('should go to the dashboard', function() {
+                                    $rootScope.$apply(function() {
+                                        updateRequestDeferred.resolve(updateRequest);
+                                    });
+
+                                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                                });
                             });
                         });
                     });
@@ -417,34 +433,46 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         expect(campaign.pojoify).not.toHaveBeenCalled();
                     });
 
-                    it('should create an update request without modifying the current status', function() {
-                        expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
-                            campaign: 'cam-123',
-                            data: cState.campaign
-                        });
+                    it('should convert the card for player', function() {
+                        expect(MiniReelService.convertCardForPlayer).toHaveBeenCalledWith(cState.campaign.cards[0]);
                     });
 
-                    it('should save the update request', function() {
-                        expect(updateRequest.save).toHaveBeenCalled();
-                    });
-
-                    describe('when the update request save succeeds', function() {
-                        it('should not modify the status on the campaign bound in the UI', function() {
-                            expect(SelfieCampaignCtrl.campaign.status).toBe('paused');
-
+                    describe('when the card conversion completes', function() {
+                        beforeEach(function() {
                             $rootScope.$apply(function() {
-                                updateRequestDeferred.resolve(updateRequest);
+                                convertCardDeferred.resolve(cState.campaign.cards[0]);
                             });
-
-                            expect(SelfieCampaignCtrl.campaign.status).toBe('paused');
                         });
 
-                        it('should go to the dashboard', function() {
-                            $rootScope.$apply(function() {
-                                updateRequestDeferred.resolve(updateRequest);
+                        it('should create an update request without modifying the current status', function() {
+                            expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
+                                campaign: 'cam-123',
+                                data: cState.campaign
+                            });
+                        });
+
+                        it('should save the update request', function() {
+                            expect(updateRequest.save).toHaveBeenCalled();
+                        });
+
+                        describe('when the update request save succeeds', function() {
+                            it('should not modify the status on the campaign bound in the UI', function() {
+                                expect(SelfieCampaignCtrl.campaign.status).toBe('paused');
+
+                                $rootScope.$apply(function() {
+                                    updateRequestDeferred.resolve(updateRequest);
+                                });
+
+                                expect(SelfieCampaignCtrl.campaign.status).toBe('paused');
                             });
 
-                            expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                            it('should go to the dashboard', function() {
+                                $rootScope.$apply(function() {
+                                    updateRequestDeferred.resolve(updateRequest);
+                                });
+
+                                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                            });
                         });
                     });
                 });
@@ -515,20 +543,36 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
 
             describe('delete()', function() {
-                it('should be wrapped in a c6AsyncQueue', function() {
-                    expect(debouncedFns).toContain(SelfieCampaignCtrl.copy);
+                var onAffirm;
+
+                beforeEach(function() {
+                    spyOn(ConfirmDialogService, 'display');
+
+                    SelfieCampaignCtrl.delete();
+
+                    onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
                 });
 
-                it('should erase the campaign and go to the dashboard', function() {
-                    spyOn(campaign, 'erase').and.returnValue($q.when(null));
-                    spyOn(c6State, 'goTo');
+                it('should show a confirmation dialog', function() {
+                    expect(ConfirmDialogService.display).toHaveBeenCalled();
+                });
 
-                    $rootScope.$apply(function() {
-                        SelfieCampaignCtrl.delete();
+                describe('onAffirm()', function() {
+                    it('should be wrapped in a c6AsyncQueue', function() {
+                        expect(debouncedFns).toContain(onAffirm);
                     });
 
-                    expect(campaign.erase).toHaveBeenCalled();
-                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                    it('should erase the campaign and go to the dashboard', function() {
+                        spyOn(campaign, 'erase').and.returnValue($q.when(null));
+                        spyOn(c6State, 'goTo');
+
+                        $rootScope.$apply(function() {
+                            onAffirm();
+                        });
+
+                        expect(campaign.erase).toHaveBeenCalled();
+                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                    });
                 });
             });
         });
@@ -628,12 +672,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         });
 
                         describe('when the card has no service type and video id', function() {
-                            it('should not reload preview', function() {
+                            it('should reload preview', function() {
                                 $scope.$apply(function() {
                                     SelfieCampaignCtrl.campaign.name = 'Campaign Name!';
                                 });
 
-                                expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                                expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
                             });
                         });
                     });
@@ -661,12 +705,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         });
 
                         describe('when the card has no service type and video id', function() {
-                            it('should not reload preview', function() {
+                            it('should reload preview', function() {
                                 $scope.$apply(function() {
                                     SelfieCampaignCtrl.campaign.name = 'New Advertiser';
                                 });
 
-                                expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                                expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
                             });
                         });
                     });
@@ -765,12 +809,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         });
 
                         describe('when the card has no service type and video id', function() {
-                            it('should not reload preview', function() {
+                            it('should reload preview', function() {
                                 $scope.$apply(function() {
                                     SelfieCampaignCtrl.campaign.name = 'Campaign Name!';
                                 });
 
-                                expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                                expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
                             });
                         });
                     });
@@ -798,12 +842,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         });
 
                         describe('when the card has no service type and video id', function() {
-                            it('should not reload preview', function() {
+                            it('should reload preview', function() {
                                 $scope.$apply(function() {
                                     SelfieCampaignCtrl.campaign.advertiserDisplayName = 'Advertiser Name';
                                 });
 
-                                expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                                expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
                             });
                         });
                     });
@@ -826,12 +870,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
                         });
 
-                        it(prop + ' changes should not reload preview if card has no service and id', function() {
+                        it(prop + ' changes should reload preview if card has no service and id', function() {
                             $scope.$apply(function() {
                                 SelfieCampaignCtrl.card[prop] = 'something';
                             });
 
-                            expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                            expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
                         });
 
 
@@ -881,13 +925,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
                         });
 
-                        it(prop + ' changes should not reload preview if card has no service and id', function() {
+                        it(prop + ' changes should reload preview if card has no service and id', function() {
                             $scope.$apply(function() {
                                 SelfieCampaignCtrl.card.params.action = {};
                                 SelfieCampaignCtrl.card.params.action[prop] = 'something';
                             });
 
-                            expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                            expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
                         });
 
 
@@ -912,15 +956,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                         expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
                         expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
-                    });
-
-                    it('service and id changes should not trigger a preview reload if null', function() {
-                        $scope.$apply(function() {
-                            SelfieCampaignCtrl.card.data.service = null;
-                            SelfieCampaignCtrl.card.data.videoid = null;
-                        });
-
-                        expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
                     });
                 });
             });

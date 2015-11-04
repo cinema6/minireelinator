@@ -45,6 +45,25 @@ define(['app'], function(appModule) {
                 };
 
                 $scope = $rootScope.$new();
+                $scope.schema = {
+                    pricing: {
+                        budget: {
+                            __min:50,
+                            __max:20000
+                        },
+                        dailyLimit: {
+                            __percentMin:0.015,
+                            __percentMax:1,
+                            __percentDefault:0.03
+                        },
+                        cost: {
+                            __base: 0.05,
+                            __pricePerGeo: 0.01,
+                            __pricePerDemo: 0.01,
+                            __priceForInterests: 0.01
+                        }
+                    }
+                };
                 $scope.campaign = campaign;
             });
 

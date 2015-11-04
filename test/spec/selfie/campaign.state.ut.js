@@ -12,6 +12,7 @@ define(['app'], function(appModule) {
                 cinema6,
                 MiniReelService,
                 SelfieLogoService,
+                CampaignService,
                 ConfirmDialogService;
 
             var card,
@@ -31,6 +32,7 @@ define(['app'], function(appModule) {
                     MiniReelService = $injector.get('MiniReelService');
                     SelfieLogoService = $injector.get('SelfieLogoService');
                     ConfirmDialogService = $injector.get('ConfirmDialogService');
+                    CampaignService = $injector.get('CampaignService');
 
                     card = MiniReelService.createCard('video');
                     categories = [
@@ -47,7 +49,13 @@ define(['app'], function(appModule) {
                     campaign = cinema6.db.create('selfieCampaign', {
                         id: 'cam-123',
                         cards: [card],
-                        links: {}
+                        links: {},
+                        targeting: {
+                            interests: [],
+                            demographics: {
+                                age: []
+                            }
+                        }
                     });
                     logos = [
                         {
@@ -193,6 +201,27 @@ define(['app'], function(appModule) {
                         expect(campaignState.campaign.paymentMethod).toEqual(paymentMethods[2].token);
                     });
                 });
+
+                it('should get the user campaign schema and put it on the state', function() {
+                    var schema = {
+                        pricing: {
+                            cost:{
+
+                            }
+                        }
+                    };
+                    spyOn(CampaignService, 'getSchema').and.returnValue($q.when(schema));
+
+                    campaign.paymentMethod = paymentMethods[2].token;
+                    campaignState.campaign = campaign;
+
+                    $rootScope.$apply(function() {
+                        campaignState.afterModel({ paymentMethods: [] });
+                    });
+
+                    expect(CampaignService.getSchema).toHaveBeenCalled();
+                    expect(campaignState.schema).toEqual(schema);
+                });
             });
 
             describe('exit()', function() {
@@ -214,34 +243,6 @@ define(['app'], function(appModule) {
                 describe('when master campaign is not in draft', function() {
                     it('should resolve the promise', function() {
                         campaignState._campaign.status = 'active';
-                        campaignState.campaign.status = 'draft';
-
-                        $rootScope.$apply(function() {
-                            campaignState.exit().then(success, failure);
-                        });
-
-                        expect(success).toHaveBeenCalled();
-                        expect(campaignState.saveCampaign).not.toHaveBeenCalled();
-                    });
-                });
-
-                describe('when edited campaign is not in draft', function() {
-                    it('should resolve the promise', function() {
-                        campaignState._campaign.status = 'draft';
-                        campaignState.campaign.status = 'active';
-
-                        $rootScope.$apply(function() {
-                            campaignState.exit().then(success, failure);
-                        });
-
-                        expect(success).toHaveBeenCalled();
-                        expect(campaignState.saveCampaign).not.toHaveBeenCalled();
-                    });
-                });
-
-                describe('when master campaign has been erased', function() {
-                    it('should resolve the promise', function() {
-                        campaignState._campaign._erased = true;
                         campaignState.campaign.status = 'draft';
 
                         $rootScope.$apply(function() {
@@ -339,6 +340,28 @@ define(['app'], function(appModule) {
                     campaignState.campaign = campaign.pojoify();
                 });
 
+                it('should not save if _campaign is erased', function() {
+                    campaignState._campaign._erased = true;
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveCampaign().then(success, failure);
+                    });
+
+                    expect(campaign.save).not.toHaveBeenCalled();
+                    expect(success).toHaveBeenCalledWith(campaignState.campaign);
+                });
+
+                it('should not save if _campaign is erased', function() {
+                    campaignState.campaign.status = 'pending';
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveCampaign().then(success, failure);
+                    });
+
+                    expect(campaign.save).not.toHaveBeenCalled();
+                    expect(success).toHaveBeenCalledWith(campaignState.campaign);
+                });
+
                 it('should update the campaign DB Model with the current campaign data and save', function() {
                     campaignState.campaign.name = 'New Campaign';
 
@@ -380,6 +403,33 @@ define(['app'], function(appModule) {
                     });
 
                     expect(success).toHaveBeenCalledWith(campaignState.campaign);
+                });
+
+                it('should not extend the cards array objects', function() {
+                    campaignState.campaign.cards[0] = {};
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveCampaign().then(success, failure);
+                    });
+
+                    expect(campaignState._campaign.cards[0]).toEqual(card);
+                });
+
+                it('should overwrite the targeting arrays', function() {
+                    campaignState._campaign.targeting.interests.push('comedy');
+                    campaignState._campaign.targeting.interests.push('entertainment');
+                    campaignState.campaign.targeting.interests = [];
+
+                    campaignState._campaign.targeting.demographics.age.push('18-24');
+                    campaignState._campaign.targeting.demographics.age.push('25-34');
+                    campaignState.campaign.targeting.demographics.age = [];
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveCampaign().then(success, failure);
+                    });
+
+                    expect(campaignState._campaign.targeting.interests).toEqual([]);
+                    expect(campaignState._campaign.targeting.demographics.age).toEqual([]);
                 });
             });
         });

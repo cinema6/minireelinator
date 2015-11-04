@@ -1190,12 +1190,12 @@ function( angular , c6State  , PaginatedListState                    ,
             }]);
         }])
 
-        .controller('SelfieManageCampaignController', ['$scope','cState','c6AsyncQueue',
+        .controller('SelfieManageCampaignController', ['$scope','cState','c6AsyncQueue','$q',
                                                        'c6State', 'CampaignService','cinema6',
-                                                       'ConfirmDialogService',
-        function                                      ( $scope , cState , c6AsyncQueue ,
+                                                       'ConfirmDialogService','MiniReelService',
+        function                                      ( $scope , cState , c6AsyncQueue , $q ,
                                                         c6State ,  CampaignService , cinema6 ,
-                                                        ConfirmDialogService ) {
+                                                        ConfirmDialogService , MiniReelService ) {
             var SelfieManageCampaignCtrl = this,
                 queue = c6AsyncQueue();
 
@@ -1224,18 +1224,35 @@ function( angular , c6State  , PaginatedListState                    ,
                 });
             }
 
-            function createUpdateRequest(action) {
-                var campaign = SelfieManageCampaignCtrl.campaign.pojoify(),
-                    id = campaign.id;
+            function prepareCampaign(action) {
+                var campaign = SelfieManageCampaignCtrl.campaign.pojoify();
+
+                if (action === 'paymentMethod') {
+                    return $q.when({
+                        id: campaign.id,
+                        paymentMethod: campaign.paymentMethod
+                    });
+                }
 
                 if (action) {
                     campaign.status = statusFor(action);
                 }
 
-                if (action === 'paymentMethod') {
-                    campaign = {
-                        paymentMethod: campaign.paymentMethod
-                    };
+                return MiniReelService.convertCardForPlayer(campaign.cards[0])
+                    .then(function(card) {
+                        campaign.cards[0] = card;
+                        return campaign;
+                    })
+            }
+
+            function createUpdateRequest(campaign) {
+                var id = campaign.id;
+
+                if (!campaign.status) {
+                    // if there's no status we're sending a partial
+                    // campaign body, meaning the ID is not supposed
+                    // to be sent
+                    delete campaign.id;
                 }
 
                 return cinema6.db.create('updateRequest', {
@@ -1259,7 +1276,8 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function submitUpdate(action) {
-                return createUpdateRequest(action)
+                return prepareCampaign(action)
+                    .then(createUpdateRequest)
                     .then(setUpdateRequest)
                     .then(updateProxy)
                     .catch(handleError);
@@ -1371,8 +1389,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Manage:Campaign:Admin', ['cinema6', '$q',
-            function                                              ( cinema6 ,  $q ) {
+            c6StateProvider.state('Selfie:Manage:Campaign:Admin', ['cinema6','$q','c6State',
+            function                                              ( cinema6 , $q , c6State ) {
                 this.templateUrl = 'views/selfie/campaigns/manage/admin.html';
                 this.controller = 'SelfieManageCampaignAdminController';
                 this.controllerAs = 'SelfieManageCampaignAdminCtrl';

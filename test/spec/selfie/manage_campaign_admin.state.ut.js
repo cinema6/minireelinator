@@ -60,6 +60,9 @@ define(['app'], function(appModule) {
                     }
                 };
                 campaignState = c6State.get('Selfie:Manage:Campaign:Admin');
+                campaignState.cParent = {
+                    isAdmin: false
+                };
             });
         });
 
@@ -99,6 +102,25 @@ define(['app'], function(appModule) {
                 });
                 expect(cinema6.db.find).toHaveBeenCalledWith('updateRequest', 'cam-123:ur-12345');
                 expect(success).toHaveBeenCalledWith({updateRequest: updateRequest});
+            });
+        });
+
+        describe('enter()', function() {
+            it('should do nothing if user is an admin', function() {
+                spyOn(c6State, 'goTo');
+                campaignState.cParent.isAdmin = true;
+
+                campaignState.enter();
+
+                expect(c6State.goTo).not.toHaveBeenCalled();
+            });
+
+            it('should redirect to the manager if user is no an admin', function() {
+                spyOn(c6State, 'goTo');
+
+                campaignState.enter();
+
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage');
             });
         });
     });

@@ -289,6 +289,47 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                 });
             });
 
+            describe('getSchema', function() {
+                var success, failure, schema;
+
+                beforeEach(function() {
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
+
+                    schema = {
+                        pricing: {
+                            cost: {},
+                            budget: {},
+                            dailyLimit: {}
+                        }
+                    };
+                });
+
+                it('should request stats for a single campaign and return an array', function() {
+                    $httpBackend.expectGET('/api/campaigns/schema?personalized=true')
+                        .respond(200, schema);
+
+                    CampaignService.getSchema().then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).toHaveBeenCalledWith(schema);
+                    expect(failure).not.toHaveBeenCalled();
+                });
+
+                it('should reject the promise if the request fails', function() {
+                    $httpBackend.expectGET('/api/campaigns/schema?personalized=true')
+                        .respond(404, 'NOT FOUND');
+
+                    CampaignService.getSchema().then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).not.toHaveBeenCalledWith(schema);
+                    expect(failure).toHaveBeenCalled();
+                });
+            });
+
             describe('getAnalytics(ids)', function() {
                 var success, failure, stats;
 
@@ -316,7 +357,7 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
 
                 describe('when fetching multiple campaigns', function() {
                     it('should request stats for multiple campaigns and return an array', function() {
-                        $httpBackend.expectGET('/api/analytics/campaigns/?id=cam-1,cam-2')
+                        $httpBackend.expectGET('/api/analytics/campaigns/?ids=cam-1,cam-2')
                             .respond(200, stats);
 
                         CampaignService.getAnalytics('cam-1,cam-2').then(success, failure);
@@ -328,7 +369,7 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     });
 
                     it('should reject the promise if the request fails', function() {
-                        $httpBackend.expectGET('/api/analytics/campaigns/?id=cam-1,cam-2')
+                        $httpBackend.expectGET('/api/analytics/campaigns/?ids=cam-1,cam-2')
                             .respond(404, 'NOT FOUND');
 
                         CampaignService.getAnalytics('cam-1,cam-2').then(success, failure);
