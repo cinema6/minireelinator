@@ -1,11 +1,11 @@
 <div class="tabContent targeting__content container">
     <header class="tabContent__header">
-        <h2 class="tabContent__title tk--hdr">Your campaign is currently {{campaign.status}}</h2>
-        <span class="tabContent__subtitle">{{campaign.name}}</span>
+        <h2 class="tabContent__title tk--hdr">Campaign: {{campaign.name}}</h2>
+        <span class="tabContent__subtitle">Your campaign is currently <span class="alertLabel alertLabel__success">{{campaign.status}}</span></span>
     </header>
 
     <div class="tabContent__gridHolder">
-        <div class="grid">
+        <div class="grid grid--center">            
             <!--left column-->
             <div class="grid__item two-thirds palm--one-whole">
                 <section class="campaignPreview__group">
@@ -17,13 +17,14 @@
                     <div class="grid__item grid--center lockedMsg">
                         <img src="styles/selfie/img/lock-icon.png" class="lockedMsg__icon"/>
                         <h3 class="lockedMsg__icon--text tk--hdr">Locked</h3>
-                        <p class="lockedMsg__info">Your campaign is <strong>{{campaign.status}}</strong></p>
-                        <p class="lockedMsg__info">You cannot make changes to the campaign once it's approved. If you want to make changes, create a copy of the campaign and cancel this one.</p>
+                        <h3 class="tk--hdr">Your campaign is <span class="tk--success">{{campaign.status}}</span></h3>
+                        <p class="lockedMsg__info">You have a pending change request. You cannot edit or pause your campaign until the request is approved.</p>
+                        <p class="lockedMsg__info">You can copy or cancel the campaign if you wish</p>
                     </div>
                     <div class="grid__item one--whole grid--center">
                         <div class="action__btnGroup">
                           <button ng-click="SelfieManageCampaignCtrl.pause(campaign)" ng-class="{'btn--disabled' : !!campaign.updateRequest }" ng-disabled="!!campaign.updateRequest" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-pause"></i>  Pause</button> <!--  For disabled buttons add ""btn--disabled" class and also add "disabled" property to the button element -->
-                          <button ng-click="SelfieManageCampaignCtrl.edit(campaign)" ng-class="{'btn--disabled' : !!campaign.updateRequest }" ng-disabled="!!campaign.updateRequest" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-pencil-square-o"></i>  Edit</button>
+                          <!--<button ng-click="SelfieManageCampaignCtrl.pause(campaign)" ng-class="{'btn--disabled' : !!campaign.updateRequest }" ng-disabled="!!campaign.updateRequest" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-play"></i>  Resume</button>-->
                         </div>
                     </div>
                 </div>

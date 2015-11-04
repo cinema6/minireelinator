@@ -91,6 +91,9 @@
     .tk--alert {
         color:#C90000;
     }
+    .tk--success {
+        color:#00BC65;
+    }
 
     .tk--facebook {
         color:#3A5795;
@@ -296,12 +299,6 @@ fa,
             font-size:1.5em;
             margin: 0.25rem;
         }
-        .btn--disabled, .btn--disabled:hover {
-            background-color: #ccc;
-            color: #999;
-            box-shadow: 0 1px 1px rgba(0,0,0,0.25);
-            cursor: auto;
-        }
     .action__btnDefault {
         background:#fff;
         color:#666;
@@ -384,7 +381,7 @@ fa,
                 opacity:0.5;
             }
             .btn:disabled:hover {
-                border:1px solid #ddd;
+                border: 1px solid #ccc;
             }
         .btn--primary, .btn--primary:focus {
             background: #f5f5f5;
@@ -580,23 +577,117 @@ fa,
         .btnAction--danger:focus {
             background-color:#dc4141;
         }
-    /*Alert messages*/
-    .alertMessage {
-        display: block;
-        background-color: #FBE4AB;
-        color: #775B17;
-        border-radius: 3px;
-        padding: 0.25em;
-    }
-        .alertMessage.alert__success {
-            background-color: #DBFFEF;
-            color: #00BC65;
+
+    /*  Buttons disabled    */
+        .btn--disabled, .btn--disabled:hover {
+            background-color: #ccc;
+            color: #999;
+            border: 1px solid #ccc;
+            /*border-color: rgba(0, 0, 0, 0.25);*/
+            box-shadow: 0 1px 1px rgba(0,0,0,0.25);
+            cursor: not-allowed;
         }
-        .alertMessage.alert__failure {
-            background-color: #FFC0C0;
-            color: #ED0000;
+        .btnGroup .btn--disabled, .btnGroup .btn--disabled:hover {
+            background-color: #fff;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        .btn--disabled.hint--bottom:before, .btn--disabled.hint--bottom:after {
+            display: none;
+        }
+    /*  Alert messages  */
+        .alertMessage {
+            display: block;
+            background-color: #FBE4AB;
+            color: #775B17;
+            border-radius: 3px;
+            padding: 0.25em;
+        }
+        .alertMessage:empty {
+            display: none;
+        }
+            .alertMessage.alert__success {
+                background-color: #DBFFEF;
+                color: #00BC65;
+            }
+            .alertMessage.alert__failure {
+                background-color: #FFC0C0;
+                color: #ED0000;
+            }
+    /*  Alert labels    */
+        .alertLabel {
+            display: inline;
+            padding: .2em .6em .3em;
+            background-color: #ccc;
+            color: #fff;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: .25em;
+        }
+        .alertLabel:empty {
+            display: none;
+        }
+            .alertLabel.alertLabel__success {
+                background-color: #00BC65;
+                color: #DBFFEF; 
+            }
+            .alertLabel.alertLabel__failure {
+                background-color: #ED0000;
+                color: #FFC0C0;
+            }
+            .alertLabel.alertLabel__warning {
+                background-color: #ED0000;
+                color: #FFC0C0;
+            }
+    /*  Loading content spinner  */
+        .spinner {
+          width: 40px;
+          height: 40px;
+          background-color: #00a2de;
+          position: absolute;
+          margin: auto;
+          top: 0;
+          bottom: 0;
+          right: 0;
+          left: 0;
+          -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out;
+          animation: sk-rotateplane 1.2s infinite ease-in-out;
+          z-index: 100;
         }
 
+        @-webkit-keyframes sk-rotateplane {
+          0% { -webkit-transform: perspective(120px) }
+          50% { -webkit-transform: perspective(120px) rotateY(180deg) }
+          100% { -webkit-transform: perspective(120px) rotateY(180deg)  rotateX(180deg) }
+        }
+
+        @keyframes sk-rotateplane {
+          0% { 
+            transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+            -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg) 
+          } 50% { 
+            transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+            -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg) 
+          } 100% { 
+            transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+            -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+          }
+        }
+    /*  Table styles*/
+    table {
+        border-spacing: 0;
+        border-collapse: collapse;
+    }
+    .table {
+        margin: 20px auto;
+    }
+    .table tr{
+        border-bottom: 1px solid #1c1c1c;
+    }
+    .table td {
+        padding: 10px;
+    }
 /*  ================================================
     Sign up and Pre-Login screen styles
     ================================================ */    
@@ -781,18 +872,19 @@ fa,
             list-style-type:none;
         }
 
-            .mainNav__dropDownItem a{
+            .mainNav__dropDownItem a, .mainNav__dropDownItem button{
                 list-style-type:none;
                 margin:0;
                 padding:1.5rem 4rem;
                 display:block;
                 width:100%;
                 background:#232628;
+                color: #eee;
                 transition:0.3s background;
                 cursor: pointer;
             }
 
-            .mainNav__dropDownItem a:hover {
+            .mainNav__dropDownItem a:hover, .mainNav__dropDownItem button:hover {
                 background:#29c5ff;
                 color: #fff;
             }
@@ -2332,12 +2424,17 @@ fa,
         background-color:#fff;
         box-shadow:0 1px 3px rgba(0, 0, 0, 0.25);
     }
+        .adPreview__group:after {
+            content: 'This preview is just for reference. Actual ad size and layout would vary based on placement.';
+            color: #888;
+            font-size: 0.75em;
+        }
 
         .adPreview__desktop {
             width:100%;
             background-color:#e1e1e1;
             position:relative;
-            min-height:32em;
+            min-height:26em;
         }
             .adPreview__desktop:before {
                 content:'No preview available';
@@ -2383,7 +2480,7 @@ fa,
                 height:81%;
                 background-color:#e1e1e1;
                 position:absolute;
-                top:8.5%; 
+                top:10.5%; 
                 left:5%;
             }
             .adPreview__mobileFrame:before {
@@ -2754,15 +2851,17 @@ fa,
             padding:0
         }
 
-
-
         .action__dropdown ul li.current-menu-item {
             background:#ddd
         }
 
-        .action__dropdown ul ul li:hover {
-            background:#f6f6f6;
-        }
+            .action__dropdown ul ul li:hover,  .action__dropdown ul ul li:hover button {
+                background: #2398db;
+                color: #fff;
+            }
+            .action__dropdown ul ul li button:hover {
+                color: #fff;
+            }
 
         .action__dropdown ul ul {
             display:none;
@@ -2888,14 +2987,14 @@ fa,
     modal styles
     ====================================================== */
     .modal__overlay {
-        position:fixed; z-index: 99; top:0; left:0; right:0; bottom:0;
+        position:fixed; z-index: 2100; top:0; left:0; right:0; bottom:0;
         background:#000; opacity:0.75;
     }
         .modal__overlay--confirm {
-            z-index:199;
+            z-index:2100;
         }
     .modal__group {
-        position:fixed; z-index: 100; top:50%; left:50%;
+        position:fixed; z-index: 2200; top:50%; left:50%;
         width:61.5em; height:37.5em;
         margin:-18.75em 0 0 -30.75em;
         background:#fff;
@@ -2920,7 +3019,7 @@ fa,
         overflow: hidden;
     }
         .modalDialog__group--confirm {
-            z-index:200;
+            z-index:2200;
         }
     .modalHeader__group {
         min-height:3em;
@@ -3233,4 +3332,4 @@ fa,
         margin-left: -4px;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
-    }
+    }    
