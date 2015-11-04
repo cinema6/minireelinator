@@ -10,6 +10,11 @@ define(['app'], function(appModule) {
         var campaign;
 
         function compileCtrl() {
+            $scope = $rootScope.$new();
+            $scope.campaign = campaign;
+            $scope.validation = {
+                budget: true
+            };
             $scope.$apply(function() {
                 SelfieBudgetCtrl = $controller('SelfieBudgetController', { $scope: $scope });
             });
@@ -31,12 +36,6 @@ define(['app'], function(appModule) {
                         },
                         interests: []
                     }
-                };
-
-                $scope = $rootScope.$new();
-                $scope.campaign = campaign;
-                $scope.validation = {
-                    budget: true
                 };
             });
 
@@ -155,60 +154,84 @@ define(['app'], function(appModule) {
             });
         });
 
-        describe('$watchers', function() {
-            describe('budget and limit', function() {
-                it('should set the budget and daily limit on the campaign if valid', function() {
-                    expect(campaign.pricing.budget).toBeUndefined();
-                    expect(campaign.pricing.dailyLimit).toBeUndefined();
-
-                    $scope.$apply(function() {
-                        SelfieBudgetCtrl.budget = 3000;
-                    });
-
-                    expect(campaign.pricing.budget).toBe(3000);
-                    expect(campaign.pricing.dailyLimit).toBe(null);
+        describe('$scope properties', function() {
+            describe('validation.budget', function() {
+                it('should be false if budget and limit are not set', function() {
                     expect($scope.validation.budget).toBe(false);
+                });
 
-                    $scope.$apply(function() {
-                        SelfieBudgetCtrl.limit = 100;
-                    });
+                it('should be true if budget and limit are set', function() {
+                    campaign.pricing.budget = 1000;
+                    campaign.pricing.dailyLimit = 100;
 
-                    expect(campaign.pricing.budget).toBe(3000);
-                    expect(campaign.pricing.dailyLimit).toBe(100);
-                    expect($scope.validation.budget).toBe(true);
+                    compileCtrl();
 
-                    $scope.$apply(function() {
-                        SelfieBudgetCtrl.limit = 500000;
-                    });
-
-                    expect(campaign.pricing.budget).toBe(3000);
-                    expect(campaign.pricing.dailyLimit).toBe(100);
-                    expect($scope.validation.budget).toBe(false);
-
-                    $scope.$apply(function() {
-                        SelfieBudgetCtrl.limit = 300;
-                    });
-
-                    expect(campaign.pricing.budget).toBe(3000);
-                    expect(campaign.pricing.dailyLimit).toBe(300);
-                    expect($scope.validation.budget).toBe(true);
-
-                    $scope.$apply(function() {
-                        SelfieBudgetCtrl.budget = 3000000;
-                    });
-
-                    expect(campaign.pricing.budget).toBe(3000);
-                    expect(campaign.pricing.dailyLimit).toBe(300);
-                    expect($scope.validation.budget).toBe(false);
-
-                    $scope.$apply(function() {
-                        SelfieBudgetCtrl.budget = 5000;
-                    });
-
-                    expect(campaign.pricing.budget).toBe(5000);
-                    expect(campaign.pricing.dailyLimit).toBe(300);
                     expect($scope.validation.budget).toBe(true);
                 });
+            });
+        });
+
+        describe('setBudget()', function() {
+            it('should set the budget and limit on the campaign if valid', function() {
+                expect(campaign.pricing.budget).toBeUndefined();
+                expect(campaign.pricing.dailyLimit).toBeUndefined();
+
+                SelfieBudgetCtrl.budget = 300000000;
+
+                SelfieBudgetCtrl.setBudget();
+
+                expect(campaign.pricing.budget).toBe(undefined);
+                expect(campaign.pricing.dailyLimit).toBe(undefined);
+                expect($scope.validation.budget).toBe(false);
+
+                SelfieBudgetCtrl.budget = 3000;
+
+                SelfieBudgetCtrl.setBudget();
+
+                expect(campaign.pricing.budget).toBe(3000);
+                expect(campaign.pricing.dailyLimit).toBe(null);
+                expect($scope.validation.budget).toBe(false);
+
+                SelfieBudgetCtrl.limit = 3000000;
+
+                SelfieBudgetCtrl.setBudget();
+
+                expect(campaign.pricing.budget).toBe(3000);
+                expect(campaign.pricing.dailyLimit).toBe(null);
+                expect($scope.validation.budget).toBe(false);
+
+                SelfieBudgetCtrl.limit = 300;
+
+                SelfieBudgetCtrl.setBudget();
+
+                expect(campaign.pricing.budget).toBe(3000);
+                expect(campaign.pricing.dailyLimit).toBe(300);
+                expect($scope.validation.budget).toBe(true);
+
+                SelfieBudgetCtrl.limit = null;
+
+                SelfieBudgetCtrl.setBudget();
+
+                expect(campaign.pricing.budget).toBe(3000);
+                expect(campaign.pricing.dailyLimit).toBe(null);
+                expect($scope.validation.budget).toBe(false);
+
+                SelfieBudgetCtrl.budget = 3000000000;
+
+                SelfieBudgetCtrl.setBudget();
+
+                expect(campaign.pricing.budget).toBe(3000);
+                expect(campaign.pricing.dailyLimit).toBe(null);
+                expect($scope.validation.budget).toBe(false);
+
+                SelfieBudgetCtrl.budget = 5000;
+                SelfieBudgetCtrl.limit = 500;
+
+                SelfieBudgetCtrl.setBudget();
+
+                expect(campaign.pricing.budget).toBe(5000);
+                expect(campaign.pricing.dailyLimit).toBe(500);
+                expect($scope.validation.budget).toBe(true);
             });
         });
     });

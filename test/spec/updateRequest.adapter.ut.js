@@ -99,7 +99,7 @@
                         }
                     ];
                     data = {
-                        campaignId: 'c-123',
+                        campaign: 'c-123',
                         ids: 'ur-12345,ur-54321',
                         statuses: 'pending'
                     };
@@ -116,7 +116,7 @@
                 });
 
                 it('should reject if not provided a campaign id', function() {
-                    delete data.campaignId;
+                    delete data.campaign;
                     adapter.findQuery('updateRequest', data).then(success, failure);
                     $rootScope.$apply();
                     expect(success).not.toHaveBeenCalled();
@@ -130,7 +130,7 @@
                 beforeEach(function() {
                     updateRequest = {
                         status: 'pending',
-                        campaignId: 'c-123'
+                        campaign: 'c-123'
                     };
 
                     $httpBackend.expectPOST('/api/campaigns/c-123/updates')
@@ -142,14 +142,12 @@
                 it('should return the created updateRequest', function() {
                     adapter.create('updateRequest', updateRequest).then(success, failure);
                     $httpBackend.flush();
-                    expect(success).toHaveBeenCalledWith([{
-                        status: 'pending'
-                    }]);
+                    expect(success).toHaveBeenCalledWith([updateRequest]);
                     expect(failure).not.toHaveBeenCalled();
                 });
 
                 it('should reject if not provided a campaignId', function() {
-                    delete updateRequest.campaignId;
+                    delete updateRequest.campaign;
                     adapter.create('updateRequest', updateRequest).then(success, failure);
                     $rootScope.$apply();
                     expect(success).not.toHaveBeenCalled();

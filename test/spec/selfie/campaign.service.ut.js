@@ -103,7 +103,6 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                             customerId: selfie.cModel.customer.id,
                             name: undefined,
                             pricing: {},
-                            status: 'draft',
                             application: 'selfie',
                             advertiserDisplayName: selfie.cModel.company,
                             paymentMethod: undefined,
@@ -257,7 +256,6 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                         expect(result.customerId).toEqual(existingCampaign.customerId);
 
                         expect(result.name).toEqual(existingCampaign.name + ' (Copy)');
-                        expect(result.status).toEqual('draft');
                         expect(result.application).toEqual('selfie');
                     });
 

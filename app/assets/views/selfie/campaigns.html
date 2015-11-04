@@ -109,6 +109,8 @@
                 <h1 class="campaign__name tk--hdr">
                     {{$this.name}}
                 </h1>
+                <span ng-if="$this.rejectionReason">Rejected: {{$this.rejectionReason}}</span>
+                <span ng-if="$this.updateRequest">Pending update request...</span>
             </div><!--.column__campaignName-->
 
             <div class="campaign__column column__totalViews">
@@ -152,8 +154,7 @@
                 <div class="campaign__budgetInfo">
                     <span class="campaign__budgetNumbers">
                         <span class="budget__label">Views:</span>
-                        <i class="fa fa-play-circle"></i>
-                        <span ng-if="SelfieCampaignsCtrl.metaData[$this.id].stats.views">{{SelfieCampaignsCtrl.metaData[$this.id].stats.views}}</span>
+                        <span ng-if="SelfieCampaignsCtrl.metaData[$this.id].stats.views"><i class="fa fa-play-circle"></i> {{SelfieCampaignsCtrl.metaData[$this.id].stats.views}}</span>
                         <span ng-if="!SelfieCampaignsCtrl.metaData[$this.id].stats.views">--</span>
                     </span>
                     <span class="campaign__budgetNumbers">

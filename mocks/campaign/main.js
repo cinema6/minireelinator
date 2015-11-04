@@ -23,12 +23,71 @@ module.exports = function(http) {
         var id = idFromPath(request.pathname);
         var filePath = path.resolve(__dirname, './updates/' + id + '.json');
         var json = grunt.file.readJSON(filePath);
-        this.respond(200, json);
+        this.respond(200, extend(json, {
+            id: id
+        }));
     });
 
     http.whenPUT('/api/campaigns/**/updates/**', function(request) {
-        console.log(request.body);
-        this.respond(200, {});
+        var id = idFromPath(request.pathname),
+            campaignId = request.pathname.match(/campaigns\/([\w+-]+)/)[1],
+            campaign = grunt.file.readJSON(objectPath('campaigns', campaignId)),
+            filePath = objectPath('updates', id),
+            currentTime = (new Date()).toISOString(),
+            current = grunt.file.readJSON(filePath),
+            updateRequest = extend(current, request.body, {
+                lastUpdated: currentTime
+            });
+
+        if (request.body.status === 'rejected') {
+            campaign.rejectionReason = request.body.rejectionReason;
+            campaign.status = campaign.status === 'pending' ? 'draft' : campaign.status;
+        } else {
+            campaign = updateRequest.data;
+            delete campaign.rejectionReason;
+        }
+
+        campaign.lastUpdated = currentTime;
+        delete campaign.updateRequest;
+        grunt.file.write(objectPath('campaigns', campaign.id), JSON.stringify(campaign, null, '    '));
+
+
+        grunt.file.write(filePath, JSON.stringify(updateRequest, null, '    '));
+
+        this.respond(200, extend(updateRequest, {
+            id: id
+        }));
+    });
+
+    http.whenPOST('/api/campaigns/**/updates', function(request) {
+        var id = genId('ur'),
+            campaign = grunt.file.readJSON(objectPath('campaigns', request.body.campaign)),
+            user = require('../auth/user_cache').user,
+            currentTime = (new Date()).toISOString(),
+            updateRequest = extend({
+                status: 'pending'
+            }, request.body, {
+                created: currentTime,
+                user: user.id,
+                org: user.org,
+                lastUpdated: currentTime
+            });
+
+        if (request.body.data.paymentMethod !== campaign.paymentMethod) {
+            campaign.paymentMethod = request.body.data.paymentMethod;
+            updateRequest.status = 'approved';
+        } else {
+            campaign.updateRequest = id;
+            campaign.status = campaign.status === 'draft' ? 'pending' : campaign.status;
+        }
+
+        campaign.lastUpdated = currentTime;
+        delete campaign.rejectionReason;
+        grunt.file.write(objectPath('campaigns', updateRequest.campaign), JSON.stringify(campaign, null, '    '));
+
+        grunt.file.write(objectPath('updates', id), JSON.stringify(updateRequest, null, '    '));
+
+        this.respond(201, extend(updateRequest, { id: id }));
     });
 
     http.whenGET('/api/campaigns', function(request) {
@@ -148,7 +207,8 @@ module.exports = function(http) {
                 created: currentTime,
                 user: user.id,
                 org: user.org,
-                lastUpdated: currentTime
+                lastUpdated: currentTime,
+                status: 'draft'
             });
 
         grunt.file.write(objectPath('campaigns', id), JSON.stringify(campaign, null, '    '));
