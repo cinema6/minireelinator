@@ -65,7 +65,7 @@
 
         <li class="campaign__item campaign__item--{{$this.status}} clearfix"
         ng-repeat="$this in campaigns track by $this.id"
-        c6-sref="{{SelfieCampaignsCtrl.editStateFor($this)}}" c6-models="[$this]" c6-params="{}" >
+        c6-sref="{{SelfieCampaignsCtrl.editStateFor($this)}}" c6-models="[$this]" c6-params="{}">
 
             <!--popoverItem__group ends-->
             <div class="popoverItem__group budget__popover fade left in editable-container editable-popup" style="top: -20px; left: auto; right: 120px; display: none;">
@@ -109,7 +109,7 @@
                 <h1 class="campaign__name tk--hdr">
                     {{$this.name}}
                 </h1>
-                <span ng-if="$this.rejectionReason">Rejected: {{$this.rejectionReason}}</span>
+                <span ng-if="$this.rejectionReason">We're sorry, this campaign has been rejected: {{$this.rejectionReason}}</span>
                 <span ng-if="$this.updateRequest">Pending update request...</span>
             </div><!--.column__campaignName-->
 
