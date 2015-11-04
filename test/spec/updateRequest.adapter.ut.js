@@ -6,16 +6,20 @@
         var copy = angular.copy,
             extend = angular.extend;
 
-        describe('UpdateRequestAdapter', function() {
+        fdescribe('UpdateRequestAdapter', function() {
             var UpdateRequestAdapter,
                 cinema6,
                 $q,
                 $rootScope,
+                MiniReelService,
                 adapter,
                 success,
                 failure;
 
-            var $httpBackend;
+            var $httpBackend,
+                convertCardForPlayerDeferred,
+                convertCardForEditorDeferred,
+                card;
 
             beforeEach(function() {
                 module(appModule.name);
@@ -27,6 +31,8 @@
                     $rootScope = $injector.get('$rootScope');
                     $q = $injector.get('$q');
                     cinema6 = $injector.get('cinema6');
+                    MiniReelService = $injector.get('MiniReelService');
+
                     UpdateRequestAdapter = $injector.get('UpdateRequestAdapter');
                     UpdateRequestAdapter.config = {
                         apiBase: '/api'
@@ -38,6 +44,17 @@
 
                     $httpBackend = $injector.get('$httpBackend');
                 });
+
+                card = {
+                    data: {},
+                    collateral: {},
+                    campaign: {},
+                    params: {}
+                };
+                convertCardForPlayerDeferred = $q.defer();
+                convertCardForEditorDeferred = $q.defer();
+                spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue(convertCardForPlayerDeferred.promise);
+                spyOn(MiniReelService, 'convertCardForEditor').and.returnValue(convertCardForEditorDeferred.promise);
             });
 
             it('should exist', function() {
@@ -63,7 +80,10 @@
                 beforeEach(function() {
                     updateRequest = {
                         id: 'ur-12345',
-                        status: 'pending'
+                        status: 'pending',
+                        data: {
+                            cards: [ card ]
+                        }
                     };
 
                     $httpBackend.expectGET('/api/campaigns/c-123/updates/ur-12345')
@@ -77,6 +97,10 @@
                 it('should return the updateRequest in an array', function() {
                     expect(success).toHaveBeenCalledWith([updateRequest]);
                     expect(failure).not.toHaveBeenCalled();
+                });
+
+                it('should convert the card for editor', function() {
+                    expect(MiniReelService.convertCardForEditor).toHaveBeenCalledWith(card);
                 });
             });
 

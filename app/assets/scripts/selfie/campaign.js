@@ -280,10 +280,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Campaign', ['cinema6','SelfieLogoService','CampaignService',
-                                                      'c6State','$q','ConfirmDialogService',
-            function                                 ( cinema6 , SelfieLogoService , CampaignService ,
-                                                       c6State , $q , ConfirmDialogService ) {
+            c6StateProvider.state('Selfie:Campaign', ['cinema6','SelfieLogoService','c6State','$q',
+                                                      'CampaignService','ConfirmDialogService',
+            function                                 ( cinema6 , SelfieLogoService , c6State , $q ,
+                                                       CampaignService , ConfirmDialogService ) {
                 var SelfieState = c6State.get('Selfie');
 
                 function campaignExtend(target, extension) {
@@ -410,10 +410,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignController', ['$scope','$log','c6State','cState','cinema6','$q',
                                                  'c6Debounce','c6AsyncQueue','CampaignService',
-                                                 'ConfirmDialogService','MiniReelService',
+                                                 'ConfirmDialogService',
         function                                ( $scope , $log , c6State , cState , cinema6 , $q ,
                                                   c6Debounce , c6AsyncQueue , CampaignService ,
-                                                  ConfirmDialogService , MiniReelService ) {
+                                                  ConfirmDialogService ) {
             var SelfieCampaignCtrl = this,
                 queue = c6AsyncQueue();
 
@@ -438,8 +438,6 @@ function( angular , c6State  , PaginatedListState                    ,
             function watchForPreview(params, oldParams) {
                 if (params === oldParams) { return; }
 
-                var card = SelfieCampaignCtrl.card;
-
                 $log.info('load preview');
                 $scope.$broadcast('loadPreview');
 
@@ -448,21 +446,13 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
             }
 
-            function prepareCampaign() {
+            function createUpdateRequest() {
                 var status = cState._campaign.status,
                     isDraft = status === 'draft',
                     campaign = extend((isDraft ? cState._campaign.pojoify() : cState.campaign), {
                         status: isDraft ? 'active' : status
                     });
 
-                return MiniReelService.convertCardForPlayer(campaign.cards[0])
-                    .then(function(card) {
-                        campaign.cards[0] = card;
-                        return campaign;
-                    });
-            }
-
-            function createUpdateRequest(campaign) {
                 return cinema6.db.create('updateRequest', {
                     data: campaign,
                     campaign: campaign.id
@@ -545,7 +535,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 var isDraft = cState._campaign.status === 'draft';
 
                 return (isDraft ? saveCampaign() : $q.when(this.campaign))
-                    .then(prepareCampaign)
                     .then(createUpdateRequest)
                     .then(setPending)
                     .then(returnToDashboard)
@@ -1192,10 +1181,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieManageCampaignController', ['$scope','cState','c6AsyncQueue','$q',
                                                        'c6State', 'CampaignService','cinema6',
-                                                       'ConfirmDialogService','MiniReelService',
+                                                       'ConfirmDialogService',
         function                                      ( $scope , cState , c6AsyncQueue , $q ,
                                                         c6State ,  CampaignService , cinema6 ,
-                                                        ConfirmDialogService , MiniReelService ) {
+                                                        ConfirmDialogService ) {
             var SelfieManageCampaignCtrl = this,
                 queue = c6AsyncQueue();
 
@@ -1224,35 +1213,18 @@ function( angular , c6State  , PaginatedListState                    ,
                 });
             }
 
-            function prepareCampaign(action) {
-                var campaign = SelfieManageCampaignCtrl.campaign.pojoify();
-
-                if (action === 'paymentMethod') {
-                    return $q.when({
-                        id: campaign.id,
-                        paymentMethod: campaign.paymentMethod
-                    });
-                }
+            function createUpdateRequest(action) {
+                var campaign = SelfieManageCampaignCtrl.campaign.pojoify(),
+                    id = campaign.id;
 
                 if (action) {
                     campaign.status = statusFor(action);
                 }
 
-                return MiniReelService.convertCardForPlayer(campaign.cards[0])
-                    .then(function(card) {
-                        campaign.cards[0] = card;
-                        return campaign;
-                    })
-            }
-
-            function createUpdateRequest(campaign) {
-                var id = campaign.id;
-
-                if (!campaign.status) {
-                    // if there's no status we're sending a partial
-                    // campaign body, meaning the ID is not supposed
-                    // to be sent
-                    delete campaign.id;
+                if (action === 'paymentMethod') {
+                    campaign = {
+                        paymentMethod: campaign.paymentMethod
+                    };
                 }
 
                 return cinema6.db.create('updateRequest', {
@@ -1276,8 +1248,7 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function submitUpdate(action) {
-                return prepareCampaign(action)
-                    .then(createUpdateRequest)
+                return createUpdateRequest(action)
                     .then(setUpdateRequest)
                     .then(updateProxy)
                     .catch(handleError);

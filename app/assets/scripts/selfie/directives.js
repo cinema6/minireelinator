@@ -438,8 +438,6 @@ function( angular , select2 , braintree ) {
                 budgetMin = pricing.budget.__min,
                 budgetMax = pricing.budget.__max,
                 limitMinPercent = pricing.dailyLimit.__percentMin,
-                limitMaxPercent = pricing.dailyLimit.__percentMax,
-                limitDefaultPercent = pricing.dailyLimit.__percentDefault,
                 basePrice = pricing.cost.__base,
                 pricePerGeo = pricing.cost.__pricePerGeo,
                 pricePerDemo = pricing.cost.__pricePerDemo,
@@ -490,7 +488,8 @@ function( angular , select2 , braintree ) {
                         }
 
                         if (max < budget * limitMinPercent) {
-                            return 'Must be greater than ' + (limitMinPercent * 100) + '% of the Total Budget';
+                            return 'Must be greater than ' + (limitMinPercent * 100) +
+                                '% of the Total Budget';
                         }
 
                         if (max > budget) {

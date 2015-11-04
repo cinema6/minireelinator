@@ -157,7 +157,7 @@ function( angular , c6uilib ) {
                     .then(function(response) {
                         return response.data;
                     });
-            }
+            };
 
             /* Creates a diff summary of two campaigns with special handling for the first entry in
                 the cards array. Does not compare individual elements of arrays. */

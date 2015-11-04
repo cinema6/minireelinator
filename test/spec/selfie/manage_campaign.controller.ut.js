@@ -26,9 +26,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             $q,
             c6State,
             cinema6,
-            MiniReelService,
             CampaignService,
             ConfirmDialogService,
+            MiniReelService,
             SelfieManageCampaignCtrl;
 
         var cState,
@@ -78,9 +78,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 $q = $injector.get('$q');
                 c6State = $injector.get('c6State');
                 cinema6 = $injector.get('cinema6');
-                MiniReelService = $injector.get('MiniReelService');
                 CampaignService = $injector.get('CampaignService');
                 ConfirmDialogService = $injector.get('ConfirmDialogService');
+                MiniReelService = $injector.get('MiniReelService');
             });
 
             spyOn(ConfirmDialogService, 'display');
@@ -265,12 +265,11 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
 
             describe('safeUpdate()', function() {
-                var updateRequest, updateRequestDeferred, convertCardDeferred;
+                var updateRequest, updateRequestDeferred;
 
                 beforeEach(function() {
                     updateRequest = {};
                     updateRequestDeferred = $q.defer();
-                    convertCardDeferred = $q.defer();
 
                     campaign.id = 'cam-123';
 
@@ -279,7 +278,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         paymentMethods: paymentMethods
                     });
 
-                    spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue(convertCardDeferred.promise);
                     spyOn(cinema6.db, 'create').and.callFake(function(type, obj) {
                         updateRequest.data = obj.data;
                         updateRequest.campaign = obj.campaign;
@@ -298,22 +296,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(cinema6.db.create).not.toHaveBeenCalled();
                 });
 
-                it('should convert the card for player', function() {
+                it('should create an update request', function() {
                     SelfieManageCampaignCtrl.campaign.paymentMethod = 'pay-8888';
 
                     SelfieManageCampaignCtrl.safeUpdate();
-
-                    expect(MiniReelService.convertCardForPlayer).toHaveBeenCalledWith(SelfieManageCampaignCtrl.campaign.cards[0]);
-                });
-
-                it('should create an update request after card conversion', function() {
-                    SelfieManageCampaignCtrl.campaign.paymentMethod = 'pay-8888';
-
-                    SelfieManageCampaignCtrl.safeUpdate();
-
-                    $rootScope.$apply(function() {
-                        convertCardDeferred.resolve(SelfieManageCampaignCtrl.campaign.cards[0]);
-                    });
 
                     expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
                         data: SelfieManageCampaignCtrl.campaign.pojoify(),
@@ -324,7 +310,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
             describe('update(action)', function() {
                 describe('action:', function() {
-                    var onAffirm, onCancel, updateRequest, updateRequestDeferred, convertCardDeferred;
+                    var onAffirm, onCancel, updateRequest, updateRequestDeferred;
 
                     function statusFor(action) {
                         switch (action) {
@@ -340,13 +326,11 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     beforeEach(function() {
                         updateRequest = {};
                         updateRequestDeferred = $q.defer();
-                        convertCardDeferred = $q.defer();
 
                         SelfieManageCampaignCtrl.campaign.id = 'cam-123';
 
                         spyOn(c6State, 'goTo');
                         spyOn(SelfieManageCampaignCtrl.campaign, 'pojoify').and.callThrough();
-                        spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue(convertCardDeferred.promise);
                         spyOn(cinema6.db, 'create').and.callFake(function(type, obj) {
                             updateRequest.data = obj.data;
                             updateRequest.campaign = obj.campaign;
@@ -382,63 +366,51 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                     expect(debouncedFns).toContain(onAffirm);
                                 });
 
-                                it('should convert the card for player', function() {
-                                    expect(MiniReelService.convertCardForPlayer).toHaveBeenCalledWith(expectedData.cards[0]);
+                                it('should create an update request with a pojoified campaign', function() {
+                                    expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
+                                        data: expectedData,
+                                        campaign: 'cam-123'
+                                    });
                                 });
 
-                                describe('when the card conversion completes', function() {
+                                it('should save the updateRequest', function() {
+                                    expect(updateRequest.save).toHaveBeenCalled();
+                                });
+
+                                describe('when updateRequest status is approved', function() {
                                     beforeEach(function() {
+                                        updateRequest.status = 'approved';
+
                                         $rootScope.$apply(function() {
-                                            convertCardDeferred.resolve(campaign.cards[0]);
+                                            updateRequestDeferred.resolve(updateRequest);
                                         });
                                     });
 
-                                    it('should create an update request with a pojoified campaign', function() {
-                                        expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
-                                            data: expectedData,
-                                            campaign: 'cam-123'
+                                    it('should not add the updateRequest id to the campaign', function() {
+                                        expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe(undefined);
+                                    });
+
+                                    it('should update proxy campaign', function() {
+                                        expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
+                                    });
+                                });
+
+                                describe('when updateRequest status is not approved', function() {
+                                    beforeEach(function() {
+                                        updateRequest.status = 'pending';
+                                        updateRequest.id = 'ur-1234';
+
+                                        $rootScope.$apply(function() {
+                                            updateRequestDeferred.resolve(updateRequest);
                                         });
                                     });
 
-                                    it('should save the updateRequest', function() {
-                                        expect(updateRequest.save).toHaveBeenCalled();
+                                    it('should add the updateRequest id to the campaign', function() {
+                                        expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe('ur-1234');
                                     });
 
-                                    describe('when updateRequest status is approved', function() {
-                                        beforeEach(function() {
-                                            updateRequest.status = 'approved';
-
-                                            $rootScope.$apply(function() {
-                                                updateRequestDeferred.resolve(updateRequest);
-                                            });
-                                        });
-
-                                        it('should not add the updateRequest id to the campaign', function() {
-                                            expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe(undefined);
-                                        });
-
-                                        it('should update proxy campaign', function() {
-                                            expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
-                                        });
-                                    });
-
-                                    describe('when updateRequest status is not approved', function() {
-                                        beforeEach(function() {
-                                            updateRequest.status = 'pending';
-                                            updateRequest.id = 'ur-1234';
-
-                                            $rootScope.$apply(function() {
-                                                updateRequestDeferred.resolve(updateRequest);
-                                            });
-                                        });
-
-                                        it('should add the updateRequest id to the campaign', function() {
-                                            expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe('ur-1234');
-                                        });
-
-                                        it('should update proxy campaign', function() {
-                                            expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
-                                        });
+                                    it('should update proxy campaign', function() {
+                                        expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
                                     });
                                 });
                             });
@@ -448,12 +420,11 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
 
             describe('updatePaymentMethod()', function() {
-                var updateRequest, updateRequestDeferred, convertCardDeferred;
+                var updateRequest, updateRequestDeferred;
 
                 beforeEach(function() {
                     updateRequest = {};
                     updateRequestDeferred = $q.defer();
-                    convertCardDeferred = $q.defer();
 
                     campaign.id = 'cam-123';
 
@@ -462,7 +433,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         paymentMethods: paymentMethods
                     });
 
-                    spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue(convertCardDeferred.promise);
                     spyOn(cinema6.db, 'create').and.callFake(function(type, obj) {
                         updateRequest.data = obj.data;
                         updateRequest.campaign = obj.campaign;
@@ -481,17 +451,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(cinema6.db.create).not.toHaveBeenCalled();
                 });
 
-                it('should not convert the card for player', function() {
-                    SelfieManageCampaignCtrl.campaign.paymentMethod = 'pay-8888';
-
-                    SelfieManageCampaignCtrl.updatePaymentMethod();
-
-                    $scope.$digest();
-
-                    expect(MiniReelService.convertCardForPlayer).not.toHaveBeenCalled();
-                });
-
-                it('should create an update request after card conversion', function() {
+                it('should create an update request', function() {
                     SelfieManageCampaignCtrl.campaign.paymentMethod = 'pay-8888';
 
                     SelfieManageCampaignCtrl.updatePaymentMethod();
