@@ -18,7 +18,12 @@
                     </div>
 
                     <div class="ui__btnHolder">
-                        <button class="action__btn action__btn--wide" ng-class="{ 'btn--disabled' : !SelfieManageCampaignCtrl.canSubmit }" ng-disabled="!SelfieManageCampaignCtrl.canSubmit" ng-click="SelfieManageCampaignCtrl.safeUpdate()">Save Changes</button>
+                        <button class="action__btn action__btn--wide" ng-class="{ 'btn--disabled' : !SelfieManageCampaignCtrl.canSubmit }" ng-disabled="!SelfieManageCampaignCtrl.canSubmit" ng-click="SelfieManageCampaignCtrl.updatePaymentMethod()">Save Changes</button>
+                    </div>
+
+                    <div ng-if="SelfieManageCampaignCtrl.paymentStatus" class="alertMessage" ng-class="{ 'alert__success' : SelfieManageCampaignCtrl.paymentStatus === 'success', 'alert__failure' : SelfieManageCampaignCtrl.paymentStatus === 'failed' }">
+                        <span ng-if="SelfieManageCampaignCtrl.paymentStatus === 'failed'">There was a problem updating your payment method.</span>
+                        <span ng-if="SelfieManageCampaignCtrl.paymentStatus === 'success'">You have successfully updated your payment method</span>
                     </div>
                 </section>
             </div>

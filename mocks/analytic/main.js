@@ -25,7 +25,7 @@ module.exports = function(http) {
                 return grunt.file.readJSON(path);
             })
             .filter(function(stat) {
-                var ids = request.query.id,
+                var ids = request.query.ids,
                     idArray = (ids || '').split(','),
                     id = stat.campaignId;
 

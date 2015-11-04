@@ -1,7 +1,10 @@
 <h1 class="formSection__title">
     <span class="formSection__titleText tk--hdr">Set Your Budget</span>
 </h1>
-<p class="formSection__introText">Your calculated cost per 1000 video plays is : <strong>${{SelfieBudgetCtrl.cpv}}</strong>. A video must play for a minimum of 3 seconds to count as a play.</p>
+<p class="formSection__introText">Your calculated cost per 1000 video plays is : <strong>${{SelfieBudgetCtrl.cpv | number:2}}</strong>. A video must play for a minimum of 3 seconds to count as a play.
+<span ng-if="SelfieBudgetCtrl.budget && SelfieBudgetCtrl.validBudget" style="display:block">Estimated views: {{ SelfieBudgetCtrl.budget / SelfieBudgetCtrl.cpv | number:0}}</span>
+</p>
+
 
 <div class="form__items">
     <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': !SelfieBudgetCtrl.validBudget }">
@@ -32,7 +35,7 @@
         </label>
         <div class="form__helpBox form__helpBox--right">
             <div class="form__helpText">
-                Enter the daily budget limit. It must be more than 1.5% of the total budget.
+                Enter the daily budget limit. It must be more than {{SelfieBudgetCtrl.limitMinPercent * 100}}% of the total budget.
             </div>
         </div>
         <div class="form__errorBox">

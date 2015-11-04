@@ -157,8 +157,23 @@ module.exports = function(http) {
      * Card Endpoints
      **********************************************************************************************/
 
+    function setProp(target, base, arr) {
+        arr.forEach(function(prop) {
+            var props = prop.split('.');
+
+            if (props.length === 1) {
+                target[prop] = base[prop];
+            } else {
+                target[props[0]] = base[props[0]] || {};
+                target[props[0]] = setProp(target[props[0]], (base[props[0]] || {}), props);
+            }
+        });
+
+        return target;
+    }
+
     http.whenGET('/api/content/cards', function(request) {
-        var filters = pluckExcept(request.query, ['ids']),
+        var filters = pluckExcept(request.query, ['ids','fields']),
             allCards = grunt.file.expand(path.resolve(__dirname, './cards/*.json'))
                 .map(function(path) {
                     var id = path.match(/[^\/]+(?=\.json)/)[0];
@@ -174,6 +189,14 @@ module.exports = function(http) {
                         idArray = (ids || '').split(',');
 
                     return !ids || idArray.indexOf(card.id) > -1;
+                }).map(function(card) {
+                    var fields = request.query.fields,
+                        fieldsArray = (fields || '').split(','),
+                        cardObject = {id: card.id};
+
+                    if (!fields) { return card; }
+
+                    return setProp(cardObject, card, fieldsArray);
                 });
 
 

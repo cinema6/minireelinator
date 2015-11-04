@@ -271,7 +271,7 @@ function( angular , select2 , braintree ) {
         }])
 
         .controller('SelfieCategoriesController', ['$scope',
-        function                                         ( $scope ) {
+        function                                  ( $scope ) {
             var SelfieCategoriesCtrl = this,
                 campaign = $scope.campaign,
                 categories = $scope.categories;
@@ -294,7 +294,8 @@ function( angular , select2 , braintree ) {
                 restrict: 'E',
                 scope: {
                     categories: '=',
-                    campaign: '='
+                    campaign: '=',
+                    schema: '='
                 },
                 templateUrl: 'views/selfie/directives/interests.html',
                 controller: 'SelfieInterestsController',
@@ -306,11 +307,14 @@ function( angular , select2 , braintree ) {
         function                                 ( $scope ) {
             var SelfieInterestsCtrl = this,
                 campaign = $scope.campaign,
-                categories = $scope.categories;
+                categories = $scope.categories,
+                schema = $scope.schema;
 
             this.interests = categories.filter(function(category) {
                 return campaign.targeting.interests.indexOf(category.id) > -1;
             });
+
+            this.priceForInterests = schema.pricing.cost.__priceForInterests;
 
             $scope.$watch(function() {
                 return SelfieInterestsCtrl.interests;
@@ -327,7 +331,8 @@ function( angular , select2 , braintree ) {
             return {
                 restrict: 'E',
                 scope: {
-                    campaign: '='
+                    campaign: '=',
+                    schema: '='
                 },
                 templateUrl: 'views/selfie/directives/geotargeting.html',
                 controller: 'SelfieGeotargetingController',
@@ -338,7 +343,8 @@ function( angular , select2 , braintree ) {
         .controller('SelfieGeotargetingController', ['$scope','GeoService',
         function                                    ( $scope , GeoService ) {
             var SelfieGeotargetingCtrl = this,
-                campaign = $scope.campaign;
+                campaign = $scope.campaign,
+                schema = $scope.schema;
 
             this.stateOptions = GeoService.usa.map(function(state) {
                 return {
@@ -356,6 +362,8 @@ function( angular , select2 , braintree ) {
                 }).length > 0;
             });
 
+            this.pricePerGeo = schema.pricing.cost.__pricePerGeo;
+
             // we watch the geo choices and save an array of states
             $scope.$watch(function() {
                 return SelfieGeotargetingCtrl.states;
@@ -372,7 +380,8 @@ function( angular , select2 , braintree ) {
             return {
                 restrict: 'E',
                 scope: {
-                    campaign: '='
+                    campaign: '=',
+                    schema: '='
                 },
                 templateUrl: 'views/selfie/directives/demographics.html',
                 controller: 'SelfieDemographcisController',
@@ -380,11 +389,29 @@ function( angular , select2 , braintree ) {
             };
         }])
 
-        .controller('SelfieDemographcisController', ['DemographicsService',
-        function                                    ( DemographicsService ) {
+        .controller('SelfieDemographcisController', ['DemographicsService','$scope',
+        function                                    ( DemographicsService , $scope ) {
+            var SelfieDemographicsCtrl = this,
+                campaign = $scope.campaign,
+                schema = $scope.schema,
+                demographics = campaign.targeting.demographics;
+
             this.ageOptions = DemographicsService.ages;
             this.incomeOptions = DemographicsService.incomes;
-            this.genderOptions = ['Male','Female'];
+            this.genderOptions = ['None','Male','Female'];
+            this.pricePerDemo = schema.pricing.cost.__pricePerDemo;
+
+            this.gender = this.genderOptions.filter(function() {
+                return demographics.gender[0] || 'None';
+            })[0];
+
+            $scope.$watch(function() {
+                return SelfieDemographicsCtrl.gender;
+            }, function(newGender, oldGender) {
+                if (newGender === oldGender) { return; }
+
+                demographics.gender = newGender === 'None' ? [] : [newGender];
+            });
         }])
 
         .directive('selfieBudget', [function() {
@@ -392,7 +419,8 @@ function( angular , select2 , braintree ) {
                 restrict: 'E',
                 scope: {
                     campaign: '=',
-                    validation: '='
+                    validation: '=',
+                    schema: '='
                 },
                 templateUrl: 'views/selfie/directives/budget.html',
                 controller: 'SelfieBudgetController',
@@ -404,44 +432,52 @@ function( angular , select2 , braintree ) {
         function                              ( $scope ) {
             var SelfieBudgetCtrl = this,
                 campaign = $scope.campaign,
-                validation = $scope.validation || {};
+                validation = $scope.validation || {},
+                schema = $scope.schema,
+                pricing = schema.pricing,
+                budgetMin = pricing.budget.__min,
+                budgetMax = pricing.budget.__max,
+                limitMinPercent = pricing.dailyLimit.__percentMin,
+                limitMaxPercent = pricing.dailyLimit.__percentMax,
+                limitDefaultPercent = pricing.dailyLimit.__percentDefault,
+                basePrice = pricing.cost.__base,
+                pricePerGeo = pricing.cost.__pricePerGeo,
+                pricePerDemo = pricing.cost.__pricePerDemo,
+                priceForInterests = pricing.cost.__priceForInterests;
+
+            function getPrice(booleanArray, price) {
+                return booleanArray.filter(function(bool) {
+                    return !!bool;
+                }).length * price;
+            }
 
             this.budget = campaign.pricing.budget || null;
             this.limit = campaign.pricing.dailyLimit || null;
+            this.limitMinPercent = limitMinPercent;
 
-            validation.budget = !!this.budget && !!this.limit;
-
-            this.setBudget = function() {
-                var Ctrl = SelfieBudgetCtrl,
-                    budget = Ctrl.budget,
-                    limit = Ctrl.limit;
-
-                if (Ctrl.validBudget && !Ctrl.dailyLimitError) {
-                    campaign.pricing.budget = budget;
-                    campaign.pricing.dailyLimit = limit;
-
-                    validation.budget = !!budget && !!limit;
-                } else {
-                    validation.budget = false;
-                }
-            };
+            validation.budget = !!this.budget;
 
             Object.defineProperties(this, {
                 cpv: {
                     get: function() {
                         var hasInterests = campaign.targeting.interests.length,
                             hasStates = campaign.targeting.geo.states.length,
-                            hasDmas = campaign.targeting.geo.dmas.length;
+                            hasDmas = campaign.targeting.geo.dmas.length,
+                            hasAge = campaign.targeting.demographics.age.length,
+                            hasIncome = campaign.targeting.demographics.income.length,
+                            hasGender = campaign.targeting.demographics.gender.length,
+                            geoPrice = getPrice([hasStates, hasDmas], pricePerGeo),
+                            demoPrice = getPrice([hasAge, hasIncome, hasGender], pricePerDemo),
+                            interestsPrice = getPrice([hasInterests], priceForInterests);
 
-                        return 50 + ([hasInterests, hasStates, hasDmas]
-                            .filter(function(bool) { return bool; }).length * 0.5);
+                        return basePrice + geoPrice + demoPrice + interestsPrice;
                     }
                 },
                 validBudget: {
                     get: function() {
                         var budget = parseInt(this.budget);
 
-                        return !budget || (budget > 50 && budget < 20000);
+                        return !budget || (budget > budgetMin && budget < budgetMax);
                     }
                 },
                 dailyLimitError: {
@@ -453,8 +489,8 @@ function( angular , select2 , braintree ) {
                             return 'Please enter your Total Budget first';
                         }
 
-                        if (max < budget * 0.015) {
-                            return 'Must be greater than 1.5% of the Total Budget';
+                        if (max < budget * limitMinPercent) {
+                            return 'Must be greater than ' + (limitMinPercent * 100) + '% of the Total Budget';
                         }
 
                         if (max > budget) {
@@ -465,6 +501,21 @@ function( angular , select2 , braintree ) {
                     }
                 }
             });
+
+            this.setBudget = function() {
+                var Ctrl = SelfieBudgetCtrl,
+                    budget = Ctrl.budget,
+                    limit = Ctrl.limit;
+
+                if (Ctrl.validBudget && !Ctrl.dailyLimitError) {
+                    campaign.pricing.budget = budget;
+                    campaign.pricing.dailyLimit = limit;
+
+                    validation.budget = !!budget;
+                } else {
+                    validation.budget = false;
+                }
+            };
         }])
 
         .directive('braintreeCreditCard', [function() {

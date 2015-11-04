@@ -19,6 +19,12 @@ module.exports = function(http) {
         return path.resolve(__dirname, './' + type + '/' + id + '.json');
     }
 
+    http.whenGET('/api/campaigns/schema', function(request) {
+        var filePath = path.resolve(__dirname, './schema/schema.json');
+        var json = grunt.file.readJSON(filePath);
+        this.respond(200, json);
+    });
+
     http.whenGET('/api/campaigns/**/updates/**', function(request) {
         var id = idFromPath(request.pathname);
         var filePath = path.resolve(__dirname, './updates/' + id + '.json');
@@ -199,6 +205,7 @@ module.exports = function(http) {
 
     http.whenPOST('/api/campaign', function(request) {
         var id = genId('c'),
+            cardId = genId('rc'),
             user = require('../auth/user_cache').user,
             currentTime = (new Date()).toISOString(),
             campaign = extend({
@@ -210,6 +217,8 @@ module.exports = function(http) {
                 lastUpdated: currentTime,
                 status: 'draft'
             });
+
+        campaign.cards[0].id = cardId;
 
         grunt.file.write(objectPath('campaigns', id), JSON.stringify(campaign, null, '    '));
 
