@@ -23,9 +23,56 @@
 
             var lastCreatedCard;
 
-            var cModel;
+            var minireel, cModel;
 
             beforeEach(function() {
+                minireel = {
+                    id: 'e-53ae461c63b015',
+                    status: 'pending',
+                    access: 'public',
+                    data: {
+                        title: 'My Awesome MiniReel',
+                        branding: 'urbantimes',
+                        mode: 'lightbox',
+                        collateral: {
+                            splash: '/collateral/foo.jpg'
+                        },
+                        splash: {
+                            theme: 'img-only',
+                            ratio: '16-9',
+                            source: 'generated'
+                        },
+                        deck: [
+                            {
+                                id: 'rc-e91e76c0ce486a',
+                                type: 'ad',
+                                data: {}
+                            },
+                            {
+                                id: 'rc-2ba11eda2b2300',
+                                type: 'video',
+                                data: {
+                                    service: 'youtube',
+                                    videoid: 'X-CjbR1GAmU'
+                                }
+                            },
+                            {
+                                id: 'rc-968f823aa61637',
+                                type: 'videoBallot',
+                                data: {
+                                    service: 'vimeo',
+                                    videoid: '84687115'
+                                }
+                            },
+                            {
+                                id: 'rc-fbccf72de29c63',
+                                type: 'recap',
+                                data: {}
+                            }
+                        ]
+                    }
+                };
+
                 cModel = {
                     id: 'e-53ae461c63b015',
                     status: 'pending',
@@ -35,7 +82,7 @@
                         branding: 'urbantimes',
                         mode: 'lightbox',
                         collateral: {
-                            splash: null
+                            splash: 'fhrwiuoefhb843uyrf7834dhfu8efdg8'
                         },
                         splash: {
                             theme: 'img-only',
@@ -163,7 +210,7 @@
                     $childScope = $scope.$new();
                     $scope.$apply(function() {
                         EditorCtrl = $controller('EditorController', { $scope: $scope });
-                        EditorCtrl.initWithModel({});
+                        EditorCtrl.initWithModel(minireel);
                     });
                 });
 
@@ -191,6 +238,12 @@
             });
 */
             describe('properties', function() {
+                describe('__minireel__', function() {
+                    it('should be the original model', function() {
+                        expect(EditorCtrl.__minireel__).toBe(minireel);
+                    });
+                });
+
                 describe('model', function() {
                     it('should be the EditorService\'s MiniReel', function() {
                         expect(EditorCtrl.model).toBe(cModel);
