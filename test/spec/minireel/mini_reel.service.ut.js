@@ -1519,7 +1519,7 @@
                                 c6Defines.kDebug = true;
                                 result = MiniReelService.previewUrlOf(minireel);
                                 expect(result).toBe('//staging.cinema6.com/preview?' +
-                                   'id=' + encodeURIComponent(minireel.id)
+                                   'experience=' + encodeURIComponent(minireel.id)
                                 );
                             });
 
@@ -1527,7 +1527,7 @@
                                 c6Defines.kDebug = false;
                                 result = MiniReelService.previewUrlOf(minireel);
                                 expect(result).toBe('http://cinema6.com/preview?' +
-                                   'id=' + encodeURIComponent(minireel.id)
+                                   'experience=' + encodeURIComponent(minireel.id)
                                 );
                             });
                         });
