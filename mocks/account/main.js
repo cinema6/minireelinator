@@ -65,7 +65,7 @@ module.exports = function(http) {
     });
 
     http.whenGET('/api/account/users', function(request) {
-        var allCampaigns = grunt.file.expand(path.resolve(__dirname, './users/*.json'))
+        var allUsers = grunt.file.expand(path.resolve(__dirname, './users/*.json'))
                 .map(function(path) {
                     var id = path.match(/[^\/]+(?=\.json)/)[0];
 
@@ -94,7 +94,7 @@ module.exports = function(http) {
                 });
 
         try {
-            this.respond(200, allCampaigns);
+            this.respond(200, allUsers);
         } catch(e) {
             this.respond(401, 'Not Authorized');
         }

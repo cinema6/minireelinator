@@ -710,7 +710,7 @@ function( angular , c6State  , PaginatedListState                    ,
             })[0] || this.logoOptions[0];
 
             this.logo = card.collateral.logo;
-            this.previouslyUploadedLogo = null;
+            this.previouslyUploadedLogo = undefined;
 
             this.links = ['Website','Facebook','Twitter','Pinterest','YouTube','Instagram']
                 .map(function(name) {

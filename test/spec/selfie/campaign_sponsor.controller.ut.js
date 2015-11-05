@@ -32,7 +32,7 @@ define(['app'], function(appModule) {
                 logos = [];
                 card = {
                     collateral: {
-                        logo: null
+                        logo: undefined
                     },
                     links: {},
                     shareLinks: {}
@@ -117,6 +117,7 @@ define(['app'], function(appModule) {
 
                 describe('when a logo has been set and has a valid logoType', function() {
                     it('should choose that option', function() {
+                        card.collateral.logo = 'logo.jpg';
                         card.collateral.logoType = 'url';
 
                         compileCtrl();
@@ -149,7 +150,7 @@ define(['app'], function(appModule) {
                             square: 'square.jpg'
                         };
 
-                        card.collateral.logo = null;
+                        card.collateral.logo = undefined;
 
                         compileCtrl();
 
@@ -163,11 +164,11 @@ define(['app'], function(appModule) {
 
             describe('logo', function() {
                 it('should be the card logo', function() {
-                    card.collateral.logo = null;
+                    card.collateral.logo = undefined;
 
                     compileCtrl();
 
-                    expect(SelfieCampaignSponsorCtrl.logo).toEqual(null);
+                    expect(SelfieCampaignSponsorCtrl.logo).toEqual(undefined);
                 });
 
                 it('should be the card logo', function() {
@@ -182,7 +183,7 @@ define(['app'], function(appModule) {
 
             describe('previouslyUploadedLogo', function() {
                 it('should be null', function() {
-                    expect(SelfieCampaignSponsorCtrl.previouslyUploadedLogo).toBe(null);
+                    expect(SelfieCampaignSponsorCtrl.previouslyUploadedLogo).toBe(undefined);
                 });
             });
 
@@ -331,7 +332,7 @@ define(['app'], function(appModule) {
         describe('$watchers', function() {
             describe('logo', function() {
                 it('should update the logo and logoType properties on the card', function() {
-                    expect(card.collateral.logo).toBe(null);
+                    expect(card.collateral.logo).toBe(undefined);
                     expect(card.collateral.logoType).toBeUndefined();
 
                     $scope.$apply(function() {
@@ -385,7 +386,7 @@ define(['app'], function(appModule) {
                             SelfieCampaignSponsorCtrl.logoType.type = 'file';
                         });
 
-                        expect(SelfieCampaignSponsorCtrl.logo).toEqual(null);
+                        expect(SelfieCampaignSponsorCtrl.logo).toEqual(undefined);
                     });
                 });
 
@@ -438,7 +439,7 @@ define(['app'], function(appModule) {
                             SelfieCampaignSponsorCtrl.logoType = SelfieCampaignSponsorCtrl.logoOptions[1];
                         });
 
-                        expect(SelfieCampaignSponsorCtrl.logo).toEqual(null);
+                        expect(SelfieCampaignSponsorCtrl.logo).toEqual(undefined);
                         expect(SelfieCampaignSponsorCtrl.logoType.type).toEqual('none');
                     });
                 });
