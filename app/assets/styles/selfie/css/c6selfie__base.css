@@ -110,6 +110,9 @@
     .tk--instagram {
         color:#125688;
     }
+    .tk--share {
+        color:#0A693D;
+    }
 
 fa,
         .faa:after,
@@ -487,17 +490,22 @@ fa,
             }
             .btnGroup .btn {
                 float:left;
-                border-radius:0;
+                border-radius:0.1875em;
                 margin-left: -1px;
             }
-            .btnGroup .btn:first-child,
+            .btnGroup .btn:first-child:not(:last-child),
             .btnGroup .btn--first {
-                border-radius:0.1875em 0 0 0.1875em;
+                /*border-radius:0.1875em 0 0 0.1875em;*/
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
             }
-            .btnGroup .btn:last-child,
+            .btnGroup .btn:last-child:not(:first-child),
             .btnGroup .btn--last {
-                border-radius:0 0.1875em 0.1875rem 0;
+                /*border-radius:0 0.1875em 0.1875rem 0;*/
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;                
             }
+            
 
     /*  buttons: key action  */
         .btnAction,
@@ -634,12 +642,58 @@ fa,
             }
             .alertLabel.alertLabel__failure {
                 background-color: #ED0000;
-                color: #FFC0C0;
+                color: #FFFFFF;
             }
             .alertLabel.alertLabel__warning {
-                background-color: #ED0000;
-                color: #FFC0C0;
+                background-color: #F0AD4E;
+                color: #FFFFFF;
             }
+            .alertLabel--small {
+                font-size: 0.75em;
+            }
+        .softAlert { /*fixed position top right (example use saved as draft)*/
+            margin-top: 6em;
+            right: 10px;
+            float: right;
+            position: fixed;
+            padding: 0.5em;
+            background: #000;
+            color: #fff;
+            border-radius: 3px;
+            z-index: 1000;
+            opacity: 0.8;
+        }
+            .softAlert__success {
+                background: #20d783;
+                color: #fff;
+            }
+            .softAlert__failure {
+                background: #ed0000;
+                color: #fff;
+            }
+        /* Saving draft and Saved animation*/
+        .animateBounce {
+          top: 0;
+          left: 0;          
+          -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+          animation: sk-bounce 2.0s infinite ease-in-out;
+        }
+
+        @-webkit-keyframes sk-bounce {
+          0%, 100% { -webkit-transform: scale(0.0) }
+          50% { -webkit-transform: scale(1.0) }
+        }
+
+        @keyframes sk-bounce {
+          0%, 100% { 
+            transform: scale(0.0);
+            -webkit-transform: scale(0.0);
+          } 50% { 
+            transform: scale(1.0);
+            -webkit-transform: scale(1.0);
+          }
+        }
+
     /*  Loading content spinner  */
         .spinner {
           width: 40px;
@@ -683,7 +737,7 @@ fa,
         margin: 20px auto;
     }
     .table tr{
-        border-bottom: 1px solid #1c1c1c;
+        border-bottom: 1px solid #ccc;
     }
     .table td {
         padding: 10px;
@@ -1275,7 +1329,6 @@ fa,
                 background:#fff;
                 border:1px solid #ddd;
                 max-height:14.625em;
-                overflow: auto;
                 box-shadow: 0 0 10px #ccc;
                 padding-left: 0;
             }
@@ -1292,15 +1345,19 @@ fa,
                 }
                 .ui__clickDropBtn {
                     display: block;
-                    border:0; margin:0; padding:0.5rem 1rem;
+                    border:0; margin:0;
+                    padding: 0.5rem 1rem;
                     font-size:0.8125em;
                     background:none;
                     width:10em;
                     text-align: left;
+                    overflow: hidden;
                 }
                     .ui__clickDropBtn label {
                         width: 100%;
                         display: block;
+                        padding:0.5rem 1rem;
+                        cursor: pointer;
                     }
                     .ui__clickDropBtn input {
                         vertical-align: middle;
@@ -1328,6 +1385,9 @@ fa,
                     }
 
 /* filter row styles*/
+        .sortBar__item .ui__clickDropBtn {
+            padding: 0.25em;
+        }
         .sortBar__btn--Dropdown:hover {
          color: #00a2de;
      }
@@ -1683,6 +1743,109 @@ fa,
 /*  ================================================
     form classes
     ================================================ */
+    /*  Form elements   */
+    .checkbox--inline {
+        padding:0 !important; margin:0;
+        position: relative;
+        width:1.25em; line-height: 1em;
+        display: inline-block;
+    }
+        .checkbox__input {
+            position:absolute; left:-1000000em;
+            margin:0; padding:0;
+        }
+        .checkbox--inline .btn__label {
+            font-size: 1em;
+            vertical-align: top;
+            display: inline-block;
+            width: 70%;
+            padding: 0.5em;            
+        }
+            .checkbox--inline .btn__label:after {
+                content:'\f00c';
+                position:absolute; top:0; right:0;
+                display: none;
+                padding: 0.5em;
+            }            
+            .checkbox--inline .checkbox__input:checked + .btn__label:after {
+                display:block;
+            }
+            .checkbox--inline .checkbox__input:focus + .btn__label:before {
+                border-color:#2398db;
+            }
+            .checkbox--inline:hover .btn__label:before {
+                background:#eaf7ff;
+                border-color:#2398db;
+            }
+
+    select.btn,
+    select.btn:focus {
+        height:1.5em;
+    }
+
+    .radiobox {
+        padding:0; margin:0;
+        position: relative;
+        width:1.25em; height:1em;
+        display: inline-block;
+    }
+        .radiobox--disabled {
+            opacity:0.5;
+        }
+        .radiobox__input {
+            position:absolute; left:-1000000em;
+            margin:0; padding:0;
+        }
+        .radiobox .btn__icon:before,
+        .radiobox .btn__icon:after {
+            content:'\f10c';
+            position:absolute; top:0.25rem;
+            display:block;
+            width:1rem; height:1rem;
+            border:0; margin:0; padding:0;
+            text-align: center;
+            -webkit-transition: all 0.5s; transition: all 0.5s;
+            vertical-align: middle;
+        }
+        .radiobox .btn__icon:after {
+            content:'\f111';
+            opacity:0;
+            color:#3dc667;
+        }
+            .radiobox .radiobox__input:checked + .btn__icon:after {
+                opacity:1;
+            }
+            .radiobox .radiobox__input:checked + .btn__icon:before {
+                display:none;
+            }
+            .radiobox .radiobox__input:focus + .btn__icon:before {
+                border-color:#2398db;
+            }
+            .radiobox:hover .btn__icon:before {
+                color:#2398db;
+            }
+    .radiobox--hasLabel {
+        width:auto; height:auto;
+        display: block;
+        margin:0 0 1.5em 0;
+    }
+        .radiobox--hasLabel .btn__icon {
+            position: absolute;
+        }
+        .radiobox--hasLabel .btn__label {
+            margin-left:1.5em;
+            display: block;
+            font-size:1em;
+        }
+    .radiobox--large .btn__icon:before,
+    .radiobox--large .btn__icon:after {
+        font-size:2em;
+    }
+        .radiobox--large .btn__icon:after {
+            content:'\f192';
+        }
+
+
     .formSection__group {
         margin:3em 0 1.75em;
     }
@@ -2115,6 +2278,10 @@ fa,
             opacity:0;
             transition:opacity 0.3s 0.2s;
         }
+            .select2-container--default .select2-selection--single:focus {
+                outline: none;
+                border-bottom: 2px solid #00c0ff;
+            }
             .form__fillCheck--filled ~ .select2-container--default .select2-selection--single .select2-selection__rendered {
                 opacity: 1;
             }
