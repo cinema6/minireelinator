@@ -109,6 +109,7 @@
                 <h1 class="campaign__name tk--hdr">
                     {{$this.name}}
                 </h1>
+                <div class=" campaign__owner text--small">by <em>John Doe</em> for <em>Some awesome company</em></div>
                 <span ng-if="$this.rejectionReason"><span class="alertLabel alertLabel__failure alertLabel--small">Rejected</span> We're sorry, this campaign has been rejected. {{$this.rejectionReason}}</span>
                 <span ng-if="$this.updateRequest"><span class="alertLabel alertLabel__warning alertLabel--small">Pending</span> Your update request is being processed...</span>
             </div><!--.column__campaignName-->
