@@ -6,7 +6,7 @@
         var copy = angular.copy,
             extend = angular.extend;
 
-        fdescribe('UpdateRequestAdapter', function() {
+        describe('UpdateRequestAdapter', function() {
             var UpdateRequestAdapter,
                 cinema6,
                 $q,
@@ -38,23 +38,24 @@
                         apiBase: '/api'
                     };
 
+                    card = {
+                        data: {},
+                        collateral: {},
+                        campaign: {},
+                        params: {}
+                    };
+                    convertCardForPlayerDeferred = $q.defer();
+                    convertCardForEditorDeferred = $q.defer();
+                    spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue(convertCardForPlayerDeferred.promise);
+                    spyOn(MiniReelService, 'convertCardForEditor').and.returnValue(convertCardForEditorDeferred.promise);
+
                     adapter = $injector.instantiate(UpdateRequestAdapter, {
-                        config: UpdateRequestAdapter.config
+                        config: UpdateRequestAdapter.config,
+                        MiniReelService: MiniReelService
                     });
 
                     $httpBackend = $injector.get('$httpBackend');
                 });
-
-                card = {
-                    data: {},
-                    collateral: {},
-                    campaign: {},
-                    params: {}
-                };
-                convertCardForPlayerDeferred = $q.defer();
-                convertCardForEditorDeferred = $q.defer();
-                spyOn(MiniReelService, 'convertCardForPlayer').and.returnValue(convertCardForPlayerDeferred.promise);
-                spyOn(MiniReelService, 'convertCardForEditor').and.returnValue(convertCardForEditorDeferred.promise);
             });
 
             it('should exist', function() {
@@ -94,13 +95,27 @@
                     $httpBackend.flush();
                 });
 
-                it('should return the updateRequest in an array', function() {
-                    expect(success).toHaveBeenCalledWith([updateRequest]);
-                    expect(failure).not.toHaveBeenCalled();
-                });
-
                 it('should convert the card for editor', function() {
                     expect(MiniReelService.convertCardForEditor).toHaveBeenCalledWith(card);
+                });
+
+                it('should return the updateRequest in an array when the conversion completes', function() {
+                    var updatedCard = {
+                            data: {
+                                videoid: '1234',
+                                source: 'YouTube'
+                            }
+                        },
+                        expectedRequest = copy(updateRequest);
+
+                    expectedRequest.data.cards[0] = updatedCard;
+
+                    $rootScope.$apply(function() {
+                        convertCardForEditorDeferred.resolve(updatedCard);
+                    });
+
+                    expect(success).toHaveBeenCalledWith([expectedRequest]);
+                    expect(failure).not.toHaveBeenCalled();
                 });
             });
 
@@ -115,7 +130,10 @@
                         },
                         {
                             id: 'ur-54321',
-                            status: 'pending'
+                            status: 'pending',
+                            data: {
+                                cards: [ card ]
+                            }
                         },
                         {
                             id: 'ur-31524',
@@ -129,13 +147,31 @@
                     };
 
                     $httpBackend.expectGET('/api/campaigns/c-123/updates?ids=ur-12345,ur-54321&statuses=pending')
-                        .respond(200, [{id:'ur-12345'},{id:'ur-54321'}]);
+                        .respond(200, updateRequests);
                 });
 
-                it('should return the updateRequests with the given filters', function() {
+                it('should decorate any cards and handle updates with no cards', function() {
+                    var updatedCard = {
+                            data: {
+                                videoid: '1234',
+                                source: 'YouTube'
+                            }
+                        },
+                        expectedRequest = copy(updateRequests[1]);
+
+                    expectedRequest.data.cards[0] = updatedCard;
+
                     adapter.findQuery('updateRequest', data).then(success, failure);
                     $httpBackend.flush();
-                    expect(success).toHaveBeenCalledWith([{id:'ur-12345'},{id:'ur-54321'}]);
+
+                    expect(MiniReelService.convertCardForEditor).toHaveBeenCalledWith(card);
+                    expect(MiniReelService.convertCardForEditor.calls.count()).toBe(1);
+
+                    $rootScope.$apply(function() {
+                        convertCardForEditorDeferred.resolve(updatedCard);
+                    });
+
+                    expect(success).toHaveBeenCalledWith([updateRequests[0], expectedRequest, updateRequests[2]]);
                     expect(failure).not.toHaveBeenCalled();
                 });
 
@@ -149,30 +185,76 @@
             });
 
             describe('create(type, data)', function() {
-                var updateRequest;
+                var postRequest, responseRequest, playerCard, editorCard, expectedResponse;
 
                 beforeEach(function() {
-                    updateRequest = {
-                        status: 'pending',
-                        campaign: 'c-123'
+                    playerCard = {
+                        data: {
+                            source: 'YouTube',
+                            videoid: '1234',
+                            modestbranding: 1
+                        }
+                    };
+                    editorCard = {
+                        type: 'video',
+                        params: {},
+                        thumbs: null
                     };
 
-                    $httpBackend.expectPOST('/api/campaigns/c-123/updates')
-                        .respond(function(method, url, data) {
-                            return [200, data];
-                        });
+                    postRequest = {
+                        status: 'pending',
+                        campaign: 'c-123',
+                        data: {
+                            cards: [ editorCard ]
+                        }
+                    };
+
+                    responseRequest = {
+                        status: 'pending',
+                        campaign: 'c-123',
+                        data: {
+                            cards: [ playerCard ]
+                        }
+                    };
+
+                    expectedResponse = {
+                        status: 'pending',
+                        campaign: 'c-123',
+                        data: {
+                            cards: [ editorCard ]
+                        }
+                    };
+
+                    $httpBackend.expectPOST('/api/campaigns/c-123/updates', postRequest)
+                        .respond(201, responseRequest);
                 });
 
-                it('should return the created updateRequest', function() {
-                    adapter.create('updateRequest', updateRequest).then(success, failure);
+                it('should convert editor card for player before saving, then convert player card for editor', function() {
+                    adapter.create('updateRequest', postRequest).then(success, failure);
+
+                    expect(MiniReelService.convertCardForPlayer).toHaveBeenCalledWith(editorCard);
+                    expect(MiniReelService.convertCardForEditor).not.toHaveBeenCalled();
+
+                    $rootScope.$apply(function() {
+                        convertCardForPlayerDeferred.resolve(playerCard);
+                    });
+
                     $httpBackend.flush();
-                    expect(success).toHaveBeenCalledWith([updateRequest]);
+
+
+                    expect(MiniReelService.convertCardForEditor).toHaveBeenCalledWith(playerCard);
+
+                    $rootScope.$apply(function() {
+                        convertCardForEditorDeferred.resolve(editorCard);
+                    });
+
+                    expect(success).toHaveBeenCalledWith([expectedResponse]);
                     expect(failure).not.toHaveBeenCalled();
                 });
 
                 it('should reject if not provided a campaignId', function() {
-                    delete updateRequest.campaign;
-                    adapter.create('updateRequest', updateRequest).then(success, failure);
+                    delete postRequest.campaign;
+                    adapter.create('updateRequest', postRequest).then(success, failure);
                     $rootScope.$apply();
                     expect(success).not.toHaveBeenCalled();
                     expect(failure).toHaveBeenCalledWith('Must provide a campaign id');
@@ -193,27 +275,107 @@
             });
 
             describe('update(type, updateRequest)', function() {
-                var updateRequest;
+                describe('if status is rejected', function() {
+                    it('should only send a status and rejection reason', function() {
+                        var response = {
+                            id: 'ur-12345',
+                            campaign: 'c-123',
+                            status: 'rejected',
+                            rejectionReason: 'Bad things'
+                        };
 
-                beforeEach(function() {
-                    updateRequest = {
-                        id: 'ur-12345',
-                        campaign: 'c-123',
-                        status: 'pending',
-                        data: {}
-                    };
+                        var updateRequest = {
+                            id: 'ur-12345',
+                            campaign: 'c-123',
+                            status: 'rejected',
+                            rejectionReason: 'Bad things',
+                            data: {
+                                cards: [ card ]
+                            }
+                        };
 
-                    $httpBackend.expectPUT('/api/campaigns/c-123/updates/ur-12345', {status:'pending', data:{}})
-                        .respond(200, updateRequest);
+                        $httpBackend.expectPUT('/api/campaigns/c-123/updates/ur-12345', {status:'rejected', rejectionReason: 'Bad things'})
+                            .respond(200, response);
 
-                    adapter.update('updateRequest', updateRequest).then(success, failure);
+                        adapter.update('updateRequest', updateRequest).then(success, failure);
 
-                    $httpBackend.flush();
+                        $httpBackend.flush();
+
+                        expect(success).toHaveBeenCalledWith([response]);
+                        expect(failure).not.toHaveBeenCalled();
+                        expect(MiniReelService.convertCardForPlayer).not.toHaveBeenCalled();
+                        expect(MiniReelService.convertCardForEditor).not.toHaveBeenCalled();
+                    });
                 });
 
-                it('should return the updateRequest in an array', function() {
-                    expect(success).toHaveBeenCalledWith([updateRequest]);
-                    expect(failure).not.toHaveBeenCalled();
+                describe('if status is not rejected', function() {
+                    it('should convert the card before and after saving and return the update', function() {
+                        var playerCard = {
+                                data: {
+                                    source: 'YouTube',
+                                    videoid: '1234',
+                                    modestbranding: 1
+                                }
+                            },
+                            editorCard = {
+                                type: 'video',
+                                params: {},
+                                thumbs: null
+                            },
+                            putRequest = {
+                                id: 'ur-12345',
+                                status: 'pending',
+                                campaign: 'c-123',
+                                data: {
+                                    cards: [ editorCard ]
+                                }
+                            },
+                            actualRequest = {
+                                status: 'pending',
+                                data: {
+                                    cards: [ playerCard ]
+                                }
+                            },
+                            responseRequest = {
+                                id: 'ur-12345',
+                                status: 'pending',
+                                campaign: 'c-123',
+                                data: {
+                                    cards: [ playerCard ]
+                                }
+                            },
+                            expectedResponse = {
+                                id: 'ur-12345',
+                                status: 'pending',
+                                campaign: 'c-123',
+                                data: {
+                                    cards: [ editorCard ]
+                                }
+                            };
+
+                        $httpBackend.expectPUT('/api/campaigns/c-123/updates/ur-12345', actualRequest)
+                            .respond(200, responseRequest);
+
+                        adapter.update('updateRequest', putRequest).then(success, failure);
+
+                        expect(MiniReelService.convertCardForPlayer).toHaveBeenCalledWith(editorCard);
+                        expect(MiniReelService.convertCardForEditor).not.toHaveBeenCalled();
+
+                        $rootScope.$apply(function() {
+                            convertCardForPlayerDeferred.resolve(playerCard);
+                        });
+
+                        $httpBackend.flush();
+
+                        expect(MiniReelService.convertCardForEditor).toHaveBeenCalledWith(playerCard);
+
+                        $rootScope.$apply(function() {
+                            convertCardForEditorDeferred.resolve(editorCard);
+                        });
+
+                        expect(success).toHaveBeenCalledWith([expectedResponse]);
+                        expect(failure).not.toHaveBeenCalled();
+                    });
                 });
             });
         });

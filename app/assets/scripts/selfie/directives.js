@@ -384,12 +384,12 @@ function( angular , select2 , braintree ) {
                     schema: '='
                 },
                 templateUrl: 'views/selfie/directives/demographics.html',
-                controller: 'SelfieDemographcisController',
+                controller: 'SelfieDemographicsController',
                 controllerAs: 'SelfieDemographicsCtrl'
             };
         }])
 
-        .controller('SelfieDemographcisController', ['DemographicsService','$scope',
+        .controller('SelfieDemographicsController', ['DemographicsService','$scope',
         function                                    ( DemographicsService , $scope ) {
             var SelfieDemographicsCtrl = this,
                 campaign = $scope.campaign,
@@ -401,8 +401,9 @@ function( angular , select2 , braintree ) {
             this.genderOptions = ['None','Male','Female'];
             this.pricePerDemo = schema.pricing.cost.__pricePerDemo;
 
-            this.gender = this.genderOptions.filter(function() {
-                return demographics.gender[0] || 'None';
+            this.gender = this.genderOptions.filter(function(option) {
+                return demographics.gender[0] === option ||
+                    !demographics.gender[0] && option === 'None';
             })[0];
 
             $scope.$watch(function() {
