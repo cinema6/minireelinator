@@ -573,7 +573,8 @@ VideoCardController           , c6embed) {
                 }
             });
 
-            this.initWithModel = function() {
+            this.initWithModel = function(minireel) {
+                this.__minireel__ = minireel;
                 this.model = EditorService.state.minireel;
                 this.campaign = EditorService.state.campaign;
 

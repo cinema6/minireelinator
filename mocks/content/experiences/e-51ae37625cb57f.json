@@ -5,8 +5,9 @@
     "appUriPrefix": "<%= settings.appUrl %>",
     "appUri": "mini-reel-maker",
     "data": {
-        "c6EmbedSrc": "//lib.cinema6.com/c6embed/v0.7.0-0-g495dfa0/c6embed.min.js",
-        "soloPlayerUrl": "https://staging.cinema6.com/solo",
+        "apiRoot": "//staging.cinema6.com/",
+        "c6EmbedSrc": "//s3.amazonaws.com/c6.dev/ext/c6embed/v1/embed-html.min.js",
+        "soloPlayerUrl": "//staging.cinema6.com/api/public/players/",
         "modes": [
             {
                 "name": "View in a lightbox",

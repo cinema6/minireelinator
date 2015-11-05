@@ -20,6 +20,10 @@
   * [FEATURE]: (Selfie) Default the call to action to the Website link if available
   * [FEATURE]: (Selfie) Add Social Sharing link in Campaign Creation screen
   * [FEATURE]: (Selfie) Add ability to manage campaigns (pause, resume, cancel)
+  * Update embed code generator to create Player Service embed codes
+  * **Extra Deployment Steps**:
+    * Deploy [`c6embed` v3.0.0](https://github.com/cinema6/c6embed/milestones/v3.0.0)
+    * Update MiniReelinator experience
 
 ## v1.23.0 (October 27, 2015)
 * *[v1.23.0.rc3]*
