@@ -131,9 +131,15 @@ function( angular , c6State  , PaginatedListState                    ,
             function addMetaData() {
                 var Ctrl = SelfieCampaignsCtrl,
                     model = Ctrl.model.items.value,
-                    ids = model.map(function(campaign) {
-                        return campaign.id;
-                    }).join(',');
+                    ids = model.reduce(function(idsHash, campaign) {
+                        if (idsHash.campaigns.indexOf(campaign.id) < 0) {
+                            idsHash.campaigns.push(campaign.id);
+                        }
+                        if (idsHash.users.indexOf(campaign.user) < 0) {
+                            idsHash.users.push(campaign.user);
+                        }
+                        return idsHash;
+                    }, {campaigns: [], users: []});
 
                 Ctrl.metaData = model.reduce(function(result, campaign) {
                     var card = campaign.cards && campaign.cards[0];
@@ -152,8 +158,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     return result;
                 },{});
 
-                if (ids) {
-                    CampaignService.getAnalytics(ids)
+                if (ids.campaigns) {
+                    CampaignService.getAnalytics(ids.campaigns.join(','))
                         .then(function(stats) {
                             stats.forEach(function(stat) {
                                 var campaignId = stat.campaignId;
@@ -166,6 +172,15 @@ function( angular , c6State  , PaginatedListState                    ,
                                     views: stat.summary.views,
                                     spend: stat.summary.totalSpend
                                 };
+                            });
+                        });
+                }
+
+                if (ids.users) {
+                    CampaignService.getUserData(ids.users.join(','))
+                        .then(function(userHash) {
+                            model.forEach(function(campaign) {
+                                Ctrl.metaData[campaign.id].user = userHash[campaign.user];
                             });
                         });
                 }
@@ -774,7 +789,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     Ctrl.logo = defaultLogo;
                     break;
                 case 'none':
-                    Ctrl.logo = null;
+                    Ctrl.logo = undefined;
                     break;
                 }
             });
