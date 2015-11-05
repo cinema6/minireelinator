@@ -7,8 +7,8 @@
             </h1>
             <div class="pageHeader__actions">
                 <div class="btnGroup">
-                    <button ng-click="SelfieCampaignCtrl.copy()" class="btn btn--primary btn--small btn--nav hint--bottom" data-hint="Copy" title="Copy"><i class="fa fa-copy"></i></button>
-                    <button ng-show="!SelfieCampaignCtrl.campaign.status || SelfieCampaignCtrl.campaign.status === 'draft'" ng-click="SelfieCampaignCtrl.delete()" class="btn btn--primary btn--small btn--nav hint--bottom" data-hint="Delete" title="Delete"><i class="fa fa-trash-o"></i></button>
+                    <button ng-click="SelfieCampaignCtrl.copy()" class="btn btn--primary btn--small btn--nav hint--bottom" data-hint="Copy"><i class="fa fa-copy"></i></button>
+                    <button ng-if="!SelfieCampaignCtrl.campaign.status || SelfieCampaignCtrl.campaign.status === 'draft'" ng-click="SelfieCampaignCtrl.delete()" class="btn btn--primary btn--small btn--nav hint--bottom" data-hint="Delete"><i class="fa fa-trash-o"></i></button>
                 </div>
             </div>
         </div><!--.mainHeader__group-->
@@ -17,32 +17,36 @@
     <nav class="tocNav__group">
         <ul class="tocNav__list">
             <li class="tocNav__item">
-                <a c6-scroll-to href="#section_1" class="tocNav__link">1</a>
-                <div class="tocNav__label tk--hdr">Create Your Campaign</div>
+                <a c6-scroll-to href="#section_1" class="tocNav__link hint--right" data-hint="Create Your Campaign">1</a>
+                <!--<div class="tocNav__label tk--hdr">Create Your Campaign</div>-->
             </li>
             <li class="tocNav__item">
-                <a c6-scroll-to href="#section_2" class="tocNav__link">2</a>
-                <div class="tocNav__label tk--hdr">Sponsor Details</div>
+                <a c6-scroll-to href="#section_2" class="tocNav__link hint--right" data-hint="Sponsor Details">2</a>
+                <!--<div class="tocNav__label tk--hdr">Sponsor Details</div>-->
             </li>
             <li class="tocNav__item">
-                <a c6-scroll-to href="#section_3" class="tocNav__link">3</a>
-                <div class="tocNav__label tk--hdr">Add Your Video</div>
+                <a c6-scroll-to href="#section_3" class="tocNav__link hint--right" data-hint="Add Your Video">3</a>
+                <!--<div class="tocNav__label tk--hdr">Add Your Video</div>-->
             </li>
             <li class="tocNav__item">
-                <a c6-scroll-to href="#section_4" class="tocNav__link">4</a>
-                <div class="tocNav__label tk--hdr">Create Your Ad</div>
+                <a c6-scroll-to href="#section_4" class="tocNav__link hint--right" data-hint="Create Your Ad">4</a>
+                <!--<div class="tocNav__label tk--hdr">Create Your Ad</div>-->
             </li>
             <li class="tocNav__item">
-                <a c6-scroll-to href="#section_5" class="tocNav__link">5</a>
-                <div class="tocNav__label tk--hdr">Target Your Ad</div>
+                <a c6-scroll-to href="#section_5" class="tocNav__link hint--right" data-hint="Target Your Ad">5</a>
+                <!--<div class="tocNav__label tk--hdr">Target Your Ad</div>-->
             </li>
             <li class="tocNav__item">
-                <a c6-scroll-to href="#section_6" class="tocNav__link">6</a>
-                <div class="tocNav__label tk--hdr">Payment Options</div>
+                <a c6-scroll-to href="#section_6" class="tocNav__link hint--right" data-hint="Set Your Budget">6</a>
+                <!--<div class="tocNav__label tk--hdr">Set Your Budget</div>-->
             </li>
             <li class="tocNav__item">
-                <a c6-scroll-to href="#section_7" class="tocNav__link">7</a>
-                <div class="tocNav__label tk--hdr">Submit Your Ad</div>
+                <a c6-scroll-to href="#section_7" class="tocNav__link hint--right" data-hint="Payment Options">7</a>
+                <!--<div class="tocNav__label tk--hdr">Payment Options</div>-->
+            </li>
+            <li class="tocNav__item">
+                <a c6-scroll-to href="#section_8" class="tocNav__link hint--right" data-hint="Submit Your Ad">8</a>
+                <!--<div class="tocNav__label tk--hdr">Submit Your Ad</div>-->
             </li>
         </ul>
     </nav>

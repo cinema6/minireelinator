@@ -1307,7 +1307,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     'https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css',
                     'styles/selfie/css/select2.min.css',
                     'styles/selfie/css/css-wizardry-grids.css',
-                    'styles/selfie/css/c6selfie__base.css'
+                    'styles/selfie/css/c6selfie__base.css',
+                    'styles/selfie/css/hint.min.css'
                 ]
             };
 

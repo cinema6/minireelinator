@@ -6,7 +6,7 @@
 
     <div class="tabContent__gridHolder">
         <div class="grid grid--center">
-            <div class="grid__item one-half">
+            <div class="grid__item two-thirds palm--one-whole">
                 <section class="formSection__group">
                     <h1 class="formSection__title">
                         <span class="formSection__titleText tk--hdr">Moderate Campaign Updates</span>
@@ -15,11 +15,18 @@
 
                     <div ng-if="Ctrl.showApproval">
                         <selfie-campaign-updates-summary campaign="Ctrl.campaign" updated-campaign="Ctrl.updatedCampaign"></selfie-campaign-updates-summary>
-                        <selfie-preview card="Ctrl.previewCard"></selfie-preview>
-                        <input type="text" ng-model="Ctrl.rejectionReason"></input>
-                        <div class="action__btnGroup ui__btnHolder">
-                            <button ng-click="Ctrl.approveCampaign()" class="action__btn action__btn--big">Approve</button>
-                            <button ng-click="Ctrl.rejectCampaign()" class="action__btn action__btn--big">Reject</button>
+                        <div class="grid__item grid--center">
+                            <div class="grid__item one--whole">
+                            <selfie-preview card="Ctrl.previewCard"></selfie-preview>
+                            <fieldset class="form__item">
+                            <br>
+                            <input type="text" ng-model="Ctrl.rejectionReason" class="form__textBox" placeholder="Rejection reason"></input>
+                            </fieldset>
+                            <div class="action__btnGroup ui__btnHolder">
+                                <button ng-click="Ctrl.approveCampaign()" class="action__btn action__btn--big">Approve</button>
+                                <button ng-click="Ctrl.rejectCampaign()" class="action__btn action__btn--big">Reject</button>
+                            </div>
+                            </div>
                         </div>
                     </div>
                 </section>

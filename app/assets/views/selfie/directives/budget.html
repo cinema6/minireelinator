@@ -1,10 +1,6 @@
-<h1 class="formSection__title">
-    <span class="formSection__titleText tk--hdr">Set Your Budget</span>
-</h1>
-<p class="formSection__introText">Your calculated cost per 1000 video plays is : <strong>${{SelfieBudgetCtrl.cpv | number:2}}</strong>. A video must play for a minimum of 3 seconds to count as a play.
+<p class="formSection__introText">Based on your targeting selections, you cost per video view is <strong>${{SelfieBudgetCtrl.cpv | number:2}}</strong>.
 <span ng-if="SelfieBudgetCtrl.budget && SelfieBudgetCtrl.validBudget" style="display:block">Estimated views: {{ SelfieBudgetCtrl.budget / SelfieBudgetCtrl.cpv | number:0}}</span>
 </p>
-
 
 <div class="form__items">
     <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': !SelfieBudgetCtrl.validBudget }">
@@ -12,11 +8,11 @@
         <span class="input__unit">$</span>
         <label class="form__label" for="c6-campaign-budget">
             <i class="fa fa-times ui--error"></i>
-            Campaign Budget
+            Campaign Budget*
         </label>
         <div class="form__helpBox form__helpBox--right">
             <div class="form__helpText">
-                Enter your total budget for this campaign.
+                Please enter the budget for your campaign.
             </div>
         </div>
         <div class="form__errorBox">
@@ -31,11 +27,11 @@
         <span class="input__unit">$</span>
         <label class="form__label" for="c6-daily-limit">
             <i class="fa fa-times ui--error"></i>
-            Daily Max
+            Daily Budget*
         </label>
         <div class="form__helpBox form__helpBox--right">
             <div class="form__helpText">
-                Enter the daily budget limit. It must be more than {{SelfieBudgetCtrl.limitMinPercent * 100}}% of the total budget.
+                The Daily Budget allows you to set a limit for how much your campaign can spend in a day. It must be more than {{SelfieBudgetCtrl.limitMinPercent * 100}}% of the total budget.
             </div>
         </div>
         <div class="form__errorBox">

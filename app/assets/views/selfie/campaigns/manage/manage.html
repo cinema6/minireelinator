@@ -1,11 +1,11 @@
 <div class="tabContent targeting__content container">
     <header class="tabContent__header">
-        <h2 class="tabContent__title tk--hdr">Your campaign is currently {{campaign.status}}</h2>
-        <span class="tabContent__subtitle">{{campaign.name}}</span>
+        <h2 class="tabContent__title tk--hdr">Campaign: {{campaign.name}}</h2>
+        <span class="tabContent__subtitle">Your campaign is currently {{campaign.status}}</span>
     </header>
 
     <div class="tabContent__gridHolder">
-        <div class="grid">
+        <div class="grid grid--center">            
             <!--left column-->
             <div class="grid__item two-thirds palm--one-whole">
                 <section class="campaignPreview__group">
@@ -19,7 +19,7 @@
                             <img src="styles/selfie/img/lock-icon.png" class="lockedMsg__icon"/>
                             <h3 class="lockedMsg__icon--text tk--hdr">Locked</h3>
                         </span>
-                        <p class="lockedMsg__info">Your campaign is <strong>{{campaign.status}}</strong></p>
+                        <h3 class="lockedMsg__info tk--hdr">Your campaign is <strong>{{campaign.status}}</strong></h3>
                         <p class="lockedMsg__info" ng-if="!SelfieManageCampaignCtrl.isLocked">You can edit this campaign but once a change is submitted for approval the campaign will be locked until approved.</p>
                         <p class="lockedMsg__info" ng-if="SelfieManageCampaignCtrl.isLocked && campaign.status !== 'pending'">You have a change waiting to be approved. Once it's approved you can submit another change.</p>
                         <p class="lockedMsg__info" ng-if="SelfieManageCampaignCtrl.isLocked && campaign.status === 'pending'">You cannot make changes to the campaign until it has been approved.</p>
