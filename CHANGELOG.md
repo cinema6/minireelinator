@@ -25,6 +25,8 @@
   * **Extra Deployment Steps**:
     * Deploy [`c6embed` v3.0.0](https://github.com/cinema6/c6embed/milestones/v3.0.0)
     * Update MiniReelinator experience
+  * [DESIGN]: (Selfie) Added styles to improve Admin tab, Campaign list (pending/rejected
+    messages), updated help text and sub text
 
 ## v1.23.0 (October 27, 2015)
 * *[v1.23.0.rc3]*

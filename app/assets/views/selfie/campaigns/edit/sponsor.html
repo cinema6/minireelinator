@@ -6,7 +6,7 @@
             <span class="formSection__number">
                 <span class="formSection__numberText">2</span>
             </span>
-            <span class="formSection__titleText tk--hdr">Sponsor Details</span>
+            <span class="formSection__titleText tk--hdr">Advertiser Details</span>
         </h1>
         <p class="formSection__introText">This information will be displayed on your sponsored card</p>
         <div class="form__items">
@@ -15,11 +15,11 @@
                 <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-name" ng-model="campaign.advertiserDisplayName">
                 <label class="form__label" for="c6-sponsor-name">
                     <i class="fa fa-times ui--error"></i>
-                    Company/Brand Name
+                    Company/Brand Name*
                 </label>
                 <div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">
-                        Company/Brand name will be linked back to your website and displayed on the card.
+                        Please enter the advertiser's name.
                     </div>
                 </div>
                 <div class="form__errorBox">
@@ -41,7 +41,7 @@
                 </label>
                 <div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">
-                        Your logo will be linked back to your website and displayed on the card.
+                        Add a recogognizable logo to reinforce association with the advertiser.  This is a proven strategy to increase brand awareness and recall.  This field is optional.
                     </div>
                 </div>
                 <div class="form__errorBox">
@@ -70,7 +70,7 @@
                     </label>
                     <div class="form__helpBox form__helpBox--right">
                         <div class="form__helpText">
-                            The text is what the link will be attached to for the button or the link.
+                            Enter or paste the link to your existing logo on the web.
                         </div>
                     </div>
                     <div class="form__errorBox">
@@ -83,7 +83,7 @@
                     <button class="action__btn action__btn--small" ng-click="SelfieCampaignSponsorCtrl.uploadFromUri(SelfieCampaignSponsorCtrl.url)">Upload From URL</button>
                 </div>
                 <div class="ui__btnHolder ui__btnHolder--sub" ng-if="SelfieCampaignSponsorCtrl.logoType.type === 'file'">
-                    <button class="action__btn action__btn--small" hidden-input-click="logoUpload">Upload Your Image</button>
+                    <button class="action__btn action__btn--small" hidden-input-click="logoUpload">Choose File</button>
                 </div>
 
                 <input id="logoUpload" type="file" style="display:none;" ng-model="SelfieCampaignSponsorCtrl.logoFile"><!-- hidden file input-->
@@ -111,11 +111,11 @@
                 <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-sharing" ng-model="SelfieCampaignSponsorCtrl.sharing" ng-blur="SelfieCampaignSponsorCtrl.updateLinks()">
                 <label class="form__label" for="c6-sponsor-sharing">
                     <i class="fa fa-times ui--error"></i>
-                    <i class="fa fa-sharingLink tk--active tk--sharingLink"></i> Share Link
+                    <i class="fa fa-share-alt-square tk--active tk--share"></i> Share Link
                 </label>
                 <div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">
-                        This link will be added to your video card.
+                        Add a link to your landing page to allow users to share it.
                     </div>
                 </div>
                 <div class="form__errorBox">
