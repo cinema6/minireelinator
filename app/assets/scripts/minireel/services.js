@@ -2464,18 +2464,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
 
             this.previewUrlOf = function(minireel) {
-                if (minireel.access === 'public') {
-                    var path;
-                    if (c6Defines.kDebug) {
-                        path = '//staging.cinema6.com';
-                    } else {
-                        path = 'http://cinema6.com';
-                    }
-                    path = path + '/preview?id=' + encodeURIComponent(minireel.id);
-                    return path;
-                } else {
-                    return null;
-                }
+                return ((minireel.access === 'public') || null) &&
+                    (c6Defines.kDebug ? '//staging.cinema6.com' : 'http://cinema6.com') +
+                    ('/preview?experience=' + encodeURIComponent(minireel.id));
             };
 
             this.publish = function(minireel) {
