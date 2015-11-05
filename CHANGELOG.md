@@ -20,6 +20,8 @@
   * [FEATURE]: (Selfie) Default the call to action to the Website link if available
   * [FEATURE]: (Selfie) Add Social Sharing link in Campaign Creation screen
   * [FEATURE]: (Selfie) Add ability to manage campaigns (pause, resume, cancel)
+  * [DESIGN]: (Selfie) Added styles to improve Admin tab, Campaign list (pending/rejected
+    messages), updated help text and sub text
 
 ## v1.23.0 (October 27, 2015)
 * *[v1.23.0.rc3]*
