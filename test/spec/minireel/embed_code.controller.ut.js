@@ -38,8 +38,9 @@
                     MiniReelState = c6State.get('MiniReel');
                     MiniReelState.cModel = {
                         data: {
+                            apiRoot: '//staging.cinema6.com/',
                             c6EmbedSrc: '//lib.cinema6.com/c6embed/v0.7.0-0-g495dfa0/c6embed.min.js',
-                            soloPlayerUrl: '//cinema6.com/solo',
+                            soloPlayerUrl: '//portal.cinema6.com/api/public/players/',
                             modes: [
                                 {
                                     value: 'lightbox',
@@ -228,8 +229,8 @@
                             expect(EmbedCodeCtrl.code).toMatch(/frameborder="0"/);
                         });
 
-                        it('should have a src that points to the solo page', function() {
-                            expect(EmbedCodeCtrl.code).toMatch(/\/\/cinema6\.com\/solo\?id=e-0277a8c7564f87/);
+                        it('should have a src that points to the player service', function() {
+                            expect(EmbedCodeCtrl.code).toMatch(/\/\/portal.cinema6.com\/api\/public\/players\/lightbox\?experience=e-0277a8c7564f87/);
                         });
 
                         describe('if the size is responsive', function() {
@@ -374,11 +375,27 @@
                         });
 
                         it('should include the experience id', function() {
-                            expect(EmbedCodeCtrl.code).toContain(' data-exp="' + $scope.minireel.id + '"');
+                            expect(EmbedCodeCtrl.code).toContain(' data-experience="' + $scope.minireel.id + '"');
                         });
 
                         it('should include the splash settings', function() {
-                            expect(EmbedCodeCtrl.code).toContain(' data-splash="img-text-overlay:6/4"');
+                            expect(EmbedCodeCtrl.code).toContain(' data-splash="img-text-overlay/6:4"');
+                        });
+
+                        it('should include the player type', function() {
+                            expect(EmbedCodeCtrl.code).toContain(' data-type="' + $scope.minireel.data.mode + '"');
+                        });
+
+                        it('should include the apiRoot', function() {
+                            expect(EmbedCodeCtrl.code).toContain(' data-api-root="' + MiniReelState.cModel.data.apiRoot + '"');
+                        });
+
+                        it('should include the title', function() {
+                            expect(EmbedCodeCtrl.code).toContain(' data-title="' + $scope.minireel.data.title + '"');
+                        });
+
+                        it('should include the splash image', function() {
+                            expect(EmbedCodeCtrl.code).toContain(' data-image="' + $scope.minireel.data.collateral.splash + '"');
                         });
 
                         ['lightbox', 'lightbox-ads'].forEach(function(mode) {
@@ -446,7 +463,7 @@
                             it('should include a preview=true param', function() {
                                 EmbedCodeCtrl.preview = true;
 
-                                expect(EmbedCodeCtrl.code).toMatch(/ data-preview="true"/);
+                                expect(EmbedCodeCtrl.code).toMatch(/ data-preview/);
                             });
                         });
                     });

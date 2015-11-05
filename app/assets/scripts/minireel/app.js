@@ -783,6 +783,7 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                 categories = minireelState.cModel.data.modes,
                 c6EmbedSrc = minireelState.cModel.data.c6EmbedSrc,
                 soloPlayerUrl = minireelState.cModel.data.soloPlayerUrl,
+                apiRoot = minireelState.cModel.data.apiRoot,
                 orgSettings = SettingsService.getReadOnly('MR::org');
 
             var allFormats = {
@@ -859,38 +860,48 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                             .value === 'inline',
                         explicitDimensions = this.mode === 'custom';
 
-                    var data = {
-                        'exp': minireel.id,
-                        'splash': splash.theme + ':' + splash.ratio.replace('-', '/'),
-                        'width': explicitDimensions ? this.size.width : false,
-                        'height': explicitDimensions ? this.size.height : false,
-                        'preload': isInline,
-                        'campaign': campaign ? campaign.id : false,
-                        'preview': this.preview ? 'true' : false
-                    };
-
                     switch (this.format) {
                     case 'shortcode':
-                        return formatEmbed('[minireel version="1" |{attr}="{value}"|]', data, {
+                        return formatEmbed('[minireel version="1" |{attr}="{value}"|]', {
+                            'exp':      minireel.id,
+                            'splash':   splash.theme + ':' + splash.ratio.replace('-', '/'),
+                            'width':    explicitDimensions ? this.size.width : false,
+                            'height':   explicitDimensions ? this.size.height : false,
+                            'preload':  isInline,
+                            'campaign': campaign ? campaign.id : false,
+                            'preview':  this.preview ? 'true' : false
+                        }, {
                             preload: function(string) {
                                 return string + '="preload"';
                             }
                         });
                     case 'script':
                         return formatEmbed(
-                            '<script src="' + c6EmbedSrc + '" |data-{attr}="{value}"|></script>',
-                            data
+                            '<script src="' + c6EmbedSrc + '" |data-{attr}="{value}"|></script>', {
+                                'api-root':     apiRoot,
+                                'type':         minireel.data.mode,
+                                'experience':   minireel.id,
+                                'title':        minireel.data.title,
+                                'image':        minireel.data.collateral.splash,
+                                'splash':       splash.theme + '/' + splash.ratio.replace('-', ':'),
+                                'width':        explicitDimensions ? this.size.width : false,
+                                'height':       explicitDimensions ? this.size.height : false,
+                                'preload':      isInline,
+                                'campaign':     campaign ? campaign.id : false,
+                                'preview':      this.preview ? 'true' : false
+                            }
                         );
                     case 'iframe':
                         return formatEmbed(
                             '<iframe |{attr}="{value}"|></iframe>',
                             {
-                                src: soloPlayerUrl + '?id=' + minireel.id +
-                                    (campaign ? '&campaign=' + campaign.id : '') +
-                                    (this.preview ? '&preview=true' : ''),
-                                frameborder: '0',
-                                width: explicitDimensions ? this.size.width : '100%',
-                                height: explicitDimensions ? this.size.height : '100%'
+                                src:            soloPlayerUrl + minireel.data.mode +
+                                                    '?experience=' + minireel.id +
+                                                    (campaign ? '&campaign=' + campaign.id : '') +
+                                                    (this.preview ? '&preview=true' : ''),
+                                frameborder:    '0',
+                                width:          explicitDimensions ? this.size.width : '100%',
+                                height:         explicitDimensions ? this.size.height : '100%'
                             }
                         );
                     }
