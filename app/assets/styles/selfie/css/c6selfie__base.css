@@ -214,6 +214,9 @@ fa,
     .text--right {
         text-align: right;
     }
+    .text--small {
+        font-size: 0.875rem;
+    }
 
     .ui--error {
         display: none;
@@ -422,14 +425,24 @@ fa,
             font-size:1em;
             padding:0.5rem 1rem 0.375rem;
         }
-        .btn--nav, .btn--nav:focus {
+        .btn__nav, .btn__nav:focus {
             background-color:#fff;
         }
-        .btn--nav:hover {
-            background-color: #20d783;
-            border-color: #1FC176;
-            color: #fff;
-        }
+            .btn__nav:hover {
+                background-color: #20d783;
+                border-color: #1FC176;
+                color: #fff;
+            }
+            .btn__nav--danger:hover {
+                background-color:#dc4141;
+                border-color: #cf2626;
+                color: #fff;
+            }
+            .btn__nav--warning:hover {
+                background-color: #f0ad4e;
+                border-color: #ed9f31;
+                color: #fff;
+            }
     /*  buttons: default  */
         .btnFill, .btnFill:focus {
             background:#626262; color:#fff;
@@ -1618,6 +1631,13 @@ fa,
                     display: block;
                     line-height:1.5em;
                     padding-left:2.5em;
+                }
+            .campaign__owner {
+                color: #888888;
+            }
+                .compaign__owner em {
+                    padding: 0.25em;
+                    text-transform: capitalize;
                 }
     /*Hiding styles for budget popover for beta
             .campaign__budgetEdit {
