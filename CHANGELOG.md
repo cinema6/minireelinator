@@ -20,6 +20,14 @@
   * [FEATURE]: (Selfie) Default the call to action to the Website link if available
   * [FEATURE]: (Selfie) Add Social Sharing link in Campaign Creation screen
   * [FEATURE]: (Selfie) Add ability to manage campaigns (pause, resume, cancel)
+  * [FIX]: (Selfie) Ensure campaign cards are saved in correct format for the player
+  * [FIX]: (Selfie) Fix for an issue where changes to targeting weren't being saved
+  * [FEATURE]: (Selfie) Calculate CPV based on user's settings
+  * [FIX]: (Selfie) Fix for an issue where delayed autosaves were happening after submission for approval
+  * [FIX]: (Selfie) Ensure non-Admin users cannot access the admin tab for a campaign
+  * [FIX]: (Selfie) Only allow selecting of one gender for targeting
+  * [FIX]: (Selfie) Ask for confirmation before deleting a draft campaign
+  * [FIX]: (Selfie) Save the campaign and remove preview if user removes video url
 
 ## v1.23.0 (October 27, 2015)
 * *[v1.23.0.rc3]*
