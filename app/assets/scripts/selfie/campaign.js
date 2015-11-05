@@ -63,9 +63,9 @@ function( angular , c6State  , PaginatedListState                    ,
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Campaigns', ['$injector','$location',
-                                                       'paginatedDbList',
+                                                       'paginatedDbList','c6State',
             function                                  ( $injector , $location ,
-                                                        paginatedDbList ) {
+                                                        paginatedDbList , c6State ) {
                 $injector.invoke(PaginatedListState, this);
 
                 this.templateUrl = 'views/selfie/campaigns.html';
@@ -93,6 +93,11 @@ function( angular , c6State  , PaginatedListState                    ,
                         application: 'selfie',
                         statuses: this.filter,
                     }, this.limit, this.page).ensureResolution();
+                };
+                this.afterModel = function() {
+                    var user = c6State.get('Selfie').cModel;
+
+                    this.isAdmin = (user.entitlements.adminCampaigns === true);
                 };
             }]);
         }])
@@ -176,7 +181,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         });
                 }
 
-                if (ids.users) {
+                if (ids.users && cState.isAdmin) {
                     CampaignService.getUserData(ids.users.join(','))
                         .then(function(userHash) {
                             model.forEach(function(campaign) {

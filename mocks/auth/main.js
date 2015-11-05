@@ -22,10 +22,7 @@ module.exports = function(http) {
 
             this.respond(200, (userCache.user = extend(user, {
                 email: request.body.email,
-                id: userId,
-                entitlements: {
-                    adminCampaigns: true
-                }
+                id: userId
             })));
         } else {
             this.respond(401, 'Invalid email or password');
