@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## v1.24.0 (November 5, 2015)
 * *[v1.24.0.rc1]*
   * [FEATURE]: (Selfie) Created admin tab to moderate update requests
   * [DESIGN]: (Selfie) Moved campaign action buttons out of the tab
@@ -22,20 +23,22 @@
   * [FEATURE]: (Selfie) Add ability to manage campaigns (pause, resume, cancel)
   * Update embed code generator to create Player Service embed codes
   * Update preview page URLs for new preview page API
-  * **Extra Deployment Steps**:
-    * Deploy [`c6embed` v3.0.0](https://github.com/cinema6/c6embed/milestones/v3.0.0)
-    * Update MiniReelinator experience
   * [DESIGN]: (Selfie) Added styles to improve Admin tab, Campaign list (pending/rejected
     messages), updated help text and sub text
   * [FIX]: (Selfie) Ensure campaign cards are saved in correct format for the player
   * [FIX]: (Selfie) Fix for an issue where changes to targeting weren't being saved
   * [FEATURE]: (Selfie) Calculate CPV based on user's settings
-  * [FIX]: (Selfie) Fix for an issue where delayed autosaves were happening after submission for approval
+  * [FIX]: (Selfie) Fix for an issue where delayed autosaves were happening after
+    submission for approval
   * [FIX]: (Selfie) Ensure non-Admin users cannot access the admin tab for a campaign
   * [FIX]: (Selfie) Only allow selecting of one gender for targeting
   * [FIX]: (Selfie) Ask for confirmation before deleting a draft campaign
   * [FIX]: (Selfie) Save the campaign and remove preview if user removes video url
   * [DEV]: Set status to "active" when creating new campaigns in the Campaign Manager
+  * **Extra Deployment Steps**:
+    * Deploy [`c6embed` v3.0.0](https://github.com/cinema6/c6embed/milestones/v3.0.0)
+    * Update MiniReelinator experience
+* *[/v1.24.0.rc1]*
 
 ## v1.23.0 (October 27, 2015)
 * *[v1.23.0.rc3]*
