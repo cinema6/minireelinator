@@ -28,8 +28,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             c6State,
             c6Debounce,
             cinema6,
-            MiniReelService,
             CampaignService,
+            MiniReelService,
+            ConfirmDialogService,
             SelfieCampaignCtrl;
 
         var cState,
@@ -98,8 +99,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 c6State = $injector.get('c6State');
                 c6Debounce = $injector.get('c6Debounce');
                 cinema6 = $injector.get('cinema6');
-                MiniReelService = $injector.get('MiniReelService');
                 CampaignService = $injector.get('CampaignService');
+                MiniReelService = $injector.get('MiniReelService');
+                ConfirmDialogService = $injector.get('ConfirmDialogService');
             });
 
             advertiser = {
@@ -515,20 +517,36 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
 
             describe('delete()', function() {
-                it('should be wrapped in a c6AsyncQueue', function() {
-                    expect(debouncedFns).toContain(SelfieCampaignCtrl.copy);
+                var onAffirm;
+
+                beforeEach(function() {
+                    spyOn(ConfirmDialogService, 'display');
+
+                    SelfieCampaignCtrl.delete();
+
+                    onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
                 });
 
-                it('should erase the campaign and go to the dashboard', function() {
-                    spyOn(campaign, 'erase').and.returnValue($q.when(null));
-                    spyOn(c6State, 'goTo');
+                it('should show a confirmation dialog', function() {
+                    expect(ConfirmDialogService.display).toHaveBeenCalled();
+                });
 
-                    $rootScope.$apply(function() {
-                        SelfieCampaignCtrl.delete();
+                describe('onAffirm()', function() {
+                    it('should be wrapped in a c6AsyncQueue', function() {
+                        expect(debouncedFns).toContain(onAffirm);
                     });
 
-                    expect(campaign.erase).toHaveBeenCalled();
-                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                    it('should erase the campaign and go to the dashboard', function() {
+                        spyOn(campaign, 'erase').and.returnValue($q.when(null));
+                        spyOn(c6State, 'goTo');
+
+                        $rootScope.$apply(function() {
+                            onAffirm();
+                        });
+
+                        expect(campaign.erase).toHaveBeenCalled();
+                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                    });
                 });
             });
         });
@@ -628,12 +646,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         });
 
                         describe('when the card has no service type and video id', function() {
-                            it('should not reload preview', function() {
+                            it('should reload preview', function() {
                                 $scope.$apply(function() {
                                     SelfieCampaignCtrl.campaign.name = 'Campaign Name!';
                                 });
 
-                                expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                                expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
                             });
                         });
                     });
@@ -661,12 +679,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         });
 
                         describe('when the card has no service type and video id', function() {
-                            it('should not reload preview', function() {
+                            it('should reload preview', function() {
                                 $scope.$apply(function() {
                                     SelfieCampaignCtrl.campaign.name = 'New Advertiser';
                                 });
 
-                                expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                                expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
                             });
                         });
                     });
@@ -765,12 +783,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         });
 
                         describe('when the card has no service type and video id', function() {
-                            it('should not reload preview', function() {
+                            it('should reload preview', function() {
                                 $scope.$apply(function() {
                                     SelfieCampaignCtrl.campaign.name = 'Campaign Name!';
                                 });
 
-                                expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                                expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
                             });
                         });
                     });
@@ -798,12 +816,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         });
 
                         describe('when the card has no service type and video id', function() {
-                            it('should not reload preview', function() {
+                            it('should reload preview', function() {
                                 $scope.$apply(function() {
                                     SelfieCampaignCtrl.campaign.advertiserDisplayName = 'Advertiser Name';
                                 });
 
-                                expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                                expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
                             });
                         });
                     });
@@ -826,12 +844,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
                         });
 
-                        it(prop + ' changes should not reload preview if card has no service and id', function() {
+                        it(prop + ' changes should reload preview if card has no service and id', function() {
                             $scope.$apply(function() {
                                 SelfieCampaignCtrl.card[prop] = 'something';
                             });
 
-                            expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                            expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
                         });
 
 
@@ -881,13 +899,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
                         });
 
-                        it(prop + ' changes should not reload preview if card has no service and id', function() {
+                        it(prop + ' changes should reload preview if card has no service and id', function() {
                             $scope.$apply(function() {
                                 SelfieCampaignCtrl.card.params.action = {};
                                 SelfieCampaignCtrl.card.params.action[prop] = 'something';
                             });
 
-                            expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
+                            expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
                         });
 
 
@@ -912,15 +930,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                         expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
                         expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
-                    });
-
-                    it('service and id changes should not trigger a preview reload if null', function() {
-                        $scope.$apply(function() {
-                            SelfieCampaignCtrl.card.data.service = null;
-                            SelfieCampaignCtrl.card.data.videoid = null;
-                        });
-
-                        expect($scope.$broadcast).not.toHaveBeenCalledWith('loadPreview');
                     });
                 });
             });

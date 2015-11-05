@@ -1,36 +1,46 @@
-<fieldset class="form__item" >
-    <select c6-select-box multiple="multiple" class="form__selectBox form__selectBox--multiple" ng-model="SelfieGeotargetingCtrl.states" ng-options="option.state for option in SelfieGeotargetingCtrl.stateOptions" id="c6-states"></select>
-    <label class="form__label" for="c6-states">
-        <i class="fa fa-times ui--error"></i>
-        States
-    </label>
-    <div class="form__helpBox form__helpBox--right">
-        <div class="form__helpText">
-            Geo-target enables you to reach viewers based on their location including country, state, or DMA.
-            <!-- You can use geographic data to target viewers from a specific state. -->
-        </div>
-    </div>
-    <div class="form__errorBox">
-        <p class="form__errorMsg">
-            <i class="fa fa-exclamation-triangle"></i> Error message goes here
-        </p>
-    </div>
-</fieldset>
+<h1 class="formSection__title">
+    <span class="formSection__titleText tk--hdr">Location</span>
+    <span class="tk--fineprint">
+        <i class="fa fa-asterisk"></i> Using this feature will add an additional cost of ${{SelfieGeotargetingCtrl.pricePerGeo}} per 1000 video plays.
+    </span>
+</h1>
+<div class="form__items">
 
-<fieldset class="form__item">
-    <select c6-select-box multiple="multiple" class="form__selectBox form__selectBox--multiple" ng-model="campaign.targeting.geo.dmas" ng-options="option for option in SelfieGeotargetingCtrl.dmaOptions" id="c6-dmas"></select>
-    <label class="form__label" for="c6-dmas">
-        <i class="fa fa-times ui--error"></i>
-        DMAs
-    </label>
-    <div class="form__helpBox form__helpBox--right">
-        <div class="form__helpText">
-            You can use geographic data to target viewers from a specific DMA.
+    <fieldset class="form__item" >
+        <select c6-select-box multiple="multiple" class="form__selectBox form__selectBox--multiple" ng-model="SelfieGeotargetingCtrl.states" ng-options="option.state for option in SelfieGeotargetingCtrl.stateOptions" id="c6-states"></select>
+        <label class="form__label" for="c6-states">
+            <i class="fa fa-times ui--error"></i>
+            States
+        </label>
+        <div class="form__helpBox form__helpBox--right">
+            <div class="form__helpText">
+                Geo-target enables you to reach viewers based on their location including country, state, or DMA.
+                <!-- You can use geographic data to target viewers from a specific state. -->
+            </div>
         </div>
-    </div>
-    <div class="form__errorBox">
-        <p class="form__errorMsg">
-            <i class="fa fa-exclamation-triangle"></i> Error message goes here
-        </p>
-    </div>
-</fieldset>
+        <div class="form__errorBox">
+            <p class="form__errorMsg">
+                <i class="fa fa-exclamation-triangle"></i> Error message goes here
+            </p>
+        </div>
+    </fieldset>
+
+    <fieldset class="form__item">
+        <select c6-select-box multiple="multiple" class="form__selectBox form__selectBox--multiple" ng-model="campaign.targeting.geo.dmas" ng-options="option for option in SelfieGeotargetingCtrl.dmaOptions" id="c6-dmas"></select>
+        <label class="form__label" for="c6-dmas">
+            <i class="fa fa-times ui--error"></i>
+            DMAs
+        </label>
+        <div class="form__helpBox form__helpBox--right">
+            <div class="form__helpText">
+                You can use geographic data to target viewers from a specific DMA.
+            </div>
+        </div>
+        <div class="form__errorBox">
+            <p class="form__errorMsg">
+                <i class="fa fa-exclamation-triangle"></i> Error message goes here
+            </p>
+        </div>
+    </fieldset>
+
+</div>

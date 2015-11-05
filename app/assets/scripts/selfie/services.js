@@ -144,11 +144,18 @@ function( angular , c6uilib ) {
 
             this.getAnalytics = function(ids) {
                 var multi = (ids || '').split(',').length > 1,
-                    url = c6UrlMaker('analytics/campaigns/' + (multi ? ('?id='+ids) : ids), 'api');
+                    url = c6UrlMaker('analytics/campaigns/' + (multi ? ('?ids='+ids) : ids), 'api');
 
                 return $http.get(url)
                     .then(function(response) {
                         return multi ? response.data : [response.data];
+                    });
+            };
+
+            this.getSchema = function() {
+                return $http.get(c6UrlMaker('campaigns/schema?personalized=true', 'api'))
+                    .then(function(response) {
+                        return response.data;
                     });
             };
 

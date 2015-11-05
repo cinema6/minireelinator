@@ -8,7 +8,7 @@
             <div class="pageHeader__actions">
                 <div class="btnGroup">
                     <button ng-click="SelfieCampaignCtrl.copy()" class="btn btn--primary btn--small btn--nav hint--bottom" data-hint="Copy"><i class="fa fa-copy"></i></button>
-                    <button ng-show="SelfieCampaignCtrl.campaign.status === 'draft'" ng-click="SelfieCampaignCtrl.delete()" class="btn btn--primary btn--small btn--nav hint--bottom" data-hint="Delete"><i class="fa fa-trash-o"></i></button>
+                    <button ng-if="!SelfieCampaignCtrl.campaign.status || SelfieCampaignCtrl.campaign.status === 'draft'" ng-click="SelfieCampaignCtrl.delete()" class="btn btn--primary btn--small btn--nav hint--bottom" data-hint="Delete"><i class="fa fa-trash-o"></i></button>
                 </div>
             </div>
         </div><!--.mainHeader__group-->

@@ -8,45 +8,17 @@
             <span class="formSection__titleText tk--hdr">Choose Your Audience</span>
         </h1>
         <p class="formSection__introText">Reach the relevant audience by targeting people based on Demographics, Interests and Location</p>
-        <h1 class="formSection__title">
-            <span class="formSection__titleText tk--hdr">Interests</span>
-            <span class="tk--fineprint">
-                <i class="fa fa-asterisk"></i> Using this feature will add an additional cost of $0.50 per 1000 video plays.
-            </span>
-        </h1>
 
-        <div class="form__items">
-            <selfie-interests campaign="campaign" categories="SelfieCampaignCtrl.categories"></selfie-interests>
-        </div>
+        <selfie-interests campaign="campaign" schema="SelfieCampaignCtrl.schema" categories="SelfieCampaignCtrl.categories"></selfie-interests>
 
     </section><!--.formSection__group-->
 
      <section class="formSection__group formSection__group--sub">
-
-        <h1 class="formSection__title">
-            <span class="formSection__titleText tk--hdr">Demographics</span>
-            <span class="tk--fineprint">
-                <i class="fa fa-asterisk"></i> Using this feature will add an additional cost of $0.50 per 1000 video plays.
-            </span>
-        </h1>
-        
-        <div class="form__items">
-            <selfie-demographics campaign="campaign"></selfie-demographics>
-        </div>
+        <selfie-demographics campaign="campaign" schema="SelfieCampaignCtrl.schema"></selfie-demographics>
     </section><!--.formSection__group-->
-    
+
     <section class="formSection__group formSection__group--sub">
-
-        <h1 class="formSection__title">
-            <span class="formSection__titleText tk--hdr">Location</span>
-            <span class="tk--fineprint">
-                <i class="fa fa-asterisk"></i> Using this feature will add an additional cost of $0.50 per 1000 video plays.
-            </span>
-        </h1>
-        <div class="form__items">
-            <selfie-geotargeting campaign="campaign"></selfie-geotargeting>
-        </div>
-
+        <selfie-geotargeting campaign="campaign" schema="SelfieCampaignCtrl.schema"></selfie-geotargeting>
     </section><!--.formSection__group-->
     <div class="grid__item" id="section_6">
     <section class="formSection__group formSection__group--sub">
@@ -56,8 +28,7 @@
             </span>
             <span class="formSection__titleText tk--hdr">Set Your Budget</span>
         </h1>
-        <selfie-budget campaign="campaign" validation="SelfieCampaignCtrl.validation"></selfie-budget>
-
+        <selfie-budget campaign="campaign" schema="SelfieCampaignCtrl.schema" validation="SelfieCampaignCtrl.validation"></selfie-budget>
     </section><!--.formSection__group-->
     </div>
 

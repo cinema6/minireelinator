@@ -11,7 +11,7 @@
 
     <div class="adPreview__panel">
         <div ng-class="{'adPreview__desktop' : device === 'desktop', 'adPreview__mobile' : device === 'phone'}">
-            <div ng-class="{'adPreview__desktopFrame' : device === 'desktop', 'adPreview__mobileFrame' : device === 'phone'}">
+            <div ng-class="{'adPreview__desktopFrame' : device === 'desktop', 'adPreview__mobileFrame' : device === 'phone'}" ng-if="SelfiePreviewCtrl.card.data.videoid">
                 <c6-embed class="preview__embedHolder"
                     experience="SelfiePreviewCtrl.experience"
                     profile="SelfiePreviewCtrl.profile"

@@ -63,6 +63,9 @@ define(['app'], function(appModule) {
                     advertiser: {},
                     org: {
                         id: 'o-123'
+                    },
+                    entitlements: {
+                        adminCampaigns: true
                     }
                 };
                 campaignState = c6State.get('Selfie:Manage:Campaign');
@@ -112,13 +115,33 @@ define(['app'], function(appModule) {
             });
         });
 
-        describe('enter()', function() {
-            it('shoud go to the Selfie:Manage:Campaign:Manage state', function() {
-                spyOn(c6State, 'goTo');
+        describe('afterModel()', function() {
+            it('should set the isAdmin flag on the state', function() {
+                campaignState.afterModel();
 
+                expect(campaignState.isAdmin).toBe(true);
+            });
+        });
+
+        describe('enter()', function() {
+            it('shoud go to the Selfie:Manage:Campaign:Manage state if user is not an admin', function() {
+                spyOn(c6State, 'goTo');
+                selfieState.cModel.entitlements.adminCampaigns = false;
+
+                campaignState.afterModel();
                 campaignState.enter();
 
                 expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage');
+            });
+
+            it('shoud go to the Selfie:Manage:Campaign:Admin state if user is an admin', function() {
+                spyOn(c6State, 'goTo');
+                selfieState.cModel.entitlements.adminCampaigns = true;
+
+                campaignState.afterModel();
+                campaignState.enter();
+
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Admin');
             });
         });
     });

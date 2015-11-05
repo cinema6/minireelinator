@@ -26,9 +26,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             $q,
             c6State,
             cinema6,
-            MiniReelService,
             CampaignService,
             ConfirmDialogService,
+            MiniReelService,
             SelfieManageCampaignCtrl;
 
         var cState,
@@ -78,9 +78,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 $q = $injector.get('$q');
                 c6State = $injector.get('c6State');
                 cinema6 = $injector.get('cinema6');
-                MiniReelService = $injector.get('MiniReelService');
                 CampaignService = $injector.get('CampaignService');
                 ConfirmDialogService = $injector.get('ConfirmDialogService');
+                MiniReelService = $injector.get('MiniReelService');
             });
 
             spyOn(ConfirmDialogService, 'display');
@@ -92,29 +92,15 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 }
             };
 
-            campaign = cinema6.db.create('selfieCampaign', {
-                name: null,
-                categories: [],
-                cards: [],
-                pricing: {},
-                geoTargeting: [],
-                status: 'draft',
-                application: 'selfie',
-                paymentMethod: undefined
-            });
-            card = deepExtend(cinema6.db.create('card', MiniReelService.createCard('video')), {
-                id: undefined,
-                campaignId: undefined,
+            card = deepExtend(MiniReelService.createCard('video'), {
                 campaign: {
                     minViewTime: 3
                 },
                 sponsored: true,
                 collateral: {
-                    logo: null
                 },
                 links: {},
                 params: {
-                    sponsor: 'Advertiser Name',
                     ad: true,
                     action: null
                 },
@@ -124,6 +110,26 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     autoplay: true,
                     skip: 30
                 }
+            });
+            campaign = cinema6.db.create('selfieCampaign', {
+                name: undefined,
+                pricing: {},
+                status: 'draft',
+                appllication: 'selfie',
+                advertiserDisplayName: 'My Company',
+                targeting: {
+                    geo: {
+                        states: [],
+                        dmas: []
+                    },
+                    demographics: {
+                        age: [],
+                        gender: [],
+                        income: []
+                    },
+                    interests: []
+                },
+                cards: [ card ]
             });
             categories = [];
             paymentMethods = [];
@@ -254,7 +260,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieManageCampaignCtrl.campaign).toEqual(campaign);
                     expect(SelfieManageCampaignCtrl.categories).toEqual(categories);
                     expect(SelfieManageCampaignCtrl.paymentMethods).toEqual(paymentMethods);
-                    expect(SelfieManageCampaignCtrl.showAdminTab).toBe(true);
                     expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(campaign));
                 });
             });
@@ -410,6 +415,54 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                 });
                             });
                         });
+                    });
+                });
+            });
+
+            describe('updatePaymentMethod()', function() {
+                var updateRequest, updateRequestDeferred;
+
+                beforeEach(function() {
+                    updateRequest = {};
+                    updateRequestDeferred = $q.defer();
+
+                    campaign.id = 'cam-123';
+
+                    compileCtrl(cState, {
+                        categories: categories,
+                        paymentMethods: paymentMethods
+                    });
+
+                    spyOn(cinema6.db, 'create').and.callFake(function(type, obj) {
+                        updateRequest.data = obj.data;
+                        updateRequest.campaign = obj.campaign;
+                        updateRequest.save = jasmine.createSpy('update.save()').and.returnValue(updateRequestDeferred.promise);
+                        return updateRequest;
+                    });
+                });
+
+                it('should be wrapped in a c6AsyncQueue', function() {
+                    expect(debouncedFns).toContain(SelfieManageCampaignCtrl.updatePaymentMethod);
+                });
+
+                it('should do nothing if canSubmit is false', function() {
+                    SelfieManageCampaignCtrl.updatePaymentMethod();
+
+                    expect(cinema6.db.create).not.toHaveBeenCalled();
+                });
+
+                it('should create an update request', function() {
+                    SelfieManageCampaignCtrl.campaign.paymentMethod = 'pay-8888';
+
+                    SelfieManageCampaignCtrl.updatePaymentMethod();
+
+                    $scope.$digest();
+
+                    expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
+                        data: {
+                            paymentMethod: 'pay-8888'
+                        },
+                        campaign: 'cam-123'
                     });
                 });
             });

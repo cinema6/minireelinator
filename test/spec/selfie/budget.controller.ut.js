@@ -5,12 +5,32 @@ define(['app'], function(appModule) {
         var $rootScope,
             $scope,
             $controller,
+            $filter,
             SelfieBudgetCtrl;
 
         var campaign;
 
         function compileCtrl() {
             $scope = $rootScope.$new();
+            $scope.schema = {
+                pricing: {
+                    budget: {
+                        __min:50,
+                        __max:20000
+                    },
+                    dailyLimit: {
+                        __percentMin:0.015,
+                        __percentMax:1,
+                        __percentDefault:0.03
+                    },
+                    cost: {
+                        __base: 0.05,
+                        __pricePerGeo: 0.01,
+                        __pricePerDemo: 0.01,
+                        __priceForInterests: 0.01
+                    }
+                }
+            };
             $scope.campaign = campaign;
             $scope.validation = {
                 budget: true
@@ -20,12 +40,17 @@ define(['app'], function(appModule) {
             });
         }
 
+        function num(num) {
+            return parseFloat($filter('number')(num, 2));
+        }
+
         beforeEach(function() {
             module(appModule.name);
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
                 $controller = $injector.get('$controller');
+                $filter = $injector.get('$filter');
 
                 campaign = {
                     pricing: {},
@@ -33,6 +58,11 @@ define(['app'], function(appModule) {
                         geo: {
                             states: [],
                             dmas: []
+                        },
+                        demographics: {
+                            age: [],
+                            income: [],
+                            gender: []
                         },
                         interests: []
                     }
@@ -72,28 +102,56 @@ define(['app'], function(appModule) {
             });
 
             describe('cpv', function() {
-                it('should add $.50 each for interests, states and DMAs', function() {
-                    expect(SelfieBudgetCtrl.cpv).toBe(50);
+                it('should add $.01 each for interests, states, DMAs, age, gender, income', function() {
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.05);
 
                     campaign.targeting.geo.states.push('Arizona');
 
-                    expect(SelfieBudgetCtrl.cpv).toBe(50.5);
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.06);
 
                     campaign.targeting.geo.states.push('Alabama');
 
-                    expect(SelfieBudgetCtrl.cpv).toBe(50.5);
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.06);
 
                     campaign.targeting.geo.dmas.push('Chicago');
 
-                    expect(SelfieBudgetCtrl.cpv).toBe(51);
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.07);
 
                     campaign.targeting.geo.dmas.push('New York City');
 
-                    expect(SelfieBudgetCtrl.cpv).toBe(51);
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.07);
 
                     campaign.targeting.interests.push('comedy');
 
-                    expect(SelfieBudgetCtrl.cpv).toBe(51.5);
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.08);
+
+                    campaign.targeting.interests.push('entertainment');
+
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.08);
+
+                    campaign.targeting.demographics.age.push('18-24');
+
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.09);
+
+                    campaign.targeting.demographics.age.push('25-40');
+
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.09);
+
+                    campaign.targeting.demographics.income.push('20,000-50,000');
+
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.10);
+
+                    campaign.targeting.demographics.income.push('120,000-150,000');
+
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.10);
+
+                    campaign.targeting.demographics.gender.push('Male');
+
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.11);
+
+                    campaign.targeting.demographics.gender.push('Male');
+
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.11);
                 });
             });
 
@@ -190,7 +248,7 @@ define(['app'], function(appModule) {
 
                 expect(campaign.pricing.budget).toBe(3000);
                 expect(campaign.pricing.dailyLimit).toBe(null);
-                expect($scope.validation.budget).toBe(false);
+                expect($scope.validation.budget).toBe(true);
 
                 SelfieBudgetCtrl.limit = 3000000;
 
@@ -214,7 +272,7 @@ define(['app'], function(appModule) {
 
                 expect(campaign.pricing.budget).toBe(3000);
                 expect(campaign.pricing.dailyLimit).toBe(null);
-                expect($scope.validation.budget).toBe(false);
+                expect($scope.validation.budget).toBe(true);
 
                 SelfieBudgetCtrl.budget = 3000000000;
 

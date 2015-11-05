@@ -1,4 +1,6 @@
-<p class="formSection__introText">Based on your targeting selections, you cost per video view is <strong>${{SelfieBudgetCtrl.cpv}}</strong>.</p>
+<p class="formSection__introText">Based on your targeting selections, you cost per video view is <strong>${{SelfieBudgetCtrl.cpv | number:2}}</strong>.
+<span ng-if="SelfieBudgetCtrl.budget && SelfieBudgetCtrl.validBudget" style="display:block">Estimated views: {{ SelfieBudgetCtrl.budget / SelfieBudgetCtrl.cpv | number:0}}</span>
+</p>
 
 <div class="form__items">
     <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': !SelfieBudgetCtrl.validBudget }">
@@ -29,7 +31,7 @@
         </label>
         <div class="form__helpBox form__helpBox--right">
             <div class="form__helpText">
-                The Daily Budget allows you to set a limit for how much your campaign can spend in a day.
+                The Daily Budget allows you to set a limit for how much your campaign can spend in a day. It must be more than {{SelfieBudgetCtrl.limitMinPercent * 100}}% of the total budget.
             </div>
         </div>
         <div class="form__errorBox">

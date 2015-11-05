@@ -842,10 +842,43 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
             }]);
 
-            $provide.constant('UpdateRequestAdapter', ['config','$http', '$q',
-            function                                  ( config , $http ,  $q ) {
+            $provide.constant('UpdateRequestAdapter', ['config','$http','$q','MiniReelService',
+            function                                  ( config , $http , $q , MiniReelService ) {
+                var convertCardForPlayer = MiniReelService.convertCardForPlayer,
+                    convertCardForEditor = MiniReelService.convertCardForEditor;
+
                 function url(end) {
                     return config.apiBase + '/' + end;
+                }
+
+                function decorateUpdates(updates) {
+                    return $q.all(updates.map(function(update) {
+                        return decorateUpdate(update);
+                    }));
+                }
+
+                function decorateUpdate(update) {
+                    var card = update.data && update.data.cards && update.data.cards[0];
+
+                    return (card ? convertCardForEditor(card) : $q.when(null))
+                        .then(function(card) {
+                            if (card) {
+                                update.data.cards[0] = card;
+                            }
+                            return update;
+                        });
+                }
+
+                function undecorateUpdate(update) {
+                    var card = update.data && update.data.cards && update.data.cards[0];
+
+                    return (card ? convertCardForPlayer(card) : $q.when(null))
+                        .then(function(card) {
+                            if (card) {
+                                update.data.cards[0] = card;
+                            }
+                            return update;
+                        });
                 }
 
                 this.find = function(type, id) {
@@ -855,6 +888,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     var endpoint = url('campaigns/' + campId + '/updates/' + updateId);
                     return $http.get(endpoint, { cache: true })
                         .then(pick('data'))
+                        .then(decorateUpdate)
                         .then(putInArray);
                 };
 
@@ -870,8 +904,12 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     } else {
                         requestBody.data = updateRequest.data;
                     }
-                    return $http.put(endpoint, requestBody)
+                    return undecorateUpdate(requestBody)
+                        .then(function(body) {
+                            return $http.put(endpoint, body);
+                        })
                         .then(pick('data'))
+                        .then(decorateUpdate)
                         .then(putInArray);
                 };
 
@@ -883,7 +921,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     delete data.campaign;
                     var endpoint = url('campaigns/' + campId + '/updates');
                     return $http.get(endpoint, { params: data })
-                        .then(pick('data'));
+                        .then(pick('data'))
+                        .then(decorateUpdates);
                 };
 
                 this.create = function(type, data) {
@@ -892,8 +931,12 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         return $q.reject('Must provide a campaign id');
                     }
                     var endpoint = url('campaigns/' + campId + '/updates');
-                    return $http.post(endpoint, data)
+                    return undecorateUpdate(data)
+                        .then(function(body) {
+                            return $http.post(endpoint, body);
+                        })
                         .then(pick('data'))
+                        .then(decorateUpdate)
                         .then(putInArray);
                 };
 

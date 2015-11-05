@@ -1,18 +1,29 @@
-<fieldset class="form__item">
-    <select c6-select-box unselect-default="true" multiple="multiple" ng-model="SelfieInterestsCtrl.interests" ng-options="category.label for category in categories" class="form__selectBox form__selectBox--single" id="c6-interests"></select>
-    <label class="form__label" for="c6-interests">
-        <i class="fa fa-times ui--error"></i>
-        Interests
-    </label>
-    <div class="form__helpBox form__helpBox--right">
-        <div class="form__helpText">
-            Interest targeting allows you to zero in on viewers whose interests align with your business.
-            <!-- If possible, we will try to match your ad to relevant content. Please choose your category preferences here. Use 'Ctl/Cmd' or 'Shift' to select multiple items.-->
+<h1 class="formSection__title">
+    <span class="formSection__titleText tk--hdr">Interests</span>
+    <span class="tk--fineprint">
+        <i class="fa fa-asterisk"></i> Using this feature will add an additional cost of ${{SelfieInterestsCtrl.priceForInterests}} per 1000 video plays.
+    </span>
+</h1>
+
+<div class="form__items">
+
+    <fieldset class="form__item">
+        <select c6-select-box unselect-default="true" multiple="multiple" ng-model="SelfieInterestsCtrl.interests" ng-options="category.label for category in categories" class="form__selectBox form__selectBox--single" id="c6-interests"></select>
+        <label class="form__label" for="c6-interests">
+            <i class="fa fa-times ui--error"></i>
+            Interests
+        </label>
+        <div class="form__helpBox form__helpBox--right">
+            <div class="form__helpText">
+                Interest targeting allows you to zero in on viewers whose interests align with your business.
+                <!-- If possible, we will try to match your ad to relevant content. Please choose your category preferences here. Use 'Ctl/Cmd' or 'Shift' to select multiple items.-->
+            </div>
         </div>
-    </div>
-    <div class="form__errorBox">
-        <p class="form__errorMsg">
-            <i class="fa fa-exclamation-triangle"></i> Error message goes here
-        </p>
-    </div>
-</fieldset>
+        <div class="form__errorBox">
+            <p class="form__errorMsg">
+                <i class="fa fa-exclamation-triangle"></i> Error message goes here
+            </p>
+        </div>
+    </fieldset>
+
+</div>

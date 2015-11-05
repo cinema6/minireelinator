@@ -89,7 +89,8 @@ define(['app', 'c6uilib'], function(appModule, c6uilib) {
                     cards: [],
                     staticCardMap: [],
                     miniReelGroups: [],
-                    pricing: {}
+                    pricing: {},
+                    status: 'active'
                 });
             });
 
