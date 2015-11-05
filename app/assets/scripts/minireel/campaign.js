@@ -155,7 +155,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             cards: [],
                             staticCardMap: [],
                             miniReelGroups: [],
-                            pricing: {}
+                            pricing: {},
+                            status: 'active'
                         }),
                         customers: cinema6.db.findAll('customer')
                     });

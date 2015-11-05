@@ -860,7 +860,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 function decorateUpdate(update) {
                     var card = update.data && update.data.cards && update.data.cards[0];
 
-
                     return (card ? convertCardForEditor(card) : $q.when(null))
                         .then(function(card) {
                             if (card) {

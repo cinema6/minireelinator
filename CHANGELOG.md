@@ -28,6 +28,7 @@
   * [FIX]: (Selfie) Only allow selecting of one gender for targeting
   * [FIX]: (Selfie) Ask for confirmation before deleting a draft campaign
   * [FIX]: (Selfie) Save the campaign and remove preview if user removes video url
+  * [DEV]: Set status to "active" when creating new campaigns in the Campaign Manager
 
 ## v1.23.0 (October 27, 2015)
 * *[v1.23.0.rc3]*
