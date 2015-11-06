@@ -355,7 +355,7 @@ define(['app'], function(appModule) {
                     });
 
                     expect(card.collateral.logo).toBe('/differentlogo.jpg');
-                    expect(card.collateral.logoType).toBe(null);
+                    expect(card.collateral.logoType).toBe(undefined);
                 });
             });
 

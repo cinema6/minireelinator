@@ -408,6 +408,114 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                 });
             });
 
+            describe('getUserData(ids)', function() {
+                var success, failure, users, usersHash;
+
+                beforeEach(function() {
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
+
+                    users = [
+                        {
+                            id: 'u-1',
+                            firstName: 'Johnny',
+                            lastName: 'Testmonkey',
+                            company: 'Tester, LLC'
+                        },
+                        {
+                            id: 'u-2',
+                            firstName: 'Brent',
+                            lastName: 'Rambo',
+                            company: 'Rambo, Inc.'
+                        },
+                        {
+                            id: 'u-3',
+                            firstName: 'Turtle',
+                            lastName: 'Monster',
+                            company: 'Monster, Inc.'
+                        }
+                    ];
+
+                    usersHash = {
+                        'u-1': {
+                            id: 'u-1',
+                            firstName: 'Johnny',
+                            lastName: 'Testmonkey',
+                            company: 'Tester, LLC'
+                        },
+                        'u-2': {
+                            id: 'u-2',
+                            firstName: 'Brent',
+                            lastName: 'Rambo',
+                            company: 'Rambo, Inc.'
+                        },
+                        'u-3': {
+                            id: 'u-3',
+                            firstName: 'Turtle',
+                            lastName: 'Monster',
+                            company: 'Monster, Inc.'
+                        }
+                    };
+                });
+
+                describe('when fetching multiple users', function() {
+                    it('should request users and return a hash keyed by id', function() {
+                        $httpBackend.expectGET('/api/account/users?ids=u-1,u-2,u-3&fields=firstName,lastName,company')
+                            .respond(200, users);
+
+                        CampaignService.getUserData('u-1,u-2,u-3').then(success, failure);
+
+                        $httpBackend.flush();
+
+                        expect(success).toHaveBeenCalledWith(usersHash);
+                        expect(failure).not.toHaveBeenCalled();
+                    });
+
+                    it('should reject the promise if the request fails', function() {
+                        $httpBackend.expectGET('/api/account/users?ids=u-1,u-2,u-3&fields=firstName,lastName,company')
+                            .respond(404, 'NOT FOUND');
+
+                        CampaignService.getUserData('u-1,u-2,u-3').then(success, failure);
+
+                        $httpBackend.flush();
+
+                        expect(success).not.toHaveBeenCalledWith(usersHash);
+                        expect(failure).toHaveBeenCalled();
+                    });
+                });
+
+                describe('when fetching a single campaign', function() {
+                    it('should request the user and return a hash', function() {
+                        var singleUser = users[1],
+                            singleHash = {
+                                'u-2': usersHash['u-2']
+                            };
+
+                        $httpBackend.expectGET('/api/account/users/u-2?fields=firstName,lastName,company')
+                            .respond(200, singleUser);
+
+                        CampaignService.getUserData('u-2').then(success, failure);
+
+                        $httpBackend.flush();
+
+                        expect(success).toHaveBeenCalledWith(singleHash);
+                        expect(failure).not.toHaveBeenCalled();
+                    });
+
+                    it('should reject the promise if the request fails', function() {
+                        $httpBackend.expectGET('/api/account/users/u-2?fields=firstName,lastName,company')
+                            .respond(404, 'NOT FOUND');
+
+                        CampaignService.getUserData('u-2').then(success, failure);
+
+                        $httpBackend.flush();
+
+                        expect(success).not.toHaveBeenCalled();
+                        expect(failure).toHaveBeenCalled();
+                    });
+                });
+            });
+
             describe('campaignDiffSummary', function() {
                 var originalCampaign, updatedCampaign, result;
 

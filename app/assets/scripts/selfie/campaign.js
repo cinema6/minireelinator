@@ -768,7 +768,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 var selectedType = SelfieCampaignSponsorCtrl.logoType.type;
 
                 card.collateral.logo = newLogo;
-                card.collateral.logoType = /file|url/.test(selectedType) ? selectedType : null;
+                card.collateral.logoType = /file|url/.test(selectedType) ? selectedType : undefined;
             });
 
             // we do very different things depending on what the
