@@ -35,6 +35,9 @@
             "delete": "all"
         }
     },
+    "entitlements": {
+        "adminCampaigns": true
+    },
     "status": "active",
     "type": "Publisher"
 }

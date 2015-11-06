@@ -124,5 +124,22 @@ define(['app','minireel/services','minireel/mixins/PaginatedListState'], functio
                 }, campaigns.limit, campaigns.page);
             });
         });
+
+        describe('afterModel()', function() {
+            it('should add the isAdmin flag to the state', function() {
+                var selfieState = c6State.get('Selfie');
+                selfieState.cModel = {
+                    entitlements: {}
+                };
+
+                campaigns.afterModel();
+                expect(campaigns.isAdmin).toBe(false);
+
+                selfieState.cModel.entitlements.adminCampaigns = true;
+
+                campaigns.afterModel();
+                expect(campaigns.isAdmin).toBe(true);
+            });
+        });
     });
 });

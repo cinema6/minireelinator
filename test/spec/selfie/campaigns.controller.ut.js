@@ -32,6 +32,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 CampaignService = $injector.get('CampaignService');
 
                 campaigns = c6State.get('Selfie:Campaigns');
+                campaigns.isAdmin = false;
 
                 spyOn(cinema6.db, 'findAll').and.returnValue((function() {
                     var items = [];
@@ -239,7 +240,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                 });
 
                 describe('adding the metaData', function() {
-                    var statsDeferred, thumbDeferred;
+                    var statsDeferred, thumbDeferred, usersDeferred;
 
                     beforeEach(function() {
                         statsDeferred = $q.defer();
@@ -247,13 +248,16 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             ensureFulfillment: jasmine.createSpy('ensureFulfillment')
                                 .and.returnValue($q.when({large: 'large-thumb.jpg'}))
                         };
+                        usersDeferred = $q.defer();
 
                         spyOn(CampaignService, 'getAnalytics').and.returnValue(statsDeferred.promise);
                         spyOn(ThumbnailService, 'getThumbsFor').and.returnValue(thumbDeferred);
+                        spyOn(CampaignService, 'getUserData').and.returnValue(usersDeferred.promise);
 
                         model.items.value = [
                             {
                                 id: 'cam-1',
+                                user: 'u-1',
                                 cards: [
                                     {
                                         params: {},
@@ -264,6 +268,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             },
                             {
                                 id: 'cam-2',
+                                user: 'u-2',
                                 cards: [
                                     {
                                         params: {
@@ -282,6 +287,7 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                             },
                             {
                                 id: 'cam-3',
+                                user: 'u-3',
                                 cards: [
                                     {
                                         params: {
@@ -379,6 +385,68 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                                         views: 2000,
                                         spend: '500.50'
                                     }
+                                });
+                            });
+                        });
+                    });
+
+                    describe('add the user data', function() {
+                        it('should not happen if user is not admin', function() {
+                            expect(CampaignService.getUserData).not.toHaveBeenCalled();
+                        });
+
+                        describe('when user is an admin', function() {
+                            beforeEach(function() {
+                                campaigns.isAdmin = true;
+
+                                $scope.$apply(function() {
+                                    SelfieCampaignsCtrl.initWithModel(model);
+                                });
+                            });
+
+                            it('should request user data', function() {
+                                expect(CampaignService.getUserData).toHaveBeenCalledWith('u-1,u-2,u-3');
+                            });
+
+                            describe('when userData is returned', function() {
+                                it('should add it to the meta data object', function() {
+                                    var userHash = {
+                                        'u-1': {
+                                            firstName: 'Johnny',
+                                            lastName: 'Testmonkey',
+                                            company: 'Tester, LLC'
+                                        },
+                                        'u-2': {
+                                            firstName: 'Brent',
+                                            lastName: 'Rambo',
+                                            company: 'Rambo, Inc.'
+                                        },
+                                        'u-3': {
+                                            firstName: 'Turtle',
+                                            lastName: 'Monster',
+                                            company: 'Monster, Inc.'
+                                        }
+                                    };
+
+                                    $scope.$apply(function() {
+                                        usersDeferred.resolve(userHash);
+                                    });
+
+                                    expect(SelfieCampaignsCtrl.metaData['cam-1'].user).toEqual({
+                                        firstName: 'Johnny',
+                                        lastName: 'Testmonkey',
+                                        company: 'Tester, LLC'
+                                    });
+                                    expect(SelfieCampaignsCtrl.metaData['cam-2'].user).toEqual({
+                                        firstName: 'Brent',
+                                        lastName: 'Rambo',
+                                        company: 'Rambo, Inc.'
+                                    });
+                                    expect(SelfieCampaignsCtrl.metaData['cam-3'].user).toEqual({
+                                        firstName: 'Turtle',
+                                        lastName: 'Monster',
+                                        company: 'Monster, Inc.'
+                                    });
                                 });
                             });
                         });

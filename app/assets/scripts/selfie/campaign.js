@@ -63,9 +63,9 @@ function( angular , c6State  , PaginatedListState                    ,
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Campaigns', ['$injector','$location',
-                                                       'paginatedDbList',
+                                                       'paginatedDbList','c6State',
             function                                  ( $injector , $location ,
-                                                        paginatedDbList ) {
+                                                        paginatedDbList , c6State ) {
                 $injector.invoke(PaginatedListState, this);
 
                 this.templateUrl = 'views/selfie/campaigns.html';
@@ -93,6 +93,11 @@ function( angular , c6State  , PaginatedListState                    ,
                         application: 'selfie',
                         statuses: this.filter,
                     }, this.limit, this.page).ensureResolution();
+                };
+                this.afterModel = function() {
+                    var user = c6State.get('Selfie').cModel;
+
+                    this.isAdmin = (user.entitlements.adminCampaigns === true);
                 };
             }]);
         }])
@@ -131,9 +136,15 @@ function( angular , c6State  , PaginatedListState                    ,
             function addMetaData() {
                 var Ctrl = SelfieCampaignsCtrl,
                     model = Ctrl.model.items.value,
-                    ids = model.map(function(campaign) {
-                        return campaign.id;
-                    }).join(',');
+                    ids = model.reduce(function(idsHash, campaign) {
+                        if (idsHash.campaigns.indexOf(campaign.id) < 0) {
+                            idsHash.campaigns.push(campaign.id);
+                        }
+                        if (idsHash.users.indexOf(campaign.user) < 0) {
+                            idsHash.users.push(campaign.user);
+                        }
+                        return idsHash;
+                    }, {campaigns: [], users: []});
 
                 Ctrl.metaData = model.reduce(function(result, campaign) {
                     var card = campaign.cards && campaign.cards[0];
@@ -152,8 +163,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     return result;
                 },{});
 
-                if (ids) {
-                    CampaignService.getAnalytics(ids)
+                if (ids.campaigns) {
+                    CampaignService.getAnalytics(ids.campaigns.join(','))
                         .then(function(stats) {
                             stats.forEach(function(stat) {
                                 var campaignId = stat.campaignId;
@@ -166,6 +177,15 @@ function( angular , c6State  , PaginatedListState                    ,
                                     views: stat.summary.views,
                                     spend: stat.summary.totalSpend
                                 };
+                            });
+                        });
+                }
+
+                if (ids.users && cState.isAdmin) {
+                    CampaignService.getUserData(ids.users.join(','))
+                        .then(function(userHash) {
+                            model.forEach(function(campaign) {
+                                Ctrl.metaData[campaign.id].user = userHash[campaign.user];
                             });
                         });
                 }
@@ -690,7 +710,7 @@ function( angular , c6State  , PaginatedListState                    ,
             })[0] || this.logoOptions[0];
 
             this.logo = card.collateral.logo;
-            this.previouslyUploadedLogo = null;
+            this.previouslyUploadedLogo = undefined;
 
             this.links = ['Website','Facebook','Twitter','Pinterest','YouTube','Instagram']
                 .map(function(name) {
@@ -748,7 +768,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 var selectedType = SelfieCampaignSponsorCtrl.logoType.type;
 
                 card.collateral.logo = newLogo;
-                card.collateral.logoType = /file|url/.test(selectedType) ? selectedType : null;
+                card.collateral.logoType = /file|url/.test(selectedType) ? selectedType : undefined;
             });
 
             // we do very different things depending on what the
@@ -774,7 +794,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     Ctrl.logo = defaultLogo;
                     break;
                 case 'none':
-                    Ctrl.logo = null;
+                    Ctrl.logo = undefined;
                     break;
                 }
             });
