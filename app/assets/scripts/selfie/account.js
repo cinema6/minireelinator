@@ -103,7 +103,7 @@ function( angular , c6State  ) {
                     .catch(function(err) {
                         // failure, we should tell the user why
                         // and highlight bad fields
-                        SelfieSignUpCtrl.message = 'Failed, ' + err;
+                        SelfieSignUpCtrl.message = 'There was a problem, ' + err;
                     });
             };
         }])
