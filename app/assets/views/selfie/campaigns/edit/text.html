@@ -20,16 +20,16 @@
                 <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-title" ng-model="card.title" ng-class="{'form__fillCheck--filled' : card.title }" ng-focus="SelfieCampaignCtrl.disableVideoTitleOverwrite = 'true'">
                 <label class="form__label" for="c6-video-title">
                     <i class="fa fa-times ui--error"></i>
-                    Video Title*
+                    Headline<span class="text--small"> (required) </span>
                 </label>
-                <div class="form__helpBox form__helpBox--right">
+                <!--<div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">
                         Include an impactful headline to get more people to engage with your content. See our FAQ -- link -- for help designing attention-grabbing headlines.
                     </div>
-                </div>
+                </div>-->
                 <div class="form__errorBox">
                     <p class="form__errorMsg">
-                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                        <i class="fa fa-exclamation-triangle"></i> Headline is required
                     </p>
                 </div>
             </fieldset>
@@ -38,16 +38,16 @@
                 <textarea c6-fill-check class="form__textBox form__textArea form__textArea--large form__fillCheck" type="text" id="c6-video-description" ng-model="card.note"></textarea>
                 <label class="form__label" for="c6-video-description">
                     <i class="fa fa-times ui--error"></i>
-                    Video Description
+                    Description
                 </label>
-                <div class="form__helpBox form__helpBox--right">
+                <!--<div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">
                     Add easy to consume short-form content to re-inforce your message.
                     </div>
-                </div>
+                </div>-->
                 <div class="form__errorBox">
                     <p class="form__errorMsg">
-                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                        <i class="fa fa-exclamation-triangle"></i> Description is required
                     </p>
                 </div>
             </fieldset>
@@ -58,12 +58,12 @@
                     <i class="fa fa-times ui--error"></i>
                     Call to action
                 </label>
-                <div class="form__helpBox form__helpBox--right">
+                <!--<div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">
                         The  Call to Action (CTA) button drives conversions by provoking an immediate response from the viewer.  See our FAQ -- Link -- for help on designing an effective CTA.
-                        <!--A call to action is a prompt for the user to do an action. For instance, “Learn more,” or “Shop now!”-->
+                        --old cta desc--A call to action is a prompt for the user to do an action. For instance, “Learn more,” or “Shop now!”
                     </div>
-                </div>
+                </div>-->
                 <div class="form__errorBox">
                     <p class="form__errorMsg">
                         <i class="fa fa-exclamation-triangle"></i> Error message goes here
@@ -92,11 +92,11 @@
                         <i class="fa fa-times ui--error"></i>
                         {{SelfieCampaignTextCtrl.actionType.name}} Text
                     </label>
-                    <div class="form__helpBox form__helpBox--right">
+                    <!--<div class="form__helpBox form__helpBox--right">
                         <div class="form__helpText">
                             The text is what the link will be attached to for the button or the link.
                         </div>
-                    </div>
+                    </div>-->
                     <div class="form__errorBox">
                         <p class="form__errorMsg">
                             <i class="fa fa-exclamation-triangle"></i> Error message goes here
@@ -110,11 +110,11 @@
                         <i class="fa fa-times ui--error"></i>
                         URL
                     </label>
-                    <div class="form__helpBox form__helpBox--right">
+                    <!--<div class="form__helpBox form__helpBox--right">
                         <div class="form__helpText">
                         Link to your landing page or website.
                         </div>
-                    </div>
+                    </div>-->
                     <div class="form__errorBox">
                         <p class="form__errorMsg">
                             <i class="fa fa-exclamation-triangle"></i> Error message goes here

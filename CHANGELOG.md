@@ -3,6 +3,9 @@
 * *[v1.25.0.rc1]*
   * [FEATURE]: (Selfie) Support other video player types (Vzaar, Wistia, etc)
   * [FIX]: (Selfie) Update Budget and Daily Limit error messages to be more informative
+  * [FIX]: (Selfie) Updated branding (changed logo, primary buttons, links, accent colors 
+    etc), removed help text from inputs based on feedback, updated side navigation for 
+    sections on create campaign. 
 
 ## v1.24.0 (November 5, 2015)
 * *[v1.24.0.rc2]*

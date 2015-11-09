@@ -8,13 +8,14 @@
         <span class="input__unit">$</span>
         <label class="form__label" for="c6-campaign-budget">
             <i class="fa fa-times ui--error"></i>
-            Campaign Budget*
+            Campaign Budget<span class="text--small"> (required) </span>
         </label>
-        <div class="form__helpBox form__helpBox--right">
+        <!--<div class="form__helpBox form__helpBox--right">
             <div class="form__helpText">
                 Please enter the budget for your campaign.
             </div>
-        </div>
+
+        </div>-->
         <div class="form__errorBox" ng-switch="SelfieBudgetCtrl.budgetError">
             <p class="form__errorMsg" ng-switch-when="1"><i class="fa fa-exclamation-triangle"></i> Must be greater than ${{SelfieBudgetCtrl.budgetMin | number:2}} </p>
             <p class="form__errorMsg" ng-switch-when="2"><i class="fa fa-exclamation-triangle"></i> Must be less than ${{SelfieBudgetCtrl.budgetMax | number:2}} </p>
@@ -30,7 +31,8 @@
         </label>
         <div class="form__helpBox form__helpBox--right">
             <div class="form__helpText">
-                The Daily Budget allows you to set a limit for how much your campaign can spend in a day. It must be more than {{SelfieBudgetCtrl.limitMinPercent * 100}}% of the total budget.
+                Limit how much your campaign can spend in a day. This field is optional and will default to total budget if left blank.
+                <!--The Daily Budget allows you to set a limit for how much your campaign can spend in a day. It must be more than {{SelfieBudgetCtrl.limitMinPercent * 100}}% of the total budget.-->
             </div>
         </div>
         <div class="form__errorBox" ng-switch="SelfieBudgetCtrl.dailyLimitError">
