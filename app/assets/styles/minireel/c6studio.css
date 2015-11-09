@@ -1484,6 +1484,13 @@
                 position:absolute;
                 top:0; left:0;
             }
+            .embeddedPlayer--jwplayer {
+                width:75%; height:100%;
+                padding:0 12.5%;
+                background:#fff;
+                position:absolute;
+                top:0; left:0;
+            }
             .embeddedPlayer--aol,
             .embeddedPlayer--aol object,
             .embeddedPlayer--aol video,

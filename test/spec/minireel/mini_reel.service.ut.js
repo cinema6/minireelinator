@@ -264,6 +264,39 @@
                                     large: 'images.wistia.com/video/9iqvphjp4u/large.jpg'
                                 }
                             }
+                        },
+                        jwplayer: {
+                            id: 'rc-6f4aebc424f3',
+                            type: 'jwplayer',
+                            title: 'JWPlayer Card',
+                            note: 'This is a JWPlayer card, gaze at its wonder.',
+                            source: 'JWPlayer',
+                            placementId: null,
+                            templateUrl: null,
+                            sponsored: false,
+                            campaign: {
+                                campaignId: null,
+                                advertiserId: null,
+                                minViewTime: null,
+                                countUrls: [],
+                                clickUrls: []
+                            },
+                            thumbs: null,
+                            collateral: {},
+                            links: {},
+                            shareLinks: {},
+                            params: {},
+                            modules: [],
+                            data: {
+                                skip: true,
+                                service: 'jwplayer',
+                                videoid: 'iGznZrKK-n5DiyUyn',
+                                href: 'https://content.jwplatform.com/previews/iGznZrKK-n5DiyUyn',
+                                thumbs: {
+                                    small: 'images.jwplayer.com/video/iGznZrKK-n5DiyUyn/small.jpg',
+                                    large: 'images.jwplayer.com/video/iGznZrKK-n5DiyUyn/large.jpg'
+                                }
+                            }
                         }
                     }
                 };
@@ -912,6 +945,7 @@
                             mocks.playerCards.instagram,
                             mocks.playerCards.vzaar,
                             mocks.playerCards.wistia,
+                            mocks.playerCards.jwplayer,
                             {
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
@@ -2029,6 +2063,46 @@
                         	    type: 'video',
                         	    title: 'Wistia Card',
                         	    note: 'This is a Wistia card.',
+                        	    label: 'Video',
+                        	    view: 'video',
+                        	    ad: false,
+                        	    placementId: null,
+                        	    templateUrl: null,
+                        	    sponsored: false,
+                        	    campaign: {
+                        	        campaignId: null,
+                        	        advertiserId: null,
+                        	        minViewTime: null,
+                        	        countUrls: [],
+                        	        clickUrls: []
+                        	    },
+                        	    collateral: {},
+                        	    thumb: null,
+                        	    links: {},
+                                shareLinks: {},
+                        	    params: {}
+                            });
+                        });
+
+                        it('should transpile the jwplayer card', function() {
+                            expect(deck[21]).toEqual({
+                                data: {
+                        	       skip: 'anytime',
+                        	        controls: true,
+                        	        autoplay: null,
+                        	        autoadvance: null,
+                        	        survey: null,
+                        	        service: 'jwplayer',
+                                    videoid: 'iGznZrKK-n5DiyUyn',
+                                    hostname: null,
+                        	        start: null,
+                        	        end: null,
+                        	        moat: null
+                        	    },
+                        	    id: 'rc-6f4aebc424f3',
+                        	    type: 'video',
+                        	    title: 'JWPlayer Card',
+                        	    note: 'This is a JWPlayer card, gaze at its wonder.',
                         	    label: 'Video',
                         	    view: 'video',
                         	    ad: false,

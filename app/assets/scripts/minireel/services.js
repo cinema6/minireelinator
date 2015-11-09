@@ -966,6 +966,19 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     });
             };
 
+            _private.fetchJWPlayerThumbs = function(id) {
+                function thumbUrl(id, width) {
+                    return 'https://content.jwplatform.com/thumbs/' +
+                        videoId + '-' + width + '.jpg';
+                }
+
+                var videoId = id.split('-')[0];
+                return {
+                    small: thumbUrl(videoId, '320'),
+                    large: thumbUrl(videoId, '720')
+                };
+            };
+
             _private.fetchInstagramThumbs = function(id) {
                 var instagramKey = c6Defines.kInstagramDataApiKey;
                 var request = 'https://api.instagram.com/v1/media/shortcode/' + id +
@@ -1105,6 +1118,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return new ThumbModel($q.when(_private.fetchVzaarThumbs(id)));
                         case 'wistia':
                             return new ThumbModel(_private.fetchWistiaThumbs(id));
+                        case 'jwplayer':
+                            return new ThumbModel($q.when(_private.fetchJWPlayerThumbs(id)));
                         case 'yahoo':
                         case 'aol':
                         case 'vine':
@@ -1196,6 +1211,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     return 'http://vzaar.tv/' + id;
                 case 'wistia':
                     return 'https://' + hostname + '/medias/' + id + '?preview=true';
+                case 'jwplayer':
+                    return 'https://content.jwplatform.com/previews/' + id;
                 }
             };
 
@@ -1203,10 +1220,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 var parsedUrl = c6UrlParser(text),
                     urlService = (parsedUrl.hostname.match(
                         new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|aol|yahoo|' +
-                            'rumble|vine|vzaar\\.tv|wistia')
+                            'rumble|vine|vzaar\\.tv|wistia|jwplatform')
                     ) || [])[0],
                     embedService = (text.match(
-                        /youtube|youtu\.be|dailymotion|dai\.ly|vimeo/
+                        /youtube|youtu\.be|dailymotion|dai\.ly|vimeo|jwplatform/
                     ) || [])[0],
                     embed = /<iframe|<script/.test(text) ? 'embed' : null,
                     type = !!urlService ? 'url' : embed,
@@ -1262,6 +1279,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 return (url.pathname
                                     .replace(/\/medias\//, '')
                                     .match(/[a-zA-Z\d]+/) || [null])[0];
+                            },
+                            jwplatform: function(url) {
+                                return (url.pathname
+                                    .replace(/\/previews\//, '')
+                                    .match(/[a-zA-Z\d-]+/) || [null])[0];
                             }
                         },
                         embed: {
@@ -1273,6 +1295,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             },
                             dailymotion: function(embed) {
                                 return (embed.match(/video\/([a-zA-Z0-9]+)/) || [])[1];
+                            },
+                            jwplatform: function(embed) {
+                                return (embed.match(
+                                    /content.jwplatform.com\/players\/([a-zA-Z\d-]+)/) || [])[1];
                             }
                         }
                     };
@@ -1306,6 +1332,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 case 'vzaar.tv':
                     service = 'vzaar';
                     break;
+                case 'jwplatform':
+                    service = 'jwplayer';
                 }
 
                 if (!id) { return null; }
@@ -1348,6 +1376,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 function wistiaSrc(id) {
                     return '//fast.wistia.net/embed/iframe/' + id + '?videoFoam=true';
+                }
+
+                function jwplayerSrc(id) {
+                    return '//content.jwplatform.com/players/' + id + '.html';
                 }
 
                 switch (service) {
@@ -1398,6 +1430,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         ' webkitallowfullscreen oallowfullscreen msallowfullscreen' +
                         ' width="100%" height="100%"></iframe></div></div>' +
                         '<script src="//fast.wistia.net/assets/external/E-v1.js" async></script>';
+                case 'jwplayer':
+                    return '<iframe src="' + jwplayerSrc(id) + '" style="width:100%;height:100%"' +
+                        ' frameborder="0" scrolling="auto" allowfullscreen></iframe>';
                 }
             };
         }])
@@ -2059,6 +2094,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'vine':
                         case 'vzaar':
                         case 'wistia':
+                        case 'jwplayer':
                             return 'video' + ((card.modules.indexOf('ballot') > -1) ?
                                 'Ballot' : '');
                         default:
@@ -2652,6 +2688,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return 'Yahoo! Screen';
                     case 'getty':
                         return 'gettyimages';
+                    case 'jwplayer':
+                        return 'JWPlayer';
                     case 'web':
                     case 'adUnit':
                         return undefined;
@@ -2978,6 +3016,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         moat: copy(null)
                     },
                     wistia: {
+                        hideSource: hideSourceValue(),
+                        autoplay: copy(null),
+                        autoadvance: copy(null),
+                        skip: skipValue(),
+                        service: copy(),
+                        videoid: copy(null),
+                        href: hrefValue(),
+                        thumbs: videoThumbsValue(),
+                        moat: copy(null)
+                    },
+                    jwplayer: {
                         hideSource: hideSourceValue(),
                         autoplay: copy(null),
                         autoadvance: copy(null),

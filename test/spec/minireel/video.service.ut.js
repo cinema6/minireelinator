@@ -74,6 +74,11 @@
                             expect(fromData('wistia', '12345', 'cinema6.wistia.com')).toBe('https://cinema6.wistia.com/medias/12345?preview=true');
                             expect(fromData('wistia', '12345', 'home.wistia.com')).toBe('https://home.wistia.com/medias/12345?preview=true');
                         });
+
+                        it('should create a jwplayer url', function() {
+                            expect(fromData('jwplayer', '12345')).toBe('https://content.jwplatform.com/previews/12345');
+                            expect(fromData('jwplayer', 'iGznZrKK-n5DiyUyn')).toBe('https://content.jwplatform.com/previews/iGznZrKK-n5DiyUyn');
+                        });
                     });
 
                     describe('dataFromText(url)', function() {
@@ -193,6 +198,26 @@
                             });
                         });
 
+                        it('should parse a jwplayer url', function() {
+                            expect(fromUrl('https://content.jwplatform.com/previews/iGznZrKK-n5DiyUyn')).toEqual({
+                                service: 'jwplayer',
+                                id: 'iGznZrKK-n5DiyUyn',
+                                hostname: 'content.jwplatform.com'
+                            });
+                        });
+
+                        it('should parse jwplayer embed codes', function() {
+                            var scriptEmbed = '<script type="application/javascript" src="//content.jwplatform.com/players/iGznZrKK-n5DiyUyn.js"></script>';
+                            var iframeEmbed = '<iframe src="//content.jwplatform.com/players/iGznZrKK-n5DiyUyn.html" width="480" height="270" frameborder="0" scrolling="auto" allowfullscreen></iframe>';
+                            var expected = {
+                                service: 'jwplayer',
+                                id: 'iGznZrKK-n5DiyUyn',
+                                hostname: null
+                            };
+                            expect(fromUrl(scriptEmbed)).toEqual(expected);
+                            expect(fromUrl(iframeEmbed)).toEqual(expected);
+                        });
+
                         it('should return null if the url is not valid', function() {
                             expect(fromUrl('apple.com')).toBeNull();
                             expect(fromUrl('84fh439#')).toBeNull();
@@ -201,6 +226,7 @@
                             expect(fromUrl('http://www.dailymotion.com/')).toBeNull();
                             expect(fromUrl('http://www.youtube.c')).toBeNull();
                             expect(fromUrl('http://www.vzaar.t/123')).toBeNull();
+                            expect(fromUrl('http://www.jwplayer.com/123')).toBeNull();
                         });
                     });
 
@@ -284,6 +310,12 @@
                                 ' webkitallowfullscreen oallowfullscreen msallowfullscreen' +
                                 ' width="100%" height="100%"></iframe></div></div>' +
                                 '<script src="//fast.wistia.net/assets/external/E-v1.js" async></script>'
+                            );
+                        });
+
+                        it('should create a JWPlayer embed code', function() {
+                            expect(VideoService.embedCodeFromData('jwplayer', 'iGznZrKK-n5DiyUyn')).toBe(
+                                '<iframe src="//content.jwplatform.com/players/iGznZrKK-n5DiyUyn.html" style="width:100%;height:100%" frameborder="0" scrolling="auto" allowfullscreen></iframe>'
                             );
                         });
                     });
