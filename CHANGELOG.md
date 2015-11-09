@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.25.0.rc1]*
+  * [FEATURE]: (Selfie) Support other video player types (Vzaar, Wistia, etc)
+
 ## v1.24.0 (November 5, 2015)
 * *[v1.24.0.rc2]*
   * [FEATURE]: (Selfie) Show user name and company of campaign creator in dashboard
