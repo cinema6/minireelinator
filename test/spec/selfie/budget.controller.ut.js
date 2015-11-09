@@ -177,6 +177,21 @@ define(['app'], function(appModule) {
                 });
             });
 
+            describe('budgetError', function() {
+                it('should be false if within the limits or have a status code number when true', function() {
+                    expect(SelfieBudgetCtrl.budgetError).toBe(false);
+
+                    SelfieBudgetCtrl.budget = 20;
+                    expect(SelfieBudgetCtrl.budgetError).toBe(1);
+
+                    SelfieBudgetCtrl.budget = 200000000;
+                    expect(SelfieBudgetCtrl.budgetError).toBe(2);
+
+                    SelfieBudgetCtrl.budget = 2000;
+                    expect(SelfieBudgetCtrl.budgetError).toBe(false);
+                });
+            });
+
             describe('dailyLimitError', function() {
                 it('should be false if budget and limit are not defined or if the limit is between the 1.5% to 100% of the budget', function() {
                     expect(SelfieBudgetCtrl.dailyLimitError).toBe(false);
@@ -194,20 +209,24 @@ define(['app'], function(appModule) {
                     expect(SelfieBudgetCtrl.dailyLimitError).toBe(false);
                 });
 
-                it('should contain an error message if limit is set but budget is not or the limit is not between 1.5% to 100% of total budget', function() {
+                it('should contain an error status number if limit is set but budget is not or the limit is not between 1.5% to 100% of total budget', function() {
                     expect(SelfieBudgetCtrl.dailyLimitError).toBe(false);
+
+                    SelfieBudgetCtrl.budget = 200000000;
+                    SelfieBudgetCtrl.limit = 20;
+                    expect(SelfieBudgetCtrl.dailyLimitError).toBe(1);
 
                     SelfieBudgetCtrl.budget = null;
                     SelfieBudgetCtrl.limit = 20;
-                    expect(SelfieBudgetCtrl.dailyLimitError).toBe('Please enter your Total Budget first');
+                    expect(SelfieBudgetCtrl.dailyLimitError).toBe(2);
 
                     SelfieBudgetCtrl.budget = 100;
                     SelfieBudgetCtrl.limit = 1;
-                    expect(SelfieBudgetCtrl.dailyLimitError).toBe('Must be greater than 1.5% of the Total Budget');
+                    expect(SelfieBudgetCtrl.dailyLimitError).toBe(3);
 
                     SelfieBudgetCtrl.budget = 100;
                     SelfieBudgetCtrl.limit = 101;
-                    expect(SelfieBudgetCtrl.dailyLimitError).toBe('Must be less than Total Budget');
+                    expect(SelfieBudgetCtrl.dailyLimitError).toBe(4);
                 });
             });
         });

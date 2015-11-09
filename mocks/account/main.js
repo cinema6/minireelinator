@@ -53,6 +53,53 @@ module.exports = function(http) {
         }
     });
 
+    http.whenGET('/api/account/users/**', function(request) {
+        var id = idFromPath(request.pathname),
+            filePath = objectPath('users', id);
+
+        try {
+            this.respond(200, extend(grunt.file.readJSON(filePath), { id: id }));
+        } catch(e) {
+            this.respond(401, 'Not Authorized');
+        }
+    });
+
+    http.whenGET('/api/account/users', function(request) {
+        var allUsers = grunt.file.expand(path.resolve(__dirname, './users/*.json'))
+                .map(function(path) {
+                    var id = path.match(/[^\/]+(?=\.json)/)[0];
+
+                    return extend(grunt.file.readJSON(path), { id: id });
+                })
+                .filter(function(user) {
+                    var ids = request.query.ids,
+                        idArray = (ids || '').split(','),
+                        id = user.id;
+
+                    return !ids || idArray.indexOf(id) > -1;
+                })
+                .map(function(user) {
+                    var fields = request.query.fields,
+                        fieldsArray = (fields || '').split(',');
+
+                    if (!fields) { return user; }
+
+                    for (var key in user) {
+                        if (fieldsArray.indexOf(key) === -1 && key !== 'id') {
+                            delete user[key];
+                        }
+                    }
+
+                    return user;
+                });
+
+        try {
+            this.respond(200, allUsers);
+        } catch(e) {
+            this.respond(401, 'Not Authorized');
+        }
+    });
+
     http.whenPOST('/api/account/users/confirm/**', function(request) {
         var id = idFromPath(request.pathname),
             filePath = objectPath('users', id),

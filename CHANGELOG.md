@@ -1,6 +1,18 @@
 # MiniReelinator
 
+* *[v1.25.0.rc1]*
+  * [FEATURE]: (Selfie) Support other video player types (Vzaar, Wistia, etc)
+  * [FIX]: (Selfie) Update Budget and Daily Limit error messages to be more informative
+
 ## v1.24.0 (November 5, 2015)
+* *[v1.24.0.rc2]*
+  * [FEATURE]: (Selfie) Show user name and company of campaign creator in dashboard
+    but only if current user is an admin
+  * [FIX]: (Selfie) Fix for an issue where autosaves were triggered as soon aa a new
+    campaign was opened
+  * [DESIGN]: (Selfie) Make delete and cancel buttons red on hover
+* *[/v1.24.0.rc2]*
+
 * *[v1.24.0.rc1]*
   * [FEATURE]: (Selfie) Created admin tab to moderate update requests
   * [DESIGN]: (Selfie) Moved campaign action buttons out of the tab

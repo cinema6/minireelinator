@@ -164,6 +164,16 @@ define(['app'], function(appModule) {
                     expect(statsFromService('').then).toBeDefined();
                 });
 
+                describe('any unrecognized service', function() {
+                    it('should resolve the promise with null', function() {
+                        $rootScope.$apply(function() {
+                            statsFromService('unrecognized', '1234');
+                        });
+
+                        expect(success).toHaveBeenCalledWith(null);
+                    });
+                });
+
                 describe('YouTube data', function() {
                     beforeEach(function() {
                         spyOn(YouTubeDataService.videos, 'list').and.returnValue(deferred.promise);
@@ -297,23 +307,6 @@ define(['app'], function(appModule) {
 
                         expect(success).not.toHaveBeenCalled();
                         expect(failure).toHaveBeenCalled();
-                    });
-                });
-
-                describe('AdUnit data', function() {
-                    beforeEach(function() {
-                        $rootScope.$apply(function() {
-                            statsFromService('adUnit', '{"vast":"http://vasttag.com/vast.xml"}');
-                        });
-                    });
-
-                    it('should resolve with a data object', function() {
-                        expect(success).toHaveBeenCalledWith({
-                            title: null,
-                            duration: 0,
-                            views: 0,
-                            href: SelfieVideoService.urlFromData('adUnit', '{"vast":"http://vasttag.com/vast.xml"}')
-                        });
                     });
                 });
             });

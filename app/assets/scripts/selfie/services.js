@@ -159,6 +159,23 @@ function( angular , c6uilib ) {
                     });
             };
 
+            this.getUserData = function(ids) {
+                var multi = (ids || '').split(',').length > 1,
+                    url = c6UrlMaker('account/users' + (multi ? ('?ids='+ids+'&') : '/'+ids+'?') +
+                        'fields=firstName,lastName,company', 'api');
+
+                return $http.get(url)
+                    .then(function(response) {
+                        return multi ? response.data : [response.data];
+                    })
+                    .then(function(users) {
+                        return users.reduce(function(userHash, user) {
+                            userHash[user.id] = user;
+                            return userHash;
+                        }, {});
+                    });
+            };
+
             /* Creates a diff summary of two campaigns with special handling for the first entry in
                 the cards array. Does not compare individual elements of arrays. */
             this.campaignDiffSummary = function(originalCampaign, updatedCampaign,
@@ -351,22 +368,10 @@ function( angular , c6uilib ) {
                                 href: self.urlFromData(service, id)
                             };
                         });
-                    },
-                    adUnit: function() {
-                        return $q.when({
-                            title: null,
-                            duration: 0,
-                            views: 0,
-                            href: self.urlFromData(service, id)
-                        });
                     }
                 };
 
-                if (!/youtube|vimeo|dailymotion|adUnit/.test(service)) {
-                    return $q.reject('Unknown service');
-                }
-
-                return fetch[service]();
+                return fetch[service] ? fetch[service]() : $q.when(null);
             };
         }])
 

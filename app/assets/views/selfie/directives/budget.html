@@ -14,11 +14,11 @@
             <div class="form__helpText">
                 Please enter the budget for your campaign.
             </div>
+
         </div>-->
-        <div class="form__errorBox">
-            <p class="form__errorMsg">
-                <i class="fa fa-exclamation-triangle"></i> Error message goes here
-            </p>
+        <div class="form__errorBox" ng-switch="SelfieBudgetCtrl.budgetError">
+            <p class="form__errorMsg" ng-switch-when="1"><i class="fa fa-exclamation-triangle"></i> Must be greater than ${{SelfieBudgetCtrl.budgetMin | number:2}} </p>
+            <p class="form__errorMsg" ng-switch-when="2"><i class="fa fa-exclamation-triangle"></i> Must be less than ${{SelfieBudgetCtrl.budgetMax | number:2}} </p>
         </div>
     </fieldset>
 
@@ -35,10 +35,11 @@
                 <!--The Daily Budget allows you to set a limit for how much your campaign can spend in a day. It must be more than {{SelfieBudgetCtrl.limitMinPercent * 100}}% of the total budget.-->
             </div>
         </div>
-        <div class="form__errorBox">
-            <p class="form__errorMsg">
-                <i class="fa fa-exclamation-triangle"></i> {{SelfieBudgetCtrl.dailyLimitError}}
-            </p>
+        <div class="form__errorBox" ng-switch="SelfieBudgetCtrl.dailyLimitError">
+            <p class="form__errorMsg" ng-switch-when="1"><i class="fa fa-exclamation-triangle"></i> Please enter a valid Budget </p>
+            <p class="form__errorMsg" ng-switch-when="2"><i class="fa fa-exclamation-triangle"></i> Please enter your Total Budget first </p>
+            <p class="form__errorMsg" ng-switch-when="3"><i class="fa fa-exclamation-triangle"></i> Must be greater than ${{SelfieBudgetCtrl.limitMinPercent * SelfieBudgetCtrl.budget | number:2}} </p>
+            <p class="form__errorMsg" ng-switch-when="4"><i class="fa fa-exclamation-triangle"></i> Must be less than Total Budget </p>
         </div>
     </fieldset>
 </div>
