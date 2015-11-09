@@ -8,23 +8,23 @@
             </span>
             <span class="formSection__titleText tk--hdr">Advertiser Details</span>
         </h1>
-        <p class="formSection__introText">This information will be displayed on your sponsored card</p>
+        <p class="formSection__introText">Enter your logo and company links</p>
         <div class="form__items">
 
             <fieldset class="form__item">
                 <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-name" ng-model="campaign.advertiserDisplayName">
                 <label class="form__label" for="c6-sponsor-name">
                     <i class="fa fa-times ui--error"></i>
-                    Company/Brand Name*
+                    Advertiser<span class="text--small"> (required) </span>
                 </label>
-                <div class="form__helpBox form__helpBox--right">
+                <!--<div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">
                         Please enter the advertiser's name.
                     </div>
-                </div>
+                </div>-->
                 <div class="form__errorBox">
                     <p class="form__errorMsg">
-                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                        <i class="fa fa-exclamation-triangle"></i> Advertiser is required
                     </p>
                 </div>
             </fieldset>
@@ -39,11 +39,11 @@
                     <i class="fa fa-times ui--error"></i>
                     Logo
                 </label>
-                <div class="form__helpBox form__helpBox--right">
+                <!--<div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">
                         Add a recogognizable logo to reinforce association with the advertiser.  This is a proven strategy to increase brand awareness and recall.  This field is optional.
                     </div>
-                </div>
+                </div>-->
                 <div class="form__errorBox">
                     <p class="form__errorMsg">
                         <i class="fa fa-exclamation-triangle"></i> Error message goes here
@@ -95,11 +95,11 @@
                     <i class="fa fa-times ui--error"></i>
                     <i class="fa fa-{{link.cssClass}} tk--active tk--{{link.cssClass}}"></i> {{link.name}}
                 </label>
-                <div class="form__helpBox form__helpBox--right">
+                <!--<div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">
                         This link will be added to your video card.
                     </div>
-                </div>
+                </div>-->
                 <div class="form__errorBox">
                     <p class="form__errorMsg">
                         <i class="fa fa-exclamation-triangle"></i> Error message goes here
@@ -115,7 +115,7 @@
                 </label>
                 <div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">
-                        Add a link to your landing page to allow users to share it.
+                        Add a link for users to share
                     </div>
                 </div>
                 <div class="form__errorBox">
