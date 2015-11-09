@@ -380,7 +380,7 @@ function( angular , c6uilib ) {
                 };
 
                 if (!/youtube|vimeo|dailymotion|adUnit/.test(service)) {
-                    return $q.reject('Unknown service');
+                    return $q.when(null);
                 }
 
                 return fetch[service]();

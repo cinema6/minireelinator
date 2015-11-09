@@ -31,7 +31,7 @@
 
         </div><!-- .form__items -->
 
-        <div class="videoPreview__wizard ui__connector" ng-if="SelfieCampaignVideoCtrl.video">
+        <div class="videoPreview__wizard ui__connector" ng-if="card.data.service">
 
             <div class="videoPreview__group">
 
@@ -66,7 +66,7 @@
                 </div>
 
 
-                <div class="videoDescription__group" ng-if="card.data.service !== 'adUnit'">
+                <div class="videoDescription__group" ng-if="card.data.service !== 'adUnit' && SelfieCampaignVideoCtrl.video">
 
                     <h1 class="videoDescription__title">{{SelfieCampaignVideoCtrl.video.title}} - <a ng-href="{{SelfieCampaignVideoCtrl.video.href}}" target="_blank" class="videoDescription__source">{{card.data.service | videoService}}</a></h1>
 

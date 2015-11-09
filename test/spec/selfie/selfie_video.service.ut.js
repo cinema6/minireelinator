@@ -164,6 +164,16 @@ define(['app'], function(appModule) {
                     expect(statsFromService('').then).toBeDefined();
                 });
 
+                describe('any unrecognized service', function() {
+                    it('should resolve the promise with null', function() {
+                        $rootScope.$apply(function() {
+                            statsFromService('unrecognized', '1234');
+                        });
+
+                        expect(success).toHaveBeenCalledWith(null);
+                    });
+                });
+
                 describe('YouTube data', function() {
                     beforeEach(function() {
                         spyOn(YouTubeDataService.videos, 'list').and.returnValue(deferred.promise);
