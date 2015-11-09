@@ -893,7 +893,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         SelfieCampaignVideoCtrl.videoError = false;
                         SelfieCampaignVideoCtrl.video = data;
                         card.title = SelfieCampaignVideoCtrl.disableTitleOverwrite ?
-                            card.title : data.title;
+                            card.title : (data || {}).title;
                         card.data.service = service;
                         card.data.videoid = id;
                     })
