@@ -309,23 +309,6 @@ define(['app'], function(appModule) {
                         expect(failure).toHaveBeenCalled();
                     });
                 });
-
-                describe('AdUnit data', function() {
-                    beforeEach(function() {
-                        $rootScope.$apply(function() {
-                            statsFromService('adUnit', '{"vast":"http://vasttag.com/vast.xml"}');
-                        });
-                    });
-
-                    it('should resolve with a data object', function() {
-                        expect(success).toHaveBeenCalledWith({
-                            title: null,
-                            duration: 0,
-                            views: 0,
-                            href: SelfieVideoService.urlFromData('adUnit', '{"vast":"http://vasttag.com/vast.xml"}')
-                        });
-                    });
-                });
             });
         });
     });

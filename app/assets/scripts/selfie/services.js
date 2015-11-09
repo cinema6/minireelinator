@@ -368,22 +368,10 @@ function( angular , c6uilib ) {
                                 href: self.urlFromData(service, id)
                             };
                         });
-                    },
-                    adUnit: function() {
-                        return $q.when({
-                            title: null,
-                            duration: 0,
-                            views: 0,
-                            href: self.urlFromData(service, id)
-                        });
                     }
                 };
 
-                if (!/youtube|vimeo|dailymotion|adUnit/.test(service)) {
-                    return $q.when(null);
-                }
-
-                return fetch[service]();
+                return fetch[service] ? fetch[service]() : $q.when(null);
             };
         }])
 
