@@ -453,6 +453,8 @@ function( angular , select2 , braintree ) {
             this.budget = campaign.pricing.budget || null;
             this.limit = campaign.pricing.dailyLimit || null;
             this.limitMinPercent = limitMinPercent;
+            this.budgetMin = budgetMin;
+            this.budgetMax = budgetMax;
 
             validation.budget = !!this.budget;
 
@@ -479,23 +481,25 @@ function( angular , select2 , braintree ) {
                         return !budget || (budget > budgetMin && budget < budgetMax);
                     }
                 },
+                budgetError: {
+                    get: function() {
+                        var budget = parseInt(this.budget);
+
+                        if (budget < budgetMin) { return 1; }
+                        if (budget > budgetMax) { return 2; }
+
+                        return false;
+                    }
+                },
                 dailyLimitError: {
                     get: function() {
                         var budget = parseInt(this.budget),
                             max = parseInt(this.limit);
 
-                        if (max && !budget) {
-                            return 'Please enter your Total Budget first';
-                        }
-
-                        if (max < budget * limitMinPercent) {
-                            return 'Must be greater than ' + (limitMinPercent * 100) +
-                                '% of the Total Budget';
-                        }
-
-                        if (max > budget) {
-                            return 'Must be less than Total Budget';
-                        }
+                        if (max && !this.validBudget) { return 1; }
+                        if (max && !budget) { return 2; }
+                        if (max < budget * limitMinPercent) { return 3; }
+                        if (max > budget) { return 4; }
 
                         return false;
                     }

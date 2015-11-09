@@ -2,6 +2,7 @@
 
 * *[v1.25.0.rc1]*
   * [FEATURE]: (Selfie) Support other video player types (Vzaar, Wistia, etc)
+  * [FIX]: (Selfie) Update Budget and Daily Limit error messages to be more informative
 
 ## v1.24.0 (November 5, 2015)
 * *[v1.24.0.rc2]*
