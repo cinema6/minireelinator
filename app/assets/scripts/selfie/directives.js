@@ -25,35 +25,25 @@ function( angular , select2 , braintree ) {
     }
 
     return angular.module('c6.app.selfie.directives', [])
-        .directive('c6FillCheck', ['$timeout','$parse',
-        function                  ( $timeout , $parse ) {
+        .directive('c6FillCheck', ['$timeout',
+        function                  ( $timeout ) {
             return {
                 restrict: 'A',
-                link: function(scope, $element, attrs) {
-                    // this won't work
-                    // attrs.$observe('ngModel', function(value) {
-                    //     console.log(value);
-                    // });
+                require: '?ngModel',
+                link: function(scope, $element, attrs, ngModel) {
 
-                    // one way to do it if attribute is in {{value}}
-                    attrs.$observe('value', function(value) {
-                        if (value) {
+                    function handleModelChange() {
+                        if (ngModel.$viewValue) {
                             $element.addClass('form__fillCheck--filled');
                         } else {
                             $element.removeClass('form__fillCheck--filled');
                         }
-                    });
+                    }
 
-                    // one way to do it if the attribute isn't in {{value}}
-                    scope.$watch(function() {
-                        return $parse(attrs.ngModel)(scope);
-                    }, function(value) {
-                        if (value) {
-                            $element.addClass('form__fillCheck--filled');
-                        } else {
-                            $element.removeClass('form__fillCheck--filled');
-                        }
-                    });
+                    if (ngModel) {
+                        ngModel.$viewChangeListeners.push(handleModelChange);
+                        $timeout(handleModelChange);
+                    }
                 }
             };
         }])
@@ -409,20 +399,21 @@ function( angular , select2 , braintree ) {
 
             this.ageOptions = DemographicsService.ages;
             this.incomeOptions = DemographicsService.incomes;
-            this.genderOptions = ['None','Male','Female'];
+            this.genderOptions = ['Male','Female'];
             this.pricePerDemo = schema.pricing.cost.__pricePerDemo;
 
-            this.gender = this.genderOptions.filter(function(option) {
-                return demographics.gender[0] === option ||
-                    !demographics.gender[0] && option === 'None';
-            })[0];
+            this.gender = demographics.gender;
 
             $scope.$watch(function() {
                 return SelfieDemographicsCtrl.gender;
             }, function(newGender, oldGender) {
                 if (newGender === oldGender) { return; }
 
-                demographics.gender = newGender === 'None' ? [] : [newGender];
+                if (oldGender[0]) {
+                    newGender.splice(newGender.indexOf(oldGender[0]), 1);
+                }
+
+                demographics.gender = newGender;
             });
         }])
 
