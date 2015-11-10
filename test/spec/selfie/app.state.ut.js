@@ -6,6 +6,7 @@ define(['app'], function(appModule) {
             $q,
             c6State,
             SettingsService,
+            CampaignService,
             selfie,
             selfieApps,
             selfieApp;
@@ -38,6 +39,7 @@ define(['app'], function(appModule) {
                 $q = $injector.get('$q');
                 c6State = $injector.get('c6State');
                 SettingsService = $injector.get('SettingsService');
+                CampaignService = $injector.get('CampaignService');
             });
 
             selfie = c6State.get('Selfie');
@@ -67,8 +69,12 @@ define(['app'], function(appModule) {
         });
 
         describe('afterModel()', function() {
+            var campaignsDeferred;
+
             beforeEach(function() {
+                campaignsDeferred = $q.defer();
                 spyOn(SettingsService, 'register').and.callThrough();
+                spyOn(CampaignService, 'hasCampaigns').and.returnValue(campaignsDeferred.promise);
                 selfieApp.afterModel();
             });
 
@@ -168,19 +174,43 @@ define(['app'], function(appModule) {
                     expect(user.org.config.minireelinator).toEqual(jasmine.any(Object));
                 });
             });
+
+            it('should check for campaigns', function() {
+                expect(CampaignService.hasCampaigns).toHaveBeenCalled();
+            });
+
+            it('should add the hasCampaigns flag to the state', function() {
+                $rootScope.$apply(function() {
+                    campaignsDeferred.resolve(true);
+                });
+
+                expect(selfieApp.hasCampaigns).toBe(true);
+            });
         });
 
         describe('enter()', function() {
             beforeEach(function() {
                 spyOn(c6State, 'goTo');
+            });
 
-                $rootScope.$apply(function() {
-                    selfieApp.enter();
+            describe('if the user has campaigns', function() {
+                it('should go to the dashboard', function() {
+                    $rootScope.$apply(function() {
+                        selfieApp.hasCampaigns = true;
+                        selfieApp.enter();
+                    });
+                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard', null, null, true);
                 });
             });
 
-            it('should go to the "Selfie:CampaignDashboard" state', function() {
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard', null, null, true);
+            describe('if the user does not have campaigns', function() {
+                it('should go to New Campaign page', function() {
+                    $rootScope.$apply(function() {
+                        selfieApp.hasCampaigns = false;
+                        selfieApp.enter();
+                    });
+                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:NewCampaign', null, {}, true);
+                });
             });
         });
     });
