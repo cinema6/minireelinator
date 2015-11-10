@@ -8,6 +8,8 @@ define(function() {
     c6.kLocal = !!window.DEBUG;
     c6.kSelfie = !!window.SELFIE || (/platform/).test(hostname);
     c6.kDebug = c6.kLocal || (/staging/).test(hostname);
+    c6.kPortalHome = c6.kDebug ?
+        'https://staging.cinema6.com/' : 'https://portal.cinema6.com/';
     c6.kHasKarma = false;
     c6.kLogFormats = c6.kDebug;
     c6.kLogLevels = c6.kDebug ? ['error','warn','log','info'] : [];
