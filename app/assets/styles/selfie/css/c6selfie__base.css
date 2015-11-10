@@ -2666,7 +2666,7 @@ fa,
             }
 
             .adPreview__desktopFrame {
-                position:relative;
+                position:absolute; /* changed to absolute for desktop-card player */
                 width:100%;
                 top:0;
                 left:0;

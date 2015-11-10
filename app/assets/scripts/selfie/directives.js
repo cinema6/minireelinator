@@ -204,7 +204,7 @@ function( angular , select2 , braintree ) {
                     experience = deepExtend(minireel, {
                         id: 'e-123',
                         data: {
-                            mode: 'light',
+                            mode: 'desktop-card',
                             autoplay: false,
                             autoadvance: false,
                             adConfig: {
