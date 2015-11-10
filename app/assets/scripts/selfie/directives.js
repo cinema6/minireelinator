@@ -25,23 +25,34 @@ function( angular , select2 , braintree ) {
     }
 
     return angular.module('c6.app.selfie.directives', [])
-        .directive('c6FillCheck', ['$timeout',
-        function                  ( $timeout ) {
+        .directive('c6FillCheck', ['$timeout','$parse',
+        function                  ( $timeout , $parse ) {
             return {
                 restrict: 'A',
-                link: function(scope, $element) {
-                    $timeout(function() {
-                        if ($element.val()) {
-                            $element.addClass('form__fillCheck--filled');
-                        }
+                link: function(scope, $element, attrs) {
+                    // this won't work
+                    // attrs.$observe('ngModel', function(value) {
+                    //     console.log(value);
+                    // });
 
-                        $element.blur(function() {
-                            if ($element.val()){
-                                $element.addClass('form__fillCheck--filled');
-                            } else {
-                                $element.removeClass('form__fillCheck--filled');
-                            }
-                        });
+                    // one way to do it if attribute is in {{value}}
+                    attrs.$observe('value', function(value) {
+                        if (value) {
+                            $element.addClass('form__fillCheck--filled');
+                        } else {
+                            $element.removeClass('form__fillCheck--filled');
+                        }
+                    });
+
+                    // one way to do it if the attribute isn't in {{value}}
+                    scope.$watch(function() {
+                        return $parse(attrs.ngModel)(scope);
+                    }, function(value) {
+                        if (value) {
+                            $element.addClass('form__fillCheck--filled');
+                        } else {
+                            $element.removeClass('form__fillCheck--filled');
+                        }
                     });
                 }
             };
