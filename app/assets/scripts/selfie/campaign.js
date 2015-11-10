@@ -94,10 +94,11 @@ function( angular , c6State  , PaginatedListState                    ,
                         statuses: this.filter,
                     }, this.limit, this.page).ensureResolution();
                 };
-                this.afterModel = function() {
+                this.afterModel = function(model) {
                     var user = c6State.get('Selfie').cModel;
 
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
+                    this.campaignList = model;
                 };
             }]);
         }])
@@ -163,7 +164,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     return result;
                 },{});
 
-                if (ids.campaigns) {
+                if (ids.campaigns.length) {
                     CampaignService.getAnalytics(ids.campaigns.join(','))
                         .then(function(stats) {
                             stats.forEach(function(stat) {
@@ -181,7 +182,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         });
                 }
 
-                if (ids.users && cState.isAdmin) {
+                if (ids.users.length && cState.isAdmin) {
                     CampaignService.getUserData(ids.users.join(','))
                         .then(function(userHash) {
                             model.forEach(function(campaign) {

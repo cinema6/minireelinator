@@ -153,34 +153,17 @@ function( angular , c6State  ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:ConfirmAccount', ['$location','c6State','cinema6',
+            c6StateProvider.state('Selfie:ConfirmAccount', ['$location','c6State',
                                                             'AccountService','$q',
-            function                                       ( $location , c6State , cinema6 ,
+            function                                       ( $location , c6State ,
                                                              AccountService , $q ) {
                 var id = $location.search().id,
                     token = $location.search().token;
 
                 this.model = function() {
                     return AccountService.confirmUser(id, token)
-                        .then(function(user) {
-                            return $q.all({
-                                user: user,
-                                org: cinema6.db.find('org', user.org),
-                                advertiser: cinema6.db.find('advertiser', user.advertiser),
-                                customer: cinema6.db.find('customer', user.customer)
-                            });
-                        })
-                        .then(function(decoration) {
-                            var user = decoration.user;
-                            user.org = decoration.org;
-                            user.advertiser = decoration.advertiser;
-                            user.customer = decoration.customer;
-
-                            return cinema6.db.push('user', user.id, user);
-                        })
-                        .then(function(user) {
-                            c6State.goTo('Selfie', [user]);
-                            return user;
+                        .then(function() {
+                            c6State.goTo('Selfie:Login', null, {reason:2});
                         })
                         .catch(function() {
                             // if the confirmation fails go to Login page with message

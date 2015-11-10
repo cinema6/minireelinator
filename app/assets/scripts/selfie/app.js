@@ -56,15 +56,16 @@ function( angular , c6State  , services   , directives   , campaign   ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:App', ['c6State','SettingsService',
-            function                            ( c6State , SettingsService ) {
+            c6StateProvider.state('Selfie:App', ['c6State','SettingsService','CampaignService',
+            function                            ( c6State , SettingsService , CampaignService ) {
                 this.templateUrl = 'views/selfie/app.html';
 
                 this.model = function() {
                     return this.cParent.cModel.selfie;
                 };
                 this.afterModel = function() {
-                    var user = c6State.get('Selfie').cModel;
+                    var user = c6State.get('Selfie').cModel,
+                        cState = this;
 
                     if (!user.org.config.minireelinator) {
                         user.org.config.minireelinator = {};
@@ -111,9 +112,17 @@ function( angular , c6State  , services   , directives   , campaign   ) {
                                 return currentUserId === prevUserId;
                             }
                         });
+                    return CampaignService.hasCampaigns()
+                        .then(function(hasCampaigns) {
+                            cState.hasCampaigns = hasCampaigns;
+                        });
                 };
                 this.enter = function() {
-                    c6State.goTo('Selfie:CampaignDashboard', null, null, true);
+                    if (this.hasCampaigns) {
+                        c6State.goTo('Selfie:CampaignDashboard', null, null, true);
+                    } else {
+                        c6State.goTo('Selfie:NewCampaign', null, {}, true);
+                    }
                 };
             }]);
         }]);
