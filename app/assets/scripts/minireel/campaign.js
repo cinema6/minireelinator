@@ -1059,7 +1059,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 card.params.sponsor = card.params.sponsor || CampaignCtrl.model.brand;
                 card.params.ad = card.params.ad !== false;
                 card.campaign.countUrls = card.campaign.countUrls || [];
-                card.campaign.clickUrls = card.campaign.clickUrls || [];
+                card.campaign.playUrls = card.campaign.playUrls || [];
                 this.model = card;
                 this.campaignData = cState.metaData;
                 this.enableMoat = !!card.data.moat;

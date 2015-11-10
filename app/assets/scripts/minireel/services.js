@@ -2146,7 +2146,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         advertiserId: null,
                         minViewTime: null,
                         countUrls: [],
-                        clickUrls: []
+                        playUrls: []
                     }),
                     collateral: copy({}),
                     thumb: function(card) {
