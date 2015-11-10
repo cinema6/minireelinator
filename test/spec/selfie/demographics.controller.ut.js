@@ -55,14 +55,14 @@ define(['app'], function(appModule) {
 
         describe('properties', function() {
             describe('gender', function() {
-                it('should come from the campaign or be None', function() {
-                    expect(SelfieDemographicsCtrl.gender).toEqual('None');
+                it('should come from the campaign', function() {
+                    expect(SelfieDemographicsCtrl.gender).toEqual([]);
 
                     campaign.targeting.demographics.gender.push('Male');
 
                     compileCtrl();
 
-                    expect(SelfieDemographicsCtrl.gender).toEqual('Male');
+                    expect(SelfieDemographicsCtrl.gender).toEqual(['Male']);
                 });
             });
         });
@@ -73,19 +73,19 @@ define(['app'], function(appModule) {
                     expect(campaign.targeting.demographics.gender).toEqual([]);
 
                     $scope.$apply(function() {
-                        SelfieDemographicsCtrl.gender = 'Male';
+                        SelfieDemographicsCtrl.gender = ['Male'];
                     });
 
                     expect(campaign.targeting.demographics.gender).toEqual(['Male']);
 
                     $scope.$apply(function() {
-                        SelfieDemographicsCtrl.gender = 'Female';
+                        SelfieDemographicsCtrl.gender = ['Male','Female'];
                     });
 
                     expect(campaign.targeting.demographics.gender).toEqual(['Female']);
 
                     $scope.$apply(function() {
-                        SelfieDemographicsCtrl.gender = 'None';
+                        SelfieDemographicsCtrl.gender = [];
                     });
 
                     expect(campaign.targeting.demographics.gender).toEqual([]);
