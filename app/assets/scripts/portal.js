@@ -45,8 +45,8 @@ function( angular , c6State  , c6uilib ) {
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Apps', ['c6State','cinema6','$q',
-            function                      ( c6State , cinema6 , $q ) {
+            c6StateProvider.state('Apps', ['c6State','cinema6','$q','$window','c6Defines',
+            function                      ( c6State , cinema6 , $q , $window , c6Defines ) {
                 this.model = function() {
                     var applications = this.cParent.cModel.applications;
 
@@ -67,9 +67,7 @@ function( angular , c6State  , c6uilib ) {
                         return c6State.goTo('MiniReel', [minireel], null, true);
                     }
 
-                    c6State.goTo('Error', [
-                        'You do not have any supported experiences!'
-                    ], null, true);
+                    $window.location.href = c6Defines.kPlatformHome;
                 };
             }]);
         }]);

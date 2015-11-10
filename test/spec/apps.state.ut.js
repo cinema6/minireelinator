@@ -7,12 +7,21 @@ define(['app'], function(appModule) {
             $q,
             cinema6,
             portal,
-            apps;
+            apps,
+            c6Defines;
+
+        var $window;
 
         beforeEach(function() {
             module('ng', function($provide) {
                 $provide.value('$location', {
                     absUrl: function() {}
+                });
+                $provide.value('$window', {
+                    addEventListener: function() {},
+                    document: window.document,
+                    navigator: window.navigator,
+                    location: { href: null }
                 });
             });
             module(appModule.name);
@@ -22,6 +31,8 @@ define(['app'], function(appModule) {
                 $rootScope = $injector.get('$rootScope');
                 $q = $injector.get('$q');
                 cinema6 = $injector.get('cinema6');
+                c6Defines = $injector.get('c6Defines');
+                $window = $injector.get('$window');
             });
 
             portal = c6State.get('Portal');
@@ -98,11 +109,15 @@ define(['app'], function(appModule) {
                 expect(c6State.goTo).toHaveBeenCalledWith('MiniReel', [apps.cModel['mini-reel-maker']], null, true);
             });
 
-            it('should go to the error state if the minireel\'s uri is not "mini-reel-maker"', function() {
-                delete apps.cModel['mini-reel-maker'];
-                apps.enter();
+            describe('if the user lacks the mini-reel-maker experience', function() {
+                beforeEach(function() {
+                    delete apps.cModel['mini-reel-maker'];
+                    apps.enter();
+                });
 
-                expect(c6State.goTo).toHaveBeenCalledWith('Error', [jasmine.any(String)], null, true);
+                it('should go to the platform', function() {
+                    expect($window.location.href).toBe(c6Defines.kPlatformHome);
+                });
             });
         });
     });
