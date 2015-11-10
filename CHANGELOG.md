@@ -6,7 +6,7 @@
   * [FIX]: (Selfie) Updated branding (changed logo, primary buttons, links, accent colors 
     etc), removed help text from inputs based on feedback, updated side navigation for 
     sections on create campaign. 
-  * [FIX]: (Selfie) Updated form field labels for create campaign
+  * [FIX]: (Selfie) Updated form field labels for create campaign, changed preview player
     
 ## v1.24.0 (November 5, 2015)
 * *[v1.24.0.rc2]*
