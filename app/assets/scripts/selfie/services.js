@@ -176,6 +176,13 @@ function( angular , c6uilib ) {
                     });
             };
 
+            this.hasCampaigns = function() {
+                return $http.get(c6UrlMaker('campaigns?limit=1&fields=id', 'api'))
+                    .then(function(response) {
+                        return !!response.data.length;
+                    });
+            };
+
             /* Creates a diff summary of two campaigns with special handling for the first entry in
                 the cards array. Does not compare individual elements of arrays. */
             this.campaignDiffSummary = function(originalCampaign, updatedCampaign,

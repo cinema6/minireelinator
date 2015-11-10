@@ -6,7 +6,7 @@
         </div>
             <form class="login__form" ng-submit="LoginCtrl.submit()">
                 <fieldset class="form__item">
-                    <input c6-fill-check class="form__textBox form__fillCheck" type="email" name="email" id="c6-username" ng-model="LoginCtrl.model.email" autofocus autocomplete="off">
+                    <input c6-fill-check class="form__textBox form__fillCheck" type="text" name="email" id="c6-username" ng-model="LoginCtrl.model.email" autofocus autocomplete="off">
                     <label class="form__label" for="c6-username">
                         <i class="fa fa-times ui--error"></i> 
                         Email
@@ -36,7 +36,8 @@
                     {{LoginCtrl.error}}
                 </div>
                 <div ng-show="LoginCtrl.reason" ng-switch="LoginCtrl.reason">
-                    <span ng-switch-when="1">There was an problem confirming your account. Please sign in so you can resend an activation link by email.</span>
+                    <span ng-switch-when="1" class="alertMessage alert__failure text--center">There was an problem confirming your account. Please sign in so you can resend an activation link by email.</span>
+                    <span ng-switch-when="2" class="alertMessage alert__success text--center">Your account has been successfully activated. Please login to continue.</span>
                 </div>
                 <div class="subActions__box">
                     <p class="subAction text--center"><a c6-sref="Selfie:ForgotPassword">Forgot Password?</a></p>

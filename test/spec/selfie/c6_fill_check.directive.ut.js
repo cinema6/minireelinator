@@ -24,7 +24,7 @@ define(['app'], function(appModule) {
             it('should add a class', function() {
                 $scope.value = 'Filling in the input';
                 $scope.$apply(function() {
-                    $input = $compile('<input c6-fill-check ng-model="value">')($scope);
+                    $input = $compile('<input c6-fill-check ng-model="value" type="text">')($scope);
                 });
 
                 $timeout.flush();
@@ -36,7 +36,7 @@ define(['app'], function(appModule) {
         describe('when an input is empty', function() {
             beforeEach(function() {
                 $scope.$apply(function() {
-                    $input = $compile('<input c6-fill-check ng-model="value">')($scope);
+                    $input = $compile('<input c6-fill-check ng-model="value" type="text">')($scope);
                 });
 
                 $timeout.flush();
@@ -49,10 +49,9 @@ define(['app'], function(appModule) {
             describe('when a value is added', function() {
                 beforeEach(function() {
                     $scope.$apply(function() {
-                        $scope.value = 'Filled in!';
+                        $input.val('Filled in!');
+                        $input.trigger('change');
                     });
-
-                    $input.trigger('blur');
                 });
 
                 it('should add the class', function() {
@@ -62,10 +61,9 @@ define(['app'], function(appModule) {
                 describe('when a value is removed', function() {
                     it('should remove the class', function() {
                         $scope.$apply(function() {
-                            $scope.value = '';
+                            $input.val('');
+                            $input.trigger('change');
                         });
-
-                        $input.trigger('blur');
 
                         expect($input.hasClass('form__fillCheck--filled')).toBe(false);
                     });

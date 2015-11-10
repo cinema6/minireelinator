@@ -37,7 +37,7 @@ define(['app'], function(appModule) {
         });
 
         describe('model()', function() {
-            var user, decoratedUser, success, failure;
+            var user, success, failure;
 
             beforeEach(function() {
                 user = {
@@ -47,39 +47,8 @@ define(['app'], function(appModule) {
                     customer: 'cus-123'
                 };
 
-                decoratedUser = {
-                    email: 'josh@cinema6.com',
-                    org: {
-                        id: 'o-123'
-                    },
-                    advertiser: {
-                        id: 'a-123'
-                    },
-                    customer: {
-                        id: 'cus-123'
-                    }
-                };
-
                 success = jasmine.createSpy('success');
                 failure = jasmine.createSpy('failure');
-
-                spyOn(cinema6.db, 'find').and.callFake(function(entity) {
-                    switch (entity) {
-                        case 'org':
-                            return {
-                                id: 'o-123'
-                            };
-                        case 'advertiser':
-                            return {
-                                id: 'a-123'
-                            };
-                        case 'customer':
-                            return {
-                                id: 'cus-123'
-                            };
-                    }
-                });
-                spyOn(cinema6.db, 'push').and.returnValue(decoratedUser);
 
                 spyOn(AccountService, 'confirmUser');
             });
@@ -101,55 +70,18 @@ define(['app'], function(appModule) {
                     });
                 });
 
-                it('should decorate the user', function() {
-                    expect(cinema6.db.find).toHaveBeenCalledWith('org', 'o-123');
-                    expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', 'a-123');
-                    expect(cinema6.db.find).toHaveBeenCalledWith('customer', 'cus-123');
+                it('should transition to the login state', function() {
+                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Login', null, {reason:2});
                 });
 
-                it('shoudl go to the Selfie state', function() {
-                    var decoratedUser = {
-                        email: 'josh@cinema6.com',
-                        org: {
-                            id: 'o-123'
-                        },
-                        advertiser: {
-                            id: 'a-123'
-                        },
-                        customer: {
-                            id: 'cus-123'
-                        }
-                    };
-
-                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie', [decoratedUser]);
-                });
-
-                it('should return the user', function() {
-                    expect(success).toHaveBeenCalledWith(user);
+                it('should fulfill the promise', function() {
+                    expect(success).toHaveBeenCalled();
                 });
             });
 
             describe('if the user is not confirmed', function() {
                 beforeEach(function() {
                     AccountService.confirmUser.and.returnValue($q.reject());
-                    $rootScope.$apply(function() {
-                        SelfieConfirmAcctState.model().then(success, failure);
-                    });
-                });
-
-                it('should transition to the login state', function() {
-                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Login', null, {reason:1});
-                });
-
-                it('should reject the promise', function() {
-                    expect(failure).toHaveBeenCalled();
-                });
-            });
-
-            describe('if the decoration is not successful', function() {
-                beforeEach(function() {
-                    AccountService.confirmUser.and.returnValue($q.when(user));
-                    cinema6.db.find.and.returnValue($q.reject());
                     $rootScope.$apply(function() {
                         SelfieConfirmAcctState.model().then(success, failure);
                     });
