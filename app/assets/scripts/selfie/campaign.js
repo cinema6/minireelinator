@@ -94,11 +94,10 @@ function( angular , c6State  , PaginatedListState                    ,
                         statuses: this.filter,
                     }, this.limit, this.page).ensureResolution();
                 };
-                this.afterModel = function(model) {
+                this.afterModel = function() {
                     var user = c6State.get('Selfie').cModel;
 
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
-                    this.campaignList = model;
                 };
             }]);
         }])
