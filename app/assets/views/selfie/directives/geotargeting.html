@@ -1,8 +1,8 @@
 <h1 class="formSection__title">
     <span class="formSection__titleText tk--hdr">Location</span>
-    <span class="tk--fineprint">
+    <!--<span class="tk--fineprint">
         <i class="fa fa-asterisk"></i> Using this feature will add an additional cost of ${{SelfieGeotargetingCtrl.pricePerGeo}} per 1000 video plays.
-    </span>
+    </span>-->
 </h1>
 <div class="form__items">
 
@@ -12,12 +12,12 @@
             <i class="fa fa-times ui--error"></i>
             States
         </label>
-        <div class="form__helpBox form__helpBox--right">
+        <!--<div class="form__helpBox form__helpBox--right">
             <div class="form__helpText">
                 Geo-target enables you to reach viewers based on their location including country, state, or DMA.
-                <!-- You can use geographic data to target viewers from a specific state. -->
+                --old text-- You can use geographic data to target viewers from a specific state. --
             </div>
-        </div>
+        </div>-->
         <div class="form__errorBox">
             <p class="form__errorMsg">
                 <i class="fa fa-exclamation-triangle"></i> Error message goes here
@@ -29,11 +29,11 @@
         <select c6-select-box multiple="multiple" class="form__selectBox form__selectBox--multiple" ng-model="campaign.targeting.geo.dmas" ng-options="option for option in SelfieGeotargetingCtrl.dmaOptions" id="c6-dmas"></select>
         <label class="form__label" for="c6-dmas">
             <i class="fa fa-times ui--error"></i>
-            DMAs
+            DMA
         </label>
         <div class="form__helpBox form__helpBox--right">
             <div class="form__helpText">
-                You can use geographic data to target viewers from a specific DMA.
+                Target viewers by metropolitan area
             </div>
         </div>
         <div class="form__errorBox">
