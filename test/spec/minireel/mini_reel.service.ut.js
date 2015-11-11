@@ -1518,7 +1518,7 @@
                             it('should be the correct short url in staging', function() {
                                 c6Defines.kDebug = true;
                                 result = MiniReelService.previewUrlOf(minireel);
-                                expect(result).toBe('//platform.staging.reelcontent.com/preview?' +
+                                expect(result).toBe('//platform-staging.reelcontent.com/preview?' +
                                    'experience=' + encodeURIComponent(minireel.id)
                                 );
                             });
