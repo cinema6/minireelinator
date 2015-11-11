@@ -445,6 +445,28 @@ function( angular , c6uilib ) {
             };
         }])
 
+        .service('SelfieLoginDialogService', ['$q',function($q) {
+            var model = {},
+                deferred;
+
+            Object.defineProperty(this, 'model', {
+                get: function() {
+                    return model;
+                }
+            });
+
+            this.display = function() {
+                model.show = true;
+                deferred = $q.defer();
+                return deferred.promise;
+            };
+
+            this.success = function() {
+                model.show = false;
+                deferred.resolve('success');
+            };
+        }])
+
         .service('DemographicsService', [function() {
             this.ages = [
                 '0-18',
