@@ -2464,8 +2464,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
 
             this.previewUrlOf = function(minireel) {
+                var debug = c6Defines.kDebug;
+
                 return ((minireel.access === 'public') || null) &&
-                    (c6Defines.kDebug ? '//staging.cinema6.com' : 'http://cinema6.com') +
+                    (debug ? '//platform.staging.reelcontent.com' : '//reelcontent.com') +
                     ('/preview?experience=' + encodeURIComponent(minireel.id));
             };
 

@@ -1,5 +1,10 @@
 # MiniReelinator
 
+* *[v1.25.0.rc2]*
+  * Add support for deploying selfie to \*.reelcontent.com
+  * **Extra Deployment Steps**:
+    * Deploy [`c6embed` v3.0.3](https://github.com/cinema6/c6embed/milestones/v3.0.3)
+
 * *[v1.25.0.rc1]*
   * [FEATURE]: (Selfie) Support other video player types (Vzaar, Wistia, etc)
   * [FIX]: (Selfie) Update Budget and Daily Limit error messages to be more informative

@@ -1239,8 +1239,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     this.controller = 'AppController';
                     this.controllerAs = 'AppCtrl';
 
-                    this.name = /selfie/.test(window.location.href) || c6Defines.kSelfie ?
-                        'Selfie' : 'Portal';
+                    this.name = c6Defines.kSelfie ? 'Selfie' : 'Portal';
 
                     this.title = function() {
                         return 'Cinema6 Dashboard';
