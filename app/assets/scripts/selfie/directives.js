@@ -137,6 +137,25 @@ function( angular , select2 , braintree ) {
             };
         }])
 
+        .directive('selectLabel', ['$document',function($document) {
+            return {
+                restrict: 'A',
+                link: function(scope, $element, attrs) {
+
+                    $element.on('click', function() {
+                        var input = $document[0].getElementById(attrs['for']),
+                            $input = $(input);
+
+                        if ($input.hasClass('ui--active')) {
+                            $input.select2('close');
+                        } else {
+                            $input.select2('open');
+                        }
+                    });
+                }
+            };
+        }])
+
         .directive('blurValidate', [function() {
             return {
                 restrict: 'A',

@@ -9,7 +9,7 @@
 
     <fieldset class="form__item" >
         <select c6-select-box multiple="multiple" class="form__selectBox form__selectBox--multiple" ng-model="campaign.targeting.demographics.age" ng-options="option for option in SelfieDemographicsCtrl.ageOptions" id="c6-ages"></select>
-        <label class="form__label" for="c6-ages">
+        <label select-label class="form__label" for="c6-ages">
             <i class="fa fa-times ui--error"></i>
             Age
         </label>
@@ -27,7 +27,7 @@
 
     <fieldset class="form__item">
         <select c6-select-box multiple="multiple" class="form__selectBox form__selectBox--multiple" ng-model="campaign.targeting.demographics.income" ng-options="option for option in SelfieDemographicsCtrl.incomeOptions" id="c6-income"></select>
-        <label class="form__label" for="c6-income">
+        <label select-label class="form__label" for="c6-income">
             <i class="fa fa-times ui--error"></i>
             Income
         </label>
@@ -44,8 +44,8 @@
     </fieldset>
 
     <fieldset class="form__item">
-        <select c6-select-box multiple="multiple" class="form__selectBox form__selectBox--multiple" ng-model="SelfieDemographicsCtrl.gender" ng-options="option for option in SelfieDemographicsCtrl.genderOptions" id="c6-income"></select>
-        <label class="form__label" for="c6-income">
+        <select c6-select-box multiple="multiple" class="form__selectBox form__selectBox--multiple" ng-model="SelfieDemographicsCtrl.gender" ng-options="option for option in SelfieDemographicsCtrl.genderOptions" id="c6-gender"></select>
+        <label select-label class="form__label" for="c6-gender">
             <i class="fa fa-times ui--error"></i>
             Gender
         </label>
