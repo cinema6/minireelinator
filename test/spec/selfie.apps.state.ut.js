@@ -7,9 +7,20 @@ define(['app'], function(appModule) {
             $q,
             cinema6,
             selfie,
-            apps;
+            apps,
+            c6Defines;
+
+        var $window;
 
         beforeEach(function() {
+            module(function($provide) {
+                $provide.value('$window', {
+                    addEventListener: function() {},
+                    document: window.document,
+                    navigator: window.navigator,
+                    location: { href: null }
+                });
+            });
             module(appModule.name);
 
             inject(function($injector) {
@@ -17,6 +28,8 @@ define(['app'], function(appModule) {
                 $rootScope = $injector.get('$rootScope');
                 $q = $injector.get('$q');
                 cinema6 = $injector.get('cinema6');
+                c6Defines = $injector.get('c6Defines');
+                $window = $injector.get('$window');
             });
 
             selfie = c6State.get('Selfie');
@@ -93,11 +106,15 @@ define(['app'], function(appModule) {
                 expect(c6State.goTo).toHaveBeenCalledWith('Selfie:App', [apps.cModel.selfie], null, true);
             });
 
-            it('should go to the error state if the minireel\'s uri is not "selfie"', function() {
-                delete apps.cModel.selfie;
-                apps.enter();
+            describe('if the user lacks the selfie experience', function() {
+                beforeEach(function() {
+                    delete apps.cModel.selfie;
+                    apps.enter();
+                });
 
-                expect(c6State.goTo).toHaveBeenCalledWith('Error', [jasmine.any(String)], null, true);
+                it('should go to the portal', function() {
+                    expect($window.location.href).toBe(c6Defines.kPortalHome);
+                });
             });
         });
     });
