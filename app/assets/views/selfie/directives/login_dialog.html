@@ -1,24 +1,11 @@
 <div ng-if="model.show">
     <div style="height:26em;" class="modalDialog__group modalDialog__group--confirm selfieModal">
+
         <header class="modalHeader__group">
-            <h1 class="modal__title">Your session has expired, please login to continue</h1>
-            <!-- <button class="modal__closeBtn btnInvis" ng-click="dialog.onCancel()"><span class="ir">Close</span>
-                <svg class="ui__iconHolder18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                     viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
-                    <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M16.5,0L9,7.5L1.5,0L0,1.5L7.5,9L0,16.5L1.5,18L9,10.5l7.5,7.5l1.5-1.5L10.5,9
-                    L18,1.5L16.5,0z"/>
-                </svg>
-            </button> -->
+            <h1 class="modal__title">Your session has expired, please login</h1>
         </header>
 
         <div class="modalBody__group typo--centered">
-            <!-- <h1 ng-show="dialog.prompt" class="modalBody__title">{{dialog.prompt}}</h1>
-            <p ng-show="dialog.message" class="modalBody__message">
-                Message here {{dialog.message}}
-            </p> -->
-
-
-
 
             <form class="login__form" ng-submit="LoginCtrl.submit()">
                 <fieldset class="form__item">
@@ -27,11 +14,6 @@
                         <i class="fa fa-times ui--error"></i> 
                         Email
                     </label>
-                    <!--<div class="form__helpBox form__helpBox--right">
-                        <div class="form__helpText">
-                            Please enter your email associated with the account 
-                        </div>
-                    </div>-->
                 </fieldset>
                 <fieldset class="form__item">
                     <input c6-fill-check class="form__textBox form__fillCheck" type="password" name="password" id="c6-password" ng-model="LoginCtrl.model.password" autocomplete="off">
@@ -39,11 +21,6 @@
                         <i class="fa fa-times ui--error"></i> 
                         Password
                     </label>
-                    <!--<div class="form__helpBox form__helpBox--right">
-                        <div class="form__helpText">
-                            Please enter your password
-                        </div>
-                    </div>-->
                 </fieldset>
                 <div class="ui__btnHolder">
                     <button class="action__btn action__btn--full">Login</button>
@@ -59,18 +36,9 @@
                 </div>
             </form>
 
-
-
-
-
         </div>
 
-        <!-- <footer class="modalFooter__group">
-            <button class="btnAction btnAction btnAction--first" ng-show="!!dialog.cancel" ng-click="dialog.onCancel()" title="{{dialog.cancel}}">{{dialog.cancel}}</button>
-            <button ng-click="dialog.onAffirm()" title="{{dialog.affirm}}" class="btnAction btnAction--success btnAction--last" type="button">{{dialog.affirm}}</button>
-        </footer> -->
     </div>
-
 
     <div class="modal__overlay modal__overlay--confirm">&nbsp;</div>
 </div>

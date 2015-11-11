@@ -104,8 +104,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             }]);
             $httpProvider.interceptors.push('Accepted202Interceptor');
 
-            $provide.factory('Unauthorized401Interceptor', ['$q','c6UrlParser','SelfieLoginDialogService','$injector',
-            function                                       ( $q , c6UrlParser , SelfieLoginDialogService , $injector ) {
+            $provide.factory('Unauthorized401Interceptor', ['$q','$injector','c6UrlParser',
+                                                            'SelfieLoginDialogService',
+            function                                       ( $q , $injector , c6UrlParser ,
+                                                             SelfieLoginDialogService ) {
                 function validUrl(url) {
                     var currentUrl = c6UrlParser(''),
                         requestUrl = c6UrlParser(url),
@@ -126,14 +128,14 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         if (status === 401 && validUrl(url)) {
                             SelfieLoginDialogService.display()
                                 .then(function() {
-                                    $injector.invoke(['$http', function($http) {
-                                        $http(config)
-                                            .then(function(resp) {
-                                                deferred.resolve(resp);
-                                            }, function(err) {
-                                                deferred.reject(err);
-                                            });
-                                    }]);
+                                    var $http = $injector.get('$http');
+
+                                    $http(config)
+                                        .then(function(resp) {
+                                            deferred.resolve(resp);
+                                        }, function(err) {
+                                            deferred.reject(err);
+                                        });
                                 });
 
                             return deferred.promise;
