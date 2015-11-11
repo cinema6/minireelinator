@@ -104,6 +104,47 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             }]);
             $httpProvider.interceptors.push('Accepted202Interceptor');
 
+            $provide.factory('Unauthorized401Interceptor', ['$q','c6UrlParser','SelfieLoginDialogService','$injector',
+            function                                       ( $q , c6UrlParser , SelfieLoginDialogService , $injector ) {
+                function validUrl(url) {
+                    var currentUrl = c6UrlParser(''),
+                        requestUrl = c6UrlParser(url),
+                        currentHost = currentUrl.hostname,
+                        requestHost = requestUrl.hostname,
+                        path = requestUrl.pathname;
+
+                    return (currentHost === requestHost) && !(/auth/).test(path);
+                }
+
+                return {
+                    responseError: function(response) {
+                        var deferred = $q.defer(),
+                            status = response.status,
+                            config = response.config,
+                            url = config.url;
+
+                        if (status === 401 && validUrl(url)) {
+                            SelfieLoginDialogService.display()
+                                .then(function() {
+                                    $injector.invoke(['$http', function($http) {
+                                        $http(config)
+                                            .then(function(resp) {
+                                                deferred.resolve(resp);
+                                            }, function(err) {
+                                                deferred.reject(err);
+                                            });
+                                    }]);
+                                });
+
+                            return deferred.promise;
+                        } else {
+                            return $q.reject(response);
+                        }
+                    }
+                };
+            }]);
+            $httpProvider.interceptors.push('Unauthorized401Interceptor');
+
             $provide.constant('VoteAdapter', ['$http','config','$q',
             function                         ( $http , config , $q ) {
                 function clean(model) {
