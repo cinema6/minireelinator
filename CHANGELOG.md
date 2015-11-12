@@ -1,6 +1,12 @@
 # MiniReelinator
 
 * *[v1.25.0.rc2]*
+  * [FIX]: Fix for an issue where "Ad Start" pixels were saved incorrectly
+  * [FEATURE]: (Selfie) Prompt user to login when session has expired, ensure that the
+    they don't lose any changes they had made
+  * [FIX]: Ensure that email fields have a type of "email" to trigger the correct
+    keyboard on iPads and mobile devices
+  * [FIX]: Fix for an issue where the labels of select dropdowns were not clickable
   * Add support for deploying selfie to \*.reelcontent.com
   * **Extra Deployment Steps**:
     * Deploy [`c6embed` v3.0.3](https://github.com/cinema6/c6embed/milestones/v3.0.3)
