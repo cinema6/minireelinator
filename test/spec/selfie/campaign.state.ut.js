@@ -1,6 +1,8 @@
 define(['app'], function(appModule) {
     'use strict';
 
+    var copy = angular.copy;
+
     ['Selfie:New:Campaign', 'Selfie:Edit:Campaign'].forEach(function(stateName) {
         describe('Selfie:Campaign State', function() {
             var $rootScope,
@@ -87,7 +89,8 @@ define(['app'], function(appModule) {
                         advertiser: {},
                         org: {
                             id: 'o-123'
-                        }
+                        },
+                        id: 'u-123'
                     };
                     campaignState = c6State.get(stateName);
                 });
@@ -127,6 +130,30 @@ define(['app'], function(appModule) {
                     expect(campaignState.campaign).toEqual(pojo);
                     expect(campaignState.advertiser).toEqual(selfieState.cModel.advertiser);
                     expect(campaignState._campaign).toEqual(campaign);
+                });
+
+                describe('isCreator', function() {
+                    it('should be true if campaign has no user (new campaign) or if user matches', function() {
+                        var _campaign;
+
+                        _campaign = copy(campaign);
+                        delete _campaign.user;
+                        campaignState.cParent.campaign = _campaign;
+                        campaignState.beforeModel();
+                        expect(campaignState.isCreator).toBe(true);
+
+                        _campaign = copy(campaign);
+                        _campaign.user = 'u-123';
+                        campaignState.cParent.campaign = _campaign;
+                        campaignState.beforeModel();
+                        expect(campaignState.isCreator).toBe(true);
+
+                        _campaign = copy(campaign);
+                        _campaign.user = 'u-xxx';
+                        campaignState.cParent.campaign = _campaign;
+                        campaignState.beforeModel();
+                        expect(campaignState.isCreator).toBe(false);
+                    });
                 });
             });
 
@@ -351,7 +378,7 @@ define(['app'], function(appModule) {
                     expect(success).toHaveBeenCalledWith(campaignState.campaign);
                 });
 
-                it('should not save if _campaign is erased', function() {
+                it('should not save if _campaign is not a draft', function() {
                     campaignState.campaign.status = 'pending';
 
                     $rootScope.$apply(function() {
@@ -362,74 +389,92 @@ define(['app'], function(appModule) {
                     expect(success).toHaveBeenCalledWith(campaignState.campaign);
                 });
 
-                it('should update the campaign DB Model with the current campaign data and save', function() {
-                    campaignState.campaign.name = 'New Campaign';
+
+                it('should not save if user is not the creator', function() {
+                    campaignState.isCreator = false;
 
                     $rootScope.$apply(function() {
                         campaignState.saveCampaign().then(success, failure);
                     });
 
-                    expect(campaign.save).toHaveBeenCalled();
-                    expect(campaignState._campaign.name).toEqual('New Campaign');
-                });
-
-                it('should maintain data returned from the server in addition to UI updates', function() {
-                    $rootScope.$apply(function() {
-                        campaignState.saveCampaign();
-                    });
-                    expect(campaignState._campaign.change).toEqual(1);
-
-                    $rootScope.$apply(function() {
-                        campaignState.saveCampaign();
-                    });
-                    expect(campaignState._campaign.change).toEqual(2);
-
-                    $rootScope.$apply(function() {
-                        campaignState.saveCampaign();
-                    });
-                    expect(campaignState._campaign.change).toEqual(3);
-
-                    $rootScope.$apply(function() {
-                        campaignState.saveCampaign();
-                    });
-                    expect(campaignState._campaign.change).toEqual(4);
-                });
-
-                it('should return the pojoified campaign without the server updates', function() {
-                    campaignState.campaign.name = 'New Campaign';
-
-                    $rootScope.$apply(function() {
-                        campaignState.saveCampaign().then(success, failure);
-                    });
-
+                    expect(campaign.save).not.toHaveBeenCalled();
                     expect(success).toHaveBeenCalledWith(campaignState.campaign);
                 });
 
-                it('should not extend the cards array objects', function() {
-                    campaignState.campaign.cards[0] = {};
-
-                    $rootScope.$apply(function() {
-                        campaignState.saveCampaign().then(success, failure);
+                describe('when the campaign should actually save', function() {
+                    beforeEach(function() {
+                        campaignState.isCreator = true;
                     });
 
-                    expect(campaignState._campaign.cards[0]).toEqual(card);
-                });
+                    it('should update the campaign DB Model with the current campaign data and save', function() {
+                        campaignState.campaign.name = 'New Campaign';
 
-                it('should overwrite the targeting arrays', function() {
-                    campaignState._campaign.targeting.interests.push('comedy');
-                    campaignState._campaign.targeting.interests.push('entertainment');
-                    campaignState.campaign.targeting.interests = [];
+                        $rootScope.$apply(function() {
+                            campaignState.saveCampaign().then(success, failure);
+                        });
 
-                    campaignState._campaign.targeting.demographics.age.push('18-24');
-                    campaignState._campaign.targeting.demographics.age.push('25-34');
-                    campaignState.campaign.targeting.demographics.age = [];
-
-                    $rootScope.$apply(function() {
-                        campaignState.saveCampaign().then(success, failure);
+                        expect(campaign.save).toHaveBeenCalled();
+                        expect(campaignState._campaign.name).toEqual('New Campaign');
                     });
 
-                    expect(campaignState._campaign.targeting.interests).toEqual([]);
-                    expect(campaignState._campaign.targeting.demographics.age).toEqual([]);
+                    it('should maintain data returned from the server in addition to UI updates', function() {
+                        $rootScope.$apply(function() {
+                            campaignState.saveCampaign();
+                        });
+                        expect(campaignState._campaign.change).toEqual(1);
+
+                        $rootScope.$apply(function() {
+                            campaignState.saveCampaign();
+                        });
+                        expect(campaignState._campaign.change).toEqual(2);
+
+                        $rootScope.$apply(function() {
+                            campaignState.saveCampaign();
+                        });
+                        expect(campaignState._campaign.change).toEqual(3);
+
+                        $rootScope.$apply(function() {
+                            campaignState.saveCampaign();
+                        });
+                        expect(campaignState._campaign.change).toEqual(4);
+                    });
+
+                    it('should return the pojoified campaign without the server updates', function() {
+                        campaignState.campaign.name = 'New Campaign';
+
+                        $rootScope.$apply(function() {
+                            campaignState.saveCampaign().then(success, failure);
+                        });
+
+                        expect(success).toHaveBeenCalledWith(campaignState.campaign);
+                    });
+
+                    it('should not extend the cards array objects', function() {
+                        campaignState.campaign.cards[0] = {};
+
+                        $rootScope.$apply(function() {
+                            campaignState.saveCampaign().then(success, failure);
+                        });
+
+                        expect(campaignState._campaign.cards[0]).toEqual(card);
+                    });
+
+                    it('should overwrite the targeting arrays', function() {
+                        campaignState._campaign.targeting.interests.push('comedy');
+                        campaignState._campaign.targeting.interests.push('entertainment');
+                        campaignState.campaign.targeting.interests = [];
+
+                        campaignState._campaign.targeting.demographics.age.push('18-24');
+                        campaignState._campaign.targeting.demographics.age.push('25-34');
+                        campaignState.campaign.targeting.demographics.age = [];
+
+                        $rootScope.$apply(function() {
+                            campaignState.saveCampaign().then(success, failure);
+                        });
+
+                        expect(campaignState._campaign.targeting.interests).toEqual([]);
+                        expect(campaignState._campaign.targeting.demographics.age).toEqual([]);
+                    });
                 });
             });
         });

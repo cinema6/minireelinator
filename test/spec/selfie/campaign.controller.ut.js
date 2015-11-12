@@ -191,35 +191,51 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
 
             describe('shouldSave', function() {
-                describe('when campaign status is not defined', function() {
-                    it('should be false until a property changes', function() {
-                        expect(SelfieCampaignCtrl.shouldSave).toBe(false);
-                        SelfieCampaignCtrl.campaign.name = 'Something Else';
-                        expect(SelfieCampaignCtrl.shouldSave).toBe(true);
+                describe('when the viewer is the creator', function() {
+                    beforeEach(function() {
+                        SelfieCampaignCtrl.isCreator = true;
+                    });
+
+                    describe('when campaign status is not defined', function() {
+                        it('should be false until a property changes', function() {
+                            expect(SelfieCampaignCtrl.shouldSave).toBe(false);
+                            SelfieCampaignCtrl.campaign.name = 'Something Else';
+                            expect(SelfieCampaignCtrl.shouldSave).toBe(true);
+                        });
+                    });
+
+                    describe('when campaign status is not "draft"', function() {
+                        it('should be false even if properties change', function() {
+                            SelfieCampaignCtrl.campaign.status = 'active';
+                            SelfieCampaignCtrl.campaign.name = 'Something Else';
+                            expect(SelfieCampaignCtrl.shouldSave).toBe(false);
+                        });
+
+                        it('should be false even if properties change', function() {
+                            SelfieCampaignCtrl.campaign.status = 'active';
+                            SelfieCampaignCtrl.campaign.name = 'Something Else';
+                            SelfieCampaignCtrl.card.title = 'Something';
+                            expect(SelfieCampaignCtrl.shouldSave).toBe(false);
+                        });
+                    });
+
+                    describe('when the campaign status is "draft"', function() {
+                        it('should be false until a property changes', function() {
+                            SelfieCampaignCtrl.campaign.status = 'draft';
+                            expect(SelfieCampaignCtrl.shouldSave).toBe(false);
+                            SelfieCampaignCtrl.campaign.name = 'Something Else';
+                            expect(SelfieCampaignCtrl.shouldSave).toBe(true);
+                        });
                     });
                 });
 
-                describe('when campaign status is not "draft"', function() {
-                    it('should be false even if properties change', function() {
-                        SelfieCampaignCtrl.campaign.status = 'active';
-                        SelfieCampaignCtrl.campaign.name = 'Something Else';
-                        expect(SelfieCampaignCtrl.shouldSave).toBe(false);
-                    });
-
-                    it('should be false even if properties change', function() {
-                        SelfieCampaignCtrl.campaign.status = 'active';
-                        SelfieCampaignCtrl.campaign.name = 'Something Else';
-                        SelfieCampaignCtrl.card.title = 'Something';
-                        expect(SelfieCampaignCtrl.shouldSave).toBe(false);
-                    });
-                });
-
-                describe('when the campaign status is "draft"', function() {
-                    it('should be false until a property changes', function() {
+                describe('when the viewer is not the creator', function() {
+                    it('should be false', function() {
+                        SelfieCampaignCtrl.isCreator = false;
                         SelfieCampaignCtrl.campaign.status = 'draft';
-                        expect(SelfieCampaignCtrl.shouldSave).toBe(false);
                         SelfieCampaignCtrl.campaign.name = 'Something Else';
-                        expect(SelfieCampaignCtrl.shouldSave).toBe(true);
+
+                        expect(SelfieCampaignCtrl.shouldSave).toBe(false);
                     });
                 });
             });
@@ -243,6 +259,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieCampaignCtrl.canSubmit).toBe(false);
 
                     SelfieCampaignCtrl.card.data.videoid = '123456';
+                    expect(SelfieCampaignCtrl.canSubmit).toBe(false);
+
+                    SelfieCampaignCtrl.card.links.Website = 'http://cinema6.com';
                     expect(SelfieCampaignCtrl.canSubmit).toBe(false);
 
                     SelfieCampaignCtrl.validation.budget = true;
@@ -554,6 +573,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         describe('$watchers', function() {
             describe('campaign properties', function() {
                 beforeEach(function() {
+                    SelfieCampaignCtrl.isCreator = true;
                     spyOn(SelfieCampaignCtrl, 'autoSave');
                     spyOn($scope, '$broadcast');
                 });
@@ -830,6 +850,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
             describe('card properties', function() {
                 beforeEach(function() {
+                    SelfieCampaignCtrl.isCreator = true;
                     spyOn(SelfieCampaignCtrl, 'autoSave');
                     spyOn($scope, '$broadcast');
                 });

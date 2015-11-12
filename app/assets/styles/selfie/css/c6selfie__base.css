@@ -2332,6 +2332,10 @@ fa,
             border:0;
         }
 
+        .select2-container--open {
+            z-index: 2200;
+        }
+
         .select2-container--default .select2-selection--single,
         .select2-container--default .select2-selection--multiple {
             border:0; border-bottom:2px solid #eee;
