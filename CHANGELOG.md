@@ -16,6 +16,8 @@
   * Add support for deploying selfie to \*.reelcontent.com
   * **Extra Deployment Steps**:
     * Deploy [`c6embed` v3.0.3](https://github.com/cinema6/c6embed/milestones/v3.0.3)
+  * [DESIGN]: (Selfie) Added styles and message for empty dashboard and error states on 
+    section navigation on create/edit campaign
 
 * *[v1.25.0.rc1]*
   * [FEATURE]: Added support for JWPlayer
