@@ -515,7 +515,8 @@ function( angular , c6State  , PaginatedListState                    ,
                             campaign.paymentMethod,
                             this.validation.budget,
                             card.data.service,
-                            card.data.videoid
+                            card.data.videoid,
+                            card.links.Website
                         ].filter(function(prop) {
                             return !prop;
                         }).length === 0;
@@ -715,12 +716,14 @@ function( angular , c6State  , PaginatedListState                    ,
             this.links = ['Website','Sharing','Facebook','Twitter','Instagram','YouTube','Pinterest']
                 .map(function(name) {
                     var href = card.links[name] || null,
-                        cssClass = name.toLowerCase();
+                        cssClass = name.toLowerCase(),
+                        isWebsite = cssClass === 'website';
 
                     return {
-                        cssClass: /website/.test(cssClass) ? 'link' : cssClass,
+                        cssClass: isWebsite ? 'link' : cssClass,
                         name: name,
-                        href: href
+                        href: href,
+                        required: isWebsite
                     };
                 });
 

@@ -112,7 +112,7 @@
                     <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-{{link.name}}" ng-model="link.href" ng-blur="SelfieCampaignSponsorCtrl.updateLinks()">
                     <label class="form__label" for="c6-sponsor-{{link.name}}">
                         <i class="fa fa-times ui--error"></i>
-                        <i class="fa fa-{{link.cssClass}} tk--active tk--{{link.cssClass}}"></i> {{link.name}}
+                        <i class="fa fa-{{link.cssClass}} tk--active tk--{{link.cssClass}}"></i> {{link.name}} <span ng-if="link.required" class="text--small"> (required) </span>
                     </label>
                     <!--<div class="form__helpBox form__helpBox--right">
                         <div class="form__helpText">
