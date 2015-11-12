@@ -111,7 +111,7 @@ define(['app'], function(appModule) {
                 });
             });
 
-            [401, 403, 500].forEach(function(status) {
+            [403, 500].forEach(function(status) {
                 describe('if the response is a ' + status, function() {
                     beforeEach(function() {
                         success.calls.reset();

@@ -115,7 +115,7 @@ define(['app'], function(appModule) {
                 });
             });
 
-            [401, 403, 500].forEach(function(status) {
+            [403, 500].forEach(function(status) {
                 describe('if the status is ' + status, function() {
                     beforeEach(function() {
                         failure.calls.reset();

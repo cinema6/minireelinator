@@ -137,6 +137,25 @@ function( angular , select2 , braintree ) {
             };
         }])
 
+        .directive('selectLabel', ['$document',function($document) {
+            return {
+                restrict: 'A',
+                link: function(scope, $element, attrs) {
+
+                    $element.on('click', function() {
+                        var input = $document[0].getElementById(attrs['for']),
+                            $input = $(input);
+
+                        if ($input.hasClass('ui--active')) {
+                            $input.select2('close');
+                        } else {
+                            $input.select2('open');
+                        }
+                    });
+                }
+            };
+        }])
+
         .directive('blurValidate', [function() {
             return {
                 restrict: 'A',
@@ -706,6 +725,66 @@ function( angular , select2 , braintree ) {
 
                 SelfiePaymentMethodsCtrl.setCurrentMethod(getMethodById(newToken));
             });
+        }])
+
+        .directive('selfieLoginDialog', ['SelfieLoginDialogService',
+        function                        ( SelfieLoginDialogService ) {
+            return {
+                restrict: 'E',
+                templateUrl: 'views/selfie/directives/login_dialog.html',
+                controller: 'SelfieLoginDialogController',
+                controllerAs: 'LoginCtrl',
+                scope: {},
+                link: function(scope) {
+                    scope.model = SelfieLoginDialogService.model;
+                }
+            };
+        }])
+
+        .controller('SelfieLoginDialogController', ['$q','AuthService','SelfieLoginDialogService',
+        function                                   ( $q , AuthService , SelfieLoginDialogService ) {
+            var LoginCtrl = this;
+
+            this.error = null;
+            this.model = {
+                email: '',
+                password: ''
+            };
+
+            this.submit = function() {
+                var self = this;
+
+                function validate(model) {
+                    if (model.email && model.password) {
+                        return $q.when(model);
+                    } else {
+                        return $q.reject('Email and password required.');
+                    }
+                }
+
+                function login(model) {
+                    return AuthService.login(model.email, model.password);
+                }
+
+                function goToApp(user) {
+                    SelfieLoginDialogService.success();
+
+                    LoginCtrl.model.email = '';
+                    LoginCtrl.model.password = '';
+
+                    return user;
+                }
+
+                function writeError(error) {
+                    self.error = error;
+                    return $q.reject(error);
+                }
+
+                return validate(this.model)
+                    .then(login)
+                    .then(goToApp)
+                    .catch(writeError);
+            };
         }])
 
         .filter('videoService', [function() {
