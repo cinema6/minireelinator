@@ -3,9 +3,18 @@
 * *[v1.25.0.rc1]*
   * [FEATURE]: (Selfie) Support other video player types (Vzaar, Wistia, etc)
   * [FIX]: (Selfie) Update Budget and Daily Limit error messages to be more informative
-  * [FIX]: (Selfie) Updated branding (changed logo, primary buttons, links, accent colors 
-    etc), removed help text from inputs based on feedback, updated side navigation for 
-    sections on create campaign. 
+  * [FIX]: (Selfie) Updated branding (changed logo, primary buttons, links, accent colors
+    etc), removed help text from inputs based on feedback, updated side navigation for
+    sections on create campaign.
+  * [FIX]: (Selfie) Updated form field labels for create campaign, changed preview player
+  * [FIX]: (Selfie) Stop logging user in automatically after successful account confirmation
+  * [FIX]: (Selfie) Enable text searching in select dropdowns
+  * [FIX]: (Selfie) Highlight error message on failed Sign Up attempt
+  * [FIX]: (Selfie) Fix error highlighting on email field in Sign Up page
+  * [FIX]: (Selfie) Ensure input labels move to the side when fields are autofilled
+  * [FIX]: (Selfie) Remove "None" option from gender targeting dropdown
+  * [FIX]: (Selfie) Redirect users with no campaigns to the New Campaign page after login
+* *[/v1.25.0.rc1]*
 
 ## v1.24.0 (November 5, 2015)
 * *[v1.24.0.rc2]*

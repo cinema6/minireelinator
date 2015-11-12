@@ -330,6 +330,53 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                 });
             });
 
+            describe('hasCampaigns', function() {
+                var success, failure, campaigns;
+
+                beforeEach(function() {
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
+
+                    campaigns = [{id: 'cam-123'}];
+                });
+
+                it('should return true if there is a campaign', function() {
+                    $httpBackend.expectGET('/api/campaigns?limit=1&fields=id')
+                        .respond(200, campaigns);
+
+                    CampaignService.hasCampaigns().then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).toHaveBeenCalledWith(true);
+                    expect(failure).not.toHaveBeenCalled();
+                });
+
+                it('should return false if there is no campaign', function() {
+                    $httpBackend.expectGET('/api/campaigns?limit=1&fields=id')
+                        .respond(200, []);
+
+                    CampaignService.hasCampaigns().then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).toHaveBeenCalledWith(false);
+                    expect(failure).not.toHaveBeenCalled();
+                });
+
+                it('should reject the promise if the request fails', function() {
+                    $httpBackend.expectGET('/api/campaigns?limit=1&fields=id')
+                        .respond(404, 'NOT FOUND');
+
+                    CampaignService.hasCampaigns().then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(success).not.toHaveBeenCalled();
+                    expect(failure).toHaveBeenCalled();
+                });
+            });
+
             describe('getAnalytics(ids)', function() {
                 var success, failure, stats;
 

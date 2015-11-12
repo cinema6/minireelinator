@@ -29,20 +29,21 @@ function( angular , select2 , braintree ) {
         function                  ( $timeout ) {
             return {
                 restrict: 'A',
-                link: function(scope, $element) {
-                    $timeout(function() {
-                        if ($element.val()) {
-                            $element.addClass('form__fillCheck--filled');
-                        }
+                require: '?ngModel',
+                link: function(scope, $element, attrs, ngModel) {
 
-                        $element.blur(function() {
-                            if ($element.val()){
-                                $element.addClass('form__fillCheck--filled');
-                            } else {
-                                $element.removeClass('form__fillCheck--filled');
-                            }
-                        });
-                    });
+                    function handleModelChange() {
+                        if (ngModel.$viewValue) {
+                            $element.addClass('form__fillCheck--filled');
+                        } else {
+                            $element.removeClass('form__fillCheck--filled');
+                        }
+                    }
+
+                    if (ngModel) {
+                        ngModel.$viewChangeListeners.push(handleModelChange);
+                        $timeout(handleModelChange);
+                    }
                 }
             };
         }])
@@ -204,7 +205,7 @@ function( angular , select2 , braintree ) {
                     experience = deepExtend(minireel, {
                         id: 'e-123',
                         data: {
-                            mode: 'light',
+                            mode: 'desktop-card',
                             autoplay: false,
                             autoadvance: false,
                             adConfig: {
@@ -398,20 +399,21 @@ function( angular , select2 , braintree ) {
 
             this.ageOptions = DemographicsService.ages;
             this.incomeOptions = DemographicsService.incomes;
-            this.genderOptions = ['None','Male','Female'];
+            this.genderOptions = ['Male','Female'];
             this.pricePerDemo = schema.pricing.cost.__pricePerDemo;
 
-            this.gender = this.genderOptions.filter(function(option) {
-                return demographics.gender[0] === option ||
-                    !demographics.gender[0] && option === 'None';
-            })[0];
+            this.gender = demographics.gender;
 
             $scope.$watch(function() {
                 return SelfieDemographicsCtrl.gender;
             }, function(newGender, oldGender) {
                 if (newGender === oldGender) { return; }
 
-                demographics.gender = newGender === 'None' ? [] : [newGender];
+                if (oldGender[0]) {
+                    newGender.splice(newGender.indexOf(oldGender[0]), 1);
+                }
+
+                demographics.gender = newGender;
             });
         }])
 

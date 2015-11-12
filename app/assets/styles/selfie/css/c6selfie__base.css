@@ -2416,7 +2416,7 @@ fa,
         }
 
         .select2-container--default .select2-search--inline .select2-search__field {
-            display: none;
+            /*display: none;*/
         }
 
 
@@ -2707,7 +2707,7 @@ fa,
             }
 
             .adPreview__desktopFrame {
-                position:relative;
+                position:absolute; /* changed to absolute for desktop-card player */
                 width:100%;
                 top:0;
                 left:0;
