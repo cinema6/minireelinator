@@ -712,7 +712,7 @@ function( angular , c6State  , PaginatedListState                    ,
             this.logo = card.collateral.logo;
             this.previouslyUploadedLogo = undefined;
 
-            this.links = ['Website','Facebook','Twitter','Pinterest','YouTube','Instagram']
+            this.links = ['Website','Sharing','Facebook','Twitter','Instagram','YouTube','Pinterest']
                 .map(function(name) {
                     var href = card.links[name] || null,
                         cssClass = name.toLowerCase();
