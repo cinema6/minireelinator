@@ -18,6 +18,8 @@
     * Deploy [`c6embed` v3.0.3](https://github.com/cinema6/c6embed/milestones/v3.0.3)
   * [DESIGN]: (Selfie) Added styles and message for empty dashboard and error states on 
     section navigation on create/edit campaign
+  * [FIX]: (Selfie) Updated "Activate your account" text on account confirmation and resend
+    activation link screens
 
 * *[v1.25.0.rc1]*
   * [FEATURE]: Added support for JWPlayer
