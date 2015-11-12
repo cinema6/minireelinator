@@ -5,7 +5,6 @@
   * [DESIGN]: (Selfie) Updated "Activate your account" text on account confirmation and resend
     activation link screens
   * [DESIGN]: (Selfie) Updated action buttons on create and manage campaign screens
-  * [DESIGN]: (Selfie) Updated action buttons on create and manage campaign screens
 
 * *[v1.25.0.rc2]*
   * [FIX]: Fix for an issue where "Ad Start" pixels were saved incorrectly
