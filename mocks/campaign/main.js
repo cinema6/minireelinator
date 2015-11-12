@@ -229,6 +229,7 @@ module.exports = function(http) {
         var id = idFromPath(request.pathname),
             filePath = objectPath('campaigns', id),
             current = grunt.file.readJSON(filePath),
+            rejectFlag = current.rejectFlag,
             campaign = extend(current, request.body, {
                 lastUpdated: (new Date()).toISOString()
             }),
@@ -257,7 +258,23 @@ module.exports = function(http) {
             return;
         }
 
+        if (campaign.name === 'Unauthorized') {
+            if (!rejectFlag) {
+                campaign.rejectFlag = true;
+                rejectFlag = true;
+            } else {
+                campaign.rejectFlag = false;
+                rejectFlag = false;
+            }
+        } else {
+            delete campaign.rejectFlag;
+        }
+
         grunt.file.write(filePath, JSON.stringify(campaign, null, '    '));
+
+        if (rejectFlag) {
+            return this.respond(401, Q.when('Not Authorized').delay(1000));
+        }
 
         this.respond(200, Q.when(extend(campaign, {
             id: id

@@ -130,7 +130,7 @@
                                 advertiserId: null,
                                 minViewTime: null,
                                 countUrls: [],
-                                clickUrls: []
+                                playUrls: []
                             },
                             thumbs: null,
                             collateral: {},
@@ -188,7 +188,7 @@
                                 advertiserId: null,
                                 minViewTime: null,
                                 countUrls: [],
-                                clickUrls: []
+                                playUrls: []
                             },
                             collateral: {},
                             links: {},
@@ -213,7 +213,7 @@
                                 advertiserId: null,
                                 minViewTime: null,
                                 countUrls: [],
-                                clickUrls: []
+                                playUrls: []
                             },
                             thumbs: null,
                             collateral: {},
@@ -246,7 +246,7 @@
                                 advertiserId: null,
                                 minViewTime: null,
                                 countUrls: [],
-                                clickUrls: []
+                                playUrls: []
                             },
                             thumbs: null,
                             collateral: {},
@@ -333,7 +333,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -354,7 +354,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -387,7 +387,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -416,7 +416,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -448,7 +448,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 thumbs: null,
                                 collateral: {},
@@ -491,7 +491,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -542,7 +542,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -583,7 +583,7 @@
                                     advertiserId: '123abc',
                                     minViewTime: 15,
                                     countUrls: ['http://dumbturtle.com/pixel?s=dumb'],
-                                    clickUrls: ['//dumbturtle.com/anotherpixel?s=sodumb']
+                                    playUrls: ['//dumbturtle.com/anotherpixel?s=sodumb']
                                 },
                                 collateral: {
                                     logo: 'my-awesome-logo.png'
@@ -646,7 +646,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 thumbs: null,
                                 collateral: {},
@@ -669,7 +669,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 thumbs: null,
                                 collateral: {},
@@ -695,7 +695,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -733,7 +733,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 links: {
@@ -764,7 +764,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -802,7 +802,7 @@
                                         advertiserId: null,
                                         minViewTime: null,
                                         countUrls: [],
-                                        clickUrls: []
+                                        playUrls: []
                                     },
                                     thumbs: null,
                                     collateral: {},
@@ -841,7 +841,7 @@
                                         advertiserId: null,
                                         minViewTime: null,
                                         countUrls: [],
-                                        clickUrls: []
+                                        playUrls: []
                                     },
                                     thumbs: null,
                                     collateral: {},
@@ -880,7 +880,7 @@
                                         advertiserId: null,
                                         minViewTime: null,
                                         countUrls: [],
-                                        clickUrls: []
+                                        playUrls: []
                                     },
                                     collateral: {},
                                     links: {},
@@ -925,7 +925,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -1025,7 +1025,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1054,7 +1054,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1092,7 +1092,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1118,7 +1118,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1160,7 +1160,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1190,7 +1190,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1216,7 +1216,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1268,7 +1268,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1298,7 +1298,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1330,7 +1330,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1518,7 +1518,7 @@
                             it('should be the correct short url in staging', function() {
                                 c6Defines.kDebug = true;
                                 result = MiniReelService.previewUrlOf(minireel);
-                                expect(result).toBe('//staging.cinema6.com/preview?' +
+                                expect(result).toBe('//platform.staging.reelcontent.com/preview?' +
                                    'experience=' + encodeURIComponent(minireel.id)
                                 );
                             });
@@ -1526,7 +1526,7 @@
                             it('should be the correct short url in production', function() {
                                 c6Defines.kDebug = false;
                                 result = MiniReelService.previewUrlOf(minireel);
-                                expect(result).toBe('http://cinema6.com/preview?' +
+                                expect(result).toBe('//reelcontent.com/preview?' +
                                    'experience=' + encodeURIComponent(minireel.id)
                                 );
                             });
@@ -1827,7 +1827,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1855,7 +1855,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: 'images.somewhere.com/user_specified.jpg',
@@ -1886,7 +1886,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -1930,7 +1930,7 @@
                         	        advertiserId: null,
                         	        minViewTime: null,
                         	        countUrls: [],
-                        	        clickUrls: []
+                        	        playUrls: []
                         	    },
                         	    collateral: {},
                         	    thumb: null,
@@ -1961,7 +1961,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -2000,7 +2000,7 @@
                         	        advertiserId: null,
                         	        minViewTime: null,
                         	        countUrls: [],
-                        	        clickUrls: []
+                        	        playUrls: []
                         	    },
                         	    collateral: {},
                         	    thumb: null,
@@ -2040,7 +2040,7 @@
                         	        advertiserId: null,
                         	        minViewTime: null,
                         	        countUrls: [],
-                        	        clickUrls: []
+                        	        playUrls: []
                         	    },
                         	    collateral: {},
                         	    thumb: null,
@@ -2067,7 +2067,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -2109,7 +2109,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -2154,7 +2154,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -2199,7 +2199,7 @@
                                     advertiserId: '123abc',
                                     minViewTime: 15,
                                     countUrls: ['http://dumbturtle.com/pixel?s=dumb'],
-                                    clickUrls: ['//dumbturtle.com/anotherpixel?s=sodumb']
+                                    playUrls: ['//dumbturtle.com/anotherpixel?s=sodumb']
                                 },
                                 collateral: {
                                     logo: 'my-awesome-logo.png'
@@ -2260,7 +2260,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -2305,7 +2305,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -2343,7 +2343,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -2381,7 +2381,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 links: {},
@@ -2421,7 +2421,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -2457,7 +2457,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: 'logo.jpg',
@@ -2489,7 +2489,7 @@
                                     advertiserId: null,
                                     minViewTime: null,
                                     countUrls: [],
-                                    clickUrls: []
+                                    playUrls: []
                                 },
                                 collateral: {},
                                 thumb: null,
@@ -2888,7 +2888,7 @@
                                         advertiserId: null,
                                         minViewTime: null,
                                         countUrls: [],
-                                        clickUrls: []
+                                        playUrls: []
                                     },
                                     collateral: {},
                                     links: {},
@@ -2955,7 +2955,7 @@
                                         advertiserId: null,
                                         minViewTime: null,
                                         countUrls: [],
-                                        clickUrls: []
+                                        playUrls: []
                                     },
                                     collateral: {},
                                     links: {},

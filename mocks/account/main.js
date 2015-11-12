@@ -49,7 +49,7 @@ module.exports = function(http) {
         try {
             this.respond(200, extend(grunt.file.readJSON(filePath), { id: id }));
         } catch(e) {
-            this.respond(401, 'Not Authorized');
+            this.respond(404, 'Not Found');
         }
     });
 
@@ -60,7 +60,7 @@ module.exports = function(http) {
         try {
             this.respond(200, extend(grunt.file.readJSON(filePath), { id: id }));
         } catch(e) {
-            this.respond(401, 'Not Authorized');
+            this.respond(404, 'Not Found');
         }
     });
 
@@ -96,7 +96,7 @@ module.exports = function(http) {
         try {
             this.respond(200, allUsers);
         } catch(e) {
-            this.respond(401, 'Not Authorized');
+            this.respond(404, 'Not Found');
         }
     });
 

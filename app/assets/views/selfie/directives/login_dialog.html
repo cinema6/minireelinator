@@ -1,9 +1,12 @@
-<div class="prelogin__gridHolder">
-    <div class="grid grid--center grid--middle">
-        <div class="grid__item one-whole">
-        <div class="brandingHead">
-            <h1 class="text--center tk--hdr"><img src="styles/selfie/img/reelcontent-logo.png" /><span class="ir">Cinema6</span></h1>
-        </div>
+<div ng-if="model.show">
+    <div style="height:26em;" class="modalDialog__group modalDialog__group--confirm selfieModal">
+
+        <header class="modalHeader__group">
+            <h1 class="modal__title">Your session has expired, please login</h1>
+        </header>
+
+        <div class="modalBody__group typo--centered">
+
             <form class="login__form" ng-submit="LoginCtrl.submit()">
                 <fieldset class="form__item">
                     <input c6-fill-check class="form__textBox form__fillCheck" type="email" name="email" id="c6-username" ng-model="LoginCtrl.model.email" autofocus autocomplete="off">
@@ -11,11 +14,6 @@
                         <i class="fa fa-times ui--error"></i> 
                         Email
                     </label>
-                    <!--<div class="form__helpBox form__helpBox--right">
-                        <div class="form__helpText">
-                            Please enter your email associated with the account 
-                        </div>
-                    </div>-->
                 </fieldset>
                 <fieldset class="form__item">
                     <input c6-fill-check class="form__textBox form__fillCheck" type="password" name="password" id="c6-password" ng-model="LoginCtrl.model.password" autocomplete="off">
@@ -23,21 +21,12 @@
                         <i class="fa fa-times ui--error"></i> 
                         Password
                     </label>
-                    <!--<div class="form__helpBox form__helpBox--right">
-                        <div class="form__helpText">
-                            Please enter your password
-                        </div>
-                    </div>-->
                 </fieldset>
                 <div class="ui__btnHolder">
                     <button class="action__btn action__btn--full">Login</button>
                 </div>
                 <div ng-show="LoginCtrl.error" class="alertMessage alert__failure text--center">
                     {{LoginCtrl.error}}
-                </div>
-                <div ng-show="LoginCtrl.reason" ng-switch="LoginCtrl.reason">
-                    <span ng-switch-when="1" class="alertMessage alert__failure text--center">There was an problem confirming your account. Please sign in so you can resend an activation link by email.</span>
-                    <span ng-switch-when="2" class="alertMessage alert__success text--center">Your account has been successfully activated. Please login to continue.</span>
                 </div>
                 <div class="subActions__box">
                     <p class="subAction text--center"><a c6-sref="Selfie:ForgotPassword">Forgot Password?</a></p>
@@ -46,6 +35,10 @@
                     <p class="subAction text--center">Don't have an account? <a c6-sref="Selfie:SignUp">Sign up Now!</a></p>
                 </div>
             </form>
+
         </div>
+
     </div>
+
+    <div class="modal__overlay modal__overlay--confirm">&nbsp;</div>
 </div>

@@ -27,16 +27,6 @@
                     c6Defines.kSelfie = false;
                 });
 
-                describe('when selfie is in the url', function() {
-                    it('should go to Selfie state', function() {
-                        spyOn(RegExp.prototype, 'test').and.returnValue(true);
-
-                        application = c6State.get('Application');
-
-                        expect(application.name).toBe('Selfie');
-                    });
-                });
-
                 describe('when selfie is running locally', function() {
                     it('should go to Selfie state', function() {
                         c6Defines.kSelfie = true;

@@ -140,25 +140,25 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     expect(WildcardCtrl.model.params.ad).toBe(true);
                 });
 
-                it('should initialize arrays for campaign.countUrls and campaign.clickUrls if not defined', function() {
+                it('should initialize arrays for campaign.countUrls and campaign.playUrls if not defined', function() {
                     delete WildcardState.cModel.campaign.countUrls;
-                    delete WildcardState.cModel.campaign.clickUrls;
+                    delete WildcardState.cModel.campaign.playUrls;
 
                     expect(WildcardCtrl.model.campaign.countUrls).toBeUndefined();
-                    expect(WildcardCtrl.model.campaign.clickUrls).toBeUndefined();
+                    expect(WildcardCtrl.model.campaign.playUrls).toBeUndefined();
 
                     WildcardCtrl.initWithModel(WildcardState.cModel);
 
                     expect(WildcardCtrl.model.campaign.countUrls).toEqual([]);
-                    expect(WildcardCtrl.model.campaign.clickUrls).toEqual([]);
+                    expect(WildcardCtrl.model.campaign.playUrls).toEqual([]);
 
                     WildcardState.cModel.campaign.countUrls = ['http://countpixel.com/pixel'];
-                    WildcardState.cModel.campaign.clickUrls = ['http://clickpixel.com/pixel'];
+                    WildcardState.cModel.campaign.playUrls = ['http://clickpixel.com/pixel'];
 
                     WildcardCtrl.initWithModel(WildcardState.cModel);
 
                     expect(WildcardCtrl.model.campaign.countUrls).toEqual(['http://countpixel.com/pixel']);
-                    expect(WildcardCtrl.model.campaign.clickUrls).toEqual(['http://clickpixel.com/pixel']);
+                    expect(WildcardCtrl.model.campaign.playUrls).toEqual(['http://clickpixel.com/pixel']);
                 });
 
                 it('should set some fields to be hidden for Instagram cards', function() {
