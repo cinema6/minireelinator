@@ -197,11 +197,19 @@ define(['app'], function(appModule) {
 
                     compileCtrl();
 
-                    ['Website','YouTube','Facebook'].forEach(function(link) {
+                    expect(SelfieCampaignSponsorCtrl.links).toContain({
+                        cssClass: 'link',
+                        name: 'Website',
+                        href: 'http://mybrand.com',
+                        required: true
+                    });
+
+                    ['YouTube','Facebook'].forEach(function(link) {
                         expect(SelfieCampaignSponsorCtrl.links).toContain({
-                            cssClass: /website/.test(link.toLowerCase()) ? 'link' : link.toLowerCase(),
+                            cssClass: link.toLowerCase(),
                             name: link,
-                            href: card.links[link]
+                            href: card.links[link],
+                            required: false
                         });
                     });
 
@@ -209,7 +217,8 @@ define(['app'], function(appModule) {
                         expect(SelfieCampaignSponsorCtrl.links).toContain({
                             cssClass: link.toLowerCase(),
                             name: link,
-                            href: null
+                            href: null,
+                            required: false
                         });
                     });
                 });
