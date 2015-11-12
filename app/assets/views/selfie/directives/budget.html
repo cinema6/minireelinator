@@ -20,11 +20,7 @@
             <p class="form__errorMsg" ng-switch-when="2"><i class="fa fa-exclamation-triangle"></i> Must be less than ${{SelfieBudgetCtrl.budgetMax | number:2}} </p>
             <p class="form__errorMsg" ng-switch-when="3"><i class="fa fa-exclamation-triangle"></i> Please enter a valid dollar amount </p>
         </div>
-
-        <span ng-if="SelfieBudgetCtrl.budget && SelfieBudgetCtrl.validBudget" style="display:block">Estimated views: <strong>{{ SelfieBudgetCtrl.budget / SelfieBudgetCtrl.cpv | number:0}}</strong></span>
-
     </fieldset>
-
 
     <fieldset class="form__item form__item--shortInput" ng-class="{ 'ui--hasError': SelfieBudgetCtrl.dailyLimitError }">
         <input c6-fill-check class="form__textBox form__textBox--units form__fillCheck" type="number" id="c6-daily-limit" ng-model="SelfieBudgetCtrl.limit" ng-blur="SelfieBudgetCtrl.setBudget()" step="0.01">
@@ -46,4 +42,7 @@
             <p class="form__errorMsg" ng-switch-when="4"><i class="fa fa-exclamation-triangle"></i> Please enter a valid dollar amount </p>
         </div>
     </fieldset>
+
+    <span ng-if="SelfieBudgetCtrl.budget && SelfieBudgetCtrl.validBudget" style="display:block">Estimated views: <strong>{{ SelfieBudgetCtrl.budget / SelfieBudgetCtrl.cpv | number:0}}</strong></span>
+
 </div>
