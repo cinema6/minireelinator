@@ -4,9 +4,15 @@
   * [FIX]: Fix for an issue where "Ad Start" pixels were saved incorrectly
   * [FEATURE]: (Selfie) Prompt user to login when session has expired, ensure that the
     they don't lose any changes they had made
-  * [FIX]: Ensure that email fields have a type of "email" to trigger the correct
+  * [FIX]: (Selfie) Ensure that email fields have a type of "email" to trigger the correct
     keyboard on iPads and mobile devices
-  * [FIX]: Fix for an issue where the labels of select dropdowns were not clickable
+  * [FIX]: (Selfie) Fix for an issue where the labels of select dropdowns were not clickable
+  * [FIX]: (Selfie)Only auto save drafts when the viewer/editor is the original creator
+  * [FEATURE]: (Selfie) Require Website link for campaign creation
+  * [DESIGN]: (Selfie) Reorder the links in the UI
+  * [DESIGN]: (Selfie) Move the estimated views count below the Daily Limit field
+  * [FIX]: (Selfie) Enable decimal dollar amounts for budget and limit
+  * [FIX]: (Selfie) Fix for an issue where the payment method primary dropdown was hidden
   * Add support for deploying selfie to \*.reelcontent.com
   * **Extra Deployment Steps**:
     * Deploy [`c6embed` v3.0.3](https://github.com/cinema6/c6embed/milestones/v3.0.3)
