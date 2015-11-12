@@ -519,7 +519,8 @@ function( angular , c6State  , PaginatedListState                    ,
                             this.validation.budget,
                             card.data.service,
                             card.data.videoid,
-                            card.links.Website
+                            card.links.Website,
+                            card.title
                         ].filter(function(prop) {
                             return !prop;
                         }).length === 0;
@@ -528,8 +529,29 @@ function( angular , c6State  , PaginatedListState                    ,
             });
 
             this.validation = {
-                budget: true
+                budget: true,
+                show: false
             };
+
+            Object.defineProperties(this.validation, {
+                sections: {
+                    get: function() {
+                        var campaign = SelfieCampaignCtrl.campaign,
+                            card = SelfieCampaignCtrl.card;
+
+                        return {
+                            section1: !!campaign.name,
+                            section2: !!campaign.advertiserDisplayName && !!card.links.Website,
+                            section3: !!card.data.service && card.data.videoid,
+                            section4: !!card.title,
+                            section5: true,
+                            section6: this.budget,
+                            section7: campaign.paymentMethod,
+                            section8: true
+                        };
+                    }
+                }
+            });
 
             this.initWithModel = function(model) {
                 this.logos = model.logos;
@@ -558,6 +580,11 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.submit = queue.debounce(function() {
                 var isDraft = cState._campaign.status === 'draft';
+
+                if (!SelfieCampaignCtrl.canSubmit) {
+                    SelfieCampaignCtrl.validation.show = true;
+                    return;
+                }
 
                 return (isDraft ? saveCampaign() : $q.when(this.campaign))
                     .then(createUpdateRequest)

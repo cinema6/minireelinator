@@ -499,7 +499,7 @@ function( angular , select2 , braintree ) {
                     get: function() {
                         var budget = parseFloat(this.budget);
 
-                        return !budget || !this.budgetError;
+                        return (!budget && !validation.show) || !this.budgetError;
                     }
                 },
                 budgetError: {
@@ -510,6 +510,7 @@ function( angular , select2 , braintree ) {
                         if (budget < budgetMin) { return 1; }
                         if (budget > budgetMax) { return 2; }
                         if (!validDecimal) { return 3; }
+                        if (!budget && validation.show) { return 4; }
 
                         return false;
                     }

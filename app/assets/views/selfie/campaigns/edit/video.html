@@ -12,7 +12,7 @@
 
         <div class="form__items">
 
-            <fieldset class="form__item" ng-class="{ 'ui--hasError': SelfieCampaignVideoCtrl.videoError }">
+            <fieldset class="form__item" ng-class="{ 'ui--hasError': SelfieCampaignVideoCtrl.videoError || (!SelfieCampaignVideoCtrl.videoUrl && SelfieCampaignCtrl.validation.show) }">
                 <textarea c6-fill-check class="form__textBox form__textArea form__fillCheck" type="text" id="c6-video-input" ng-model="SelfieCampaignVideoCtrl.videoUrl"></textarea>
                 <label class="form__label" for="c6-video-input">
                     <i class="fa fa-times ui--error"></i>
@@ -25,7 +25,7 @@
                 </div>-->
                 <div class="form__errorBox">
                     <p class="form__errorMsg">
-                        <i class="fa fa-exclamation-triangle"></i> Please enter a valid link, embed code or VAST tag
+                        <i class="fa fa-exclamation-triangle"></i> A valid link, embed code or VAST tag is required
                     </p>
                 </div>
             </fieldset>
