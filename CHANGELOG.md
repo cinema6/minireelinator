@@ -18,6 +18,7 @@
     * Deploy [`c6embed` v3.0.3](https://github.com/cinema6/c6embed/milestones/v3.0.3)
 
 * *[v1.25.0.rc1]*
+  * [FEATURE]: Added support for JWPlayer
   * [FEATURE]: (Selfie) Support other video player types (Vzaar, Wistia, etc)
   * [FIX]: (Selfie) Update Budget and Daily Limit error messages to be more informative
   * [FIX]: (Selfie) Updated branding (changed logo, primary buttons, links, accent colors
