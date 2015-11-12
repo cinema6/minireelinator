@@ -509,21 +509,13 @@ function( angular , c6State  , PaginatedListState                    ,
                 },
                 canSubmit: {
                     get: function() {
-                        var campaign = this.campaign,
-                            card = this.card;
+                        var sections = [];
 
-                        return [
-                            campaign.name,
-                            campaign.advertiserDisplayName,
-                            campaign.paymentMethod,
-                            this.validation.budget,
-                            card.data.service,
-                            card.data.videoid,
-                            card.links.Website,
-                            card.title
-                        ].filter(function(prop) {
-                            return !prop;
-                        }).length === 0;
+                        forEach(this.validation.sections, function(section) {
+                            sections.push(section);
+                        });
+
+                        return sections.indexOf(false) < 0;
                     }
                 }
             });
@@ -542,11 +534,11 @@ function( angular , c6State  , PaginatedListState                    ,
                         return {
                             section1: !!campaign.name,
                             section2: !!campaign.advertiserDisplayName && !!card.links.Website,
-                            section3: !!card.data.service && card.data.videoid,
+                            section3: !!card.data.service && !!card.data.videoid,
                             section4: !!card.title,
                             section5: true,
                             section6: this.budget,
-                            section7: campaign.paymentMethod,
+                            section7: !!campaign.paymentMethod,
                             section8: true
                         };
                     }

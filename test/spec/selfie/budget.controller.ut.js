@@ -156,7 +156,7 @@ define(['app'], function(appModule) {
             });
 
             describe('validBudget', function() {
-                it('should be true if not set or is set between 50 and 20,000', function() {
+                it('should be true if not set and validation.show is false or is set between 50 and 20,000', function() {
                     expect(SelfieBudgetCtrl.validBudget).toBe(true);
 
                     SelfieBudgetCtrl.budget = 100;
@@ -174,6 +174,11 @@ define(['app'], function(appModule) {
                     SelfieBudgetCtrl.budget = 25000;
 
                     expect(SelfieBudgetCtrl.validBudget).toBe(false);
+
+                    SelfieBudgetCtrl.budget = null;
+                    expect(SelfieBudgetCtrl.validBudget).toBe(true);
+                    $scope.validation.show = true;
+                    expect(SelfieBudgetCtrl.validBudget).toBe(false);
                 });
             });
 
@@ -189,6 +194,10 @@ define(['app'], function(appModule) {
 
                     SelfieBudgetCtrl.budget = 200.123;
                     expect(SelfieBudgetCtrl.budgetError).toBe(3);
+
+                    SelfieBudgetCtrl.budget = null;
+                    $scope.validation.show = true;
+                    expect(SelfieBudgetCtrl.budgetError).toBe(4);
 
                     SelfieBudgetCtrl.budget = 2000;
                     expect(SelfieBudgetCtrl.budgetError).toBe(false);
