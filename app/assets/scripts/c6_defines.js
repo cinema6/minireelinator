@@ -11,7 +11,7 @@ define(function() {
     c6.kPortalHome = c6.kDebug ?
         'https://staging.cinema6.com/' : 'https://portal.cinema6.com/';
     c6.kPlatformHome = c6.kDebug ?
-        'https://platform.staging.reelcontent.com/' : 'https://platform.reelcontent.com/';
+        'https://platform-staging.reelcontent.com/' : 'https://platform.reelcontent.com/';
     c6.kHasKarma = false;
     c6.kLogFormats = c6.kDebug;
     c6.kLogLevels = c6.kDebug ? ['error','warn','log','info'] : [];

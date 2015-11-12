@@ -2467,7 +2467,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 var debug = c6Defines.kDebug;
 
                 return ((minireel.access === 'public') || null) &&
-                    (debug ? '//platform.staging.reelcontent.com' : '//reelcontent.com') +
+                    (debug ? '//platform-staging.reelcontent.com' : '//reelcontent.com') +
                     ('/preview?experience=' + encodeURIComponent(minireel.id));
             };
 
