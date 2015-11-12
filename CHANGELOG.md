@@ -1,5 +1,12 @@
 # MiniReelinator
 
+## v1.25.0 (November 12, 2015)
+* *[v1.25.0.rc3]*
+  * [DESIGN]: (Selfie) Updated "Activate your account" text on account confirmation and resend
+    activation link screens
+  * [DESIGN]: (Selfie) Updated action buttons on create and manage campaign screens
+  * [DESIGN]: (Selfie) Updated action buttons on create and manage campaign screens
+
 * *[v1.25.0.rc2]*
   * [FIX]: Fix for an issue where "Ad Start" pixels were saved incorrectly
   * [FEATURE]: (Selfie) Prompt user to login when session has expired, ensure that the
@@ -13,13 +20,14 @@
   * [DESIGN]: (Selfie) Move the estimated views count below the Daily Limit field
   * [FIX]: (Selfie) Enable decimal dollar amounts for budget and limit
   * [FIX]: (Selfie) Fix for an issue where the payment method primary dropdown was hidden
+  * [DESIGN]: (Selfie) Added styles and message for empty dashboard and error states on
+    section navigation on create/edit campaign
   * Add support for deploying selfie to \*.reelcontent.com
   * **Extra Deployment Steps**:
     * Deploy [`c6embed` v3.0.3](https://github.com/cinema6/c6embed/milestones/v3.0.3)
   * [DESIGN]: (Selfie) Added styles and message for empty dashboard and error states on 
     section navigation on create/edit campaign
-  * [FIX]: (Selfie) Updated "Activate your account" text on account confirmation and resend
-    activation link screens
+* *[v1.25.0.rc2]*
 
 * *[v1.25.0.rc1]*
   * [FEATURE]: Added support for JWPlayer
