@@ -110,6 +110,15 @@
                         });
                     });
 
+                    describe('fetchJWPlayerThumbs(videoid)', function() {
+                        it('should get the right thumbnail urls', function() {
+                            expect(_private.fetchJWPlayerThumbs('12345-123')).toEqual({
+                                small: 'https://content.jwplatform.com/thumbs/12345-320.jpg',
+                                large: 'https://content.jwplatform.com/thumbs/12345-720.jpg'
+                            });
+                        });
+                    });
+
                     describe('fetchVimeoThumbs(videoid)', function() {
                         var success;
 
@@ -423,7 +432,7 @@
                      describe('getThumbsFor(data)', function() {
                          var result;
 
-                         ['instagram', 'flickr', 'getty', 'web', 'yahoo', 'aol', 'rumble', 'vzaar', 'wistia'].forEach(function(service) {
+                         ['instagram', 'flickr', 'getty', 'web', 'yahoo', 'aol', 'rumble', 'vzaar', 'wistia', 'jwplayer'].forEach(function(service) {
                              describe('when the service is ' + service, function() {
                                  beforeEach(function() {
                                      result = ThumbnailService.getThumbsFor(service, '12345');
@@ -673,6 +682,25 @@
 
                             it('should set the small and large properties when the promise resolves', function() {
                                 expect(_private.fetchWistiaThumbs).toHaveBeenCalledWith('cinema6|12345');
+                                $rootScope.$digest();
+                                expect(result.small).toBe('small.jpg');
+                                expect(result.large).toBe('large.jpg');
+                            });
+                        });
+
+                        describe('jwplayer', function() {
+                            beforeEach(function() {
+                                spyOn(_private, 'fetchJWPlayerThumbs').and.returnValue(
+                                    $q.when({
+                                        small: 'small.jpg',
+                                        large: 'large.jpg'
+                                    })
+                                );
+                                result = ThumbnailService.getThumbsFor('jwplayer', '12345-123');
+                            });
+
+                            it('should set the small and large properties when the promise resolves', function() {
+                                expect(_private.fetchJWPlayerThumbs).toHaveBeenCalledWith('12345-123');
                                 $rootScope.$digest();
                                 expect(result.small).toBe('small.jpg');
                                 expect(result.large).toBe('large.jpg');

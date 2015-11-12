@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## v1.25.0 (November 12, 2015)
 * *[v1.25.0.rc2]*
   * [FIX]: Fix for an issue where "Ad Start" pixels were saved incorrectly
   * [FEATURE]: (Selfie) Prompt user to login when session has expired, ensure that the
@@ -7,17 +8,21 @@
   * [FIX]: (Selfie) Ensure that email fields have a type of "email" to trigger the correct
     keyboard on iPads and mobile devices
   * [FIX]: (Selfie) Fix for an issue where the labels of select dropdowns were not clickable
-  * [FIX]: (Selfie)Only auto save drafts when the viewer/editor is the original creator
+  * [FIX]: (Selfie) Only auto save drafts when the viewer/editor is the original creator
   * [FEATURE]: (Selfie) Require Website link for campaign creation
   * [DESIGN]: (Selfie) Reorder the links in the UI
   * [DESIGN]: (Selfie) Move the estimated views count below the Daily Limit field
   * [FIX]: (Selfie) Enable decimal dollar amounts for budget and limit
   * [FIX]: (Selfie) Fix for an issue where the payment method primary dropdown was hidden
+  * [DESIGN]: (Selfie) Added styles and message for empty dashboard and error states on
+    section navigation on create/edit campaign
   * Add support for deploying selfie to \*.reelcontent.com
   * **Extra Deployment Steps**:
     * Deploy [`c6embed` v3.0.3](https://github.com/cinema6/c6embed/milestones/v3.0.3)
+* *[v1.25.0.rc2]*
 
 * *[v1.25.0.rc1]*
+  * [FEATURE]: Added support for JWPlayer
   * [FEATURE]: (Selfie) Support other video player types (Vzaar, Wistia, etc)
   * [FIX]: (Selfie) Update Budget and Daily Limit error messages to be more informative
   * [FIX]: (Selfie) Updated branding (changed logo, primary buttons, links, accent colors
