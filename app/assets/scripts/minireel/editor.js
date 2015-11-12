@@ -2223,7 +2223,7 @@ VideoCardController           , c6embed) {
 
                     scope.disableTrimmer = function() {
                         return (scope.service === 'vine' || scope.service === 'vzaar' ||
-                            scope.service === 'wistia');
+                            scope.service === 'wistia' || scope.service === 'jwplayer');
                     };
 
                     Object.defineProperties(scope, {
