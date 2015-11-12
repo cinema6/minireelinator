@@ -349,6 +349,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     this.campaign = this.cParent.campaign.pojoify();
                     this.card = this.campaign.cards[0];
                     this.advertiser = SelfieState.cModel.advertiser;
+                    this.isCreator = !this.campaign.user ||
+                        this.campaign.user === SelfieState.cModel.id;
                 };
 
                 this.model = function() {
@@ -413,7 +415,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     var cState = this,
                         master = this._campaign,
                         current = this.campaign,
-                        saveable = !master._erased &&
+                        saveable = this.isCreator && !master._erased &&
                             (!current.status || current.status === 'draft');
 
                     if (!saveable) {
@@ -499,7 +501,8 @@ function( angular , c6State  , PaginatedListState                    ,
             Object.defineProperties(this, {
                 shouldSave: {
                     get: function() {
-                        return  (!this.campaign.status || this.campaign.status === 'draft') &&
+                        return this.isCreator &&
+                            (!this.campaign.status || this.campaign.status === 'draft') &&
                             (!equals(this.card, this._proxyCard) ||
                             !equals(this.campaign, this._proxyCampaign));
                     }
@@ -515,7 +518,8 @@ function( angular , c6State  , PaginatedListState                    ,
                             campaign.paymentMethod,
                             this.validation.budget,
                             card.data.service,
-                            card.data.videoid
+                            card.data.videoid,
+                            card.links.Website
                         ].filter(function(prop) {
                             return !prop;
                         }).length === 0;
@@ -536,6 +540,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.campaign = cState.campaign;
                 this.advertiser = cState.advertiser;
                 this.schema = cState.schema;
+                this.isCreator = cState.isCreator;
 
                 this._proxyCard = copy(this.card);
                 this._proxyCampaign = copy(this.campaign);
@@ -712,15 +717,19 @@ function( angular , c6State  , PaginatedListState                    ,
             this.logo = card.collateral.logo;
             this.previouslyUploadedLogo = undefined;
 
-            this.links = ['Website','Facebook','Twitter','Pinterest','YouTube','Instagram']
-                .map(function(name) {
+            this.links = [
+                    'Website','Sharing','Facebook','Twitter',
+                    'Instagram','YouTube','Pinterest'
+                ].map(function(name) {
                     var href = card.links[name] || null,
-                        cssClass = name.toLowerCase();
+                        cssClass = name.toLowerCase(),
+                        isWebsite = cssClass === 'website';
 
                     return {
-                        cssClass: /website/.test(cssClass) ? 'link' : cssClass,
+                        cssClass: isWebsite ? 'link' : cssClass,
                         name: name,
-                        href: href
+                        href: href,
+                        required: isWebsite
                     };
                 });
 

@@ -497,30 +497,33 @@ function( angular , select2 , braintree ) {
                 },
                 validBudget: {
                     get: function() {
-                        var budget = parseInt(this.budget);
+                        var budget = parseFloat(this.budget);
 
-                        return !budget || (budget > budgetMin && budget < budgetMax);
+                        return !budget || !this.budgetError;
                     }
                 },
                 budgetError: {
                     get: function() {
-                        var budget = parseInt(this.budget);
+                        var budget = parseFloat(this.budget),
+                            validDecimal = !budget || (/^[0-9]+(\.[0-9]{1,2})?$/).test(budget);
 
                         if (budget < budgetMin) { return 1; }
                         if (budget > budgetMax) { return 2; }
+                        if (!validDecimal) { return 3; }
 
                         return false;
                     }
                 },
                 dailyLimitError: {
                     get: function() {
-                        var budget = parseInt(this.budget),
-                            max = parseInt(this.limit);
+                        var budget = parseFloat(this.budget),
+                            max = parseFloat(this.limit),
+                            validDecimal = !max || (/^[0-9]+(\.[0-9]{1,2})?$/).test(max);
 
-                        if (max && !this.validBudget) { return 1; }
-                        if (max && !budget) { return 2; }
-                        if (max < budget * limitMinPercent) { return 3; }
-                        if (max > budget) { return 4; }
+                        if (max && !budget) { return 1; }
+                        if (max < budget * limitMinPercent) { return 2; }
+                        if (max > budget) { return 3; }
+                        if (!validDecimal) { return 4; }
 
                         return false;
                     }
