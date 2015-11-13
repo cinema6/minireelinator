@@ -24,9 +24,7 @@
   * [FIX]: (Selfie) Enable decimal dollar amounts for budget and limit
   * [FIX]: (Selfie) Fix for an issue where the payment method primary dropdown was hidden
   * [DESIGN]: (Selfie) Added styles and message for empty dashboard and error states on
-    section navigation on create/edit campaign
-  * [DESIGN]: (Selfie) Added styles and message for empty dashboard and error states on 
-    section navigation on create/edit campaign    
+    section navigation on create/edit campaign 
   * Add support for deploying selfie to \*.reelcontent.com
   * **Extra Deployment Steps**:
     * Deploy [`c6embed` v3.0.3](https://github.com/cinema6/c6embed/milestones/v3.0.3)
