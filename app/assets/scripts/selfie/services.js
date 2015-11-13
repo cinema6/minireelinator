@@ -60,7 +60,10 @@ function( angular , c6uilib ) {
                         shareLinks: {},
                         params: {
                             ad: true,
-                            action: null
+                            action: {
+                                type: 'button',
+                                label: 'Learn More'
+                            }
                         },
                         data: {
                             autoadvance: false,
