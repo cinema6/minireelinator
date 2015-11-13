@@ -446,6 +446,16 @@ fa,
                 border-color: #ed9f31;
                 color: #fff;
             }
+        .btn__nav--primary, .btn__nav--primary:focus {
+            background-color: #119DA3;
+            color: #fff;
+            font-weight: normal;
+        }
+            .btn__nav--primary:hover {
+                background-color: #0E7D81;
+                border-color: #0d767b;
+                color: #fff;
+            }
     /*  buttons: default  */
         .btnFill, .btnFill:focus {
             background:#626262; color:#fff;
