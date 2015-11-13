@@ -11,7 +11,7 @@ define(['app'], function(appModule) {
             SelfieLoginDialogService,
             Unauthorized401Interceptor;
 
-        var success, failure, loginDeferred;
+        var success, failure;
 
         beforeEach(function() {
             success = jasmine.createSpy('success()');
@@ -31,8 +31,7 @@ define(['app'], function(appModule) {
                 Unauthorized401Interceptor = $injector.get('Unauthorized401Interceptor');
             });
 
-            loginDeferred = $q.defer();
-            spyOn(SelfieLoginDialogService, 'display').and.returnValue(loginDeferred.promise);
+            spyOn(SelfieLoginDialogService, 'display').and.callThrough();
         });
 
         it('should exist', function() {
@@ -131,7 +130,7 @@ define(['app'], function(appModule) {
                                 .respond();
 
                             $rootScope.$apply(function() {
-                                loginDeferred.resolve();
+                                SelfieLoginDialogService.success();
                             });
 
                             $httpBackend.flush();
@@ -145,7 +144,7 @@ define(['app'], function(appModule) {
                                     .respond(200, config.data);
 
                                 $rootScope.$apply(function() {
-                                    loginDeferred.resolve();
+                                    SelfieLoginDialogService.success();
                                 });
 
                                 $httpBackend.flush();
@@ -165,12 +164,109 @@ define(['app'], function(appModule) {
                                     .respond(404, 'BAD');
 
                                 $rootScope.$apply(function() {
-                                    loginDeferred.resolve();
+                                    SelfieLoginDialogService.success();
                                 });
 
                                 $httpBackend.flush();
 
                                 expect(failure).toHaveBeenCalled();
+                                expect(success).not.toHaveBeenCalled();
+                            });
+                        });
+                    });
+                });
+
+                describe('when multiple requests fail at once', function() {
+                    var requests;
+
+                    beforeEach(function() {
+                        requests = [
+                            {
+                                url: '/api/campaigns?user=u-123&fields=id,name',
+                                method: 'GET'
+                            },
+                            {
+                                url: '/api/account/user/u-123',
+                                method: 'POST',
+                                data: {
+                                    name: 'Some User',
+                                    company: 'My Company'
+                                }
+                            },
+                            {
+                                url: '/api/campaign/cam-123',
+                                method: 'PUT',
+                                data: {
+                                    cards: [],
+                                    name: 'My Campaign'
+                                }
+                            }
+                        ];
+
+                        requests.forEach(function(config) {
+                            resp.config = config;
+
+                            Unauthorized401Interceptor.responseError(resp)
+                                .then(success, failure);
+
+                            $rootScope.$digest();
+                        });
+                    });
+
+                    describe('after login succeeds', function() {
+                        it('should re-attempt all requests', function() {
+                            requests.forEach(function(config) {
+                                $httpBackend.expect(config.method, config.url, config.data)
+                                    .respond();
+                            });
+
+                            $rootScope.$apply(function() {
+                                SelfieLoginDialogService.success();
+                            });
+
+                            $httpBackend.flush();
+                        });
+
+                        describe('when second attempt succeeds', function() {
+                            it('should resolve the initial promise', function() {
+                                requests.forEach(function(config) {
+                                    $httpBackend.expect(config.method, config.url, config.data)
+                                        .respond(200, config.data);
+                                });
+
+                                $rootScope.$apply(function() {
+                                    SelfieLoginDialogService.success();
+                                });
+
+                                $httpBackend.flush();
+
+                                requests.forEach(function(config) {
+                                    expect(success).toHaveBeenCalledWith(jasmine.objectContaining({
+                                        data: config.data
+                                    }));
+                                });
+                                expect(failure).not.toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('when second attempt fails', function() {
+                            it('should reject the initial promise', function() {
+                                requests.forEach(function(config) {
+                                    $httpBackend.expect(config.method, config.url, config.data)
+                                        .respond(404, config.data);
+                                });
+
+                                $rootScope.$apply(function() {
+                                    SelfieLoginDialogService.success();
+                                });
+
+                                $httpBackend.flush();
+
+                                requests.forEach(function(config) {
+                                    expect(failure).toHaveBeenCalledWith(jasmine.objectContaining({
+                                        data: config.data
+                                    }));
+                                });
                                 expect(success).not.toHaveBeenCalled();
                             });
                         });
