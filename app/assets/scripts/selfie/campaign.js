@@ -729,9 +729,9 @@ function( angular , c6State  , PaginatedListState                    ,
             // then "none" must have been selected
             this.logoType = this.logoOptions.filter(function(option) {
                 return option.type === card.collateral.logoType ||
-                    option.src === card.collateral.logo ||
+                    (card.collateral.logo && (option.src === card.collateral.logo)) ||
                     (!card.collateral.logo && defaultLogo && option.type === 'none');
-            })[0] || this.logoOptions[0];
+            })[0] || this.logoOptions[1];
 
             this.logo = card.collateral.logo;
             this.previouslyUploadedLogo = undefined;
