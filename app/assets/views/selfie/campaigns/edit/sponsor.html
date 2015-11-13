@@ -11,7 +11,7 @@
         <p class="formSection__introText">Enter your logo and company links</p>
         <div class="form__items">
 
-            <fieldset class="form__item">
+            <fieldset class="form__item" ng-class="{'ui--hasError': !campaign.advertiserDisplayName && SelfieCampaignCtrl.validation.show }">
                 <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-name" ng-model="campaign.advertiserDisplayName">
                 <label class="form__label" for="c6-sponsor-name">
                     <i class="fa fa-times ui--error"></i>
@@ -89,43 +89,45 @@
                 <input id="logoUpload" type="file" style="display:none;" ng-model="SelfieCampaignSponsorCtrl.logoFile"><!-- hidden file input-->
             </div><!--.sponsorLogo__wizard-->
 
-            <fieldset class="form__item" ng-repeat="link in SelfieCampaignSponsorCtrl.links">
-                <div ng-if="link.name === 'Sharing'">
-                    <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-sharing" ng-model="SelfieCampaignSponsorCtrl.sharing" ng-blur="SelfieCampaignSponsorCtrl.updateLinks()">
-                    <label class="form__label" for="c6-sponsor-sharing">
-                        <i class="fa fa-times ui--error"></i>
-                        <i class="fa fa-share-alt-square tk--active tk--share"></i> Share Link
-                    </label>
-                    <div class="form__helpBox form__helpBox--right">
-                        <div class="form__helpText">
-                            Add a link for users to share
+            <div ng-repeat="link in SelfieCampaignSponsorCtrl.links">
+                <fieldset class="form__item" ng-class="{'ui--hasError': !link.href && link.required && SelfieCampaignCtrl.validation.show }">
+                    <div ng-if="link.name === 'Sharing'">
+                        <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-sharing" ng-model="SelfieCampaignSponsorCtrl.sharing" ng-blur="SelfieCampaignSponsorCtrl.updateLinks()">
+                        <label class="form__label" for="c6-sponsor-sharing">
+                            <i class="fa fa-times ui--error"></i>
+                            <i class="fa fa-share-alt-square tk--active tk--share"></i> Share Link
+                        </label>
+                        <div class="form__helpBox form__helpBox--right">
+                            <div class="form__helpText">
+                                Add a link for users to share
+                            </div>
+                        </div>
+                        <div class="form__errorBox">
+                            <p class="form__errorMsg">
+                                <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                            </p>
                         </div>
                     </div>
-                    <div class="form__errorBox">
-                        <p class="form__errorMsg">
-                            <i class="fa fa-exclamation-triangle"></i> Error message goes here
-                        </p>
-                    </div>
-                </div>
 
-                <div ng-if="link.name !== 'Sharing'">
-                    <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-{{link.name}}" ng-model="link.href" ng-blur="SelfieCampaignSponsorCtrl.updateLinks()">
-                    <label class="form__label" for="c6-sponsor-{{link.name}}">
-                        <i class="fa fa-times ui--error"></i>
-                        <i class="fa fa-{{link.cssClass}} tk--active tk--{{link.cssClass}}"></i> {{link.name}} <span ng-if="link.required" class="text--small"> (required) </span>
-                    </label>
-                    <!--<div class="form__helpBox form__helpBox--right">
-                        <div class="form__helpText">
-                            This link will be added to your video card.
+                    <div ng-if="link.name !== 'Sharing'">
+                        <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-sponsor-{{link.name}}" ng-model="link.href" ng-blur="SelfieCampaignSponsorCtrl.updateLinks()">
+                        <label class="form__label" for="c6-sponsor-{{link.name}}">
+                            <i class="fa fa-times ui--error"></i>
+                            <i class="fa fa-{{link.cssClass}} tk--active tk--{{link.cssClass}}"></i> {{link.name}} <span ng-if="link.required" class="text--small"> (required) </span>
+                        </label>
+                        <!--<div class="form__helpBox form__helpBox--right">
+                            <div class="form__helpText">
+                                This link will be added to your video card.
+                            </div>
+                        </div>-->
+                        <div class="form__errorBox">
+                            <p class="form__errorMsg">
+                                <i class="fa fa-exclamation-triangle"></i> {{link.name}} is required
+                            </p>
                         </div>
-                    </div>-->
-                    <div class="form__errorBox">
-                        <p class="form__errorMsg">
-                            <i class="fa fa-exclamation-triangle"></i> Error message goes here
-                        </p>
                     </div>
-                </div>
-            </fieldset>
+                </fieldset>
+            </div>
 
         </div>
 

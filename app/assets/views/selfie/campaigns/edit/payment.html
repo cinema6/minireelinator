@@ -8,8 +8,11 @@
             </span>
             <span class="formSection__titleText tk--hdr">Payment Options</span>
         </h1>
-        <p class="formSection__introText">Select a payment method for your campaign <span class="text--small"> (required) </span>.
-        </p>
+        <p class="formSection__introText">Select a payment method for your campaign <span class="text--small"> (required) </span>.</p>
+
+        <div ng-if="!campaign.paymentMethod && SelfieCampaignCtrl.validation.show" class="alertMessage alert__failure">
+            <span class="formSection__introText">Payment method is required</span>
+        </div>
 
         <div class="form__items">
 
@@ -25,7 +28,7 @@
                     PayPal
                 </button><!--
             --><a c6-sref="Selfie:Campaign:Payment:New" class="action__btnSecondary action__btnSecondary--big palm--one-whole"><i class="faa fa-plus"></i>
-                    Credit Card</a>                
+                    Credit Card</a>
             </div>
 
         </div><!--.form__items -->

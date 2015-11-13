@@ -108,6 +108,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                                                             'SelfieLoginDialogService',
             function                                       ( $q , $injector , c6UrlParser ,
                                                              SelfieLoginDialogService ) {
+                var requests = [];
+
                 function validUrl(url) {
                     var currentUrl = c6UrlParser(''),
                         requestUrl = c6UrlParser(url),
@@ -126,16 +128,39 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             url = config.url;
 
                         if (status === 401 && validUrl(url)) {
+                            // add all requests to the array since there
+                            // might be multiple requests that failed
+                            // before the login succeeds
+                            requests.push({
+                                deferred: deferred,
+                                config: config
+                            });
+
+                            // when multiple requests fail display() gets called
+                            // multiple times, but since we only want the user
+                            // to login once we only fulfill the last display()
+                            // call, meaning we need to re-attempt all failed
+                            // previously failed attempts in this handler.
                             SelfieLoginDialogService.display()
                                 .then(function() {
                                     var $http = $injector.get('$http');
 
-                                    $http(config)
-                                        .then(function(resp) {
-                                            deferred.resolve(resp);
-                                        }, function(err) {
-                                            deferred.reject(err);
-                                        });
+                                    // we loop through all the requests,
+                                    // re-attempt them, and if they succeed
+                                    // we resolve/reject the original promise
+                                    // that was returned.
+                                    $q.all(requests.map(function(req) {
+                                        return $http(req.config)
+                                            .then(function(resp) {
+                                                req.deferred.resolve(resp);
+                                            }, function(err) {
+                                                req.deferred.reject(err);
+                                            });
+                                    })).then(function() {
+                                        // once all the re-attempts succeed
+                                        // we need to reset the array
+                                        requests = [];
+                                    });
                                 });
 
                             return deferred.promise;
