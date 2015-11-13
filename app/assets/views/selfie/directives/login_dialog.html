@@ -1,5 +1,5 @@
 <div ng-if="model.show">
-    <div style="height:26em;" class="modalDialog__group modalDialog__group--confirm selfieModal">
+    <div style="height:22em;" class="modalDialog__group modalDialog__group--confirm selfieModal">
 
         <header class="modalHeader__group">
             <h1 class="modal__title">Your session has expired, please login</h1>
@@ -7,34 +7,32 @@
 
         <div class="modalBody__group typo--centered">
 
-            <form class="login__form" ng-submit="LoginCtrl.submit()">
-                <fieldset class="form__item">
-                    <input c6-fill-check class="form__textBox form__fillCheck" type="email" name="email" id="c6-username" ng-model="LoginCtrl.model.email" autofocus autocomplete="off">
-                    <label class="form__label" for="c6-username">
-                        <i class="fa fa-times ui--error"></i> 
-                        Email
-                    </label>
-                </fieldset>
-                <fieldset class="form__item">
-                    <input c6-fill-check class="form__textBox form__fillCheck" type="password" name="password" id="c6-password" ng-model="LoginCtrl.model.password" autocomplete="off">
-                    <label class="form__label" for="c6-password">
-                        <i class="fa fa-times ui--error"></i> 
-                        Password
-                    </label>
-                </fieldset>
-                <div class="ui__btnHolder">
-                    <button class="action__btn action__btn--full">Login</button>
-                </div>
-                <div ng-show="LoginCtrl.error" class="alertMessage alert__failure text--center">
-                    {{LoginCtrl.error}}
-                </div>
-                <div class="subActions__box">
-                    <p class="subAction text--center"><a c6-sref="Selfie:ForgotPassword">Forgot Password?</a></p>
-                </div>
-                <div class="subActions__box">
-                    <p class="subAction text--center">Don't have an account? <a c6-sref="Selfie:SignUp">Sign up Now!</a></p>
-                </div>
-            </form>
+            <div style="width:60%;margin: 0 auto">
+
+                <form class="login__form" ng-submit="LoginCtrl.submit()">
+                    <fieldset class="form__item">
+                        <input c6-fill-check class="form__textBox form__fillCheck" type="email" name="email" id="c6-username" ng-model="LoginCtrl.model.email" autofocus autocomplete="off">
+                        <label class="form__label" for="c6-username">
+                            <i class="fa fa-times ui--error"></i> 
+                            Email
+                        </label>
+                    </fieldset>
+                    <fieldset class="form__item">
+                        <input c6-fill-check class="form__textBox form__fillCheck" type="password" name="password" id="c6-password" ng-model="LoginCtrl.model.password" autocomplete="off">
+                        <label class="form__label" for="c6-password">
+                            <i class="fa fa-times ui--error"></i> 
+                            Password
+                        </label>
+                    </fieldset>
+                    <div class="ui__btnHolder">
+                        <button class="action__btn action__btn--full">Login</button>
+                    </div>
+                    <div ng-show="LoginCtrl.error" class="alertMessage alert__failure text--center">
+                        {{LoginCtrl.error}}
+                    </div>
+                </form>
+
+            </div>
 
         </div>
 

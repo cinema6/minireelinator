@@ -19,6 +19,7 @@
             <p class="form__errorMsg" ng-switch-when="1"><i class="fa fa-exclamation-triangle"></i> Must be greater than ${{SelfieBudgetCtrl.budgetMin | number:2}} </p>
             <p class="form__errorMsg" ng-switch-when="2"><i class="fa fa-exclamation-triangle"></i> Must be less than ${{SelfieBudgetCtrl.budgetMax | number:2}} </p>
             <p class="form__errorMsg" ng-switch-when="3"><i class="fa fa-exclamation-triangle"></i> Please enter a valid dollar amount </p>
+            <p class="form__errorMsg" ng-switch-when="4"><i class="fa fa-exclamation-triangle"></i> Budget is required </p>
         </div>
     </fieldset>
 
@@ -27,7 +28,7 @@
         <span class="input__unit">$</span>
         <label class="form__label" for="c6-daily-limit">
             <i class="fa fa-times ui--error"></i>
-            Daily Budget
+            Daily Limit
         </label>
         <div class="form__helpBox form__helpBox--right">
             <div class="form__helpText">

@@ -11,7 +11,7 @@
         <p class="formSection__introText">This is for your reference only. It will not be added to the video card.</p>
         <div class="form__items">
 
-            <fieldset class="form__item form__item--bigInput">
+            <fieldset class="form__item form__item--bigInput" ng-class="{'ui--hasError': !campaign.name && SelfieCampaignCtrl.validation.show }">
                 <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-campaign-name" name="c6-campaign-name" ng-model="campaign.name" autofocus="autofocus">
                 <label class="form__label" for="c6-campaign-name">
                     <i class="fa fa-times ui--error"></i>
@@ -24,7 +24,7 @@
                 </div>-->
                 <div class="form__errorBox">
                     <p class="form__errorMsg">
-                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                        <i class="fa fa-exclamation-triangle"></i> A campaign name is required
                     </p>
                 </div>
 
