@@ -17,7 +17,7 @@
   * [FIX]: (Selfie) Ensure that email fields have a type of "email" to trigger the correct
     keyboard on iPads and mobile devices
   * [FIX]: (Selfie) Fix for an issue where the labels of select dropdowns were not clickable
-  * [FIX]: (Selfie)Only auto save drafts when the viewer/editor is the original creator
+  * [FIX]: (Selfie) Only auto save drafts when the viewer/editor is the original creator
   * [FEATURE]: (Selfie) Require Website link for campaign creation
   * [DESIGN]: (Selfie) Reorder the links in the UI
   * [DESIGN]: (Selfie) Move the estimated views count below the Daily Limit field
@@ -25,11 +25,11 @@
   * [FIX]: (Selfie) Fix for an issue where the payment method primary dropdown was hidden
   * [DESIGN]: (Selfie) Added styles and message for empty dashboard and error states on
     section navigation on create/edit campaign
+  * [DESIGN]: (Selfie) Added styles and message for empty dashboard and error states on 
+    section navigation on create/edit campaign    
   * Add support for deploying selfie to \*.reelcontent.com
   * **Extra Deployment Steps**:
     * Deploy [`c6embed` v3.0.3](https://github.com/cinema6/c6embed/milestones/v3.0.3)
-  * [DESIGN]: (Selfie) Added styles and message for empty dashboard and error states on 
-    section navigation on create/edit campaign
 * *[v1.25.0.rc2]*
 
 * *[v1.25.0.rc1]*
