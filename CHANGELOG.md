@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## v1.25.0 (November 12, 2015)
+* *[v1.25.0.rc3]*
+  * [DESIGN]: (Selfie) Change "Daily Budget" to "Daily Limit"
+  * [DESIGN]: (Selfie) Change heading and sub-heading for Targeting section
+  * [FEATURE]: (Selfie) Show error states on all required fields when attempting to submit
+
 * *[v1.25.0.rc2]*
   * [FIX]: Fix for an issue where "Ad Start" pixels were saved incorrectly
   * [FEATURE]: (Selfie) Prompt user to login when session has expired, ensure that the
