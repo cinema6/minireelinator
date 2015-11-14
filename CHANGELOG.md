@@ -11,6 +11,9 @@
   * [DESIGN]: (Selfie) Updated action buttons on create and manage campaign screens
   * [DESIGN]: (Selfie) Updated main navigation, added retina display logo, updated sign up
     page text, fixed pagination alignment, removed hover on sort by sponsor
+  * [FEATURE]: (Selfie) Remove call to action dropdown, default to button, require button
+    text and url, always show a call to action button in the preview, fix input color
+  * [FIX]: (Selfie) Default the logo option to "Upload from URL"
 
 * *[v1.25.0.rc2]*
   * [FIX]: Fix for an issue where "Ad Start" pixels were saved incorrectly
