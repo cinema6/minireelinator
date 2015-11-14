@@ -919,7 +919,7 @@ fa,
     .mainNav__dashboard {
         border-bottom: 1px solid #222;
     }
-        .mainNav__item {
+        .mainNav__item, .mainNav__item:focus {
             width: 100%;
             height: auto;
             display: block;
@@ -937,7 +937,7 @@ fa,
                 padding:0.75rem 0 0 0;
                 display: block;
             }
-            .mainNav__label {
+            .mainNav__label, .mainNav__btn {
                font-size: 0.625em;
                 color: #87949f;
                 margin-top: 0;
@@ -945,7 +945,11 @@ fa,
                 display: inline-block;
                 padding-bottom: 0.5rem;   
             }
-        .mainNav__settings {
+        .mainNav__btn {
+            width: 100%;
+            height: 100%;
+        }
+        .mainNav__logout {
             width:100%;
             height:4.5rem;
             position:absolute;
@@ -953,7 +957,7 @@ fa,
             border-bottom: 0;
             cursor: pointer;
         }
-            .mainNav__settings:hover {
+            .mainNav__logout:hover {
                 background:#232628;
             }
 
@@ -1111,6 +1115,7 @@ fa,
                 color:#444;
                 font-size:1.25em;
                 margin:0; padding:0.75rem 0 0;
+                display: inline-block;
             }
                 .mainHeader__breadcrumbs a {
                     color:#49B8B9;
@@ -1120,6 +1125,65 @@ fa,
                 }
 
 
+    /*  search group classes
+        ================================================ */
+        .search__group {
+                /*margin-top: 0.5em;*/
+                padding: 0.625em 0 0 0;
+        }
+            .search__group  .form__textBox {
+                /*vertical-align: middle;
+                margin-top: 0.45em;*/
+                border-bottom: 2px solid #fff;
+                border-bottom-left-radius: 3px;
+                border-top-left-radius: 3px;
+                width: 50%;
+            }
+            .search__group .select2-container {
+                display: inline-block;
+                /*width: auto;
+                margin-top: 0.535em;*/
+                vertical-align: top;
+                margin-left: -4px;
+                border-bottom: 2px solid #fff;
+            }
+            .search__group .select2-container--default .select2-selection--single {
+                border-bottom: 2px solid #fff;
+            }
+            .search__group .searchBtn {
+                padding: 0.25em 1em 0.3em 1em;
+                vertical-align: top;        
+                margin-bottom: 0;
+                margin-left: -4px;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+
+    /*  item actions group classes (header actions)
+        ================================================ */
+        .itemActions__group {
+            padding: 0.625em 0 0 0;
+        }
+            .itemActions__group .action__btn {
+                margin-bottom: 0;
+            }
+        
+        .filterBtn__group .filterBtn {
+            margin-bottom: 0;
+            /* margin-top: 0.625em; */
+        }
+        .filterBtn__group .filterBtn:hover {
+            background: #f5f5f5;
+            color: #666;
+            border: 1px solid #ccc;
+        }
+        /* filter row styles*/
+        .filterBtn__group .ui__clickDropMenu {
+            margin: 0 0 0 5px;
+        }
+            .filterBtn__group .ui__clickDropBtn {
+                padding: 0.25em;
+            }
 
     /*  sortBar classes
         ================================================ */
@@ -1178,6 +1242,7 @@ fa,
                     bottom:0.375rem;
                     opacity:1;
                 }
+
     /*  tabBar__group classes
         ================================================ */
         .tabBar__group {
@@ -1334,7 +1399,7 @@ fa,
                 color:#9c9c9c;
                 font-size:0.875em;
                 line-height: 1.5rem;
-                margin:0.75rem 0;
+                margin: 0.75em 0;
             }
                 .paginator__readout strong {
                     color:#5c5c5c;
@@ -1343,7 +1408,6 @@ fa,
 
     .pager__group {
         float: left;
-        margin: 0.5rem 0;
     }
         .pager__group .pager__itemsPerPage {
             top: -94px;
@@ -1371,14 +1435,17 @@ fa,
             color: #00698F;
         }
         .pager__group .btnGroup .btn__label {
-            padding: 0.25em 0;
+            padding: 0.5em 0;
             vertical-align: top;
+            display: inline-block;
+            margin-top: 0.125em;
         }
         .pager__pageIndicator .forms__textField {
             background: #eee;
             color: #626262;
             border: 1px solid #ddd;
             padding: 0.25em 0;
+            margin-top: 0.375em;
         }
 
 /*  ================================================
@@ -1445,13 +1512,6 @@ fa,
                         margin:0.5em;
                     }
 
-/* filter row styles*/
-        .sortBar__item .ui__clickDropBtn {
-            padding: 0.25em;
-        }
-        .sortBar__btn--Dropdown:hover {
-         color: #49B8B9;
-     }
 
     /*  popover  */
     .popoverItem__group {
@@ -1794,6 +1854,10 @@ fa,
                 -webkit-transform: translate3d(0,0,0);
                 transform: translate3d(0, 0, 0);
             }
+    .hint--always:after, .hint:focus:after, .hint:focus:before, [data-hint]:focus:after, [data-hint]:focus:before {
+        opacity: 0;
+        z-index: 100 !important;
+    }
     /*  campaign section padding for TOC links navigation */
     #section_1, #section_2, #section_3, #section_4, #section_5, #section_6, #section_7,  #section_8 {
         padding-top: 30px;
@@ -3574,36 +3638,3 @@ fa,
             border-radius: 3px;
             margin: 0 0.25em 0 0;
         }
-
-        
-/***Temp styles Dashboard- Dhaval Search form***/
- .search__group {
-        margin-top: 0.5em;
-    }
-    .search__group  .form__textBox {
-        /*vertical-align: middle;
-        margin-top: 0.45em;*/
-        border-bottom: 2px solid #fff;
-        border-bottom-left-radius: 3px;
-        border-top-left-radius: 3px;
-        width: 50%;
-    }
-    .search__group .select2-container {
-        display: inline-block;
-        /*width: auto;
-        margin-top: 0.535em;*/
-        vertical-align: top;
-        margin-left: -4px;
-        border-bottom: 2px solid #fff;
-    }
-    .search__group .select2-container--default .select2-selection--single {
-        border-bottom: 2px solid #fff;
-    }
-    .search__group .searchBtn {
-        padding: 0.25em 1em 0.3em 1em;
-        vertical-align: top;        
-        margin-bottom: 0;
-        margin-left: -4px;
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-    }
