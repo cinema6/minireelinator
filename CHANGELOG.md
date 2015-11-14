@@ -8,7 +8,9 @@
   * [FIX]: (Selfie) Fix for an issue where logging in after session expiration broke things
   * [DESIGN]: (Selfie) Updated "Activate your account" text on account confirmation and resend
     activation link screens
-  * [DESIGN]: (Selfie) Updated action buttons on create and manage campaign screens  
+  * [DESIGN]: (Selfie) Updated action buttons on create and manage campaign screens
+  * [DESIGN]: (Selfie) Updated main navigation, added retina display logo, updated sign up
+    page text, fixed pagination alignment, removed hover on sort by sponsor
 
 * *[v1.25.0.rc2]*
   * [FIX]: Fix for an issue where "Ad Start" pixels were saved incorrectly

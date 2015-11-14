@@ -5,16 +5,12 @@
     <!--<div class=" mainNav__item--active"><!-- add "mainNav__item--active" class to div to highlight current nav item-->
     <!-- <a c6-sref="#" title="Pending Tasks" class="mainNav__campaigns mainNav__item"><i class="fa fa-clock-o mainNav__iconOnly"></i><span class="mainNav__label">Waiting Approval</span></a> -->
     <a c6-sref="Selfie:CampaignDashboard" title="Campaigns" class="mainNav__campaigns mainNav__item"><i class="fa fa-flag mainNav__iconOnly"></i><span class="mainNav__label">Campaigns</span></a>
+    <a c6-sref="Selfie:Account" c6-params="{}" title="Account Settings" class="mainNav__settings mainNav__item"><i class="fa fa-cog mainNav__iconOnly"></i><span class="mainNav__label">Account Settings</span></a>
 
     <!-- <a href="archives.html" title="Archives" class="mainNav__archives mainNav__item"><i class="fa fa-archive mainNav__iconOnly"></i><span class="mainNav__label">Archives</span></a> -->
 
-    <div c6-sref="Selfie:Account" c6-params="{}" class="mainNav__settings mainNav__item" title="Settings">
-        <i class="fa fa-cog mainNav__iconOnly"></i>
-        <span class="mainNav__label">Settings</span>
-        <ul class="mainNav__dropDownGroup" style="list-style: none;">
-            <li class="mainNav__dropDownItem"><a c6-sref="Selfie:Account" c6-params="{}">Settings</a></li>
-            <li class="mainNav__dropDownItem"><button ng-click="SelfieCtrl.logout()">Logout</button></li>
-            </ul>
+    <div class="mainNav__logout mainNav__item" title="Logout">
+        <button class="mainNav__btn" ng-click="SelfieCtrl.logout()"> <i class="fa fa-power-off mainNav__iconOnly"></i>Logout</button>
     </div>
 
 </nav>
