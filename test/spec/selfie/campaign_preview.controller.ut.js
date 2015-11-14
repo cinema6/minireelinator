@@ -42,7 +42,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                 card = {
                     data: {},
-                    params: {}
+                    links: {},
+                    params: {
+                        action: null
+                    }
                 };
 
                 campaign = {
@@ -104,7 +107,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                 it('should put a copy of the card on the controller and add the advertiserDisplayName', function() {
                     var decoratedCard = copy(card);
+                    decoratedCard.links.Action = 'http://reelcontent.com';
                     decoratedCard.params.sponsor = campaign.advertiserDisplayName;
+                    decoratedCard.params.action = {
+                        type: 'button',
+                        label: 'Learn More'
+                    };
 
                     expect(SelfieCampaignPreviewCtrl.card).toBe(undefined);
 
@@ -113,6 +121,15 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     $timeout.flush(2000);
 
                     expect(SelfieCampaignPreviewCtrl.card).toEqual(decoratedCard);
+                });
+
+                it('should ensure an action label and url', function() {
+                    SelfieCampaignPreviewCtrl.loadPreview();
+
+                    $timeout.flush(2000);
+
+                    expect(SelfieCampaignPreviewCtrl.card.params.action.label).toEqual('Learn More');
+                    expect(SelfieCampaignPreviewCtrl.card.links.Action).toEqual('http://reelcontent.com');
                 });
             });
         });

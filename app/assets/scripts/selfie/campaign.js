@@ -967,8 +967,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignTextController', ['$scope',
         function                                    ( $scope ) {
-            var AppCtrl = $scope.AppCtrl,
-                SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 SelfieCampaignTextCtrl = this,
                 card = SelfieCampaignCtrl.card;
 
@@ -1004,6 +1003,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 $log.info('loading preview');
 
                 _card.params.sponsor = campaign.advertiserDisplayName;
+                _card.params.action = _card.params.action || { type: 'button' };
                 _card.params.action.label = _card.params.action.label || 'Learn More';
                 _card.links.Action = _card.links.Action || 'http://reelcontent.com';
 
