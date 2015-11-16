@@ -1484,18 +1484,6 @@
                 position:absolute;
                 top:0; left:0;
             }
-            .embeddedPlayer--jwplayer {
-                width:75%; height:20em;
-                padding:0 12.5%;
-                background:#eee;
-                position:relative;
-                min-height:500px;
-                margin-bottom:-10px;
-            }
-            .embeddedPlayer--jwplayer iframe {
-                max-height:500px;
-                max-width:500px;
-            }
             .embeddedPlayer--aol,
             .embeddedPlayer--aol object,
             .embeddedPlayer--aol video,
@@ -1535,6 +1523,14 @@
                 color:#000;
                 border-bottom:1px dotted #000;
             }
+
+        .jwplayerPreview {
+            width:75%; height:100%;
+            padding:0 12.5%;
+            background:#fff;
+            position:absolute;
+            top:0; left:0;
+        }
 
         .imagePreview {
             width:100%; height:20em;
