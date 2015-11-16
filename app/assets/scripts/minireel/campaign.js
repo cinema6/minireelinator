@@ -35,6 +35,17 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         return target;
     }
 
+    function find(array, predicate) {
+        var length = array.length;
+
+        var index = 0;
+        for (; index < length; index++) {
+            if (predicate(array[index], index, array)) {
+                return array[index];
+            }
+        }
+    }
+
     return angular.module('c6.app.minireel.campaign', [c6State.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
@@ -851,21 +862,14 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         function( c6StateProvider ) {
             c6StateProvider.state('MR:EditWildcard', ['cinema6','c6State',
             function                                 ( cinema6 , c6State ) {
+                var CampaignState = c6State.get('MR:Campaign');
+
                 this.model = function(params) {
-                    return cinema6.db.find('card', params.cardId);
-                };
+                    var campaign = CampaignState.cModel;
 
-                this.afterModel = function(card) {
-                    var campaign = c6State.get('MR:Campaign').cModel;
-                    var item = campaign.cards.reduce(function(result, item) {
-                        return item.id === card.id ? item : result;
-                    }, null);
-
-                    this.metaData = {
-                        endDate: item.endDate,
-                        name: item.name,
-                        reportingId: item.reportingId
-                    };
+                    return find(campaign.cards, function(card) {
+                        return card.id === params.cardId;
+                    });
                 };
 
                 this.enter = function() {
