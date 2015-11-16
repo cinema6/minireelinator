@@ -1,6 +1,6 @@
 # MiniReelinator
 
-## v1.25.0 (November 12, 2015)
+## v1.25.0 (November 16, 2015)
 * *[v1.25.0.rc3]*
   * [DESIGN]: (Selfie) Change "Daily Budget" to "Daily Limit"
   * [DESIGN]: (Selfie) Change heading and sub-heading for Targeting section
@@ -14,6 +14,7 @@
   * [FEATURE]: (Selfie) Remove call to action dropdown, default to button, require button
     text and url, always show a call to action button in the preview, fix input color
   * [FIX]: (Selfie) Default the logo option to "Upload from URL"
+* *[/v1.25.0.rc3]*
 
 * *[v1.25.0.rc2]*
   * [FIX]: Fix for an issue where "Ad Start" pixels were saved incorrectly
