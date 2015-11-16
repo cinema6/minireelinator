@@ -289,7 +289,21 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.afterModel = function(campaign) {
+                    var cState = this,
+                        id = campaign.updateRequest ?
+                            campaign.id + ':' + campaign.updateRequest :
+                            null;
+
                     this.campaign = CampaignService.normalize(campaign);
+
+                    return (id ? cinema6.db.find('updateRequest', id) : $q.when(null))
+                        .then(function(updateRequest) {
+                            // this should always be a full campaign object.
+                            // If we ever start submitting partial campaign
+                            // objects as update requests then we'll need to
+                            // normalize this
+                            cState.updateRequest = updateRequest;
+                        });
                 };
 
                 this.enter = function() {
@@ -344,9 +358,23 @@ function( angular , c6State  , PaginatedListState                    ,
                 this._campaign = null;
 
                 this.beforeModel = function() {
+                    var updateRequest = this.cParent.updateRequest;
+
+                    // this will alwyas be a c6DB campaign model
+                    // we need this for autosaving 'draft' campaigns
+                    //  and for deleting 'pending' campaigns
                     this._campaign = this.cParent.campaign;
 
-                    this.campaign = this.cParent.campaign.pojoify();
+                    // if we have an update request we want to use it
+                    // to bind in the UI, this way it always refelects
+                    // the latest updates the user has made.
+                    this.campaign = (updateRequest && updateRequest.data) ||
+                        this.cParent.campaign.pojoify();
+
+                    // put this on the Ctrl for convenience
+                    this.updateRequest = updateRequest;
+
+                    // these are always necessary
                     this.card = this.campaign.cards[0];
                     this.advertiser = SelfieState.cModel.advertiser;
                     this.isCreator = !this.campaign.user ||
@@ -475,6 +503,10 @@ function( angular , c6State  , PaginatedListState                    ,
                         status: isDraft ? 'active' : status
                     });
 
+                if (cState.updateRequest) {
+                    return cState.updateRequest.save();
+                }
+
                 return cinema6.db.create('updateRequest', {
                     data: campaign,
                     campaign: campaign.id
@@ -556,6 +588,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.advertiser = cState.advertiser;
                 this.schema = cState.schema;
                 this.isCreator = cState.isCreator;
+                this.updateRequest = cState.updateRequest;
 
                 this._proxyCard = copy(this.card);
                 this._proxyCampaign = copy(this.campaign);
@@ -1164,6 +1197,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.afterModel = function(model) {
                     var user = c6State.get('Selfie').cModel;
+
+                    console.log(model.updateRequest);
 
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
                     this.updateRequest = model.updateRequest;

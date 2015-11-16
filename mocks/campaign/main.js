@@ -49,14 +49,16 @@ module.exports = function(http) {
             campaign.rejectionReason = request.body.rejectionReason;
             campaign.status = campaign.status === 'pending' ? 'draft' : campaign.status;
         } else {
-            campaign = updateRequest.data;
             delete campaign.rejectionReason;
         }
 
-        campaign.lastUpdated = currentTime;
-        delete campaign.updateRequest;
-        grunt.file.write(objectPath('campaigns', campaign.id), JSON.stringify(campaign, null, '    '));
+        if (request.body.status === 'approved') {
+            campaign = updateRequest.data;
+            delete campaign.updateRequest;
+        }
 
+        campaign.lastUpdated = currentTime;
+        grunt.file.write(objectPath('campaigns', campaign.id), JSON.stringify(campaign, null, '    '));
 
         grunt.file.write(filePath, JSON.stringify(updateRequest, null, '    '));
 
