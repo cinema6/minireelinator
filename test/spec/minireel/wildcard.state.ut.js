@@ -1,5 +1,7 @@
-define(['app'], function(appModule) {
+define(['app', 'angular'], function(appModule, angular) {
     'use strict';
+
+    var copy = angular.copy;
 
     ['MR:New:Wildcard', 'MR:Edit:Wildcard'].forEach(function(stateName) {
         describe(stateName + ' state', function() {
@@ -38,7 +40,7 @@ define(['app'], function(appModule) {
                 var card;
 
                 beforeEach(function() {
-                    card = wildcard.cParent.cModel = cinema6.db.create('card', MiniReelService.createCard('videoBallot'));
+                    card = wildcard.cParent.cModel = MiniReelService.createCard('videoBallot');
 
                     wildcard.beforeModel();
                 });
@@ -52,31 +54,21 @@ define(['app'], function(appModule) {
                 var card, result;
 
                 beforeEach(function() {
-                    card = wildcard.cParent.cModel = cinema6.db.create('card', MiniReelService.createCard('videoBallot'));
+                    card = wildcard.cParent.cModel = MiniReelService.createCard('videoBallot');
                     wildcard.beforeModel();
 
                     result = wildcard.model();
                 });
 
                 it('should return a pojo of its parent\'s model', function() {
-                    expect(result).toEqual(card.pojoify());
-                });
-            });
-
-            describe('afterModel()', function() {
-                beforeEach(function() {
-                    wildcard.cParent.metaData = {};
-
-                    wildcard.afterModel();
-                });
-
-                it('should copy its parent\'s metaData', function() {
-                    expect(wildcard.metaData).toBe(wildcard.cParent.metaData);
+                    expect(result).toEqual(card);
+                    expect(result).not.toBe(card);
                 });
             });
 
             describe('updateCard()', function() {
                 var saveDeferred,
+                    card, proxy,
                     success, failure;
 
                 beforeEach(function() {
@@ -85,10 +77,11 @@ define(['app'], function(appModule) {
                     success = jasmine.createSpy('success()');
                     failure = jasmine.createSpy('failure()');
 
-                    wildcard.card = cinema6.db.create('card', MiniReelService.createCard('videoBallot'));
-                    wildcard.cModel = wildcard.card.pojoify();
-                    spyOn(wildcard.card, '_update').and.returnValue(wildcard.card);
-                    spyOn(wildcard.card, 'save').and.returnValue(saveDeferred.promise);
+                    card = wildcard.card = MiniReelService.createCard('videoBallot');
+                    proxy = wildcard.cModel = copy(wildcard.card);
+
+                    proxy.title = 'Some Title';
+                    proxy.note = 'A description.';
 
                     $rootScope.$apply(function() {
                         wildcard.updateCard().then(success, failure);
@@ -96,23 +89,13 @@ define(['app'], function(appModule) {
                 });
 
                 it('should update the card with the data from the model', function() {
-                    expect(wildcard.card._update).toHaveBeenCalledWith(wildcard.cModel);
+                    expect(card).toEqual(proxy);
+                    expect(wildcard.card).toBe(card);
                 });
 
-                it('should save the card', function() {
-                    expect(wildcard.card.save).toHaveBeenCalled();
-                });
-
-                describe('when the save completes', function() {
-                    beforeEach(function() {
-                        $rootScope.$apply(function() {
-                            saveDeferred.resolve(wildcard.card);
-                        });
-                    });
-
-                    it('should resolve to the card', function() {
-                        expect(success).toHaveBeenCalledWith(wildcard.card);
-                    });
+                it('should resolve to the card', function() {
+                    expect(success).toHaveBeenCalledWith(wildcard.card);
+                    expect(success.calls.mostRecent().args[0]).toBe(wildcard.card);
                 });
             });
         });

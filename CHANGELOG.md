@@ -4,6 +4,13 @@
   * [FIX]: Fix for an issue where JWPlayer previews would not fill the preview area
 
 ## v1.25.0 (November 16, 2015)
+* *[v1.25.0.rc4]*
+  * [FIX]: Fix for an issue that caused changes to cards not to be
+    persisted
+  * [FIX]: Fix for an issue that caused splash image configuration not
+    to be persisted
+* *[/v1.25.0.rc4]*
+
 * *[v1.25.0.rc3]*
   * [DESIGN]: (Selfie) Change "Daily Budget" to "Daily Limit"
   * [DESIGN]: (Selfie) Change heading and sub-heading for Targeting section

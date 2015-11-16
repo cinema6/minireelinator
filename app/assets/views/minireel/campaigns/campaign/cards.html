@@ -38,8 +38,8 @@
                 </article>
             </li>
 
-            <li class="miniReels__item grid__item" ng-repeat="data in cards track by data.id">
-                <article c6-alias="data.item as card" class="miniReel__group clearfix">
+            <li class="miniReels__item grid__item" ng-repeat="card in cards track by card.id">
+                <article class="miniReel__group clearfix">
                     <div class="miniReel__selector">
                         <button class="btnInvis ui__iconHolder18" ng-click="CampaignCardsCtrl.remove(card)">
                             <span class="fab fa-trash">&nbsp;</span>
@@ -61,11 +61,11 @@
                             c6-models="[card, null]"
                             title="Edit This Card: {{card.title}}">
                                 {{card.title}}
-                                <small ng-show="data.name">&nbsp;(<em>{{data.name}}</em>)</small>
+                                <small ng-show="card.campaign.adtechName">&nbsp;(<em>{{card.campaign.adtechName}}</em>)</small>
                             </a>
                         </h1>
                     </div>
-                    <div class="miniReel__status" ng-switch="data.state">
+                    <div class="miniReel__status" ng-switch="card.campaign.state">
                         <strong ng-switch-when="updating" class="miniReel__statusText--updating">
                             Updating
                         </strong>
@@ -98,7 +98,7 @@
                         </strong>
                     </div>
                     <div class="miniReel__stats">
-                        <p ng-if="data.endDate" class="miniReel__views"><strong>End Date:</strong> {{data.endDate | date:'M/d/yyyy'}}</p>
+                        <p ng-if="card.campaign.endDate" class="miniReel__views"><strong>End Date:</strong> {{card.campaign.endDate | date:'M/d/yyyy'}}</p>
                     </div>
                 </article>
             </li>

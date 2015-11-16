@@ -10,6 +10,17 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         isObject = angular.isObject,
         extend = angular.extend;
 
+    function find(array, predicate) {
+        var length = array.length;
+
+        var index = 0;
+        for (; index < length; index++) {
+            if (predicate(array[index], index, array)) {
+                return array[index];
+            }
+        }
+    }
+
     return angular.module('c6.app', [
         ui.name,
         templates.name,
@@ -463,76 +474,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
             }]);
 
-            $provide.constant('CardAdapter', ['config','$http','$q','MiniReelService',
-                                              'VoteService',
-            function                         ( config , $http , $q , MiniReelService ,
-                                               VoteService ) {
-                var convertCardForEditor = MiniReelService.convertCardForEditor,
-                    convertCardForPlayer = MiniReelService.convertCardForPlayer;
-
-                function url(end) {
-                    return config.apiBase + '/content/' + end;
-                }
-
-                function convertCardsForEditor(cards) {
-                    return $q.all(cards.map(MiniReelService.convertCardForEditor));
-                }
-
-                this.findAll = function() {
-                    return $http.get(url('cards'))
-                        .then(pick('data'))
-                        .then(convertCardsForEditor);
-                };
-
-                this.find = function(type, id) {
-                    return $http.get(url('card/' + id), { cache: true })
-                        .then(pick('data'))
-                        .then(convertCardForEditor)
-                        .then(putInArray);
-                };
-
-                this.findQuery = function(type, query) {
-                    return $http.get(url('cards'), { params: query })
-                        .then(pick('data'), function(response) {
-                            return response.status === 404 ?
-                                [] : $q.reject(response);
-                        })
-                        .then(convertCardsForEditor);
-                };
-
-                this.create = function(type, data) {
-                    return convertCardForPlayer(data).then(function(playerData) {
-                        return VoteService.syncCard(extend(playerData, {
-                            campaignId: data.campaignId
-                        }));
-                    }).then(function(data) {
-                        return $http.post(url('card'), data).then(pick('data'));
-                    })
-                    .then(function(data) {
-                        return convertCardForEditor(data);
-                    })
-                    .then(function(editorData) {
-                        return extend(editorData, { campaignId: data.campaignId });
-                    })
-                    .then(putInArray);
-                };
-
-                this.erase = function(type, card) {
-                    return $http.delete(url('card/' + card.id))
-                        .then(value(null));
-                };
-
-                this.update = function(type, card) {
-                    return convertCardForPlayer(card).then(function(playerCard) {
-                        return VoteService.syncCard(playerCard);
-                    }).then(function(card) {
-                        return $http.put(url('card/' + card.id), card).then(pick('data'));
-                    })
-                    .then(convertCardForEditor)
-                    .then(putInArray);
-                };
-            }]);
-
             $provide.constant('CategoryAdapter', ['config','$http','$q',
             function                             ( config , $http , $q ) {
                 function makeQuery(obj) {
@@ -670,42 +611,39 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 }
 
                 function undecorateCampaign(campaign) {
-                    return extend(campaign, {
-                        created: undefined,
+                    return $q.all(campaign.cards.map(function(card) {
+                        return MiniReelService.convertCardForPlayer(card);
+                    })).then(function(cards) {
+                        return extend(campaign, {
+                            created: undefined,
 
-                        advertiser: undefined,
-                        advertiserId: campaign.advertiser.id,
+                            advertiser: undefined,
+                            advertiserId: campaign.advertiser.id,
 
-                        customer: undefined,
-                        customerId: campaign.customer.id,
+                            customer: undefined,
+                            customerId: campaign.customer.id,
 
-                        cards: campaign.cards.map(makeCreativeWrapper),
-                        miniReels: campaign.miniReels.map(makeCreativeWrapper),
+                            cards: cards,
+                            miniReels: campaign.miniReels.map(makeCreativeWrapper),
 
-                        staticCardMap: (function() {
-                            function hasWildcard(entry) {
-                                return !!entry.wildcard;
-                            }
+                            staticCardMap: (function() {
+                                function hasWildcard(entry) {
+                                    return !!entry.wildcard;
+                                }
 
-                            return campaign.staticCardMap.filter(function(entry) {
-                                return entry.cards.some(hasWildcard);
-                            }).reduce(function(result, entry) {
-                                result[entry.minireel.id] = entry.cards
-                                    .filter(hasWildcard)
-                                    .reduce(function(result, entry) {
-                                        result[entry.placeholder.id] = entry.wildcard.id;
-                                        return result;
-                                    }, {});
-                                return result;
-                            }, {});
-                        }()),
-
-                        miniReelGroups: campaign.miniReelGroups.map(function(group) {
-                            return extend(group, {
-                                miniReels: group.miniReels.map(pick('id')),
-                                cards: group.cards.map(pick('id'))
-                            });
-                        })
+                                return campaign.staticCardMap.filter(function(entry) {
+                                    return entry.cards.some(hasWildcard);
+                                }).reduce(function(result, entry) {
+                                    result[entry.minireel.id] = entry.cards
+                                        .filter(hasWildcard)
+                                        .reduce(function(result, entry) {
+                                            result[entry.placeholder.id] = entry.wildcard.id;
+                                            return result;
+                                        }, {});
+                                    return result;
+                                }, {});
+                            }())
+                        });
                     });
                 }
 
@@ -725,56 +663,56 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         });
                     }
 
-                    return $q.all({
-                        customer: getDbModel('customer')(campaign.customerId),
-                        advertiser: getDbModel('advertiser')(campaign.advertiserId),
+                    return $q.all(campaign.cards.map(function(card) {
+                        return MiniReelService.convertCardForEditor(card).then(function(card) {
+                            var endDate = card.campaign.endDate;
 
-                        miniReels: $q.all(campaign.miniReels.map(function(data) {
-                            return $q.all(extend(parseWrapper(data), {
-                                item: getDbModel('experience')(data.id)
-                            }));
-                        })),
+                            card.campaign.endDate = endDate && new Date(endDate);
 
-                        cards: $q.all(campaign.cards.map(function(data) {
-                            return $q.all(extend(parseWrapper(data), {
-                                item: getDbModel('card')(data.id)
-                            }));
-                        })),
+                            return card;
+                        });
+                    })).then(function(cards) {
+                        return $q.all({
+                            customer: getDbModel('customer')(campaign.customerId),
+                            advertiser: getDbModel('advertiser')(campaign.advertiserId),
 
-                        staticCardMap: $q.all(Object.keys(staticCardMap).map(function(minireelId) {
-                            var map = staticCardMap[minireelId],
-                                findMiniReel = getDbModel('experience')(minireelId);
+                            miniReels: $q.all(campaign.miniReels.map(function(data) {
+                                return $q.all(extend(parseWrapper(data), {
+                                    item: getDbModel('experience')(data.id)
+                                }));
+                            })),
 
-                            return $q.all({
-                                minireel: findMiniReel,
-                                cards: $q.all(Object.keys(map).map(function(placeholderId) {
-                                    var wildcardId = map[placeholderId];
+                            cards: cards,
 
-                                    return $q.all({
-                                        placeholder: findMiniReel.then(function(minireel) {
-                                            var deck = minireel.data.deck;
+                            staticCardMap: $q.all(Object.keys(staticCardMap).map(function(mrId) {
+                                var map = staticCardMap[mrId],
+                                    findMiniReel = getDbModel('experience')(mrId);
 
-                                            return findCard(deck, placeholderId) || {};
-                                        }),
-                                        wildcard: getDbModel('card')(wildcardId)
-                                    });
-                                }))
-                            }).catch(function() {
-                                return null;
-                            });
-                        })).then(function(map) {
-                            return map.filter(function(entry) { return !!entry; });
-                        }),
-                        miniReelGroups: $q.all(campaign.miniReelGroups.map(function(entry) {
-                            return $q.all({
-                                miniReels: $q.all(entry.miniReels.map(getDbModel('experience'))),
-                                cards: $q.all(entry.cards.map(getDbModel('card')))
-                            }).then(function(data) {
-                                return extend(entry, data);
-                            });
-                        }))
-                    }).then(function(data) {
-                        return extend(campaign, data);
+                                return $q.all({
+                                    minireel: findMiniReel,
+                                    cards: $q.all(Object.keys(map).map(function(placeholderId) {
+                                        var wildcardId = map[placeholderId];
+
+                                        return $q.all({
+                                            placeholder: findMiniReel.then(function(minireel) {
+                                                var deck = minireel.data.deck;
+
+                                                return findCard(deck, placeholderId) || {};
+                                            }),
+                                            wildcard: find(cards, function(card) {
+                                                return card.id === wildcardId;
+                                            })
+                                        });
+                                    }))
+                                }).catch(function() {
+                                    return null;
+                                });
+                            })).then(function(map) {
+                                return map.filter(function(entry) { return !!entry; });
+                            })
+                        }).then(function(data) {
+                            return extend(campaign, data);
+                        });
                     });
                 };
 
@@ -802,7 +740,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
 
                 this.create = function(type, data) {
-                    return $http.post(url('campaign'), undecorateCampaign(data))
+                    return undecorateCampaign(data)
+                        .then(function(campaign) {
+                            return $http.post(url('campaign'), campaign);
+                        })
                         .then(pick('data'))
                         .then(this.decorateCampaign)
                         .then(putInArray);
@@ -814,7 +755,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
 
                 this.update = function(type, campaign) {
-                    return $http.put(url('campaign/' + campaign.id), undecorateCampaign(campaign))
+                    return undecorateCampaign(campaign)
+                        .then(function(campaign) {
+                            return $http.put(url('campaign/' + campaign.id), campaign);
+                        })
                         .then(pick('data'))
                         .then(this.decorateCampaign)
                         .then(putInArray);
@@ -1137,11 +1081,11 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         }])
 
         .config(['cinema6Provider','ContentAdapter','CWRXAdapter','CampaignAdapter',
-                 'VoteAdapter','OrgAdapter','UserAdapter','CardAdapter','CustomerAdapter',
+                 'VoteAdapter','OrgAdapter','UserAdapter','CustomerAdapter',
                  'CategoryAdapter','AdvertiserAdapter','ExpGroupAdapter','SelfieCampaignAdapter',
                  'PaymentMethodAdapter', 'UpdateRequestAdapter',
         function( cinema6Provider , ContentAdapter , CWRXAdapter , CampaignAdapter ,
-                  VoteAdapter , OrgAdapter , UserAdapter , CardAdapter , CustomerAdapter ,
+                  VoteAdapter , OrgAdapter , UserAdapter , CustomerAdapter ,
                   CategoryAdapter , AdvertiserAdapter , ExpGroupAdapter , SelfieCampaignAdapter ,
                   PaymentMethodAdapter, UpdateRequestAdapter ) {
 
@@ -1150,7 +1094,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 VoteAdapter,
                 OrgAdapter,
                 UserAdapter,
-                CardAdapter,
                 CategoryAdapter,
                 ExpGroupAdapter,
                 CampaignAdapter,
@@ -1170,7 +1113,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 experience: ContentAdapter,
                 org: OrgAdapter,
                 user: UserAdapter,
-                card: CardAdapter,
                 category: CategoryAdapter,
                 advertiser: AdvertiserAdapter,
                 expGroup: ExpGroupAdapter,

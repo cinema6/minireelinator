@@ -23,8 +23,25 @@
     "cards": [
         {
             "id": "rc-5ff4ca42a5f6fd",
-            "endDate": "1990-06-26T00:00:00.000Z",
-            "state": "active"
+            "data": {
+                "related": 0,
+                "videoid": "x18b09a"
+            },
+            "type": "dailymotion",
+            "title": "Kristen Stewart for Channel",
+            "note": "Psychotic glamour",
+            "source": "DailyMotion",
+            "modules": [
+                "ballot"
+            ],
+            "ballot": {
+                "prompt": "What did you think of this video?",
+                "choices": [
+                    "Funny",
+                    "Lame"
+                ]
+            },
+            "displayAdSource": null
         }
     ],
     "staticCardMap": {},
