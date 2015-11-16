@@ -1235,9 +1235,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 if (action === 'paymentMethod') {
                     // the payment method can be auto-approved
                     // but to do this it must be the only property
-                    // included in the body of the campaign.
-                    // This could be problematic if there are lots
-                    // of changes in a previous updateRequest.
+                    // included in the body of the campaign
                     campaign = {
                         paymentMethod: campaign.paymentMethod
                     };
@@ -1245,7 +1243,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 if (updateRequest) {
                     // if we have an existing updateRequest then
-                    // put the campaign on it and save()
+                    // update the data and save()
                     updateRequest.data = campaign;
                     return updateRequest.save();
                 }
@@ -1260,6 +1258,11 @@ function( angular , c6State  , PaginatedListState                    ,
                 var campaign = SelfieManageCampaignCtrl.campaign;
 
                 if (updateRequest.status !== 'approved') {
+                    // make sure the current campaign has the update request
+                    // prop, make sure the Ctrl has the update request in
+                    // case the user wants to make more updates, make sure
+                    // the cState has the update request in case the user
+                    // is an admin and wants access to it in the Admin tab
                     campaign.updateRequest = updateRequest.id;
                     SelfieManageCampaignCtrl.updateRequest = updateRequest;
                     cState.updateRequest = updateRequest;
@@ -1278,6 +1281,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     .then(updateProxy)
                     .then(function() {
                         if ((/delete|cancel/).test(action)) {
+                            // if user has deleted or canceled the campaign
+                            // we probably want to go back the dashboard
                             c6State.goTo('Selfie:CampaignDashboard');
                         }
                     })
