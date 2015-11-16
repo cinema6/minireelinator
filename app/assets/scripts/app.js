@@ -474,76 +474,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 };
             }]);
 
-            $provide.constant('CardAdapter', ['config','$http','$q','MiniReelService',
-                                              'VoteService',
-            function                         ( config , $http , $q , MiniReelService ,
-                                               VoteService ) {
-                var convertCardForEditor = MiniReelService.convertCardForEditor,
-                    convertCardForPlayer = MiniReelService.convertCardForPlayer;
-
-                function url(end) {
-                    return config.apiBase + '/content/' + end;
-                }
-
-                function convertCardsForEditor(cards) {
-                    return $q.all(cards.map(MiniReelService.convertCardForEditor));
-                }
-
-                this.findAll = function() {
-                    return $http.get(url('cards'))
-                        .then(pick('data'))
-                        .then(convertCardsForEditor);
-                };
-
-                this.find = function(type, id) {
-                    return $http.get(url('card/' + id), { cache: true })
-                        .then(pick('data'))
-                        .then(convertCardForEditor)
-                        .then(putInArray);
-                };
-
-                this.findQuery = function(type, query) {
-                    return $http.get(url('cards'), { params: query })
-                        .then(pick('data'), function(response) {
-                            return response.status === 404 ?
-                                [] : $q.reject(response);
-                        })
-                        .then(convertCardsForEditor);
-                };
-
-                this.create = function(type, data) {
-                    return convertCardForPlayer(data).then(function(playerData) {
-                        return VoteService.syncCard(extend(playerData, {
-                            campaignId: data.campaignId
-                        }));
-                    }).then(function(data) {
-                        return $http.post(url('card'), data).then(pick('data'));
-                    })
-                    .then(function(data) {
-                        return convertCardForEditor(data);
-                    })
-                    .then(function(editorData) {
-                        return extend(editorData, { campaignId: data.campaignId });
-                    })
-                    .then(putInArray);
-                };
-
-                this.erase = function(type, card) {
-                    return $http.delete(url('card/' + card.id))
-                        .then(value(null));
-                };
-
-                this.update = function(type, card) {
-                    return convertCardForPlayer(card).then(function(playerCard) {
-                        return VoteService.syncCard(playerCard);
-                    }).then(function(card) {
-                        return $http.put(url('card/' + card.id), card).then(pick('data'));
-                    })
-                    .then(convertCardForEditor)
-                    .then(putInArray);
-                };
-            }]);
-
             $provide.constant('CategoryAdapter', ['config','$http','$q',
             function                             ( config , $http , $q ) {
                 function makeQuery(obj) {
@@ -1151,11 +1081,11 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         }])
 
         .config(['cinema6Provider','ContentAdapter','CWRXAdapter','CampaignAdapter',
-                 'VoteAdapter','OrgAdapter','UserAdapter','CardAdapter','CustomerAdapter',
+                 'VoteAdapter','OrgAdapter','UserAdapter','CustomerAdapter',
                  'CategoryAdapter','AdvertiserAdapter','ExpGroupAdapter','SelfieCampaignAdapter',
                  'PaymentMethodAdapter', 'UpdateRequestAdapter',
         function( cinema6Provider , ContentAdapter , CWRXAdapter , CampaignAdapter ,
-                  VoteAdapter , OrgAdapter , UserAdapter , CardAdapter , CustomerAdapter ,
+                  VoteAdapter , OrgAdapter , UserAdapter , CustomerAdapter ,
                   CategoryAdapter , AdvertiserAdapter , ExpGroupAdapter , SelfieCampaignAdapter ,
                   PaymentMethodAdapter, UpdateRequestAdapter ) {
 
@@ -1164,7 +1094,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 VoteAdapter,
                 OrgAdapter,
                 UserAdapter,
-                CardAdapter,
                 CategoryAdapter,
                 ExpGroupAdapter,
                 CampaignAdapter,
@@ -1184,7 +1113,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 experience: ContentAdapter,
                 org: OrgAdapter,
                 user: UserAdapter,
-                card: CardAdapter,
                 category: CategoryAdapter,
                 advertiser: AdvertiserAdapter,
                 expGroup: ExpGroupAdapter,
