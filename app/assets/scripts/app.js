@@ -698,14 +698,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                                     }, {});
                                 return result;
                             }, {});
-                        }()),
-
-                        miniReelGroups: campaign.miniReelGroups.map(function(group) {
-                            return extend(group, {
-                                miniReels: group.miniReels.map(pick('id')),
-                                cards: group.cards.map(pick('id'))
-                            });
-                        })
+                        }())
                     });
                 }
 
@@ -764,15 +757,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             });
                         })).then(function(map) {
                             return map.filter(function(entry) { return !!entry; });
-                        }),
-                        miniReelGroups: $q.all(campaign.miniReelGroups.map(function(entry) {
-                            return $q.all({
-                                miniReels: $q.all(entry.miniReels.map(getDbModel('experience'))),
-                                cards: $q.all(entry.cards.map(getDbModel('card')))
-                            }).then(function(data) {
-                                return extend(entry, data);
-                            });
-                        }))
+                        })
                     }).then(function(data) {
                         return extend(campaign, data);
                     });

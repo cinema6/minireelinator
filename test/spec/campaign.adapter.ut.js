@@ -103,19 +103,7 @@ define(['app', 'angular'], function(appModule, angular) {
                         'e-91705e579c27cc': {
                             'rc-32c5ebb72266ab': 'rc-06f6db8ba1877f'
                         }
-                    },
-                    miniReelGroups: [
-                        {
-                            name: 'My Favorite Group',
-                            miniReels: ['e-18306aa3d27d54', 'e-d43686a9835df1', 'e-91705e579c27cc'],
-                            cards: ['rc-223a31e4d985c4', 'rc-06f6db8ba1877f']
-                        },
-                        {
-                            name: 'My Other Favorite Group',
-                            miniReels: ['e-f3b45211f2d9b7', 'e-d43686a9835df1'],
-                            cards: ['rc-223a31e4d985c4']
-                        }
-                    ]
+                    }
                 };
 
                 advertiserId = campaign.advertiserId;
@@ -263,21 +251,6 @@ define(['app', 'angular'], function(appModule, angular) {
                                 placeholder: minireels['e-91705e579c27cc'].data.deck[0]
                             }
                        ]
-                    }
-                ]);
-            });
-
-            it('should convert the miniReelGroups into an object with actual instances', function() {
-                expect(campaign.miniReelGroups).toEqual([
-                    {
-                        name: 'My Favorite Group',
-                        miniReels: [minireels['e-18306aa3d27d54'], minireels['e-d43686a9835df1'], minireels['e-91705e579c27cc']],
-                        cards: [cards['rc-223a31e4d985c4'], cards['rc-06f6db8ba1877f']]
-                    },
-                    {
-                        name: 'My Other Favorite Group',
-                        miniReels: [minireels['e-f3b45211f2d9b7'], minireels['e-d43686a9835df1']],
-                        cards: [cards['rc-223a31e4d985c4']]
                     }
                 ]);
             });
@@ -593,19 +566,7 @@ define(['app', 'angular'], function(appModule, angular) {
                         'e-2fa13f2f543cfb': {
                             'rc-1d2de31db9ecdb': 'rc-c755e74bb92856'
                         }
-                    },
-                    miniReelGroups: [
-                        {
-                            name: 'My Favorite Group',
-                            miniReels: ['e-e06b2c4c0f3f3a', 'e-c0bb634aeb9d09'],
-                            cards: ['rc-219c8b95e584b2']
-                        },
-                        {
-                            name: 'My Other Favorite Group',
-                            miniReels: ['e-49c349d99d7ae0', 'e-c0bb634aeb9d09', 'e-e849f8df3a8939', 'e-5dfb9da8b5b1d4'],
-                            cards: ['rc-219c8b95e584b2', 'rc-87f4d923c3a844']
-                        }
-                    ]
+                    }
                 };
 
                 spyOn(cinema6.db, 'find').and.callFake(function(type, id) {
