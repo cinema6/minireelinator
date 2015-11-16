@@ -8,28 +8,15 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
             campaign,
             newWildcard;
 
-        var cardTemplate,
-            card;
+        var card;
 
         beforeEach(function() {
-            module(c6uilib.name, function($provide) {
-                $provide.decorator('cinema6', function($delegate) {
-                    var create = $delegate.db.create;
-
-                    spyOn($delegate.db, 'create').and.callFake(function() {
-                        return (card = create.apply($delegate.db, arguments));
-                    });
-
-                    return $delegate;
-                });
-            });
-
             module(servicesModule.name, function($provide) {
                 $provide.decorator('MiniReelService', function($delegate) {
                     var createCard = $delegate.createCard;
 
                     spyOn($delegate, 'createCard').and.callFake(function() {
-                        return (cardTemplate = createCard.apply($delegate, arguments));
+                        return (card = createCard.apply($delegate, arguments));
                     });
 
                     return $delegate;
@@ -77,7 +64,6 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
             ['video', 'instagram', 'article'].forEach(function(type) {
                 describe('for ' + type + ' cards', function() {
                     beforeEach(function() {
-                        cinema6.db.create.calls.reset();
                         result = newWildcard.model({
                             type: type
                         });
@@ -85,7 +71,6 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
 
                     it('should be a new card', function() {
                         expect(MiniReelService.createCard).toHaveBeenCalledWith(type);
-                        expect(cinema6.db.create).toHaveBeenCalledWith('card', cardTemplate);
                         expect(result).toBe(card);
                     });
 

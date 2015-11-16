@@ -812,9 +812,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         cardType = 'video';
                     }
 
-                    var card = cinema6.db.create('card', MiniReelService.createCard(cardType));
-
-                    return deepExtend(card, {
+                    return deepExtend(MiniReelService.createCard(cardType), {
                         id: undefined,
                         campaignId: campaign.id,
                         sponsored: true,
