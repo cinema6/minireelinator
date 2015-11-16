@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.26.0.rc1]*
+  * [FIX]: Fix for an issue where JWPlayer previews would not fill the preview area
+
 ## v1.25.0 (November 16, 2015)
 * *[v1.25.0.rc3]*
   * [DESIGN]: (Selfie) Change "Daily Budget" to "Daily Limit"
