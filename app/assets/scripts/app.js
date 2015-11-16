@@ -854,6 +854,12 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 this.decorateCampaign = function(campaign) {
                     return $q.all((campaign.cards || []).map(function(card) {
+                        extend(card.data, {
+                            autoadvance: true,
+                            autoplay: true,
+                            controls: true,
+                            skip: 30
+                        });
                         return convertCardForEditor(card);
                     })).then(function(cards) {
                         campaign.cards = cards.length ? cards : undefined;
