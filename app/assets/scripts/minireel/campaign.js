@@ -825,7 +825,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             ad: true
                         },
                         campaign: {
-                            minViewTime: campaign.minViewTime
+                            minViewTime: campaign.minViewTime,
+                            endDate: null
                         },
                         data: {
                             autoadvance: false

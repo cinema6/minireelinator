@@ -88,7 +88,8 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                                 ad: true
                             }),
                             campaign: jasmine.objectContaining({
-                                minViewTime: campaign.cModel.minViewTime
+                                minViewTime: campaign.cModel.minViewTime,
+                                endDate: null
                             }),
                             data: jasmine.objectContaining({
                                 autoadvance: false
