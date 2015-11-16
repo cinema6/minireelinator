@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.26.0.rc1]*
+  * [DESIGN]: (Selfie) Fixed the issue with circle nav hint hiding behind the form elements,
+    added styles to hide circle hint after the page scrolls to relevent section
+  
 ## v1.25.0 (November 16, 2015)
 * *[v1.25.0.rc3]*
   * [DESIGN]: (Selfie) Change "Daily Budget" to "Daily Limit"
