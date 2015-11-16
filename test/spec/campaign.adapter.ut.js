@@ -31,7 +31,8 @@ define(['app', 'angular'], function(appModule, angular) {
             $rootScope,
             $q,
             $httpBackend,
-            cinema6;
+            cinema6,
+            MiniReelService;
 
         var success, failure;
 
@@ -47,6 +48,7 @@ define(['app', 'angular'], function(appModule, angular) {
                 $q = $injector.get('$q');
                 $httpBackend = $injector.get('$httpBackend');
                 cinema6 = $injector.get('cinema6');
+                MiniReelService = $injector.get('MiniReelService');
 
                 CampaignAdapter.config = {
                     apiBase: '/api'
@@ -83,11 +85,15 @@ define(['app', 'angular'], function(appModule, angular) {
                     ],
                     cards: [
                         {
-                            endDate: null,
+                            campaign: {
+                                endDate: '2015-11-16T22:56:50.180Z',
+                            },
                             id: 'rc-223a31e4d985c4'
                         },
                         {
-                            endDate: '2015-03-04T19:54:26.806Z',
+                            campaign: {
+                                endDate: null,
+                            },
                             id: 'rc-06f6db8ba1877f'
                         }
                     ],
@@ -166,11 +172,19 @@ define(['app', 'angular'], function(appModule, angular) {
                 cards = {
                     'rc-223a31e4d985c4': {
                         id: 'rc-223a31e4d985c4',
-                        title: 'You NEED to Buy This Thing!'
+                        data: {},
+                        type: 'video',
+                        campaign: {
+                            endDate: '2015-11-16T22:56:50.180Z',
+                        }
                     },
                     'rc-06f6db8ba1877f': {
                         id: 'rc-06f6db8ba1877f',
-                        title: 'This Product Will Fix EVERYTHING in Your Life!'
+                        data: {},
+                        type: 'video',
+                        campaign: {
+                            endDate: null,
+                        }
                     }
                 };
 
@@ -196,6 +210,10 @@ define(['app', 'angular'], function(appModule, angular) {
                     });
                 });
 
+                spyOn(MiniReelService, 'convertCardForEditor').and.callFake(function(card) {
+                    return $q.when(cards[card.id]);
+                });
+
                 $rootScope.$apply(function() {
                     adapter.decorateCampaign(campaign).then(success, failure);
                 });
@@ -205,7 +223,7 @@ define(['app', 'angular'], function(appModule, angular) {
                 expect(success).toHaveBeenCalledWith(campaign);
             });
 
-            it('should decorate references to cards and minireels with actual objects', function() {
+            it('should decorate references to minireels with actual objects', function() {
                 expect(campaign.advertiser).toBe(advertisers[advertiserId]);
                 expect(campaign.customer).toBe(customers[customerId]);
                 expect(campaign.miniReels).toEqual(sponsoredMiniReels.map(function(data) {
@@ -215,13 +233,16 @@ define(['app', 'angular'], function(appModule, angular) {
                         id: data.id
                     };
                 }));
-                expect(campaign.cards).toEqual(sponsoredCards.map(function(data) {
-                    return {
-                        endDate: data.endDate && new Date(data.endDate),
-                        item: cards[data.id],
-                        id: data.id
-                    };
-                }));
+            });
+
+            it('should convert cards for the editor', function() {
+                expect(campaign.cards[0]).toBe(cards['rc-223a31e4d985c4']);
+                expect(campaign.cards[1]).toBe(cards['rc-06f6db8ba1877f']);
+            });
+
+            it('should convert the endDates into real dates', function() {
+                expect(campaign.cards[0].campaign.endDate).toEqual(new Date('2015-11-16T22:56:50.180Z'));
+                expect(campaign.cards[1].campaign.endDate).toBeNull();
             });
 
             it('should convert the staticCardMap to a larger format', function() {
@@ -253,6 +274,10 @@ define(['app', 'angular'], function(appModule, angular) {
                        ]
                     }
                 ]);
+                expect(campaign.staticCardMap[0].cards[0].wildcard).toBe(campaign.cards[0]);
+                expect(campaign.staticCardMap[0].cards[1].wildcard).toBe(campaign.cards[1]);
+                expect(campaign.staticCardMap[0].cards[2].wildcard).toBe(campaign.cards[1]);
+                expect(campaign.staticCardMap[1].cards[0].wildcard).toBe(campaign.cards[1]);
             });
         });
 
@@ -446,8 +471,10 @@ define(['app', 'angular'], function(appModule, angular) {
                     ],
                     cards: [
                         {
-                            endDate: null,
                             id: 'rc-e7d87387399afb',
+                            campaign: {
+                                endDate: null,
+                            },
                             item: {
                                 id: 'rc-e7d87387399afb',
                                 type: 'vimeo',
@@ -458,7 +485,9 @@ define(['app', 'angular'], function(appModule, angular) {
                             }
                         },
                         {
-                            endDate: new Date().toISOString(),
+                            campaign: {
+                                endDate: new Date().toISOString(),
+                            },
                             id: 'rc-eba4ebd9796e24',
                             item: {
                                 id: 'rc-eba4ebd9796e24',
@@ -471,6 +500,14 @@ define(['app', 'angular'], function(appModule, angular) {
                     miniReelGroups: []
                 };
 
+                spyOn(MiniReelService, 'convertCardForPlayer').and.callFake(function(card) {
+                    var playerCard = copy(card);
+
+                    delete playerCard.item;
+
+                    return $q.when(playerCard);
+                });
+
                 postData = without(['advertiser', 'customer'], extend(campaign, {
                     advertiserId: campaign.advertiser.id,
                     customerId: campaign.customer.id,
@@ -480,10 +517,12 @@ define(['app', 'angular'], function(appModule, angular) {
                             id: data.id
                         };
                     }),
-                    cards: campaign.cards.map(function(data) {
+                    cards: campaign.cards.map(function(card) {
                         return {
-                            endDate: data.endDate,
-                            id: data.id
+                            campaign: {
+                                endDate: card.campaign.endDate
+                            },
+                            id: card.id
                         };
                     }),
                     staticCardMap: {}
@@ -551,13 +590,21 @@ define(['app', 'angular'], function(appModule, angular) {
                     ],
                     cards: [
                         {
-                            endDate: new Date().toISOString(),
+                            campaign: {
+                                endDate: new Date().toISOString()
+                            },
                             id: 'rc-ddc10b88e25b44'
+                        },
+                        {
+                            campaign: {
+                                endDate: new Date().toISOString()
+                            },
+                            id: 'rc-c755e74bb92856'
                         }
                     ],
                     staticCardMap: {
                         'e-50a82df1192d11': {
-                            'rc-7bd45eb26582e5': 'rc-789f23554ad597',
+                            'rc-7bd45eb26582e5': 'rc-ddc10b88e25b44',
                             'rc-1d2de31db9ecdb': 'rc-c755e74bb92856'
                         },
                         'e-6a76407457ebc4': {
@@ -581,6 +628,18 @@ define(['app', 'angular'], function(appModule, angular) {
                             ]
                         }
                     });
+                });
+
+                spyOn(MiniReelService, 'convertCardForEditor').and.callFake(function(card) {
+                    return $q.when(extend(card, { editor: true }));
+                });
+
+                spyOn(MiniReelService, 'convertCardForPlayer').and.callFake(function(card) {
+                    var playerCard = copy(card);
+
+                    delete playerCard.editor;
+
+                    return $q.when(playerCard);
                 });
 
                 $rootScope.$apply(function() {
