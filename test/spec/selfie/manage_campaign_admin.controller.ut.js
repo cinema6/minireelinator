@@ -43,10 +43,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             $scope.$apply(function() {
                 SelfieManageCampaignAdminCtrl = $controller('SelfieManageCampaignAdminController', {
                     $scope: $scope,
-                    cState: {
-                        card: cState.card,
-                        campaign: cState.campaign
-                    }
+                    cState: cState
                 });
                 SelfieManageCampaignAdminCtrl.initWithModel(model);
             });
@@ -142,12 +139,11 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             };
 
             cState = {
-                campaign: campaign
+                campaign: campaign,
+                updateRequest: updateRequest
             };
 
-            compileCtrl(cState, {
-                updateRequest: updateRequest
-            });
+            compileCtrl(cState, {});
         });
 
         it('should exist', function() {
@@ -163,7 +159,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 describe('when there is an updateRequest', function() {
                     beforeEach(function() {
                         $scope.$apply(function() {
-                            SelfieManageCampaignAdminCtrl.initWithModel({updateRequest: updateRequest});
+                            SelfieManageCampaignAdminCtrl.initWithModel();
                         });
                     })
 
@@ -181,8 +177,11 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                 describe('when there is no updateRequest', function() {
                     beforeEach(function() {
+                        cState.updateRequest = null;
+                        compileCtrl(cState, {});
+
                         $scope.$apply(function() {
-                            SelfieManageCampaignAdminCtrl.initWithModel({updateRequest: null});
+                            SelfieManageCampaignAdminCtrl.initWithModel();
                         });
                     })
 
