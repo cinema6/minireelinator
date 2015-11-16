@@ -124,37 +124,33 @@ define(['app'], function(appModule) {
             });
         });
 
-        describe('remove(item)', function() {
+        describe('remove(card)', function() {
             var card;
-            var data;
 
             beforeEach(function() {
                 campaign.cards.push.apply(campaign.cards, ['rc-69f8ae2e995e0d', 'rc-fe5d81d4ad982f', 'rc-9555f364197617'].map(function(id) {
                     return {
                         id: id,
-                        item: cinema6.db.create('card', {
-                            id: id,
-                            data: {}
-                        })
+                        type: 'adUnit',
+                        data: {},
+                        campaign: {}
                     };
                 }));
 
-                data = campaign.cards[1];
-                card = data.item;
+                card = campaign.cards[1];
 
                 CampaignCardsCtrl.remove(card);
             });
 
             it('should remove the card', function() {
                 expect(campaign.cards.length).toBe(2);
-                expect(campaign.cards).not.toContain(data);
+                expect(campaign.cards).not.toContain(card);
             });
         });
 
         describe('add(item)', function() {
             var result;
             var card;
-            var data;
 
             beforeEach(function() {
                 campaign.cards.push.apply(campaign.cards, ['rc-69f8ae2e995e0d', 'rc-fe5d81d4ad982f', 'rc-9555f364197617'].map(function(id) {
@@ -167,26 +163,16 @@ define(['app'], function(appModule) {
                     };
                 }));
 
-                card = cinema6.db.create('card', {
+                card = {
                     id: 'rc-5480ecc1063d7e',
                     data: {}
-                });
-
-                data = {
-                    endDate: new Date(),
-                    reportingId: '12345'
                 };
 
-                result = CampaignCardsCtrl.add(card, data);
+                result = CampaignCardsCtrl.add(card);
             });
 
             it('should add the card to the campaign', function() {
-                expect(campaign.cards[3]).toEqual({
-                    id: card.id,
-                    item: card,
-                    endDate: data.endDate,
-                    reportingId: '12345'
-                });
+                expect(campaign.cards[3]).toBe(card);
             });
 
             it('should return the card', function() {
@@ -194,32 +180,16 @@ define(['app'], function(appModule) {
             });
 
             describe('if called with a card that is already added', function() {
-                var newDate;
-
                 beforeEach(function() {
-                    newDate = new Date(0);
-
-                    result = CampaignCardsCtrl.add(card, {
-                        endDate: newDate,
-                        reportingId: '999999'
-                    });
+                    result = CampaignCardsCtrl.add(card);
                 });
 
                 it('should return the card', function() {
                     expect(result).toBe(card);
                 });
 
-                it('should not add the minireel again', function() {
+                it('should not add the card again', function() {
                     expect(campaign.cards[4]).not.toBeDefined();
-                });
-
-                it('should udpate the item', function() {
-                    expect(campaign.cards[3]).toEqual({
-                        id: card.id,
-                        item: card,
-                        endDate: newDate,
-                        reportingId: '999999'
-                    });
                 });
             });
         });
