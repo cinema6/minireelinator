@@ -1150,15 +1150,23 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.model = function() {
+                    var updateRequest = this.campaign.updateRequest ?
+                        this.campaign.id + ':' + this.campaign.updateRequest :
+                        null;
+
                     return $q.all({
-                        paymentMethods: cinema6.db.findAll('paymentMethod')
+                        paymentMethods: cinema6.db.findAll('paymentMethod'),
+                        updateRequest:  updateRequest ?
+                            cinema6.db.find('updateRequest', updateRequest) :
+                            null
                     });
                 };
 
-                this.afterModel = function() {
+                this.afterModel = function(model) {
                     var user = c6State.get('Selfie').cModel;
 
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
+                    this.updateRequest = model.updateRequest;
                 };
 
                 this.enter = function() {
@@ -1207,17 +1215,39 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function createUpdateRequest(action) {
-                var campaign = SelfieManageCampaignCtrl.campaign.pojoify(),
-                    id = campaign.id;
+                var Ctrl = SelfieManageCampaignCtrl,
+                    updateRequest = Ctrl.updateRequest,
+                    campaign = (updateRequest || {}).data || Ctrl.campaign.pojoify(),
+                    id = Ctrl.campaign.id;
+
+                if (action === 'delete') {
+                    // if status is pending, expired, canceled
+                    // use the campaigns endpoint
+                    return Ctrl.campaign.erase();
+                }
 
                 if (action) {
+                    // most actions are status changes, except for
+                    // paymentMethod, which is handled below
                     campaign.status = statusFor(action);
                 }
 
                 if (action === 'paymentMethod') {
+                    // the payment method can be auto-approved
+                    // but to do this it must be the only property
+                    // included in the body of the campaign.
+                    // This could be problematic if there are lots
+                    // of changes in a previous updateRequest.
                     campaign = {
                         paymentMethod: campaign.paymentMethod
                     };
+                }
+
+                if (updateRequest) {
+                    // if we have an existing updateRequest then
+                    // put the campaign on it and save()
+                    updateRequest.data = campaign;
+                    return updateRequest.save();
                 }
 
                 return cinema6.db.create('updateRequest', {
@@ -1231,6 +1261,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 if (updateRequest.status !== 'approved') {
                     campaign.updateRequest = updateRequest.id;
+                    SelfieManageCampaignCtrl.updateRequest = updateRequest;
+                    cState.updateRequest = updateRequest;
                 }
 
                 return campaign;
@@ -1244,6 +1276,11 @@ function( angular , c6State  , PaginatedListState                    ,
                 return createUpdateRequest(action)
                     .then(setUpdateRequest)
                     .then(updateProxy)
+                    .then(function() {
+                        if ((/delete|cancel/).test(action)) {
+                            c6State.goTo('Selfie:CampaignDashboard');
+                        }
+                    })
                     .catch(handleError);
             }
 
@@ -1251,13 +1288,22 @@ function( angular , c6State  , PaginatedListState                    ,
                 canSubmit: {
                     get: function() {
                         return !equals(this.campaign, this._proxyCampaign) &&
-                            !!this.campaign.paymentMethod && !this.campaign.updateRequest;
+                            !!this.campaign.paymentMethod;
                     }
                 },
-                isLocked: {
+                canEdit: {
                     get: function() {
-                        return (/expired|canceled/).test(this.campaign.status) ||
-                            !!this.campaign.updateRequest;
+                        return (/pending|active|paused/).test(this.campaign.status);
+                    }
+                },
+                canCancel: {
+                    get: function() {
+                        return (/active|paused/).test(this.campaign.status);
+                    }
+                },
+                canDelete: {
+                    get: function() {
+                        return (/expired|canceled|pending/).test(this.campaign.status);
                     }
                 }
             });
@@ -1265,9 +1311,11 @@ function( angular , c6State  , PaginatedListState                    ,
             this.initWithModel = function(model) {
                 this.card = cState.card;
                 this.campaign = cState.campaign;
+                this.showAdminTab = cState.isAdmin;
+
                 this.categories = model.categories;
                 this.paymentMethods = model.paymentMethods;
-                this.showAdminTab = cState.isAdmin;
+                this.updateRequest = model.updateRequest;
 
                 this._proxyCampaign = copy(cState.campaign);
             };
@@ -1275,8 +1323,7 @@ function( angular , c6State  , PaginatedListState                    ,
             this.update = function(action) {
                 ConfirmDialogService.display({
                     prompt: 'Are you sure you want to ' + action + ' your campaign? ' +
-                        'Submitting this update will lock your campaign from further' +
-                        ' edits until the change is approved.',
+                        'This change may take up to 24 hours to be approved.',
                     affirm: 'Yes, submit this change',
                     cancel: 'Cancel',
 
@@ -1363,17 +1410,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.beforeModel = function() {
                     this.campaign = this.cParent.campaign;
-                };
-
-                this.model = function() {
-                    var model = {
-                        updateRequest: null
-                    };
-                    if(this.campaign.updateRequest) {
-                        var updateHash = this.campaign.id + ':' + this.campaign.updateRequest;
-                        model.updateRequest = cinema6.db.find('updateRequest', updateHash);
-                    }
-                    return $q.all(model);
+                    this.updateRequest = this.cParent.updateRequest;
                 };
 
                 this.enter = function() {
@@ -1391,8 +1428,8 @@ function( angular , c6State  , PaginatedListState                    ,
             var self = this;
             var updateRequest;
 
-            this.initWithModel = function(model) {
-                updateRequest = model.updateRequest;
+            this.initWithModel = function() {
+                updateRequest = cState.updateRequest;
                 extend(self, {
                     showApproval: false,
                     campaign: cState.campaign.pojoify(),

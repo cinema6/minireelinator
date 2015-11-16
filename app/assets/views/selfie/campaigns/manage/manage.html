@@ -5,7 +5,7 @@
     </header>
 
     <div class="tabContent__gridHolder">
-        <div class="grid grid--center">            
+        <div class="grid grid--center">
             <!--left column-->
             <div class="grid__item two-thirds palm--one-whole">
                 <section class="campaignPreview__group">
@@ -15,19 +15,14 @@
             --><div class="grid__item adManage one-third palm--one-whole">
                 <div class="grid">
                     <div class="grid__item grid--center lockedMsg">
-                        <span ng-if="SelfieManageCampaignCtrl.isLocked">
-                            <img src="styles/selfie/img/lock-icon.png" class="lockedMsg__icon"/>
-                            <h3 class="lockedMsg__icon--text tk--hdr">Locked</h3>
-                        </span>
                         <h3 class="lockedMsg__info tk--hdr">Your campaign is <strong>{{campaign.status}}</strong></h3>
-                        <p class="lockedMsg__info" ng-if="!SelfieManageCampaignCtrl.isLocked">You can edit this campaign but once a change is submitted for approval the campaign will be locked until approved.</p>
-                        <p class="lockedMsg__info" ng-if="SelfieManageCampaignCtrl.isLocked && campaign.status !== 'pending'">You have a change waiting to be approved. Once it's approved you can submit another change.</p>
-                        <p class="lockedMsg__info" ng-if="SelfieManageCampaignCtrl.isLocked && campaign.status === 'pending'">You cannot make changes to the campaign until it has been approved.</p>
+                        <p class="lockedMsg__info" ng-if="campaign.updateRequest && campaign.status === 'pending'">Your campaign is pending approval.</p>
+                        <p class="lockedMsg__info" ng-if="campaign.updateRequest && campaign.status !== 'pending'">Your requested changes are pending approval.</p>
                     </div>
                     <div class="grid__item one--whole grid--center" ng-if="campaign.status === 'active' || campaign.status === 'paused'">
                         <div class="action__btnGroup">
-                          <button ng-show="campaign.status === 'active'" ng-click="SelfieManageCampaignCtrl.update('pause')" ng-class="{'btn--disabled' : SelfieManageCampaignCtrl.isLocked }" ng-disabled="SelfieManageCampaignCtrl.isLocked" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-pause"></i>  Pause</button>
-                          <button ng-show="campaign.status === 'paused'" ng-click="SelfieManageCampaignCtrl.update('resume')" ng-class="{'btn--disabled' : SelfieManageCampaignCtrl.isLocked }" ng-disabled="SelfieManageCampaignCtrl.isLocked" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-play"></i>  Resume</button>
+                          <button ng-show="(campaign.status === 'active' && SelfieManageCampaignCtrl.updateRequest.data.status !== 'paused') || (campaign.status === 'paused' && SelfieManageCampaignCtrl.updateRequest.data.status === 'active')" ng-click="SelfieManageCampaignCtrl.update('pause')" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-pause"></i>  Pause</button>
+                          <button ng-show="(campaign.status === 'paused' && SelfieManageCampaignCtrl.updateRequest.data.status !== 'active') || (campaign.status === 'active' && SelfieManageCampaignCtrl.updateRequest.data.status === 'paused')" ng-click="SelfieManageCampaignCtrl.update('resume')" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-play"></i>  Resume</button>
                           <!-- <button ng-click="SelfieManageCampaignCtrl.edit(campaign)" ng-class="{'btn--disabled' : !!campaign.updateRequest }" ng-disabled="!!campaign.updateRequest" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-pencil-square-o"></i>  Edit</button> -->
                         </div>
                     </div>
