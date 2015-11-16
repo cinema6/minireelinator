@@ -855,7 +855,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 this.decorateCampaign = function(campaign) {
                     return $q.all((campaign.cards || []).map(function(card) {
                         extend(card.data, {
-                            autoadvance: true,
+                            autoadvance: false,
                             autoplay: true,
                             controls: true,
                             skip: 30
