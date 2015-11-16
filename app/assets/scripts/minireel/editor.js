@@ -2120,6 +2120,42 @@ VideoCardController           , c6embed) {
             };
         }])
 
+        .directive('jwPlayer', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    videoid: '@'
+                },
+                link: function(scope, $element) {
+                    var id = 'botr_' + scope.videoid.replace('-', '_') + '_div';
+                    var style = document.createElement('style');
+                    var script = document.createElement('script');
+                    var div = document.createElement('div');
+                    var iframe = document.createElement('iframe');
+
+                    /* The JWPlayer embed is responsive only to certain aspect ratios.
+                        This style hack is needed to ensure it displays properly. */
+                    style.innerHTML = 'div#' + id +
+                        '{ width: 100% !important; height: 100% !important; }';
+                    script.setAttribute('type', 'application/javascript');
+                    script.setAttribute('src', '//content.jwplatform.com/players/' + scope.videoid +
+                        '.js');
+                    div.setAttribute('id', id);
+                    div.appendChild(script);
+                    iframe.setAttribute('width', '100%');
+                    iframe.setAttribute('height', '100%');
+                    iframe.setAttribute('frameBorder', 0);
+                    iframe.onload = function() {
+                        iframe.contentDocument.head.appendChild(style);
+                        iframe.contentDocument.body.appendChild(div);
+                    };
+
+                    $element.addClass('jwplayerPreview');
+                    $element.append(iframe);
+                }
+            };
+        }])
+
         .directive('videoPreview', ['c6UrlMaker','$timeout','VideoService',
         function                   ( c6UrlMaker , $timeout , VideoService ) {
             return {
