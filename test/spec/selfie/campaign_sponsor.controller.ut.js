@@ -111,7 +111,7 @@ define(['app'], function(appModule) {
             describe('logoType', function() {
                 describe('when no logo has been selected yet, aka brand new campaign', function() {
                     it('should default to the first option', function() {
-                        expect(SelfieCampaignSponsorCtrl.logoType).toEqual(SelfieCampaignSponsorCtrl.logoOptions[0]);
+                        expect(SelfieCampaignSponsorCtrl.logoType).toEqual(SelfieCampaignSponsorCtrl.logoOptions[1]);
                     });
                 });
 

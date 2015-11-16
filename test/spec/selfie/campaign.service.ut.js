@@ -131,7 +131,10 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                         expect(cardResult.links).toEqual({});
                         expect(cardResult.params).toEqual({
                             ad: true,
-                            action: null
+                            action: {
+                                type: 'button',
+                                label: 'Learn More'
+                            }
                         });
                         expect(cardResult.data).toEqual(jasmine.objectContaining({
                             autoadvance: false,

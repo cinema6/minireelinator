@@ -52,78 +52,43 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form__item form__item--stackedInput">
-                <select c6-select-box preselected="true" ng-model="SelfieCampaignTextCtrl.actionType" ng-options="option.name for option in SelfieCampaignTextCtrl.actionTypeOptions" class="form__selectBox form__selectBox--single"></select>
-                <label class="form__label" for="c6-call-to-action">
+            <fieldset class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.params.action.label && SelfieCampaignCtrl.validation.show }">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-model="card.params.action.label">
+                <label class="form__label" for="c6-video-ctaText">
                     <i class="fa fa-times ui--error"></i>
-                    Call to action
+                    Call To Action Button Text <span class="text--small"> (required) </span>
                 </label>
                 <!--<div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">
-                        The  Call to Action (CTA) button drives conversions by provoking an immediate response from the viewer.  See our FAQ -- Link -- for help on designing an effective CTA.
-                        --old cta desc--A call to action is a prompt for the user to do an action. For instance, “Learn more,” or “Shop now!”
+                        The text is what the link will be attached to for the button or the link.
                     </div>
                 </div>-->
                 <div class="form__errorBox">
                     <p class="form__errorMsg">
-                        <i class="fa fa-exclamation-triangle"></i> Error message goes here
+                        <i class="fa fa-exclamation-triangle"></i> Call to action text is required
+                    </p>
+                </div>
+            </fieldset>
+
+            <fieldset class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.links.Action && SelfieCampaignCtrl.validation.show }">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-model="card.links.Action" ng-focus="SelfieCampaignTextCtrl.bindLinkToWebsite = false">
+                <label class="form__label" for="c6-video-ctaText">
+                    <i class="fa fa-times ui--error"></i>
+                    Call To Action URL <span class="text--small"> (required) </span>
+                </label>
+                <!--<div class="form__helpBox form__helpBox--right">
+                    <div class="form__helpText">
+                    Link to your landing page or website.
+                    </div>
+                </div>-->
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Call to action URL is required
                     </p>
                 </div>
             </fieldset>
 
         </div><!-- .form__items -->
-
-        <div class="ctaPreview__wizard" ng-if="SelfieCampaignTextCtrl.actionType.type !== 'none'">
-            <!-- <div class="ctaPreview__group ui__connector">
-
-                <h2 class="ctaPreview__title">Preview</h2>
-                <div class="ctaPreview__container" ng-switch="SelfieCampaignTextCtrl.actionType.type">
-                    <button class="ctaPreview__btn" ng-switch-when="button">{{SelfieCampaignTextCtrl.actionLabel}}</button>
-                    <a href="#" class="ctaPreview__link" ng-switch-when="text">{{SelfieCampaignTextCtrl.actionLabel}}</a>
-                </div>
-
-            </div> -->
-
-            <div class="form__items">
-
-                <fieldset class="form__item form__item--sub">
-                    <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-model="SelfieCampaignTextCtrl.actionLabel">
-                    <label class="form__label" for="c6-video-ctaText">
-                        <i class="fa fa-times ui--error"></i>
-                        {{SelfieCampaignTextCtrl.actionType.name}} Text
-                    </label>
-                    <!--<div class="form__helpBox form__helpBox--right">
-                        <div class="form__helpText">
-                            The text is what the link will be attached to for the button or the link.
-                        </div>
-                    </div>-->
-                    <div class="form__errorBox">
-                        <p class="form__errorMsg">
-                            <i class="fa fa-exclamation-triangle"></i> Error message goes here
-                        </p>
-                    </div>
-                </fieldset>
-
-                <fieldset class="form__item form__item--sub">
-                    <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-model="SelfieCampaignTextCtrl.actionLink">
-                    <label class="form__label" for="c6-video-ctaText">
-                        <i class="fa fa-times ui--error"></i>
-                        URL
-                    </label>
-                    <!--<div class="form__helpBox form__helpBox--right">
-                        <div class="form__helpText">
-                        Link to your landing page or website.
-                        </div>
-                    </div>-->
-                    <div class="form__errorBox">
-                        <p class="form__errorMsg">
-                            <i class="fa fa-exclamation-triangle"></i> Error message goes here
-                        </p>
-                    </div>
-                </fieldset>
-
-            </div>
-        </div><!--.ctaPreview__wizard-->
 
     </section><!--.formSection__group-->
 

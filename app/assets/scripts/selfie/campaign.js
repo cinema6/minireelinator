@@ -535,7 +535,8 @@ function( angular , c6State  , PaginatedListState                    ,
                             section1: !!campaign.name,
                             section2: !!campaign.advertiserDisplayName && !!card.links.Website,
                             section3: !!card.data.service && !!card.data.videoid,
-                            section4: !!card.title,
+                            section4: !!card.title && !!card.links.Action &&
+                                !!card.params.action.label,
                             section5: true,
                             section6: this.budget,
                             section7: !!campaign.paymentMethod,
@@ -729,9 +730,9 @@ function( angular , c6State  , PaginatedListState                    ,
             // then "none" must have been selected
             this.logoType = this.logoOptions.filter(function(option) {
                 return option.type === card.collateral.logoType ||
-                    option.src === card.collateral.logo ||
+                    (card.collateral.logo && (option.src === card.collateral.logo)) ||
                     (!card.collateral.logo && defaultLogo && option.type === 'none');
-            })[0] || this.logoOptions[0];
+            })[0] || this.logoOptions[1];
 
             this.logo = card.collateral.logo;
             this.previouslyUploadedLogo = undefined;
@@ -967,82 +968,23 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignTextController', ['$scope',
         function                                    ( $scope ) {
-            var AppCtrl = $scope.AppCtrl,
-                SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 SelfieCampaignTextCtrl = this,
                 card = SelfieCampaignCtrl.card;
 
-            function validLink(link) {
-                return link && link !== 'http://';
-            }
+            card.links.Action = card.links.Action || card.links.Website;
+            card.params.action = card.params.action || { type: 'button' };
+            card.params.action.label =  card.params.action.label || 'Learn More';
 
-            // we only set the action object if we have
-            // an action link and a valid type
-            function updateActionLink() {
-                var type = SelfieCampaignTextCtrl.actionType.type,
-                    actionLink = SelfieCampaignTextCtrl.actionLink,
-                    actionLabel = SelfieCampaignTextCtrl.actionLabel,
-                    isValid = validLink(actionLink);
+            this.bindLinkToWebsite = !card.links.Action;
 
-                if (isValid) {
-                    card.links.Action = AppCtrl.validUrl.test(actionLink) ?
-                        actionLink : 'http://' + actionLink;
+            $scope.$watch(function() {
+                return card.links.Website;
+            }, function(website) {
+                if (website && SelfieCampaignTextCtrl.bindLinkToWebsite) {
+                    card.links.Action = website;
                 }
-
-                if (type === 'none' || !isValid) {
-                    card.links.Action = undefined;
-                }
-
-                card.params.action = isValid && type !== 'none' ? {
-                    type: type,
-                    label: actionLabel
-                } : null;
-            }
-
-            this.actionLink = card.links.Action;
-            this.actionLabel = (card.params.action && card.params.action.label) || 'Learn More';
-
-            // there's only one valid type: 'button'
-            // if the user chooses 'none' then we null out the 'action' prop
-            this.actionTypeOptions = ['None','Button']
-                .map(function(option) {
-                    return {
-                        name: option,
-                        type: option.toLowerCase()
-                    };
-                });
-
-            // if we do not have an action object or valid type
-            // then we're defaulting the choice to 'none'
-            this.actionType = this.actionTypeOptions
-                .filter(function(option) {
-                    var type = card.params.action && card.params.action.type || 'none';
-
-                    return option.type === type;
-                })[0];
-
-            $scope.$watchCollection(function() {
-                return [
-                    SelfieCampaignTextCtrl.actionType.type,
-                    SelfieCampaignTextCtrl.actionLink,
-                    SelfieCampaignTextCtrl.actionLabel
-                ];
-            }, function(newProps, oldProps) {
-                if (newProps === oldProps) { return; }
-
-                var newType = newProps[0],
-                    oldType = oldProps[0];
-
-                if (newType !== oldType && newType !== 'none') {
-                    SelfieCampaignTextCtrl.actionLink = SelfieCampaignTextCtrl.actionLink ||
-                        card.links.Website || 'http://';
-                }
-
-                updateActionLink();
             });
-
-            $scope.$on('SelfieCampaignWillSave', updateActionLink);
-
         }])
 
         .controller('SelfieCampaignPreviewController', ['$scope','c6Debounce','$log',
@@ -1062,6 +1004,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 $log.info('loading preview');
 
                 _card.params.sponsor = campaign.advertiserDisplayName;
+                _card.params.action = _card.params.action || { type: 'button' };
+                _card.params.action.label = _card.params.action.label || 'Learn More';
+                _card.links.Action = _card.links.Action || 'http://reelcontent.com';
 
                 SelfieCampaignPreviewCtrl.card = _card;
             }, 2000);

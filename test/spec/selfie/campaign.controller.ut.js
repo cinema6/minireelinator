@@ -267,6 +267,15 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     SelfieCampaignCtrl.card.title = 'Some headline!';
                     expect(SelfieCampaignCtrl.canSubmit).toBe(false);
 
+                    SelfieCampaignCtrl.card.params.action = {
+                        type: 'button',
+                        label: 'Learn More'
+                    };
+                    expect(SelfieCampaignCtrl.canSubmit).toBe(false);
+
+                    SelfieCampaignCtrl.card.links.Action = 'http://cinema6.com';
+                    expect(SelfieCampaignCtrl.canSubmit).toBe(false);
+
                     SelfieCampaignCtrl.validation.budget = true;
                     expect(SelfieCampaignCtrl.canSubmit).toBe(true);
                 });
@@ -297,6 +306,11 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                         expect(SelfieCampaignCtrl.validation.sections.section4).toBe(false);
                         cState.card.title = 'My Headline!';
+                        cState.card.links.Action = 'http://cinema6.com';
+                        cState.card.params.action = {
+                            type: 'button',
+                            label: 'Learn More'
+                        };
                         expect(SelfieCampaignCtrl.validation.sections.section4).toBe(true);
 
                         expect(SelfieCampaignCtrl.validation.sections.section5).toBe(true);
@@ -420,6 +434,11 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         cState.card.data.service = 'Youtube';
                         cState.card.data.videoid = 'xh653bs8';
                         cState.card.title = 'My Headline!';
+                        cState.card.links.Action = 'http://cinema6.com';
+                        cState.card.params.action = {
+                            type: 'button',
+                            label: 'Learn More'
+                        };
 
                         SelfieCampaignCtrl.validation.budget = true;
                     });
