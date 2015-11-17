@@ -806,12 +806,6 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 this.decorateCampaign = function(campaign) {
                     return $q.all((campaign.cards || []).map(function(card) {
-                        extend(card.data, {
-                            autoadvance: false,
-                            autoplay: true,
-                            controls: true,
-                            skip: 30
-                        });
                         return convertCardForEditor(card);
                     })).then(function(cards) {
                         campaign.cards = cards.length ? cards : undefined;
@@ -1272,7 +1266,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     this.name = c6Defines.kSelfie ? 'Selfie' : 'Portal';
 
                     this.title = function() {
-                        return 'Cinema6 Dashboard';
+                        return c6Defines.kSelfie ? 'Reelcontent' : 'Studio';
                     };
 
                     this.enter = function() {
