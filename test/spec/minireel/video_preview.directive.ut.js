@@ -78,7 +78,27 @@
                     beforeEach(function() {
                         scope.service = 'wistia';
                     });
-                    
+
+                    it('should be true', function() {
+                        expect(scope.disableTrimmer()).toBe(true);
+                    });
+                });
+
+                describe('for jwplayer', function() {
+                    beforeEach(function() {
+                        scope.service = 'jwplayer';
+                    });
+
+                    it('should be true', function() {
+                        expect(scope.disableTrimmer()).toBe(true);
+                    });
+                });
+
+                describe('for vidyard', function() {
+                    beforeEach(function() {
+                        scope.service = 'vidyard';
+                    });
+
                     it('should be true', function() {
                         expect(scope.disableTrimmer()).toBe(true);
                     });

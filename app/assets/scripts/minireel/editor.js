@@ -2156,6 +2156,30 @@ VideoCardController           , c6embed) {
             };
         }])
 
+        .directive('vidyardPlayer', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    videoid: '@'
+                },
+                link: function(scope, $element) {
+                    var style = document.createElement('style');
+                    var script = document.createElement('script');
+
+                    style.innerHTML = 'span#vidyard_span_' + scope.videoid +
+                        '{width:100%!important;height:100%!important;}';
+                    script.setAttribute('type', 'text/javascript');
+                    script.setAttribute('id', 'vidyard_embed_code_' + scope.videoid);
+                    script.setAttribute('src', '//play.vidyard.com/' + scope.videoid +
+                        '.js?v=3.1.1&type=inline');
+
+                    $element.addClass('vidyardPreview');
+                    $element.append(style);
+                    $element.append(script);
+                }
+            };
+        }])
+
         .directive('videoPreview', ['c6UrlMaker','$timeout','VideoService',
         function                   ( c6UrlMaker , $timeout , VideoService ) {
             return {
@@ -2259,7 +2283,8 @@ VideoCardController           , c6embed) {
 
                     scope.disableTrimmer = function() {
                         return (scope.service === 'vine' || scope.service === 'vzaar' ||
-                            scope.service === 'wistia' || scope.service === 'jwplayer');
+                            scope.service === 'wistia' || scope.service === 'jwplayer' ||
+                            scope.service === 'vidyard');
                     };
 
                     Object.defineProperties(scope, {
