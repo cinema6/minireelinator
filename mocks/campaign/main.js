@@ -221,6 +221,11 @@ module.exports = function(http) {
             });
 
         campaign.cards[0].id = cardId;
+        campaign.cards[0].data.moat = {
+            campaign: id,
+            advertiser: campaign.advertiserId,
+            creative: cardId
+        };
 
         grunt.file.write(objectPath('campaigns', id), JSON.stringify(campaign, null, '    '));
 
