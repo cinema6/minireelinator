@@ -1407,12 +1407,16 @@ function( angular , c6State  , PaginatedListState                    ,
                 },
                 canEdit: {
                     get: function() {
-                        return (/pending|active|paused/).test(this.campaign.status);
+                        return (/pending|active|paused/).test(this.campaign.status) &&
+                            (this.updateRequest && this.updateRequest.data &&
+                                this.updateRequest.data.status !== 'canceled');
                     }
                 },
                 canCancel: {
                     get: function() {
-                        return (/active|paused/).test(this.campaign.status);
+                        return (/active|paused/).test(this.campaign.status) &&
+                            (this.updateRequest && this.updateRequest.data &&
+                                this.updateRequest.data.status !== 'canceled');
                     }
                 },
                 canDelete: {

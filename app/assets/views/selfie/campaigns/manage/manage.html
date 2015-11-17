@@ -19,7 +19,7 @@
                         <p class="lockedMsg__info" ng-if="campaign.updateRequest && campaign.status === 'pending'">Your campaign is pending approval.</p>
                         <p class="lockedMsg__info" ng-if="campaign.updateRequest && campaign.status !== 'pending'">Your requested changes are pending approval.</p>
                     </div>
-                    <div class="grid__item one--whole grid--center" ng-if="campaign.status === 'active' || campaign.status === 'paused'">
+                    <div class="grid__item one--whole grid--center" ng-if="(campaign.status === 'active' || campaign.status === 'paused') && SelfieManageCampaignCtrl.updateRequest.data.status !== 'canceled'">
                         <div class="action__btnGroup">
                           <button ng-show="(campaign.status === 'active' && SelfieManageCampaignCtrl.updateRequest.data.status !== 'paused') || (campaign.status === 'paused' && SelfieManageCampaignCtrl.updateRequest.data.status === 'active')" ng-click="SelfieManageCampaignCtrl.update('pause')" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-pause"></i>  Pause</button>
                           <button ng-show="(campaign.status === 'paused' && SelfieManageCampaignCtrl.updateRequest.data.status !== 'active') || (campaign.status === 'active' && SelfieManageCampaignCtrl.updateRequest.data.status === 'paused')" ng-click="SelfieManageCampaignCtrl.update('resume')" class="action__btnSecondary action__btnSecondary--small"><i class="fa fa-play"></i>  Resume</button>
