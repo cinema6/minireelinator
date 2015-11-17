@@ -132,11 +132,35 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 status: 'pending',
                 data: {
                     name: 'Updated Name',
-                    cards: [
-                        {
-                            title: 'Updated Title'
+                    categories: [],
+                    cards: [{
+                        title: 'Updated Title',
+                        id: undefined,
+                        campaignId: undefined,
+                        campaign: {
+                            minViewTime: 3
+                        },
+                        sponsored: true,
+                        collateral: {
+                            logo: null
+                        },
+                        links: {},
+                        params: {
+                            sponsor: 'Advertiser Name',
+                            ad: true,
+                            action: null
+                        },
+                        data: {
+                            autoadvance: false,
+                            controls: false,
+                            autoplay: true,
+                            skip: 30
                         }
-                    ]
+                    }],
+                    pricing: {},
+                    geoTargeting: [],
+                    status: 'draft',
+                    appllication: 'selfie'
                 },
                 save: jasmine.createSpy('save()').and.returnValue($q.when())
             };
@@ -154,9 +178,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             expect(SelfieManageCampaignAdminCtrl).toEqual(jasmine.any(Object));
         });
 
-        describe('properties', function() {
-        });
-
         describe('methods', function() {
             describe('initWithModel(model)', function() {
 
@@ -171,6 +192,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         expect(SelfieManageCampaignAdminCtrl.showApproval).toBe(true);
                         expect(SelfieManageCampaignAdminCtrl.campaign).toEqual(campaign.pojoify());
                         expect(SelfieManageCampaignAdminCtrl.updatedCampaign).not.toBe(campaign);
+                        expect(SelfieManageCampaignAdminCtrl.updatedCampaign).toBe(updateRequest.data);
                         expect(SelfieManageCampaignAdminCtrl.updatedCampaign.name).toBe('Updated Name');
                         expect(SelfieManageCampaignAdminCtrl.updatedCampaign.cards[0].title).toBe('Updated Title');
                         expect(SelfieManageCampaignAdminCtrl.previewCard).not.toBe(SelfieManageCampaignAdminCtrl.updatedCampaign.cards[0]);

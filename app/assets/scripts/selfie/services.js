@@ -215,7 +215,14 @@ function( angular , c6uilib ) {
                 var origObj = this._flatten(originalObj);
                 var updaObj = this._flatten(updatedObj);
 
-                Object.keys(updaObj).forEach(function(keysHash) {
+                var allKeys = Object.keys(origObj);
+                Object.keys(updaObj).forEach(function(key) {
+                    if(!(key in origObj)) {
+                        allKeys.push(key);
+                    }
+                });
+
+                allKeys.forEach(function(keysHash) {
                     var origVal = origObj[keysHash];
                     var updatedVal = updaObj[keysHash];
                     if(!equals(origVal, updatedVal)) {
