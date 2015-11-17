@@ -8,7 +8,7 @@
             </h1>
             <div class="pageHeader__actions">
                 <div class="btnGroup">
-                    <button ng-click="SelfieManageCampaignCtrl.edit(campaign)" ng-class="{'btn--disabled' : !SelfieManageCampaignCtrl.canEdit }" ng-disabled="!SelfieManageCampaignCtrl.canEdit" class="btn btn--primary btn--small btn__nav btn__nav--primary"><i class="fa fa-pencil-square-o"></i> Edit</button>
+                    <button ng-click="SelfieManageCampaignCtrl.edit()" ng-class="{'btn--disabled' : !SelfieManageCampaignCtrl.canEdit }" ng-disabled="!SelfieManageCampaignCtrl.canEdit" class="btn btn--primary btn--small btn__nav btn__nav--primary"><i class="fa fa-pencil-square-o"></i> Edit</button>
                     <button ng-click="SelfieManageCampaignCtrl.copy(campaign)" class="btn btn--primary btn--small btn__nav btn__nav--primary"><i class="fa fa-copy"></i> Copy</button>
                     <button ng-if="SelfieManageCampaignCtrl.canCancel" ng-click="SelfieManageCampaignCtrl.update('cancel')" class="btn btn--primary btn--small btn__nav btn__nav--primary"><i class="fa fa-ban"></i> Cancel</button>
                     <button ng-if="SelfieManageCampaignCtrl.canDelete" ng-click="SelfieManageCampaignCtrl.update('delete')" class="btn btn--primary btn--small btn__nav btn__nav--primary"><i class="fa fa-trash-o"></i> Delete</button>
