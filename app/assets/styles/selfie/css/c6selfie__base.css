@@ -344,7 +344,8 @@ fa,
 
     .ui__tab {
         border:0;
-        border-bottom:2px solid #5c5c5c;
+        border-bottom:2px solid #ddd;
+        background: #ddd;
         padding:0.75rem 0 0.625rem;
         transition:border-color 0.3s, background 0.3s;
         text-align: center;
@@ -355,7 +356,8 @@ fa,
     }
         .ui__tab:hover,
         .ui__tab:focus {
-            border-color:#49B8B9;
+            border-color: #ccc;
+            background: #ccc;
         }
 
         .ui__tab--active,
@@ -882,6 +884,8 @@ fa,
     .pageHolder {
         margin:0 0 0 4em;
         position: relative;
+        z-index: 1;
+        
     }
 
     .gridHolder {
@@ -889,6 +893,8 @@ fa,
         max-width:64em;
         margin: 0 auto;
         padding:4em 0 0 0;
+        z-index: -1;
+        position: relative;
     }
     @media screen and (max-width:75em) {
         .gridHolder {
@@ -896,6 +902,8 @@ fa,
             max-width:64em;
             margin: 0 auto;
             padding:4em 0 0 0;
+            z-index: -1;
+            position: relative;
         }   
     }
     .tabContent__gridHolder,
@@ -1859,8 +1867,8 @@ fa,
                 transform: translate3d(0, 0, 0);
             }
     .hint--always:after, .hint:focus:after, .hint:focus:before, [data-hint]:focus:after, [data-hint]:focus:before {
-        opacity: 0;
-        z-index: 100 !important;
+        opacity: 0 !important;
+        transition: 2s ease;
     }
     /*  campaign section padding for TOC links navigation */
     #section_1, #section_2, #section_3, #section_4, #section_5, #section_6, #section_7,  #section_8 {
