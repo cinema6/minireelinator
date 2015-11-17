@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## v1.25.0 (November 16, 2015)
+* *[v1.25.0.rc6]*
+  * [FIX]: Fix for an issue that caused the static card map manager to
+    not work
+* *[/v1.25.0.rc6]*
+
 * *[v1.25.0.rc5]*
   * [FIX]: Restore voting functionality for sponsored cards
 * *[/v1.25.0.rc5]*
