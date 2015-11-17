@@ -5,6 +5,9 @@
     added styles to hide circle hint after the page scrolls to relevent section
 
 ## v1.25.0 (November 16, 2015)
+* *[v1.25.0.rc7]*
+  * [DESIGN]: Added styles for login popup (shown when session expires)
+
 * *[v1.25.0.rc6]*
   * [FIX]: Fix for an issue that caused the static card map manager to
     not work
