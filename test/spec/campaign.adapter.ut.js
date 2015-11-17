@@ -32,7 +32,8 @@ define(['app', 'angular'], function(appModule, angular) {
             $q,
             $httpBackend,
             cinema6,
-            MiniReelService;
+            MiniReelService,
+            VoteService;
 
         var success, failure;
 
@@ -49,6 +50,7 @@ define(['app', 'angular'], function(appModule, angular) {
                 $httpBackend = $injector.get('$httpBackend');
                 cinema6 = $injector.get('cinema6');
                 MiniReelService = $injector.get('MiniReelService');
+                VoteService = $injector.get('VoteService');
 
                 CampaignAdapter.config = {
                     apiBase: '/api'
@@ -519,6 +521,9 @@ define(['app', 'angular'], function(appModule, angular) {
                     }),
                     cards: campaign.cards.map(function(card) {
                         return {
+                            ballot: {
+                                election: 'e-whr89f43hr8'
+                            },
                             campaign: {
                                 endDate: card.campaign.endDate
                             },
@@ -534,6 +539,11 @@ define(['app', 'angular'], function(appModule, angular) {
                 });
 
                 spyOn(adapter, 'decorateCampaign').and.returnValue($q.when(response));
+                spyOn(VoteService, 'syncCard').and.callFake(function(card) {
+                    expect(adapter.decorateCampaign).not.toHaveBeenCalled();
+                    card.ballot = { election: 'e-whr89f43hr8' };
+                    return $q.when(card);
+                });
 
                 $httpBackend.expectPOST('/api/campaign', postData)
                     .respond(201, response);
@@ -549,6 +559,13 @@ define(['app', 'angular'], function(appModule, angular) {
 
             it('should decorate the campaign', function() {
                 expect(adapter.decorateCampaign).toHaveBeenCalledWith(response);
+            });
+
+            it('should sync each card with the vote service', function() {
+                expect(campaign.cards.length).toBeGreaterThan(0);
+                campaign.cards.forEach(function(card) {
+                    expect(VoteService.syncCard).toHaveBeenCalledWith(card);
+                });
             });
         });
 
@@ -590,12 +607,14 @@ define(['app', 'angular'], function(appModule, angular) {
                     ],
                     cards: [
                         {
+                            ballot: { election: 'e-f9834yr8734' },
                             campaign: {
                                 endDate: new Date().toISOString()
                             },
                             id: 'rc-ddc10b88e25b44'
                         },
                         {
+                            ballot: { election: 'e-f9834yr8734' },
                             campaign: {
                                 endDate: new Date().toISOString()
                             },
@@ -631,7 +650,7 @@ define(['app', 'angular'], function(appModule, angular) {
                 });
 
                 spyOn(MiniReelService, 'convertCardForEditor').and.callFake(function(card) {
-                    return $q.when(extend(card, { editor: true }));
+                    return $q.when(extend(card, { editor: true, ballot: undefined }));
                 });
 
                 spyOn(MiniReelService, 'convertCardForPlayer').and.callFake(function(card) {
@@ -676,6 +695,11 @@ define(['app', 'angular'], function(appModule, angular) {
                 });
 
                 spyOn(adapter, 'decorateCampaign').and.returnValue($q.when(response));
+                spyOn(VoteService, 'syncCard').and.callFake(function(card) {
+                    expect(adapter.decorateCampaign).not.toHaveBeenCalled();
+                    card.ballot = { election: 'e-f9834yr8734' };
+                    return $q.when(card);
+                });
 
                 $httpBackend.expectPUT('/api/campaign/' + campaign.id, without(['created'], rawCampaign))
                     .respond(200, response);
@@ -687,6 +711,13 @@ define(['app', 'angular'], function(appModule, angular) {
 
             it('should resolve to the response in an array', function() {
                 expect(success).toHaveBeenCalledWith([response]);
+            });
+
+            it('should sync each card with the vote service', function() {
+                expect(campaign.cards.length).toBeGreaterThan(0);
+                campaign.cards.forEach(function(card) {
+                    expect(VoteService.syncCard).toHaveBeenCalledWith(card);
+                });
             });
 
             it('should decorate the campaign', function() {

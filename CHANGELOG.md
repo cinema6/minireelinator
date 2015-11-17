@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.25.0 (November 16, 2015)
+* *[v1.25.0.rc5]*
+  * [FIX]: Restore voting functionality for sponsored cards
+* *[/v1.25.0.rc5]*
+
 * *[v1.25.0.rc4]*
   * [FIX]: Fix for an issue that caused changes to cards not to be
     persisted

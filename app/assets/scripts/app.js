@@ -589,9 +589,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
             }]);
 
             $provide.constant('CampaignAdapter', ['config','$http','$q','cinema6',
-                                                  'MiniReelService',
+                                                  'MiniReelService','VoteService',
             function                             ( config , $http , $q , cinema6 ,
-                                                   MiniReelService ) {
+                                                   MiniReelService , VoteService ) {
                 var adapter = this;
 
                 function url(end) {
@@ -608,6 +608,12 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     return extend(data, {
                         item: undefined
                     });
+                }
+
+                function syncElections(campaign) {
+                    return $q.all(campaign.cards.map(function(card) {
+                        return VoteService.syncCard(card);
+                    })).then(function() { return campaign; });
                 }
 
                 function undecorateCampaign(campaign) {
@@ -741,6 +747,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 this.create = function(type, data) {
                     return undecorateCampaign(data)
+                        .then(syncElections)
                         .then(function(campaign) {
                             return $http.post(url('campaign'), campaign);
                         })
@@ -756,6 +763,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 this.update = function(type, campaign) {
                     return undecorateCampaign(campaign)
+                        .then(syncElections)
                         .then(function(campaign) {
                             return $http.put(url('campaign/' + campaign.id), campaign);
                         })
