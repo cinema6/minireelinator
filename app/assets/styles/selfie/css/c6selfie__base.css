@@ -205,6 +205,10 @@ fa,
     .item--right {
         float: right;
     }
+    .item--center {
+        margin-left: auto;
+        margin-right: auto;
+    }
     .text--center {
         text-align: center;
     }
@@ -3528,6 +3532,10 @@ fa,
         .selfieModal .btnAction--success:hover {
             background-color: #1FC176;
             color: #fff;
+        }
+        /*login modal*/
+        .loginModal {
+            height: 23em;
         }
 /*  ================================================
     payment history list classes
