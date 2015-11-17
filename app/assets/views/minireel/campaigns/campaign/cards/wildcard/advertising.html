@@ -8,7 +8,7 @@
                 Name
             </span>
             <span class="forms__inputHolder">
-                <input type="text" class="forms__textField forms__textField--block" ng-model="WildcardCtrl.campaignData.name">
+                <input type="text" class="forms__textField forms__textField--block" ng-model="card.campaign.adtechName">
             </span>
         </label>
 
@@ -35,7 +35,7 @@
                 End Date
             </span>
             <span class="forms__inputHolder">
-                <input type="date" time="23:59" class="forms__textField forms__textField--block" ng-model="WildcardCtrl.campaignData.endDate">
+                <input type="date" time="23:59" class="forms__textField forms__textField--block" ng-model="card.campaign.endDate">
             </span>
             <span ng-show="!WildcardCtrl.validDate" style="padding-left:9em;">Invalid date.</span>
         </label>

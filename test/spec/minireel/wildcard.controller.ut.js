@@ -1,5 +1,7 @@
-define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardController) {
+define(['app', 'minireel/mixins/WizardController', 'angular'], function(appModule, WizardController, angular) {
     'use strict';
+
+    var copy = angular.copy;
 
     describe('WildcardController', function() {
         var $rootScope,
@@ -45,10 +47,9 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                 cinema6 = $injector.get('cinema6');
 
                 WildcardState = c6State.get('MR:New:Wildcard');
-                card = WildcardState.card = cinema6.db.create('card', MiniReelService.createCard('videoBallot'));
+                card = WildcardState.card = MiniReelService.createCard('videoBallot');
                 delete card.id;
-                WildcardState.cModel = card.pojoify();
-                WildcardState.metaData = {};
+                WildcardState.cModel = copy(card);
 
                 $scope = $rootScope.$new();
                 $scope.AppCtrl = $controller('AppController', { cState:{} });
@@ -170,12 +171,6 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                 });
             });
 
-            describe('campaignData', function() {
-                it('should be its state\'s metaData', function() {
-                    expect(WildcardCtrl.campaignData).toBe(WildcardState.metaData);
-                });
-            });
-
             describe('canSave', function() {
                 var validVideo, validSurvey, validBranding;
                 beforeEach(function() {
@@ -223,12 +218,12 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
 
             describe('validDate', function() {
                 it('should be true if endDate is null', function() {
-                    WildcardCtrl.campaignData.endDate = null;
+                    WildcardCtrl.model.campaign.endDate = null;
                     expect(WildcardCtrl.validDate).toBe(true);
                 });
 
                 it('should false if endDate is undefined', function() {
-                    WildcardCtrl.campaignData.endDate = void 0;
+                    WildcardCtrl.model.campaign.endDate = void 0;
                     expect(WildcardCtrl.validDate).toBeFalsy();
                 });
 
@@ -236,7 +231,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     var now = new Date(),
                         tomorrow = new Date(now.getTime() + 24 * 60 *60 * 1000);
 
-                    WildcardCtrl.campaignData.endDate = tomorrow;
+                    WildcardCtrl.model.campaign.endDate = tomorrow;
                     expect(WildcardCtrl.validDate).toBe(true);
                 });
 
@@ -244,7 +239,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     var now = new Date(),
                         yesterday = new Date(now.getTime() - 24 * 60 *60 * 1000);
 
-                    WildcardCtrl.campaignData.endDate = yesterday;
+                    WildcardCtrl.model.campaign.endDate = yesterday;
                     expect(WildcardCtrl.validDate).toBeFalsy();
                 });
             });
@@ -268,7 +263,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     describe('when reportingId is set', function() {
                         it('should be true', function() {
                             WildcardCtrl.enableMoat = true;
-                            WildcardCtrl.campaignData.reportingId = 'some_id';
+                            WildcardCtrl.model.campaign.reportingId = 'some_id';
                             expect(WildcardCtrl.validReportingId).toBe(true);
                         });
                     });
@@ -678,7 +673,7 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                     });
 
                     it('should add the card to the campaign', function() {
-                        expect(CampaignCardsCtrl.add).toHaveBeenCalledWith(card, WildcardCtrl.campaignData);
+                        expect(CampaignCardsCtrl.add).toHaveBeenCalledWith(card);
                     });
 
                     it('should go to the "MR:Campaign.Cards" state', function() {
@@ -705,15 +700,15 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                             cState: WildcardState
                         });
                         WildcardCtrl.initWithModel(WildcardState.cModel);
+                        spyOn(c6State, 'goTo').and.returnValue($q.when());
                     });
 
                     it('should add a MOAT object to the data property of the card', function() {
-                        spyOn(card, '_update').and.returnValue({save:function(){return $q.defer().promise;}});
                         WildcardState.updateCard.and.callThrough();
 
                         WildcardCtrl.enableMoat = true;
 
-                        WildcardCtrl.campaignData = {
+                        WildcardCtrl.model.campaign = {
                             reportingId: 'some_id'
                         };
 
@@ -722,12 +717,6 @@ define(['app', 'minireel/mixins/WizardController'], function(appModule, WizardCo
                         });
 
                         expect(WildcardCtrl.model.data.moat).toEqual({
-                            campaign: CampaignCtrl.model.name,
-                            advertiser: CampaignCtrl.model.brand,
-                            creative: 'some_id'
-                        });
-
-                        expect(card._update.calls.mostRecent().args[0].data.moat).toEqual({
                             campaign: CampaignCtrl.model.name,
                             advertiser: CampaignCtrl.model.brand,
                             creative: 'some_id'

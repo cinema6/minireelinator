@@ -220,12 +220,14 @@ module.exports = function(http) {
                 status: 'draft'
             });
 
-        campaign.cards[0].id = cardId;
-        campaign.cards[0].data.moat = {
-            campaign: id,
-            advertiser: campaign.advertiserId,
-            creative: cardId
-        };
+        if (campaign.cards[0]) {
+            campaign.cards[0].id = cardId;
+            campaign.cards[0].data.moat = {
+                campaign: id,
+                advertiser: campaign.advertiserId,
+                creative: cardId
+            };
+        }
 
         grunt.file.write(objectPath('campaigns', id), JSON.stringify(campaign, null, '    '));
 
@@ -259,6 +261,12 @@ module.exports = function(http) {
 
         (campaign.miniReels || []).forEach(handleDate);
         (campaign.cards || []).forEach(handleDate);
+
+        (campaign.cards || []).forEach(function(card) {
+            if (!card.id) {
+                card.id = genId('rc');
+            }
+        });
 
         if (badDate) {
             this.respond(400, 'BAD REQUEST');
