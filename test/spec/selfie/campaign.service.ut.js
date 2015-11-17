@@ -575,7 +575,11 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                         id: 'c-123',
                         cards: [
                             {
-                                title: 'original title'
+                                title: 'original title',
+                                links: {
+                                    Facebook: 'https://www.facebook.com/pages/Diageo/108265212535624',
+                                    Twitter: 'https://twitter.com/Diageo_News'
+                                }
                             }
                         ]
                     };
@@ -583,7 +587,11 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                         id: 'c-123',
                         cards: [
                             {
-                                title: 'updated title'
+                                title: 'updated title',
+                                links: {
+                                    Facebook: 'https://www.facebook.com/pages/Diageo/108265212535624',
+                                    Website: 'http://www.cottonusa.org/'
+                                }
                             }
                         ]
                     };
@@ -600,9 +608,17 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
 
                 it('should generate a summary of card differences', function() {
                     expect(CampaignService._generateSummary).toHaveBeenCalledWith({
-                        title: 'original title'
+                        title: 'original title',
+                        links: {
+                            Facebook: 'https://www.facebook.com/pages/Diageo/108265212535624',
+                            Twitter: 'https://twitter.com/Diageo_News'
+                        }
                     }, {
-                        title: 'updated title'
+                        title: 'updated title',
+                        links: {
+                            Facebook: 'https://www.facebook.com/pages/Diageo/108265212535624',
+                            Website: 'http://www.cottonusa.org/'
+                        }
                     }, 'Card');
                 });
 
@@ -611,6 +627,16 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                         originalValue: 'original title',
                         updatedValue: 'updated title',
                         key: 'title',
+                        type: 'Card'
+                    }, {
+                        originalValue: 'https://twitter.com/Diageo_News',
+                        updatedValue: undefined,
+                        key: 'links.Twitter',
+                        type: 'Card'
+                    }, {
+                        originalValue: undefined,
+                        updatedValue: 'http://www.cottonusa.org/',
+                        key: 'links.Website',
                         type: 'Card'
                     }]);
                 });

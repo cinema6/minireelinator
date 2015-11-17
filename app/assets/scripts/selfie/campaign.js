@@ -10,44 +10,7 @@ function( angular , c6State  , PaginatedListState                    ,
         extend = angular.extend,
         forEach = angular.forEach,
         isObject = angular.isObject,
-        isArray = angular.isArray,
-        isFunction = angular.isFunction,
-        isDate = angular.isDate;
-
-    /* Adapted from Angular 1.4.7, modified to not handle regular expressions.
-        Used for merging objects. */
-    function baseExtend(dst, objs, deep) {
-        for (var i = 0, ii = objs.length; i < ii; ++i) {
-            var obj = objs[i];
-            if (!isObject(obj) && !isFunction(obj)) {
-                continue;
-            }
-            var keys = Object.keys(obj);
-            for (var j = 0, jj = keys.length; j < jj; j++) {
-                var key = keys[j];
-                var src = obj[key];
-                if (deep && isObject(src)) {
-                    if (isDate(src)) {
-                        dst[key] = new Date(src.valueOf());
-                    } else {
-                        if (!isObject(dst[key])) {
-                            dst[key] = isArray(src) ? [] : {};
-                        }
-                        baseExtend(dst[key], [src], true);
-                    }
-                } else {
-                    dst[key] = src;
-                }
-            }
-        }
-        return dst;
-    }
-
-    /* Adapted from Angular 1.4.7 as the currently used version of Angular
-        does not include a merge function. */
-    function merge(dst) {
-        return baseExtend(dst, [].slice.call(arguments, 1), true);
-    }
+        isArray = angular.isArray;
 
     return angular.module('c6.app.selfie.campaign', [c6State.name])
         .config(['c6StateProvider',
@@ -1401,8 +1364,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     rejectionReason: ''
                 });
                 if(updateRequest) {
-                    var updates = updateRequest.data;
-                    merge(self.updatedCampaign, updates);
+                    self.updatedCampaign = updateRequest.data;
                     extend(self, {
                         showApproval: true,
                         previewCard: copy(self.updatedCampaign.cards[0])
