@@ -35,6 +35,17 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         return target;
     }
 
+    function find(array, predicate) {
+        var length = array.length;
+
+        var index = 0;
+        for (; index < length; index++) {
+            if (predicate(array[index], index, array)) {
+                return array[index];
+            }
+        }
+    }
+
     return angular.module('c6.app.minireel.campaign', [c6State.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
@@ -757,36 +768,25 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             };
 
             this.remove = function(card) {
-                var items = campaign.cards;
-                var cards = items.map(function(data) {
-                    return data.item;
-                });
+                var cards = campaign.cards;
                 var index = cards.indexOf(card);
 
                 if (index < 0) {
                     return null;
                 }
 
-                items.splice(index, 1);
+                cards.splice(index, 1);
                 return card;
             };
 
-            this.add = function(card, data) {
-                var items = campaign.cards;
-                var cards = items.map(function(data) {
-                    return data.item;
-                });
-                var item = items[cards.indexOf(card)];
+            this.add = function(card) {
+                var cards = campaign.cards;
 
-                if (item) {
-                    extend(item, data);
+                if (cards.indexOf(card) > -1) {
                     return card;
                 }
 
-                items.push(extend({
-                    id: card.id,
-                    item: card
-                }, data));
+                cards.push(card);
                 return card;
             };
         }])
@@ -812,9 +812,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         cardType = 'video';
                     }
 
-                    var card = cinema6.db.create('card', MiniReelService.createCard(cardType));
-
-                    return deepExtend(card, {
+                    return deepExtend(MiniReelService.createCard(cardType), {
                         id: undefined,
                         campaignId: campaign.id,
                         sponsored: true,
@@ -827,7 +825,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             ad: true
                         },
                         campaign: {
-                            minViewTime: campaign.minViewTime
+                            minViewTime: campaign.minViewTime,
+                            endDate: null
                         },
                         data: {
                             autoadvance: false
@@ -853,21 +852,14 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
         function( c6StateProvider ) {
             c6StateProvider.state('MR:EditWildcard', ['cinema6','c6State',
             function                                 ( cinema6 , c6State ) {
+                var CampaignState = c6State.get('MR:Campaign');
+
                 this.model = function(params) {
-                    return cinema6.db.find('card', params.cardId);
-                };
+                    var campaign = CampaignState.cModel;
 
-                this.afterModel = function(card) {
-                    var campaign = c6State.get('MR:Campaign').cModel;
-                    var item = campaign.cards.reduce(function(result, item) {
-                        return item.id === card.id ? item : result;
-                    }, null);
-
-                    this.metaData = {
-                        endDate: item.endDate,
-                        name: item.name,
-                        reportingId: item.reportingId
-                    };
+                    return find(campaign.cards, function(card) {
+                        return card.id === params.cardId;
+                    });
                 };
 
                 this.enter = function() {
@@ -878,7 +870,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('MR:Wildcard', [function() {
+            c6StateProvider.state('MR:Wildcard', ['$q',
+            function                             ( $q ) {
                 this.templateUrl = 'views/minireel/campaigns/campaign/cards/wildcard.html';
                 this.controller = 'WildcardController';
                 this.controllerAs = 'WildcardCtrl';
@@ -890,15 +883,11 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 };
 
                 this.model = function() {
-                    return this.card.pojoify();
-                };
-
-                this.afterModel = function() {
-                    this.metaData = this.cParent.metaData;
+                    return copy(this.card);
                 };
 
                 this.updateCard = function() {
-                    return this.card._update(this.cModel).save();
+                    return $q.when(copy(this.cModel, this.card));
                 };
             }]);
         }])
@@ -953,7 +942,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 validDate: {
                     configurable: true,
                     get: function() {
-                        var endDate = this.campaignData.endDate;
+                        var endDate = this.model.campaign.endDate;
 
                         return (endDate === null) ||
                             (endDate && endDate instanceof Date && endDate > now);
@@ -963,7 +952,7 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     configurable: true,
                     get: function() {
                         var moat = this.enableMoat,
-                            hasId = !!this.campaignData.reportingId;
+                            hasId = !!this.model.campaign.reportingId;
 
                         return !moat || (moat && hasId);
                     }
@@ -1061,7 +1050,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 card.campaign.countUrls = card.campaign.countUrls || [];
                 card.campaign.playUrls = card.campaign.playUrls || [];
                 this.model = card;
-                this.campaignData = cState.metaData;
                 this.enableMoat = !!card.data.moat;
                 this.tabs = _private.tabsForCardType(card.type);
                 if(card.type === 'instagram') {
@@ -1076,14 +1064,14 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     this.model.data.moat = {
                         campaign: CampaignCtrl.model.name,
                         advertiser: this.model.params.sponsor,
-                        creative: this.campaignData.reportingId
+                        creative: this.model.campaign.reportingId
                     };
                 }
 
                 $scope.$broadcast('CampaignCtrl:campaignWillSave');
 
                 return cState.updateCard().then(function(card) {
-                    return CampaignCardsCtrl.add(card, WildcardCtrl.campaignData);
+                    return CampaignCardsCtrl.add(card);
                 }).then(function(card) {
                     return c6State.goTo('MR:Campaign.Cards')
                         .then(function() { return card; });
@@ -1602,9 +1590,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 CampaignPlacementsCtrl = $scope.CampaignPlacementsCtrl,
                 cards = CampaignCtrl.model.cards;
 
-            this.cardOptions = cards.reduce(function(cardOptions, data) {
-                var card = data.item,
-                    name = data.name;
+            this.cardOptions = cards.reduce(function(cardOptions, card) {
+                var name = card.campaign.adtechName;
 
                 cardOptions[card.title + (name ? ' (' + name + ')' : '')] = card;
                 return cardOptions;

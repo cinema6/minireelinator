@@ -1,11 +1,27 @@
 # MiniReelinator
 
 * *[v1.26.0.rc1]*
-  * [FIX]: Fix for an issue where JWPlayer previews would not fill the preview area
   * [DESIGN]: (Selfie) Fixed the issue with circle nav hint hiding behind the form elements,
     added styles to hide circle hint after the page scrolls to relevent section
 
 ## v1.25.0 (November 16, 2015)
+* *[v1.25.0.rc6]*
+  * [FIX]: Fix for an issue that caused the static card map manager to
+    not work
+* *[/v1.25.0.rc6]*
+
+* *[v1.25.0.rc5]*
+  * [FIX]: Restore voting functionality for sponsored cards
+* *[/v1.25.0.rc5]*
+
+* *[v1.25.0.rc4]*
+  * [FIX]: Fix for an issue that caused changes to cards not to be
+    persisted
+  * [FIX]: Fix for an issue that caused splash image configuration not
+    to be persisted
+  * [FIX]: Fix for an issue where JWPlayer previews would not fill the preview area
+* *[/v1.25.0.rc4]*
+
 * *[v1.25.0.rc3]*
   * [DESIGN]: (Selfie) Change "Daily Budget" to "Daily Limit"
   * [DESIGN]: (Selfie) Change heading and sub-heading for Targeting section
