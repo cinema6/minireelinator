@@ -205,6 +205,10 @@ fa,
     .item--right {
         float: right;
     }
+    .item--center {
+        margin-left: auto;
+        margin-right: auto;
+    }
     .text--center {
         text-align: center;
     }
@@ -3529,6 +3533,17 @@ fa,
             background-color: #1FC176;
             color: #fff;
         }
+        /*login modal*/
+        .loginModal {
+            height: 23em;
+        }
+            .loginModal .modalHeader__group {
+                background: #eee;
+            }
+            .loginModal.modalDialog__group {
+                background: #eee;
+            }
+
 /*  ================================================
     payment history list classes
     (Jess)
