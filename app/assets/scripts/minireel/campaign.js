@@ -1590,9 +1590,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 CampaignPlacementsCtrl = $scope.CampaignPlacementsCtrl,
                 cards = CampaignCtrl.model.cards;
 
-            this.cardOptions = cards.reduce(function(cardOptions, data) {
-                var card = data.item,
-                    name = data.name;
+            this.cardOptions = cards.reduce(function(cardOptions, card) {
+                var name = card.campaign.adtechName;
 
                 cardOptions[card.title + (name ? ' (' + name + ')' : '')] = card;
                 return cardOptions;
