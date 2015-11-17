@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.26.0.rc1]*
+  * [DESIGN]: Added styles for login popup (shown when session expires)
+
 ## v1.25.0 (November 16, 2015)
 * *[v1.25.0.rc5]*
   * [FIX]: Restore voting functionality for sponsored cards

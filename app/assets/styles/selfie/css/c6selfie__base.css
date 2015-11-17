@@ -3537,6 +3537,13 @@ fa,
         .loginModal {
             height: 23em;
         }
+            .loginModal .modalHeader__group {
+                background: #eee;
+            }
+            .loginModal.modalDialog__group {
+                background: #eee;
+            }
+
 /*  ================================================
     payment history list classes
     (Jess)
