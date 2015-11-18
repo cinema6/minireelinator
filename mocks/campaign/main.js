@@ -48,6 +48,7 @@ module.exports = function(http) {
         if (request.body.status === 'rejected') {
             campaign.rejectionReason = request.body.rejectionReason;
             campaign.status = campaign.status === 'pending' ? 'draft' : campaign.status;
+            delete campaign.updateRequest;
         } else {
             delete campaign.rejectionReason;
         }

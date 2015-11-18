@@ -3051,10 +3051,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         size: copy('300x250')
                     },
                     default: {
-                        moat: copy(null),
-                        autoplay: copy(null),
-                        autoadvance: copy(null),
-                        controls: copy(true),
+                        moat: copy(),
+                        autoplay: copy(),
+                        autoadvance: copy(),
+                        controls: copy(),
                         skip: skipValue()
                     }
                 };
@@ -3282,7 +3282,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 function createCard() {
                     cardType = getCardType(card);
                     dataType = getDataType(card) || 'default';
-
 
                     function createCardBase() {
                         var base = cardBases[cardType];

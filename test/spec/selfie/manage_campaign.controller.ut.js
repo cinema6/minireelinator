@@ -210,10 +210,27 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                     expect(SelfieManageCampaignCtrl.canEdit).toBe(false);
                 });
+
+                it('should be true if status is active or paused and has update request that is not canceling', function() {
+                    SelfieManageCampaignCtrl.updateRequest = {
+                        data: {
+                            status: 'canceled'
+                        }
+                    };
+                    expect(SelfieManageCampaignCtrl.canEdit).toBe(false);
+
+                    SelfieManageCampaignCtrl.campaign.status = 'active';
+
+                    expect(SelfieManageCampaignCtrl.canEdit).toBe(false);
+
+                    SelfieManageCampaignCtrl.updateRequest.data.status = 'paused';
+
+                    expect(SelfieManageCampaignCtrl.canEdit).toBe(true);
+                });
             });
 
             describe('canCancel', function() {
-                it('should be true if status is active or paused', function() {
+                it('should be true if status is active or paused and has no update request', function() {
                     expect(SelfieManageCampaignCtrl.canCancel).toBe(false);
 
                     SelfieManageCampaignCtrl.campaign.status = 'pending';
@@ -231,6 +248,23 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     SelfieManageCampaignCtrl.campaign.status = 'expired';
 
                     expect(SelfieManageCampaignCtrl.canCancel).toBe(false);
+                });
+
+                it('should be true if status is active or paused and has update request that is not canceling', function() {
+                    SelfieManageCampaignCtrl.updateRequest = {
+                        data: {
+                            status: 'canceled'
+                        }
+                    };
+                    expect(SelfieManageCampaignCtrl.canCancel).toBe(false);
+
+                    SelfieManageCampaignCtrl.campaign.status = 'active';
+
+                    expect(SelfieManageCampaignCtrl.canCancel).toBe(false);
+
+                    SelfieManageCampaignCtrl.updateRequest.data.status = 'paused';
+
+                    expect(SelfieManageCampaignCtrl.canCancel).toBe(true);
                 });
             });
 
@@ -414,7 +448,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                     describe('when updateRequest status is not approved', function() {
                                         beforeEach(function() {
                                             updateRequest.status = 'pending';
-                                            updateRequest.id = 'ur-1234';
+                                            updateRequest.id = 'cam-123:ur-1234';
 
                                             $rootScope.$apply(function() {
                                                 updateRequestDeferred.resolve(updateRequest);
@@ -492,7 +526,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                     describe('when updateRequest status is not approved', function() {
                                         beforeEach(function() {
                                             updateRequest.status = 'pending';
-                                            updateRequest.id = 'ur-1234';
+                                            updateRequest.id = 'cam-123:ur-1234';
 
                                             $rootScope.$apply(function() {
                                                 updateRequestDeferred.resolve(updateRequest);
@@ -661,46 +695,18 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
 
             describe('edit(campaign)', function() {
-                var onAffirm, onCancel;
-
                 beforeEach(function() {
                     spyOn(c6State, 'goTo');
 
                     SelfieManageCampaignCtrl.edit(SelfieManageCampaignCtrl.campaign);
-
-                    onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
-                    onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
                 });
 
-                it('should show a confirmation modal', function() {
-                    expect(ConfirmDialogService.display).toHaveBeenCalled();
+                it('should be wrapped in a c6AsyncQueue', function() {
+                    expect(debouncedFns).toContain(SelfieManageCampaignCtrl.edit);
                 });
 
-                describe('onAffirm()', function() {
-                    it('should be wrapped in a c6AsyncQueue', function() {
-                        expect(debouncedFns).toContain(onAffirm);
-                    });
-
-                    it('should close the dialog', function() {
-                        onAffirm();
-
-                        expect(ConfirmDialogService.close).toHaveBeenCalled();
-                    });
-
-                    it('should go to EditCampaign with the campaign', function() {
-                        onAffirm();
-
-                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:EditCampaign', [SelfieManageCampaignCtrl.campaign]);
-                    });
-                });
-
-                describe('onCancel()', function() {
-                    it('should close the dialog and not go anywhere', function() {
-                        onCancel();
-
-                        expect(ConfirmDialogService.close).toHaveBeenCalled();
-                        expect(c6State.goTo).not.toHaveBeenCalled();
-                    });
+                it('should go to EditCampaign with the campaign', function() {
+                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:EditCampaign', [SelfieManageCampaignCtrl.campaign]);
                 });
             });
         });

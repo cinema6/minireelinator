@@ -87,6 +87,26 @@ define(['app'], function(appModule) {
             });
         });
 
+        describe('methods', function() {
+            describe('updateActionLink(link)', function() {
+                it('should ensure a protocol on the link and set the Action link on the card', function() {
+                    expect(card.links.Action).toEqual(undefined);
+
+                    SelfieCampaignTextCtrl.updateActionLink('cinema6.com');
+                    expect(card.links.Action).toEqual('http://cinema6.com');
+
+                    SelfieCampaignTextCtrl.updateActionLink('//cinema6.com');
+                    expect(card.links.Action).toEqual('http://cinema6.com');
+
+                    SelfieCampaignTextCtrl.updateActionLink('https://cinema6.com');
+                    expect(card.links.Action).toEqual('https://cinema6.com');
+
+                    SelfieCampaignTextCtrl.updateActionLink('');
+                    expect(card.links.Action).toEqual('');
+                });
+            });
+        });
+
         describe('$watchers', function() {
             describe('card.links.Website', function() {
                 describe('when it should bind to Action', function() {

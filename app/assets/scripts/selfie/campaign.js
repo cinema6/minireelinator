@@ -314,7 +314,9 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.card = null;
                 this.campaign = null;
+                this.updateRequest = null;
                 this._campaign = null;
+                this._updateRequest = null;
 
                 this.beforeModel = function() {
                     // we need this for saving the update request
@@ -372,13 +374,16 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.exit = function() {
                     var deferred = $q.defer(),
-                        isClean = (this._campaign.updateRequest &&
-                            equals(this._updateRequest.data, this.campaign)) ||
-                            (!this._campaign.updateRequest &&
-                            equals(this._campaign.pojoify(), this.campaign));
+                        proxyCampaign = this.campaign,
+                        masterCampaign = this._campaign,
+                        masterUpdateRequest = this._updateRequest,
+                        isClean = (masterCampaign.updateRequest &&
+                            equals(masterUpdateRequest.data, proxyCampaign)) ||
+                            (!masterCampaign.updateRequest &&
+                            equals(masterCampaign.pojoify(), proxyCampaign));
 
-                    if (this._campaign.status !== 'draft') {
-                        if (isClean || !this._campaign.status) {
+                    if (masterCampaign.status !== 'draft') {
+                        if (isClean || !masterCampaign.status) {
                             return $q.when(null);
                         } else {
                             ConfirmDialogService.display({
@@ -1044,19 +1049,43 @@ function( angular , c6State  , PaginatedListState                    ,
                 SelfieCampaignTextCtrl = this,
                 card = SelfieCampaignCtrl.card;
 
+            function generateLink(link) {
+                var hasProtocol = (/^http:\/\/|https:\/\//).test(link),
+                    hasSlashes = (/^\/\//).test(link);
+
+                if (hasProtocol) {
+                    return link;
+                }
+
+                if (link) {
+                    return (hasSlashes ? 'http:' : 'http://') + link;
+                }
+
+                return link;
+            }
+
             card.links.Action = card.links.Action || card.links.Website;
             card.params.action = card.params.action || { type: 'button' };
             card.params.action.label =  card.params.action.label || 'Learn More';
 
             this.bindLinkToWebsite = !card.links.Action;
+            this.actionLink = card.links.Action;
+
+            this.updateActionLink = function(link) {
+                var link = generateLink(link);
+
+                card.links.Action = link;
+                SelfieCampaignTextCtrl.actionLink = link;
+            };
 
             $scope.$watch(function() {
                 return card.links.Website;
             }, function(website) {
                 if (website && SelfieCampaignTextCtrl.bindLinkToWebsite) {
-                    card.links.Action = website;
+                    SelfieCampaignTextCtrl.updateActionLink(website);
                 }
             });
+
         }])
 
         .controller('SelfieCampaignPreviewController', ['$scope','c6Debounce','$log',
@@ -1371,15 +1400,17 @@ function( angular , c6State  , PaginatedListState                    ,
                 canEdit: {
                     get: function() {
                         return (/pending|active|paused/).test(this.campaign.status) &&
-                            (this.updateRequest && this.updateRequest.data &&
-                                this.updateRequest.data.status !== 'canceled');
+                            (!this.updateRequest ||
+                                (this.updateRequest && this.updateRequest.data &&
+                                this.updateRequest.data.status !== 'canceled'));
                     }
                 },
                 canCancel: {
                     get: function() {
                         return (/active|paused/).test(this.campaign.status) &&
-                            (this.updateRequest && this.updateRequest.data &&
-                                this.updateRequest.data.status !== 'canceled');
+                            (!this.updateRequest ||
+                                (this.updateRequest && this.updateRequest.data &&
+                                this.updateRequest.data.status !== 'canceled'));
                     }
                 },
                 canDelete: {
