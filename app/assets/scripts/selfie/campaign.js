@@ -920,11 +920,9 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignVideoController', ['$injector','$scope','SelfieVideoService',
-                                                      'c6Debounce','ThumbnailService',
-                                                      'FileService','CollateralService',
+                                                      'c6Debounce',
         function                                     ( $injector , $scope , SelfieVideoService ,
-                                                       c6Debounce , ThumbnailService ,
-                                                       FileService , CollateralService ) {
+                                                       c6Debounce ) {
             var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 SelfieCampaignVideoCtrl = this,
                 card = SelfieCampaignCtrl.card,
@@ -932,27 +930,11 @@ function( angular , c6State  , PaginatedListState                    ,
                 id = card.data.videoid,
                 hasExistingVideo = !!service && !!id;
 
-            function setDefaultThumbs(service, id) {
-                if (service === 'adUnit') {
-                    SelfieCampaignVideoCtrl.useDefaultThumb = false;
-                    SelfieCampaignVideoCtrl.defaultThumb = null;
-                } else {
-                    ThumbnailService.getThumbsFor(service, id)
-                        .ensureFulfillment()
-                        .then(function(thumbs) {
-                            SelfieCampaignVideoCtrl.defaultThumb = thumbs.large;
-                            SelfieCampaignVideoCtrl.useDefaultThumb = !card.thumb;
-                        });
-                }
-            }
-
             function handleVideoError() {
                 SelfieCampaignVideoCtrl.videoError = true;
                 SelfieCampaignVideoCtrl.video = null;
             }
 
-            this.useDefaultThumb = !card.thumb;
-            this.customThumbSrc = card.thumb;
             this.videoUrl = SelfieVideoService.urlFromData(service, id);
             this.disableTrimmer = function() { return true; };
 
@@ -964,12 +946,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
                 }
             });
-
-            this.updateThumbs = function() {
-                card.thumb = !SelfieCampaignVideoCtrl.useDefaultThumb ?
-                    SelfieCampaignVideoCtrl.customThumbSrc :
-                    null;
-            };
 
             // when a user enters a new video url or emebd code we
             // first figure out the service and id, then get thumbs
@@ -991,8 +967,6 @@ function( angular , c6State  , PaginatedListState                    ,
                         service = data.service;
                         id = data.id;
 
-                        setDefaultThumbs(service, id);
-
                         return SelfieVideoService.statsFromService(service, id);
                     })
                     .then(function(data) {
@@ -1006,40 +980,11 @@ function( angular , c6State  , PaginatedListState                    ,
                     .catch(handleVideoError);
             }, 1000);
 
-            // watch the thumbnail selector button and make the change
-            // on the actual card to trigger save/preview
-            $scope.$watch(function() {
-                return SelfieCampaignVideoCtrl.useDefaultThumb;
-            }, function(useDefault) {
-                if (useDefault) {
-                    card.thumb = null;
-                } else {
-                    card.thumb = SelfieCampaignVideoCtrl.customThumbSrc;
-                }
-            });
-
-            // watch the the File <input> and upload when chosen,
-            // on success we're assuming a choice of "custom"
-            $scope.$watch(function() {
-                return SelfieCampaignVideoCtrl.customThumbFile;
-            }, function(newFile) {
-                if (!newFile) { return; }
-
-                CollateralService.uploadFromFile(newFile)
-                    .then(function(path) {
-                        SelfieCampaignVideoCtrl.customThumbSrc = '/' + path;
-                        SelfieCampaignVideoCtrl.useDefaultThumb = false;
-                        card.thumb = '/' + path;
-                    });
-            });
-
             // watch the video link/embed/vast tag input
             // and then do all the checking/getting of data
             $scope.$watch(function() {
                 return SelfieCampaignVideoCtrl.videoUrl;
             }, SelfieCampaignVideoCtrl.updateUrl);
-
-            $scope.$on('SelfieCampaignWillSave', this.updateThumbs);
 
         }])
 
