@@ -442,6 +442,9 @@ fa,
                 border-color: #1FC176;
                 color: #fff;
             }
+            .btn__nav .btn--small.btnSpinner__waiting {
+                padding: 0.5rem 2rem 0.375rem 1rem;
+            }
             .btn__nav--danger:hover {
                 background-color:#dc4141;
                 border-color: #cf2626;
@@ -727,6 +730,16 @@ fa,
         }
 
     /*  Loading content spinner  */
+    .spinnerWrap {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: #eee;
+        z-index: 5000;
+    }
         .spinner {
           width: 40px;
           height: 40px;
@@ -762,11 +775,21 @@ fa,
         }
         
     /* Spinners for pending or waiting states */
-    .spinnerBtn__waiting:after {
+    .btnGroup .btnSpinner__waiting, .btnGroup .btnSpinner__waiting:focus {
+        padding-right: 2.5rem;
+        transition: padding 0.2s ease-in;
+    }
+    .pmtMethod__btnGroup .btnSpinner__waiting {
+        min-width: 180px;
+        padding-right: 2.5rem;
+        transition: padding 0.2s ease-in;
+    }
+    .btnSpinner__waiting:after {
         content: '\f021';
         font-family: 'FontAwesome';
         margin-left: 10px;
-        opacity: 0.5;
+        font-size: 16px;
+        opacity: 0.6;
         position: absolute;
         -webkit-animation: spin 2s infinite linear;
         -moz-animation: spin 2s infinite linear;
@@ -1178,6 +1201,7 @@ fa,
         }
             .itemActions__group .action__btn {
                 margin-bottom: 0;
+                width: 200px;
             }
         
         .filterBtn__group .filterBtn {
