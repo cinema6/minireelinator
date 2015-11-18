@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.26.0.rc1]*
+  * [DESIGN]: Added styles for button spinners, replaced C6 references with Reelcontent
+
 ## v1.25.0 (November 17, 2015)
 * *[v1.25.0.rc7]*
   * [FIX]: Fix for an issue where the process for approving campaign update requests would fail to
