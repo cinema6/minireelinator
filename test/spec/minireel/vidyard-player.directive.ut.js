@@ -5,13 +5,21 @@ define(['app', 'angular'], function(appModule, angular) {
         var $rootScope,
             $scope,
             $compile,
-            $player;
+            $player,
+            mockIFrame,
+            mockSpan;
 
         beforeEach(function() {
             module(appModule.name);
 
+            mockSpan = { style: {} };
+            mockIFrame = { parentElement: mockSpan };
+
             spyOn(document, 'createElement').and.callThrough();
-            spyOn(angular.element.prototype, 'append');
+            spyOn(angular.element.prototype, 'css');
+            spyOn(angular.element.prototype, 'find');
+            spyOn(angular.element.prototype, 'empty');
+            spyOn(angular.element.prototype, 'append').and.returnValue([]);
             spyOn(angular.element.prototype, 'addClass');
 
             inject(function($injector) {
@@ -25,25 +33,11 @@ define(['app', 'angular'], function(appModule, angular) {
             });
         });
 
-        it('should create a style', function() {
-            expect(document.createElement).toHaveBeenCalledWith('style');
-        });
-
         it('should create a script', function() {
             expect(document.createElement).toHaveBeenCalledWith('script');
         });
 
-        it('should create the correct style', function(){
-            var style;
-            document.createElement.calls.all().forEach(function(call) {
-                if(call.args[0] === 'style') {
-                    style = call.returnValue;
-                }
-            });
-            expect(style.innerHTML).toBe('span#vidyard_span_abc123{width:100%!important;height:100%!important;}');
-        });
-
-        it('should create the correct script', function() {
+        it('should create the correct script and append it', function() {
             var script;
             document.createElement.calls.all().forEach(function(call) {
                 if(call.args[0] === 'script') {
@@ -53,10 +47,35 @@ define(['app', 'angular'], function(appModule, angular) {
             expect(script.getAttribute('type')).toBe('text/javascript');
             expect(script.getAttribute('id')).toBe('vidyard_embed_code_abc123');
             expect(script.getAttribute('src')).toBe('//play.vidyard.com/abc123.js?v=3.1.1&type=inline');
+            expect(angular.element.prototype.append).toHaveBeenCalledWith(script);
         });
 
         it('should add the correct class to the directive', function() {
             expect(angular.element.prototype.addClass).toHaveBeenCalledWith('vidyardPreview');
+        });
+
+        it('should empty the element', function() {
+            expect(angular.element.prototype.empty).toHaveBeenCalled();
+        });
+
+        it('should set display to none', function() {
+            expect(angular.element.prototype.css).toHaveBeenCalledWith('display', 'none');
+        });
+
+        it('should watch out for the iframe', function() {
+            expect(mockIFrame.width).not.toBe('100%');
+            expect(mockIFrame.height).not.toBe('100%');
+            expect(mockSpan.style.width).not.toBe('100%');
+            expect(mockSpan.style.height).not.toBe('100%');
+            expect(angular.element.prototype.css).not.toHaveBeenCalledWith('display', 'inline');
+            $scope.$apply(function() {
+                angular.element.prototype.find.and.returnValue([mockIFrame]);
+            });
+            expect(mockIFrame.width).toBe('100%');
+            expect(mockIFrame.height).toBe('100%');
+            expect(mockSpan.style.width).toBe('100%');
+            expect(mockSpan.style.height).toBe('100%');
+            expect(angular.element.prototype.css).toHaveBeenCalledWith('display', 'inline');
         });
     });
 });

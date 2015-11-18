@@ -11,6 +11,7 @@ define(['app', 'angular'], function(appModule, angular) {
             module(appModule.name);
 
             spyOn(document, 'createElement').and.callThrough();
+            spyOn(angular.element.prototype, 'empty');
             spyOn(angular.element.prototype, 'append');
             spyOn(angular.element.prototype, 'addClass');
             spyOn(Node.prototype, 'appendChild').and.callThrough();
@@ -24,6 +25,10 @@ define(['app', 'angular'], function(appModule, angular) {
                     $player = $compile('<jw-player videoid="{{id}}"></jw-player>')($scope);
                 });
             });
+        });
+
+        it('should empty the element', function() {
+            expect(angular.element.prototype.empty).toHaveBeenCalled();
         });
 
         it('should create a style', function() {
@@ -84,6 +89,14 @@ define(['app', 'angular'], function(appModule, angular) {
 
         it('should add the correct class to the directive', function() {
             expect(angular.element.prototype.addClass).toHaveBeenCalledWith('jwplayerPreview');
+        });
+
+        it('should reload the preview when the videoid changes', function() {
+            expect(angular.element.prototype.append.calls.count()).toBe(1);
+            $scope.$apply(function() {
+                $scope.id = 'changed-id';
+            });
+            expect(angular.element.prototype.append.calls.count()).toBe(2);
         });
     });
 });
