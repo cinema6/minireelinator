@@ -8,6 +8,7 @@
   * [FIX]: (Selfie) Fix for an issue where Call to Action url could be saved without a protocol
   * [FIX]: (Selfie) Update Selfie page title to be "Reelcontent" and Portal to be "Studio"
   * [FIX]: (Selfie) Fix for an issue where default card data properties were not being saved
+  * [DESIGN]: Added styles for button spinners, replaced C6 references with Reelcontent
 
 ## v1.25.0 (November 17, 2015)
 * *[v1.25.0.rc7]*

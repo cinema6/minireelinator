@@ -77,12 +77,11 @@
                             </div>
                         </fieldset>
 
-                        <div>
-                            <span>{{EmailCtrl.lastMessage}}</span>
-                        </div>
-
                         <div class="ui__btnHolder">
                             <button ng-disabled="(!theForm.$valid || !EmailCtrl.email || (EmailCtrl.email === AccountCtrl.model.email))" class="action__btn action__btn--wide">Update Email</button>
+                        </div>
+                        <div>
+                            <span>{{EmailCtrl.lastMessage}}</span>
                         </div>
                     </form>
                 </div>
