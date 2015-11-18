@@ -1,5 +1,14 @@
 # MiniReelinator
 
+* *[v1.26.0.rc1]*
+  * [FEATURE]: (Selfie) Enable editing of campaigns with pending update requests
+  * [FEATURE]: (Selfie) Allow deletion of pending campaigns
+  * [FEATURE]: (Selfie) Alert users to unsaved changed to active campaigns before exiting editor view
+  * [FEATURE]: (Selfie) Ask for confirmation before submitting changes to active campaigns
+  * [FIX]: (Selfie) Fix for an issue where Call to Action url could be saved without a protocol
+  * [FIX]: (Selfie) Update Selfie page title to be "Reelcontent" and Portal to be "Studio"
+  * [FIX]: (Selfie) Fix for an issue where default card data properties were not being saved
+
 ## v1.25.0 (November 17, 2015)
 * *[v1.25.0.rc7]*
   * [FIX]: Fix for an issue where the process for approving campaign update requests would fail to

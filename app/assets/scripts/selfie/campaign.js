@@ -1072,7 +1072,7 @@ function( angular , c6State  , PaginatedListState                    ,
             this.actionLink = card.links.Action;
 
             this.updateActionLink = function(link) {
-                var link = generateLink(link);
+                link = generateLink(link);
 
                 card.links.Action = link;
                 SelfieCampaignTextCtrl.actionLink = link;
