@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## v1.26.0 (November 19, 2015)
 * *[v1.26.0.rc1]*
   * [FEATURE]: (Selfie) Enable editing of campaigns with pending update requests
   * [FEATURE]: (Selfie) Allow deletion of pending campaigns
@@ -11,6 +12,7 @@
   * [FIX]: (Selfie) Fix for an issue where default card data properties were not being saved
   * [FIX]: (Selfie) Remove all thumbnail functionality
   * [DESIGN]: Added styles for button spinners, replaced C6 references with Reelcontent
+* *[/v1.26.0.rc1]*
 
 ## v1.25.0 (November 17, 2015)
 * *[v1.25.0.rc7]*
