@@ -218,6 +218,26 @@
                             expect(fromUrl(iframeEmbed)).toEqual(expected);
                         });
 
+                        it('should parse wistia embed codes', function() {
+                            var inlineEmbed = '<div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;"><div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;"><iframe src="//fast.wistia.net/embed/iframe/9iqvphjp4u?videoFoam=true" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" allowfullscreen mozallowfullscreen webkitallowfullscreen oallowfullscreen msallowfullscreen width="100%" height="100%"></iframe></div></div><script src="//fast.wistia.net/assets/external/E-v1.js" async></script>';
+                            var expected = {
+                                service: 'wistia',
+                                id: '9iqvphjp4u',
+                                hostname: null
+                            };
+                            expect(fromUrl(inlineEmbed)).toEqual(expected);
+                        });
+
+                        it('should parse vzaar embed codes', function() {
+                            var embedCode = '<iframe allowFullScreen allowTransparency="true" class="vzaar-video-player" frameborder="0" height="252" id="vzvd-5700429" mozallowfullscreen name="vzvd-5700429" src="//view.vzaar.com/5700429/player" title="vzaar video player" type="text/html" webkitAllowFullScreen width="448"></iframe>';
+                            var expected = {
+                                service: 'vzaar',
+                                id: '5700429',
+                                hostname: null
+                            };
+                            expect(fromUrl(embedCode)).toEqual(expected);
+                        });
+
                         it('should return null if the url is not valid', function() {
                             expect(fromUrl('apple.com')).toBeNull();
                             expect(fromUrl('84fh439#')).toBeNull();
