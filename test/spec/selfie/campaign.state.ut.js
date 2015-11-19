@@ -136,6 +136,12 @@ define(['app'], function(appModule) {
                 });
             });
 
+            describe('allowExit', function() {
+                it('should be false', function() {
+                    expect(campaignState.allowExit).toBe(false);
+                });
+            });
+
             describe('beforeModel()', function() {
                 describe('when there is a pending update request', function() {
                     beforeEach(function() {
@@ -326,6 +332,19 @@ define(['app'], function(appModule) {
                     describe('when master campaign is a new draft without a status yet', function() {
                         it('should resolve the promise immediately', function() {
                             campaignState._campaign.status = undefined;
+
+                            $rootScope.$apply(function() {
+                                campaignState.exit().then(success, failure);
+                            });
+
+                            expect(success).toHaveBeenCalled();
+                            expect(campaignState.saveCampaign).not.toHaveBeenCalled();
+                        });
+                    });
+
+                    describe('when allowExit is true', function() {
+                        it('should resolve the promise immediately', function() {
+                            campaignState.allowExit = true;
 
                             $rootScope.$apply(function() {
                                 campaignState.exit().then(success, failure);

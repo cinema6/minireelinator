@@ -527,6 +527,14 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                                         expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
                                     });
+
+                                    it('should set the allowExit flag on the cState', function() {
+                                        $rootScope.$apply(function() {
+                                            updateRequestDeferred.resolve(updateRequest);
+                                        });
+
+                                        expect(cState.allowExit).toBe(true);
+                                    });
                                 });
                             });
                         });
@@ -605,6 +613,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                         it('should go to the dashboard', function() {
                                             expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
                                         });
+
+                                        it('should set the allowExit flag on the cState', function() {
+                                            expect(cState.allowExit).toBe(true);
+                                        });
                                     });
                                 });
                             });
@@ -637,8 +649,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                     it('should not save the campaign', function() {
                                         expect(cState.saveCampaign).not.toHaveBeenCalled();
                                     });
-
-
 
                                     describe('when the campaign does not have a pending update request', function() {
                                         it('should not pojoify the master campaign', function() {
@@ -673,6 +683,14 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                                 });
 
                                                 expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
+                                            });
+
+                                            it('should set the allowExit flag on the cState', function() {
+                                                $rootScope.$apply(function() {
+                                                    updateRequestDeferred.resolve(updateRequest);
+                                                });
+
+                                                expect(cState.allowExit).toBe(true);
                                             });
                                         });
                                     });

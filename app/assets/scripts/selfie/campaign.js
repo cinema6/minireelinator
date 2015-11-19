@@ -47,9 +47,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     search: '='
                 });
 
-                this.title = function() {
-                    return 'Selfie Campaign Manager';
-                };
                 this.model = function() {
                     return paginatedDbList('selfieCampaign', {
                         sort: this.sort,
@@ -318,6 +315,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 this._campaign = null;
                 this._updateRequest = null;
 
+                this.allowExit = false;
+
                 this.beforeModel = function() {
                     // we need this for saving the update request
                     this._updateRequest = this.cParent.updateRequest;
@@ -383,7 +382,7 @@ function( angular , c6State  , PaginatedListState                    ,
                             equals(masterCampaign.pojoify(), proxyCampaign));
 
                     if (masterCampaign.status !== 'draft') {
-                        if (isClean || !masterCampaign.status) {
+                        if (this.allowExit || isClean || !masterCampaign.status) {
                             return $q.when(null);
                         } else {
                             ConfirmDialogService.display({
@@ -522,6 +521,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 currentCampaign.status = !status || status === 'draft' ?
                     'pending' : currentCampaign.status;
+
+                cState.allowExit = true;
 
                 return currentCampaign;
             }
