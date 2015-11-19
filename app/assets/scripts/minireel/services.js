@@ -3049,6 +3049,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     },
                     displayAd: {
                         size: copy('300x250')
+                    },
+                    default: {
+                        moat: copy(),
+                        autoplay: copy(),
+                        autoadvance: copy(),
+                        controls: copy(),
+                        skip: skipValue()
                     }
                 };
 
@@ -3274,8 +3281,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 function createCard() {
                     cardType = getCardType(card);
-                    dataType = getDataType(card);
-
+                    dataType = getDataType(card) || 'default';
 
                     function createCardBase() {
                         var base = cardBases[cardType];

@@ -67,9 +67,10 @@ function( angular , c6uilib ) {
                         },
                         data: {
                             autoadvance: false,
-                            controls: false,
+                            controls: true,
                             autoplay: true,
-                            skip: 30
+                            skip: 30,
+                            moat: undefined
                         }
                     }),
 

@@ -35,7 +35,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             campaign,
             card,
             categories,
-            paymentMethods;
+            paymentMethods,
+            updateRequest;
 
         var debouncedFns;
 
@@ -44,10 +45,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             $scope.$apply(function() {
                 SelfieManageCampaignCtrl = $controller('SelfieManageCampaignController', {
                     $scope: $scope,
-                    cState: {
-                        card: cState.card,
-                        campaign: cState.campaign
-                    }
+                    cState: cState
                 });
                 SelfieManageCampaignCtrl.initWithModel(model);
             });
@@ -133,6 +131,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
             categories = [];
             paymentMethods = [];
+            updateRequest = null;
 
             cState = {
                 campaign: campaign,
@@ -141,7 +140,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
             compileCtrl(cState, {
                 categories: categories,
-                paymentMethods: paymentMethods
+                paymentMethods: paymentMethods,
+                updateRequest: updateRequest
             });
         });
 
@@ -188,57 +188,105 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                     expect(SelfieManageCampaignCtrl.canSubmit).toBe(true);
                 });
-
-                it('should be false if campaign has an updateRequest', function() {
-                    campaign.paymentMethod = 'pay-1234';
-                    campaign.updateRequest = 'ur-1234';
-
-                    compileCtrl(cState, {
-                        categories: categories,
-                        paymentMethods: paymentMethods
-                    });
-
-                    expect(SelfieManageCampaignCtrl.canSubmit).toBe(false);
-
-                    SelfieManageCampaignCtrl.campaign.paymentMethod = 'pay-1111';
-
-                    expect(SelfieManageCampaignCtrl.canSubmit).toBe(false);
-
-                    SelfieManageCampaignCtrl.campaign.updateRequest = undefined;
-
-                    expect(SelfieManageCampaignCtrl.canSubmit).toBe(true);
-                });
             });
 
-            describe('isLocked', function() {
-                it('should be true if status is expired or canceled or has an updateRequest', function() {
-                    SelfieManageCampaignCtrl.campaign.status = 'draft';
+            describe('canEdit', function() {
+                it('should be true if status is pending, active or paused', function() {
+                    expect(SelfieManageCampaignCtrl.canEdit).toBe(false);
 
-                    expect(SelfieManageCampaignCtrl.isLocked).toBe(false);
+                    SelfieManageCampaignCtrl.campaign.status = 'pending';
 
-                    SelfieManageCampaignCtrl.campaign.status = 'expired';
-
-                    expect(SelfieManageCampaignCtrl.isLocked).toBe(true);
-
-                    SelfieManageCampaignCtrl.campaign.status = 'paused';
-
-                    expect(SelfieManageCampaignCtrl.isLocked).toBe(false);
-
-                    SelfieManageCampaignCtrl.campaign.status = 'canceled';
-
-                    expect(SelfieManageCampaignCtrl.isLocked).toBe(true);
+                    expect(SelfieManageCampaignCtrl.canEdit).toBe(true);
 
                     SelfieManageCampaignCtrl.campaign.status = 'active';
 
-                    expect(SelfieManageCampaignCtrl.isLocked).toBe(false);
+                    expect(SelfieManageCampaignCtrl.canEdit).toBe(true);
 
-                    SelfieManageCampaignCtrl.campaign.updateRequest = 'ur-1234';
+                    SelfieManageCampaignCtrl.campaign.status = 'paused';
 
-                    expect(SelfieManageCampaignCtrl.isLocked).toBe(true);
+                    expect(SelfieManageCampaignCtrl.canEdit).toBe(true);
 
-                    SelfieManageCampaignCtrl.campaign.updateRequest = undefined;
+                    SelfieManageCampaignCtrl.campaign.status = 'expired';
 
-                    expect(SelfieManageCampaignCtrl.isLocked).toBe(false);
+                    expect(SelfieManageCampaignCtrl.canEdit).toBe(false);
+                });
+
+                it('should be true if status is active or paused and has update request that is not canceling', function() {
+                    SelfieManageCampaignCtrl.updateRequest = {
+                        data: {
+                            status: 'canceled'
+                        }
+                    };
+                    expect(SelfieManageCampaignCtrl.canEdit).toBe(false);
+
+                    SelfieManageCampaignCtrl.campaign.status = 'active';
+
+                    expect(SelfieManageCampaignCtrl.canEdit).toBe(false);
+
+                    SelfieManageCampaignCtrl.updateRequest.data.status = 'paused';
+
+                    expect(SelfieManageCampaignCtrl.canEdit).toBe(true);
+                });
+            });
+
+            describe('canCancel', function() {
+                it('should be true if status is active or paused and has no update request', function() {
+                    expect(SelfieManageCampaignCtrl.canCancel).toBe(false);
+
+                    SelfieManageCampaignCtrl.campaign.status = 'pending';
+
+                    expect(SelfieManageCampaignCtrl.canCancel).toBe(false);
+
+                    SelfieManageCampaignCtrl.campaign.status = 'active';
+
+                    expect(SelfieManageCampaignCtrl.canCancel).toBe(true);
+
+                    SelfieManageCampaignCtrl.campaign.status = 'paused';
+
+                    expect(SelfieManageCampaignCtrl.canCancel).toBe(true);
+
+                    SelfieManageCampaignCtrl.campaign.status = 'expired';
+
+                    expect(SelfieManageCampaignCtrl.canCancel).toBe(false);
+                });
+
+                it('should be true if status is active or paused and has update request that is not canceling', function() {
+                    SelfieManageCampaignCtrl.updateRequest = {
+                        data: {
+                            status: 'canceled'
+                        }
+                    };
+                    expect(SelfieManageCampaignCtrl.canCancel).toBe(false);
+
+                    SelfieManageCampaignCtrl.campaign.status = 'active';
+
+                    expect(SelfieManageCampaignCtrl.canCancel).toBe(false);
+
+                    SelfieManageCampaignCtrl.updateRequest.data.status = 'paused';
+
+                    expect(SelfieManageCampaignCtrl.canCancel).toBe(true);
+                });
+            });
+
+            describe('canDelete', function() {
+                it('should be true if status is active or paused', function() {
+                    expect(SelfieManageCampaignCtrl.canDelete).toBe(false);
+
+                    SelfieManageCampaignCtrl.campaign.status = 'pending';
+
+                    expect(SelfieManageCampaignCtrl.canDelete).toBe(true);
+
+                    SelfieManageCampaignCtrl.campaign.status = 'expired';
+
+                    expect(SelfieManageCampaignCtrl.canDelete).toBe(true);
+
+                    SelfieManageCampaignCtrl.campaign.status = 'canceled';
+
+                    expect(SelfieManageCampaignCtrl.canDelete).toBe(true);
+
+                    SelfieManageCampaignCtrl.campaign.status = 'active';
+
+                    expect(SelfieManageCampaignCtrl.canDelete).toBe(false);
                 });
             });
         });
@@ -253,13 +301,14 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         SelfieManageCampaignCtrl.paymentMethods = null;
                         SelfieManageCampaignCtrl._proxyCampaign = null;
 
-                        SelfieManageCampaignCtrl.initWithModel({categories: categories, paymentMethods: paymentMethods});
+                        SelfieManageCampaignCtrl.initWithModel({categories: categories, paymentMethods: paymentMethods, updateRequest: updateRequest});
                     });
 
                     expect(SelfieManageCampaignCtrl.card).toEqual(card);
                     expect(SelfieManageCampaignCtrl.campaign).toEqual(campaign);
                     expect(SelfieManageCampaignCtrl.categories).toEqual(categories);
                     expect(SelfieManageCampaignCtrl.paymentMethods).toEqual(paymentMethods);
+                    expect(SelfieManageCampaignCtrl.updateRequest).toEqual(updateRequest);
                     expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(campaign));
                 });
             });
@@ -353,66 +402,202 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             });
 
                             describe('onAffirm()', function() {
-                                var expectedData;
+                                describe('when there is no existing update request', function() {
+                                    var expectedData;
 
-                                beforeEach(function() {
-                                    expectedData = SelfieManageCampaignCtrl.campaign.pojoify();
-                                    expectedData.status = statusFor(action);
+                                    beforeEach(function() {
+                                        expectedData = SelfieManageCampaignCtrl.campaign.pojoify();
+                                        expectedData.status = statusFor(action);
 
+                                        onAffirm();
+                                    });
+
+                                    it('should be wrapped in a c6AsyncQueue', function() {
+                                        expect(debouncedFns).toContain(onAffirm);
+                                    });
+
+                                    it('should create an update request with a pojoified campaign', function() {
+                                        expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
+                                            data: expectedData,
+                                            campaign: 'cam-123'
+                                        });
+                                    });
+
+                                    it('should save the updateRequest', function() {
+                                        expect(updateRequest.save).toHaveBeenCalled();
+                                    });
+
+                                    describe('when updateRequest status is approved', function() {
+                                        beforeEach(function() {
+                                            updateRequest.status = 'approved';
+
+                                            $rootScope.$apply(function() {
+                                                updateRequestDeferred.resolve(updateRequest);
+                                            });
+                                        });
+
+                                        it('should not add the updateRequest id to the campaign', function() {
+                                            expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe(undefined);
+                                        });
+
+                                        it('should update proxy campaign', function() {
+                                            expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
+                                        });
+                                    });
+
+                                    describe('when updateRequest status is not approved', function() {
+                                        beforeEach(function() {
+                                            updateRequest.status = 'pending';
+                                            updateRequest.id = 'cam-123:ur-1234';
+
+                                            $rootScope.$apply(function() {
+                                                updateRequestDeferred.resolve(updateRequest);
+                                            });
+                                        });
+
+                                        it('should add the updateRequest id to the campaign', function() {
+                                            expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe('ur-1234');
+                                        });
+
+                                        it('should add the updateRequest to the controller and state', function() {
+                                            expect(SelfieManageCampaignCtrl.updateRequest).toEqual(updateRequest);
+                                            expect(cState.updateRequest).toEqual(updateRequest);
+                                        });
+
+                                        it('should update proxy campaign', function() {
+                                            expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
+                                        });
+                                    });
+                                });
+
+                                describe('when there is an existing update request', function() {
+                                    beforeEach(function() {
+                                        SelfieManageCampaignCtrl.updateRequest = {
+                                            id: 'ur-123',
+                                            data: {
+                                                name: 'My Campaign',
+                                                status: 'paused',
+                                                cards: []
+                                            },
+                                            save: jasmine.createSpy('updateRequest.save()').and.returnValue(updateRequestDeferred.promise)
+                                        };
+
+                                        onAffirm();
+                                    });
+
+                                    it('should be wrapped in a c6AsyncQueue', function() {
+                                        expect(debouncedFns).toContain(onAffirm);
+                                    });
+
+                                    it('should not create an update request', function() {
+                                        expect(cinema6.db.create).not.toHaveBeenCalledWith();
+                                    });
+
+                                    it('should save the updateRequest', function() {
+                                        expect(SelfieManageCampaignCtrl.updateRequest.save).toHaveBeenCalled();
+                                    });
+
+                                    describe('when updateRequest status is approved', function() {
+                                        beforeEach(function() {
+                                            updateRequest.status = 'approved';
+
+                                            $rootScope.$apply(function() {
+                                                updateRequestDeferred.resolve(updateRequest);
+                                            });
+                                        });
+
+                                        it('should not add the updateRequest id to the campaign', function() {
+                                            expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe(undefined);
+                                        });
+
+                                        it('should update proxy campaign', function() {
+                                            expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
+                                        });
+
+                                        describe('if action is cancel', function() {
+                                            it('should go to Selfie:Dashboard', function() {
+                                                if (action === 'cancel') {
+                                                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard')
+                                                }
+                                            });
+                                        });
+                                    });
+
+                                    describe('when updateRequest status is not approved', function() {
+                                        beforeEach(function() {
+                                            updateRequest.status = 'pending';
+                                            updateRequest.id = 'cam-123:ur-1234';
+
+                                            $rootScope.$apply(function() {
+                                                updateRequestDeferred.resolve(updateRequest);
+                                            });
+                                        });
+
+                                        it('should add the updateRequest id to the campaign', function() {
+                                            expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe('ur-1234');
+                                        });
+
+                                        it('should add the updateRequest to the controller and state', function() {
+                                            expect(SelfieManageCampaignCtrl.updateRequest).toEqual(updateRequest);
+                                            expect(cState.updateRequest).toEqual(updateRequest);
+                                        });
+
+                                        it('should update proxy campaign', function() {
+                                            expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
+                                        });
+
+                                        describe('if action is cancel', function() {
+                                            it('should go to Selfie:Dashboard', function() {
+                                                if (action === 'cancel') {
+                                                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard')
+                                                }
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+
+                    describe('delete', function() {
+                        beforeEach(function() {
+                            spyOn(campaign, 'erase').and.returnValue($q.when(campaign));
+                            // spyOn(c6State, 'goTo');
+                            SelfieManageCampaignCtrl.update('delete');
+
+                            onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
+                            onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
+                        });
+
+                        it('should show a confirmation dialog', function() {
+                            expect(ConfirmDialogService.display).toHaveBeenCalled();
+                        });
+
+                        describe('onAffirm()', function() {
+                            beforeEach(function() {
+                                $rootScope.$apply(function() {
                                     onAffirm();
                                 });
+                            });
 
-                                it('should be wrapped in a c6AsyncQueue', function() {
-                                    expect(debouncedFns).toContain(onAffirm);
-                                });
+                            it('should be wrapped in a c6AsyncQueue', function() {
+                                expect(debouncedFns).toContain(onAffirm);
+                            });
 
-                                it('should create an update request with a pojoified campaign', function() {
-                                    expect(cinema6.db.create).toHaveBeenCalledWith('updateRequest', {
-                                        data: expectedData,
-                                        campaign: 'cam-123'
-                                    });
-                                });
+                            it('should call erase()', function() {
+                                expect(campaign.erase).toHaveBeenCalled();
+                            });
 
-                                it('should save the updateRequest', function() {
-                                    expect(updateRequest.save).toHaveBeenCalled();
-                                });
+                            it('should not create an update request', function() {
+                                expect(cinema6.db.create).not.toHaveBeenCalledWith();
+                            });
 
-                                describe('when updateRequest status is approved', function() {
-                                    beforeEach(function() {
-                                        updateRequest.status = 'approved';
+                            it('should update proxy campaign', function() {
+                                expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
+                            });
 
-                                        $rootScope.$apply(function() {
-                                            updateRequestDeferred.resolve(updateRequest);
-                                        });
-                                    });
-
-                                    it('should not add the updateRequest id to the campaign', function() {
-                                        expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe(undefined);
-                                    });
-
-                                    it('should update proxy campaign', function() {
-                                        expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
-                                    });
-                                });
-
-                                describe('when updateRequest status is not approved', function() {
-                                    beforeEach(function() {
-                                        updateRequest.status = 'pending';
-                                        updateRequest.id = 'ur-1234';
-
-                                        $rootScope.$apply(function() {
-                                            updateRequestDeferred.resolve(updateRequest);
-                                        });
-                                    });
-
-                                    it('should add the updateRequest id to the campaign', function() {
-                                        expect(SelfieManageCampaignCtrl.campaign.updateRequest).toBe('ur-1234');
-                                    });
-
-                                    it('should update proxy campaign', function() {
-                                        expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(SelfieManageCampaignCtrl.campaign));
-                                    });
-                                });
+                            it('should go to Selfie:CampaignDashboard', function() {
+                                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
                             });
                         });
                     });
@@ -510,46 +695,18 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             });
 
             describe('edit(campaign)', function() {
-                var onAffirm, onCancel;
-
                 beforeEach(function() {
                     spyOn(c6State, 'goTo');
 
                     SelfieManageCampaignCtrl.edit(SelfieManageCampaignCtrl.campaign);
-
-                    onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
-                    onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
                 });
 
-                it('should show a confirmation modal', function() {
-                    expect(ConfirmDialogService.display).toHaveBeenCalled();
+                it('should be wrapped in a c6AsyncQueue', function() {
+                    expect(debouncedFns).toContain(SelfieManageCampaignCtrl.edit);
                 });
 
-                describe('onAffirm()', function() {
-                    it('should be wrapped in a c6AsyncQueue', function() {
-                        expect(debouncedFns).toContain(onAffirm);
-                    });
-
-                    it('should close the dialog', function() {
-                        onAffirm();
-
-                        expect(ConfirmDialogService.close).toHaveBeenCalled();
-                    });
-
-                    it('should go to EditCampaign with the campaign', function() {
-                        onAffirm();
-
-                        expect(c6State.goTo).toHaveBeenCalledWith('Selfie:EditCampaign', [SelfieManageCampaignCtrl.campaign]);
-                    });
-                });
-
-                describe('onCancel()', function() {
-                    it('should close the dialog and not go anywhere', function() {
-                        onCancel();
-
-                        expect(ConfirmDialogService.close).toHaveBeenCalled();
-                        expect(c6State.goTo).not.toHaveBeenCalled();
-                    });
+                it('should go to EditCampaign with the campaign', function() {
+                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:EditCampaign', [SelfieManageCampaignCtrl.campaign]);
                 });
             });
         });

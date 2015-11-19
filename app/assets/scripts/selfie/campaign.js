@@ -47,9 +47,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     search: '='
                 });
 
-                this.title = function() {
-                    return 'Selfie Campaign Manager';
-                };
                 this.model = function() {
                     return paginatedDbList('selfieCampaign', {
                         sort: this.sort,
@@ -252,7 +249,17 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.afterModel = function(campaign) {
+                    var cState = this,
+                        id = campaign.updateRequest ?
+                            campaign.id + ':' + campaign.updateRequest :
+                            null;
+
                     this.campaign = CampaignService.normalize(campaign);
+
+                    return (id ? cinema6.db.find('updateRequest', id) : $q.when(null))
+                        .then(function(updateRequest) {
+                            cState.updateRequest = updateRequest;
+                        });
                 };
 
                 this.enter = function() {
@@ -304,12 +311,33 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.card = null;
                 this.campaign = null;
+                this.updateRequest = null;
                 this._campaign = null;
+                this._updateRequest = null;
+
+                this.allowExit = false;
 
                 this.beforeModel = function() {
+                    // we need this for saving the update request
+                    this._updateRequest = this.cParent.updateRequest;
+
+                    // we need a copy of the update request for binding
+                    // in the UI. We'll use this to update the DB model
+                    // when we save/submit
+                    this.updateRequest = this._updateRequest && this._updateRequest.pojoify();
+
+                    // this will alwyas be a c6DB campaign model
+                    // we need this for autosaving 'draft' campaigns
+                    // and for deleting 'pending' campaigns
                     this._campaign = this.cParent.campaign;
 
-                    this.campaign = this.cParent.campaign.pojoify();
+                    // if we have an update request we want to use it
+                    // to bind in the UI, this way it always refelects
+                    // the latest updates the user has made.
+                    this.campaign = (this.updateRequest && this.updateRequest.data) ||
+                        this.cParent.campaign.pojoify();
+
+                    // these are always necessary
                     this.card = this.campaign.cards[0];
                     this.advertiser = SelfieState.cModel.advertiser;
                     this.isCreator = !this.campaign.user ||
@@ -344,14 +372,42 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.exit = function() {
-                    if (this._campaign.status !== 'draft') {
-                        return $q.when(null);
+                    var deferred = $q.defer(),
+                        proxyCampaign = this.campaign,
+                        masterCampaign = this._campaign,
+                        masterUpdateRequest = this._updateRequest,
+                        isClean = (masterCampaign.updateRequest &&
+                            equals(masterUpdateRequest.data, proxyCampaign)) ||
+                            (!masterCampaign.updateRequest &&
+                            equals(masterCampaign.pojoify(), proxyCampaign));
+
+                    if (masterCampaign.status !== 'draft') {
+                        if (this.allowExit || isClean || !masterCampaign.status) {
+                            return $q.when(null);
+                        } else {
+                            ConfirmDialogService.display({
+                                prompt: 'Are you sure you want to lose your changes?',
+                                affirm: 'Yes',
+                                cancel: 'No',
+
+                                onCancel: function() {
+                                    deferred.reject();
+
+                                    return ConfirmDialogService.close();
+                                },
+                                onAffirm: function() {
+                                    deferred.resolve();
+
+                                    return ConfirmDialogService.close();
+                                }
+                            });
+
+                            return deferred.promise;
+                        }
                     }
 
                     return this.saveCampaign()
                         .catch(function() {
-                            var deferred = $q.defer();
-
                             ConfirmDialogService.display({
                                 prompt: 'There was a problem saving your campaign, would ' +
                                     'you like to stay on this page to edit the campaign?',
@@ -371,6 +427,15 @@ function( angular , c6State  , PaginatedListState                    ,
                             });
 
                             return deferred.promise;
+                        });
+                };
+
+                this.saveUpdateRequest = function() {
+                    var cState = this;
+
+                    return campaignExtend(this._updateRequest, this.updateRequest).save()
+                        .then(function() {
+                            return cState.updateRequest;
                         });
                 };
 
@@ -434,9 +499,15 @@ function( angular , c6State  , PaginatedListState                    ,
             function createUpdateRequest() {
                 var status = cState._campaign.status,
                     isDraft = status === 'draft',
-                    campaign = extend((isDraft ? cState._campaign.pojoify() : cState.campaign), {
-                        status: isDraft ? 'active' : status
-                    });
+                    campaign;
+
+                if (cState.updateRequest) {
+                    return cState.saveUpdateRequest();
+                }
+
+                campaign = extend((isDraft ? cState._campaign.pojoify() : cState.campaign), {
+                    status: isDraft ? 'active' : status
+                });
 
                 return cinema6.db.create('updateRequest', {
                     data: campaign,
@@ -450,6 +521,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 currentCampaign.status = !status || status === 'draft' ?
                     'pending' : currentCampaign.status;
+
+                cState.allowExit = true;
 
                 return currentCampaign;
             }
@@ -479,6 +552,11 @@ function( angular , c6State  , PaginatedListState                    ,
                         });
 
                         return sections.indexOf(false) < 0;
+                    }
+                },
+                isClean: {
+                    get: function() {
+                        return equals(this.campaign, this._proxyCampaign);
                     }
                 }
             });
@@ -522,6 +600,12 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this._proxyCard = copy(this.card);
                 this._proxyCampaign = copy(this.campaign);
+
+                // this is so we can go back to the manager screen
+                // and pass the real campaign since this.campaign
+                // might be bound to updateRequest.data instead of
+                // an actual campaign
+                this.originalCampaign = cState._campaign;
             };
 
             this.save = function() {
@@ -534,20 +618,51 @@ function( angular , c6State  , PaginatedListState                    ,
                     .catch(handleError);
             };
 
-            this.submit = queue.debounce(function() {
-                var isDraft = cState._campaign.status === 'draft';
+            this.submit = function() {
+                var isDraft = cState._campaign.status === 'draft',
+                    draftText = 'Are you sure you want to submit your campaign for approval? ' +
+                        'It may take up to 24 hours for your campaign to become active.',
+                    activeText = 'Are you sure you want to submit these changes for approval? ' +
+                        'It may take up to 24 hours for them to take effect.';
 
                 if (!SelfieCampaignCtrl.canSubmit) {
                     SelfieCampaignCtrl.validation.show = true;
                     return;
                 }
 
-                return (isDraft ? saveCampaign() : $q.when(this.campaign))
-                    .then(createUpdateRequest)
-                    .then(setPending)
-                    .then(returnToDashboard)
-                    .catch(handleError);
-            }, this);
+                if (!isDraft && this.isClean) {
+                    return ConfirmDialogService.display({
+                        prompt: 'No changes have been detected.',
+                        affirm: 'OK',
+
+                        onCancel: function() {
+                            return ConfirmDialogService.close();
+                        },
+                        onAffirm: function() {
+                            ConfirmDialogService.close();
+                        }
+                    });
+                }
+
+                ConfirmDialogService.display({
+                    prompt: isDraft ? draftText : activeText,
+                    affirm: 'Yes',
+                    cancel: 'Cancel',
+
+                    onCancel: function() {
+                        return ConfirmDialogService.close();
+                    },
+                    onAffirm: queue.debounce(function() {
+                        ConfirmDialogService.close();
+
+                        return (isDraft ? saveCampaign() : $q.when(SelfieCampaignCtrl.campaign))
+                            .then(createUpdateRequest)
+                            .then(setPending)
+                            .then(returnToDashboard)
+                            .catch(handleError);
+                    })
+                });
+            };
 
             // debounce the auto-save
             this.autoSave = c6Debounce(SelfieCampaignCtrl.save, 5000);
@@ -806,11 +921,9 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignVideoController', ['$injector','$scope','SelfieVideoService',
-                                                      'c6Debounce','ThumbnailService',
-                                                      'FileService','CollateralService',
+                                                      'c6Debounce',
         function                                     ( $injector , $scope , SelfieVideoService ,
-                                                       c6Debounce , ThumbnailService ,
-                                                       FileService , CollateralService ) {
+                                                       c6Debounce ) {
             var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 SelfieCampaignVideoCtrl = this,
                 card = SelfieCampaignCtrl.card,
@@ -818,27 +931,11 @@ function( angular , c6State  , PaginatedListState                    ,
                 id = card.data.videoid,
                 hasExistingVideo = !!service && !!id;
 
-            function setDefaultThumbs(service, id) {
-                if (service === 'adUnit') {
-                    SelfieCampaignVideoCtrl.useDefaultThumb = false;
-                    SelfieCampaignVideoCtrl.defaultThumb = null;
-                } else {
-                    ThumbnailService.getThumbsFor(service, id)
-                        .ensureFulfillment()
-                        .then(function(thumbs) {
-                            SelfieCampaignVideoCtrl.defaultThumb = thumbs.large;
-                            SelfieCampaignVideoCtrl.useDefaultThumb = !card.thumb;
-                        });
-                }
-            }
-
             function handleVideoError() {
                 SelfieCampaignVideoCtrl.videoError = true;
                 SelfieCampaignVideoCtrl.video = null;
             }
 
-            this.useDefaultThumb = !card.thumb;
-            this.customThumbSrc = card.thumb;
             this.videoUrl = SelfieVideoService.urlFromData(service, id);
             this.disableTrimmer = function() { return true; };
 
@@ -850,12 +947,6 @@ function( angular , c6State  , PaginatedListState                    ,
                     }
                 }
             });
-
-            this.updateThumbs = function() {
-                card.thumb = !SelfieCampaignVideoCtrl.useDefaultThumb ?
-                    SelfieCampaignVideoCtrl.customThumbSrc :
-                    null;
-            };
 
             // when a user enters a new video url or emebd code we
             // first figure out the service and id, then get thumbs
@@ -877,8 +968,6 @@ function( angular , c6State  , PaginatedListState                    ,
                         service = data.service;
                         id = data.id;
 
-                        setDefaultThumbs(service, id);
-
                         return SelfieVideoService.statsFromService(service, id);
                     })
                     .then(function(data) {
@@ -892,40 +981,11 @@ function( angular , c6State  , PaginatedListState                    ,
                     .catch(handleVideoError);
             }, 1000);
 
-            // watch the thumbnail selector button and make the change
-            // on the actual card to trigger save/preview
-            $scope.$watch(function() {
-                return SelfieCampaignVideoCtrl.useDefaultThumb;
-            }, function(useDefault) {
-                if (useDefault) {
-                    card.thumb = null;
-                } else {
-                    card.thumb = SelfieCampaignVideoCtrl.customThumbSrc;
-                }
-            });
-
-            // watch the the File <input> and upload when chosen,
-            // on success we're assuming a choice of "custom"
-            $scope.$watch(function() {
-                return SelfieCampaignVideoCtrl.customThumbFile;
-            }, function(newFile) {
-                if (!newFile) { return; }
-
-                CollateralService.uploadFromFile(newFile)
-                    .then(function(path) {
-                        SelfieCampaignVideoCtrl.customThumbSrc = '/' + path;
-                        SelfieCampaignVideoCtrl.useDefaultThumb = false;
-                        card.thumb = '/' + path;
-                    });
-            });
-
             // watch the video link/embed/vast tag input
             // and then do all the checking/getting of data
             $scope.$watch(function() {
                 return SelfieCampaignVideoCtrl.videoUrl;
             }, SelfieCampaignVideoCtrl.updateUrl);
-
-            $scope.$on('SelfieCampaignWillSave', this.updateThumbs);
 
         }])
 
@@ -935,19 +995,43 @@ function( angular , c6State  , PaginatedListState                    ,
                 SelfieCampaignTextCtrl = this,
                 card = SelfieCampaignCtrl.card;
 
+            function generateLink(link) {
+                var hasProtocol = (/^http:\/\/|https:\/\//).test(link),
+                    hasSlashes = (/^\/\//).test(link);
+
+                if (hasProtocol) {
+                    return link;
+                }
+
+                if (link) {
+                    return (hasSlashes ? 'http:' : 'http://') + link;
+                }
+
+                return link;
+            }
+
             card.links.Action = card.links.Action || card.links.Website;
             card.params.action = card.params.action || { type: 'button' };
             card.params.action.label =  card.params.action.label || 'Learn More';
 
             this.bindLinkToWebsite = !card.links.Action;
+            this.actionLink = card.links.Action;
+
+            this.updateActionLink = function(link) {
+                link = generateLink(link);
+
+                card.links.Action = link;
+                SelfieCampaignTextCtrl.actionLink = link;
+            };
 
             $scope.$watch(function() {
                 return card.links.Website;
             }, function(website) {
                 if (website && SelfieCampaignTextCtrl.bindLinkToWebsite) {
-                    card.links.Action = website;
+                    SelfieCampaignTextCtrl.updateActionLink(website);
                 }
             });
+
         }])
 
         .controller('SelfieCampaignPreviewController', ['$scope','c6Debounce','$log',
@@ -1113,15 +1197,23 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.model = function() {
+                    var updateRequest = this.campaign.updateRequest ?
+                        this.campaign.id + ':' + this.campaign.updateRequest :
+                        null;
+
                     return $q.all({
-                        paymentMethods: cinema6.db.findAll('paymentMethod')
+                        paymentMethods: cinema6.db.findAll('paymentMethod'),
+                        updateRequest:  updateRequest ?
+                            cinema6.db.find('updateRequest', updateRequest) :
+                            null
                     });
                 };
 
-                this.afterModel = function() {
+                this.afterModel = function(model) {
                     var user = c6State.get('Selfie').cModel;
 
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
+                    this.updateRequest = model.updateRequest;
                 };
 
                 this.enter = function() {
@@ -1170,17 +1262,37 @@ function( angular , c6State  , PaginatedListState                    ,
             }
 
             function createUpdateRequest(action) {
-                var campaign = SelfieManageCampaignCtrl.campaign.pojoify(),
-                    id = campaign.id;
+                var Ctrl = SelfieManageCampaignCtrl,
+                    updateRequest = Ctrl.updateRequest,
+                    campaign = (updateRequest || {}).data || Ctrl.campaign.pojoify(),
+                    id = Ctrl.campaign.id;
+
+                if (action === 'delete') {
+                    // if status is pending, expired, canceled
+                    // use the campaigns endpoint
+                    return Ctrl.campaign.erase();
+                }
 
                 if (action) {
+                    // most actions are status changes, except for
+                    // paymentMethod, which is handled below
                     campaign.status = statusFor(action);
                 }
 
                 if (action === 'paymentMethod') {
+                    // the payment method can be auto-approved
+                    // but to do this it must be the only property
+                    // included in the body of the campaign
                     campaign = {
                         paymentMethod: campaign.paymentMethod
                     };
+                }
+
+                if (updateRequest) {
+                    // if we have an existing updateRequest then
+                    // update the data and save()
+                    updateRequest.data = campaign;
+                    return updateRequest.save();
                 }
 
                 return cinema6.db.create('updateRequest', {
@@ -1192,8 +1304,15 @@ function( angular , c6State  , PaginatedListState                    ,
             function setUpdateRequest(updateRequest) {
                 var campaign = SelfieManageCampaignCtrl.campaign;
 
-                if (updateRequest.status !== 'approved') {
-                    campaign.updateRequest = updateRequest.id;
+                if (updateRequest && updateRequest.status !== 'approved') {
+                    // make sure the current campaign has the update request
+                    // prop, make sure the Ctrl has the update request in
+                    // case the user wants to make more updates, make sure
+                    // the cState has the update request in case the user
+                    // is an admin and wants access to it in the Admin tab
+                    campaign.updateRequest = updateRequest.id.split(':')[1];
+                    SelfieManageCampaignCtrl.updateRequest = updateRequest;
+                    cState.updateRequest = updateRequest;
                 }
 
                 return campaign;
@@ -1207,6 +1326,13 @@ function( angular , c6State  , PaginatedListState                    ,
                 return createUpdateRequest(action)
                     .then(setUpdateRequest)
                     .then(updateProxy)
+                    .then(function() {
+                        if ((/delete|cancel/).test(action)) {
+                            // if user has deleted or canceled the campaign
+                            // we probably want to go back the dashboard
+                            c6State.goTo('Selfie:CampaignDashboard');
+                        }
+                    })
                     .catch(handleError);
             }
 
@@ -1214,13 +1340,28 @@ function( angular , c6State  , PaginatedListState                    ,
                 canSubmit: {
                     get: function() {
                         return !equals(this.campaign, this._proxyCampaign) &&
-                            !!this.campaign.paymentMethod && !this.campaign.updateRequest;
+                            !!this.campaign.paymentMethod;
                     }
                 },
-                isLocked: {
+                canEdit: {
                     get: function() {
-                        return (/expired|canceled/).test(this.campaign.status) ||
-                            !!this.campaign.updateRequest;
+                        return (/pending|active|paused/).test(this.campaign.status) &&
+                            (!this.updateRequest ||
+                                (this.updateRequest && this.updateRequest.data &&
+                                this.updateRequest.data.status !== 'canceled'));
+                    }
+                },
+                canCancel: {
+                    get: function() {
+                        return (/active|paused/).test(this.campaign.status) &&
+                            (!this.updateRequest ||
+                                (this.updateRequest && this.updateRequest.data &&
+                                this.updateRequest.data.status !== 'canceled'));
+                    }
+                },
+                canDelete: {
+                    get: function() {
+                        return (/expired|canceled|pending/).test(this.campaign.status);
                     }
                 }
             });
@@ -1228,9 +1369,11 @@ function( angular , c6State  , PaginatedListState                    ,
             this.initWithModel = function(model) {
                 this.card = cState.card;
                 this.campaign = cState.campaign;
+                this.showAdminTab = cState.isAdmin;
+
                 this.categories = model.categories;
                 this.paymentMethods = model.paymentMethods;
-                this.showAdminTab = cState.isAdmin;
+                this.updateRequest = model.updateRequest;
 
                 this._proxyCampaign = copy(cState.campaign);
             };
@@ -1238,8 +1381,7 @@ function( angular , c6State  , PaginatedListState                    ,
             this.update = function(action) {
                 ConfirmDialogService.display({
                     prompt: 'Are you sure you want to ' + action + ' your campaign? ' +
-                        'Submitting this update will lock your campaign from further' +
-                        ' edits until the change is approved.',
+                        'This change may take up to 24 hours to be approved.',
                     affirm: 'Yes, submit this change',
                     cancel: 'Cancel',
 
@@ -1281,23 +1423,9 @@ function( angular , c6State  , PaginatedListState                    ,
                     });
             }, this);
 
-            this.edit = function(campaign) {
-                ConfirmDialogService.display({
-                    prompt: 'Are you sure you want to edit your campaign? Submitting ' +
-                        'changes will lock the campaign until they are approved.',
-                    affirm: 'Yes, take me to the editor',
-                    cancel: 'No, leave me here',
-
-                    onCancel: function() {
-                        return ConfirmDialogService.close();
-                    },
-                    onAffirm: queue.debounce(function() {
-                        ConfirmDialogService.close();
-
-                        return c6State.goTo('Selfie:EditCampaign', [campaign]);
-                    })
-                });
-            };
+            this.edit = queue.debounce(function() {
+                return c6State.goTo('Selfie:EditCampaign', [this.campaign]);
+            }, this);
         }])
 
         .config(['c6StateProvider',
@@ -1326,17 +1454,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.beforeModel = function() {
                     this.campaign = this.cParent.campaign;
-                };
-
-                this.model = function() {
-                    var model = {
-                        updateRequest: null
-                    };
-                    if(this.campaign.updateRequest) {
-                        var updateHash = this.campaign.id + ':' + this.campaign.updateRequest;
-                        model.updateRequest = cinema6.db.find('updateRequest', updateHash);
-                    }
-                    return $q.all(model);
+                    this.updateRequest = this.cParent.updateRequest;
                 };
 
                 this.enter = function() {
@@ -1354,8 +1472,8 @@ function( angular , c6State  , PaginatedListState                    ,
             var self = this;
             var updateRequest;
 
-            this.initWithModel = function(model) {
-                updateRequest = model.updateRequest;
+            this.initWithModel = function() {
+                updateRequest = cState.updateRequest;
                 extend(self, {
                     showApproval: false,
                     campaign: cState.campaign.pojoify(),

@@ -880,6 +880,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                 function decorateUpdate(update) {
                     var card = update.data && update.data.cards && update.data.cards[0];
 
+                    update.id = update.campaign + ':' + update.id;
+
                     return (card ? convertCardForEditor(card) : $q.when(null))
                         .then(function(card) {
                             if (card) {
@@ -891,6 +893,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 function undecorateUpdate(update) {
                     var card = update.data && update.data.cards && update.data.cards[0];
+
+                    if (update.id) {
+                        update.id = update.id.split(':')[1];
+                    }
 
                     return (card ? convertCardForPlayer(card) : $q.when(null))
                         .then(function(card) {
@@ -914,7 +920,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 this.update = function(type, updateRequest) {
                     var campId = updateRequest.campaign;
-                    var updateId = updateRequest.id;
+                    var updateId = updateRequest.id.split(':')[1];
                     var endpoint = url('campaigns/' + campId + '/updates/' + updateId);
                     var requestBody = {
                         status: updateRequest.status
@@ -1260,7 +1266,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     this.name = c6Defines.kSelfie ? 'Selfie' : 'Portal';
 
                     this.title = function() {
-                        return 'Cinema6 Dashboard';
+                        return c6Defines.kSelfie ? 'Reelcontent' : 'Studio';
                     };
 
                     this.enter = function() {

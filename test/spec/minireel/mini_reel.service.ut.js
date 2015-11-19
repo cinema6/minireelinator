@@ -686,7 +686,10 @@
                                 links: {},
                                 shareLinks: {},
                                 params: {},
-                                data: {}
+                                data: {
+                                    controls: true,
+                                    skip: true
+                                }
                             },
                             {
                                 id: 'rc-d98fad7e413692',
@@ -713,7 +716,10 @@
                                     prompt: null,
                                     choices: []
                                 },
-                                data: {}
+                                data: {
+                                    controls: true,
+                                    skip: true
+                                }
                             },
                             {
                                 id: 'rc-25c1f60b933186',
@@ -1741,6 +1747,30 @@
                                     });
                                 });
                             });
+                        });
+
+                        it('should protect some data properties even when no video service is found', function() {
+                            var card = MiniReelService.createCard('video'),
+                                spy = jasmine.createSpy('spy()'),
+                                convertedCard;
+
+                            card.data = {
+                                autoadvance: false,
+                                autoplay: true,
+                                controls: true,
+                                skip: 30,
+                                moat: {
+                                    advertiser: 'a-123'
+                                }
+                            };
+
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertCardForPlayer(card).then(spy);
+                            });
+
+                            convertedCard = spy.calls.mostRecent().args[0];
+
+                            expect(convertedCard.data).toEqual(card.data);
                         });
                     });
 

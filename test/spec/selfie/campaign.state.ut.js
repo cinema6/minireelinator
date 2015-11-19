@@ -21,7 +21,8 @@ define(['app'], function(appModule) {
                 categories,
                 campaign,
                 logos,
-                paymentMethods;
+                paymentMethods,
+                updateRequest;
 
             beforeEach(function() {
                 module(appModule.name);
@@ -58,6 +59,11 @@ define(['app'], function(appModule) {
                                 age: []
                             }
                         }
+                    });
+                    updateRequest = cinema6.db.create('updateRequest', {
+                        id: 'ur-123',
+                        data: campaign.pojoify(),
+                        campaign: campaign.id
                     });
                     logos = [
                         {
@@ -112,24 +118,79 @@ define(['app'], function(appModule) {
                 });
             });
 
+            describe('updateRequest', function() {
+                it('should be null', function() {
+                    expect(campaignState.updateRequest).toBe(null);
+                });
+            });
+
             describe('_campaign', function() {
                 it('should be null', function() {
                     expect(campaignState._campaign).toBe(null);
                 });
             });
 
+            describe('_updateRequest', function() {
+                it('should be null', function() {
+                    expect(campaignState._updateRequest).toBe(null);
+                });
+            });
+
+            describe('allowExit', function() {
+                it('should be false', function() {
+                    expect(campaignState.allowExit).toBe(false);
+                });
+            });
+
             describe('beforeModel()', function() {
-                it('should put the card and campaign on the state object', function() {
-                    var pojo = campaign.pojoify();
+                describe('when there is a pending update request', function() {
+                    beforeEach(function() {
+                        campaignState.cParent.updateRequest = updateRequest;
+                        campaignState.cParent.campaign = campaign;
 
-                    campaignState.cParent.campaign = campaign;
+                        campaignState.beforeModel();
+                    });
 
-                    campaignState.beforeModel();
+                    it('should put the updateRequest on the state object', function() {
+                        expect(campaignState.updateRequest).toEqual(updateRequest.pojoify());
+                        expect(campaignState._updateRequest).toEqual(updateRequest);
+                    });
 
-                    expect(campaignState.card).toEqual(pojo.cards[0]);
-                    expect(campaignState.campaign).toEqual(pojo);
-                    expect(campaignState.advertiser).toEqual(selfieState.cModel.advertiser);
-                    expect(campaignState._campaign).toEqual(campaign);
+                    it('the campaign and card should come from the updateRequest', function() {
+                        expect(campaignState.campaign).toEqual(updateRequest.data);
+                        expect(campaignState.card).toEqual(updateRequest.data.cards[0]);
+                    });
+
+                    it('the advertiser and original campaign should be set', function() {
+                        expect(campaignState.advertiser).toEqual(selfieState.cModel.advertiser);
+                        expect(campaignState._campaign).toEqual(campaign);
+                    });
+                });
+
+                describe('when there is not a pending update request', function() {
+                    beforeEach(function() {
+                        campaignState.cParent.updateRequest = null;
+                        campaignState.cParent.campaign = campaign;
+
+                        campaignState.beforeModel();
+                    });
+
+                    it('should put the updateRequest on the state object', function() {
+                        expect(campaignState.updateRequest).toEqual(null);
+                        expect(campaignState._updateRequest).toEqual(null);
+                    });
+
+                    it('the campaign and card should come from the pojoified campaign', function() {
+                        var pojo = campaign.pojoify();
+
+                        expect(campaignState.campaign).toEqual(pojo);
+                        expect(campaignState.card).toEqual(pojo.cards[0]);
+                    });
+
+                    it('the advertiser and original campaign should be set', function() {
+                        expect(campaignState.advertiser).toEqual(selfieState.cModel.advertiser);
+                        expect(campaignState._campaign).toEqual(campaign);
+                    });
                 });
 
                 describe('isCreator', function() {
@@ -268,16 +329,90 @@ define(['app'], function(appModule) {
                 });
 
                 describe('when master campaign is not in draft', function() {
-                    it('should resolve the promise', function() {
-                        campaignState._campaign.status = 'active';
-                        campaignState.campaign.status = 'draft';
+                    describe('when master campaign is a new draft without a status yet', function() {
+                        it('should resolve the promise immediately', function() {
+                            campaignState._campaign.status = undefined;
 
-                        $rootScope.$apply(function() {
-                            campaignState.exit().then(success, failure);
+                            $rootScope.$apply(function() {
+                                campaignState.exit().then(success, failure);
+                            });
+
+                            expect(success).toHaveBeenCalled();
+                            expect(campaignState.saveCampaign).not.toHaveBeenCalled();
+                        });
+                    });
+
+                    describe('when allowExit is true', function() {
+                        it('should resolve the promise immediately', function() {
+                            campaignState.allowExit = true;
+
+                            $rootScope.$apply(function() {
+                                campaignState.exit().then(success, failure);
+                            });
+
+                            expect(success).toHaveBeenCalled();
+                            expect(campaignState.saveCampaign).not.toHaveBeenCalled();
+                        });
+                    });
+
+                    describe('when master campaign has a status but is clean and unchanged', function() {
+                        it('should resolve the promise immediately', function() {
+                            campaignState._campaign.status = 'active';
+                            campaignState.campaign.status = 'active';
+
+                            $rootScope.$apply(function() {
+                                campaignState.exit().then(success, failure);
+                            });
+
+                            expect(success).toHaveBeenCalled();
+                            expect(campaignState.saveCampaign).not.toHaveBeenCalled();
+                        });
+                    });
+
+                    describe('when campaign has a status and has been edited', function() {
+                        var onAffirm, onCancel, prompt;
+
+                        beforeEach(function() {
+                            campaignState._campaign.status = 'active';
+
+                            campaignState.campaign.name = 'Updated Name!';
+
+                            $rootScope.$apply(function() {
+                                campaignState.exit().then(success, failure);
+                            });
+
+                            onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
+                            onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
+                            prompt = ConfirmDialogService.display.calls.mostRecent().args[0].prompt;
                         });
 
-                        expect(success).toHaveBeenCalled();
-                        expect(campaignState.saveCampaign).not.toHaveBeenCalled();
+                        it('should alert the user before leaving', function() {
+                            expect(ConfirmDialogService.display).toHaveBeenCalled();
+                            expect(prompt).toEqual('Are you sure you want to lose your changes?');
+                        });
+
+                        describe('onAffirm()', function() {
+                            it('should resolve the promise', function() {
+                                $rootScope.$apply(function() {
+                                    onAffirm();
+                                });
+
+                                expect(success).toHaveBeenCalled();
+                                expect(campaignState.saveCampaign).not.toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('onCancel()', function() {
+                            it('should reject the promise', function() {
+                                $rootScope.$apply(function() {
+                                    onCancel();
+                                });
+
+                                expect(success).not.toHaveBeenCalled();
+                                expect(failure).toHaveBeenCalled();
+                                expect(campaignState.saveCampaign).not.toHaveBeenCalled();
+                            });
+                        });
                     });
                 });
 
@@ -341,6 +476,102 @@ define(['app'], function(appModule) {
                             });
                         });
                     });
+                });
+            });
+
+            describe('saveUpdateRequest()', function() {
+                var success, failure, serverChange;
+
+                beforeEach(function() {
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
+
+                    serverChange = 0;
+
+                    spyOn(updateRequest, 'save').and.callFake(function() {
+                        // make some change to the DB Model that the UI doesn't know about
+                        updateRequest.data.cards[0].data.change = ++serverChange;
+
+                        return $q.when(updateRequest);
+                    });
+
+                    // put the DB Model on the state
+                    campaignState._updateRequest = updateRequest;
+
+                    // put the pojo on the state for the Ctrl to use
+                    campaignState.updateRequest = updateRequest.pojoify();
+                });
+
+                it('should update the campaign DB Model with the current campaign data and save', function() {
+                    campaignState.updateRequest.data.name = 'New Campaign';
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveUpdateRequest().then(success, failure);
+                    });
+
+                    expect(updateRequest.save).toHaveBeenCalled();
+                    expect(campaignState._updateRequest.data.name).toEqual('New Campaign');
+                });
+
+                it('should maintain data returned from the server in addition to UI updates', function() {
+                    $rootScope.$apply(function() {
+                        campaignState.saveUpdateRequest();
+                    });
+                    expect(campaignState._updateRequest.data.cards[0].data.change).toEqual(1);
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveUpdateRequest();
+                    });
+                    expect(campaignState._updateRequest.data.cards[0].data.change).toEqual(2);
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveUpdateRequest();
+                    });
+                    expect(campaignState._updateRequest.data.cards[0].data.change).toEqual(3);
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveUpdateRequest();
+                    });
+                    expect(campaignState._updateRequest.data.cards[0].data.change).toEqual(4);
+                });
+
+                it('should return the pojoified campaign without the server updates', function() {
+                    campaignState.updateRequest.data.name = 'New Campaign';
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveUpdateRequest().then(success, failure);
+                    });
+
+                    expect(success).toHaveBeenCalledWith(campaignState.updateRequest);
+                });
+
+                it('should not extend the cards array objects', function() {
+                    campaignState.updateRequest.data.cards[0] = {};
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveUpdateRequest().then(success, failure);
+                    });
+
+                    expect(campaignState._updateRequest.data.cards[0].id).toEqual(card.id);
+                    expect(campaignState._updateRequest.data.cards[0].type).toEqual(card.type);
+                    expect(campaignState._updateRequest.data.cards[0].data).toEqual(jasmine.any(Object));
+                });
+
+                it('should overwrite the targeting arrays', function() {
+                    campaignState._updateRequest.data.targeting.interests.push('comedy');
+                    campaignState._updateRequest.data.targeting.interests.push('entertainment');
+                    campaignState.updateRequest.data.targeting.interests = [];
+
+                    campaignState._updateRequest.data.targeting.demographics.age.push('18-24');
+                    campaignState._updateRequest.data.targeting.demographics.age.push('25-34');
+                    campaignState.updateRequest.data.targeting.demographics.age = [];
+
+                    $rootScope.$apply(function() {
+                        campaignState.saveUpdateRequest().then(success, failure);
+                    });
+
+                    expect(campaignState._updateRequest.data.targeting.interests).toEqual([]);
+                    expect(campaignState._updateRequest.data.targeting.demographics.age).toEqual([]);
                 });
             });
 

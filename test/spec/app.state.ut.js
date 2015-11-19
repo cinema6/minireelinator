@@ -46,6 +46,24 @@
                 });
             });
 
+            describe('title()', function() {
+                describe('when Selfie', function() {
+                    it('should be Reelcontent', function() {
+                        c6Defines.kSelfie = true;
+
+                        expect(application.title()).toEqual('Reelcontent');
+                    });
+                });
+
+                describe('when Portal', function() {
+                    it('should be Studio', function() {
+                        c6Defines.kSelfie = false;
+
+                        expect(application.title()).toEqual('Studio');
+                    });
+                });
+            });
+
             describe('enter()', function() {
                 beforeEach(function() {
                     application = c6State.get('Application');
