@@ -1,6 +1,9 @@
 # MiniReelinator
 
 ## v1.26.0 (November 19, 2015)
+* *[v1.26.0.rc3]*
+  * [FEATURE]: Added support for recognizing Wistia and Vzaar embed codes
+
 * *[v1.26.0.rc2]*
   * [FIX]: (Selfie) Fix for an issue where the "Lose changes?" alert was triggered after successfully
     submitting changes to an active campaign

@@ -1,7 +1,7 @@
 /*  ================================================
     global styles
     ================================================ */
-    /*  apply a natural box layout model to all elements, 
+    /*  apply a natural box layout model to all elements,
         but allowing components to change */
         html {
           box-sizing: border-box;
@@ -10,12 +10,12 @@
           box-sizing: inherit;
         }
     body {
-        font-size: 16px; 
-        font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif; 
-        font-weight:normal; 
+        font-size: 16px;
+        font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
+        font-weight:normal;
         color:#1c1c1c;
         line-height: 1.5;
-        background:#eee; 
+        background:#eee;
         margin:0;
         min-width: 1024px;
     }
@@ -54,7 +54,7 @@
 
 /*  ================================================
     c6 copy classes : general type and color styles
-    ================================================ */        
+    ================================================ */
     a {
         text-decoration: none; color:#4AB8BA;
         transition:color 0.3s;
@@ -73,7 +73,7 @@
         font-weight:300;
     }
     .tk--copy {
-        font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif; 
+        font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
     }
 
     .tk--fineprint {
@@ -416,19 +416,19 @@ fa,
             }
      /*   .btn--info, .btn--info:focus {
             background-color:#eaf7ff; color:#2398db;
-            border:1px solid #bfe7ff; 
+            border:1px solid #bfe7ff;
         }
         .btn--success, .btn--success:focus {
             background-color:#d7ffe3; color:#3dc667;
-            border:1px solid #9be2b1; 
+            border:1px solid #9be2b1;
         }
         .btn--warning, .btn--warning:focus {
             background-color:#fff2e2; color:#fe8900;
-            border:1px solid #ffd5a3; 
+            border:1px solid #ffd5a3;
         }
         .btn--danger, .btn--danger:focus {
             background-color:#ffeaea; color:#dc4141;
-            border:1px solid #ffcbcb; 
+            border:1px solid #ffcbcb;
         }*/
         .btn--small, .btn--small:focus {
             font-size:1em;
@@ -538,9 +538,9 @@ fa,
             .btnGroup .btn--last {
                 /*border-radius:0 0.1875em 0.1875rem 0;*/
                 border-top-left-radius: 0;
-                border-bottom-left-radius: 0;                
+                border-bottom-left-radius: 0;
             }
-            
+
 
     /*  buttons: key action  */
         .btnAction,
@@ -589,7 +589,7 @@ fa,
             padding:0.5em 1.5em;
             height:1.125em;
         }
-            
+
         .btnAction--primary,
         .btnAction--primary:hover,
         .btnAction--primary:active,
@@ -673,7 +673,7 @@ fa,
         }
             .alertLabel.alertLabel__success {
                 background-color: #00BC65;
-                color: #DBFFEF; 
+                color: #DBFFEF;
             }
             .alertLabel.alertLabel__failure {
                 background-color: #ED0000;
@@ -709,7 +709,7 @@ fa,
         /* Saving draft and Saved animation*/
         .animateBounce {
           top: 0;
-          left: 0;          
+          left: 0;
           -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
           animation: sk-bounce 2.0s infinite ease-in-out;
         }
@@ -720,10 +720,10 @@ fa,
         }
 
         @keyframes sk-bounce {
-          0%, 100% { 
+          0%, 100% {
             transform: scale(0.0);
             -webkit-transform: scale(0.0);
-          } 50% { 
+          } 50% {
             transform: scale(1.0);
             -webkit-transform: scale(1.0);
           }
@@ -762,18 +762,18 @@ fa,
         }
 
         @keyframes sk-rotateplane {
-          0% { 
+          0% {
             transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-            -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg) 
-          } 50% { 
+            -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg)
+          } 50% {
             transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
-            -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg) 
-          } 100% { 
+            -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg)
+          } 100% {
             transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
             -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
           }
         }
-        
+
     /* Spinners for pending or waiting states */
     .btnGroup .btnSpinner__waiting, .btnGroup .btnSpinner__waiting:focus {
         padding-right: 2.5rem;
@@ -796,13 +796,13 @@ fa,
         animation: spin 2s infinite linear;
     }
     @-moz-keyframes spin {
-        100% { -moz-transform: rotate(360deg); } 
+        100% { -moz-transform: rotate(360deg); }
     }
     @-webkit-keyframes spin {
-        100% { -webkit-transform: rotate(360deg); } 
+        100% { -webkit-transform: rotate(360deg); }
     }
     @keyframes spin {
-        100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } 
+        100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); }
     }
 
     /*  Table styles*/
@@ -821,7 +821,7 @@ fa,
     }
 /*  ================================================
     Sign up and Pre-Login screen styles
-    ================================================ */    
+    ================================================ */
     .signup__pagetitle {
         padding-left: 1em;
     }
@@ -908,7 +908,7 @@ fa,
         margin:0 0 0 4em;
         position: relative;
         z-index: 1;
-        
+
     }
 
     .gridHolder {
@@ -927,7 +927,7 @@ fa,
             padding:4em 0 0 0;
             z-index: -1;
             position: relative;
-        }   
+        }
     }
     .tabContent__gridHolder,
     .settingsContent__gridHolder,.supportContent__gridHolder {
@@ -949,7 +949,7 @@ fa,
 
 /*  ================================================
     mainNav classes
-    ================================================ 
+    ================================================
     (Jess added)                                    */
     .mainNav__dashboard {
         border-bottom: 1px solid #222;
@@ -978,7 +978,7 @@ fa,
                 margin-top: 0;
                 padding-top: 0;
                 display: inline-block;
-                padding-bottom: 0.5rem;   
+                padding-bottom: 0.5rem;
             }
         .mainNav__btn {
             width: 100%;
@@ -1008,7 +1008,7 @@ fa,
             color:#fff;
             display:none;
         }
-        
+
         .mainNav__item.c6-active {
             background: #222;
             border-left: 2px solid #49B8B9;
@@ -1187,7 +1187,7 @@ fa,
             }
             .search__group .searchBtn {
                 padding: 0.25em 1em 0.3em 1em;
-                vertical-align: top;        
+                vertical-align: top;
                 margin-bottom: 0;
                 margin-left: -4px;
                 border-top-left-radius: 0;
@@ -1203,7 +1203,7 @@ fa,
                 margin-bottom: 0;
                 width: 200px;
             }
-        
+
         .filterBtn__group .filterBtn {
             margin-bottom: 0;
             /* margin-top: 0.625em; */
@@ -1610,7 +1610,7 @@ fa,
                 border-left-color: #ffffff;
                 border-right-width: 0;
                 content: " ";
-            }        
+            }
 /*  ================================================
     campaign list classes
     ================================================ */
@@ -1684,7 +1684,7 @@ fa,
                 .campaign__item--finished .campaign__status {
                     color:#5c5c5c;
                 }
-            
+
             .campaign__date {
                 display: block;
                 font-size:0.875em;
@@ -1710,7 +1710,7 @@ fa,
                 margin:0.5em 0 0 0;
                 color:#5c5c5c;
             }
-                
+
                 .campaign__sponsorLogo {
                     width:2.5em; height:2.5em;
                     border-radius:3px;
@@ -1908,7 +1908,7 @@ fa,
         width: 96%;
         max-width: 104em;
         margin: 0 auto;
-        padding: 0;        
+        padding: 0;
     }
         .tabContent__title {
             display: block;
@@ -1953,14 +1953,14 @@ fa,
             vertical-align: top;
             display: inline-block;
             width: 70%;
-            padding: 0.5em;            
+            padding: 0.5em;
         }
             .checkbox--inline .btn__label:after {
                 content:'\f00c';
                 position:absolute; top:0; right:0;
                 display: none;
                 padding: 0.5em;
-            }            
+            }
             .checkbox--inline .checkbox__input:checked + .btn__label:after {
                 display:block;
             }
@@ -2077,7 +2077,7 @@ fa,
 
         .formSection__titleText {
             display: block;
-            font-size:2em; 
+            font-size:2em;
             line-height:1.25em;
             color:#b1b1b1;
             margin-top:0.28125em;
@@ -2139,7 +2139,7 @@ fa,
 
     /*  input fields classes
         ================================================ */
-        .form__textBox { 
+        .form__textBox {
             border:0;
             padding:0.375rem 0.5rem 0.25rem;
             border-bottom:2px solid #eee;
@@ -2153,11 +2153,11 @@ fa,
             -moz-box-shadow: inset 0 0 3px #bbb;
             -webkit-box-shadow: inset 0 0 3px #bbb;
             box-shadow: inset 0 0 3px #bbb;
-    
+
         }
-        
+
             .form__textBox:focus,
-            .form__item--sub .form__textBox:focus, .form__textBox.in--focus { 
+            .form__item--sub .form__textBox:focus, .form__textBox.in--focus {
                 border-bottom:2px solid #49B8B9;
                 background:#fff;
             }
@@ -2231,7 +2231,7 @@ fa,
                     text-align: left;
                 }
 
-            .form__item--sub .form__textBox { 
+            .form__item--sub .form__textBox {
                 color:#1c1c1c;
                 background-color:#e1e1e1;
             }
@@ -2239,7 +2239,7 @@ fa,
 
 
         .form__item--shortInput {
-            width:56%; 
+            width:56%;
             margin-left:22%;
         }
             .form__item--shortInput .form__label {
@@ -2260,7 +2260,7 @@ fa,
             }
 
 
-    
+
 
 
 
@@ -2309,7 +2309,7 @@ fa,
             -webkit-box-shadow: 0 0 5px #888;
             -moz-box-shadow: 0 0 5px #888;
             box-shadow: 0 0 5px #888;
-            
+
         }
             .form__textBox:focus ~ .form__helpBox,
             .ui--active ~ .form__helpBox--right {
@@ -2416,9 +2416,9 @@ fa,
             .form__item--bigInput .form__errorMsg {
                 text-align: center;
             }
-                
 
-            
+
+
 
 
         .ui--hasError .form__textBox,
@@ -2669,7 +2669,7 @@ fa,
                         margin-right:0.35715em;
                     }
 
-    
+
 
 
     /*  .thumbnail__btn classes
@@ -2700,7 +2700,7 @@ fa,
         }
 
 
-                
+
 
     /*  .thumbnail__label classes
         ================================================ */
@@ -2735,7 +2735,7 @@ fa,
                 .thumbnail__btn--selected:hover .thumbnail__label:before {
                     color:#00c0ff;
                 }
-        
+
 
 
 
@@ -2749,7 +2749,7 @@ fa,
         width:100%;
         margin-bottom:2em;
     }
-        
+
         .ctaPreview__title {
             text-align:center;
             font-size:1em;
@@ -2781,7 +2781,7 @@ fa,
 
             .ctaPreview__link {
                 font-size:1em;
-                
+
             }
 
 
@@ -2830,7 +2830,7 @@ fa,
                 z-index:5;
             }
 
-    @media screen and (max-width:75em) { 
+    @media screen and (max-width:75em) {
         .adPreview__desktop {
             width:100%;
             background-color:#e1e1e1;
@@ -2853,7 +2853,7 @@ fa,
                 height:81%;
                 background-color:#DDDDDD;
                 position:absolute;
-                top:10.5%; 
+                top:10.5%;
                 left:6%;
                 padding: 10px 8px;
             }
@@ -2875,8 +2875,8 @@ fa,
 
 /*  ================================================
     Account Settings and Payment screen styles
-    ================================================ */    
-    
+    ================================================ */
+
     /*display boxes for account settings*/
     .card--item {
         background: #fff;
@@ -2902,7 +2902,7 @@ fa,
         display: inline-block;
         margin-right: 1em;
     }
-    
+
     /*  Payment screen sortbar classes
         Jess
     ================================================ */
@@ -2955,7 +2955,7 @@ fa,
                 padding-right:1em;
             }
         }
-        
+
 /*  ================================================
     payment history list classes
     (Jess)
@@ -2988,7 +2988,7 @@ fa,
                 font-size:1.25em;
                 font-weight:normal;
             }
-            
+
             .paymentHistory__time {
                 display: block;
                 font-size:0.875em;
@@ -3051,7 +3051,7 @@ fa,
 
 /*  ================================================
     settings content classes
-    ================================================ 
+    ================================================
     (this is a section Jess added   */
 
     .settingsContent{
@@ -3097,14 +3097,14 @@ fa,
         font-size:1.25em;
         /*position:absolute;
         top:0.25em;
-        right:0.5em; 
+        right:0.5em;
         Removed by Dhaval*/
     }
 
     .payment__group .payment__default {
         display:none;
     }
-    .payment__group--info { 
+    .payment__group--info {
         margin-right: 2.25em;
     }
     .payment__group.payment__group--default .payment__default {
@@ -3139,12 +3139,12 @@ fa,
         margin:3.25em 0 0;
     }
 
-    /*Braintree Paypal button/account information styles*/    
-    #braintree-paypal-loggedin { 
-        display: none !important; 
+    /*Braintree Paypal button/account information styles*/
+    #braintree-paypal-loggedin {
+        display: none !important;
     }
-    #braintree-paypal-loggedout { 
-        display: none !important; 
+    #braintree-paypal-loggedout {
+        display: none !important;
     }
 
 /*  ================================================
@@ -3281,7 +3281,7 @@ fa,
         ================================================ */
         .pmtDropdown .pmtDropdown__btn, .pmtDropdown .ui__clickDropMenu, .pmtDropdown .ui__clickDropBtn {
             text-align: left;
-        }        
+        }
         .pmtDropdown__btn, .pmtDropdown__btn:focus {
             width: 100%;
             border: 0;
@@ -3307,7 +3307,7 @@ fa,
             box-shadow: inset 0 0 3px #bbb;
         }
         .pmtDropdown__btn:after {
-            font-family: FontAwesome;            
+            font-family: FontAwesome;
         }
         .pmtDropdown__btn i.fa {
             text-align: right;
@@ -3316,7 +3316,7 @@ fa,
             margin-top: -4em;
             margin-right: 1em;
         }
-        .pmtDropdown .ui__clickDropBtn { 
+        .pmtDropdown .ui__clickDropBtn {
             width: 100%;
             padding: 0;
         }
@@ -3349,10 +3349,10 @@ fa,
             background-color: #00c0ff;
         }
         .pmtDropdown__single {
-            cursor: default; 
+            cursor: default;
         }
-        .pmtDropdown__btn:focus.pmtDropdown__single { 
-            border-bottom: 2px solid #eee; 
+        .pmtDropdown__btn:focus.pmtDropdown__single {
+            border-bottom: 2px solid #eee;
         }
 
 
@@ -3414,7 +3414,7 @@ fa,
                 width: 14px;
             }
             .modal__closeBtn .ui__icon {
-                fill: #888;                
+                fill: #888;
             }
             .modal__closeBtn:hover .ui__icon{
                 fill: #000;
@@ -3436,7 +3436,7 @@ fa,
         position:absolute; left:1.5em; top:4.5em; z-index:1;
     }
     .modalBody__group {
-        position:absolute; 
+        position:absolute;
         left:1.5em; right:0.25em; top:3em; bottom:3.8em;
         overflow:auto;
         padding:2em 0.5em 5em 0;
@@ -3473,12 +3473,12 @@ fa,
                 top:0.75em; right:0.75em;
             }
         .modalFooter__guideText {
-            margin:1.75em 8em 0; 
+            margin:1.75em 8em 0;
             text-align: center; font-size:0.75em;
         }
 
     @media screen and (max-width:65em), screen and (max-height:39.375em) {
-        /* w:1040px 
+        /* w:1040px
            h: 630px */
         .modal__group {
             position:fixed;
@@ -3504,8 +3504,8 @@ fa,
         border: 1px solid #ccc;
         padding-top: 2em;
     }
-    .modalPayment__group .form__item { 
-        margin: 0 0 0.125em 0; 
+    .modalPayment__group .form__item {
+        margin: 0 0 0.125em 0;
         width: 100%;
     }
     .addPayment__method .form__textBox {
@@ -3550,7 +3550,7 @@ fa,
             line-height: 1.5rem;
             display: inline-block;
             -webkit-box-shadow: none;
-            box-shadow: none; 
+            box-shadow: none;
         }
         .selfieModal .btnAction--success {
             background-color: #20d783;
@@ -3610,7 +3610,7 @@ fa,
                 font-size:1.25em;
                 font-weight:normal;
             }
-            
+
             .paymentHistory__time {
                 display: block;
                 font-size:0.875em;
@@ -3675,7 +3675,7 @@ fa,
         }
         .creditTransaction__note {
             font-size: 0.865em;
-        }        
+        }
         .creditTransaction__type {
             background-color: #20d783;
             color: #fff;
@@ -3685,3 +3685,15 @@ fa,
             border-radius: 3px;
             margin: 0 0.25em 0 0;
         }
+
+/* Embedded Player Classes */
+.embeddedPlayer--vzaar {
+    width:100%; height:100%;
+    position:absolute;
+    top:0; left:0;
+}
+.embeddedPlayer--wistia {
+    width:100%; height:100%;
+    position:absolute;
+    top:0; left:0;
+}

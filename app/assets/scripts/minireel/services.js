@@ -1223,7 +1223,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             'rumble|vine|vzaar\\.tv|wistia|jwplatform')
                     ) || [])[0],
                     embedService = (text.match(
-                        /youtube|youtu\.be|dailymotion|dai\.ly|vimeo|jwplatform/
+                        /youtube|youtu\.be|dailymotion|dai\.ly|vimeo|jwplatform|wistia|vzaar/
                     ) || [])[0],
                     embed = /<iframe|<script/.test(text) ? 'embed' : null,
                     type = !!urlService ? 'url' : embed,
@@ -1299,6 +1299,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             jwplatform: function(embed) {
                                 return (embed.match(
                                     /content.jwplatform.com\/players\/([a-zA-Z\d-]+)/) || [])[1];
+                            },
+                            wistia: function(embed) {
+                                return (embed.match(
+                                    /fast.wistia.net\/embed\/iframe\/([a-zA-Z\d]+)/) || [])[1];
+                            },
+                            vzaar: function(embed) {
+                                return (embed.match(/view.vzaar.com\/(\d+)/) || [])[1];
                             }
                         }
                     };
