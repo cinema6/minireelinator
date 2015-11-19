@@ -1,5 +1,5 @@
-define( ['angular','select2','braintree','multiselect'],
-function( angular , select2 , braintree , multiselect ) {
+define( ['angular','select2','braintree'],
+function( angular , select2 , braintree ) {
     'use strict';
 
     var $ = angular.element,
@@ -48,47 +48,23 @@ function( angular , select2 , braintree , multiselect ) {
             };
         }])
 
-        .directive('c6MultiSelectBox', ['$timeout','$parse',function($timeout, $parse) {
+        .directive('c6Indeterminate', ['$parse',function($parse) {
             return {
                 restrict: 'A',
                 scope: {
-                    categories: '='
+                    c6Indeterminate: '='
                 },
-                link: function(scope, $element, attrs) {
-                    $timeout(function() {
-                        var model = $parse(attrs.options)(scope);
-
-                        console.log(scope.categories);
-
-                        var topTierHash = scope.categories.reduce(function(result, category) {
-                            if (category.externalId.indexOf('-') < 0) {
-                                result[category.externalId] = category.label;
-                            }
-                            return result;
-                        }, {});
-
-                        var allCategoriesHash = scope.categories.reduce(function(result, category) {
-                            result[category.label] = category;
-                            return result;
-                        }, {});
-
-                        $element.find('option').each(function(option) {
-                            // console.log(this.text, this.value);
-
-                            var id = allCategoriesHash[this.text].externalId,
-                                isTopTier = id.indexOf('-') < 0,
-                                tierId = id.split('-')[0],
-                                tier = 'Interests' + (isTopTier ? '' : ' / ' + topTierHash[tierId]);
-
-                            console.log(id, tier);
-
-                            $(this).attr('data-section', tier);
-                        });
-
-                        $element.treeMultiselect({ sortable: true });
+                link: function(scope, $element) {
+                    scope.$watch('c6Indeterminate', function(value) {
+                        if (value === 'indeterminate') {
+                            $element.prop('indeterminate', true);
+                        } else {
+                            $element.prop('indeterminate', false);
+                            $element.prop('checked', value);
+                        }
                     });
                 }
-            };
+            }
         }])
 
         .directive('c6SelectBox', ['$timeout','$parse',
@@ -374,47 +350,142 @@ function( angular , select2 , braintree , multiselect ) {
                 schema = $scope.schema;
 
             function sortOptions(categories) {
-                var topTierHash = categories.reduce(function(result, category) {
-                    /*
-                        Gives you:
-                        {
-                            'IAB1': 'Automobiles',
-                            'IAB2': 'Gaming'
-                        }
-                     */
+                var tiersArray = categories.reduce(function(result, category) {
                     if (category.externalId.indexOf('-') < 0) {
-                        result[category.externalId] = category.label;
+                        result.push({
+                            name: category.name,
+                            label: category.label,
+                            id: category.id,
+                            iab: category.externalId,
+                            selected: campaign.targeting.interests.indexOf(category.id) > -1,
+                            children: []
+                        });
                     }
                     return result;
-                }, {});
+                }, []);
 
-                var allCategoriesHash = categories.reduce(function(result, category) {
-                    /*
-                        Gives you:
-                        {
-                            'Entertainment': {
-                                id: 'cat-123',
-                                label: 'Entertainment',
-                                externalId: 'IAB1-3'
-                            }
+                categories.map(function(category) {
+                    var id = category.externalId,
+                        isTopTier = !(/-/).test(id),
+                        tierId = id.split('-')[0];
+
+                    tiersArray.map(function(tier) {
+                        if (!isTopTier && tier.iab === tierId) {
+                            tier.children.push({
+                                id: category.id,
+                                iab: category.externalId,
+                                name: category.name,
+                                label: category.label,
+                                selected: campaign.targeting.interests.indexOf(category.id) > -1 ||
+                                    campaign.targeting.interests.indexOf(tier.id) > -1
+                            });
                         }
-                     */
-                    result[category.label] = category;
-                    return result;
-                }, {});
+                    });
+                });
 
-                // return categories.sort(function(cat1, cat2) {
-                //     return cat1.externalId < cat1.externalId ? -1 : 1;
-                // });
+                tiersArray.forEach(function(tier) {
+                    var length = tier.children.length,
+                        count = tier.children.filter(function(item) {
+                            return item.selected;
+                        }).length;
+
+                    if (count === length) {
+                        tier.selected = true;
+                    }
+                    if (count < length && count > 0) {
+                        tier.selected = 'indeterminate';
+                    }
+                });
+
+                return tiersArray;
             }
 
-            this.interestOptions = sortOptions($scope.categories);
 
-            console.log(this.interestOptions);
+            this.checkTier = function(tier) {
+                var targeting = campaign.targeting,
+                    tierIds = tier.children.map(function(item) {
+                        return item.id;
+                    });
 
-            this.interests = categories.filter(function(category) {
-                return campaign.targeting.interests.indexOf(category.id) > -1;
-            });
+                if (tier.selected === 'indeterminate') {
+                    tier.selected = true;
+                } else {
+                    tier.selected = !tier.selected;
+                }
+
+                tier.children.forEach(function(item) {
+                    item.selected = tier.selected;
+                });
+
+                targeting.interests = targeting.interests.filter(function(interest) {
+                    return tierIds.indexOf(interest) < 0;
+                });
+
+                if (tier.selected) {
+                    targeting.interests.push(tier.id);
+                } else {
+                    targeting.interests = targeting.interests.filter(function(interest) {
+                        return interest !== tier.id;
+                    });
+                }
+            };
+
+            this.checkInterest = function(item, tier) {
+                var targeting = campaign.targeting,
+                    selectedInTier = tier.children.filter(function(item) {
+                        return item.selected;
+                    }).length,
+                    tierIds = tier.children.map(function(item) {
+                        return item.id;
+                    });
+
+                if (!selectedInTier) {
+                    tier.selected = false;
+                } else if (selectedInTier === tier.children.length) {
+                    tier.selected = true;
+                } else {
+                    tier.selected = 'indeterminate';
+                }
+
+                if (item.selected && selectedInTier !== tier.children.length) {
+
+                    targeting.interests.push(item.id);
+
+                } else if (item.selected && selectedInTier === tier.children.length) {
+                    // we need to remove all in the tier and just store the top tier
+
+                    targeting.interests = targeting.interests.filter(function(interest) {
+                        return tierIds.indexOf(interest) < 0;
+                    }).concat(tier.id);
+
+                } else if (!item.selected && selectedInTier === tier.children.length -1) {
+                    // then we need to remove the top tier id and add the ids of all the others
+                    // in the tier
+
+                    targeting.interests = targeting.interests.filter(function(interest) {
+                        return interest !== tier.id;
+                    }).concat(tier.children.reduce(function(result, i) {
+                        if (i.id !== item.id) {
+                            result.push(i.id);
+                        }
+                        return result;
+                    }, []));
+
+                } else {
+
+                    targeting.interests = targeting.interests.filter(function(interest) {
+                        return interest !== item.id;
+                    });
+
+                }
+            };
+
+            this.removeInterest = function(item, tier) {
+                item.selected = false;
+                this.checkInterest(item, tier);
+            };
+
+            this.tiers = sortOptions(categories);
 
             this.priceForInterests = schema.pricing.cost.__priceForInterests;
 

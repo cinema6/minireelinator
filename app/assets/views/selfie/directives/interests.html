@@ -5,30 +5,46 @@
     </span>-->
 </h1>
 
-<div class="form__items">
+<div class="form__items text--left">
 
     <fieldset class="form__item">
-        <!-- <select c6-multi-select-box categories="categories" multiple="multiple" ng-model="SelfieInterestsCtrl.interests" ng-options="category.label for category in SelfieInterestsCtrl.interestOptions" class="form__selectBox form__selectBox--single" id="c6-interests"></select> -->
 
-        <select categories="categories" multiple="multiple" class="form__selectBox form__selectBox--single" id="c6-interests">
-            <option value="0">Gaming</option>
-            <option value="1">Entertainment</option>
-            <option value="2">Howto & DIY</option>
-            <option value="3">Comedy</option>
-            <option value="4">Cars</option>
-            <option value="5">Sports</option>
-            <option value="6">Cooking</option>
-            <option value="7">Lifestyle</option>
-            <option value="8">Education</option>
-            <option value="9">Events</option>
-            <option value="10">Film & Animation</option>
-            <option value="11">Music</option>
-        </select>
+    <div class="tree-multiselect">
 
-        <label class="form__label" for="c6-interests">
+        <div class="selections">
+            <div class="section">
+                <div class="title" style="cursor:pointer;" ng-click="show = !show">
+                    <label>Interests</label>
+                    <span ng-show="show" class="collapse-section">-</span>
+                    <span ng-show="!show" class="collapse-section">+</span>
+                </div>
+            </div>
+            <div ng-show="show" class="section" ng-repeat="tier in SelfieInterestsCtrl.tiers">
+                <div class="title">
+                    <span ng-click="tier.show = !tier.show" ng-show="tier.show" class="collapse-section">-</span>
+                    <span ng-click="tier.show = !tier.show" ng-show="!tier.show" class="collapse-section">+</span>
+                    <span ng-click="SelfieInterestsCtrl.checkTier(tier)">
+                        <input c6-indeterminate="tier.selected" type="checkbox" id="{{tier.id}}">
+                        <label>{{tier.label}}</label>
+                    </span>
+                </div>
+                <div ng-show="tier.show" ng-repeat="item in tier.children" class="item" data-value="{{item.id}}"><input ng-model="item.selected" type="checkbox" ng-change="SelfieInterestsCtrl.checkInterest(item, tier)" id="{{item.id}}"><label for="{{item.id}}">{{item.label}}</label></div>
+            </div>
+        </div>
+
+        <span ng-if="campaign.targeting.interests.length">Selected Interests</span>
+        <div class="selected" ng-repeat="tier in SelfieInterestsCtrl.tiers">
+            <div ng-repeat="item in tier.children">
+                <div class="item" ng-if="item.selected" data-value="{{item.id}}"><span ng-click="SelfieInterestsCtrl.removeInterest(item, tier)" class="remove-selected">×</span>{{item.label}}<span class="section-name">{{tier.label}}</span></div>
+            </div>
+        </div>
+
+    </div>
+
+        <!-- <label class="form__label" for="c6-interests">
             <i class="fa fa-times ui--error"></i>
             Interests
-        </label>
+        </label> -->
         <!--<div class="form__helpBox form__helpBox--right">
             <div class="form__helpText">
                 Interest targeting allows you to zero in on viewers whose interests align with your business.

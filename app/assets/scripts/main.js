@@ -11,7 +11,6 @@
             modernizr: 'https://lib.cinema6.com/modernizr/modernizr.custom.71747',
             youtube: 'lib/youtube',
             select2: 'lib/select2.min',
-            multiselect: 'lib/tree-multiselect.min',
             cryptojs: 'https://lib.cinema6.com/cryptojs/v3.1.2/sha1',
             angular: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular.min',
             ngAnimate: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular-animate.min',
@@ -45,10 +44,6 @@
                     window.__c6_ga__ = function() {};
                     return c6Defines;
                 }
-            },
-            multiselect: {
-                deps: ['jquery'],
-                exports: 'multiselect'
             }
         }
     });
