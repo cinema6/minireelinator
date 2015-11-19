@@ -82,6 +82,7 @@
                     updateRequest = {
                         id: 'ur-12345',
                         status: 'pending',
+                        campaign: 'c-123',
                         data: {
                             cards: [ card ]
                         }
@@ -109,6 +110,7 @@
                         expectedRequest = copy(updateRequest);
 
                     expectedRequest.data.cards[0] = updatedCard;
+                    expectedRequest.id = updateRequest.campaign + ':' + updateRequest.id;
 
                     $rootScope.$apply(function() {
                         convertCardForEditorDeferred.resolve(updatedCard);
@@ -126,18 +128,21 @@
                     updateRequests = [
                         {
                             id: 'ur-12345',
-                            status: 'pending'
+                            status: 'pending',
+                            campaign: 'c-111'
                         },
                         {
                             id: 'ur-54321',
                             status: 'pending',
+                            campaign: 'c-222',
                             data: {
                                 cards: [ card ]
                             }
                         },
                         {
                             id: 'ur-31524',
-                            status: 'rejected'
+                            status: 'rejected',
+                            campaign: 'c-333'
                         }
                     ];
                     data = {
@@ -157,9 +162,13 @@
                                 source: 'YouTube'
                             }
                         },
-                        expectedRequest = copy(updateRequests[1]);
+                        expectedRequests = copy(updateRequests);
 
-                    expectedRequest.data.cards[0] = updatedCard;
+                    expectedRequests[1].data.cards[0] = updatedCard;
+
+                    expectedRequests.forEach(function(request) {
+                        request.id = request.campaign + ':' + request.id;
+                    });
 
                     adapter.findQuery('updateRequest', data).then(success, failure);
                     $httpBackend.flush();
@@ -171,7 +180,7 @@
                         convertCardForEditorDeferred.resolve(updatedCard);
                     });
 
-                    expect(success).toHaveBeenCalledWith([updateRequests[0], expectedRequest, updateRequests[2]]);
+                    expect(success).toHaveBeenCalledWith(expectedRequests);
                     expect(failure).not.toHaveBeenCalled();
                 });
 
@@ -210,6 +219,7 @@
                     };
 
                     responseRequest = {
+                        id: 'ur-123',
                         status: 'pending',
                         campaign: 'c-123',
                         data: {
@@ -218,6 +228,7 @@
                     };
 
                     expectedResponse = {
+                        id: 'c-123:ur-123',
                         status: 'pending',
                         campaign: 'c-123',
                         data: {
@@ -285,7 +296,7 @@
                         };
 
                         var updateRequest = {
-                            id: 'ur-12345',
+                            id: 'c-123:ur-12345',
                             campaign: 'c-123',
                             status: 'rejected',
                             rejectionReason: 'Bad things',
@@ -300,6 +311,8 @@
                         adapter.update('updateRequest', updateRequest).then(success, failure);
 
                         $httpBackend.flush();
+
+                        response.id = response.campaign + ':' + response.id;
 
                         expect(success).toHaveBeenCalledWith([response]);
                         expect(failure).not.toHaveBeenCalled();
@@ -323,7 +336,7 @@
                                 thumbs: null
                             },
                             putRequest = {
-                                id: 'ur-12345',
+                                id: 'c-123:ur-12345',
                                 status: 'pending',
                                 campaign: 'c-123',
                                 data: {
@@ -372,6 +385,8 @@
                         $rootScope.$apply(function() {
                             convertCardForEditorDeferred.resolve(editorCard);
                         });
+
+                        expectedResponse.id = expectedResponse.campaign + ':' + expectedResponse.id;
 
                         expect(success).toHaveBeenCalledWith([expectedResponse]);
                         expect(failure).not.toHaveBeenCalled();

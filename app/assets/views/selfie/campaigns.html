@@ -36,13 +36,13 @@
         <div class="sortBar__group">
             <ul class="sortBar__list clearfix">
                 <li class="sortBar__item sortBar__item--sortable column__status">
-                    <button class="sortBar__btn" type="button">Modified on</button>
+                    <button class="sortBar__btn" type="button" ng-click="SelfieCampaignsCtrl.toggleSort('lastUpdated')" ng-class="{ 'sortBar__btn--asc' : SelfieCampaignsCtrl.sort === 'lastUpdated,-1', 'sortBar__btn--desc' : SelfieCampaignsCtrl.sort === 'lastUpdated,1' }">Modified on</button>
                 </li>
-                <li class="sortBar__item column__sponsor">
-                    <button class="sortBar__colName" type="button">Sponsor</button>
+                <li class="sortBar__item sortBar__item--sortable column__sponsor">
+                    <button class="sortBar__btn" type="button" ng-click="SelfieCampaignsCtrl.toggleSort('advertiserDisplayName')" ng-class="{ 'sortBar__btn--asc' : SelfieCampaignsCtrl.sort === 'advertiserDisplayName,1', 'sortBar__btn--desc' : SelfieCampaignsCtrl.sort === 'advertiserDisplayName,-1' }">Sponsor</button>
                 </li>
                 <li class="sortBar__item sortBar__item--sortable column__campaignName">
-                    <button class="sortBar__btn sortBar__btn--asc" type="button" ng-click="SelfieCampaignsCtrl.toggleSort('name')">Campaign Name</button>
+                    <button class="sortBar__btn" type="button" ng-click="SelfieCampaignsCtrl.toggleSort('name')" ng-class="{ 'sortBar__btn--asc' : SelfieCampaignsCtrl.sort === 'name,1', 'sortBar__btn--desc' : SelfieCampaignsCtrl.sort === 'name,-1' }">Campaign Name</button>
                 </li>
                 <li class="sortBar__item column__totalViews">
                     <button class="sortBar__colName" type="button">Total Views</button>
@@ -102,7 +102,7 @@
 
             <div class="campaign__column column__status">
                 <span class="campaign__status">{{$this.status}}</span>
-                <span class="campaign__date">{{$this.created | date:'M/d/yyyy'}}</span>
+                <span class="campaign__date">{{$this.lastUpdated | date:'M/d/yyyy'}}</span>
             </div><!--.column__status-->
 
             <div class="campaign__column column__sponsor">

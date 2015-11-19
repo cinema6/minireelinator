@@ -85,6 +85,56 @@ define(['app'], function(appModule) {
                 expect(CampaignService.normalize).toHaveBeenCalled();
                 expect(editCampaignState.campaign).toEqual(campaign);
             });
+
+            describe('when the campaign has an update request', function() {
+                var success, failure, updateRequestDeferred, updateRequest;
+
+                beforeEach(function() {
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
+                    updateRequestDeferred = $q.defer();
+                    updateRequest = {
+                        id: 'ur-123',
+                        data: {
+                            id: 'cam-123'
+                        }
+                    };
+
+                    spyOn(cinema6.db, 'find').and.returnValue(updateRequestDeferred.promise);
+
+                    campaign.updateRequest = 'ur-123';
+
+                    $rootScope.$apply(function() {
+                        editCampaignState.afterModel(campaign);
+                    });
+                });
+
+                it('should find the update request', function() {
+                    expect(cinema6.db.find).toHaveBeenCalledWith('updateRequest', 'cam-c3fd97889f4fb9:ur-123');
+                });
+
+                describe('when the update request is found', function() {
+                    it('should put it on the cState', function() {
+                        $rootScope.$apply(function() {
+                            updateRequestDeferred.resolve(updateRequest);
+                        });
+
+                        expect(editCampaignState.updateRequest).toEqual(updateRequest);
+                    });
+                });
+            });
+
+            describe('when the campaign has no pending updateRequest', function() {
+                it('should not put any update request on the cState', function() {
+                    spyOn(cinema6.db, 'find');
+                    $rootScope.$apply(function() {
+                        editCampaignState.afterModel(campaign);
+                    });
+
+                    expect(cinema6.db.find).not.toHaveBeenCalled();
+                    expect(editCampaignState.updateRequest).toBe(null);
+                });
+            });
         });
 
         describe('enter()', function() {

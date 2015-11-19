@@ -83,43 +83,6 @@
                 </div><!--.videoDescription__group-->
             </div><!--.videoPreview__group-->
 
-            <div class="grid">
-
-                <div class="grid__item one-half portable--one-whole" ng-if="card.data.service !== 'adUnit'">
-                    <button class="thumbnail__btn" ng-click="SelfieCampaignVideoCtrl.useDefaultThumb = true" ng-class="{ 'thumbnail__btn--selected' : SelfieCampaignVideoCtrl.useDefaultThumb }">
-                        <span class="thumbnail__box">
-                            <span class="thumbnail">
-                                <img class="thumbnail__img" ng-src="{{SelfieCampaignVideoCtrl.defaultThumb}}">
-                            </span>
-                        </span>
-                        <span class="thumbnail__label">Default thumbnail</span>
-                    </button>
-                </div><!--
-
-
-             --><div class="grid__item one-half portable--one-whole">
-                    <button class="thumbnail__btn" ng-click="SelfieCampaignVideoCtrl.useDefaultThumb = false" ng-class="{ 'thumbnail__btn--selected' : !SelfieCampaignVideoCtrl.useDefaultThumb }">
-
-                        <span class="thumbnail__box thumbnail__box--uploader" hidden-input-click="thumbnailUpload">
-                            <span class="thumbnail">
-                                <img ng-if="SelfieCampaignVideoCtrl.customThumbSrc" class="thumbnail__img" ng-src="{{SelfieCampaignVideoCtrl.customThumbSrc}}">
-                            </span>
-                        </span>
-
-                        <span class="thumbnail__label">Custom thumbnail</span>
-
-                        <input id="thumbnailUpload" type="file" style="display:none;" ng-model="SelfieCampaignVideoCtrl.customThumbFile"><!-- hidden file input-->
-
-                    </button>
-                    <div class="form__errorBox">
-                        <p class="form__errorMsg">
-                            <i class="fa fa-exclamation-triangle"></i> Your image is greater than 30mb and you suck at hockey
-                        </p>
-                    </div>
-                </div><!-- .grid__item-->
-
-            </div><!--.grid-->
-
         </div><!--.videoPreview__group-->
 
     </section><!--.formSection__group-->

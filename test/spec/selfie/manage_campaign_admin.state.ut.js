@@ -77,31 +77,12 @@ define(['app'], function(appModule) {
         });
 
         describe('beforeModel()', function() {
-            it('should put the card and campaign on the state object', function() {
+            it('should put the campaign and updateRequest on the state object', function() {
                 campaignState.cParent.campaign = campaign;
+                campaignState.cParent.updateRequest = updateRequest;
                 campaignState.beforeModel();
                 expect(campaignState.campaign).toEqual(campaign);
-            });
-        });
-
-        describe('model()', function() {
-            it('should find the latest updateRequest for the current campaign', function() {
-                var success = jasmine.createSpy('success()'),
-                    failure = jasmine.createSpy('failure()');
-
-                spyOn(cinema6.db, 'find').and.callFake(function(type) {
-                    if (type === 'updateRequest') {
-                        return $q.when(updateRequest);
-                    }
-                });
-
-                campaignState.campaign = campaign;
-
-                $rootScope.$apply(function() {
-                    campaignState.model().then(success, failure);
-                });
-                expect(cinema6.db.find).toHaveBeenCalledWith('updateRequest', 'cam-123:ur-12345');
-                expect(success).toHaveBeenCalledWith({updateRequest: updateRequest});
+                expect(campaignState.updateRequest).toEqual(updateRequest);
             });
         });
 
