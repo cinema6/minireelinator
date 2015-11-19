@@ -9,8 +9,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             $q,
             ThumbnailService,
             SelfieVideoService,
-            FileService,
-            CollateralService,
             SelfieCampaignVideoCtrl,
             SelfieCampaignCtrl,
             c6Debounce;
@@ -44,7 +42,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 $q = $injector.get('$q');
                 ThumbnailService = $injector.get('ThumbnailService');
                 SelfieVideoService = $injector.get('SelfieVideoService');
-                CollateralService = $injector.get('CollateralService');
                 c6Debounce = $injector.get('c6Debounce');
 
                 card = {
@@ -66,32 +63,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         });
 
         describe('properties', function() {
-            describe('useDefaultThumb', function() {
-                it('should be true if card has no thumbnail', function() {
-                    expect(SelfieCampaignVideoCtrl.useDefaultThumb).toBe(true);
-                });
-
-                it('should be false if card has a custom thumbnail', function() {
-                    card.thumb = '/custom-thumbnail.jpg';
-
-                    compileCtrl();
-
-                    expect(SelfieCampaignVideoCtrl.useDefaultThumb).toBe(false);
-                });
-            });
-
-            describe('customThumbSrc', function() {
-                it('should be the custom path if defined', function() {
-                    expect(SelfieCampaignVideoCtrl.customThumbSrc).toBe(undefined);
-
-                    card.thumb = '/custom-thumbnail.jpg';
-
-                    compileCtrl();
-
-                    expect(SelfieCampaignVideoCtrl.customThumbSrc).toBe('/custom-thumbnail.jpg');
-                });
-            });
-
             describe('videoUrl', function() {
                 it('should call SelfieVideoService with service and id', function() {
                     spyOn(SelfieVideoService, 'urlFromData').and.callThrough();
@@ -167,31 +138,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 });
             });
 
-            describe('updateThumbs()', function() {
-                describe('when choosing to use default thumbnail', function() {
-                    it('should remove any custom thumb on the card', function() {
-                        card.thumb = 'my-custom-thumb.jpg';
-                        SelfieCampaignVideoCtrl.useDefaultThumb = true;
-
-                        SelfieCampaignVideoCtrl.updateThumbs();
-
-                        expect(card.thumb).toBe(null);
-                    });
-                });
-
-                describe('when choosing to use a custom thumbnail', function() {
-                    it('should set the custom thumbnail on the card', function() {
-                        card.thumb = null;
-                        SelfieCampaignVideoCtrl.useDefaultThumb = false;
-                        SelfieCampaignVideoCtrl.customThumbSrc = 'custom-thumb.jpg';
-
-                        SelfieCampaignVideoCtrl.updateThumbs();
-
-                        expect(card.thumb).toBe('custom-thumb.jpg');
-                    });
-                });
-            });
-
             describe('updateUrl(url)', function() {
                 var dataDeferred, statsDeferred, thumbnailDeferred;
 
@@ -252,76 +198,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     });
 
                     describe('when data is returned', function() {
-                        describe('setting thumbs', function() {
-                            describe('when video is an ad unit', function() {
-                                it('should disable default thumb because an ad unit does not have one', function() {
-                                    $scope.$apply(function() {
-                                        dataDeferred.resolve({
-                                            service: 'adUnit',
-                                            id: '12345'
-                                        });
-                                    });
-
-                                    expect(SelfieCampaignVideoCtrl.useDefaultThumb).toBe(false);
-                                    expect(SelfieCampaignVideoCtrl.defaultThumb).toBe(null);
-                                });
-                            });
-
-                            describe('when video is not an ad unit', function() {
-                                beforeEach(function() {
-                                    $scope.$apply(function() {
-                                        dataDeferred.resolve({
-                                            service: 'youtube',
-                                            id: '12345'
-                                        });
-                                    });
-                                });
-
-                                it('should call ThumbnailService', function() {
-                                    expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', '12345');
-                                });
-
-                                describe('when thumbs are resolved', function() {
-                                    it('should set the default thumb', function() {
-                                        $scope.$apply(function() {
-                                            thumbnailDeferred.resolve({
-                                                large: 'default-thumb.jpg'
-                                            });
-                                        });
-                                        expect(SelfieCampaignVideoCtrl.defaultThumb).toEqual('default-thumb.jpg');
-                                    });
-
-                                    describe('if there is a already custom thumb', function() {
-                                        it('should set not show default thumb as selected', function() {
-                                            card.thumb = 'custom-thumb.jpg';
-
-                                            $scope.$apply(function() {
-                                                thumbnailDeferred.resolve({
-                                                    large: 'default-thumb.jpg'
-                                                });
-                                            });
-
-                                            expect(SelfieCampaignVideoCtrl.useDefaultThumb).toBe(false);
-                                        });
-                                    });
-
-                                    describe('if there is no custom thumb', function() {
-                                        it('should set show default thumb as selected', function() {
-                                            card.thumb = null;
-
-                                            $scope.$apply(function() {
-                                                thumbnailDeferred.resolve({
-                                                    large: 'default-thumb.jpg'
-                                                });
-                                            });
-
-                                            expect(SelfieCampaignVideoCtrl.useDefaultThumb).toBe(true);
-                                        });
-                                    });
-                                });
-                            });
-                        });
-
                         describe('fetching stats', function() {
                             beforeEach(function() {
                                 $scope.$apply(function() {
@@ -410,66 +286,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         });
 
         describe('$watchers', function() {
-            describe('useDefaultThumb', function() {
-                it('should remove custom thumb if true', function() {
-                    card.thumb = 'my-thumb.jpg';
-
-                    $scope.$apply(function() {
-                        SelfieCampaignVideoCtrl.useDefaultThumb = false;
-                    });
-
-                    $scope.$apply(function() {
-                        SelfieCampaignVideoCtrl.useDefaultThumb = true;
-                    });
-
-                    expect(card.thumb).toBe(null);
-                });
-
-                it('should add custom thumb to card if false', function() {
-                    SelfieCampaignVideoCtrl.customThumbSrc = 'my-thumb.jpg';
-
-                    $scope.$apply(function() {
-                        SelfieCampaignVideoCtrl.useDefaultThumb = true;
-                    });
-
-                    $scope.$apply(function() {
-                        SelfieCampaignVideoCtrl.useDefaultThumb = false;
-                    });
-
-                    expect(card.thumb).toBe('my-thumb.jpg');
-                });
-            });
-
-            describe('customThumbFile', function() {
-                var deferred;
-
-                beforeEach(function() {
-                    deferred = $q.defer();
-
-                    spyOn(CollateralService, 'uploadFromFile').and.returnValue(deferred.promise);
-
-                    $scope.$apply(function() {
-                        SelfieCampaignVideoCtrl.customThumbFile = {filename: 'file'};
-                    });
-                });
-
-                it('should upload via Collateral Service', function() {
-                    expect(CollateralService.uploadFromFile).toHaveBeenCalledWith({filename: 'file'});
-                });
-
-                describe('when promise resolves', function() {
-                    it('should set the path on the controller', function() {
-                        $scope.$apply(function() {
-                            deferred.resolve('collateral/userFiles/iuyewriujksdfhjh.jpg');
-                        });
-
-                        expect(SelfieCampaignVideoCtrl.customThumbSrc).toEqual('/collateral/userFiles/iuyewriujksdfhjh.jpg');
-                        expect(SelfieCampaignVideoCtrl.useDefaultThumb).toEqual(false);
-                        expect(card.thumb).toEqual('/collateral/userFiles/iuyewriujksdfhjh.jpg');
-                    });
-                });
-            });
-
             describe('videoUrl', function() {
                 it('should updateUrl()', function() {
                     $scope.$apply(function() {

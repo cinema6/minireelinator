@@ -48,15 +48,18 @@ module.exports = function(http) {
         if (request.body.status === 'rejected') {
             campaign.rejectionReason = request.body.rejectionReason;
             campaign.status = campaign.status === 'pending' ? 'draft' : campaign.status;
+            delete campaign.updateRequest;
         } else {
-            campaign = updateRequest.data;
             delete campaign.rejectionReason;
         }
 
-        campaign.lastUpdated = currentTime;
-        delete campaign.updateRequest;
-        grunt.file.write(objectPath('campaigns', campaign.id), JSON.stringify(campaign, null, '    '));
+        if (request.body.status === 'approved') {
+            campaign = updateRequest.data;
+            delete campaign.updateRequest;
+        }
 
+        campaign.lastUpdated = currentTime;
+        grunt.file.write(objectPath('campaigns', campaign.id), JSON.stringify(campaign, null, '    '));
 
         grunt.file.write(filePath, JSON.stringify(updateRequest, null, '    '));
 
@@ -220,6 +223,11 @@ module.exports = function(http) {
 
         if (campaign.cards[0]) {
             campaign.cards[0].id = cardId;
+            campaign.cards[0].data.moat = {
+                campaign: id,
+                advertiser: campaign.advertiserId,
+                creative: cardId
+            };
         }
 
         grunt.file.write(objectPath('campaigns', id), JSON.stringify(campaign, null, '    '));

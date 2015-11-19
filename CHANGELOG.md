@@ -1,8 +1,33 @@
 # MiniReelinator
 
-* *[v1.26.0.rc1]*
-  * [DESIGN]: Added styles for button spinners, replaced C6 references with Reelcontent
+* *[v1.27.0.rc1]*
   * [DESIGN]: Fixed signup success message layout, added styles and branding for video preview
+
+## v1.26.0 (November 19, 2015)
+* *[v1.26.0.rc3]*
+  * [FIX]: Fix for an issue where the preview for some JWPlayer videos would not load
+  * [FIX]: Fix for an issue where JWPlayer previews would not reload when given a different JWPlayer link
+  * [FEATURE]: Added support for Vidyard
+  * [FEATURE]: Added support for recognizing Wistia and Vzaar embed codes
+* *[/v1.26.0.rc3]*
+
+* *[v1.26.0.rc2]*
+  * [FIX]: (Selfie) Fix for an issue where the "Lose changes?" alert was triggered after successfully
+    submitting changes to an active campaign
+* *[/v1.26.0.rc2]*
+
+* *[v1.26.0.rc1]*
+  * [FEATURE]: (Selfie) Enable editing of campaigns with pending update requests
+  * [FEATURE]: (Selfie) Allow deletion of pending campaigns
+  * [FEATURE]: (Selfie) Alert users to unsaved changed to active campaigns before exiting editor view
+  * [FEATURE]: (Selfie) Ask for confirmation before submitting changes to active campaigns
+  * [FEATURE]: (Selfie) Enable sorting by modified date and sponsor name in Campaign Dashboard
+  * [FIX]: (Selfie) Fix for an issue where Call to Action url could be saved without a protocol
+  * [FIX]: (Selfie) Update Selfie page title to be "Reelcontent" and Portal to be "Studio"
+  * [FIX]: (Selfie) Fix for an issue where default card data properties were not being saved
+  * [FIX]: (Selfie) Remove all thumbnail functionality
+  * [DESIGN]: Added styles for button spinners, replaced C6 references with Reelcontent
+* *[/v1.26.0.rc1]*
 
 ## v1.25.0 (November 17, 2015)
 * *[v1.25.0.rc7]*

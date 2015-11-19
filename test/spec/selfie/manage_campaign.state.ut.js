@@ -14,7 +14,8 @@ define(['app'], function(appModule) {
         var card,
             categories,
             campaign,
-            paymentMethods;
+            paymentMethods,
+            updateRequest;
 
         beforeEach(function() {
             module(appModule.name);
@@ -57,6 +58,14 @@ define(['app'], function(appModule) {
                         token: 'pay-3'
                     }
                 ];
+                updateRequest = {
+                    id: 'ur-123',
+                    data: {
+                        id: 'cam-123',
+                        status: 'pending',
+                        name: 'My Campaign'
+                    }
+                };
 
                 selfieState = c6State.get('Selfie');
                 selfieState.cModel = {
@@ -101,44 +110,87 @@ define(['app'], function(appModule) {
         });
 
         describe('model()', function() {
-            it('should find all categories', function() {
-                var success = jasmine.createSpy('success()'),
-                    failure = jasmine.createSpy('failure()');
+            var success, failure;
 
+            beforeEach(function() {
+                success = jasmine.createSpy('success()');
+                failure = jasmine.createSpy('failure()');
                 spyOn(cinema6.db, 'findAll').and.returnValue($q.when(paymentMethods));
+                spyOn(cinema6.db, 'find').and.returnValue($q.when(updateRequest));
+            });
 
-                $rootScope.$apply(function() {
-                    campaignState.model().then(success, failure);
+            describe('when the campaign has an updateRequest', function() {
+                it('should find the updateRequest and the paymentMethods', function() {
+                    campaignState.campaign = campaign;
+                    campaign.updateRequest = 'ur-123';
+
+                    $rootScope.$apply(function() {
+                        campaignState.model().then(success, failure);
+                    });
+                    expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod');
+                    expect(cinema6.db.find).toHaveBeenCalledWith('updateRequest', 'cam-123:ur-123');
+                    expect(success).toHaveBeenCalledWith({
+                        paymentMethods: paymentMethods,
+                        updateRequest: updateRequest
+                    });
                 });
-                expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod');
-                expect(success).toHaveBeenCalledWith({ paymentMethods: paymentMethods });
+            });
+
+            describe('when the campaign does not have an updateRequest', function() {
+                it('should find the paymentMethods', function() {
+                    campaignState.campaign = campaign;
+
+                    $rootScope.$apply(function() {
+                        campaignState.model().then(success, failure);
+                    });
+                    expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod');
+                    expect(cinema6.db.find).not.toHaveBeenCalled();
+                    expect(success).toHaveBeenCalledWith({
+                        paymentMethods: paymentMethods,
+                        updateRequest: null
+                    });
+                });
             });
         });
 
         describe('afterModel()', function() {
             it('should set the isAdmin flag on the state', function() {
-                campaignState.afterModel();
+                var model = {
+                    paymentMethods: paymentMethods,
+                    updateRequest: updateRequest
+                };
+
+                campaignState.afterModel(model);
 
                 expect(campaignState.isAdmin).toBe(true);
+                expect(campaignState.updateRequest).toBe(updateRequest)
             });
         });
 
         describe('enter()', function() {
-            it('shoud go to the Selfie:Manage:Campaign:Manage state if user is not an admin', function() {
+            var model;
+
+            beforeEach(function() {
+                model = {
+                    paymentMethods: paymentMethods,
+                    updateRequest: updateRequest
+                };
                 spyOn(c6State, 'goTo');
+            });
+
+            it('shoud go to the Selfie:Manage:Campaign:Manage state if user is not an admin', function() {
                 selfieState.cModel.entitlements.adminCampaigns = false;
 
-                campaignState.afterModel();
+                campaignState.afterModel(model);
                 campaignState.enter();
 
                 expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage');
             });
 
             it('shoud go to the Selfie:Manage:Campaign:Admin state if user is an admin', function() {
-                spyOn(c6State, 'goTo');
                 selfieState.cModel.entitlements.adminCampaigns = true;
 
-                campaignState.afterModel();
+                campaignState.afterModel(model);
                 campaignState.enter();
 
                 expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Admin');

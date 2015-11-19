@@ -71,7 +71,7 @@
             </fieldset>
 
             <fieldset class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.links.Action && SelfieCampaignCtrl.validation.show }">
-                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-model="card.links.Action" ng-focus="SelfieCampaignTextCtrl.bindLinkToWebsite = false">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-model="SelfieCampaignTextCtrl.actionLink" ng-focus="SelfieCampaignTextCtrl.bindLinkToWebsite = false" ng-blur="SelfieCampaignTextCtrl.updateActionLink(SelfieCampaignTextCtrl.actionLink)">
                 <label class="form__label" for="c6-video-ctaText">
                     <i class="fa fa-times ui--error"></i>
                     Call To Action URL <span class="text--small"> (required) </span>

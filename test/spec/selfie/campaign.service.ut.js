@@ -138,9 +138,10 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                         });
                         expect(cardResult.data).toEqual(jasmine.objectContaining({
                             autoadvance: false,
-                            controls: false,
+                            controls: true,
                             autoplay: true,
-                            skip: 30
+                            skip: 30,
+                            moat: undefined
                         }));
                     });
 

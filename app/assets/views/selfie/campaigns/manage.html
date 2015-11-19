@@ -8,10 +8,10 @@
             </h1>
             <div class="pageHeader__actions">
                 <div class="btnGroup">
-                    <button ng-click="SelfieManageCampaignCtrl.edit(campaign)" ng-class="{'btn--disabled' : SelfieManageCampaignCtrl.isLocked }" ng-disabled="SelfieManageCampaignCtrl.isLocked" class="btn btn--primary btn--small btn__nav btn__nav--primary"><i class="fa fa-pencil-square-o"></i> Edit</button>
+                    <button ng-click="SelfieManageCampaignCtrl.edit()" ng-class="{'btn--disabled' : !SelfieManageCampaignCtrl.canEdit }" ng-disabled="!SelfieManageCampaignCtrl.canEdit" class="btn btn--primary btn--small btn__nav btn__nav--primary"><i class="fa fa-pencil-square-o"></i> Edit</button>
                     <button ng-click="SelfieManageCampaignCtrl.copy(campaign)" class="btn btn--primary btn--small btn__nav btn__nav--primary"><i class="fa fa-copy"></i> Copy</button>
-                    <button ng-click="SelfieManageCampaignCtrl.update('cancel')" ng-class="{'btn--disabled' : SelfieManageCampaignCtrl.isLocked }" ng-disabled="SelfieManageCampaignCtrl.isLocked" class="btn btn--primary btn--small btn__nav btn__nav--primary"><i class="fa fa-ban"></i> Cancel</button>
-                    <!-- <button class="btn btn--primary btn--small btn__nav hint--bottom" data-hint="Delete"><i class="fa fa-trash-o"></i></button> -->
+                    <button ng-if="SelfieManageCampaignCtrl.canCancel" ng-click="SelfieManageCampaignCtrl.update('cancel')" class="btn btn--primary btn--small btn__nav btn__nav--primary"><i class="fa fa-ban"></i> Cancel</button>
+                    <button ng-if="SelfieManageCampaignCtrl.canDelete" ng-click="SelfieManageCampaignCtrl.update('delete')" class="btn btn--primary btn--small btn__nav btn__nav--primary"><i class="fa fa-trash-o"></i> Delete</button>
                     <!--<button class="btn btn--primary btn--small btn__nav btn--disabled" title="Pause"><i class="fa fa-pause"></i><span class="hide--palm"> Pause</span></button>
                     <button class="btn btn--primary btn--small btn__nav btn--disabled" title="Resume"><i class="fa fa-play"></i><span class="hide--palm"> Resume</span></button>-->
                 </div>

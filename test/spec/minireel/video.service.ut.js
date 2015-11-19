@@ -79,6 +79,12 @@
                             expect(fromData('jwplayer', '12345')).toBe('https://content.jwplatform.com/previews/12345');
                             expect(fromData('jwplayer', 'iGznZrKK-n5DiyUyn')).toBe('https://content.jwplatform.com/previews/iGznZrKK-n5DiyUyn');
                         });
+
+                        it('should create a vidyard url', function() {
+                            expect(fromData('vidyard', 'GFOy4oZge52L_NOwT2mwkw')).toBe('http://embed.vidyard.com/share/GFOy4oZge52L_NOwT2mwkw');
+                            expect(fromData('vidyard', 'abc-123')).toBe('http://embed.vidyard.com/share/abc-123');
+                            expect(fromData('vidyard', 'abc_123')).toBe('http://embed.vidyard.com/share/abc_123');
+                        });
                     });
 
                     describe('dataFromText(url)', function() {
@@ -218,6 +224,46 @@
                             expect(fromUrl(iframeEmbed)).toEqual(expected);
                         });
 
+                        it('should parse wistia embed codes', function() {
+                            var inlineEmbed = '<div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;"><div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;"><iframe src="//fast.wistia.net/embed/iframe/9iqvphjp4u?videoFoam=true" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" allowfullscreen mozallowfullscreen webkitallowfullscreen oallowfullscreen msallowfullscreen width="100%" height="100%"></iframe></div></div><script src="//fast.wistia.net/assets/external/E-v1.js" async></script>';
+                            var expected = {
+                                service: 'wistia',
+                                id: '9iqvphjp4u',
+                                hostname: null
+                            };
+                            expect(fromUrl(inlineEmbed)).toEqual(expected);
+                        });
+
+                        it('should parse vzaar embed codes', function() {
+                            var embedCode = '<iframe allowFullScreen allowTransparency="true" class="vzaar-video-player" frameborder="0" height="252" id="vzvd-5700429" mozallowfullscreen name="vzvd-5700429" src="//view.vzaar.com/5700429/player" title="vzaar video player" type="text/html" webkitAllowFullScreen width="448"></iframe>';
+                            var expected = {
+                                service: 'vzaar',
+                                id: '5700429',
+                                hostname: null
+                            };
+                            expect(fromUrl(embedCode)).toEqual(expected);
+                        });
+
+                        it('should parse a vidyard url', function() {
+                            expect(fromUrl('http://embed.vidyard.com/share/Eu6TAcwwJZaHDlfiJTsW-A')).toEqual({
+                                service: 'vidyard',
+                                id: 'Eu6TAcwwJZaHDlfiJTsW-A',
+                                hostname: 'embed.vidyard.com'
+                            });
+                        });
+
+                        it('should parse vidyard embed codes', function() {
+                            var scriptEmbed = '<script type=\'text/javascript\' id=\'vidyard_embed_code_Eu6TAcwwJZaHDlfiJTs_W-A\' src=\'//play.vidyard.com/Eu6TAcwwJZaHDlfiJTs_W-A.js?v=3.1.1&type=inline\'></script>';
+                            var iframeEmbed = '<iframe class=\'vidyard_iframe\' src=\'//play.vidyard.com/Eu6TAcwwJZaHDlfiJTs_W-A.html?v=3.1.1\' width=\'640\' height=\'360\' scrolling=\'no\' frameborder=\'0\' allowtransparency=\'true\' allowfullscreen></iframe>';
+                            var expected = {
+                                service: 'vidyard',
+                                id: 'Eu6TAcwwJZaHDlfiJTs_W-A',
+                                hostname: null
+                            };
+                            expect(fromUrl(scriptEmbed)).toEqual(expected);
+                            expect(fromUrl(iframeEmbed)).toEqual(expected);
+                        });
+
                         it('should return null if the url is not valid', function() {
                             expect(fromUrl('apple.com')).toBeNull();
                             expect(fromUrl('84fh439#')).toBeNull();
@@ -227,6 +273,7 @@
                             expect(fromUrl('http://www.youtube.c')).toBeNull();
                             expect(fromUrl('http://www.vzaar.t/123')).toBeNull();
                             expect(fromUrl('http://www.jwplayer.com/123')).toBeNull();
+                            expect(fromUrl('http://embed.vidyard.com/Eu6TAcwwJZaHDlfiJTsW-A'));
                         });
                     });
 

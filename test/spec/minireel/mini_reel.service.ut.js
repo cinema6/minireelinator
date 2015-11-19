@@ -297,6 +297,39 @@
                                     large: 'images.jwplayer.com/video/iGznZrKK-n5DiyUyn/large.jpg'
                                 }
                             }
+                        },
+                        vidyard: {
+                            id: 'rc-e2218c73ff11',
+                            type: 'vidyard',
+                            title: 'Vidyard Card',
+                            note: 'Such Card, Very Vidyard',
+                            source: 'Vidyard',
+                            placementId: null,
+                            templateUrl: null,
+                            sponsored: false,
+                            campaign: {
+                                campaignId: null,
+                                advertiserId: null,
+                                minViewTime: null,
+                                countUrls: [],
+                                clickUrls: []
+                            },
+                            thumbs: null,
+                            collateral: {},
+                            links: {},
+                            shareLinks: {},
+                            params: {},
+                            modules: [],
+                            data: {
+                                skip: true,
+                                service: 'vidyard',
+                                videoid: 'GFOy4oZge52L_NOwT2mwkw',
+                                href: 'http://embed.vidyard.com/share/GFOy4oZge52L_NOwT2mwkw',
+                                thumbs: {
+                                    small: 'images.vidyard.com/video/GFOy4oZge52L_NOwT2mwkw/small.jpg',
+                                    large: 'images.vidyard.com/video/GFOy4oZge52L_NOwT2mwkw/large.jpg'
+                                }
+                            }
                         }
                     }
                 };
@@ -686,7 +719,10 @@
                                 links: {},
                                 shareLinks: {},
                                 params: {},
-                                data: {}
+                                data: {
+                                    controls: true,
+                                    skip: true
+                                }
                             },
                             {
                                 id: 'rc-d98fad7e413692',
@@ -713,7 +749,10 @@
                                     prompt: null,
                                     choices: []
                                 },
-                                data: {}
+                                data: {
+                                    controls: true,
+                                    skip: true
+                                }
                             },
                             {
                                 id: 'rc-25c1f60b933186',
@@ -946,6 +985,7 @@
                             mocks.playerCards.vzaar,
                             mocks.playerCards.wistia,
                             mocks.playerCards.jwplayer,
+                            mocks.playerCards.vidyard,
                             {
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
@@ -1742,6 +1782,30 @@
                                 });
                             });
                         });
+
+                        it('should protect some data properties even when no video service is found', function() {
+                            var card = MiniReelService.createCard('video'),
+                                spy = jasmine.createSpy('spy()'),
+                                convertedCard;
+
+                            card.data = {
+                                autoadvance: false,
+                                autoplay: true,
+                                controls: true,
+                                skip: 30,
+                                moat: {
+                                    advertiser: 'a-123'
+                                }
+                            };
+
+                            $rootScope.$apply(function() {
+                                MiniReelService.convertCardForPlayer(card).then(spy);
+                            });
+
+                            convertedCard = spy.calls.mostRecent().args[0];
+
+                            expect(convertedCard.data).toEqual(card.data);
+                        });
                     });
 
                     describe('convertForEditor(minireel)', function() {
@@ -2103,6 +2167,46 @@
                         	    type: 'video',
                         	    title: 'JWPlayer Card',
                         	    note: 'This is a JWPlayer card, gaze at its wonder.',
+                        	    label: 'Video',
+                        	    view: 'video',
+                        	    ad: false,
+                        	    placementId: null,
+                        	    templateUrl: null,
+                        	    sponsored: false,
+                        	    campaign: {
+                        	        campaignId: null,
+                        	        advertiserId: null,
+                        	        minViewTime: null,
+                        	        countUrls: [],
+                        	        clickUrls: []
+                        	    },
+                        	    collateral: {},
+                        	    thumb: null,
+                        	    links: {},
+                                shareLinks: {},
+                        	    params: {}
+                            });
+                        });
+
+                        it('should transpile the visyard card', function() {
+                            expect(deck[22]).toEqual({
+                                data: {
+                        	       skip: 'anytime',
+                        	        controls: true,
+                        	        autoplay: null,
+                        	        autoadvance: null,
+                        	        survey: null,
+                        	        service: 'vidyard',
+                                    videoid: 'GFOy4oZge52L_NOwT2mwkw',
+                                    hostname: null,
+                        	        start: null,
+                        	        end: null,
+                        	        moat: null
+                        	    },
+                        	    id: 'rc-e2218c73ff11',
+                        	    type: 'video',
+                        	    title: 'Vidyard Card',
+                        	    note: 'Such Card, Very Vidyard',
                         	    label: 'Video',
                         	    view: 'video',
                         	    ad: false,
