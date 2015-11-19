@@ -643,6 +643,7 @@ fa,
             display: block;
             background-color: #FBE4AB;
             color: #775B17;
+            border: 1px solid #EACA79;
             border-radius: 3px;
             padding: 0.25em;
         }
@@ -652,10 +653,12 @@ fa,
             .alertMessage.alert__success {
                 background-color: #DBFFEF;
                 color: #00BC65;
+                border: 1px solid #A1F1CD;
             }
             .alertMessage.alert__failure {
                 background-color: #FFC0C0;
                 color: #ED0000;
+                border: 1px solid #E49999;
             }
     /*  Alert labels    */
         .alertLabel {
@@ -827,7 +830,7 @@ fa,
     }
     /*grid layout classes for prelogin screens*/
     .prelogin__gridHolder {
-        width: 24em;
+        width: 48em;
         max-width: 80%;
         margin: 0 auto;
         padding: 8em 0 0 0;
@@ -2161,6 +2164,11 @@ fa,
                 border-bottom:2px solid #49B8B9;
                 background:#fff;
             }
+            .form__textBox:disabled {
+                background: #f5f5f5;
+                color: #888;
+                cursor: not-allowed;
+            }
 
             .form__textBox--units {
                 padding-left:1.5rem; padding-right:1.5rem;
@@ -2793,7 +2801,7 @@ fa,
         text-align: left;
     }
     .adPreview__panel {
-        padding:1em 0.9em;
+        padding: 0;
         background-color:#fff;
         box-shadow:0 1px 3px rgba(0, 0, 0, 0.25);
     }
@@ -2821,7 +2829,7 @@ fa,
             }
 
             .adPreview__desktopFrame {
-                position:absolute; /* changed to absolute for desktop-card player */
+                position:relative;
                 width:100%;
                 top:0;
                 left:0;

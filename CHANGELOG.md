@@ -2,6 +2,7 @@
 
 * *[v1.26.0.rc1]*
   * [DESIGN]: Added styles for button spinners, replaced C6 references with Reelcontent
+  * [DESIGN]: Fixed signup success message layout, added styles and branding for video preview
 
 ## v1.25.0 (November 17, 2015)
 * *[v1.25.0.rc7]*
