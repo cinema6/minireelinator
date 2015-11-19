@@ -79,6 +79,12 @@
                             expect(fromData('jwplayer', '12345')).toBe('https://content.jwplatform.com/previews/12345');
                             expect(fromData('jwplayer', 'iGznZrKK-n5DiyUyn')).toBe('https://content.jwplatform.com/previews/iGznZrKK-n5DiyUyn');
                         });
+
+                        it('should create a vidyard url', function() {
+                            expect(fromData('vidyard', 'GFOy4oZge52L_NOwT2mwkw')).toBe('http://embed.vidyard.com/share/GFOy4oZge52L_NOwT2mwkw');
+                            expect(fromData('vidyard', 'abc-123')).toBe('http://embed.vidyard.com/share/abc-123');
+                            expect(fromData('vidyard', 'abc_123')).toBe('http://embed.vidyard.com/share/abc_123');
+                        });
                     });
 
                     describe('dataFromText(url)', function() {
@@ -238,6 +244,26 @@
                             expect(fromUrl(embedCode)).toEqual(expected);
                         });
 
+                        it('should parse a vidyard url', function() {
+                            expect(fromUrl('http://embed.vidyard.com/share/Eu6TAcwwJZaHDlfiJTsW-A')).toEqual({
+                                service: 'vidyard',
+                                id: 'Eu6TAcwwJZaHDlfiJTsW-A',
+                                hostname: 'embed.vidyard.com'
+                            });
+                        });
+
+                        it('should parse vidyard embed codes', function() {
+                            var scriptEmbed = '<script type=\'text/javascript\' id=\'vidyard_embed_code_Eu6TAcwwJZaHDlfiJTs_W-A\' src=\'//play.vidyard.com/Eu6TAcwwJZaHDlfiJTs_W-A.js?v=3.1.1&type=inline\'></script>';
+                            var iframeEmbed = '<iframe class=\'vidyard_iframe\' src=\'//play.vidyard.com/Eu6TAcwwJZaHDlfiJTs_W-A.html?v=3.1.1\' width=\'640\' height=\'360\' scrolling=\'no\' frameborder=\'0\' allowtransparency=\'true\' allowfullscreen></iframe>';
+                            var expected = {
+                                service: 'vidyard',
+                                id: 'Eu6TAcwwJZaHDlfiJTs_W-A',
+                                hostname: null
+                            };
+                            expect(fromUrl(scriptEmbed)).toEqual(expected);
+                            expect(fromUrl(iframeEmbed)).toEqual(expected);
+                        });
+
                         it('should return null if the url is not valid', function() {
                             expect(fromUrl('apple.com')).toBeNull();
                             expect(fromUrl('84fh439#')).toBeNull();
@@ -247,6 +273,7 @@
                             expect(fromUrl('http://www.youtube.c')).toBeNull();
                             expect(fromUrl('http://www.vzaar.t/123')).toBeNull();
                             expect(fromUrl('http://www.jwplayer.com/123')).toBeNull();
+                            expect(fromUrl('http://embed.vidyard.com/Eu6TAcwwJZaHDlfiJTsW-A'));
                         });
                     });
 
