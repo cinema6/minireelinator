@@ -1,5 +1,5 @@
-define( ['angular','select2','braintree'],
-function( angular , select2 , braintree ) {
+define( ['angular','select2','braintree','multiselect'],
+function( angular , select2 , braintree , multiselect ) {
     'use strict';
 
     var $ = angular.element,
@@ -44,6 +44,49 @@ function( angular , select2 , braintree ) {
                         ngModel.$viewChangeListeners.push(handleModelChange);
                         $timeout(handleModelChange);
                     }
+                }
+            };
+        }])
+
+        .directive('c6MultiSelectBox', ['$timeout','$parse',function($timeout, $parse) {
+            return {
+                restrict: 'A',
+                scope: {
+                    categories: '='
+                },
+                link: function(scope, $element, attrs) {
+                    $timeout(function() {
+                        var model = $parse(attrs.options)(scope);
+
+                        console.log(scope.categories);
+
+                        var topTierHash = scope.categories.reduce(function(result, category) {
+                            if (category.externalId.indexOf('-') < 0) {
+                                result[category.externalId] = category.label;
+                            }
+                            return result;
+                        }, {});
+
+                        var allCategoriesHash = scope.categories.reduce(function(result, category) {
+                            result[category.label] = category;
+                            return result;
+                        }, {});
+
+                        $element.find('option').each(function(option) {
+                            // console.log(this.text, this.value);
+
+                            var id = allCategoriesHash[this.text].externalId,
+                                isTopTier = id.indexOf('-') < 0,
+                                tierId = id.split('-')[0],
+                                tier = 'Interests' + (isTopTier ? '' : ' / ' + topTierHash[tierId]);
+
+                            console.log(id, tier);
+
+                            $(this).attr('data-section', tier);
+                        });
+
+                        $element.treeMultiselect({ sortable: true });
+                    });
                 }
             };
         }])
@@ -329,6 +372,45 @@ function( angular , select2 , braintree ) {
                 campaign = $scope.campaign,
                 categories = $scope.categories,
                 schema = $scope.schema;
+
+            function sortOptions(categories) {
+                var topTierHash = categories.reduce(function(result, category) {
+                    /*
+                        Gives you:
+                        {
+                            'IAB1': 'Automobiles',
+                            'IAB2': 'Gaming'
+                        }
+                     */
+                    if (category.externalId.indexOf('-') < 0) {
+                        result[category.externalId] = category.label;
+                    }
+                    return result;
+                }, {});
+
+                var allCategoriesHash = categories.reduce(function(result, category) {
+                    /*
+                        Gives you:
+                        {
+                            'Entertainment': {
+                                id: 'cat-123',
+                                label: 'Entertainment',
+                                externalId: 'IAB1-3'
+                            }
+                        }
+                     */
+                    result[category.label] = category;
+                    return result;
+                }, {});
+
+                // return categories.sort(function(cat1, cat2) {
+                //     return cat1.externalId < cat1.externalId ? -1 : 1;
+                // });
+            }
+
+            this.interestOptions = sortOptions($scope.categories);
+
+            console.log(this.interestOptions);
 
             this.interests = categories.filter(function(category) {
                 return campaign.targeting.interests.indexOf(category.id) > -1;
