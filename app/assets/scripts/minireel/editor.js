@@ -2145,6 +2145,7 @@ VideoCardController           , c6embed) {
                             '.js');
                         div.setAttribute('id', id);
                         div.appendChild(script);
+                        iframe.setAttribute('src', 'blank.html');
                         iframe.setAttribute('width', '100%');
                         iframe.setAttribute('height', '100%');
                         iframe.setAttribute('frameBorder', 0);

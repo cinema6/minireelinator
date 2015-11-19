@@ -54,6 +54,7 @@ define(['app', 'angular'], function(appModule, angular) {
             expect(appended.getAttribute('width')).toBe('100%');
             expect(appended.getAttribute('height')).toBe('100%');
             expect(appended.getAttribute('frameBorder')).toBe('0');
+            expect(appended.getAttribute('src')).toBe('blank.html');
         });
 
         it('should create the correct style', function(){
