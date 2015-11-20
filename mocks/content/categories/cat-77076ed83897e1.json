@@ -1,5 +1,6 @@
 {
     "name": "technology",
     "label": "Technology",
-    "externalId": "IAB3-1"
+    "externalId": "IAB3-1",
+    "type": "interest"
 }

@@ -1,5 +1,6 @@
 {
     "name": "entertainment",
     "label": "Entertainment",
-    "externalId": "IAB3-3"
+    "externalId": "IAB3-3",
+    "type": "interest"
 }

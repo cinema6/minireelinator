@@ -1,5 +1,6 @@
 {
     "name": "events",
     "label": "Events",
-    "externalId": "IAB3-2"
+    "externalId": "IAB3-2",
+    "type": "interest"
 }

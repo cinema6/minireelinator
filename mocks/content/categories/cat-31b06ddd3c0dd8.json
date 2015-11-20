@@ -1,5 +1,6 @@
 {
     "name": "activism",
     "label": "Nonprofits & Activism",
-    "externalId": "IAB1-3"
+    "externalId": "IAB1-3",
+    "type": "interest"
 }

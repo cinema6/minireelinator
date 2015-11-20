@@ -1,5 +1,6 @@
 {
     "name": "people_blogs",
     "label": "People & Blogs",
-    "externalId": "IAB4-1"
+    "externalId": "IAB4-1",
+    "type": "interest"
 }

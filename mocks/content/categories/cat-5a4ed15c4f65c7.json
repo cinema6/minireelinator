@@ -1,5 +1,6 @@
 {
     "name": "animals",
     "label": "Pets & Animals",
-    "externalId": "IAB2-2"
+    "externalId": "IAB2-2",
+    "type": "interest"
 }

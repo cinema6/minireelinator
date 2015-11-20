@@ -1,5 +1,6 @@
 {
     "name": "fashion",
     "label": "Fashion & Style",
-    "externalId": "IAB1-2"
+    "externalId": "IAB1-2",
+    "type": "interest"
 }

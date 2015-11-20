@@ -1,5 +1,6 @@
 {
     "name": "education",
     "label": "Education",
-    "externalId": "IAB2-1"
+    "externalId": "IAB2-1",
+    "type": "interest"
 }

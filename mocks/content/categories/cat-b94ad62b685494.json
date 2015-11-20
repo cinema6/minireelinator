@@ -1,5 +1,6 @@
 {
     "name": "film",
     "label": "Film & Animation",
-    "externalId": "IAB4-2"
+    "externalId": "IAB4-2",
+    "type": "interest"
 }

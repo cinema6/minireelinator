@@ -1,5 +1,6 @@
 {
     "name": "howto",
     "label": "Howto & DIY",
-    "externalId": "IAB1"
+    "externalId": "IAB1",
+    "type": "interest"
 }

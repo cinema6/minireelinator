@@ -1,5 +1,6 @@
 {
     "name": "travel_events",
     "label": "Travel & Events",
-    "externalId": "IAB2-3"
+    "externalId": "IAB2-3",
+    "type": "interest"
 }

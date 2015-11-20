@@ -1,5 +1,6 @@
 {
     "name": "comedy",
     "label": "Comedy",
-    "externalId": "IAB4-3"
+    "externalId": "IAB4-3",
+    "type": "interest"
 }

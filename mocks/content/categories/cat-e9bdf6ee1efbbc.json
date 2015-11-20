@@ -1,5 +1,6 @@
 {
     "name": "vehicles",
     "label": "Autos & Vehicles",
-    "externalId": "IAB4-6"
+    "externalId": "IAB4-6",
+    "type": "interest"
 }
