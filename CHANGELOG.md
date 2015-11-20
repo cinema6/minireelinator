@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.27.0.rc1]*
+  * [DESIGN]: Fixed signup success message layout, added styles and branding for video preview
+
 ## v1.26.0 (November 19, 2015)
 * *[v1.26.0.rc3]*
   * [FIX]: Fix for an issue where the preview for some JWPlayer videos would not load

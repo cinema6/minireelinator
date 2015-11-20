@@ -243,9 +243,10 @@ function( angular , select2 , braintree ) {
                     experience = deepExtend(minireel, {
                         id: 'e-123',
                         data: {
-                            mode: 'desktop-card',
+                            mode: 'light',
                             autoplay: false,
                             autoadvance: false,
+                            branding: 'rcplatform',
                             adConfig: {
                                 video: {
                                     firstPlacement: -1,
