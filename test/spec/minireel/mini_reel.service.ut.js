@@ -297,6 +297,39 @@
                                     large: 'images.jwplayer.com/video/iGznZrKK-n5DiyUyn/large.jpg'
                                 }
                             }
+                        },
+                        vidyard: {
+                            id: 'rc-e2218c73ff11',
+                            type: 'vidyard',
+                            title: 'Vidyard Card',
+                            note: 'Such Card, Very Vidyard',
+                            source: 'Vidyard',
+                            placementId: null,
+                            templateUrl: null,
+                            sponsored: false,
+                            campaign: {
+                                campaignId: null,
+                                advertiserId: null,
+                                minViewTime: null,
+                                countUrls: [],
+                                clickUrls: []
+                            },
+                            thumbs: null,
+                            collateral: {},
+                            links: {},
+                            shareLinks: {},
+                            params: {},
+                            modules: [],
+                            data: {
+                                skip: true,
+                                service: 'vidyard',
+                                videoid: 'GFOy4oZge52L_NOwT2mwkw',
+                                href: 'http://embed.vidyard.com/share/GFOy4oZge52L_NOwT2mwkw',
+                                thumbs: {
+                                    small: 'images.vidyard.com/video/GFOy4oZge52L_NOwT2mwkw/small.jpg',
+                                    large: 'images.vidyard.com/video/GFOy4oZge52L_NOwT2mwkw/large.jpg'
+                                }
+                            }
                         }
                     }
                 };
@@ -952,6 +985,7 @@
                             mocks.playerCards.vzaar,
                             mocks.playerCards.wistia,
                             mocks.playerCards.jwplayer,
+                            mocks.playerCards.vidyard,
                             {
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
@@ -2133,6 +2167,46 @@
                         	    type: 'video',
                         	    title: 'JWPlayer Card',
                         	    note: 'This is a JWPlayer card, gaze at its wonder.',
+                        	    label: 'Video',
+                        	    view: 'video',
+                        	    ad: false,
+                        	    placementId: null,
+                        	    templateUrl: null,
+                        	    sponsored: false,
+                        	    campaign: {
+                        	        campaignId: null,
+                        	        advertiserId: null,
+                        	        minViewTime: null,
+                        	        countUrls: [],
+                        	        clickUrls: []
+                        	    },
+                        	    collateral: {},
+                        	    thumb: null,
+                        	    links: {},
+                                shareLinks: {},
+                        	    params: {}
+                            });
+                        });
+
+                        it('should transpile the visyard card', function() {
+                            expect(deck[22]).toEqual({
+                                data: {
+                        	       skip: 'anytime',
+                        	        controls: true,
+                        	        autoplay: null,
+                        	        autoadvance: null,
+                        	        survey: null,
+                        	        service: 'vidyard',
+                                    videoid: 'GFOy4oZge52L_NOwT2mwkw',
+                                    hostname: null,
+                        	        start: null,
+                        	        end: null,
+                        	        moat: null
+                        	    },
+                        	    id: 'rc-e2218c73ff11',
+                        	    type: 'video',
+                        	    title: 'Vidyard Card',
+                        	    note: 'Such Card, Very Vidyard',
                         	    label: 'Video',
                         	    view: 'video',
                         	    ad: false,

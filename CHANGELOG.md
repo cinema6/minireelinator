@@ -1,6 +1,13 @@
 # MiniReelinator
 
 ## v1.26.0 (November 19, 2015)
+* *[v1.26.0.rc3]*
+  * [FIX]: Fix for an issue where the preview for some JWPlayer videos would not load
+  * [FIX]: Fix for an issue where JWPlayer previews would not reload when given a different JWPlayer link
+  * [FEATURE]: Added support for Vidyard
+  * [FEATURE]: Added support for recognizing Wistia and Vzaar embed codes
+* *[/v1.26.0.rc3]*
+
 * *[v1.26.0.rc2]*
   * [FIX]: (Selfie) Fix for an issue where the "Lose changes?" alert was triggered after successfully
     submitting changes to an active campaign

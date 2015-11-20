@@ -1213,6 +1213,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     return 'https://' + hostname + '/medias/' + id + '?preview=true';
                 case 'jwplayer':
                     return 'https://content.jwplatform.com/previews/' + id;
+                case 'vidyard':
+                    return 'http://embed.vidyard.com/share/' + id;
                 }
             };
 
@@ -1220,10 +1222,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 var parsedUrl = c6UrlParser(text),
                     urlService = (parsedUrl.hostname.match(
                         new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|aol|yahoo|' +
-                            'rumble|vine|vzaar\\.tv|wistia|jwplatform')
+                            'rumble|vine|vzaar\\.tv|wistia|jwplatform|vidyard')
                     ) || [])[0],
                     embedService = (text.match(
-                        /youtube|youtu\.be|dailymotion|dai\.ly|vimeo|jwplatform/
+                        new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|jwplatform|' +
+                            'wistia|vzaar|vidyard')
                     ) || [])[0],
                     embed = /<iframe|<script/.test(text) ? 'embed' : null,
                     type = !!urlService ? 'url' : embed,
@@ -1284,6 +1287,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 return (url.pathname
                                     .replace(/\/previews\//, '')
                                     .match(/[a-zA-Z\d-]+/) || [null])[0];
+                            },
+                            vidyard: function(url) {
+                                return (url.pathname
+                                    .replace(/\/share\//, '')
+                                    .match(/[a-zA-Z\d_-]+/) || [null])[0];
                             }
                         },
                         embed: {
@@ -1299,6 +1307,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             jwplatform: function(embed) {
                                 return (embed.match(
                                     /content.jwplatform.com\/players\/([a-zA-Z\d-]+)/) || [])[1];
+                            },
+                            wistia: function(embed) {
+                                return (embed.match(
+                                    /fast.wistia.net\/embed\/iframe\/([a-zA-Z\d]+)/) || [])[1];
+                            },
+                            vzaar: function(embed) {
+                                return (embed.match(/view.vzaar.com\/(\d+)/) || [])[1];
+                            },
+                            vidyard: function(embed) {
+                                return (embed.match(
+                                    /play\.vidyard\.com\/([a-zA-Z\d_-]+)/) || [])[1];
                             }
                         }
                     };
@@ -2095,6 +2114,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'vzaar':
                         case 'wistia':
                         case 'jwplayer':
+                        case 'vidyard':
                             return 'video' + ((card.modules.indexOf('ballot') > -1) ?
                                 'Ballot' : '');
                         default:
@@ -3029,6 +3049,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         moat: copy(null)
                     },
                     jwplayer: {
+                        hideSource: hideSourceValue(),
+                        autoplay: copy(null),
+                        autoadvance: copy(null),
+                        skip: skipValue(),
+                        service: copy(),
+                        videoid: copy(null),
+                        href: hrefValue(),
+                        thumbs: videoThumbsValue(),
+                        moat: copy(null)
+                    },
+                    vidyard: {
                         hideSource: hideSourceValue(),
                         autoplay: copy(null),
                         autoadvance: copy(null),

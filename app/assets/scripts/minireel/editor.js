@@ -2127,31 +2127,86 @@ VideoCardController           , c6embed) {
                     videoid: '@'
                 },
                 link: function(scope, $element) {
-                    var id = 'botr_' + scope.videoid.replace('-', '_') + '_div';
-                    var style = document.createElement('style');
-                    var script = document.createElement('script');
-                    var div = document.createElement('div');
-                    var iframe = document.createElement('iframe');
+                    function loadPreview(videoid) {
+                        if(!videoid) { return; }
+                        $element.empty();
+                        var id = 'botr_' + videoid.replace('-', '_') + '_div';
+                        var style = document.createElement('style');
+                        var script = document.createElement('script');
+                        var div = document.createElement('div');
+                        var iframe = document.createElement('iframe');
 
-                    /* The JWPlayer embed is responsive only to certain aspect ratios.
-                        This style hack is needed to ensure it displays properly. */
-                    style.innerHTML = 'div#' + id +
-                        '{ width: 100% !important; height: 100% !important; }';
-                    script.setAttribute('type', 'application/javascript');
-                    script.setAttribute('src', '//content.jwplatform.com/players/' + scope.videoid +
-                        '.js');
-                    div.setAttribute('id', id);
-                    div.appendChild(script);
-                    iframe.setAttribute('width', '100%');
-                    iframe.setAttribute('height', '100%');
-                    iframe.setAttribute('frameBorder', 0);
-                    iframe.onload = function() {
-                        iframe.contentDocument.head.appendChild(style);
-                        iframe.contentDocument.body.appendChild(div);
-                    };
+                        /* The JWPlayer embed is responsive only to certain aspect ratios.
+                            This style hack is needed to ensure it displays properly. */
+                        style.innerHTML = 'div#' + id +
+                            '{ width: 100% !important; height: 100% !important; }';
+                        script.setAttribute('type', 'application/javascript');
+                        script.setAttribute('src', '//content.jwplatform.com/players/' + videoid +
+                            '.js');
+                        div.setAttribute('id', id);
+                        div.appendChild(script);
+                        iframe.setAttribute('src', 'blank.html');
+                        iframe.setAttribute('width', '100%');
+                        iframe.setAttribute('height', '100%');
+                        iframe.setAttribute('frameBorder', 0);
+                        iframe.onload = function() {
+                            iframe.contentDocument.head.appendChild(style);
+                            iframe.contentDocument.body.appendChild(div);
+                        };
 
-                    $element.addClass('jwplayerPreview');
-                    $element.append(iframe);
+                        $element.addClass('jwplayerPreview');
+                        $element.append(iframe);
+                    }
+
+                    scope.$watch('videoid', loadPreview);
+                }
+            };
+        }])
+
+        .directive('vidyardPlayer', [function() {
+            var noop = function() {};
+            var deregistrationFn = noop;
+            return {
+                restrict: 'E',
+                scope: {
+                    videoid: '@'
+                },
+                link: function(scope, $element) {
+                    function loadPreview(videoid) {
+                        if(!videoid) { return; }
+                        deregistrationFn();
+                        $element.empty();
+                        var script = document.createElement('script');
+
+                        script.setAttribute('type', 'text/javascript');
+                        script.setAttribute('id', 'vidyard_embed_code_' + videoid);
+                        script.setAttribute('src', '//play.vidyard.com/' + videoid +
+                            '.js?v=3.1.1&type=inline');
+
+                        $element.addClass('vidyardPreview');
+                        $element.css('display', 'none');
+
+                        // Watch out for the vidyard iframe
+                        deregistrationFn = scope.$watch(function() {
+                            var results = $element.find('iframe#vidyard_iframe_' + videoid);
+                            return (results && results.length === 1) ? results[0] : null;
+                        }, function(iframe) {
+                            if(iframe) {
+                                iframe.width = '100%';
+                                iframe.height = '100%';
+                                var span = iframe.parentElement;
+                                span.style.width = '100%';
+                                span.style.height = '100%';
+                                $element.css('display', 'inline');
+                                deregistrationFn();
+                                deregistrationFn = noop;
+                            }
+                        });
+
+                        $element.append(script);
+                    }
+
+                    scope.$watch('videoid', loadPreview);
                 }
             };
         }])
@@ -2259,7 +2314,8 @@ VideoCardController           , c6embed) {
 
                     scope.disableTrimmer = function() {
                         return (scope.service === 'vine' || scope.service === 'vzaar' ||
-                            scope.service === 'wistia' || scope.service === 'jwplayer');
+                            scope.service === 'wistia' || scope.service === 'jwplayer' ||
+                            scope.service === 'vidyard');
                     };
 
                     Object.defineProperties(scope, {
