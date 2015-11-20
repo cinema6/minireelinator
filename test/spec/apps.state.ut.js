@@ -8,7 +8,8 @@ define(['app'], function(appModule) {
             cinema6,
             portal,
             apps,
-            c6Defines;
+            c6Defines,
+            AuthService;
 
         var $window;
 
@@ -32,6 +33,7 @@ define(['app'], function(appModule) {
                 $q = $injector.get('$q');
                 cinema6 = $injector.get('cinema6');
                 c6Defines = $injector.get('c6Defines');
+                AuthService = $injector.get('AuthService');
                 $window = $injector.get('$window');
             });
 
@@ -110,13 +112,46 @@ define(['app'], function(appModule) {
             });
 
             describe('if the user lacks the mini-reel-maker experience', function() {
+                var logoutDeferred;
+
                 beforeEach(function() {
+                    logoutDeferred = $q.defer();
+                    spyOn(AuthService, 'logout').and.returnValue(logoutDeferred.promise);
+
                     delete apps.cModel['mini-reel-maker'];
                     apps.enter();
                 });
 
-                it('should go to the platform', function() {
-                    expect($window.location.href).toBe(c6Defines.kPlatformHome);
+                it('should not go to the platform', function() {
+                    expect($window.location.href).not.toBe(c6Defines.kPlatformHome);
+                });
+
+                it('should logout the user', function() {
+                    expect(AuthService.logout).toHaveBeenCalled();
+                });
+
+                describe('if the logout() succeeds', function() {
+                    beforeEach(function() {
+                        $rootScope.$apply(function() {
+                            logoutDeferred.resolve(null);
+                        });
+                    });
+
+                    it('should not go to the platform', function() {
+                        expect($window.location.href).toBe(c6Defines.kPlatformHome);
+                    });
+                });
+
+                describe('if the logout() fails', function() {
+                    beforeEach(function() {
+                        $rootScope.$apply(function() {
+                            logoutDeferred.reject(new Error('SOMETHING WENT WRONG!'));
+                        });
+                    });
+
+                    it('should not go to the platform', function() {
+                        expect($window.location.href).toBe(c6Defines.kPlatformHome);
+                    });
                 });
             });
         });
