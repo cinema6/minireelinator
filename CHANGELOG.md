@@ -1,6 +1,9 @@
 # MiniReelinator
 
 ## v1.26.0 (November 20, 2015)
+* *[v1.26.0.rc5]*
+  * [DESIGN]: Added styles for interest selector on create campaign
+
 * *[v1.26.0.rc4]*
   * [DESIGN]: Fixed signup success message layout, added styles and branding for video preview
   * [FEATURE]: Add expanable/collapsible interest targeting multi-selector
