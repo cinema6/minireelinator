@@ -9,7 +9,7 @@
         </h1>
         <p class="formSection__introText">Limit your audience based on demographic profile, geography, or interest.</p>
 
-        <selfie-interests campaign="campaign" schema="SelfieCampaignCtrl.schema" categories="SelfieCampaignCtrl.categories"></selfie-interests>
+        <selfie-interests ng-if="SelfieCampaignCtrl.categories" campaign="campaign" schema="SelfieCampaignCtrl.schema" categories="SelfieCampaignCtrl.categories"></selfie-interests>
 
     </section><!--.formSection__group-->
 
