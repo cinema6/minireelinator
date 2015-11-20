@@ -57,7 +57,7 @@
                 ngAnimate: libUrl('angular/v1.2.22-0-g93b0c2d/angular-animate'),
                 c6uilib: libUrl('c6ui/v3.7.4-0-g734d5f3/c6uilib'),
                 c6log: libUrl('c6ui/v3.7.4-0-g734d5f3/c6log'),
-                c6embed: libUrl('c6embed/v1/app--v2.34.1.rc1-0-g3ec6d59'),
+                c6embed: libUrl('c6embed/v1/app'),
                 braintree: 'lib/braintree',
                 'helpers/drag': '/base/test/helpers/drag'
             },

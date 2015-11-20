@@ -16,7 +16,7 @@
             ngAnimate: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular-animate.min',
             c6uilib: 'https://lib.cinema6.com/c6ui/v3.7.4-0-g734d5f3/c6uilib.min',
             c6log: 'https://lib.cinema6.com/c6ui/v3.7.4-0-g734d5f3/c6log.min',
-            c6embed: 'https://lib.cinema6.com/c6embed/v1/app--v2.35.4-0-gdff0ea8.min',
+            c6embed: 'https://lib.cinema6.com/c6embed/v1/app.min',
             braintree: 'https://js.braintreegateway.com/v2/braintree'
         },
         shim: {
