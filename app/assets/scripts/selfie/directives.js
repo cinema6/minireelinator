@@ -342,27 +342,35 @@ function( angular , select2 , braintree ) {
             };
         }])
 
-        .controller('SelfieInterestsController', ['$scope','CampaignService',
-        function                                 ( $scope , CampaignService ) {
-            var SelfieInterestsCtrl = this,
-                campaign = $scope.campaign,
+        .controller('SelfieInterestsController', ['$scope',
+        function                                 ( $scope ) {
+            var campaign = $scope.campaign,
                 categories = $scope.categories,
                 schema = $scope.schema;
 
+            function filterOut(needles, haystack) {
+                needles = isArray(needles) ? needles : [needles];
+
+                return haystack.filter(function(item) {
+                    return needles.indexOf(item) < 0;
+                });
+            }
+
             function generateInterestTiers(categories) {
-                var tiersArray = categories.reduce(function(result, category) {
-                    if (category.externalId.indexOf('-') < 0) {
-                        result.push({
-                            name: category.name,
-                            label: category.label,
-                            id: category.id,
-                            iab: category.externalId,
-                            selected: campaign.targeting.interests.indexOf(category.id) > -1,
-                            children: []
-                        });
-                    }
-                    return result;
-                }, []);
+                var interests = campaign.targeting.interests,
+                    tiersArray = categories.reduce(function(result, category) {
+                        if (category.externalId.indexOf('-') < 0) {
+                            result.push({
+                                name: category.name,
+                                label: category.label,
+                                id: category.id,
+                                iab: category.externalId,
+                                selected: interests.indexOf(category.id) > -1,
+                                children: []
+                            });
+                        }
+                        return result;
+                    }, []);
 
                 categories.map(function(category) {
                     var id = category.externalId,
@@ -376,8 +384,8 @@ function( angular , select2 , braintree ) {
                                 iab: category.externalId,
                                 name: category.name,
                                 label: category.label,
-                                selected: campaign.targeting.interests.indexOf(category.id) > -1 ||
-                                    campaign.targeting.interests.indexOf(tier.id) > -1
+                                selected: interests.indexOf(category.id) > -1 ||
+                                    interests.indexOf(tier.id) > -1
                             });
                         }
                     });
@@ -424,18 +432,14 @@ function( angular , select2 , braintree ) {
                 // remove all the child ids because we're either replacing
                 // them with the tier id (if they're selecting all) or we're
                 // removing the tier id also (if they're de-selecting all)
-                targeting.interests = targeting.interests.filter(function(interest) {
-                    return tierIds.indexOf(interest) < 0;
-                });
+                targeting.interests = filterOut(tierIds, targeting.interests);
 
                 if (tier.selected) {
                     // if we're selecting all then add the tier id
                     targeting.interests.push(tier.id);
                 } else {
                     // if we're de-selecting all then remove tier id
-                    targeting.interests = targeting.interests.filter(function(interest) {
-                        return interest !== tier.id;
-                    });
+                    targeting.interests = filterOut(tier.id, targeting.interests);
                 }
             };
 
@@ -466,9 +470,8 @@ function( angular , select2 , braintree ) {
                     // our selection makes the tier full
                     // we need to remove all ids from this
                     // tier and replace with the top tier id
-                    targeting.interests = targeting.interests.filter(function(interest) {
-                        return tierIds.indexOf(interest) < 0;
-                    }).concat(tier.id);
+                    targeting.interests = filterOut(tierIds, targeting.interests)
+                        .concat(tier.id);
 
                     // mark the tier as selected
                     tier.selected = true;
@@ -482,14 +485,13 @@ function( angular , select2 , braintree ) {
                     // so now we need to remove the top tier id
                     // and replace it will all of the other ids
                     // that belong to the tier
-                    targeting.interests = targeting.interests.filter(function(interest) {
-                        return interest !== tier.id;
-                    }).concat(tier.children.reduce(function(result, i) {
-                        if (i.id !== item.id) {
-                            result.push(i.id);
-                        }
-                        return result;
-                    }, []));
+                    targeting.interests = filterOut(tier.id, targeting.interests)
+                        .concat(tier.children.reduce(function(result, i) {
+                            if (i.id !== item.id) {
+                                result.push(i.id);
+                            }
+                            return result;
+                        }, []));
 
                     // mark the top tier as indeterminate
                     tier.selected = 'indeterminate';
@@ -497,29 +499,12 @@ function( angular , select2 , braintree ) {
                     return;
                 }
 
-                if (!selectedInTier) {
-                    // we've just removed the last item in the tier
-                    targeting.interests = targeting.interests.filter(function(interest) {
-                        return interest !== item.id;
-                    });
+                // if we're still here we're just removing a single item
+                targeting.interests = filterOut(item.id, targeting.interests);
 
-                    // mark the top tier as unselected
-                    tier.selected = false;
-
-                    return;
-                }
-
-                if (!isSelected) {
-                    // just remove the one we need
-                    targeting.interests = targeting.interests.filter(function(interest) {
-                        return interest !== item.id;
-                    });
-
-                    // mark the top tier as unselected
-                    tier.selected = 'indeterminate';
-
-                    return;
-                }
+                // if nothing is selected in the tier we de-select,
+                // otherwise we leave it indeterminate
+                tier.selected = !selectedInTier ? false : 'indeterminate';
 
             };
 
