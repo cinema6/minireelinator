@@ -3835,6 +3835,10 @@ div.tree-multiselect span.section-name {
         border-right: 0;
         text-transform: capitalize;
     }
+        .sectionNested label {
+            position: absolute;
+            width: 94%;
+        }
     div.tree-multiselect > div.selected {
         padding: 0;
         border: 0;
@@ -3864,6 +3868,15 @@ div.tree-multiselect span.section-name {
             margin-right: 2px;
             color: #767676;
         }
+            div.tree-multiselect div.section > div.item {
+                margin: 0;
+                padding-top: 0.5em;
+                padding-bottom: 0.5em;
+            }
+                div.tree-multiselect div.section > div.item:hover {
+                    background: #75dbcd;
+                    color: #fff;
+                }
         div.tree-multiselect span.remove-selected {
             background: transparent;
             color: #1c1c1c;
@@ -3922,6 +3935,13 @@ div.tree-multiselect span.section-name {
         top: -34px;*/
         width: 100%;
     }
+        .tree-multiselect>.selections>.section>.title:hover {
+            background: #75dbcd;
+            color: #fff;
+        }
+        .tree-multiselect>.selections>.section>.title:hover .collapse-section {
+            color: #fff;
+        }
     .tree-multiselect>.selected .item {
         background: #fff;
         border: 1px solid #ccc;
