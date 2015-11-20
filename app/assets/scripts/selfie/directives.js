@@ -48,7 +48,7 @@ function( angular , select2 , braintree ) {
             };
         }])
 
-        .directive('c6Indeterminate', ['$parse',function($parse) {
+        .directive('c6Indeterminate', [function() {
             return {
                 restrict: 'A',
                 scope: {
@@ -64,7 +64,7 @@ function( angular , select2 , braintree ) {
                         }
                     });
                 }
-            }
+            };
         }])
 
         .directive('c6SelectBox', ['$timeout','$parse',
@@ -342,14 +342,14 @@ function( angular , select2 , braintree ) {
             };
         }])
 
-        .controller('SelfieInterestsController', ['$scope',
-        function                                 ( $scope ) {
+        .controller('SelfieInterestsController', ['$scope','CampaignService',
+        function                                 ( $scope , CampaignService ) {
             var SelfieInterestsCtrl = this,
                 campaign = $scope.campaign,
                 categories = $scope.categories,
                 schema = $scope.schema;
 
-            function sortOptions(categories) {
+            function generateInterestTiers(categories) {
                 var tiersArray = categories.reduce(function(result, category) {
                     if (category.externalId.indexOf('-') < 0) {
                         result.push({
@@ -401,67 +401,87 @@ function( angular , select2 , braintree ) {
             }
 
 
-            this.checkTier = function(tier) {
+            this.toggleTier = function(tier) {
                 var targeting = campaign.targeting,
                     tierIds = tier.children.map(function(item) {
                         return item.id;
                     });
 
                 if (tier.selected === 'indeterminate') {
+                    // if it's partially selected then
+                    // always select all on click
                     tier.selected = true;
                 } else {
+                    // otherwise simply toggle the selection
                     tier.selected = !tier.selected;
                 }
 
+                // mark all children as selected
                 tier.children.forEach(function(item) {
                     item.selected = tier.selected;
                 });
 
+                // remove all the child ids because we're either replacing
+                // them with the tier id (if they're selecting all) or we're
+                // removing the tier id also (if they're de-selecting all)
                 targeting.interests = targeting.interests.filter(function(interest) {
                     return tierIds.indexOf(interest) < 0;
                 });
 
                 if (tier.selected) {
+                    // if we're selecting all then add the tier id
                     targeting.interests.push(tier.id);
                 } else {
+                    // if we're de-selecting all then remove tier id
                     targeting.interests = targeting.interests.filter(function(interest) {
                         return interest !== tier.id;
                     });
                 }
             };
 
-            this.checkInterest = function(item, tier) {
+            this.toggleInterest = function(item, tier) {
                 var targeting = campaign.targeting,
+                    isSelected = item.selected,
                     selectedInTier = tier.children.filter(function(item) {
                         return item.selected;
                     }).length,
+                    tierIsFull = selectedInTier === tier.children.length,
+                    tierWasFull = !isSelected && selectedInTier === tier.children.length -1,
                     tierIds = tier.children.map(function(item) {
                         return item.id;
                     });
 
-                if (!selectedInTier) {
-                    tier.selected = false;
-                } else if (selectedInTier === tier.children.length) {
-                    tier.selected = true;
-                } else {
-                    tier.selected = 'indeterminate';
-                }
-
-                if (item.selected && selectedInTier !== tier.children.length) {
-
+                if (isSelected && !tierIsFull) {
+                    // we have a new selection but the tier
+                    // isn't full yet, so we just add the id
                     targeting.interests.push(item.id);
 
-                } else if (item.selected && selectedInTier === tier.children.length) {
-                    // we need to remove all in the tier and just store the top tier
+                    // mark the top tier as indeterminate
+                    tier.selected = 'indeterminate';
 
+                    return;
+                }
+
+                if (isSelected && tierIsFull) {
+                    // our selection makes the tier full
+                    // we need to remove all ids from this
+                    // tier and replace with the top tier id
                     targeting.interests = targeting.interests.filter(function(interest) {
                         return tierIds.indexOf(interest) < 0;
                     }).concat(tier.id);
 
-                } else if (!item.selected && selectedInTier === tier.children.length -1) {
-                    // then we need to remove the top tier id and add the ids of all the others
-                    // in the tier
+                    // mark the tier as selected
+                    tier.selected = true;
 
+                    return;
+
+                }
+
+                if (tierWasFull) {
+                    // the tier was full before we removed one
+                    // so now we need to remove the top tier id
+                    // and replace it will all of the other ids
+                    // that belong to the tier
                     targeting.interests = targeting.interests.filter(function(interest) {
                         return interest !== tier.id;
                     }).concat(tier.children.reduce(function(result, i) {
@@ -471,33 +491,46 @@ function( angular , select2 , braintree ) {
                         return result;
                     }, []));
 
-                } else {
+                    // mark the top tier as indeterminate
+                    tier.selected = 'indeterminate';
 
+                    return;
+                }
+
+                if (!selectedInTier) {
+                    // we've just removed the last item in the tier
                     targeting.interests = targeting.interests.filter(function(interest) {
                         return interest !== item.id;
                     });
 
+                    // mark the top tier as unselected
+                    tier.selected = false;
+
+                    return;
                 }
+
+                if (!isSelected) {
+                    // just remove the one we need
+                    targeting.interests = targeting.interests.filter(function(interest) {
+                        return interest !== item.id;
+                    });
+
+                    // mark the top tier as unselected
+                    tier.selected = 'indeterminate';
+
+                    return;
+                }
+
             };
 
             this.removeInterest = function(item, tier) {
                 item.selected = false;
-                this.checkInterest(item, tier);
+                this.toggleInterest(item, tier);
             };
 
-            this.tiers = sortOptions(categories);
-
+            this.tiers = generateInterestTiers(categories);
             this.priceForInterests = schema.pricing.cost.__priceForInterests;
 
-            $scope.$watch(function() {
-                return SelfieInterestsCtrl.interests;
-            }, function(newInterests, oldInterests) {
-                if (newInterests === oldInterests) { return; }
-
-                campaign.targeting.interests = newInterests.map(function(interest) {
-                    return interest.id;
-                });
-            });
         }])
 
         .directive('selfieGeotargeting', [function() {

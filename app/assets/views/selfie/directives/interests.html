@@ -23,12 +23,12 @@
                 <div class="title">
                     <span ng-click="tier.show = !tier.show" ng-show="tier.show" class="collapse-section">-</span>
                     <span ng-click="tier.show = !tier.show" ng-show="!tier.show" class="collapse-section">+</span>
-                    <span ng-click="SelfieInterestsCtrl.checkTier(tier)">
+                    <span ng-click="SelfieInterestsCtrl.toggleTier(tier)">
                         <input c6-indeterminate="tier.selected" type="checkbox" id="{{tier.id}}">
                         <label>{{tier.label}}</label>
                     </span>
                 </div>
-                <div ng-show="tier.show" ng-repeat="item in tier.children" class="item" data-value="{{item.id}}"><input ng-model="item.selected" type="checkbox" ng-change="SelfieInterestsCtrl.checkInterest(item, tier)" id="{{item.id}}"><label for="{{item.id}}">{{item.label}}</label></div>
+                <div ng-show="tier.show" ng-repeat="item in tier.children" class="item" data-value="{{item.id}}"><input ng-model="item.selected" type="checkbox" ng-change="SelfieInterestsCtrl.toggleInterest(item, tier)" id="{{item.id}}"><label for="{{item.id}}">{{item.label}}</label></div>
             </div>
         </div>
 
