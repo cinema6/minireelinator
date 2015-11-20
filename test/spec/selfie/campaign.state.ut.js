@@ -236,7 +236,7 @@ define(['app'], function(appModule) {
                     $rootScope.$apply(function() {
                         campaignState.model().then(success, failure);
                     });
-                    expect(cinema6.db.findAll).toHaveBeenCalledWith('category');
+                    expect(cinema6.db.findAll).toHaveBeenCalledWith('category', {type: 'interest'});
                     expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod');
                     expect(SelfieLogoService.getLogos).toHaveBeenCalled();
                     expect(success).toHaveBeenCalledWith({

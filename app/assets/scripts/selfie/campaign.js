@@ -346,7 +346,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.model = function() {
                     return $q.all({
-                        categories: cinema6.db.findAll('category'),
+                        categories: cinema6.db.findAll('category', {type: 'interest'}),
                         logos: SelfieLogoService.getLogos(),
                         paymentMethods: cinema6.db.findAll('paymentMethod')
                     }).catch(function() {

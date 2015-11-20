@@ -48,6 +48,25 @@ function( angular , select2 , braintree ) {
             };
         }])
 
+        .directive('c6Indeterminate', [function() {
+            return {
+                restrict: 'A',
+                scope: {
+                    c6Indeterminate: '='
+                },
+                link: function(scope, $element) {
+                    scope.$watch('c6Indeterminate', function(value) {
+                        if (value === 'indeterminate') {
+                            $element.prop('indeterminate', true);
+                        } else {
+                            $element.prop('indeterminate', false);
+                            $element.prop('checked', value);
+                        }
+                    });
+                }
+            };
+        }])
+
         .directive('c6SelectBox', ['$timeout','$parse',
         function                  ( $timeout , $parse ) {
             return {
@@ -326,26 +345,178 @@ function( angular , select2 , braintree ) {
 
         .controller('SelfieInterestsController', ['$scope',
         function                                 ( $scope ) {
-            var SelfieInterestsCtrl = this,
-                campaign = $scope.campaign,
+            var campaign = $scope.campaign,
                 categories = $scope.categories,
                 schema = $scope.schema;
 
-            this.interests = categories.filter(function(category) {
-                return campaign.targeting.interests.indexOf(category.id) > -1;
-            });
+            function filterOut(needles, haystack) {
+                needles = isArray(needles) ? needles : [needles];
 
+                return haystack.filter(function(item) {
+                    return needles.indexOf(item) < 0;
+                });
+            }
+
+            function generateInterestTiers(categories) {
+                var interests = campaign.targeting.interests,
+                    tiersArray = categories.reduce(function(result, category) {
+                        if (category.externalId.indexOf('-') < 0) {
+                            result.push({
+                                name: category.name,
+                                label: category.label,
+                                id: category.id,
+                                iab: category.externalId,
+                                selected: interests.indexOf(category.id) > -1,
+                                children: []
+                            });
+                        }
+                        return result;
+                    }, []);
+
+                categories.map(function(category) {
+                    var id = category.externalId,
+                        isTopTier = !(/-/).test(id),
+                        tierId = id.split('-')[0];
+
+                    tiersArray.map(function(tier) {
+                        if (!isTopTier && tier.iab === tierId) {
+                            tier.children.push({
+                                id: category.id,
+                                iab: category.externalId,
+                                name: category.name,
+                                label: category.label,
+                                selected: interests.indexOf(category.id) > -1 ||
+                                    interests.indexOf(tier.id) > -1
+                            });
+                        }
+                    });
+                });
+
+                tiersArray.forEach(function(tier) {
+                    var length = tier.children.length,
+                        count = tier.children.filter(function(item) {
+                            return item.selected;
+                        }).length;
+
+                    if (count === length) {
+                        tier.selected = true;
+                    }
+                    if (count < length && count > 0) {
+                        tier.selected = 'indeterminate';
+                    }
+                });
+
+                return tiersArray;
+            }
+
+
+            this.toggleTier = function(tier) {
+                var targeting = campaign.targeting,
+                    tierIds = tier.children.map(function(item) {
+                        return item.id;
+                    });
+
+                if (tier.selected === 'indeterminate') {
+                    // if it's partially selected then
+                    // always select all on click
+                    tier.selected = true;
+                } else {
+                    // otherwise simply toggle the selection
+                    tier.selected = !tier.selected;
+                }
+
+                // mark all children as selected
+                tier.children.forEach(function(item) {
+                    item.selected = tier.selected;
+                });
+
+                // remove all the child ids because we're either replacing
+                // them with the tier id (if they're selecting all) or we're
+                // removing the tier id also (if they're de-selecting all)
+                targeting.interests = filterOut(tierIds, targeting.interests);
+
+                if (tier.selected) {
+                    // if we're selecting all then add the tier id
+                    targeting.interests.push(tier.id);
+                } else {
+                    // if we're de-selecting all then remove tier id
+                    targeting.interests = filterOut(tier.id, targeting.interests);
+                }
+            };
+
+            this.toggleInterest = function(item, tier) {
+                var targeting = campaign.targeting,
+                    isSelected = item.selected,
+                    selectedInTier = tier.children.filter(function(item) {
+                        return item.selected;
+                    }).length,
+                    tierIsFull = selectedInTier === tier.children.length,
+                    tierWasFull = !isSelected && selectedInTier === tier.children.length -1,
+                    tierIds = tier.children.map(function(item) {
+                        return item.id;
+                    });
+
+                if (isSelected && !tierIsFull) {
+                    // we have a new selection but the tier
+                    // isn't full yet, so we just add the id
+                    targeting.interests.push(item.id);
+
+                    // mark the top tier as indeterminate
+                    tier.selected = 'indeterminate';
+
+                    return;
+                }
+
+                if (isSelected && tierIsFull) {
+                    // our selection makes the tier full
+                    // we need to remove all ids from this
+                    // tier and replace with the top tier id
+                    targeting.interests = filterOut(tierIds, targeting.interests)
+                        .concat(tier.id);
+
+                    // mark the tier as selected
+                    tier.selected = true;
+
+                    return;
+
+                }
+
+                if (tierWasFull) {
+                    // the tier was full before we removed one
+                    // so now we need to remove the top tier id
+                    // and replace it will all of the other ids
+                    // that belong to the tier
+                    targeting.interests = filterOut(tier.id, targeting.interests)
+                        .concat(tier.children.reduce(function(result, i) {
+                            if (i.id !== item.id) {
+                                result.push(i.id);
+                            }
+                            return result;
+                        }, []));
+
+                    // mark the top tier as indeterminate
+                    tier.selected = 'indeterminate';
+
+                    return;
+                }
+
+                // if we're still here we're just removing a single item
+                targeting.interests = filterOut(item.id, targeting.interests);
+
+                // if nothing is selected in the tier we de-select,
+                // otherwise we leave it indeterminate
+                tier.selected = !selectedInTier ? false : 'indeterminate';
+
+            };
+
+            this.removeInterest = function(item, tier) {
+                item.selected = false;
+                this.toggleInterest(item, tier);
+            };
+
+            this.tiers = generateInterestTiers(categories);
             this.priceForInterests = schema.pricing.cost.__priceForInterests;
 
-            $scope.$watch(function() {
-                return SelfieInterestsCtrl.interests;
-            }, function(newInterests, oldInterests) {
-                if (newInterests === oldInterests) { return; }
-
-                campaign.targeting.interests = newInterests.map(function(interest) {
-                    return interest.id;
-                });
-            });
         }])
 
         .directive('selfieGeotargeting', [function() {

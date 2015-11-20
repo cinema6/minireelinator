@@ -1,4 +1,6 @@
 {
     "name": "gaming",
-    "label": "Gaming"
+    "label": "Gaming",
+    "externalId": "IAB2",
+    "type": "interest"
 }

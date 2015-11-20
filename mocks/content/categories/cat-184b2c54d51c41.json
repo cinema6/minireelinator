@@ -1,4 +1,6 @@
 {
     "name": "politics",
-    "label": "Politics"
+    "label": "Politics",
+    "externalId": "IAB1-1",
+    "type": "interest"
 }
