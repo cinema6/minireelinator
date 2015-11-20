@@ -1,12 +1,14 @@
 # MiniReelinator
 
-## v1.26.0 (November 19, 2015)
+## v1.26.0 (November 20, 2015)
 * *[v1.26.0.rc4]*
   * [DESIGN]: Fixed signup success message layout, added styles and branding for video preview
   * [FEATURE]: Add expanable/collapsible interest targeting multi-selector
   * [FIX]: Fix for an issue that made it impossible to access the
     Portal/Platform login page after being redirected to the
     Platform/Portal, respectively.
+  * [FIX]: Hide the Interest section if no Interests are found
+* *[/v1.26.0.rc4]*
 
 * *[v1.26.0.rc3]*
   * [FIX]: Fix for an issue where the preview for some JWPlayer videos would not load
