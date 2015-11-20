@@ -55,7 +55,9 @@ function( angular , c6State  , c6uilib , account   ) {
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Apps', ['c6State','cinema6','$q','$window','c6Defines',
-            function                             ( c6State , cinema6 , $q , $window , c6Defines ) {
+                                                  'AuthService',
+            function                             ( c6State , cinema6 , $q , $window , c6Defines ,
+                                                   AuthService ) {
                 this.model = function() {
                     var applications = this.cParent.cModel.applications;
 
@@ -76,7 +78,9 @@ function( angular , c6State  , c6uilib , account   ) {
                         return c6State.goTo('Selfie:App', [selfie], null, true);
                     }
 
-                    $window.location.href = c6Defines.kPortalHome;
+                    return AuthService.logout().finally(function goToPortal() {
+                        $window.location.href = c6Defines.kPortalHome;
+                    });
                 };
             }]);
         }]);

@@ -46,7 +46,9 @@ function( angular , c6State  , c6uilib ) {
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Apps', ['c6State','cinema6','$q','$window','c6Defines',
-            function                      ( c6State , cinema6 , $q , $window , c6Defines ) {
+                                           'AuthService',
+            function                      ( c6State , cinema6 , $q , $window , c6Defines ,
+                                            AuthService ) {
                 this.model = function() {
                     var applications = this.cParent.cModel.applications;
 
@@ -67,7 +69,9 @@ function( angular , c6State  , c6uilib ) {
                         return c6State.goTo('MiniReel', [minireel], null, true);
                     }
 
-                    $window.location.href = c6Defines.kPlatformHome;
+                    return AuthService.logout().finally(function goToPlatform() {
+                        $window.location.href = c6Defines.kPlatformHome;
+                    });
                 };
             }]);
         }]);
