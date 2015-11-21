@@ -398,9 +398,6 @@ function( angular , select2 , braintree ) {
                             return item.selected;
                         }).length;
 
-                    if (!count && !tier.selected) {
-                        tier.selected = false;
-                    }
                     if (count && count === length) {
                         tier.selected = true;
                     }
