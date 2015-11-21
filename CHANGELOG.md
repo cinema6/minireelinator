@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## v1.26.0 (November 20, 2015)
+* *[v1.26.0.rc6]*
+  * [FIX]: Fix for an issue where interest tiers with no child interests
+    were selected by by default
+* *[/v1.26.0.rc6]*
+
 * *[v1.26.0.rc5]*
   * [DESIGN]: Added styles for interest selector on create campaign
 * *[/v1.26.0.rc5]*
