@@ -79,6 +79,12 @@ define(['app'], function(appModule) {
                         name: 'technology',
                         label: 'Technology',
                         externalId: 'IAB2-3'
+                    },
+                    {
+                        id: 'int-119',
+                        name: 'karate',
+                        label: 'Karate',
+                        externalId: 'IAB3'
                     }
                 ];
 
@@ -116,7 +122,7 @@ define(['app'], function(appModule) {
         describe('properties', function() {
             describe('tiers', function() {
                 it('should be an array of objects each containing all the interests in its tier', function() {
-                    expect(SelfieInterestsCtrl.tiers.length).toBe(2);
+                    expect(SelfieInterestsCtrl.tiers.length).toBe(3);
 
                     expect(SelfieInterestsCtrl.tiers[0]).toEqual({
                         name: categories[0].name,
@@ -179,6 +185,15 @@ define(['app'], function(appModule) {
                             }
                         ]
                     });
+
+                    expect(SelfieInterestsCtrl.tiers[2]).toEqual({
+                        name: categories[8].name,
+                        label: categories[8].label,
+                        id: categories[8].id,
+                        iab: categories[8].externalId,
+                        selected: false,
+                        children: []
+                    });
                 });
 
                 it('should indicate which interests or top tiers have been selected', function() {
@@ -187,6 +202,9 @@ define(['app'], function(appModule) {
 
                     // include one top tier item
                     campaign.targeting.interests.push('int-115');
+
+                    // include one top tier item that has no children
+                    campaign.targeting.interests.push('int-119');
 
                     compileCtrl();
 
@@ -250,6 +268,15 @@ define(['app'], function(appModule) {
                                 selected: true
                             }
                         ]
+                    });
+
+                    expect(SelfieInterestsCtrl.tiers[2]).toEqual({
+                        name: categories[8].name,
+                        label: categories[8].label,
+                        id: categories[8].id,
+                        iab: categories[8].externalId,
+                        selected: true,
+                        children: []
                     });
                 });
             });

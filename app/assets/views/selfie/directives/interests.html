@@ -21,13 +21,12 @@
             </div>
             <div ng-show="show" class="section sectionNested" ng-repeat="tier in SelfieInterestsCtrl.tiers">
                 <div class="title">
-                    <span ng-click="tier.show = !tier.show" ng-show="tier.show" class="collapse-section">-</span>
-                    <span ng-click="tier.show = !tier.show" ng-show="!tier.show" class="collapse-section">+</span>
+                    <span ng-click="tier.show = !tier.show" ng-show="tier.show && tier.children" class="collapse-section">-</span>
+                    <span ng-click="tier.show = !tier.show" ng-show="!tier.show && tier.children" class="collapse-section">+</span>
                     <span ng-click="SelfieInterestsCtrl.toggleTier(tier)">
                         <input c6-indeterminate="tier.selected" type="checkbox" id="{{tier.id}}">
                     </span>
                     <label ng-click="tier.show = !tier.show">{{tier.label}}</label>
-                    
                 </div>
                 <div ng-show="tier.show" ng-repeat="item in tier.children" class="item" data-value="{{item.id}}"><input ng-model="item.selected" type="checkbox" ng-change="SelfieInterestsCtrl.toggleInterest(item, tier)" id="{{item.id}}"><label for="{{item.id}}">{{item.label}}</label></div>
             </div>
@@ -35,6 +34,8 @@
         <div class="selected">
         <span ng-if="campaign.targeting.interests.length">Selected Interests</span>
         <div class="selected" ng-repeat="tier in SelfieInterestsCtrl.tiers">
+            <div class="item" ng-if="tier.selected && tier.selected !== 'indeterminate'" data-value="{{tier.id}}"><span ng-click="SelfieInterestsCtrl.toggleTier(tier)" class="remove-selected">×</span>{{tier.label}}<span class="section-name">{{tier.label}}</span></div>
+
             <div ng-repeat="item in tier.children">
                 <div class="item" ng-if="item.selected" data-value="{{item.id}}"><span ng-click="SelfieInterestsCtrl.removeInterest(item, tier)" class="remove-selected">×</span>{{item.label}}<span class="section-name">{{tier.label}}</span></div>
             </div>
