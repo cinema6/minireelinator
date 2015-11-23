@@ -3906,8 +3906,8 @@ div.tree-multiselect span.section-name {
         display: none;
     }
     .tree-multiselect>.selections>.section{
-        max-height: 300px;
-        overflow-y: auto;
+        /*max-height: 300px;*/
+        /*overflow-y: auto;*/
         background-color: #fff;
         /*-moz-box-shadow: inset 0 0 3px #bbb;
         -webkit-box-shadow: inset 0 0 3px #bbb;
