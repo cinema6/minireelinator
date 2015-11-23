@@ -367,7 +367,9 @@ function( angular , c6State  , PaginatedListState                    ,
                     return $q.all({
                         categories: cinema6.db.findAll('category', {type: 'interest'}),
                         logos: SelfieLogoService.getLogos(),
-                        paymentMethods: cinema6.db.findAll('paymentMethod')
+                        paymentMethods: cinema6.db.findAll('paymentMethod', {
+                            org: this.campaign.org || SelfieState.cModel.org
+                        })
                     }).catch(function() {
                         c6State.goTo('Selfie:CampaignDashboard');
                         return $q.reject();
@@ -1221,7 +1223,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         null;
 
                     return $q.all({
-                        paymentMethods: cinema6.db.findAll('paymentMethod'),
+                        paymentMethods: cinema6.db.findAll('paymentMethod', {org: this.campaign.org}),
                         updateRequest:  updateRequest ?
                             cinema6.db.find('updateRequest', updateRequest) :
                             null
