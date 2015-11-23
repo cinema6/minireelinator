@@ -1,6 +1,12 @@
 # MiniReelinator
 
-## v1.26.0 (November 20, 2015)
+## v1.26.0 (November 23, 2015)
+* *[v1.26.0.rc7]*
+  * [DESIGN]: Fix for an issue where interest tiers with a long list of child interests
+    looked broken when scrolling
+  * [FIX]: Added Vidyard to the list of supported video players
+* *[/v1.26.0.rc7]*
+
 * *[v1.26.0.rc6]*
   * [FIX]: Fix for an issue where interest tiers with no child interests
     were selected by by default
