@@ -695,6 +695,7 @@ fa,
             }
         .softAlert { /*fixed position top right (example use saved as draft)*/
             margin-top: 6em;
+            top: 0;
             right: 10px;
             float: right;
             position: fixed;
@@ -738,10 +739,10 @@ fa,
 
     /*  Loading content spinner  */
     .spinnerWrap {
-        position: absolute;
-        width: 100%;
+        position: fixed;
+        width: calc(100% - 4em);
         top: 0;
-        left: 0;
+        left: 4em;
         bottom: 0;
         right: 0;
         background: #eee;
@@ -3861,6 +3862,10 @@ div.tree-multiselect span.section-name {
         padding: 1% 0;
         border-right: 0;
         text-transform: capitalize;
+        max-height: 300px;
+        overflow-y: auto;
+        position: relative;
+        overflow-x: hidden;
     }
         .sectionNested label {
             position: absolute;
