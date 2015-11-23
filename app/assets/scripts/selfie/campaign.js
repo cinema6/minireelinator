@@ -36,7 +36,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.controllerAs = 'SelfieCampaignsCtrl';
 
                 this.filter = $location.search().filter ||
-                    'draft,pending,approved,active,paused,error';
+                    'draft,pending,approved,active,paused,canceled,expired,error';
                 this.filterBy = $location.search().filterBy || 'statuses';
                 this.sort = $location.search().sort || 'lastUpdated,-1';
 
@@ -151,6 +151,23 @@ function( angular , c6State  , PaginatedListState                    ,
                 }
             }
 
+            Object.defineProperties(this, {
+                allStatusesChecked: {
+                    get: function() {
+                        return this.filters.filter(function(status) {
+                            return status.checked;
+                        }).length === this.filters.length;
+                    }
+                }
+            });
+
+            this.toggleAllStatuses = function(bool) {
+                this.filters.forEach(function(status) {
+                    status.checked = bool;
+                });
+                this.toggleFilter();
+            };
+
             this.initWithModel = function(model) {
                 this.model = model;
 
@@ -163,6 +180,8 @@ function( angular , c6State  , PaginatedListState                    ,
                     'approved',
                     'active',
                     'paused',
+                    'canceled',
+                    'expired',
                     'error'
                 ].map(function(filter) {
                     return {
