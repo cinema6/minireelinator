@@ -368,7 +368,7 @@ function( angular , c6State  , PaginatedListState                    ,
                         categories: cinema6.db.findAll('category', {type: 'interest'}),
                         logos: SelfieLogoService.getLogos(),
                         paymentMethods: cinema6.db.findAll('paymentMethod', {
-                            org: this.campaign.org || SelfieState.cModel.org
+                            org: this.campaign.org || SelfieState.cModel.org.id
                         })
                     }).catch(function() {
                         c6State.goTo('Selfie:CampaignDashboard');
