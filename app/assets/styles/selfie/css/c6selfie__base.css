@@ -3835,6 +3835,10 @@ div.tree-multiselect span.section-name {
         padding: 1% 0;
         border-right: 0;
         text-transform: capitalize;
+        max-height: 300px;
+        overflow-y: auto;
+        position: relative;
+        overflow-x: hidden;
     }
         .sectionNested label {
             position: absolute;

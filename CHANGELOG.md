@@ -2,6 +2,7 @@
 
 * *[v1.27.0.rc1]*
   * [DESIGN]: Added styles for soft alerts and spinners
+  * [DESIGN]: Adding a fix height for interest selection
 
 ## v1.26.0 (November 23, 2015)
 * *[v1.26.0.rc7]*
