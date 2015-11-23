@@ -73,6 +73,34 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
             })));
         }));
 
+        describe('properties', function() {
+            describe('allStatusesChecked', function() {
+                it('should be true when all statues are checked', function() {
+                    SelfieCampaignsCtrl.filters = [
+                        { name: 'Draft', id: 'draft', checked: true },
+                        { name: 'Pending', id: 'pending', checked: false },
+                        { name: 'Approved', id: 'approved', checked: true },
+                        { name: 'Active', id: 'active', checked: true },
+                        { name: 'Paused', id: 'paused', checked: false },
+                        { name: 'Error', id: 'error', checked: true }
+                    ];
+
+                    expect(SelfieCampaignsCtrl.allStatusesChecked).toBe(false);
+
+                    SelfieCampaignsCtrl.filters = [
+                        { name: 'Draft', id: 'draft', checked: true },
+                        { name: 'Pending', id: 'pending', checked: true },
+                        { name: 'Approved', id: 'approved', checked: true },
+                        { name: 'Active', id: 'active', checked: true },
+                        { name: 'Paused', id: 'paused', checked: true },
+                        { name: 'Error', id: 'error', checked: true }
+                    ];
+
+                    expect(SelfieCampaignsCtrl.allStatusesChecked).toBe(true);
+                });
+            });
+        });
+
         describe('methods', function() {
             describe('remove(campaigns)', function() {
                 var campaigns,
@@ -235,6 +263,8 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                         { name: 'Approved', id: 'approved', checked: false },
                         { name: 'Active', id: 'active', checked: true },
                         { name: 'Paused', id: 'paused', checked: false },
+                        { name: 'Canceled', id: 'canceled', checked: false },
+                        { name: 'Expired', id: 'expired', checked: false },
                         { name: 'Error', id: 'error', checked: true }
                     ]);
                 });
@@ -468,6 +498,54 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     SelfieCampaignsCtrl.toggleFilter();
 
                     expect(SelfieCampaignsCtrl.filter).toEqual('draft,approved,active,error');
+                });
+            });
+
+            describe('toggleAllStatuses(bool)', function() {
+                describe('when bool === true', function() {
+                    it('should mark all the statuses as checked and should call toggleFilter()', function() {
+                        spyOn(SelfieCampaignsCtrl, 'toggleFilter');
+
+                        SelfieCampaignsCtrl.filters = [
+                            { name: 'Draft', id: 'draft', checked: false },
+                            { name: 'Pending', id: 'pending', checked: false },
+                            { name: 'Approved', id: 'approved', checked: true },
+                            { name: 'Active', id: 'active', checked: true },
+                            { name: 'Paused', id: 'paused', checked: false },
+                            { name: 'Error', id: 'error', checked: true }
+                        ];
+
+                        SelfieCampaignsCtrl.toggleAllStatuses(true);
+
+                        SelfieCampaignsCtrl.filters.forEach(function(status) {
+                            expect(status.checked).toBe(true);
+                        });
+
+                        expect(SelfieCampaignsCtrl.toggleFilter).toHaveBeenCalled();
+                    });
+                });
+
+                describe('when bool === false', function() {
+                    it('should mark all the statuses as checked and should call toggleFilter()', function() {
+                        spyOn(SelfieCampaignsCtrl, 'toggleFilter');
+
+                        SelfieCampaignsCtrl.filters = [
+                            { name: 'Draft', id: 'draft', checked: false },
+                            { name: 'Pending', id: 'pending', checked: false },
+                            { name: 'Approved', id: 'approved', checked: true },
+                            { name: 'Active', id: 'active', checked: true },
+                            { name: 'Paused', id: 'paused', checked: false },
+                            { name: 'Error', id: 'error', checked: true }
+                        ];
+
+                        SelfieCampaignsCtrl.toggleAllStatuses(false);
+
+                        SelfieCampaignsCtrl.filters.forEach(function(status) {
+                            expect(status.checked).toBe(false);
+                        });
+
+                        expect(SelfieCampaignsCtrl.toggleFilter).toHaveBeenCalled();
+                    });
                 });
             });
         });
