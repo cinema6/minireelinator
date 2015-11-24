@@ -11,6 +11,12 @@
   * [FEATURE]: Add Google Analytics tracking for Selfie
   * [DESIGN]: Updated the icons for interest expand/collapse and changed alert message for
     when users try to leave edit screen without submitting changes
+  * [FIX]: In campaign editor view only allow adding new payment methods when viewer is
+    the creator of the campaign
+  * [FIX]: When a top tier interest has no child interests then clicking the name
+    selects/deselects the tier
+  * [FIX]: Fix for an issue where deleting user details in one view effected details
+    in another view
 
 ## v1.26.0 (November 23, 2015)
 * *[v1.26.0.rc7]*
