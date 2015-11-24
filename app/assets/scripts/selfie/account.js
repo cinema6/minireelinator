@@ -129,15 +129,20 @@ function( angular , c6State  ) {
         .controller('SelfieResendActivationController', ['c6State','AuthService','AccountService',
         function                                        ( c6State , AuthService , AccountService) {
             var SelfieResendActivationCtrl = this;
+
+            this.error = null;
+
             this.resend = function() {
                 return AccountService.resendActivation()
                     .then(function() {
                         // probably want to put a success message on the Ctrl
                         // and tell the user to check their email
+                        SelfieResendActivationCtrl.error = null;
                         SelfieResendActivationCtrl.model = 'We have sent you an email with ' +
                             'a new confirmation link!';
                     })
                     .catch(function() {
+                        SelfieResendActivationCtrl.error = true;
                         SelfieResendActivationCtrl.model = 'There was a problem resending ' +
                             'a new activation link';
                     });
@@ -257,17 +262,21 @@ function( angular , c6State  ) {
             }]);
         }])
 
-        .controller('SelfieAccountDetailsController', ['cState',
-        function                                      ( cState ) {
+        .controller('SelfieAccountDetailsController', ['cState','c6State',
+        function                                      ( cState , c6State ) {
             var user = cState.cParent.cModel,
                 SelfieAccountDetailsCtrl = this;
 
-            this.message = null;
+            this.error = null;
+            this.user = user.pojoify();
 
             this.save = function() {
-                user.save().then(function() {
-                    SelfieAccountDetailsCtrl.message = 'Successfully updated your details!';
-                });
+                return user._update(this.user).save()
+                    .then(function() {
+                        c6State.goTo('Selfie:Account');
+                    }, function() {
+                        SelfieAccountDetailsCtrl.error = 'There was a problem saving your details';
+                    });
             };
         }])
 

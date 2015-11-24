@@ -12,21 +12,21 @@
     <div class="tree-multiselect">
 
         <div class="selections">
-            <div class="section">
+            <div class="section sectionHead">
                 <div class="title" style="cursor:pointer;" ng-click="show = !show">
                     <label>Interests</label>
-                    <span ng-show="show" class="collapse-section">-</span>
-                    <span ng-show="!show" class="collapse-section">+</span>
+                    <span ng-show="show" class="collapse-section"><i class="fa fa-minus-circle"></i></span>
+                    <span ng-show="!show" class="collapse-section"><i class="fa fa-plus-circle"></i></span>
                 </div>
             </div>
             <div ng-show="show" class="section sectionNested" ng-repeat="tier in SelfieInterestsCtrl.tiers">
                 <div class="title">
-                    <span ng-click="tier.show = !tier.show" ng-show="tier.show && tier.children" class="collapse-section">-</span>
-                    <span ng-click="tier.show = !tier.show" ng-show="!tier.show && tier.children" class="collapse-section">+</span>
-                    <span ng-click="SelfieInterestsCtrl.toggleTier(tier)">
-                        <input c6-indeterminate="tier.selected" type="checkbox" id="{{tier.id}}">
+                    <span ng-click="tier.show = !tier.show" ng-show="tier.show && tier.children" class="collapse-section"><i class="fa fa-minus-circle"></i></span>
+                    <span ng-click="tier.show = !tier.show" ng-show="!tier.show && tier.children" class="collapse-section"><i class="fa fa-plus-circle"></i></span>
+                    <span ng-click="SelfieInterestsCtrl.toggleTier(tier)" class="checkbox--wrap">
+                        <input c6-indeterminate="tier.selected" type="checkbox" class="checkbox__item" id="{{tier.id}}">
                     </span>
-                    <label ng-click="tier.show = !tier.show">{{tier.label}}</label>
+                    <label ng-click="SelfieInterestsCtrl.expandTier(tier)" class="checkbox__label">{{tier.label}}</label>
                 </div>
                 <div ng-show="tier.show" ng-repeat="item in tier.children" class="item" data-value="{{item.id}}"><input ng-model="item.selected" type="checkbox" ng-change="SelfieInterestsCtrl.toggleInterest(item, tier)" id="{{item.id}}"><label for="{{item.id}}">{{item.label}}</label></div>
             </div>

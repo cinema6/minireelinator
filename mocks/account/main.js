@@ -158,7 +158,7 @@ module.exports = function(http) {
         if (!email || !password || !newEmail) {
             this.respond(403, 'Forbidden');
         } else if (email !== 'selfie@cinema6.com') {
-            this.respond(401, 'Not Authorized');
+            this.respond(403, 'Not Authorized');
         } else {
             this.respond(201, userCache.user);
         }
