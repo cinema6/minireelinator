@@ -257,17 +257,21 @@ function( angular , c6State  ) {
             }]);
         }])
 
-        .controller('SelfieAccountDetailsController', ['cState',
-        function                                      ( cState ) {
+        .controller('SelfieAccountDetailsController', ['cState','c6State',
+        function                                      ( cState , c6State ) {
             var user = cState.cParent.cModel,
                 SelfieAccountDetailsCtrl = this;
 
-            this.message = null;
+            this.error = null;
+            this.user = user.pojoify();
 
             this.save = function() {
-                user.save().then(function() {
-                    SelfieAccountDetailsCtrl.message = 'Successfully updated your details!';
-                });
+                return user._update(this.user).save()
+                    .then(function() {
+                        c6State.goTo('Selfie:Account');
+                    }, function() {
+                        SelfieAccountDetailsCtrl.error = 'There was a problem saving your details';
+                    });
             };
         }])
 
