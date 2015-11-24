@@ -129,15 +129,20 @@ function( angular , c6State  ) {
         .controller('SelfieResendActivationController', ['c6State','AuthService','AccountService',
         function                                        ( c6State , AuthService , AccountService) {
             var SelfieResendActivationCtrl = this;
+
+            this.error = null;
+
             this.resend = function() {
                 return AccountService.resendActivation()
                     .then(function() {
                         // probably want to put a success message on the Ctrl
                         // and tell the user to check their email
+                        SelfieResendActivationCtrl.error = null;
                         SelfieResendActivationCtrl.model = 'We have sent you an email with ' +
                             'a new confirmation link!';
                     })
                     .catch(function() {
+                        SelfieResendActivationCtrl.error = true;
                         SelfieResendActivationCtrl.model = 'There was a problem resending ' +
                             'a new activation link';
                     });

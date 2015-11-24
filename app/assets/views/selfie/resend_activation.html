@@ -8,9 +8,7 @@
         <p class="subAction text--center">Please check your email for activation link.</p>
         <p class="subAction text--center">Didn't get the email? <a ng-click="SelfieResendActivationCtrl.resend()">Resend Account Activation link</a>.</p>
 
-        <p class="one-half item--center alertMessage">
-        {{SelfieResendActivationCtrl.model}}
-        </p>
+        <p class="two-thirds item--center text--center alertMessage" ng-if="SelfieResendActivationCtrl.model" ng-class="{ 'alert__success': !SelfieResendActivationCtrl.error, 'alert__failure': SelfieResendActivationCtrl.error}">{{SelfieResendActivationCtrl.model}}</p>
 
         <p class="subAction text--center">
             <button ng-click="SelfieResendActivationCtrl.logout()">Return to login screen</button>
