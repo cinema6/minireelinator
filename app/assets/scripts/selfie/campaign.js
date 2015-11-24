@@ -407,8 +407,7 @@ function( angular , c6State  , PaginatedListState                    ,
                             return $q.when(null);
                         } else {
                             ConfirmDialogService.display({
-                                prompt: 'Are you sure you want to leave? You will ' +
-                                    'lose your changes if you continue.',
+                                prompt: 'Are you sure you want to lose your changes?',
                                 affirm: 'Yes',
                                 cancel: 'No',
 
