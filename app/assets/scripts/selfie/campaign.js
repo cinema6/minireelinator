@@ -1223,7 +1223,9 @@ function( angular , c6State  , PaginatedListState                    ,
                         null;
 
                     return $q.all({
-                        paymentMethods: cinema6.db.findAll('paymentMethod', {org: this.campaign.org}),
+                        paymentMethods: cinema6.db.findAll('paymentMethod', {
+                            org: this.campaign.org
+                        }),
                         updateRequest:  updateRequest ?
                             cinema6.db.find('updateRequest', updateRequest) :
                             null
