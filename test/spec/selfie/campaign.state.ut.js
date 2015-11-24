@@ -219,9 +219,11 @@ define(['app'], function(appModule) {
             });
 
             describe('model()', function() {
-                it('should find all categories and logos', function() {
-                    var success = jasmine.createSpy('success()'),
-                        failure = jasmine.createSpy('failure()');
+                var success, failure;
+
+                beforeEach(function() {
+                    success = jasmine.createSpy('success()');
+                    failure = jasmine.createSpy('failure()');
 
                     spyOn(cinema6.db, 'findAll').and.callFake(function(type) {
                         if (type === 'category') {
@@ -232,17 +234,45 @@ define(['app'], function(appModule) {
                         }
                     });
                     spyOn(SelfieLogoService, 'getLogos').and.returnValue($q.when(logos));
+                });
 
-                    $rootScope.$apply(function() {
-                        campaignState.model().then(success, failure);
+                describe('when campaign has an org', function() {
+                    it('should get payment methods for that org and all interests and logos', function() {
+                        campaign.org = 'o-99999';
+                        campaignState.campaign = campaign;
+
+                        $rootScope.$apply(function() {
+                            campaignState.model().then(success, failure);
+                        });
+
+                        expect(cinema6.db.findAll).toHaveBeenCalledWith('category', {type: 'interest'});
+                        expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod', {org: 'o-99999'});
+                        expect(SelfieLogoService.getLogos).toHaveBeenCalled();
+                        expect(success).toHaveBeenCalledWith({
+                            categories: categories,
+                            logos: logos,
+                            paymentMethods: paymentMethods
+                        });
                     });
-                    expect(cinema6.db.findAll).toHaveBeenCalledWith('category', {type: 'interest'});
-                    expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod');
-                    expect(SelfieLogoService.getLogos).toHaveBeenCalled();
-                    expect(success).toHaveBeenCalledWith({
-                        categories: categories,
-                        logos: logos,
-                        paymentMethods: paymentMethods
+                });
+
+                describe('when campaign does not have an org', function() {
+                    it('should get payment methods for the current users org and all interests and logos', function() {
+                        delete campaign.org;
+                        campaignState.campaign = campaign;
+
+                        $rootScope.$apply(function() {
+                            campaignState.model().then(success, failure);
+                        });
+
+                        expect(cinema6.db.findAll).toHaveBeenCalledWith('category', {type: 'interest'});
+                        expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod', {org: selfieState.cModel.org.id});
+                        expect(SelfieLogoService.getLogos).toHaveBeenCalled();
+                        expect(success).toHaveBeenCalledWith({
+                            categories: categories,
+                            logos: logos,
+                            paymentMethods: paymentMethods
+                        });
                     });
                 });
             });

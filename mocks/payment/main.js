@@ -106,10 +106,19 @@ module.exports = function(http) {
     });
 
     http.whenGET('/api/payments/methods', function(request) {
-        var allPayments = grunt.file.expand(path.resolve(__dirname, './methods/*.json'))
+        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text', 'statuses', 'fields', 'ids']),
+            allPayments = grunt.file.expand(path.resolve(__dirname, './methods/*.json'))
             .map(function(path) {
-                    return grunt.file.readJSON(path);
-                });
+                return grunt.file.readJSON(path);
+            })
+            .filter(function(method) {
+                return Object.keys(filters)
+                    .every(function(key) {
+                        return !!filters[key].split(',').filter(function(val) {
+                            return val === method[key];
+                        })[0];
+                    });
+            });
 
         this.respond(200, allPayments);
     });

@@ -6,7 +6,8 @@
   * [FEATURE]: Add Canceled and Expired campaigns to dashboard
   * [FEATURE]: Add ability to Check/Uncheck All statuses in the dropdown
   * [DESIGN]: Add styles for Check/Uncheck All button in the dropdown
-  * [DESIGN]: Changed search button color and added targeting sub headline 
+  * [DESIGN]: Changed search button color and added targeting sub headline
+  * [FIX]: When editing/managing a campaign always load the campaign creator's payment methods
 
 ## v1.26.0 (November 23, 2015)
 * *[v1.26.0.rc7]*

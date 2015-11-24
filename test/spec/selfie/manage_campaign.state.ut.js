@@ -117,17 +117,19 @@ define(['app'], function(appModule) {
                 failure = jasmine.createSpy('failure()');
                 spyOn(cinema6.db, 'findAll').and.returnValue($q.when(paymentMethods));
                 spyOn(cinema6.db, 'find').and.returnValue($q.when(updateRequest));
+
+                campaignState.campaign = campaign;
+                campaign.org = 'o-999';
             });
 
             describe('when the campaign has an updateRequest', function() {
-                it('should find the updateRequest and the paymentMethods', function() {
-                    campaignState.campaign = campaign;
+                it('should find the updateRequest and the paymentMethods for the org of the campaign creator', function() {
                     campaign.updateRequest = 'ur-123';
 
                     $rootScope.$apply(function() {
                         campaignState.model().then(success, failure);
                     });
-                    expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod');
+                    expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod', {org: 'o-999'});
                     expect(cinema6.db.find).toHaveBeenCalledWith('updateRequest', 'cam-123:ur-123');
                     expect(success).toHaveBeenCalledWith({
                         paymentMethods: paymentMethods,
@@ -137,13 +139,11 @@ define(['app'], function(appModule) {
             });
 
             describe('when the campaign does not have an updateRequest', function() {
-                it('should find the paymentMethods', function() {
-                    campaignState.campaign = campaign;
-
+                it('should find the paymentMethods for the org of the campaign creator', function() {
                     $rootScope.$apply(function() {
                         campaignState.model().then(success, failure);
                     });
-                    expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod');
+                    expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod', {org: 'o-999'});
                     expect(cinema6.db.find).not.toHaveBeenCalled();
                     expect(success).toHaveBeenCalledWith({
                         paymentMethods: paymentMethods,
