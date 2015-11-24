@@ -409,7 +409,6 @@ function( angular , select2 , braintree ) {
                 return tiersArray;
             }
 
-
             this.toggleTier = function(tier) {
                 var targeting = campaign.targeting,
                     tierIds = tier.children.map(function(item) {
@@ -512,6 +511,14 @@ function( angular , select2 , braintree ) {
             this.removeInterest = function(item, tier) {
                 item.selected = false;
                 this.toggleInterest(item, tier);
+            };
+
+            this.expandTier = function(tier) {
+                tier.show = !tier.show;
+
+                if (!tier.children.length) {
+                    this.toggleTier(tier);
+                }
             };
 
             this.tiers = generateInterestTiers(categories);

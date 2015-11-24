@@ -590,6 +590,48 @@ define(['app'], function(appModule) {
                     expect(SelfieInterestsCtrl.toggleInterest).toHaveBeenCalledWith(item, tier);
                 });
             });
+
+            describe('expandTier(tier)', function() {
+                beforeEach(function() {
+                    spyOn(SelfieInterestsCtrl, 'toggleTier');
+                });
+
+                describe('when tier has children', function() {
+                    it('should toggle the "show" prop and not call toggle tier', function() {
+                        SelfieInterestsCtrl.expandTier(SelfieInterestsCtrl.tiers[0]);
+
+                        expect(SelfieInterestsCtrl.tiers[0].show).toBe(true);
+
+                        SelfieInterestsCtrl.expandTier(SelfieInterestsCtrl.tiers[0]);
+
+                        expect(SelfieInterestsCtrl.tiers[0].show).toBe(false);
+
+                        SelfieInterestsCtrl.expandTier(SelfieInterestsCtrl.tiers[0]);
+
+                        expect(SelfieInterestsCtrl.tiers[0].show).toBe(true);
+
+                        expect(SelfieInterestsCtrl.toggleTier).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe('when tier does not have children', function() {
+                    it('should toggle the "show" prop and call toggle tier', function() {
+                        SelfieInterestsCtrl.expandTier(SelfieInterestsCtrl.tiers[2]);
+                        expect(SelfieInterestsCtrl.tiers[2].show).toBe(true);
+                        expect(SelfieInterestsCtrl.toggleTier).toHaveBeenCalledWith(SelfieInterestsCtrl.tiers[2]);
+                        SelfieInterestsCtrl.toggleTier.calls.reset();
+
+                        SelfieInterestsCtrl.expandTier(SelfieInterestsCtrl.tiers[2]);
+                        expect(SelfieInterestsCtrl.tiers[2].show).toBe(false);
+                        expect(SelfieInterestsCtrl.toggleTier).toHaveBeenCalledWith(SelfieInterestsCtrl.tiers[2]);
+                        SelfieInterestsCtrl.toggleTier.calls.reset();
+
+                        SelfieInterestsCtrl.expandTier(SelfieInterestsCtrl.tiers[2]);
+                        expect(SelfieInterestsCtrl.tiers[2].show).toBe(true);
+                        expect(SelfieInterestsCtrl.toggleTier).toHaveBeenCalledWith(SelfieInterestsCtrl.tiers[2]);
+                    });
+                });
+            });
         });
     });
 });
