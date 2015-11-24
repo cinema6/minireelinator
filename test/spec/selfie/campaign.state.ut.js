@@ -418,7 +418,7 @@ define(['app'], function(appModule) {
 
                         it('should alert the user before leaving', function() {
                             expect(ConfirmDialogService.display).toHaveBeenCalled();
-                            expect(prompt).toEqual('Are you sure you want to lose your changes?');
+                            expect(prompt).toEqual('Are you sure you want to leave? You will lose your changes if you continue.');
                         });
 
                         describe('onAffirm()', function() {

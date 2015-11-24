@@ -21,7 +21,7 @@
                     <form name="theForm" ng-submit="SelfieAccountDetailsCtrl.save()">
 
                         <fieldset class="form__item" ng-class="{'ui--hasError': !theForm.firstName.$valid }">
-                            <input c6-fill-check ng-model="AccountCtrl.model.firstName" class="form__textBox form__fillCheck" type="text" name="firstName" id="c6-first-name" ng-minlength="2" ng-maxlength="128" required>
+                            <input c6-fill-check ng-model="SelfieAccountDetailsCtrl.user.firstName" class="form__textBox form__fillCheck" type="text" name="firstName" id="c6-first-name" ng-minlength="2" ng-maxlength="128" required>
                             <label class="form__label" for="c6-first-name">
                                 <i class="fa fa-times ui--error"></i>
                                 First Name
@@ -42,7 +42,7 @@
                         </fieldset>
 
                         <fieldset class="form__item" ng-class="{'ui--hasError': !theForm.lastName.$valid }">
-                            <input c6-fill-check ng-model="AccountCtrl.model.lastName" class="form__textBox form__fillCheck" type="text" name="lastName" id="c6-last-name" ng-minlength="2" ng-maxlength="128" required>
+                            <input c6-fill-check ng-model="SelfieAccountDetailsCtrl.user.lastName" class="form__textBox form__fillCheck" type="text" name="lastName" id="c6-last-name" ng-minlength="2" ng-maxlength="128" required>
                             <label class="form__label" for="c6-last-name">
                                 <i class="fa fa-times ui--error"></i>
                                 Last Name
@@ -63,7 +63,7 @@
                         </fieldset>
 
                         <fieldset class="form__item" ng-class="{'ui--hasError': !theForm.company.$valid }">
-                            <input c6-fill-check ng-model="AccountCtrl.model.company" class="form__textBox form__fillCheck" type="text" name="company" id="c6-company" ng-minlength="2" ng-maxlength="128" required>
+                            <input c6-fill-check ng-model="SelfieAccountDetailsCtrl.user.company" class="form__textBox form__fillCheck" type="text" name="company" id="c6-company" ng-minlength="2" ng-maxlength="128" required>
                             <label class="form__label" for="c6-company">
                                 <i class="fa fa-times ui--error"></i>
                                 Company
@@ -105,9 +105,9 @@
                         <div class="ui__btnHolder">
                             <button ng-disabled="!theForm.$valid" class="action__btn action__btn--wide">Save</button>
                         </div>
-                        
+
                         <div>
-                            <span class="subAction alertMessage alert__success text--center">{{SelfieAccountDetailsCtrl.message}}</span>
+                            <span class="subAction alertMessage alert__failure text--center" ng-if="SelfieAccountDetailsCtrl.error">{{SelfieAccountDetailsCtrl.error}}</span>
                         </div>
 
                     </form>
