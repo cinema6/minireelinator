@@ -40,6 +40,8 @@ function( angular , c6State  , c6uilib , c6Defines , account   ) {
 
         .controller('SelfieController', ['$scope','AuthService','c6State','tracker',
         function                        ( $scope , AuthService , c6State , tracker ) {
+            var self = this;
+
             this.initWithModel = function(model) {
                 this.model = model;
             };
