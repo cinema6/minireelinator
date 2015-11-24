@@ -1,5 +1,5 @@
-define( ['angular','c6_state','c6uilib','./selfie/account'],
-function( angular , c6State  , c6uilib , account   ) {
+define( ['angular','c6_state','c6uilib','c6_defines','./selfie/account'],
+function( angular , c6State  , c6uilib , c6Defines , account   ) {
     'use strict';
 
     return angular.module('c6.app.selfie', [c6State.name, c6uilib.name, account.name])
@@ -38,8 +38,10 @@ function( angular , c6State  , c6uilib , account   ) {
             }]);
         }])
 
-        .controller('SelfieController', ['AuthService','c6State',
-        function                        ( AuthService , c6State ) {
+        .controller('SelfieController', ['$scope','AuthService','c6State','tracker',
+        function                        ( $scope , AuthService , c6State , tracker ) {
+            var self = this;
+
             this.initWithModel = function(model) {
                 this.model = model;
             };
@@ -50,6 +52,18 @@ function( angular , c6State  , c6uilib , account   ) {
                         return c6State.goTo('Selfie:Login', null, {});
                     });
             };
+
+            this.trackStateChange = function(state){
+                tracker.pageview(state.cUrl, 'Platform - ' + state.cName);
+            };
+
+            c6State.on('stateChange', this.trackStateChange);
+
+            tracker.create(c6Defines.kTracker.accountId,c6Defines.kTracker.config);
+
+            $scope.$on('$destroy', function() {
+                c6State.removeListener('stateChange', self.trackStateChange);
+            });
         }])
 
         .config(['c6StateProvider',
