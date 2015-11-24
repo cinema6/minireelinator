@@ -5,5 +5,6 @@
     "imageUrl": null,
     "type": "paypal",
     "email": "selfie880@cinema6.com",
-    "default": false
+    "default": false,
+    "org": "o-a6fd7298acb6fa"
 }

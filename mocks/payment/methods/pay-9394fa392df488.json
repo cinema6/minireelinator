@@ -5,5 +5,6 @@
     "imageUrl": null,
     "default": true,
     "type": "paypal",
-    "email": "selfie880@aol.com"
+    "email": "selfie880@aol.com",
+    "org": "o-a6fd7298acb6fa"
 }
