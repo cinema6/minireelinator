@@ -8,6 +8,9 @@
   * [DESIGN]: Add styles for Check/Uncheck All button in the dropdown
   * [DESIGN]: Changed search button color and added targeting sub headline
   * [FIX]: When editing/managing a campaign always load the campaign creator's payment methods
+  * [FEATURE]: Add Google Analytics tracking for Selfie
+  * [DESIGN]: Updated the icons for interest expand/collapse and changed alert message for
+    when users try to leave edit screen without submitting changes
 
 ## v1.26.0 (November 23, 2015)
 * *[v1.26.0.rc7]*
