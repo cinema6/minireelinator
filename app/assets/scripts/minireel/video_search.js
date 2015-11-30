@@ -30,14 +30,6 @@ function( angular , c6State  , services          ) {
                 {
                     label: 'Dailymotion',
                     value: 'dailymotion'
-                },
-                {
-                    label: 'AOL On',
-                    value: 'aol'
-                },
-                {
-                    label: 'Yahoo! Screen',
-                    value: 'yahoo'
                 }
             ];
             this.sites = this.siteItems.reduce(function(sites, item) {

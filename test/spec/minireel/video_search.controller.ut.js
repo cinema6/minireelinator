@@ -133,9 +133,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                     expect(VideoSearchCtrl.sites).toEqual({
                         youtube: 'YouTube',
                         vimeo: 'Vimeo',
-                        dailymotion: 'Dailymotion',
-                        aol: 'AOL On',
-                        yahoo: 'Yahoo! Screen'
+                        dailymotion: 'Dailymotion'
                     });
                 });
             });

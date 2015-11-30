@@ -931,7 +931,7 @@
                                     }
                                 };
 
-                                card.data.code = VideoService.embedCodeFromData(card.data.service, card.data.videoid);
+                                card.data.code = 'teen-tries-drain-pond-lost-221030513';
 
                                 return card;
                             }()),
@@ -970,7 +970,7 @@
                                     }
                                 };
 
-                                card.data.code = VideoService.embedCodeFromData(card.data.service, card.data.videoid);
+                                card.data.code = 'arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876';
 
                                 return card;
                             }()),
@@ -1713,7 +1713,8 @@
                                     card.type !== 'displayAd' &&
                                     card.type !== 'text' &&
                                     card.type !== 'article' &&
-                                    card.type !== 'rumble';
+                                    card.type !== 'rumble' &&
+                                    card.type !== 'embedded';
                             }).forEach(function(card, index) {
                                 var editorCard = editorMR.data.deck[index];
                                 var spy = jasmine.createSpy('spy()');
@@ -1951,7 +1952,7 @@
                         });
 
                         it('should transpile the vine card', function() {
-                            expect(deck[13]).toEqual({
+                            expect(deck[11]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -1991,7 +1992,7 @@
                         });
 
                         it('should transpile the instagram card', function() {
-                            expect(deck[14]).toEqual({
+                            expect(deck[12]).toEqual({
                                 id: 'rc-94028ed693fda7',
                                 type: 'instagram',
                                 title: 'Hey it\'s an Instagram Card!',
@@ -2021,7 +2022,7 @@
                         });
 
                         it('should transpile the vzaar card', function() {
-                            expect(deck[15]).toEqual({
+                            expect(deck[13]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2061,7 +2062,7 @@
                         });
 
                         it('should transpile the wistia card', function() {
-                            expect(deck[16]).toEqual({
+                            expect(deck[14]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2101,7 +2102,7 @@
                         });
 
                         it('should transpile the jwplayer card', function() {
-                            expect(deck[17]).toEqual({
+                            expect(deck[15]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2141,7 +2142,7 @@
                         });
 
                         it('should transpile the visyard card', function() {
-                            expect(deck[18]).toEqual({
+                            expect(deck[16]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2404,82 +2405,6 @@
                                     }
                                 }
                             });
-
-                            expect(deck[10]).toEqual({
-                                id: 'rc-fc6cfb661b7a86',
-                                type: 'video',
-                                title: 'Yahoo! Card',
-                                note: 'This is a Yahoo! card.',
-                                label: 'Video',
-                                ad: false,
-                                view: 'video',
-                                placementId: null,
-                                templateUrl: null,
-                                sponsored: false,
-                                campaign: {
-                                    campaignId: null,
-                                    advertiserId: null,
-                                    minViewTime: null,
-                                    countUrls: [],
-                                    playUrls: []
-                                },
-                                collateral: {},
-                                links: {},
-                                shareLinks: {},
-                                params: {},
-                                thumb: null,
-                                data: {
-                                    skip: 'anytime',
-                                    controls: true,
-                                    autoplay: null,
-                                    autoadvance: null,
-                                    survey: null,
-                                    service: 'yahoo',
-                                    videoid: 'teen-tries-drain-pond-lost-221030513',
-                                    hostname: null,
-                                    start: null,
-                                    end: null,
-                                    moat: null
-                                }
-                            });
-
-                            expect(deck[11]).toEqual({
-                                id: 'rc-f51c0386a90a02',
-                                type: 'video',
-                                title: 'AOL Card',
-                                note: 'This is an AOL card.',
-                                label: 'Video',
-                                ad: false,
-                                view: 'video',
-                                placementId: null,
-                                templateUrl: null,
-                                sponsored: false,
-                                campaign: {
-                                    campaignId: null,
-                                    advertiserId: null,
-                                    minViewTime: null,
-                                    countUrls: [],
-                                    playUrls: []
-                                },
-                                collateral: {},
-                                links: {},
-                                shareLinks: {},
-                                params: {},
-                                thumb: null,
-                                data: {
-                                    skip: 'anytime',
-                                    controls: true,
-                                    autoplay: null,
-                                    autoadvance: null,
-                                    survey: null,
-                                    service: 'aol',
-                                    videoid: 'arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876',
-                                    hostname: null,
-                                    start: null,
-                                    end: null,
-                                    moat: null
-                                }
-                            });
                         });
 
                         it('should transpile the links cards', function() {
@@ -2518,6 +2443,18 @@
                             }).length).toEqual(0);
                         });
 
+                        it('should not transpile the aol cards', function() {
+                            expect(deck.filter(function(card) {
+                                return card.data.service === 'aol';
+                            }).length).toEqual(0);
+                        });
+
+                        it('should not transpile the aol cards', function() {
+                            expect(deck.filter(function(card) {
+                                return card.data.service === 'yahoo';
+                            }).length).toEqual(0);
+                        });
+
                         it('should not transpile the recap card', function() {
                             expect(deck.filter(function(card) {
                                 return card.type === 'recap';
@@ -2531,7 +2468,7 @@
                         });
 
                         it('should transpile the wildcards', function() {
-                            expect(deck[12]).toEqual({
+                            expect(deck[10]).toEqual({
                                 id: 'rc-c99a6f4c6b4c54',
                                 type: 'wildcard',
                                 title: null,
@@ -2820,9 +2757,9 @@
                                 }
                             });
 
-                            // remove the rumble, article, ad, displayAd, text and recap cards from the original as they will be trimmed out
+                            // remove the aol, yahoo, rumble, article, ad, displayAd, text and recap cards from the original as they will be trimmed out
                             minireel.data.deck = minireel.data.deck.filter(function(card) {
-                                return !(/^(text|displayAd|recap|ad|article|rumble)$/).test(card.type);
+                                return !(/^(text|displayAd|recap|ad|article|rumble|embedded)$/).test(card.type);
                             });
 
                             minireel.data.deck.forEach(function(card, index) {

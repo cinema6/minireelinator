@@ -43,9 +43,9 @@ VideoCardController           , c6embed) {
         }])
 
         .service('EditorService', ['MiniReelService','$q','c6AsyncQueue','VoteService',
-                                   'CollateralService','SettingsService','ThumbnailService',
+                                   'CollateralService','SettingsService',
         function                  ( MiniReelService , $q , c6AsyncQueue , VoteService ,
-                                    CollateralService , SettingsService , ThumbnailService ) {
+                                    CollateralService , SettingsService ) {
             var _private = {},
                 queue = c6AsyncQueue(),
                 beforeSyncFns = {};
@@ -165,21 +165,6 @@ VideoCardController           , c6embed) {
                     });
                 }
 
-                function fetchThumbs(proxy) {
-                    return $q.all(proxy.data.deck.filter(function(card) {
-                        return (/^(yahoo|aol)$/).test(card.data.service) && !card.thumb;
-                    }).map(function(card) {
-                        var service = card.data.service,
-                            videoid = card.data.videoid;
-
-                        return ThumbnailService.getThumbsFor(service, videoid)
-                            .ensureFulfillment()
-                            .then(function(thumb) {
-                                card.thumb = thumb.large;
-                            });
-                    }));
-                }
-
                 function beforeSync(proxy) {
                     return $q.all(Object.keys(beforeSyncFns).map(function(id) {
                         return beforeSyncFns[id](proxy);
@@ -190,7 +175,7 @@ VideoCardController           , c6embed) {
 
                 return beforeSync(proxy)
                     .then(function() {
-                        return $q.all([syncWithCollateral, fetchThumbs].map(function(fn) {
+                        return $q.all([syncWithCollateral].map(function(fn) {
                             return fn(proxy);
                         }));
                     })

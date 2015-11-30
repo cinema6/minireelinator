@@ -1120,8 +1120,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return new ThumbModel(_private.fetchWistiaThumbs(id));
                         case 'jwplayer':
                             return new ThumbModel($q.when(_private.fetchJWPlayerThumbs(id)));
-                        case 'yahoo':
-                        case 'aol':
                         case 'vine':
                             return new ThumbModel(_private.fetchOpenGraphThumbs(service, id));
                         default:
@@ -1198,10 +1196,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     return 'http://vimeo.com/' + id;
                 case 'dailymotion':
                     return 'http://www.dailymotion.com/video/' + id;
-                case 'aol':
-                    return 'http://on.aol.com/video/' + id;
-                case 'yahoo':
-                    return 'https://screen.yahoo.com/' + id + '.html';
                 case 'vine':
                     return 'https://vine.co/v/' + id;
                 case 'vzaar':
@@ -1218,7 +1212,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             this.dataFromText = function(text) {
                 var parsedUrl = c6UrlParser(text),
                     urlService = (parsedUrl.hostname.match(
-                        new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|aol|yahoo|' +
+                        new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|' +
                             'vine|vzaar\\.tv|wistia|jwplatform|vidyard')
                     ) || [])[0],
                     embedService = (text.match(
@@ -1253,13 +1247,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             },
                             'dai.ly': function(url) {
                                 return url.pathname.replace(/^\//, '');
-                            },
-                            aol: function(url) {
-                                return (url.pathname.match(/[^\/]+$/) || [null])[0];
-                            },
-                            yahoo: function(url) {
-                                return (url.pathname
-                                    .match(/[^/]+(?=(\.html))/) || [null])[0];
                             },
                             vine: function(url) {
                                 return (url.pathname
@@ -1362,16 +1349,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
 
             this.embedCodeFromData = function(service, id) {
-                function aolSrc(id) {
-                    return 'http://pshared.5min.com/Scripts/PlayerSeed.js?' +
-                        'sid=281&width=560&height=450&playList=' + (id.match(/\d+$/) || [])[0];
-                }
-
-                function yahooSrc(id) {
-                    return 'https://screen.yahoo.com/' + id + '.html?' +
-                        'format=embed';
-                }
-
                 function vineSrc(id) {
                     return 'https://vine.co/v/' + id + '/embed/simple';
                 }
@@ -1389,26 +1366,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 }
 
                 switch (service) {
-                case 'aol':
-                    return [
-                        '<div style="text-align:center">',
-                        '    <script src="' + aolSrc(id) + '"></script>',
-                        '    <br/>',
-                        '</div>'
-                    ].join('\n');
-                case 'yahoo':
-                    return [
-                        '<iframe width="100%"',
-                        '    height="100%"',
-                        '    scrolling="no"',
-                        '    frameborder="0"',
-                        '    src="' + yahooSrc(id) + '"',
-                        '    allowfullscreen="true"',
-                        '    mozallowfullscreen="true"',
-                        '    webkitallowfullscreen="true"',
-                        '    allowtransparency="true">',
-                        '</iframe>'
-                    ].join('\n');
                 case 'vine':
                     return '<iframe' +
                                ' src="' + vineSrc(id) + '"' +
@@ -2096,7 +2053,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'vimeo':
                         case 'dailymotion':
                         case 'adUnit':
-                        case 'embedded':
                         case 'vine':
                         case 'vzaar':
                         case 'wistia':
@@ -2459,7 +2415,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 function convertDeck(minireel) {
                     return $q.all(minireel.data.deck.
                         filter(function(card) {
-                            return !(/^(ad|displayAd|recap|text|article|rumble)$/).test(card.type);
+                            return !(
+                                /^(ad|displayAd|recap|text|article|rumble|embedded)$/
+                            ).test(card.type);
                         })
                         .map(self.convertCardForEditor));
                 }
@@ -2599,10 +2557,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return 'YouTube';
                     case 'dailymotion':
                         return 'DailyMotion';
-                    case 'aol':
-                        return 'AOL On';
-                    case 'yahoo':
-                        return 'Yahoo! Screen';
                     case 'getty':
                         return 'gettyimages';
                     case 'jwplayer':
@@ -2630,14 +2584,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 function getDataType(card) {
                     switch (card.type) {
                     case 'video':
-                        switch (card.data.service) {
-                        case 'yahoo':
-                        case 'aol':
-                            return 'embedded';
-                        default:
-                            return card.data.service;
-                        }
-                        break;
+                        return card.data.service;
                     default:
                         return card.type;
                     }
@@ -2843,22 +2790,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         thumbs: value(null),
                         moat: copy(null)
                     },
-                    embedded: {
-                        hideSource: hideSourceValue(),
-                        autoplay: copy(null),
-                        autoadvance: copy(null),
-                        skip: skipValue(),
-                        start: trimmer(),
-                        end: trimmer(),
-                        service: copy(),
-                        videoid: copy(null),
-                        code: function(data) {
-                            return VideoService.embedCodeFromData(data.service, data.videoid);
-                        },
-                        href: hrefValue(),
-                        thumbs: videoThumbsValue(),
-                        moat: copy(null)
-                    },
                     vine: {
                         hideSource: hideSourceValue(),
                         autoplay: copy(null),
@@ -2971,15 +2902,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     video: {
                         id: copy(),
                         type: function(card) {
-                            var service = card.data.service;
-
-                            switch (service) {
-                            case 'yahoo':
-                            case 'aol':
-                                return 'embedded';
-                            default:
-                                return service || card.type;
-                            }
+                            return card.data.service || card.type;
                         },
                         title: copy(null),
                         note: copy(null),

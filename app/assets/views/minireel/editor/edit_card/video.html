@@ -19,10 +19,6 @@
             </span>
         </label>
     </form>
-    <div class="videoPlayer__messenger" ng-if="card.data.service === 'aol'">
-        <h3>Oops! There was a problem with your video.</h3>
-        <p>Sorry, but our secure environment prevents us from showing a preview of this video... You can watch it <a ng-href="{{EditCardCtrl.videoUrl}}" target="_blank">here</a>.</p>
-    </div>
     <div class="videoPlayer__messenger" ng-if="EditCardCtrl.error">
         <h3>Oops! There was a problem with your video.</h3>
         <ng-switch on="EditCardCtrl.error.code">
