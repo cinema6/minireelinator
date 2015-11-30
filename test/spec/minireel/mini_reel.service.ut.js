@@ -1008,7 +1008,7 @@
                                     }
                                 };
 
-                                card.data.videoid = VideoService.embedIdFromVideoId('rumble', card.data.siteid);
+                                card.data.videoid = 'v2z8ro';
 
                                 return card;
                             }()),
@@ -1712,7 +1712,8 @@
                                     card.type !== 'recap' &&
                                     card.type !== 'displayAd' &&
                                     card.type !== 'text' &&
-                                    card.type !== 'article';
+                                    card.type !== 'article' &&
+                                    card.type !== 'rumble';
                             }).forEach(function(card, index) {
                                 var editorCard = editorMR.data.deck[index];
                                 var spy = jasmine.createSpy('spy()');
@@ -1950,7 +1951,7 @@
                         });
 
                         it('should transpile the vine card', function() {
-                            expect(deck[14]).toEqual({
+                            expect(deck[13]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -1990,7 +1991,7 @@
                         });
 
                         it('should transpile the instagram card', function() {
-                            expect(deck[15]).toEqual({
+                            expect(deck[14]).toEqual({
                                 id: 'rc-94028ed693fda7',
                                 type: 'instagram',
                                 title: 'Hey it\'s an Instagram Card!',
@@ -2020,7 +2021,7 @@
                         });
 
                         it('should transpile the vzaar card', function() {
-                            expect(deck[16]).toEqual({
+                            expect(deck[15]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2060,7 +2061,7 @@
                         });
 
                         it('should transpile the wistia card', function() {
-                            expect(deck[17]).toEqual({
+                            expect(deck[16]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2100,7 +2101,7 @@
                         });
 
                         it('should transpile the jwplayer card', function() {
-                            expect(deck[18]).toEqual({
+                            expect(deck[17]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2140,7 +2141,7 @@
                         });
 
                         it('should transpile the visyard card', function() {
-                            expect(deck[19]).toEqual({
+                            expect(deck[18]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2479,44 +2480,6 @@
                                     moat: null
                                 }
                             });
-
-                            expect(deck[12]).toEqual({
-                                id: 'rc-8142d1b5897b32',
-                                type: 'video',
-                                title: 'Rumble Card',
-                                note: 'This is a Rumble card.',
-                                label: 'Video',
-                                ad: false,
-                                view: 'video',
-                                placementId: null,
-                                templateUrl: null,
-                                sponsored: false,
-                                campaign: {
-                                    campaignId: null,
-                                    advertiserId: null,
-                                    minViewTime: null,
-                                    countUrls: [],
-                                    playUrls: []
-                                },
-                                collateral: {},
-                                links: {},
-                                shareLinks: {},
-                                params: {},
-                                thumb: null,
-                                data: {
-                                    skip: 'anytime',
-                                    controls: true,
-                                    autoplay: null,
-                                    autoadvance: null,
-                                    survey: null,
-                                    service: 'rumble',
-                                    videoid: 'v2z8ro-willie-perfoming-at-school-talent-show',
-                                    hostname: null,
-                                    start: null,
-                                    end: null,
-                                    moat: null
-                                }
-                            });
                         });
 
                         it('should transpile the links cards', function() {
@@ -2549,6 +2512,12 @@
                             expect(deck[9].data.links).not.toBe(minireel.data.deck[11].data.links);
                         });
 
+                        it('should not transpile the rumble cards', function() {
+                            expect(deck.filter(function(card) {
+                                return card.data.service === 'rumble';
+                            }).length).toEqual(0);
+                        });
+
                         it('should not transpile the recap card', function() {
                             expect(deck.filter(function(card) {
                                 return card.type === 'recap';
@@ -2562,7 +2531,7 @@
                         });
 
                         it('should transpile the wildcards', function() {
-                            expect(deck[13]).toEqual({
+                            expect(deck[12]).toEqual({
                                 id: 'rc-c99a6f4c6b4c54',
                                 type: 'wildcard',
                                 title: null,
@@ -2851,9 +2820,9 @@
                                 }
                             });
 
-                            // remove the article, ad, displayAd, text and recap cards from the original as they will be trimmed out
+                            // remove the rumble, article, ad, displayAd, text and recap cards from the original as they will be trimmed out
                             minireel.data.deck = minireel.data.deck.filter(function(card) {
-                                return !(/^(text|displayAd|recap|ad|article)$/).test(card.type);
+                                return !(/^(text|displayAd|recap|ad|article|rumble)$/).test(card.type);
                             });
 
                             minireel.data.deck.forEach(function(card, index) {

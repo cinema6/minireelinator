@@ -32,10 +32,6 @@ function( angular , c6State  , services          ) {
                     value: 'dailymotion'
                 },
                 {
-                    label: 'Rumble',
-                    value: 'rumble'
-                },
-                {
                     label: 'AOL On',
                     value: 'aol'
                 },

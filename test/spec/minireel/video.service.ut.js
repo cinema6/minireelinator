@@ -54,12 +54,6 @@
                             expect(fromData('yahoo', 'gopro-shows-whisky-bottle-being-085523254')).toBe('https://screen.yahoo.com/gopro-shows-whisky-bottle-being-085523254.html');
                         });
 
-                        it('should create a rumble url', function() {
-                            ['v2zfax-my-cat-dog-meets-mac-n-cheese-for-the-first-time', 'v2z8ro-willie-perfoming-at-school-talent-show', 'v2zfat-white-german-shepherd-and-baby-goat'].forEach(function(videoid) {
-                                expect(fromData('rumble', videoid)).toBe('https://rumble.com/' + videoid + '.html');
-                            });
-                        });
-
                         it('should create a vine url', function() {
                             expect(fromData('vine', '12345')).toBe('https://vine.co/v/12345');
                         });
@@ -169,14 +163,6 @@
                                 service: 'yahoo',
                                 id: 'emotions-run-high-claw-machine-160803280',
                                 hostname: 'screen.yahoo.com'
-                            });
-                        });
-
-                        it('should parse a rumble url', function() {
-                            expect(fromUrl('https://rumble.com/v2zfax-my-cat-dog-meets-mac-n-cheese-for-the-first-time.html')).toEqual({
-                                service: 'rumble',
-                                id: 'v2zfax-my-cat-dog-meets-mac-n-cheese-for-the-first-time',
-                                hostname: 'rumble.com'
                             });
                         });
 
@@ -291,14 +277,6 @@
                                 it('should return the videoid', function() {
                                     expect(result).toBe(ids[index]);
                                 });
-                            });
-                        });
-
-                        describe('for rumble', function() {
-                            it('should be the properly formed embed id', function() {
-                                expect(VideoService.embedIdFromVideoId('rumble', 'v2zfat-white-german-shepherd-and-baby-goat')).toBe('8.2zfat');
-                                expect(VideoService.embedIdFromVideoId('rumble', 'v2zfbw-police-nutbush-g20-brisbane')).toBe('8.2zfbw');
-                                expect(VideoService.embedIdFromVideoId('rumble', 'v2z8ro-willie-perfoming-at-school-talent-show')).toBe('8.2z8ro');
                             });
                         });
                     });

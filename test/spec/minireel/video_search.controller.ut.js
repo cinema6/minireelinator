@@ -134,7 +134,6 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                         youtube: 'YouTube',
                         vimeo: 'Vimeo',
                         dailymotion: 'Dailymotion',
-                        rumble: 'Rumble',
                         aol: 'AOL On',
                         yahoo: 'Yahoo! Screen'
                     });

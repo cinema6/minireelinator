@@ -432,7 +432,7 @@
                      describe('getThumbsFor(data)', function() {
                          var result;
 
-                         ['instagram', 'flickr', 'getty', 'web', 'yahoo', 'aol', 'rumble', 'vzaar', 'wistia', 'jwplayer'].forEach(function(service) {
+                         ['instagram', 'flickr', 'getty', 'web', 'yahoo', 'aol', 'vzaar', 'wistia', 'jwplayer'].forEach(function(service) {
                              describe('when the service is ' + service, function() {
                                  beforeEach(function() {
                                      result = ThumbnailService.getThumbsFor(service, '12345');

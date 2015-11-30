@@ -245,7 +245,7 @@
                         });
 
                         describe('if there are some yahoo or aol cards', function() {
-                            var yahooCard, aolCard, rumbleCard, customThumbCard,
+                            var yahooCard, aolCard, customThumbCard,
                                 thumbs;
 
                             function ThumbModel() {
@@ -286,13 +286,6 @@
 
                                     return aolCard;
                                 }()), (function() {
-                                    rumbleCard = MiniReelService.createCard('video');
-
-                                    rumbleCard.data.service = 'rumble';
-                                    rumbleCard.data.videoid = 'v2z8ro-willie-perfoming-at-school-talent-show';
-
-                                    return rumbleCard;
-                                }()), (function() {
                                     customThumbCard = MiniReelService.createCard('video');
 
                                     customThumbCard.data.service = 'yahoo';
@@ -308,9 +301,6 @@
                                     },
                                     aol: {
                                         'the-wackiest-candidates-of-2014-518495778': new ThumbModel()
-                                    },
-                                    rumble: {
-                                        'v2z8ro-willie-perfoming-at-school-talent-show': new ThumbModel()
                                     }
                                 };
 
@@ -327,8 +317,8 @@
                             });
 
                             it('should fetch thumbs for yahoo and aol cards without thumbnails', function() {
-                                expect(ThumbnailService.getThumbsFor.calls.count()).toBe(3);
-                                [yahooCard, aolCard, rumbleCard].forEach(function(card) {
+                                expect(ThumbnailService.getThumbsFor.calls.count()).toBe(2);
+                                [yahooCard, aolCard].forEach(function(card) {
                                     expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith(card.data.service, card.data.videoid);
                                 });
                             });
@@ -339,13 +329,11 @@
 
                                     thumbs.yahoo[yahooCard.data.videoid].__resolve__('i-am-a-yahoo-thumb.jpg');
                                     thumbs.aol[aolCard.data.videoid].__resolve__('i-am-an-aol-thumb.jpg');
-                                    thumbs.rumble[rumbleCard.data.videoid].__resolve__('i-am-a-rumble-thumb.jpg');
                                 });
 
                                 it('should set the thumb property on the cards', function() {
                                     expect(yahooCard.thumb).toBe('i-am-a-yahoo-thumb.jpg');
                                     expect(aolCard.thumb).toBe('i-am-an-aol-thumb.jpg');
-                                    expect(rumbleCard.thumb).toBe('i-am-a-rumble-thumb.jpg');
                                 });
 
                                 it('should resolve', function() {

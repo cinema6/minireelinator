@@ -1123,7 +1123,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'yahoo':
                         case 'aol':
                         case 'vine':
-                        case 'rumble':
                             return new ThumbModel(_private.fetchOpenGraphThumbs(service, id));
                         default:
                             return new ThumbModel($q.when({
@@ -1203,8 +1202,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     return 'http://on.aol.com/video/' + id;
                 case 'yahoo':
                     return 'https://screen.yahoo.com/' + id + '.html';
-                case 'rumble':
-                    return 'https://rumble.com/' + id + '.html';
                 case 'vine':
                     return 'https://vine.co/v/' + id;
                 case 'vzaar':
@@ -1222,7 +1219,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 var parsedUrl = c6UrlParser(text),
                     urlService = (parsedUrl.hostname.match(
                         new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|aol|yahoo|' +
-                            'rumble|vine|vzaar\\.tv|wistia|jwplatform|vidyard')
+                            'vine|vzaar\\.tv|wistia|jwplatform|vidyard')
                     ) || [])[0],
                     embedService = (text.match(
                         new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|jwplatform|' +
@@ -1261,10 +1258,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 return (url.pathname.match(/[^\/]+$/) || [null])[0];
                             },
                             yahoo: function(url) {
-                                return (url.pathname
-                                    .match(/[^/]+(?=(\.html))/) || [null])[0];
-                            },
-                            rumble: function(url) {
                                 return (url.pathname
                                     .match(/[^/]+(?=(\.html))/) || [null])[0];
                             },
@@ -1365,13 +1358,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
 
             this.embedIdFromVideoId = function(service, videoid) {
-                switch (service) {
-                case 'rumble':
-                    return videoid.match(/^[^-]+/)[0]
-                        .replace(/^v/, '8.');
-                default:
-                    return videoid;
-                }
+                return videoid;
             };
 
             this.embedCodeFromData = function(service, id) {
@@ -2108,7 +2095,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'youtube':
                         case 'vimeo':
                         case 'dailymotion':
-                        case 'rumble':
                         case 'adUnit':
                         case 'embedded':
                         case 'vine':
@@ -2269,7 +2255,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         var type = card.type;
 
                         return data.service ||
-                            (type.search(/^(youtube|dailymotion|vimeo|adUnit|rumble)$/) > -1 ?
+                            (type.search(/^(youtube|dailymotion|vimeo|adUnit)$/) > -1 ?
                                 type : null);
                     },
                     videoid: function(data, key, card) {
@@ -2279,8 +2265,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 vast: data.vast,
                                 vpaid: data.vpaid
                             });
-                        case 'rumble':
-                            return data.siteid || null;
                         default:
                             return data.videoid || null;
                         }
@@ -2475,7 +2459,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 function convertDeck(minireel) {
                     return $q.all(minireel.data.deck.
                         filter(function(card) {
-                            return !(/^(ad|displayAd|recap|text|article)$/).test(card.type);
+                            return !(/^(ad|displayAd|recap|text|article|rumble)$/).test(card.type);
                         })
                         .map(self.convertCardForEditor));
                 }
@@ -2840,23 +2824,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         end: trimmer(),
                         related: value(0),
                         videoid: copy(null),
-                        href: hrefValue(),
-                        thumbs: videoThumbsValue(),
-                        moat: copy(null)
-                    },
-                    rumble: {
-                        hideSource: hideSourceValue(),
-                        autoplay: copy(null),
-                        autoadvance: copy(null),
-                        skip: skipValue(),
-                        start: trimmer(),
-                        end: trimmer(),
-                        siteid: function(data) {
-                            return data.videoid;
-                        },
-                        videoid: function(data) {
-                            return VideoService.embedIdFromVideoId('rumble', data.videoid);
-                        },
                         href: hrefValue(),
                         thumbs: videoThumbsValue(),
                         moat: copy(null)
