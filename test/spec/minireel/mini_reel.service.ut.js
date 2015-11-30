@@ -21,6 +21,7 @@
                 cinema6,
                 c6State,
                 portal,
+                MiniReelState,
                 mocks,
                 $q;
 
@@ -112,6 +113,42 @@
                         }
                     },
                     branding: 'elitedaily'
+                };
+
+                MiniReelState = c6State.get('MiniReel');
+                MiniReelState.cModel = {
+                    data: {
+                        modes: [
+                            {
+                                value: 'lightbox',
+                                modes: [
+                                    {
+                                        value: 'lightbox-playlist',
+                                        deprecated: true,
+                                        replacement: 'light'
+                                    },
+                                    {
+                                        value: 'lightbox'
+                                    }
+                                ]
+                            },
+                            {
+                                value: 'inline',
+                                modes: [
+                                    {
+                                        value: 'full',
+                                        deprecated: true
+                                    },
+                                    {
+                                        value: 'solo'
+                                    },
+                                    {
+                                        value: 'light'
+                                    }
+                                ]
+                            }
+                        ]
+                    }
                 };
 
                 mocks = {
@@ -894,7 +931,7 @@
                                     }
                                 };
 
-                                card.data.code = VideoService.embedCodeFromData(card.data.service, card.data.videoid);
+                                card.data.code = 'teen-tries-drain-pond-lost-221030513';
 
                                 return card;
                             }()),
@@ -933,7 +970,7 @@
                                     }
                                 };
 
-                                card.data.code = VideoService.embedCodeFromData(card.data.service, card.data.videoid);
+                                card.data.code = 'arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876';
 
                                 return card;
                             }()),
@@ -971,7 +1008,7 @@
                                     }
                                 };
 
-                                card.data.videoid = VideoService.embedIdFromVideoId('rumble', card.data.siteid);
+                                card.data.videoid = 'v2z8ro';
 
                                 return card;
                             }()),
@@ -1061,8 +1098,11 @@
                             expect(result()).toEqual({});
                         });
 
-                        it('should return an empty object if a mode with no category is passed in', function() {
-                            expect(result({ data: { mode: 'foo' } }, categories)).toEqual({});
+                        it('should lookup the categories on the MiniReel state if no categories are passed', function() {
+                            expect(result({ data: { mode: 'lightbox' } })).toBe(MiniReelState.cModel.data.modes[0]);
+                            expect(result({ data: { mode: 'lightbox-playlist' } })).toBe(MiniReelState.cModel.data.modes[0]);
+                            expect(result({ data: { mode: 'light' } })).toBe(MiniReelState.cModel.data.modes[1]);
+                            expect(result({ data: { mode: 'full' } })).toBe(MiniReelState.cModel.data.modes[1]);
                         });
 
                         it('should return the category of the minireel\'s mode', function() {
@@ -1071,16 +1111,91 @@
                             expect(result({ data: { mode: 'light' } }, categories)).toBe(categories[1]);
                             expect(result({ data: { mode: 'full' } }, categories)).toBe(categories[1]);
                         });
+
+                        describe('if the MiniReelState has no model', function() {
+                            beforeEach(function() {
+                                delete MiniReelState.cModel;
+                            });
+
+                            it('should return an empty object if something falsy is passed in', function() {
+                                expect(result()).toEqual({});
+                            });
+                        });
+                    });
+
+                    describe('modeDataOf(minireel, categories)', function() {
+                        var categories;
+
+                        function result() {
+                            return MiniReelService.modeDataOf.apply(MiniReelService, arguments);
+                        }
+
+                        beforeEach(function() {
+                            categories = [
+                                {
+                                    value: 'lightbox',
+                                    modes: [
+                                        {
+                                            value: 'lightbox'
+                                        },
+                                        {
+                                            value: 'lightbox-ads'
+                                        }
+                                    ]
+                                },
+                                {
+                                    value: 'inline',
+                                    modes: [
+                                        {
+                                            value: 'light'
+                                        },
+                                        {
+                                            value: 'full'
+                                        }
+                                    ]
+                                }
+                            ];
+                        });
+
+                        it('should return undefined something falsy is passed in', function() {
+                            expect(result()).toBeUndefined();
+                        });
+
+                        it('should return undefined if a mode with no category is passed in', function() {
+                            expect(result({ data: { mode: 'foo' } }, categories)).toBeUndefined();
+                        });
+
+                        it('should lookup the data on the MiniReel state if no categories are passed', function() {
+                            expect(result({ data: { mode: 'lightbox-playlist' } })).toBe(MiniReelState.cModel.data.modes[0].modes[0]);
+                            expect(result({ data: { mode: 'lightbox' } })).toBe(MiniReelState.cModel.data.modes[0].modes[1]);
+                            expect(result({ data: { mode: 'full' } })).toBe(MiniReelState.cModel.data.modes[1].modes[0]);
+                            expect(result({ data: { mode: 'light' } })).toBe(MiniReelState.cModel.data.modes[1].modes[2]);
+                        });
+
+                        it('should return the data of the minireel\'s mode', function() {
+                            expect(result({ data: { mode: 'lightbox' } }, categories)).toBe(categories[0].modes[0]);
+                            expect(result({ data: { mode: 'lightbox-ads' } }, categories)).toBe(categories[0].modes[1]);
+                            expect(result({ data: { mode: 'light' } }, categories)).toBe(categories[1].modes[0]);
+                            expect(result({ data: { mode: 'full' } }, categories)).toBe(categories[1].modes[1]);
+                        });
+
+                        describe('if the MiniReelState has no model', function() {
+                            beforeEach(function() {
+                                delete MiniReelState.cModel;
+                            });
+
+                            it('should return undefined something falsy is passed in', function() {
+                                expect(result()).toBeUndefined();
+                            });
+                        });
                     });
 
                     describe('createCard(type)', function() {
                         it('should create a new card based on the type provided', function() {
                             var imageCard = MiniReelService.createCard('image'),
                                 videoCard = MiniReelService.createCard('video'),
-                                videoBallotCard = MiniReelService.createCard('videoBallot'),
                                 adCard = MiniReelService.createCard('ad'),
                                 linksCard = MiniReelService.createCard('links'),
-                                textCard = MiniReelService.createCard('text'),
                                 recapCard = MiniReelService.createCard('recap');
 
                             expect(imageCard).toEqual({
@@ -1146,74 +1261,6 @@
                                     hostname: null,
                                     start: null,
                                     end: null,
-                                    moat: null
-                                }
-                            });
-
-                            expect(textCard).toEqual({
-                                id: jasmine.any(String),
-                                type: 'text',
-                                title: null,
-                                note: null,
-                                label: 'Text',
-                                ad: false,
-                                view: 'text',
-                                placementId: null,
-                                templateUrl: null,
-                                sponsored: false,
-                                campaign: {
-                                    campaignId: null,
-                                    advertiserId: null,
-                                    minViewTime: null,
-                                    countUrls: [],
-                                    playUrls: []
-                                },
-                                collateral: {},
-                                thumb: null,
-                                links: {},
-                                shareLinks: {},
-                                params: {},
-                                data: {}
-                            });
-
-                            expect(videoBallotCard).toEqual({
-                                id: jasmine.any(String),
-                                type: 'videoBallot',
-                                title: null,
-                                note: null,
-                                label: 'Video + Questionnaire',
-                                ad: false,
-                                view: 'video',
-                                placementId: null,
-                                templateUrl: null,
-                                sponsored: false,
-                                campaign: {
-                                    campaignId: null,
-                                    advertiserId: null,
-                                    minViewTime: null,
-                                    countUrls: [],
-                                    playUrls: []
-                                },
-                                collateral: {},
-                                thumb: null,
-                                links: {},
-                                shareLinks: {},
-                                params: {},
-                                data: {
-                                    skip: 'anytime',
-                                    controls: true,
-                                    autoplay: null,
-                                    autoadvance: null,
-                                    survey: null,
-                                    service: null,
-                                    videoid: null,
-                                    hostname: null,
-                                    start: null,
-                                    end: null,
-                                    ballot: {
-                                        prompt: null,
-                                        choices: []
-                                    },
                                     moat: null
                                 }
                             });
@@ -1307,7 +1354,6 @@
                             var ids = [
                                 MiniReelService.createCard('image'),
                                 MiniReelService.createCard('video'),
-                                MiniReelService.createCard('videoBallot'),
                                 MiniReelService.createCard('video'),
                                 MiniReelService.createCard('ad')
                             ].map(function(card) {
@@ -1353,38 +1399,6 @@
                             });
                         });
 
-                        it('should support creating a displayAd card', function() {
-                            var card = MiniReelService.createCard('displayAd');
-
-                            expect(card).toEqual({
-                                id: jasmine.any(String),
-                                type: 'displayAd',
-                                title: null,
-                                note: null,
-                                label: 'Display Ad',
-                                ad: false,
-                                view: 'display_ad',
-                                placementId: null,
-                                templateUrl: null,
-                                sponsored: false,
-                                campaign: {
-                                    campaignId: null,
-                                    advertiserId: null,
-                                    minViewTime: null,
-                                    countUrls: [],
-                                    playUrls: []
-                                },
-                                collateral: {},
-                                thumb: null,
-                                links: {},
-                                shareLinks: {},
-                                params: {},
-                                data: {
-                                    size: '300x250'
-                                }
-                            });
-                        });
-
                         it('should support creating a wildcard card', function() {
                             var card = MiniReelService.createCard('wildcard');
 
@@ -1420,7 +1434,7 @@
                         it('should change the type of a card to the specified type', function() {
                             var card = MiniReelService.createCard(),
                                 id = card.id,
-                                imageCard, videoCard, videoBallotCard, linksCard, displayAdCard, recapCard, wildcardCard;
+                                imageCard, videoCard, videoBallotCard, linksCard, recapCard, wildcardCard;
 
                             function sameId(card) {
                                 card.id = id;
@@ -1441,19 +1455,6 @@
                             videoCard.data.start = 10;
                             videoCard.data.end = 45;
 
-                            videoBallotCard = MiniReelService.setCardType(card, 'videoBallot');
-                            expect(videoBallotCard).toBe(card);
-                            expect(videoBallotCard).toEqual((function() {
-                                var card = sameId(MiniReelService.createCard('videoBallot'));
-
-                                card.data.service = 'youtube';
-                                card.data.videoid = '12345';
-                                card.data.start = 10;
-                                card.data.end = 45;
-
-                                return card;
-                            }()));
-
                             wildcardCard = MiniReelService.setCardType(card, 'wildcard');
                             expect(wildcardCard).toBe(card);
                             expect(wildcardCard).toEqual(sameId(MiniReelService.createCard('wildcard')));
@@ -1462,10 +1463,6 @@
                             linksCard = MiniReelService.setCardType(card, 'links');
                             expect(linksCard).toBe(card);
                             expect(linksCard).toEqual(sameId(MiniReelService.createCard('links')));
-
-                            displayAdCard = MiniReelService.setCardType(card, 'displayAd');
-                            expect(displayAdCard).toBe(card);
-                            expect(displayAdCard).toEqual(sameId(MiniReelService.createCard('displayAd')));
 
                             recapCard = MiniReelService.setCardType(card, 'recap');
                             expect(recapCard).toBe(card);
@@ -1711,7 +1708,13 @@
 
                         it('should convert cards for the editor individually', function() {
                             minireel.data.deck.filter(function(card) {
-                                return card.type !== 'ad' && card.type !== 'recap';
+                                return card.type !== 'ad' &&
+                                    card.type !== 'recap' &&
+                                    card.type !== 'displayAd' &&
+                                    card.type !== 'text' &&
+                                    card.type !== 'article' &&
+                                    card.type !== 'rumble' &&
+                                    card.type !== 'embedded';
                             }).forEach(function(card, index) {
                                 var editorCard = editorMR.data.deck[index];
                                 var spy = jasmine.createSpy('spy()');
@@ -1727,62 +1730,6 @@
                     });
 
                     describe('convertCardForPlayer(card, _minireel)', function() {
-                        describe('when passed an article card', function() {
-                            var editorArticleCard;
-
-                            beforeEach(function() {
-                                var card = minireel.data.deck[3];
-                                var spy = jasmine.createSpy('spy()');
-                                $rootScope.$apply(function() {
-                                    MiniReelService.convertCardForEditor(card).then(spy);
-                                });
-                                editorArticleCard = spy.calls.mostRecent().args[0];
-                                spyOn(OpenGraphService, 'getData');
-                            });
-
-                            function convertCardForPlayer(card) {
-                                var spy = jasmine.createSpy('spy()');
-                                $rootScope.$apply(function() {
-                                    MiniReelService.convertCardForPlayer(card).then(spy);
-                                });
-                                return spy.calls.mostRecent().args[0];
-                            }
-
-                            it('should call on the OpenGraphService', function() {
-                                OpenGraphService.getData.and.returnValue($q.when({}));
-                                convertCardForPlayer(editorArticleCard);
-                                expect(OpenGraphService.getData).toHaveBeenCalled();
-                            });
-
-                            describe('when no images are found by the OpenGraphService', function() {
-                                beforeEach(function() {
-                                    OpenGraphService.getData.and.returnValue($q.when({}));
-                                });
-
-                                it('should set data.thumbs to the correct value', function() {
-                                    var result = convertCardForPlayer(editorArticleCard);
-                                    expect(result.data.thumbs).toEqual({
-                                        small: null,
-                                        large: null
-                                    });
-                                });
-                            });
-
-                            describe('when the OpenGraphService returns an error', function() {
-                                beforeEach(function() {
-                                    OpenGraphService.getData.and.returnValue($q.reject({}));
-                                });
-
-                                it('should set data.thumbs to the correct value', function() {
-                                    var result = convertCardForPlayer(editorArticleCard);
-                                    expect(result.data.thumbs).toEqual({
-                                        small: null,
-                                        large: null
-                                    });
-                                });
-                            });
-                        });
-
                         it('should protect some data properties even when no video service is found', function() {
                             var card = MiniReelService.createCard('video'),
                                 spy = jasmine.createSpy('spy()'),
@@ -1821,6 +1768,59 @@
                             result = spy.calls.mostRecent().args[0];
 
                             deck = result.data.deck;
+                        });
+
+                        describe('if an unknown mode is passed in', function() {
+                            beforeEach(function() {
+                                spy.calls.reset();
+
+                                minireel.data.mode = 'jfhdks';
+
+                                $rootScope.$apply(function() {
+                                    MiniReelService.convertForEditor(minireel).then(spy);
+                                });
+                                result = spy.calls.mostRecent().args[0];
+                            });
+
+                            it('should make the result mode the org default', function() {
+                                expect(result.data.mode).toBe(SettingsService.getReadOnly('MR::org').minireelDefaults.mode);
+                            });
+                        });
+
+                        describe('if a deprecated mode is passed in', function() {
+                            beforeEach(function() {
+                                spy.calls.reset();
+                            });
+
+                            describe('with a replacement', function() {
+                                beforeEach(function() {
+                                    minireel.data.mode = 'lightbox-playlist';
+
+                                    $rootScope.$apply(function() {
+                                        MiniReelService.convertForEditor(minireel).then(spy);
+                                    });
+                                    result = spy.calls.mostRecent().args[0];
+                                });
+
+                                it('should set the mode to the replacement', function() {
+                                    expect(result.data.mode).toBe('light');
+                                });
+                            });
+
+                            describe('without a replacement', function() {
+                                beforeEach(function() {
+                                    minireel.data.mode = 'full';
+
+                                    $rootScope.$apply(function() {
+                                        MiniReelService.convertForEditor(minireel).then(spy);
+                                    });
+                                    result = spy.calls.mostRecent().args[0];
+                                });
+
+                                it('should set the mode to the first non-deprecated mode in that category', function() {
+                                    expect(result.data.mode).toBe('solo');
+                                });
+                            });
                         });
 
                         describe('if it is missing a collateral hash or splash hash', function() {
@@ -1908,67 +1908,20 @@
                             expect(result.data.mode).toBe('lightbox');
                         });
 
-                        it('should transpile the text card', function() {
-                            expect(deck[0]).toEqual({
-                                id: 'rc-9de889d3002d03',
-                                type: 'text',
-                                title: 'This is my MiniReel',
-                                note: 'Hello. This is an intro.',
-                                label: 'Text',
-                                ad: false,
-                                view: 'text',
-                                placementId: null,
-                                templateUrl: null,
-                                sponsored: false,
-                                campaign: {
-                                    campaignId: null,
-                                    advertiserId: null,
-                                    minViewTime: null,
-                                    countUrls: [],
-                                    playUrls: []
-                                },
-                                collateral: {},
-                                thumb: null,
-                                links: {},
-                                shareLinks: {},
-                                params: {},
-                                data: {}
-                            });
+                        it('should not transpile the text card', function() {
+                            expect(deck.filter(function(card) {
+                                return card.type === 'text';
+                            }).length).toEqual(0);
                         });
 
-                        it('should transpile the article card', function() {
-                            expect(deck[3]).toEqual({
-                                id: 'rc-b2d076ce052459',
-                                type: 'article',
-                                title: 'This is an article card!',
-                                note: null,
-                                label: 'Article',
-                                ad: false,
-                                view: 'article',
-                                placementId: null,
-                                templateUrl: null,
-                                sponsored: false,
-                                campaign: {
-                                    campaignId: null,
-                                    advertiserId: null,
-                                    minViewTime: null,
-                                    countUrls: [],
-                                    playUrls: []
-                                },
-                                collateral: {},
-                                thumb: 'images.somewhere.com/user_specified.jpg',
-                                links: {},
-                                shareLinks: {},
-                                params: {},
-                                data: {
-                                    src: 'http://www.cinema6.com',
-                                    thumbUrl: 'http://www.cinema6.com/og_logo.jpg'
-                                }
-                            });
+                        it('should not transpile the article card', function() {
+                            expect(deck.filter(function(card) {
+                                return card.type === 'article';
+                            }).length).toEqual(0);
                         });
 
                         it('should transpile the image card', function() {
-                            expect(deck[1]).toEqual({
+                            expect(deck[0]).toEqual({
                                 id: 'rc-6ce459b2052d07',
                                 type: 'image',
                                 title: 'This is an image card!',
@@ -1999,7 +1952,7 @@
                         });
 
                         it('should transpile the vine card', function() {
-                            expect(deck[17]).toEqual({
+                            expect(deck[11]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2039,7 +1992,7 @@
                         });
 
                         it('should transpile the instagram card', function() {
-                            expect(deck[18]).toEqual({
+                            expect(deck[12]).toEqual({
                                 id: 'rc-94028ed693fda7',
                                 type: 'instagram',
                                 title: 'Hey it\'s an Instagram Card!',
@@ -2069,7 +2022,7 @@
                         });
 
                         it('should transpile the vzaar card', function() {
-                            expect(deck[19]).toEqual({
+                            expect(deck[13]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2109,7 +2062,7 @@
                         });
 
                         it('should transpile the wistia card', function() {
-                            expect(deck[20]).toEqual({
+                            expect(deck[14]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2149,7 +2102,7 @@
                         });
 
                         it('should transpile the jwplayer card', function() {
-                            expect(deck[21]).toEqual({
+                            expect(deck[15]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2189,7 +2142,7 @@
                         });
 
                         it('should transpile the visyard card', function() {
-                            expect(deck[22]).toEqual({
+                            expect(deck[16]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2229,7 +2182,7 @@
                         });
 
                         it('should transpile the various video cards into two cards', function() {
-                            expect(deck[4]).toEqual({
+                            expect(deck[2]).toEqual({
                                 id: 'rc-c9cf24e87307ac',
                                 type: 'video',
                                 title: 'The Slowest Turtle',
@@ -2271,12 +2224,12 @@
                                 }
                             });
 
-                            expect(deck[5]).toEqual({
+                            expect(deck[3]).toEqual({
                                 id: 'rc-17721b74ce2584',
-                                type: 'videoBallot',
+                                type: 'video',
                                 title: 'The Ugliest Turtle',
                                 note: 'Blah blah blah',
-                                label: 'Video + Questionnaire',
+                                label: 'Video',
                                 ad: false,
                                 view: 'video',
                                 placementId: null,
@@ -2305,23 +2258,16 @@
                                     hostname: null,
                                     start: null,
                                     end: null,
-                                    ballot: {
-                                        prompt: 'Was it ugly?',
-                                        choices: [
-                                            'Really Ugly',
-                                            'Not That Ugly'
-                                        ]
-                                    },
                                     moat: null
                                 }
                             });
 
-                            expect(deck[6]).toEqual({
+                            expect(deck[4]).toEqual({
                                 id: 'rc-61fa9683714e13',
-                                type: 'videoBallot',
+                                type: 'video',
                                 title: 'The Smartest Turtle',
                                 note: 'Blah blah blah',
-                                label: 'Video + Questionnaire',
+                                label: 'Video',
                                 ad: false,
                                 view: 'video',
                                 placementId: null,
@@ -2350,18 +2296,11 @@
                                     hostname: null,
                                     start: undefined,
                                     end: undefined,
-                                    ballot: {
-                                        prompt: 'How smart was it?',
-                                        choices: [
-                                            'Really Smart',
-                                            'Pretty Stupid'
-                                        ]
-                                    },
                                     moat: null
                                 }
                             });
 
-                            expect(deck[7]).toEqual({
+                            expect(deck[5]).toEqual({
                                 id: 'rc-d8ebd5461ba524',
                                 type: 'video',
                                 title: 'The Dumbest Turtle',
@@ -2422,7 +2361,7 @@
                                 }
                             });
 
-                            expect(deck[12]).toEqual({
+                            expect(deck[9]).toEqual({
                                 id: 'rc-82a19a12065636',
                                 type: 'video',
                                 title: 'AdUnit Card',
@@ -2466,124 +2405,10 @@
                                     }
                                 }
                             });
-
-                            expect(deck[13]).toEqual({
-                                id: 'rc-fc6cfb661b7a86',
-                                type: 'video',
-                                title: 'Yahoo! Card',
-                                note: 'This is a Yahoo! card.',
-                                label: 'Video',
-                                ad: false,
-                                view: 'video',
-                                placementId: null,
-                                templateUrl: null,
-                                sponsored: false,
-                                campaign: {
-                                    campaignId: null,
-                                    advertiserId: null,
-                                    minViewTime: null,
-                                    countUrls: [],
-                                    playUrls: []
-                                },
-                                collateral: {},
-                                links: {},
-                                shareLinks: {},
-                                params: {},
-                                thumb: null,
-                                data: {
-                                    skip: 'anytime',
-                                    controls: true,
-                                    autoplay: null,
-                                    autoadvance: null,
-                                    survey: null,
-                                    service: 'yahoo',
-                                    videoid: 'teen-tries-drain-pond-lost-221030513',
-                                    hostname: null,
-                                    start: null,
-                                    end: null,
-                                    moat: null
-                                }
-                            });
-
-                            expect(deck[14]).toEqual({
-                                id: 'rc-f51c0386a90a02',
-                                type: 'video',
-                                title: 'AOL Card',
-                                note: 'This is an AOL card.',
-                                label: 'Video',
-                                ad: false,
-                                view: 'video',
-                                placementId: null,
-                                templateUrl: null,
-                                sponsored: false,
-                                campaign: {
-                                    campaignId: null,
-                                    advertiserId: null,
-                                    minViewTime: null,
-                                    countUrls: [],
-                                    playUrls: []
-                                },
-                                collateral: {},
-                                links: {},
-                                shareLinks: {},
-                                params: {},
-                                thumb: null,
-                                data: {
-                                    skip: 'anytime',
-                                    controls: true,
-                                    autoplay: null,
-                                    autoadvance: null,
-                                    survey: null,
-                                    service: 'aol',
-                                    videoid: 'arrests-made-in-hit-and-run-that-killed-3-teens-on-halloween-518494876',
-                                    hostname: null,
-                                    start: null,
-                                    end: null,
-                                    moat: null
-                                }
-                            });
-
-                            expect(deck[15]).toEqual({
-                                id: 'rc-8142d1b5897b32',
-                                type: 'video',
-                                title: 'Rumble Card',
-                                note: 'This is a Rumble card.',
-                                label: 'Video',
-                                ad: false,
-                                view: 'video',
-                                placementId: null,
-                                templateUrl: null,
-                                sponsored: false,
-                                campaign: {
-                                    campaignId: null,
-                                    advertiserId: null,
-                                    minViewTime: null,
-                                    countUrls: [],
-                                    playUrls: []
-                                },
-                                collateral: {},
-                                links: {},
-                                shareLinks: {},
-                                params: {},
-                                thumb: null,
-                                data: {
-                                    skip: 'anytime',
-                                    controls: true,
-                                    autoplay: null,
-                                    autoadvance: null,
-                                    survey: null,
-                                    service: 'rumble',
-                                    videoid: 'v2z8ro-willie-perfoming-at-school-talent-show',
-                                    hostname: null,
-                                    start: null,
-                                    end: null,
-                                    moat: null
-                                }
-                            });
                         });
 
                         it('should transpile the links cards', function() {
-                            expect(deck[10]).toEqual({
+                            expect(deck[8]).toEqual({
                                 id: 'rc-25c1f60b933186',
                                 type: 'links',
                                 title: 'If You Love Turtles',
@@ -2609,7 +2434,25 @@
                                 data: minireel.data.deck[11].data
                             });
 
-                            expect(deck[10].data.links).not.toBe(minireel.data.deck[11].data.links);
+                            expect(deck[9].data.links).not.toBe(minireel.data.deck[11].data.links);
+                        });
+
+                        it('should not transpile the rumble cards', function() {
+                            expect(deck.filter(function(card) {
+                                return card.data.service === 'rumble';
+                            }).length).toEqual(0);
+                        });
+
+                        it('should not transpile the aol cards', function() {
+                            expect(deck.filter(function(card) {
+                                return card.data.service === 'aol';
+                            }).length).toEqual(0);
+                        });
+
+                        it('should not transpile the aol cards', function() {
+                            expect(deck.filter(function(card) {
+                                return card.data.service === 'yahoo';
+                            }).length).toEqual(0);
                         });
 
                         it('should not transpile the recap card', function() {
@@ -2618,40 +2461,14 @@
                             }).length).toEqual(0);
                         });
 
-                        it('should transpile the displayAd cards', function() {
-                            expect(deck[11]).toEqual({
-                                id: 'rc-82a19a12065636',
-                                type: 'displayAd',
-                                title: 'By Ubisoft',
-                                note: 'Games are great!',
-                                label: 'Display Ad',
-                                ad: false,
-                                view: 'display_ad',
-                                placementId: '398thfu954',
-                                templateUrl: null,
-                                sponsored: false,
-                                campaign: {
-                                    campaignId: null,
-                                    advertiserId: null,
-                                    minViewTime: null,
-                                    countUrls: [],
-                                    playUrls: []
-                                },
-                                collateral: {},
-                                thumb: 'logo.jpg',
-                                links: {},
-                                shareLinks: {},
-                                params: {
-                                    sponsor: 'Ubisoft'
-                                },
-                                data: {
-                                    size: '300x250'
-                                }
-                            });
+                        it('should not transpile the displayAd cards', function() {
+                            expect(deck.filter(function(card) {
+                                return card.type === 'displayAd';
+                            }).length).toEqual(0);
                         });
 
                         it('should transpile the wildcards', function() {
-                            expect(deck[16]).toEqual({
+                            expect(deck[10]).toEqual({
                                 id: 'rc-c99a6f4c6b4c54',
                                 type: 'wildcard',
                                 title: null,
@@ -2940,248 +2757,28 @@
                                 }
                             });
 
-                            // remove the recap card from both because they're filtered out and added back during conversion
-                            delete result.data.deck[result.data.deck.length - 1];
-                            delete minireel.data.deck[minireel.data.deck.length - 1];
+                            // remove the aol, yahoo, rumble, article, ad, displayAd, text and recap cards from the original as they will be trimmed out
+                            minireel.data.deck = minireel.data.deck.filter(function(card) {
+                                return !(/^(text|displayAd|recap|ad|article|rumble|embedded)$/).test(card.type);
+                            });
 
-                            expect(result.data).toEqual(minireel.data);
                             minireel.data.deck.forEach(function(card, index) {
+                                // The ballot module is deprecated so it will be filtered out on
+                                // conversion.
+                                if (card.type === 'videoBallot') { card.type = 'video'; }
+                                if (card.modules) {
+                                    if (card.modules.indexOf('ballot') > -1) { delete card.ballot; }
+                                    card.modules = card.modules.filter(function(module) {
+                                        return !(/^(ballot|displayAd)$/).test(module);
+                                    });
+                                }
+
                                 expect(result.data.deck[index]).toEqual(card, card.id);
                             });
                             expect(result).not.toBe(minireel);
-                        });
 
-                        it('should add/remove displayAd modules on each card based on adConfig', function() {
-                            var converted,
-                                result;
-
-                            minireel.data.adConfig.display.enabled = true;
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
-                            });
-                            converted = convertedSpy.calls.mostRecent().args[0];
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForPlayer(converted).then(resultSpy);
-                            });
-                            result = resultSpy.calls.mostRecent().args[0];
-
-                            result.data.deck.forEach(function(card) {
-                                if (!(/adUnit|article|image|instagram|text|links|displayAd|wildcard/).test(card.type)) {
-                                    expect(card.modules.indexOf('displayAd')).not.toBe(-1);
-                                } else if (card.type !== 'links') {
-                                    expect((card.modules || []).indexOf('displayAd')).toBe(-1);
-                                }
-                            });
-
-                            minireel.data.adConfig.display.enabled = false;
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
-                            });
-                            converted = convertedSpy.calls.mostRecent().args[0];
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForPlayer(converted).then(resultSpy);
-                            });
-                            result = resultSpy.calls.mostRecent().args[0];
-
-                            result.data.deck.forEach(function(card) {
-                                if ((!card.placementId && !(/ad|links/).test(card.type)) ||
-                                    (/adUnit|text|displayAd/).test(card.type)) {
-                                    expect((card.modules || []).indexOf('displayAd')).toBe(-1);
-                                } else if (card.type !== 'links') {
-                                    expect(card.modules.indexOf('displayAd')).not.toBe(-1);
-                                }
-                            });
-
-                            delete minireel.data.adConfig;
-
-                            portal.cModel.org.adConfig = {
-                                display: {
-                                    enabled: true
-                                }
-                            };
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
-                            });
-                            converted = convertedSpy.calls.mostRecent().args[0];
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForPlayer(converted).then(resultSpy);
-                            });
-                            result = resultSpy.calls.mostRecent().args[0];
-
-                            result.data.deck.forEach(function(card) {
-                                if (!(/adUnit|article|image|instagram|text|links|displayAd|wildcard/).test(card.type)) {
-                                    expect(card.modules.indexOf('displayAd')).not.toBe(-1);
-                                } else if (card.type !== 'links') {
-                                    expect((card.modules || []).indexOf('displayAd')).toBe(-1);
-                                }
-                            });
-
-                            portal.cModel.org.adConfig = {
-                                display: {
-                                    enabled: false
-                                }
-                            };
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
-                            });
-                            converted = convertedSpy.calls.mostRecent().args[0];
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForPlayer(converted).then(resultSpy);
-                            });
-                            result = resultSpy.calls.mostRecent().args[0];
-
-                            result.data.deck.forEach(function(card) {
-                                if ((!card.placementId && !(/ad|links/).test(card.type)) ||
-                                    (/adUnit|text|displayAd/).test(card.type)) {
-                                    expect((card.modules || []).indexOf('displayAd')).toBe(-1);
-                                } else if (card.type !== 'links') {
-                                    expect(card.modules.indexOf('displayAd')).not.toBe(-1);
-                                }
-                            });
-                        });
-
-                        it('should never have displayAd module on adUnits unless placementId is defined', function() {
-                            var converted,
-                                result;
-
-                            minireel.data.deck = [
-                                {
-                                    id: 'rc-82a19a12065636',
-                                    type: 'adUnit',
-                                    title: 'AdUnit Card',
-                                    note: 'It\'s Ad Tech!',
-                                    placementId: null,
-                                    templateUrl: null,
-                                    sponsored: false,
-                                    campaign: {
-                                        campaignId: null,
-                                        advertiserId: null,
-                                        minViewTime: null,
-                                        countUrls: [],
-                                        playUrls: []
-                                    },
-                                    collateral: {},
-                                    links: {},
-                                    shareLinks: {},
-                                    thumbs: {
-                                        small: 'logo.jpg',
-                                        large: 'logo.jpg'
-                                    },
-                                    params: {},
-                                    modules: [],
-                                    data: {
-                                        skip: true,
-                                        vast: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvTfWmlP8j6NQnxBMIgFJa80=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov',
-                                        vpaid: 'http://u-ads.adap.tv/a/h/DCQzzI0K2rv1k0TZythPvYyD60pQS_90o8grI6Qm2PI=?cb={cachebreaker}&pageUrl={pageUrl}&eov=eov'
-                                    }
-                                }
-                            ];
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
-                            });
-                            converted = convertedSpy.calls.mostRecent().args[0];
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForPlayer(converted).then(resultSpy);
-                            });
-                            result = resultSpy.calls.mostRecent().args[0];
-
-                            expect(result.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
-
-                            minireel.data.deck[0].placementId = 12345;
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
-                            });
-                            converted = convertedSpy.calls.mostRecent().args[0];
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForPlayer(converted).then(resultSpy);
-                            });
-                            result = resultSpy.calls.mostRecent().args[0];
-
-                            expect(result.data.deck[0].modules.indexOf('displayAd')).toBe(0);
-                        });
-
-                        it('should never have displayAd module on sponsored cards unless placementId is defined', function() {
-                            var converted,
-                                result;
-
-                            minireel.data.adConfig.display.enabled = true;
-
-                            minireel.data.deck = [
-                                {
-                                    id: 'rc-f940abe0c1f3f0',
-                                    type: 'video',
-                                    title: 'No video yet..',
-                                    note: 'Lame...',
-                                    modules: [],
-                                    placementId: null,
-                                    templateUrl: null,
-                                    sponsored: true,
-                                    campaign: {
-                                        campaignId: null,
-                                        advertiserId: null,
-                                        minViewTime: null,
-                                        countUrls: [],
-                                        playUrls: []
-                                    },
-                                    collateral: {},
-                                    links: {},
-                                    shareLinks: {},
-                                    params: {},
-                                    data: {}
-                                }
-                            ];
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
-                            });
-                            converted = convertedSpy.calls.mostRecent().args[0];
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForPlayer(converted).then(resultSpy);
-                            });
-                            result = resultSpy.calls.mostRecent().args[0];
-
-                            expect(result.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
-
-                            minireel.data.deck[0].placementId = 12345;
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
-                            });
-                            converted = convertedSpy.calls.mostRecent().args[0];
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForPlayer(converted).then(resultSpy);
-                            });
-                            result = resultSpy.calls.mostRecent().args[0];
-
-                            expect(result.data.deck[0].modules.indexOf('displayAd')).toBe(0);
-
-                            minireel.data.adConfig.display.enabled = false;
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForEditor(minireel).then(convertedSpy);
-                            });
-                            converted = convertedSpy.calls.mostRecent().args[0];
-
-                            $rootScope.$apply(function() {
-                                MiniReelService.convertForPlayer(converted).then(resultSpy);
-                            });
-                            result = resultSpy.calls.mostRecent().args[0];
-
-                            expect(result.data.deck[0].modules.indexOf('displayAd')).toBe(0);
+                            minireel.data.deck = jasmine.any(Array);
+                            expect(result.data).toEqual(minireel.data);
                         });
 
                         it('should support performing the conversion on a specified object', function() {
@@ -3212,7 +2809,7 @@
                             });
                             converted = convertedSpy.calls.mostRecent().args[0];
 
-                            converted.data.deck[11].data.videoid = null;
+                            converted.data.deck[10].data.videoid = null;
 
                             expect(function() {
                                 MiniReelService.convertForPlayer(converted);
@@ -3431,234 +3028,6 @@
                             expect(MiniReelService.adChoicesOf(org, data.experience.data)).toEqual({
                                 video: [{value:'cinema6'}],
                                 display: [{value:'cinema6'}, {value:'cinema6-publisher'}, {value:'publisher'}, {value:'publisher-cinema6'}]
-                            });
-                        });
-                    });
-
-                    describe('disableDisplayAds(minireel)', function() {
-                        it('should ensure that text, links, and displayAd cards never have displayAd module', function() {
-                            minireel.data.deck.forEach(function(card) {
-                                if ((/text|links|displayAd/).test(card.type)) {
-                                    card.modules = ['displayAd'];
-                                }
-                            });
-
-                            minireel = MiniReelService.disableDisplayAds(minireel);
-
-                            minireel.data.deck.forEach(function(card) {
-                                if ((/text|links|displayAd/).test(card.type)) {
-                                    expect(card.modules.indexOf('displayAd')).toBe(-1);
-                                }
-                            });
-                        });
-
-                        it('should ensure that adUnits never have displayAd module unless placementId is defined', function() {
-                            minireel.data.deck = [
-                                {
-                                    type: 'adUnit',
-                                    modules: ['displayAd']
-                                }
-                            ];
-
-                            minireel = MiniReelService.disableDisplayAds(minireel);
-
-                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
-
-                            minireel.data.deck[0].sponsored = true;
-                            minireel = MiniReelService.disableDisplayAds(minireel);
-
-                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
-
-                            minireel.data.deck[0].placementId = 12345;
-                            minireel = MiniReelService.disableDisplayAds(minireel);
-
-                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(0);
-                        });
-
-                        it('should ensure that displayAd cards never have displayAd module even if placementId is defined', function() {
-                            minireel.data.deck = [
-                                {
-                                    type: 'displayAd',
-                                    modules: ['displayAd']
-                                }
-                            ];
-
-                            minireel = MiniReelService.disableDisplayAds(minireel);
-
-                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
-
-                            minireel.data.deck[0].sponsored = true;
-                            minireel = MiniReelService.disableDisplayAds(minireel);
-
-                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
-
-                            minireel.data.deck[0].placementId = 12345;
-                            minireel = MiniReelService.disableDisplayAds(minireel);
-
-                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
-                        });
-
-                        it('should remove the displayAd module on any eligible cards that don not have placementIds', function() {
-                            minireel.data.deck = [
-                                {
-                                    type: 'youtube',
-                                    modules: ['displayAd']
-                                },
-                                {
-                                    type: 'vimeo',
-                                    modules: ['displayAd']
-                                },
-                                {
-                                    type: 'dailymotion',
-                                    modules: ['displayAd']
-                                },
-                                {
-                                    type: 'video',
-                                    modules: ['displayAd']
-                                },
-                                {
-                                    type: 'videoBallot',
-                                    modules: ['displayAd']
-                                },
-                                {
-                                    type: 'recap',
-                                    modules: ['displayAd']
-                                }
-                            ];
-
-                            minireel = MiniReelService.disableDisplayAds(minireel);
-
-                            minireel.data.deck.forEach(function(card) {
-                                expect(card.modules.indexOf('displayAd')).toBe(-1);
-                            });
-
-                            minireel.data.deck.forEach(function(card) {
-                                card.placementId = 12345;
-                            });
-
-                            minireel = MiniReelService.disableDisplayAds(minireel);
-
-                            minireel.data.deck.forEach(function(card) {
-                                expect(card.modules.indexOf('displayAd')).toBe(0);
-                            });
-                        });
-                    });
-
-                    describe('enableDisplayAds(minireel)', function() {
-                        it('should ensure that text, links, and displayAd cards never have displayAd module', function() {
-                            minireel.data.deck.forEach(function(card) {
-                                if ((/text|links|displayAd/).test(card.type)) {
-                                    card.modules = ['displayAd'];
-                                }
-                            });
-
-                            minireel = MiniReelService.enableDisplayAds(minireel);
-
-                            minireel.data.deck.forEach(function(card) {
-                                if ((/text|links|displayAd/).test(card.type)) {
-                                    expect(card.modules.indexOf('displayAd')).toBe(-1);
-                                }
-                            });
-                        });
-
-                        it('should ensure that adUnits never have displayAd module unless placementId is defined', function() {
-                            minireel.data.deck = [
-                                {
-                                    type: 'adUnit',
-                                    modules: ['displayAd']
-                                }
-                            ];
-
-                            minireel = MiniReelService.enableDisplayAds(minireel);
-
-                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
-
-                            minireel.data.deck[0].sponsored = true;
-                            minireel = MiniReelService.enableDisplayAds(minireel);
-
-                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
-
-                            minireel.data.deck[0].placementId = 12345;
-                            minireel = MiniReelService.enableDisplayAds(minireel);
-
-                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(0);
-                        });
-
-                        it('should ensure that displayAd cards never have displayAd module even if placementId is defined', function() {
-                            minireel.data.deck = [
-                                {
-                                    type: 'displayAd',
-                                    modules: ['displayAd']
-                                }
-                            ];
-
-                            minireel = MiniReelService.enableDisplayAds(minireel);
-
-                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
-
-                            minireel.data.deck[0].sponsored = true;
-                            minireel = MiniReelService.enableDisplayAds(minireel);
-
-                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
-
-                            minireel.data.deck[0].placementId = 12345;
-                            minireel = MiniReelService.enableDisplayAds(minireel);
-
-                            expect(minireel.data.deck[0].modules.indexOf('displayAd')).toBe(-1);
-                        });
-
-                        it('should set the displayAd module on any eligible cards that are not sponsored or are sponsored but have placementIds', function() {
-                            minireel.data.deck = [
-                                {
-                                    type: 'youtube',
-                                    modules: []
-                                },
-                                {
-                                    type: 'vimeo',
-                                    modules: []
-                                },
-                                {
-                                    type: 'dailymotion',
-                                    modules: []
-                                },
-                                {
-                                    type: 'video',
-                                    modules: []
-                                },
-                                {
-                                    type: 'videoBallot',
-                                    modules: []
-                                },
-                                {
-                                    type: 'recap',
-                                    modules: []
-                                }
-                            ];
-
-                            minireel = MiniReelService.enableDisplayAds(minireel);
-
-                            minireel.data.deck.forEach(function(card) {
-                                expect(card.modules.indexOf('displayAd')).toBe(0);
-                            });
-
-                            minireel.data.deck.forEach(function(card) {
-                                card.sponsored = true;
-                            });
-
-                            minireel = MiniReelService.enableDisplayAds(minireel);
-
-                            minireel.data.deck.forEach(function(card) {
-                                expect(card.modules.indexOf('displayAd')).toBe(-1);
-                            });
-
-                            minireel.data.deck.forEach(function(card) {
-                                card.placementId = 12345;
-                            });
-
-                            minireel = MiniReelService.enableDisplayAds(minireel);
-
-                            minireel.data.deck.forEach(function(card) {
-                                expect(card.modules.indexOf('displayAd')).toBe(0);
                             });
                         });
                     });

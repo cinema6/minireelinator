@@ -120,6 +120,14 @@ define(['app','minireel/services'], function(appModule, servicesModule) {
                     }, {
                         localSync: false
                     });
+                    SettingsService.register('MR::org', {
+                        minireelDefaults: {
+                            mode: 'lightbox-ads',
+                            autoplay: true
+                        }
+                    }, {
+                        localSync: false
+                    });
 
                     spyOn(cinema6.db, 'find').and.returnValue($q.when(minireel));
                     spyOn($location, 'search').and.returnValue({

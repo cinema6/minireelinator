@@ -31,7 +31,7 @@
                 model = {
                     title: null,
                     note: null,
-                    type: 'videoBallot',
+                    type: 'video',
                     data: {
                         service: 'youtube',
                         videoid: 'gy1B3agGNxw',
@@ -113,11 +113,11 @@
                                         },
                                         {
                                             id: 'rc-9bc990dd4ad17a',
-                                            type: 'videoBallot'
+                                            type: 'video'
                                         },
                                         {
                                             id: 'rc-2f3c9133f3cbb3',
-                                            type: 'videoBallot'
+                                            type: 'video'
                                         }
                                     ]
                                 }
@@ -199,21 +199,6 @@
                         });
                     });
 
-                    describe('on videoBallot cards', function() {
-                        beforeEach(function() {
-                            model.type = 'videoBallot';
-                            EditCardCtrl.initWithModel(model);
-                        });
-
-                        it('should enable the "copy", "ballot", and "video" tabs', function() {
-                            expect(EditCardCtrl.tabs).toEqual([video, copy, ballot]);
-                        });
-
-                        it('should not set data.source', function() {
-                            expect(model.data.source).toBeUndefined();
-                        });
-                    });
-
                     describe('on video cards', function() {
                         beforeEach(function() {
                             model.type = 'video';
@@ -221,7 +206,7 @@
                         });
 
                         it('should enable the "copy" and "video" tabs', function() {
-                            expect(EditCardCtrl.tabs).toEqual([video, copy, ballot]);
+                            expect(EditCardCtrl.tabs).toEqual([video, copy]);
                         });
 
                         it('should not set data.source', function() {
@@ -236,7 +221,7 @@
                         });
 
                         it('should enable the "copy" and "video" tabs', function() {
-                            expect(EditCardCtrl.tabs).toEqual([video, copy, ballot]);
+                            expect(EditCardCtrl.tabs).toEqual([video, copy]);
                         });
 
                         it('should not set data.source', function() {
@@ -298,30 +283,13 @@
                         spyOn(MiniReelService, 'setCardType').and.callThrough();
                     });
 
-                    it('should not mess with anything that is not a video/videoBallot card', function() {
-                        ['ad', 'recap', 'text', 'links'].forEach(function(type) {
+                    it('should not mess with anything that is not a video card', function() {
+                        ['ad', 'recap', 'links'].forEach(function(type) {
                             EditCardCtrl.model.type = type;
 
                             EditCardCtrl.setIdealType();
 
                             expect(EditCardCtrl.model.type).toBe(type);
-                        });
-                    });
-
-                    ['videoBallot', 'video'].forEach(function(type) {
-                        describe('with a ' + type + ' type with no videoid', function() {
-                            beforeEach(function() {
-                                EditCardCtrl.model.type = type;
-                                EditCardCtrl.model.data.videoid = null;
-                                EditCardCtrl.model.data.source = null;
-
-                                EditCardCtrl.setIdealType();
-                            });
-
-                            it('should set the card to the "text" type', function() {
-                                expect(MiniReelService.setCardType).toHaveBeenCalledWith(EditCardCtrl.model, 'text');
-                                expect(EditCardCtrl.model.type).toBe('text');
-                            });
                         });
                     });
 
@@ -336,48 +304,6 @@
 
                         it('should not do anything', function() {
                             expect(MiniReelService.setCardType).not.toHaveBeenCalled();
-                        });
-                    });
-
-                    describe('with a videoBallot type', function() {
-                        beforeEach(function() {
-                            EditCardCtrl.model.type = 'videoBallot';
-                            EditCardCtrl.model.data.videoid = 'abc';
-                            EditCardCtrl.model.data.source = 'youtube';
-                        });
-
-                        describe('if user has chosen two prompts', function() {
-                            beforeEach(function() {
-                                EditCardCtrl.model.data.ballot = {
-                                    choices: [
-                                        'Hot',
-                                        'Not'
-                                    ]
-                                };
-
-                                EditCardCtrl.setIdealType();
-                            });
-
-                            it('should not change anything', function() {
-                                expect(EditCardCtrl.model.type).toBe('videoBallot');
-                            });
-                        });
-
-                        describe('if the user has not chosen two prompts', function() {
-                            beforeEach(function() {
-                                EditCardCtrl.model.data.ballot = {
-                                    choices: [
-                                        'Hot'
-                                    ]
-                                };
-
-                                EditCardCtrl.setIdealType();
-                            });
-
-                            it('should make the card a video card', function() {
-                                expect(MiniReelService.setCardType).toHaveBeenCalledWith(EditCardCtrl.model, 'video');
-                                expect(EditCardCtrl.model.type).toBe('video');
-                            });
                         });
                     });
                 });
@@ -448,7 +374,7 @@
                         });
                     });
 
-                    ['video', 'videoBallot'].forEach(function(type) {
+                    ['video'].forEach(function(type) {
                         describe('on a ' + type + ' card', function() {
                             beforeEach(function() {
                                 model.type = type;
@@ -528,18 +454,18 @@
                         });
                     });
 
-                    ['video', 'videoBallot'].forEach(function(type) {
+                    ['video'].forEach(function(type) {
                         describe('on a ' + type + ' card', function() {
                             beforeEach(function() {
                                 model.type = type;
                             });
 
-                            it('should be true to make video selection optional', function() {
+                            it('should requre a video to be selected', function() {
                                 onlyEmpty('service');
-                                expect(cardComplete()).toBe(true);
+                                expect(cardComplete()).toBe(false);
 
                                 onlyEmpty('videoid');
-                                expect(cardComplete()).toBe(true);
+                                expect(cardComplete()).toBe(false);
 
                                 onlyEmpty('foo');
                                 expect(cardComplete()).toBe(true);
@@ -763,7 +689,7 @@
                         return EditCardCtrl.canSave;
                     }
 
-                    ['image', 'video', 'videoBallot', 'ad'].forEach(function(type) {
+                    ['image', 'video', 'ad'].forEach(function(type) {
                         describe('on a ' + type + ' card', function() {
                             beforeEach(function() {
                                 model.title = 'Foo';
@@ -784,7 +710,7 @@
                         });
                     });
 
-                    ['image', 'video', 'videoBallot'].forEach(function(type) {
+                    ['image', 'video'].forEach(function(type) {
                         describe('on a ' + type + ' card', function() {
                             describe('if the copy is not complete', function() {
                                 beforeEach(function() {
@@ -802,7 +728,7 @@
                         });
                     });
 
-                    describe('on a video or videoBallot card', function() {
+                    describe('on a video card', function() {
                         beforeEach(function() {
                             model.type = 'video';
                         });
@@ -818,13 +744,6 @@
                                 expect(canSave()).toBe(true);
 
                                 EditorCtrl.errorForCard.and.returnValue('foo');
-                                expect(canSave()).toBe(false);
-
-                                model.type = 'videoBallot';
-                                EditorCtrl.errorForCard.and.returnValue(null);
-                                expect(canSave()).toBe(true);
-
-                                EditorCtrl.errorForCard.and.returnValue('bar');
                                 expect(canSave()).toBe(false);
 
                                 EditorCtrl.errorForCard.calls.all().forEach(function(call) {

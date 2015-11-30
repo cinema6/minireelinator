@@ -56,6 +56,14 @@ define(['app','minireel/sponsor'], function(appModule, sponsorModule) {
                 }, {
                     localSync: false
                 });
+                SettingsService.register('MR::org', {
+                    minireelDefaults: {
+                        mode: 'lightbox-ads',
+                        autoplay: true
+                    }
+                }, {
+                    localSync: false
+                });
 
                 $rootScope.$apply(function() {
                     EditorService.open(minireel).then(function(_proxy_) {

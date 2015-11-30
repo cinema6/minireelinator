@@ -67,20 +67,25 @@ define(['app'], function(appModule) {
                     }
                 };
 
-                SettingsService
-                    .register('MR::org', {}, {
-                        localSync: false
-                    })
-                    .register('MR::user', {
-                        minireelDefaults: {
-                            splash: {
-                                ratio: '16-9',
-                                theme: 'img-text-overlay'
-                            }
+                SettingsService.register('MR::user', {
+                    minireelDefaults: {
+                        splash: {
+                            ratio: '3-2',
+                            theme: 'img-text-overlay'
                         }
-                    }, {
-                        localSync: false
-                    });
+                    }
+                }, {
+                    localSync: false
+                });
+
+                SettingsService.register('MR::org', {
+                    minireelDefaults: {
+                        mode: 'lightbox-ads',
+                        autoplay: true
+                    }
+                }, {
+                    localSync: false
+                });
 
                 spyOn(EditorService, 'open').and.callThrough();
 

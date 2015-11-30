@@ -105,6 +105,14 @@
                 }, {
                     localSync: false
                 });
+                SettingsService.register('MR::org', {
+                    minireelDefaults: {
+                        mode: 'lightbox-ads',
+                        autoplay: true
+                    }
+                }, {
+                    localSync: false
+                });
 
                 minireel = cinema6.db.create('experience', {
                     id: 'e-15aa87f5da34c3',
@@ -233,116 +241,6 @@
 
                             $rootScope.$apply(function() {
                                 _private.performPresync(proxy).then(success);
-                            });
-                        });
-
-                        describe('if there are some yahoo or aol cards', function() {
-                            var yahooCard, aolCard, rumbleCard, customThumbCard,
-                                thumbs;
-
-                            function ThumbModel() {
-                                this.small = null;
-                                this.large = null;
-                                this.__deferred__ = $q.defer();
-                            }
-                            ThumbModel.prototype = {
-                                ensureFulfillment: function() {
-                                    return this.__deferred__.promise;
-                                },
-                                __resolve__: function(url) {
-                                    var thumbModel = this;
-
-                                    $rootScope.$apply(function() {
-                                        ['small', 'large'].forEach(function(prop) {
-                                            this[prop] = url;
-                                        }, thumbModel);
-
-                                        thumbModel.__deferred__.resolve(thumbModel);
-                                    });
-                                }
-                            };
-
-                            beforeEach(function() {
-                                proxy.data.deck.splice(1, 0, (function() {
-                                    yahooCard = MiniReelService.createCard('video');
-
-                                    yahooCard.data.service = 'yahoo';
-                                    yahooCard.data.videoid = 'pasta-caramelized-lemons-103613220';
-
-                                    return yahooCard;
-                                }()), (function() {
-                                    aolCard = MiniReelService.createCard('video');
-
-                                    aolCard.data.service = 'aol';
-                                    aolCard.data.videoid = 'the-wackiest-candidates-of-2014-518495778';
-
-                                    return aolCard;
-                                }()), (function() {
-                                    rumbleCard = MiniReelService.createCard('video');
-
-                                    rumbleCard.data.service = 'rumble';
-                                    rumbleCard.data.videoid = 'v2z8ro-willie-perfoming-at-school-talent-show';
-
-                                    return rumbleCard;
-                                }()), (function() {
-                                    customThumbCard = MiniReelService.createCard('video');
-
-                                    customThumbCard.data.service = 'yahoo';
-                                    customThumbCard.data.videoid = 'issues-live-concert-130000202';
-                                    customThumbCard.thumb = 'custom-thumb.jpg';
-
-                                    return customThumbCard;
-                                }()));
-
-                                thumbs = {
-                                    yahoo: {
-                                        'pasta-caramelized-lemons-103613220': new ThumbModel()
-                                    },
-                                    aol: {
-                                        'the-wackiest-candidates-of-2014-518495778': new ThumbModel()
-                                    },
-                                    rumble: {
-                                        'v2z8ro-willie-perfoming-at-school-talent-show': new ThumbModel()
-                                    }
-                                };
-
-                                ThumbnailService.getThumbsFor
-                                    .and.callFake(function(service, videoid) {
-                                        return thumbs[service][videoid] || new ThumbModel();
-                                    });
-
-                                success.calls.reset();
-
-                                $rootScope.$apply(function() {
-                                    _private.performPresync(proxy).then(success);
-                                });
-                            });
-
-                            it('should fetch thumbs for yahoo and aol cards without thumbnails', function() {
-                                expect(ThumbnailService.getThumbsFor.calls.count()).toBe(3);
-                                [yahooCard, aolCard, rumbleCard].forEach(function(card) {
-                                    expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith(card.data.service, card.data.videoid);
-                                });
-                            });
-
-                            describe('when the thumbs have been fetched', function() {
-                                beforeEach(function() {
-                                    expect(success).not.toHaveBeenCalled();
-
-                                    thumbs.yahoo[yahooCard.data.videoid].__resolve__('i-am-a-yahoo-thumb.jpg');
-                                    thumbs.aol[aolCard.data.videoid].__resolve__('i-am-an-aol-thumb.jpg');
-                                    thumbs.rumble[rumbleCard.data.videoid].__resolve__('i-am-a-rumble-thumb.jpg');
-                                });
-
-                                it('should set the thumb property on the cards', function() {
-                                    expect(yahooCard.thumb).toBe('i-am-a-yahoo-thumb.jpg');
-                                    expect(aolCard.thumb).toBe('i-am-an-aol-thumb.jpg');
-                                    expect(rumbleCard.thumb).toBe('i-am-a-rumble-thumb.jpg');
-                                });
-
-                                it('should resolve', function() {
-                                    expect(success).toHaveBeenCalledWith(proxy);
-                                });
                             });
                         });
 
@@ -524,7 +422,6 @@
 
                             expect(proxy.hasOwnProperty('org')).toBe(false);
 
-                            expect(proxy.data.deck[1].data.ballot.election).toBe(minireel.data.deck[0].ballot.election);
                             expect(proxy.data.deck[2].data.survey.election).toBe(minireel.data.deck[1].ballot.election);
                             expect(proxy.data.election).toBe(minireel.data.election);
                         });

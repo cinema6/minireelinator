@@ -117,9 +117,9 @@ function( angular , c6uilib , c6State  , services   ,
         }])
 
         .controller('AdManagerController', ['$scope','c6State','$q','ConfirmDialogService',
-                                            'cState','$injector','MiniReelService',
+                                            'cState','$injector',
         function                           ( $scope , c6State , $q , ConfirmDialogService ,
-                                             cState , $injector , MiniReelService ) {
+                                             cState , $injector ) {
             var self = this,
                 org = $scope.PortalCtrl.model.org,
                 permissions = $scope.PortalCtrl.model.permissions;
@@ -274,9 +274,6 @@ function( angular , c6uilib , c6State  , services   ,
                         return $q.all(minireels.map(function(exp) {
                             exp.data.deck = cleanDeck(exp.data.deck);
                             exp.data.adConfig = null;
-                            exp = getAdConfig(org).display.enabled ?
-                                MiniReelService.enableDisplayAds(exp) :
-                                MiniReelService.disableDisplayAds(exp);
                             return exp.save();
                         }));
                     },
@@ -547,9 +544,6 @@ function( angular , c6uilib , c6State  , services   ,
                     $q.all(cState.cModel.data.map(function(exp) {
                         exp.data.adConfig = convertNewSettings(exp, settings);
                         exp.data.deck = cleanDeck(exp.data.deck);
-                        exp = settings.display.enabled ?
-                            MiniReelService.enableDisplayAds(exp) :
-                            MiniReelService.disableDisplayAds(exp);
                         return exp.save();
                     })).then(function() {
                         c6State.goTo('MR:AdManager');

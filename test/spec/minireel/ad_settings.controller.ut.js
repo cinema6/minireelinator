@@ -97,8 +97,6 @@
                     $controller = $injector.get('$controller');
                     $q = $injector.get('$q');
                     MiniReelService = $injector.get('MiniReelService');
-                    spyOn(MiniReelService, 'enableDisplayAds').and.callThrough();
-                    spyOn(MiniReelService, 'disableDisplayAds').and.callThrough();
 
                     c6State = $injector.get('c6State');
                     spyOn(c6State, 'goTo');
@@ -821,41 +819,6 @@
                             });
 
                             expect(c6State.goTo.calls.count()).toEqual(goToCallCount + 1);
-                        });
-
-                        it('should enable/disable displayAd modules for all minireel(s)', function() {
-                            var saveDeferred = $q.defer();
-
-                            settings.display.enabled = true;
-
-                            minireels.forEach(function(minireel) {
-                                minireel.save = jasmine.createSpy('exp.save()').and.returnValue(saveDeferred.promise);
-                            });
-
-                            initCtrl({
-                                type: 'minireels',
-                                settings: settings,
-                                data: minireels
-                            });
-
-                            AdSettingsCtrl.save();
-
-                            expect(MiniReelService.enableDisplayAds).toHaveBeenCalled();
-                            expect(MiniReelService.disableDisplayAds).not.toHaveBeenCalled();
-
-                            MiniReelService.enableDisplayAds.calls.reset();
-                            settings.display.enabled = false;
-
-                            initCtrl({
-                                type: 'minireels',
-                                settings: settings,
-                                data: minireels
-                            });
-
-                            AdSettingsCtrl.save();
-
-                            expect(MiniReelService.disableDisplayAds).toHaveBeenCalled();
-                            expect(MiniReelService.enableDisplayAds).not.toHaveBeenCalled();
                         });
 
                         it('should handle incomplete adConfig', function() {
