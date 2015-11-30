@@ -10,15 +10,14 @@
     <fieldset class="form__item">
 
     <div class="tree-multiselect">
-
-        <div class="selections">
-            <div class="section sectionHead">
+        <div class="section sectionHead">
                 <div class="title" style="cursor:pointer;" ng-click="show = !show">
                     <label>Interests</label>
                     <span ng-show="show" class="collapse-section"><i class="fa fa-minus-circle"></i></span>
                     <span ng-show="!show" class="collapse-section"><i class="fa fa-plus-circle"></i></span>
                 </div>
-            </div>
+        </div>
+        <div class="selections">
             <div ng-show="show" class="section sectionNested" ng-repeat="tier in SelfieInterestsCtrl.tiers">
                 <div class="title">
                     <span ng-click="tier.show = !tier.show" ng-show="tier.show && tier.children" class="collapse-section"><i class="fa fa-minus-circle"></i></span>
@@ -41,9 +40,7 @@
             </div>
         </div>
         </div>
-
     </div>
-
         <!-- <label class="form__label" for="c6-interests">
             <i class="fa fa-times ui--error"></i>
             Interests
