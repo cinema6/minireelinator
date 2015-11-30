@@ -1355,7 +1355,7 @@ VideoCardController           , c6embed) {
                         case 'instagram':
                             return !!model.data.id;
                         case 'video':
-                            return true;
+                            return !!(model.data.service && model.data.videoid);
                         default:
                             return undefined;
                         }
@@ -1452,21 +1452,7 @@ VideoCardController           , c6embed) {
                 }
             };
 
-            this.setIdealType = function() {
-                var choices;
-
-                if (!(/^video/).test(this.model.type)) { return; }
-
-                if (!this.model.data.videoid) {
-                    return MiniReelService.setCardType(this.model, 'text');
-                }
-
-                choices = (this.model.data.ballot || {}).choices || [];
-
-                if ((!choices[0] || !choices[1]) && this.model.type !== 'video') {
-                    MiniReelService.setCardType(this.model, 'video');
-                }
-            };
+            this.setIdealType = function() {};
 
             this.save = function() {
                 var deck = EditorCtrl.model.data.deck,

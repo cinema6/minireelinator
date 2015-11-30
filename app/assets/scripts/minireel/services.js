@@ -2155,8 +2155,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     return 'Intro';
                                 case 'recap':
                                     return 'Recap';
-                                case 'text':
-                                    return 'Text';
                                 case 'wildcard':
                                     return 'Sponsored Card Placeholder';
 
@@ -2344,7 +2342,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     links: {
                         links: copy([])
                     },
-                    text: {},
                     recap: {},
                     wildcard: {}
                 };
@@ -2494,7 +2491,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 function convertDeck(minireel) {
                     return $q.all(minireel.data.deck.
                         filter(function(card) {
-                            return !(/^(ad|displayAd|recap)$/).test(card.type);
+                            return !(/^(ad|displayAd|recap|text)$/).test(card.type);
                         })
                         .map(self.convertCardForEditor));
                 }
@@ -2536,15 +2533,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             { splash: null },
                         splash: minireel.data.splash ||
                             { ratio: '3-2', source: 'generated', theme: 'img-text-overlay' },
-                        deck: deck,
-                        ads: minireel.data.deck
-                            .reduce(function(ads, card, index) {
-                                if (card.ad) {
-                                    ads[index] = card;
-                                }
-
-                                return ads;
-                            }, {})
+                        deck: deck
                     };
 
                     // Loop through the experience and copy everything but
@@ -3080,20 +3069,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             };
                         }
                     },
-                    text: {
-                        id: copy(),
-                        type: copy(),
-                        title: copy(null),
-                        note: copy(null),
-                        modules: value([]),
-                        placementId: copy(null),
-                        templateUrl: copy(null),
-                        sponsored: copy(false),
-                        campaign: copy(),
-                        collateral: copy(),
-                        links: copy(),
-                        params: copy()
-                    },
                     video: {
                         id: copy(),
                         type: function(card) {
@@ -3268,12 +3243,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 }
 
                 function convertMinireel(deck) {
-                    forEach(minireel.data.ads, function(card, _index) {
-                        var index = parseInt(_index);
-
-                        deck.splice(index, 0, card);
-                    });
-
                     target = target || {};
 
                     forEach(minireel, function(value, key) {

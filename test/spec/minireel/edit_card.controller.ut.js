@@ -284,29 +284,12 @@
                     });
 
                     it('should not mess with anything that is not a video card', function() {
-                        ['ad', 'recap', 'text', 'links'].forEach(function(type) {
+                        ['ad', 'recap', 'links'].forEach(function(type) {
                             EditCardCtrl.model.type = type;
 
                             EditCardCtrl.setIdealType();
 
                             expect(EditCardCtrl.model.type).toBe(type);
-                        });
-                    });
-
-                    ['video'].forEach(function(type) {
-                        describe('with a ' + type + ' type with no videoid', function() {
-                            beforeEach(function() {
-                                EditCardCtrl.model.type = type;
-                                EditCardCtrl.model.data.videoid = null;
-                                EditCardCtrl.model.data.source = null;
-
-                                EditCardCtrl.setIdealType();
-                            });
-
-                            it('should set the card to the "text" type', function() {
-                                expect(MiniReelService.setCardType).toHaveBeenCalledWith(EditCardCtrl.model, 'text');
-                                expect(EditCardCtrl.model.type).toBe('text');
-                            });
                         });
                     });
 
@@ -477,12 +460,12 @@
                                 model.type = type;
                             });
 
-                            it('should be true to make video selection optional', function() {
+                            it('should requre a video to be selected', function() {
                                 onlyEmpty('service');
-                                expect(cardComplete()).toBe(true);
+                                expect(cardComplete()).toBe(false);
 
                                 onlyEmpty('videoid');
-                                expect(cardComplete()).toBe(true);
+                                expect(cardComplete()).toBe(false);
 
                                 onlyEmpty('foo');
                                 expect(cardComplete()).toBe(true);
