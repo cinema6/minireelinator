@@ -2157,8 +2157,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     return 'Recap';
                                 case 'text':
                                     return 'Text';
-                                case 'displayAd':
-                                    return 'Display Ad';
                                 case 'wildcard':
                                     return 'Sponsored Card Placeholder';
 
@@ -2174,9 +2172,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         switch (this.type) {
                         case 'video':
                             return 'video';
-                        case 'displayAd':
-                            return 'display_ad';
-
                         default:
                             return this.type;
                         }
@@ -2207,12 +2202,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return (card.thumbs && card.thumbs.large) || null;
                     },
                     links: function(card) {
-                        switch (card.type) {
-                        case 'displayAd':
-                            return {};
-                        default:
-                            return card.links || {};
-                        }
+                        return card.links || {};
                     },
                     shareLinks: function(card) {
                         var result = { };
@@ -2355,9 +2345,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         links: copy([])
                     },
                     text: {},
-                    displayAd: {
-                        size: value('300x250')
-                    },
                     recap: {},
                     wildcard: {}
                 };
@@ -2452,7 +2439,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
 
             function shouldHaveDisplayAd(card, enabling) {
-                if ((/text|links|displayAd/).test(card.type)) { return false; }
+                if ((/text|links/).test(card.type)) { return false; }
 
                 if (!!card.placementId) { return true; }
 
@@ -2557,7 +2544,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 function convertDeck(minireel) {
                     return $q.all(minireel.data.deck.
                         filter(function(card) {
-                            return card.type !== 'ad' && card.type !== 'recap';
+                            return !(/^(ad|displayAd|recap)$/).test(card.type);
                         })
                         .map(self.convertCardForEditor));
                 }
@@ -3084,9 +3071,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     links: {
                         links: copy([])
                     },
-                    displayAd: {
-                        size: copy('300x250')
-                    },
                     default: {
                         moat: copy(),
                         autoplay: copy(),
@@ -3280,34 +3264,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         collateral: copy(),
                         links: copy(),
                         params: copy()
-                    },
-                    displayAd: {
-                        id: copy(),
-                        type: value('displayAd'),
-                        title: copy(null),
-                        note: copy(null),
-                        modules: value([]),
-                        placementId: copy(null),
-                        templateUrl: copy(null),
-                        sponsored: copy(false),
-                        campaign: copy(),
-                        collateral: copy(),
-                        links: function() {
-                            return minireel.data.links;
-                        },
-                        thumbs: function() {
-                            var logo = minireel.data.collateral.logo;
-
-                            return {
-                                small: logo,
-                                large: logo
-                            };
-                        },
-                        params: function() {
-                            return {
-                                sponsor: minireel.data.params.sponsor
-                            };
-                        }
                     },
                     wildcard: {
                         id: copy(),

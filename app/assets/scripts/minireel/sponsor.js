@@ -250,21 +250,12 @@ function( angular , c6State  , editor   , MiniReelListController          ,
             }]);
         }])
 
-        .controller('SponsorMiniReelDisplayAdController', ['MiniReelService',
-        function                                          ( MiniReelService ) {
+        .controller('SponsorMiniReelDisplayAdController', [
+        function                                          () {
             Object.defineProperties(this, {
                 adInserted: {
                     get: function() {
-                        return this.model[this.model.length - 2].type === 'displayAd';
-                    },
-                    set: function(bool) {
-                        if (this.adInserted === bool) { return; }
-
-                        if (bool) {
-                            this.model.splice(-1, 0, MiniReelService.createCard('displayAd'));
-                        } else {
-                            this.model.splice(-1, 1);
-                        }
+                        return false;
                     }
                 }
             });
