@@ -250,8 +250,7 @@ function( angular , c6State  , editor   , MiniReelListController          ,
             }]);
         }])
 
-        .controller('SponsorMiniReelDisplayAdController', [
-        function                                          () {
+        .controller('SponsorMiniReelDisplayAdController', [function() {
             Object.defineProperties(this, {
                 adInserted: {
                     get: function() {
