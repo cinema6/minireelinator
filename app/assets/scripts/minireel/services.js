@@ -2116,8 +2116,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'wistia':
                         case 'jwplayer':
                         case 'vidyard':
-                            return 'video' + ((card.modules.indexOf('ballot') > -1) ?
-                                'Ballot' : '');
+                        case 'videoBallot':
+                            return 'video';
                         default:
                             return card.type || null;
 
@@ -2147,8 +2147,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     return 'Instagram';
                                 case 'video':
                                     return 'Video';
-                                case 'videoBallot':
-                                    return 'Video + Questionnaire';
                                 case 'ad':
                                     return 'Advertisement';
                                 case 'links':
@@ -2175,7 +2173,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     view: function() {
                         switch (this.type) {
                         case 'video':
-                        case 'videoBallot':
                             return 'video';
                         case 'displayAd':
                             return 'display_ad';
@@ -2342,14 +2339,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     image: imageDataTemplate,
                     instagram: instagramDataTemplate,
                     video: videoDataTemplate,
-                    videoBallot: extend(ngCopy(videoDataTemplate), {
-                        ballot: function(data, key, card) {
-                            return card.ballot || {
-                                prompt: null,
-                                choices: []
-                            };
-                        }
-                    }),
                     ad: {
                         autoplay: value(true),
                         source: copy(null),
@@ -2745,7 +2734,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     case 'image':
                         return 'image';
                     case 'video':
-                    case 'videoBallot':
                         return 'video';
                     default:
                         return card.type;
@@ -2755,7 +2743,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 function getDataType(card) {
                     switch (card.type) {
                     case 'video':
-                    case 'videoBallot':
                         switch (card.data.service) {
                         case 'yahoo':
                         case 'aol':
@@ -3200,7 +3187,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         },
                         modules: function(card) {
                             var modules = {
-                                'ballot': function() { return card.type === 'videoBallot'; },
                                 'displayAd': function() {
                                     var shouldAlwaysHaveDisplayAd = !!card.placementId,
                                         canHaveDisplayAd = displayAdsEnabled &&

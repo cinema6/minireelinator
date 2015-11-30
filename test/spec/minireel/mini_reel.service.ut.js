@@ -1194,7 +1194,6 @@
                         it('should create a new card based on the type provided', function() {
                             var imageCard = MiniReelService.createCard('image'),
                                 videoCard = MiniReelService.createCard('video'),
-                                videoBallotCard = MiniReelService.createCard('videoBallot'),
                                 adCard = MiniReelService.createCard('ad'),
                                 linksCard = MiniReelService.createCard('links'),
                                 textCard = MiniReelService.createCard('text'),
@@ -1293,48 +1292,6 @@
                                 data: {}
                             });
 
-                            expect(videoBallotCard).toEqual({
-                                id: jasmine.any(String),
-                                type: 'videoBallot',
-                                title: null,
-                                note: null,
-                                label: 'Video + Questionnaire',
-                                ad: false,
-                                view: 'video',
-                                placementId: null,
-                                templateUrl: null,
-                                sponsored: false,
-                                campaign: {
-                                    campaignId: null,
-                                    advertiserId: null,
-                                    minViewTime: null,
-                                    countUrls: [],
-                                    playUrls: []
-                                },
-                                collateral: {},
-                                thumb: null,
-                                links: {},
-                                shareLinks: {},
-                                params: {},
-                                data: {
-                                    skip: 'anytime',
-                                    controls: true,
-                                    autoplay: null,
-                                    autoadvance: null,
-                                    survey: null,
-                                    service: null,
-                                    videoid: null,
-                                    hostname: null,
-                                    start: null,
-                                    end: null,
-                                    ballot: {
-                                        prompt: null,
-                                        choices: []
-                                    },
-                                    moat: null
-                                }
-                            });
-
                             expect(adCard).toEqual({
                                 id: jasmine.any(String),
                                 type: 'ad',
@@ -1424,7 +1381,6 @@
                             var ids = [
                                 MiniReelService.createCard('image'),
                                 MiniReelService.createCard('video'),
-                                MiniReelService.createCard('videoBallot'),
                                 MiniReelService.createCard('video'),
                                 MiniReelService.createCard('ad')
                             ].map(function(card) {
@@ -1557,19 +1513,6 @@
                             videoCard.data.videoid = '12345';
                             videoCard.data.start = 10;
                             videoCard.data.end = 45;
-
-                            videoBallotCard = MiniReelService.setCardType(card, 'videoBallot');
-                            expect(videoBallotCard).toBe(card);
-                            expect(videoBallotCard).toEqual((function() {
-                                var card = sameId(MiniReelService.createCard('videoBallot'));
-
-                                card.data.service = 'youtube';
-                                card.data.videoid = '12345';
-                                card.data.start = 10;
-                                card.data.end = 45;
-
-                                return card;
-                            }()));
 
                             wildcardCard = MiniReelService.setCardType(card, 'wildcard');
                             expect(wildcardCard).toBe(card);
@@ -2443,10 +2386,10 @@
 
                             expect(deck[5]).toEqual({
                                 id: 'rc-17721b74ce2584',
-                                type: 'videoBallot',
+                                type: 'video',
                                 title: 'The Ugliest Turtle',
                                 note: 'Blah blah blah',
-                                label: 'Video + Questionnaire',
+                                label: 'Video',
                                 ad: false,
                                 view: 'video',
                                 placementId: null,
@@ -2475,23 +2418,16 @@
                                     hostname: null,
                                     start: null,
                                     end: null,
-                                    ballot: {
-                                        prompt: 'Was it ugly?',
-                                        choices: [
-                                            'Really Ugly',
-                                            'Not That Ugly'
-                                        ]
-                                    },
                                     moat: null
                                 }
                             });
 
                             expect(deck[6]).toEqual({
                                 id: 'rc-61fa9683714e13',
-                                type: 'videoBallot',
+                                type: 'video',
                                 title: 'The Smartest Turtle',
                                 note: 'Blah blah blah',
-                                label: 'Video + Questionnaire',
+                                label: 'Video',
                                 ad: false,
                                 view: 'video',
                                 placementId: null,
@@ -2520,13 +2456,6 @@
                                     hostname: null,
                                     start: undefined,
                                     end: undefined,
-                                    ballot: {
-                                        prompt: 'How smart was it?',
-                                        choices: [
-                                            'Really Smart',
-                                            'Pretty Stupid'
-                                        ]
-                                    },
                                     moat: null
                                 }
                             });
@@ -3114,11 +3043,23 @@
                             delete result.data.deck[result.data.deck.length - 1];
                             delete minireel.data.deck[minireel.data.deck.length - 1];
 
-                            expect(result.data).toEqual(minireel.data);
                             minireel.data.deck.forEach(function(card, index) {
+                                // The ballot module is deprecated so it will be filtered out on
+                                // conversion.
+                                if (card.type === 'videoBallot') { card.type = 'video'; }
+                                if (card.modules) {
+                                    if (card.modules.indexOf('ballot') > -1) { delete card.ballot; }
+                                    card.modules = card.modules.filter(function(module) {
+                                        return !(/^ballot$/).test(module);
+                                    });
+                                }
+
                                 expect(result.data.deck[index]).toEqual(card, card.id);
                             });
                             expect(result).not.toBe(minireel);
+
+                            minireel.data.deck = jasmine.any(Array);
+                            expect(result.data).toEqual(minireel.data);
                         });
 
                         it('should add/remove displayAd modules on each card based on adConfig', function() {

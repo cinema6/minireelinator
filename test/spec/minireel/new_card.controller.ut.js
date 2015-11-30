@@ -34,7 +34,7 @@
                     MiniReelService = $injector.get('MiniReelService');
                     EditorService = $injector.get('EditorService');
 
-                    model = MiniReelService.createCard('videoBallot');
+                    model = MiniReelService.createCard('video');
 
                     PortalState = c6State.get('Portal');
                     PortalState.cModel = {
@@ -77,7 +77,7 @@
                     });
                     minireel = EditorService.state.minireel;
 
-                    minireel.data.deck.unshift.apply(minireel.data.deck, ['text', 'videoBallot', 'videoBallot', 'video'].map(function(type) {
+                    minireel.data.deck.unshift.apply(minireel.data.deck, ['text', 'video', 'video', 'video'].map(function(type) {
                         return MiniReelService.createCard(type);
                     }));
 
@@ -108,8 +108,8 @@
 
             describe('properties', function() {
                 describe('type', function() {
-                    it('should default to videoBallot', function() {
-                        expect(NewCardCtrl.type).toBe('videoBallot');
+                    it('should default to video', function() {
+                        expect(NewCardCtrl.type).toBe('video');
                     });
                 });
             });

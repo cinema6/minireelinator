@@ -1220,7 +1220,7 @@ VideoCardController           , c6embed) {
                     };
 
                     this.afterModel = function(model) {
-                        var types = ['image', 'video', 'videoBallot', 'text', 'instagram'];
+                        var types = ['image', 'video', 'text', 'instagram'];
 
                         if (!model || types.indexOf(model.type) < 0 || model.sponsored) {
                             c6State.goTo('MR:Editor', null, {}, true);
@@ -1249,22 +1249,6 @@ VideoCardController           , c6embed) {
                         }
 
                         return card;
-                    };
-                }])
-
-                .state('MR:EditCard.Ballot', ['c6UrlMaker','MiniReelService',
-                function                     ( c6UrlMaker , MiniReelService ) {
-                    this.controller = 'GenericController';
-                    this.controllerAs = 'EditCardBallotCtrl';
-                    this.templateUrl = 'views/minireel/editor/edit_card/ballot.html';
-                    this.model = function() {
-                        var card = this.cParent.cModel;
-
-                        if (card.type !== 'videoBallot') {
-                            MiniReelService.setCardType(card, 'videoBallot');
-                        }
-
-                        return card.data.ballot;
                     };
                 }])
 
@@ -1333,7 +1317,6 @@ VideoCardController           , c6embed) {
                         switch (this.model.type) {
                         case 'image':
                         case 'video':
-                        case 'videoBallot':
                             return [this.copyComplete].indexOf(false) < 0 &&
                                 !EditorCtrl.errorForCard(this.model);
 
@@ -1350,7 +1333,6 @@ VideoCardController           , c6embed) {
                         switch (this.model.type) {
                         case 'image':
                         case 'video':
-                        case 'videoBallot':
                             return ['title'].map(function(prop) {
                                 return !!model[prop];
                             }).indexOf(false) < 0;
@@ -1373,7 +1355,6 @@ VideoCardController           , c6embed) {
                         case 'instagram':
                             return !!model.data.id;
                         case 'video':
-                        case 'videoBallot':
                             return true;
                         default:
                             return undefined;
@@ -1437,15 +1418,6 @@ VideoCardController           , c6embed) {
                         icon: 'play',
                         required: true
                     },
-                    ballotTab = {
-                        name: 'Questionnaire',
-                        sref: 'MR:EditCard.Ballot',
-                        icon: 'ballot',
-                        required: false,
-                        customRequiredText: [
-                            'Indicates required field (to include a questionnaire)'
-                        ].join('')
-                    },
                     imageTab = {
                         name: 'Image Content',
                         sref: 'MR:EditCard.Image',
@@ -1465,9 +1437,8 @@ VideoCardController           , c6embed) {
                     case 'instagram':
                         return [instagramTab];
                     case 'video':
-                    case 'videoBallot':
                     case 'text':
-                        return [videoTab, copyTab, ballotTab];
+                        return [videoTab, copyTab];
                     default:
                         return [];
                     }
@@ -1685,7 +1656,7 @@ VideoCardController           , c6embed) {
                 };
 
                 this.model = function() {
-                    return MiniReelService.createCard('videoBallot');
+                    return MiniReelService.createCard('video');
                 };
 
                 this.afterModel = function(card, params) {
@@ -1705,7 +1676,7 @@ VideoCardController           , c6embed) {
             var EditorCtrl = $scope.EditorCtrl,
                 minireel = EditorCtrl.model;
 
-            this.type = 'videoBallot';
+            this.type = 'video';
 
             this.edit = function() {
                 var card = MiniReelService.setCardType(this.model, this.type),

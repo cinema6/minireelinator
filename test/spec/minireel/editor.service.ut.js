@@ -532,7 +532,6 @@
 
                             expect(proxy.hasOwnProperty('org')).toBe(false);
 
-                            expect(proxy.data.deck[1].data.ballot.election).toBe(minireel.data.deck[0].ballot.election);
                             expect(proxy.data.deck[2].data.survey.election).toBe(minireel.data.deck[1].ballot.election);
                             expect(proxy.data.election).toBe(minireel.data.election);
                         });

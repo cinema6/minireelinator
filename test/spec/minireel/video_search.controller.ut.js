@@ -159,7 +159,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
             });
 
             describe('addButtonText', function() {
-                ['MR:EditCard.Copy', 'MR:EditCard.Video', 'MR:EditCard.Ballot', 'MR:EditCard']
+                ['MR:EditCard.Copy', 'MR:EditCard.Video', 'MR:EditCard']
                     .forEach(function(state) {
                         describe('if the state is "' + state + '"', function() {
                             beforeEach(function() {

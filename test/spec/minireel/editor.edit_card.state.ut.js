@@ -86,7 +86,7 @@
                 beforeEach(function() {
                     goodModel = {
                         id: 'rc-036a2e0b648f3d',
-                        type: 'videoBallot'
+                        type: 'video'
                     };
 
                     badModel = {
