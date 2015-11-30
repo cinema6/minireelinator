@@ -1708,7 +1708,11 @@
 
                         it('should convert cards for the editor individually', function() {
                             minireel.data.deck.filter(function(card) {
-                                return card.type !== 'ad' && card.type !== 'recap' && card.type !== 'displayAd' && card.type !== 'text';
+                                return card.type !== 'ad' &&
+                                    card.type !== 'recap' &&
+                                    card.type !== 'displayAd' &&
+                                    card.type !== 'text' &&
+                                    card.type !== 'article';
                             }).forEach(function(card, index) {
                                 var editorCard = editorMR.data.deck[index];
                                 var spy = jasmine.createSpy('spy()');
@@ -1724,62 +1728,6 @@
                     });
 
                     describe('convertCardForPlayer(card, _minireel)', function() {
-                        describe('when passed an article card', function() {
-                            var editorArticleCard;
-
-                            beforeEach(function() {
-                                var card = minireel.data.deck[3];
-                                var spy = jasmine.createSpy('spy()');
-                                $rootScope.$apply(function() {
-                                    MiniReelService.convertCardForEditor(card).then(spy);
-                                });
-                                editorArticleCard = spy.calls.mostRecent().args[0];
-                                spyOn(OpenGraphService, 'getData');
-                            });
-
-                            function convertCardForPlayer(card) {
-                                var spy = jasmine.createSpy('spy()');
-                                $rootScope.$apply(function() {
-                                    MiniReelService.convertCardForPlayer(card).then(spy);
-                                });
-                                return spy.calls.mostRecent().args[0];
-                            }
-
-                            it('should call on the OpenGraphService', function() {
-                                OpenGraphService.getData.and.returnValue($q.when({}));
-                                convertCardForPlayer(editorArticleCard);
-                                expect(OpenGraphService.getData).toHaveBeenCalled();
-                            });
-
-                            describe('when no images are found by the OpenGraphService', function() {
-                                beforeEach(function() {
-                                    OpenGraphService.getData.and.returnValue($q.when({}));
-                                });
-
-                                it('should set data.thumbs to the correct value', function() {
-                                    var result = convertCardForPlayer(editorArticleCard);
-                                    expect(result.data.thumbs).toEqual({
-                                        small: null,
-                                        large: null
-                                    });
-                                });
-                            });
-
-                            describe('when the OpenGraphService returns an error', function() {
-                                beforeEach(function() {
-                                    OpenGraphService.getData.and.returnValue($q.reject({}));
-                                });
-
-                                it('should set data.thumbs to the correct value', function() {
-                                    var result = convertCardForPlayer(editorArticleCard);
-                                    expect(result.data.thumbs).toEqual({
-                                        small: null,
-                                        large: null
-                                    });
-                                });
-                            });
-                        });
-
                         it('should protect some data properties even when no video service is found', function() {
                             var card = MiniReelService.createCard('video'),
                                 spy = jasmine.createSpy('spy()'),
@@ -1964,35 +1912,10 @@
                             }).length).toEqual(0);
                         });
 
-                        it('should transpile the article card', function() {
-                            expect(deck[2]).toEqual({
-                                id: 'rc-b2d076ce052459',
-                                type: 'article',
-                                title: 'This is an article card!',
-                                note: null,
-                                label: 'Article',
-                                ad: false,
-                                view: 'article',
-                                placementId: null,
-                                templateUrl: null,
-                                sponsored: false,
-                                campaign: {
-                                    campaignId: null,
-                                    advertiserId: null,
-                                    minViewTime: null,
-                                    countUrls: [],
-                                    playUrls: []
-                                },
-                                collateral: {},
-                                thumb: 'images.somewhere.com/user_specified.jpg',
-                                links: {},
-                                shareLinks: {},
-                                params: {},
-                                data: {
-                                    src: 'http://www.cinema6.com',
-                                    thumbUrl: 'http://www.cinema6.com/og_logo.jpg'
-                                }
-                            });
+                        it('should not transpile the article card', function() {
+                            expect(deck.filter(function(card) {
+                                return card.type === 'article';
+                            }).length).toEqual(0);
                         });
 
                         it('should transpile the image card', function() {
@@ -2027,7 +1950,7 @@
                         });
 
                         it('should transpile the vine card', function() {
-                            expect(deck[15]).toEqual({
+                            expect(deck[14]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2067,7 +1990,7 @@
                         });
 
                         it('should transpile the instagram card', function() {
-                            expect(deck[16]).toEqual({
+                            expect(deck[15]).toEqual({
                                 id: 'rc-94028ed693fda7',
                                 type: 'instagram',
                                 title: 'Hey it\'s an Instagram Card!',
@@ -2097,7 +2020,7 @@
                         });
 
                         it('should transpile the vzaar card', function() {
-                            expect(deck[17]).toEqual({
+                            expect(deck[16]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2137,7 +2060,7 @@
                         });
 
                         it('should transpile the wistia card', function() {
-                            expect(deck[18]).toEqual({
+                            expect(deck[17]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2177,7 +2100,7 @@
                         });
 
                         it('should transpile the jwplayer card', function() {
-                            expect(deck[19]).toEqual({
+                            expect(deck[18]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2217,7 +2140,7 @@
                         });
 
                         it('should transpile the visyard card', function() {
-                            expect(deck[20]).toEqual({
+                            expect(deck[19]).toEqual({
                                 data: {
                         	       skip: 'anytime',
                         	        controls: true,
@@ -2257,7 +2180,7 @@
                         });
 
                         it('should transpile the various video cards into two cards', function() {
-                            expect(deck[3]).toEqual({
+                            expect(deck[2]).toEqual({
                                 id: 'rc-c9cf24e87307ac',
                                 type: 'video',
                                 title: 'The Slowest Turtle',
@@ -2299,7 +2222,7 @@
                                 }
                             });
 
-                            expect(deck[4]).toEqual({
+                            expect(deck[3]).toEqual({
                                 id: 'rc-17721b74ce2584',
                                 type: 'video',
                                 title: 'The Ugliest Turtle',
@@ -2337,7 +2260,7 @@
                                 }
                             });
 
-                            expect(deck[5]).toEqual({
+                            expect(deck[4]).toEqual({
                                 id: 'rc-61fa9683714e13',
                                 type: 'video',
                                 title: 'The Smartest Turtle',
@@ -2375,7 +2298,7 @@
                                 }
                             });
 
-                            expect(deck[6]).toEqual({
+                            expect(deck[5]).toEqual({
                                 id: 'rc-d8ebd5461ba524',
                                 type: 'video',
                                 title: 'The Dumbest Turtle',
@@ -2436,7 +2359,7 @@
                                 }
                             });
 
-                            expect(deck[10]).toEqual({
+                            expect(deck[9]).toEqual({
                                 id: 'rc-82a19a12065636',
                                 type: 'video',
                                 title: 'AdUnit Card',
@@ -2481,7 +2404,7 @@
                                 }
                             });
 
-                            expect(deck[11]).toEqual({
+                            expect(deck[10]).toEqual({
                                 id: 'rc-fc6cfb661b7a86',
                                 type: 'video',
                                 title: 'Yahoo! Card',
@@ -2519,7 +2442,7 @@
                                 }
                             });
 
-                            expect(deck[12]).toEqual({
+                            expect(deck[11]).toEqual({
                                 id: 'rc-f51c0386a90a02',
                                 type: 'video',
                                 title: 'AOL Card',
@@ -2557,7 +2480,7 @@
                                 }
                             });
 
-                            expect(deck[13]).toEqual({
+                            expect(deck[12]).toEqual({
                                 id: 'rc-8142d1b5897b32',
                                 type: 'video',
                                 title: 'Rumble Card',
@@ -2597,7 +2520,7 @@
                         });
 
                         it('should transpile the links cards', function() {
-                            expect(deck[9]).toEqual({
+                            expect(deck[8]).toEqual({
                                 id: 'rc-25c1f60b933186',
                                 type: 'links',
                                 title: 'If You Love Turtles',
@@ -2639,7 +2562,7 @@
                         });
 
                         it('should transpile the wildcards', function() {
-                            expect(deck[14]).toEqual({
+                            expect(deck[13]).toEqual({
                                 id: 'rc-c99a6f4c6b4c54',
                                 type: 'wildcard',
                                 title: null,
@@ -2928,9 +2851,9 @@
                                 }
                             });
 
-                            // remove the ad, displayAd, text and recap cards from the original as they will be trimmed out
+                            // remove the article, ad, displayAd, text and recap cards from the original as they will be trimmed out
                             minireel.data.deck = minireel.data.deck.filter(function(card) {
-                                return !(/^(text|displayAd|recap|ad)$/).test(card.type);
+                                return !(/^(text|displayAd|recap|ad|article)$/).test(card.type);
                             });
 
                             minireel.data.deck.forEach(function(card, index) {
@@ -2980,7 +2903,7 @@
                             });
                             converted = convertedSpy.calls.mostRecent().args[0];
 
-                            converted.data.deck[11].data.videoid = null;
+                            converted.data.deck[10].data.videoid = null;
 
                             expect(function() {
                                 MiniReelService.convertForPlayer(converted);

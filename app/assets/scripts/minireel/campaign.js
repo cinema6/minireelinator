@@ -802,9 +802,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
 
                     var cardType;
                     switch(params.type) {
-                    case 'article':
-                        cardType = 'article';
-                        break;
                     case 'instagram':
                         cardType = 'instagram';
                         break;
@@ -914,9 +911,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                 switch(tab) {
                 case 'instagram':
                     return (!!model.data.id);
-                case 'article':
-                    return ((!!model.data.src && model.data.src!=='') &&
-                            (!!model.title && model.title!==''));
                 case 'branding':
                     return ((WildcardCtrl.hideBrand || !!model.params.sponsor) &&
                             WildcardCtrl.validImageSrcs);
@@ -1013,20 +1007,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         name: 'Advertising',
                         sref: 'MR:Wildcard.Advertising'
                     },
-                    articleTab = {
-                        name: 'Webpage Content',
-                        required: true,
-                        sref: 'MR:Wildcard.Article'
-                    },
                     instagramTab = {
                         name: 'Instagram Content',
                         required: true,
                         sref: 'MR:Wildcard.Instagram'
-                    },
-                    thumbsTab = {
-                        name: 'Thumbnail Content',
-                        required: false,
-                        sref: 'MR:Wildcard.Thumbs'
                     },
                     sharingTab = {
                         name: 'Social Sharing',
@@ -1034,8 +1018,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                         sref: 'MR:Wildcard.Sharing'
                     };
                 switch(type) {
-                case 'article':
-                    return [articleTab, thumbsTab];
                 case 'instagram':
                     return [instagramTab, brandingTab, linksTab];
                 default:
@@ -1079,19 +1061,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }, this);
 
             if (window.c6.kHasKarma) { this._private = _private; }
-        }])
-
-        .config(['c6StateProvider',
-        function( c6StateProvider ) {
-            c6StateProvider.state('MR:Wildcard.Article', [function() {
-                this.controller = 'WildcardArticleController';
-                this.controllerAs = 'wildcardArticleCtrl';
-                this.templateUrl = 'views/minireel/campaigns/campaign/cards/wildcard/article.html';
-
-                this.model = function() {
-                    return this.cParent.cModel;
-                };
-            }]);
         }])
 
         .config(['c6StateProvider',
@@ -1149,19 +1118,6 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             });
 
             if (window.c6.kHasKarma) { this._private = _private; }
-        }])
-
-        .config(['c6StateProvider',
-        function( c6StateProvider ) {
-            c6StateProvider.state('MR:Wildcard.Thumbs', [function() {
-                this.controller = 'GenericController';
-                this.controllerAs = 'wildcardThumbsCtrl';
-                this.templateUrl = 'views/minireel/campaigns/campaign/cards/wildcard/thumbs.html';
-
-                this.model = function() {
-                    return this.cParent.cModel;
-                };
-            }]);
         }])
 
         .controller('WildcardArticleController', ['$sce', '$scope', 'c6Debounce',

@@ -61,7 +61,7 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                 });
             });
 
-            ['video', 'instagram', 'article'].forEach(function(type) {
+            ['video', 'instagram'].forEach(function(type) {
                 describe('for ' + type + ' cards', function() {
                     beforeEach(function() {
                         result = newWildcard.model({

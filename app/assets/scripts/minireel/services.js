@@ -2085,7 +2085,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             }
 
             function makeCard(rawData, base) {
-                var template, dataTemplates, articleDataTemplate,
+                var template, dataTemplates,
                     imageDataTemplate, videoDataTemplate,
                     instagramDataTemplate,
                     card = base || {
@@ -2139,8 +2139,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             card.sponsored ? 'Sponsored' : null,
                             (function() {
                                 switch (this.type) {
-                                case 'article':
-                                    return 'Article';
                                 case 'image':
                                     return 'Image';
                                 case 'instagram':
@@ -2215,19 +2213,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return result;
                     },
                     params: copy({})
-                };
-
-                // articleDataTemplate: this is the base template for all
-                // article cards.
-                articleDataTemplate = {
-                    src: copy(null),
-                    thumbUrl: function(data) {
-                        if(data.thumbs) {
-                            return data.thumbs.large;
-                        } else {
-                            return null;
-                        }
-                    }
                 };
 
                 // imageDataTemplate: this is the base template for all
@@ -2323,7 +2308,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 // card's data, the current property key and a reference to
                 // the card.
                 dataTemplates = {
-                    article: articleDataTemplate,
                     image: imageDataTemplate,
                     instagram: instagramDataTemplate,
                     video: videoDataTemplate,
@@ -2491,7 +2475,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 function convertDeck(minireel) {
                     return $q.all(minireel.data.deck.
                         filter(function(card) {
-                            return !(/^(ad|displayAd|recap|text)$/).test(card.type);
+                            return !(/^(ad|displayAd|recap|text|article)$/).test(card.type);
                         })
                         .map(self.convertCardForEditor));
                 }
@@ -2738,34 +2722,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     };
                 }
 
-                function articleThumbsValue() {
-                    return function(data) {
-                        return OpenGraphService.getData(data.src)
-                            .then(function(ogData) {
-                                if(ogData.images &&
-                                   ogData.images.length > 0 &&
-                                   ogData.images[0].value) {
-                                    var thumbUrl = ogData.images[0].value;
-                                    return {
-                                        small: thumbUrl,
-                                        large: thumbUrl
-                                    };
-                                } else {
-                                    return {
-                                        small: null,
-                                        large: null
-                                    };
-                                }
-                            })
-                            .catch(function() {
-                                return {
-                                    small: null,
-                                    large: null
-                                };
-                            });
-                    };
-                }
-
                 function instagramThumbsValue() {
                     return function(data) {
                         return ThumbnailService.getThumbsFor('instagram', data.id)
@@ -2817,10 +2773,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 }
 
                 dataTemplates = {
-                    article: {
-                        src: copy(null),
-                        thumbs: articleThumbsValue()
-                    },
                     image: {
                         imageid: function(data) {
                             if(data.service === 'web') {
@@ -3013,26 +2965,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 };
 
                 cardBases = {
-                    article: {
-                        id: copy(),
-                        type: value('article'),
-                        title: copy(null),
-                        note: value(null),
-                        modules: value([]),
-                        placementId: copy(null),
-                        templateUrl: copy(null),
-                        sponsored: copy(false),
-                        campaign: copy(),
-                        collateral: copy(),
-                        links: copy(),
-                        params: copy(),
-                        thumbs: function(card) {
-                            return (card.thumb || null) && {
-                                small: card.thumb,
-                                large: card.thumb
-                            };
-                        }
-                    },
                     image: {
                         id: copy(),
                         type: value('image'),

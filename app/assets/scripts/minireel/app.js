@@ -125,10 +125,10 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
                         this.route('/cards', 'MR:Campaign.Cards', function() {
                             this.route('/new', 'MR:NewWildcard', function() {
                                 this.state('MR:Wildcard', 'MR:New:Wildcard', function() {
-                                    this.state('MR:Wildcard.Article', 'MR:New:Wildcard.Article');
-                                    this.state('MR:Wildcard.Instagram',
-                                               'MR:New:Wildcard.Instagram');
-                                    this.state('MR:Wildcard.Thumbs', 'MR:New:Wildcard.Thumbs');
+                                    this.state(
+                                        'MR:Wildcard.Instagram',
+                                        'MR:New:Wildcard.Instagram'
+                                    );
                                     this.state('MR:Wildcard.Copy', 'MR:New:Wildcard.Copy');
                                     this.state('MR:Wildcard.Video', 'MR:New:Wildcard.Video');
                                     this.state('MR:Wildcard.Survey', 'MR:New:Wildcard.Survey');
