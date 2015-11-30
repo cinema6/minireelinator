@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.28.0.rc1]*
+  * [DESIGN]: Updated styles for titles on create/manage campaign, settings and interests
+
 ## v1.27.0 (November 24, 2015)
 * *[v1.27.0.rc1]*
   * [DESIGN]: Added styles for soft alerts and spinners
