@@ -105,6 +105,14 @@
                 }, {
                     localSync: false
                 });
+                SettingsService.register('MR::org', {
+                    minireelDefaults: {
+                        mode: 'lightbox-ads',
+                        autoplay: true
+                    }
+                }, {
+                    localSync: false
+                });
 
                 minireel = cinema6.db.create('experience', {
                     id: 'e-15aa87f5da34c3',

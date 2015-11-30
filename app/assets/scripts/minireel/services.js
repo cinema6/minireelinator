@@ -2054,7 +2054,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             var self = this,
                 app = c6State.get('Application'),
-                application = c6State.get(app.name);
+                application = c6State.get(app.name),
+                MiniReelState = c6State.get('MiniReel');
 
             function generateId(prefix) {
                 return prefix + '-' +
@@ -2392,11 +2393,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 return card;
             }
 
-            this.modeCategoryOf = function(minireel, categories) {
+            this.modeCategoryOf = function(minireel/*, categories*/) {
+                var categories = arguments[1] || (MiniReelState.cModel || { data: {} }).data.modes;
                 var result = {},
                     modeValue = minireel && minireel.data.mode;
 
-                forEach(categories || [], function(category) {
+                forEach(categories, function(category) {
                     forEach(category.modes, function(mode) {
                         if (mode.value === modeValue) {
                             result = category;
@@ -2407,8 +2409,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 return result;
             };
 
-            this.modeDataOf = function(minireel, categories) {
+            this.modeDataOf = function(minireel/*, categories*/) {
+                var categories = arguments[1] || (MiniReelState.cModel || { data: {} }).data.modes;
                 var result;
+
+                if (!minireel) { return undefined; }
 
                 forEach(categories, function(category) {
                     forEach(category.modes, function(mode) {
@@ -2558,6 +2563,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
 
             this.convertForEditor = function(minireel, target) {
+                var self = this;
+
                 function convertDeck(minireel) {
                     return $q.all(minireel.data.deck.
                         filter(function(card) {
@@ -2568,6 +2575,18 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 function convertMinireel(deck) {
                     var model = target || {};
+                    var modeData = self.modeDataOf(minireel) || {};
+                    var mode = (modeData.deprecated ? (modeData.replacement || (function() {
+                            var modes = self.modeCategoryOf(minireel).modes;
+
+                            var length = modes.length, index = 0;
+                            for (; index < length; index++) {
+                                if (!modes[index].deprecated) {
+                                    return modes[index].value;
+                                }
+                            }
+                        }())) : modeData.value) ||
+                        SettingsService.getReadOnly('MR::org').minireelDefaults.mode;
 
                     // Make sure the target is empty
                     forEach(target, function(value, key) {
@@ -2576,7 +2595,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                     model.data = {
                         title: minireel.data.title,
-                        mode: minireel.data.mode,
+                        mode: mode,
                         branding: minireel.data.branding,
                         autoplay: minireel.data.autoplay,
                         autoadvance: minireel.data.autoadvance,

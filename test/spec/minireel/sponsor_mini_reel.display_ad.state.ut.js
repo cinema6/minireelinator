@@ -32,6 +32,14 @@ define(['app'], function(appModule) {
             }, {
                 localSync: false
             });
+            SettingsService.register('MR::org', {
+                minireelDefaults: {
+                    mode: 'lightbox-ads',
+                    autoplay: true
+                }
+            }, {
+                localSync: false
+            });
 
             sponsorMiniReel = c6State.get('MR:SponsorMiniReel');
             sponsorMiniReel.cModel = {

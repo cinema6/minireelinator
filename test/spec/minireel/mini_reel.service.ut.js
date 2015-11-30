@@ -21,6 +21,7 @@
                 cinema6,
                 c6State,
                 portal,
+                MiniReelState,
                 mocks,
                 $q;
 
@@ -112,6 +113,42 @@
                         }
                     },
                     branding: 'elitedaily'
+                };
+
+                MiniReelState = c6State.get('MiniReel');
+                MiniReelState.cModel = {
+                    data: {
+                        modes: [
+                            {
+                                value: 'lightbox',
+                                modes: [
+                                    {
+                                        value: 'lightbox-playlist',
+                                        deprecated: true,
+                                        replacement: 'light'
+                                    },
+                                    {
+                                        value: 'lightbox'
+                                    }
+                                ]
+                            },
+                            {
+                                value: 'inline',
+                                modes: [
+                                    {
+                                        value: 'full',
+                                        deprecated: true
+                                    },
+                                    {
+                                        value: 'solo'
+                                    },
+                                    {
+                                        value: 'light'
+                                    }
+                                ]
+                            }
+                        ]
+                    }
                 };
 
                 mocks = {
@@ -1061,8 +1098,11 @@
                             expect(result()).toEqual({});
                         });
 
-                        it('should return an empty object if a mode with no category is passed in', function() {
-                            expect(result({ data: { mode: 'foo' } }, categories)).toEqual({});
+                        it('should lookup the categories on the MiniReel state if no categories are passed', function() {
+                            expect(result({ data: { mode: 'lightbox' } })).toBe(MiniReelState.cModel.data.modes[0]);
+                            expect(result({ data: { mode: 'lightbox-playlist' } })).toBe(MiniReelState.cModel.data.modes[0]);
+                            expect(result({ data: { mode: 'light' } })).toBe(MiniReelState.cModel.data.modes[1]);
+                            expect(result({ data: { mode: 'full' } })).toBe(MiniReelState.cModel.data.modes[1]);
                         });
 
                         it('should return the category of the minireel\'s mode', function() {
@@ -1070,6 +1110,83 @@
                             expect(result({ data: { mode: 'lightbox-ads' } }, categories)).toBe(categories[0]);
                             expect(result({ data: { mode: 'light' } }, categories)).toBe(categories[1]);
                             expect(result({ data: { mode: 'full' } }, categories)).toBe(categories[1]);
+                        });
+
+                        describe('if the MiniReelState has no model', function() {
+                            beforeEach(function() {
+                                delete MiniReelState.cModel;
+                            });
+
+                            it('should return an empty object if something falsy is passed in', function() {
+                                expect(result()).toEqual({});
+                            });
+                        });
+                    });
+
+                    describe('modeDataOf(minireel, categories)', function() {
+                        var categories;
+
+                        function result() {
+                            return MiniReelService.modeDataOf.apply(MiniReelService, arguments);
+                        }
+
+                        beforeEach(function() {
+                            categories = [
+                                {
+                                    value: 'lightbox',
+                                    modes: [
+                                        {
+                                            value: 'lightbox'
+                                        },
+                                        {
+                                            value: 'lightbox-ads'
+                                        }
+                                    ]
+                                },
+                                {
+                                    value: 'inline',
+                                    modes: [
+                                        {
+                                            value: 'light'
+                                        },
+                                        {
+                                            value: 'full'
+                                        }
+                                    ]
+                                }
+                            ];
+                        });
+
+                        it('should return undefined something falsy is passed in', function() {
+                            expect(result()).toBeUndefined();
+                        });
+
+                        it('should return undefined if a mode with no category is passed in', function() {
+                            expect(result({ data: { mode: 'foo' } }, categories)).toBeUndefined();
+                        });
+
+                        it('should lookup the data on the MiniReel state if no categories are passed', function() {
+                            expect(result({ data: { mode: 'lightbox-playlist' } })).toBe(MiniReelState.cModel.data.modes[0].modes[0]);
+                            expect(result({ data: { mode: 'lightbox' } })).toBe(MiniReelState.cModel.data.modes[0].modes[1]);
+                            expect(result({ data: { mode: 'full' } })).toBe(MiniReelState.cModel.data.modes[1].modes[0]);
+                            expect(result({ data: { mode: 'light' } })).toBe(MiniReelState.cModel.data.modes[1].modes[2]);
+                        });
+
+                        it('should return the data of the minireel\'s mode', function() {
+                            expect(result({ data: { mode: 'lightbox' } }, categories)).toBe(categories[0].modes[0]);
+                            expect(result({ data: { mode: 'lightbox-ads' } }, categories)).toBe(categories[0].modes[1]);
+                            expect(result({ data: { mode: 'light' } }, categories)).toBe(categories[1].modes[0]);
+                            expect(result({ data: { mode: 'full' } }, categories)).toBe(categories[1].modes[1]);
+                        });
+
+                        describe('if the MiniReelState has no model', function() {
+                            beforeEach(function() {
+                                delete MiniReelState.cModel;
+                            });
+
+                            it('should return undefined something falsy is passed in', function() {
+                                expect(result()).toBeUndefined();
+                            });
                         });
                     });
 
@@ -1821,6 +1938,59 @@
                             result = spy.calls.mostRecent().args[0];
 
                             deck = result.data.deck;
+                        });
+
+                        describe('if an unknown mode is passed in', function() {
+                            beforeEach(function() {
+                                spy.calls.reset();
+
+                                minireel.data.mode = 'jfhdks';
+
+                                $rootScope.$apply(function() {
+                                    MiniReelService.convertForEditor(minireel).then(spy);
+                                });
+                                result = spy.calls.mostRecent().args[0];
+                            });
+
+                            it('should make the result mode the org default', function() {
+                                expect(result.data.mode).toBe(SettingsService.getReadOnly('MR::org').minireelDefaults.mode);
+                            });
+                        });
+
+                        describe('if a deprecated mode is passed in', function() {
+                            beforeEach(function() {
+                                spy.calls.reset();
+                            });
+
+                            describe('with a replacement', function() {
+                                beforeEach(function() {
+                                    minireel.data.mode = 'lightbox-playlist';
+
+                                    $rootScope.$apply(function() {
+                                        MiniReelService.convertForEditor(minireel).then(spy);
+                                    });
+                                    result = spy.calls.mostRecent().args[0];
+                                });
+
+                                it('should set the mode to the replacement', function() {
+                                    expect(result.data.mode).toBe('light');
+                                });
+                            });
+
+                            describe('without a replacement', function() {
+                                beforeEach(function() {
+                                    minireel.data.mode = 'full';
+
+                                    $rootScope.$apply(function() {
+                                        MiniReelService.convertForEditor(minireel).then(spy);
+                                    });
+                                    result = spy.calls.mostRecent().args[0];
+                                });
+
+                                it('should set the mode to the first non-deprecated mode in that category', function() {
+                                    expect(result.data.mode).toBe('solo');
+                                });
+                            });
                         });
 
                         describe('if it is missing a collateral hash or splash hash', function() {
