@@ -2,6 +2,7 @@
 
 * *[v1.28.0.rc1]*
   * [DESIGN]: Updated styles for titles on create/manage campaign, settings and interests
+  * [DESIGN]: Added styles for datepickers and character limit counter
 
 ## v1.27.0 (November 24, 2015)
 * *[v1.27.0.rc1]*
