@@ -718,12 +718,15 @@ function( angular , c6State  , PaginatedListState                    ,
 
             // watch for saving only
             $scope.$watch(function() {
-                var campaign = SelfieCampaignCtrl.campaign || {};
+                var campaign = SelfieCampaignCtrl.campaign || {},
+                    card = SelfieCampaignCtrl.card;
 
                 return [
                     campaign.pricing,
                     campaign.targeting,
-                    campaign.paymentMethod
+                    campaign.paymentMethod,
+                    card.campaign.endDate,
+                    card.campaign.startDate
                 ];
             }, function(params, oldParams) {
                 if (params === oldParams) { return; }
@@ -765,16 +768,64 @@ function( angular , c6State  , PaginatedListState                    ,
             }, watchForPreview);
         }])
 
-        .controller('SelfieFlightDateController', [function() {
-            this.startDate = null;
-            this.endDate = null;
+        .controller('SelfieFlightDateController', ['$scope',function($scope) {
+            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+                card = SelfieCampaignCtrl.card,
+                campaignHash = card.campaign;
+
+            var now = new Date().getTime();
+
+            function pad(num) {
+                var norm = Math.abs(Math.floor(num));
+                return (norm < 10 ? '0' : '') + norm;
+            }
+
+            function fromISO(string) {
+                if (!string) { return; }
+
+                var date = new Date(string);
+
+                return pad(date.getMonth() + 1) +
+                    '/' + pad(date.getDate()) +
+                    '/' + date.getFullYear();
+            }
+
+            function toISO(string) {
+                if (!string) { return; }
+
+                var date = new Date(string);
+                date.setHours(23,59);
+
+                return date.toISOString();
+            }
+
+            Object.defineProperties(this, {
+                validStartDate: {
+                    get: function() {
+                        var startDate = this.startDate && new Date(this.startDate);
+
+                        return !startDate || (startDate && startDate instanceof Date && startDate > now);
+                    }
+                },
+                validEndDate: {
+                    get: function() {
+                        var startDate = this.startDate && new Date(this.startDate),
+                            endDate = this.endDate && new Date(this.endDate);
+
+                        return !endDate || (endDate && endDate instanceof Date &&
+                            (!startDate && endDate > now) || (startDate && endDate > startDate));
+                    }
+                }
+            });
+
+            this.startDate = fromISO(campaignHash.startDate);
+            this.endDate = fromISO(campaignHash.endDate);
 
             this.setDates = function() {
-                // need to make sure we have valid dates
-                // maybe this happens in template.
-                // also need to convert to proper date format
-                // for saving to backend
-                console.log(this.startDate, this.endDate);
+                campaignHash.startDate = this.startDate ?
+                    toISO(this.startDate) : campaignHash.startDate;
+                campaignHash.endDate = this.endDate ?
+                    toISO(this.endDate) : campaignHash.endDate;
             };
         }])
 
