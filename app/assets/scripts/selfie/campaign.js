@@ -765,6 +765,19 @@ function( angular , c6State  , PaginatedListState                    ,
             }, watchForPreview);
         }])
 
+        .controller('SelfieFlightDateController', [function() {
+            this.startDate = null;
+            this.endDate = null;
+
+            this.setDates = function() {
+                // need to make sure we have valid dates
+                // maybe this happens in template.
+                // also need to convert to proper date format
+                // for saving to backend
+                console.log(this.startDate, this.endDate);
+            };
+        }])
+
         .controller('SelfieCampaignSponsorController', ['$scope','CollateralService',
         function                                       ( $scope , CollateralService ) {
             var AppCtrl = $scope.AppCtrl,

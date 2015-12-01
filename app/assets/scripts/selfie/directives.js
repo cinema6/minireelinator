@@ -1,4 +1,4 @@
-define( ['angular','select2','braintree'],
+define( ['angular','select2','braintree','jqueryui'],
 function( angular , select2 , braintree ) {
     'use strict';
 
@@ -188,6 +188,46 @@ function( angular , select2 , braintree ) {
                             $element.addClass('ui--hasError');
                         } else {
                             $element.removeClass('ui--hasError');
+                        }
+                    });
+                }
+            };
+        }])
+
+        .directive('datepicker', ['$timeout',
+        function                 ( $timeout ) {
+            return {
+                restrict: 'A',
+                scope: {
+                    minDate: '=',
+                    maxDate: '=',
+                    defaultDate: '='
+                },
+                link: function(scope, $element) {
+                    $element.datepicker({
+                        defaultDate: scope.defaultDate,
+                        minDate: scope.minDate || 0,
+                        maxDate: scope.maxDate,
+                        changeMonth: false,
+                        numberOfMonths: 1,
+                        prevText: '',
+                        nextText: '',
+                        beforeShow: function() {
+                            var left = $element.offset().left,
+                                inputWidth = $element.outerWidth();
+
+                            // update the options based on current selections
+                            $element.datepicker('option', 'minDate', scope.minDate || 0);
+                            $element.datepicker('option', 'maxDate', scope.maxDate);
+
+                            $timeout(function() {
+                                var $picker = $('#ui-datepicker-div'),
+                                    pickerWidth = $picker.outerWidth(),
+                                    offset = left + ((inputWidth - pickerWidth) / 2);
+
+                                // center the datepicker
+                                $picker.css('left', offset);
+                            });
                         }
                     });
                 }
