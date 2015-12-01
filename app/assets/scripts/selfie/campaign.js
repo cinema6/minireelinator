@@ -602,7 +602,7 @@ function( angular , c6State  , PaginatedListState                    ,
                                 !!card.params.action.label,
                             section5: true,
                             section6: this.budget,
-                            section7: !!campaign.paymentMethod,
+                            section7: true,
                             section8: true
                         };
                     }
