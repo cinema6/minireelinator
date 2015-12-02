@@ -768,8 +768,11 @@ function( angular , c6State  , PaginatedListState                    ,
             }, watchForPreview);
         }])
 
-        .controller('SelfieFlightDateController', ['$scope',function($scope) {
+        .controller('SelfieFlightDateController', ['$scope',
+        function                                  ( $scope ) {
             var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+                originalCampaign = SelfieCampaignCtrl.originalCampaign,
+                campaign = SelfieCampaignCtrl.campaign,
                 card = SelfieCampaignCtrl.card,
                 campaignHash = card.campaign;
 
@@ -804,7 +807,14 @@ function( angular , c6State  , PaginatedListState                    ,
                     get: function() {
                         var startDate = this.startDate && new Date(this.startDate);
 
-                        return !startDate || (startDate && startDate instanceof Date && startDate > now);
+                        // need this in case user chooses today.
+                        // set to end of day so startDate > now
+                        if (startDate) {
+                            startDate.setHours(23,59);
+                        }
+
+                        return !startDate || !this.editableStartDate ||
+                            (startDate && startDate instanceof Date && startDate > now);
                     }
                 },
                 validEndDate: {
@@ -812,8 +822,23 @@ function( angular , c6State  , PaginatedListState                    ,
                         var startDate = this.startDate && new Date(this.startDate),
                             endDate = this.endDate && new Date(this.endDate);
 
-                        return !endDate || (endDate && endDate instanceof Date &&
-                            (!startDate && endDate > now) || (startDate && endDate > startDate));
+                        // need this in case user chooses today.
+                        // set to end of day so endDate > now
+                        if (endDate) {
+                            endDate.setHours(23,59);
+                        }
+
+                        return !endDate || (endDate && endDate instanceof Date && endDate > now &&
+                            (!startDate || (startDate && endDate > startDate)));
+                    }
+                },
+                editableStartDate: {
+                    get: function() {
+                        var startDate = campaignHash.startDate && new Date(campaignHash.startDate);
+
+                        return (!startDate || startDate > now) &&
+                            (!campaign.status || campaign.status === 'draft' ||
+                                originalCampaign.status === 'pending');
                     }
                 }
             });
@@ -822,9 +847,9 @@ function( angular , c6State  , PaginatedListState                    ,
             this.endDate = fromISO(campaignHash.endDate);
 
             this.setDates = function() {
-                campaignHash.startDate = this.startDate ?
+                campaignHash.startDate = this.startDate && this.validStartDate ?
                     toISO(this.startDate) : campaignHash.startDate;
-                campaignHash.endDate = this.endDate ?
+                campaignHash.endDate = this.endDate && this.validEndDate ?
                     toISO(this.endDate) : campaignHash.endDate;
             };
         }])

@@ -204,6 +204,24 @@ function( angular , select2 , braintree ) {
                     defaultDate: '='
                 },
                 link: function(scope, $element) {
+                    function pad(num) {
+                        var norm = Math.abs(Math.floor(num));
+                        return (norm < 10 ? '0' : '') + norm;
+                    }
+
+                    function getMin() {
+                        var now = new Date(),
+                            minDate = scope.minDate && new Date(scope.minDate);
+
+                        if (minDate && minDate < now) {
+                            minDate = pad(now.getMonth() + 1) +
+                                '/' + pad(now.getDate()) +
+                                '/' + now.getFullYear();
+                        }
+
+                        return minDate;
+                    }
+
                     $element.datepicker({
                         defaultDate: scope.defaultDate,
                         minDate: scope.minDate || 0,
@@ -217,7 +235,7 @@ function( angular , select2 , braintree ) {
                                 inputWidth = $element.outerWidth();
 
                             // update the options based on current selections
-                            $element.datepicker('option', 'minDate', scope.minDate || 0);
+                            $element.datepicker('option', 'minDate', getMin() || 0);
                             $element.datepicker('option', 'maxDate', scope.maxDate);
 
                             $timeout(function() {

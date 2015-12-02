@@ -9,7 +9,7 @@
         <div class="form__items">
 
             <fieldset class="form__item form__item--shortInput" ng-class="{'ui--hasError': !SelfieFlightDateCtrl.validStartDate }">
-                <input datepicker c6-fill-check min-date="null" max-date="SelfieFlightDateCtrl.endDate" default-date="null" alt-field="_startdate" class="form__textBox form__textBox--units form__fillCheck" type="text" id="startdate" ng-model="SelfieFlightDateCtrl.startDate" ng-change="SelfieFlightDateCtrl.setDates()" time="23:59" ng-disabled="campaign.status && campaign.status !== 'draft'">
+                <input datepicker c6-fill-check min-date="null" max-date="SelfieFlightDateCtrl.endDate" default-date="null" alt-field="_startdate" class="form__textBox form__textBox--units form__fillCheck" type="text" id="startdate" ng-model="SelfieFlightDateCtrl.startDate" ng-change="SelfieFlightDateCtrl.setDates()" time="23:59" ng-disabled="!SelfieFlightDateCtrl.editableStartDate">
                 <label class="form__label" for="c6-sponsor-name">
                     <i class="fa fa-times ui--error"></i> 
                     Start date
