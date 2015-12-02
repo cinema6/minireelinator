@@ -10,7 +10,7 @@
     <fieldset class="form__item">
 
     <div class="tree-multiselect">
-        <div class="section sectionHead">
+        <div class="section sectionHead" ng-class="{ 'in--focus' : !!show }">
                 <div class="title" style="cursor:pointer;" ng-click="show = !show">
                     <label>Interests</label>
                     <span ng-show="show" class="collapse-section"><i class="fa fa-minus-circle"></i></span>
