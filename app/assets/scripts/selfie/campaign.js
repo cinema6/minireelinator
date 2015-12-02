@@ -482,10 +482,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .controller('SelfieCampaignController', ['$scope','$log','c6State','cState','cinema6','$q',
                                                  'c6Debounce','c6AsyncQueue','CampaignService',
-                                                 'ConfirmDialogService',
+                                                 'ConfirmDialogService','SelfieCampaignSummaryService',
         function                                ( $scope , $log , c6State , cState , cinema6 , $q ,
                                                   c6Debounce , c6AsyncQueue , CampaignService ,
-                                                  ConfirmDialogService ) {
+                                                  ConfirmDialogService , SelfieCampaignSummaryService ) {
             var SelfieCampaignCtrl = this,
                 queue = c6AsyncQueue();
 
@@ -666,16 +666,15 @@ function( angular , c6State  , PaginatedListState                    ,
                     });
                 }
 
-                ConfirmDialogService.display({
-                    prompt: isDraft ? draftText : activeText,
-                    affirm: 'Yes',
-                    cancel: 'Cancel',
+                SelfieCampaignSummaryService.display({
+                    campaign: this.campaign,
+                    interests: this.categories,
 
                     onCancel: function() {
-                        return ConfirmDialogService.close();
+                        return SelfieCampaignSummaryService.close();
                     },
                     onAffirm: queue.debounce(function() {
-                        ConfirmDialogService.close();
+                        SelfieCampaignSummaryService.close();
 
                         return (isDraft ? saveCampaign() : $q.when(SelfieCampaignCtrl.campaign))
                             .then(createUpdateRequest)
@@ -684,6 +683,25 @@ function( angular , c6State  , PaginatedListState                    ,
                             .catch(handleError);
                     })
                 });
+
+                // ConfirmDialogService.display({
+                //     prompt: isDraft ? draftText : activeText,
+                //     affirm: 'Yes',
+                //     cancel: 'Cancel',
+
+                //     onCancel: function() {
+                //         return ConfirmDialogService.close();
+                //     },
+                //     onAffirm: queue.debounce(function() {
+                //         ConfirmDialogService.close();
+
+                //         return (isDraft ? saveCampaign() : $q.when(SelfieCampaignCtrl.campaign))
+                //             .then(createUpdateRequest)
+                //             .then(setPending)
+                //             .then(returnToDashboard)
+                //             .catch(handleError);
+                //     })
+                // });
             };
 
             // debounce the auto-save

@@ -970,6 +970,36 @@ function( angular , select2 , braintree ) {
             };
         }])
 
+        .directive('selfieCampaignSummary', ['SelfieCampaignSummaryService',
+        function                            ( SelfieCampaignSummaryService ) {
+            return {
+                restrict: 'E',
+                templateUrl: 'views/selfie/directives/campaign_summary.html',
+                scope: {},
+                link: function(scope) {
+                    scope.model = SelfieCampaignSummaryService.model;
+                }
+            };
+        }])
+
+        .service('SelfieCampaignSummaryService', [function() {
+            var model = {};
+
+            Object.defineProperty(this, 'model', {
+                get: function() {
+                    return model;
+                }
+            });
+
+            this.display = function(dialogModel) {
+                model.show = true;
+            };
+
+            this.close = function() {
+                model.show = false;
+            };
+        }])
+
         .filter('videoService', [function() {
             return function(service) {
                 switch (service) {
