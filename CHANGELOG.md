@@ -1,9 +1,9 @@
 # MiniReelinator
 
-## v1.28.0 (December 1, 2015)
-* *[v1.28.0.rc2]*
+* *[v1.28.1.rc1]*
   * [DESIGN]: Added styles for campaign confirmation modal
 
+## v1.28.0 (December 1, 2015)
 * *[v1.28.0.rc1]*
   * [DESIGN]: Updated styles for titles on create/manage campaign, settings and interests
   * [DESIGN]: Added styles for datepickers and character limit counter
