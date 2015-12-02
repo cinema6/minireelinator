@@ -213,15 +213,35 @@ function( angular , select2 , braintree ) {
                         var now = new Date(),
                             minDate = scope.minDate && new Date(scope.minDate);
 
-                        if (minDate && minDate < now) {
-                            minDate = pad(now.getMonth() + 1) +
-                                '/' + pad(now.getDate()) +
-                                '/' + now.getFullYear();
+                        if (minDate) {
+                            if (minDate < now) {
+                                minDate = pad(now.getMonth() + 1) +
+                                    '/' + pad(now.getDate() + 1) +
+                                    '/' + now.getFullYear();
+                            } else {
+                                minDate = pad(minDate.getMonth() + 1) +
+                                    '/' + pad(minDate.getDate() + 1) +
+                                    '/' + minDate.getFullYear();
+                            }
 
                             return minDate;
                         }
 
                         return scope.minDate;
+                    }
+
+                    function getMax() {
+                        var maxDate = scope.maxDate && new Date(scope.maxDate);
+
+                        if (maxDate) {
+                            maxDate = pad(maxDate.getMonth() + 1) +
+                                '/' + pad(maxDate.getDate() - 1) +
+                                '/' + maxDate.getFullYear();
+
+                            return maxDate;
+                        }
+
+                        return scope.maxDate;
                     }
 
                     $element.datepicker({
@@ -238,7 +258,7 @@ function( angular , select2 , braintree ) {
 
                             // update the options based on current selections
                             $element.datepicker('option', 'minDate', getMin() || 0);
-                            $element.datepicker('option', 'maxDate', scope.maxDate || null);
+                            $element.datepicker('option', 'maxDate', getMax() || null);
 
                             $timeout(function() {
                                 var $picker = $('#ui-datepicker-div'),

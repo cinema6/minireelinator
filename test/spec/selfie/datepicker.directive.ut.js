@@ -79,7 +79,9 @@ define(['app','angular'], function(appModule, angular) {
             it('should update the datepicker with the minDate and maxDate', function() {
                 var now = new Date(),
                     laterDate = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + (now.getFullYear() + 1),
-                    evenLaterDate = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + (now.getFullYear() + 2);
+                    laterDateMin = pad(now.getMonth() + 1) + '/' + pad(now.getDate() + 1) + '/' + (now.getFullYear() + 1),
+                    evenLaterDate = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + (now.getFullYear() + 2),
+                    evenLaterDateMax = pad(now.getMonth() + 1) + '/' + pad(now.getDate() - 1) + '/' + (now.getFullYear() + 2);
 
                 beforeShow();
 
@@ -92,20 +94,20 @@ define(['app','angular'], function(appModule, angular) {
 
                 beforeShow();
 
-                expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', laterDate);
-                expect($input.datepicker).toHaveBeenCalledWith('option', 'maxDate', evenLaterDate);
+                expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', laterDateMin);
+                expect($input.datepicker).toHaveBeenCalledWith('option', 'maxDate', evenLaterDateMax);
             });
 
-            it('should ensure that minDate is never earlier than today', function() {
+            it('should ensure that minDate is never earlier than tomorrow', function() {
                 var now = new Date(),
-                    today = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + now.getFullYear();
+                    tomorrow = pad(now.getMonth() + 1) + '/' + pad(now.getDate() + 1) + '/' + now.getFullYear();
 
                 $scope.minDate = '01/01/2000';
                 $scope.$digest();
 
                 beforeShow();
 
-                expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', today);
+                expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', tomorrow);
             });
 
             it('should calculate and set the datepicker position', function() {
