@@ -133,10 +133,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
                     expect(VideoSearchCtrl.sites).toEqual({
                         youtube: 'YouTube',
                         vimeo: 'Vimeo',
-                        dailymotion: 'Dailymotion',
-                        rumble: 'Rumble',
-                        aol: 'AOL On',
-                        yahoo: 'Yahoo! Screen'
+                        dailymotion: 'Dailymotion'
                     });
                 });
             });
@@ -159,7 +156,7 @@ define(['app', 'minireel/services', 'jquery'], function(appModule, servicesModul
             });
 
             describe('addButtonText', function() {
-                ['MR:EditCard.Copy', 'MR:EditCard.Video', 'MR:EditCard.Ballot', 'MR:EditCard']
+                ['MR:EditCard.Copy', 'MR:EditCard.Video', 'MR:EditCard']
                     .forEach(function(state) {
                         describe('if the state is "' + state + '"', function() {
                             beforeEach(function() {

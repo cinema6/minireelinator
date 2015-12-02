@@ -1146,40 +1146,6 @@
                             expect(minireel.save).toHaveBeenCalled();
                         });
                     });
-
-                    it('should remove displayAd modules if no Org adConfig is defined', function() {
-                        spyOn(MiniReelService, 'enableDisplayAds').and.callThrough();
-                        spyOn(MiniReelService, 'disableDisplayAds').and.callThrough();
-
-                        onAffirm();
-
-                        expect(MiniReelService.enableDisplayAds).not.toHaveBeenCalled();
-                        expect(MiniReelService.disableDisplayAds).toHaveBeenCalled();
-                    });
-
-                    it('should add displayAd modules based on Org adConfig', function() {
-                        PortalCtrl.model.org.adConfig = { video: {}, display: { enabled: true }};
-
-                        spyOn(MiniReelService, 'enableDisplayAds').and.callThrough();
-                        spyOn(MiniReelService, 'disableDisplayAds').and.callThrough();
-
-                        onAffirm();
-
-                        expect(MiniReelService.enableDisplayAds).toHaveBeenCalled();
-                        expect(MiniReelService.disableDisplayAds).not.toHaveBeenCalled();
-                    });
-
-                    it('should remove displayAd modules based on Org adConfig', function() {
-                        PortalCtrl.model.org.adConfig = { video: {}, display: { enabled: false }};
-
-                        spyOn(MiniReelService, 'enableDisplayAds').and.callThrough();
-                        spyOn(MiniReelService, 'disableDisplayAds').and.callThrough();
-
-                        onAffirm();
-
-                        expect(MiniReelService.enableDisplayAds).not.toHaveBeenCalled();
-                        expect(MiniReelService.disableDisplayAds).toHaveBeenCalled();
-                    });
                 });
 
                 describe('removeAds()', function() {

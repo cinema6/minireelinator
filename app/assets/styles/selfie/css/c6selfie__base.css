@@ -3637,6 +3637,71 @@ fa,
             .loginModal.modalDialog__group .form__textBox {
                 border-bottom: 2px solid #eee;
             }
+    /*Modal tall*/
+    .modalBody__group--tall {
+        height: auto;
+        width: 40em;
+        top: 34%;
+        overflow: hidden;
+    }
+        .modalBody__group--tall .modalBody__group {
+            padding-top: 0;
+            position: relative;
+            left: 0;
+            top: 0em;
+            margin-bottom: 60px;
+            max-height: calc(100vh - 210px);
+            overflow-y: auto;
+        }
+
+
+
+/*  ================================================
+    Review Order modal styles
+    ================================================ */
+    .reviewOrder__group .grid {
+        margin: 0;
+    }
+    .reviewOrder__item h2 {
+        margin-bottom: 0;
+    }
+    .orderItem__title {
+        font-weight: 700;
+    }
+    .orderItem__label {
+        font-weight: 400;
+    }
+    .orderItem__cost {
+        font-weight: 700;
+    }
+    .orderItems {
+        padding: 24px 24px 0 24px;
+    }
+        .orderItems .grid__item {
+            padding-left: 0;
+        }
+            .orderItem__cost--total {
+                font-weight: 700;
+            }
+        .orderItem__title {
+            
+        }
+    .orderItems ul{
+        padding-left: 0;
+        margin: 0;
+    }
+        .orderItems ul li {
+            list-style-type: none;
+            border-bottom: 1px dotted #ccc;
+            padding: 5px 0;
+            margin-bottom: 0;
+        }
+        .orderItems ul li:last-child {
+            background: #eee;
+            padding: 0.25em;
+        }        
+
+
 
 /*  ================================================
     payment history list classes
@@ -4011,10 +4076,12 @@ div.tree-multiselect span.section-name {
             width: 100%;
             font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
         }
+            .tree-multiselect .section.sectionHead.in--focus {
+                border-bottom:2px solid #49B8B9;
+            }
         div.sectionHead div.title {
             border:0;
-            border-bottom:2px solid #eee;
-            font-size:1.125em;
+            font-size:1em;
             line-height:1.5rem;
             color: #5c5c5c;
             background:#fff;

@@ -1120,10 +1120,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return new ThumbModel(_private.fetchWistiaThumbs(id));
                         case 'jwplayer':
                             return new ThumbModel($q.when(_private.fetchJWPlayerThumbs(id)));
-                        case 'yahoo':
-                        case 'aol':
                         case 'vine':
-                        case 'rumble':
                             return new ThumbModel(_private.fetchOpenGraphThumbs(service, id));
                         default:
                             return new ThumbModel($q.when({
@@ -1199,12 +1196,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     return 'http://vimeo.com/' + id;
                 case 'dailymotion':
                     return 'http://www.dailymotion.com/video/' + id;
-                case 'aol':
-                    return 'http://on.aol.com/video/' + id;
-                case 'yahoo':
-                    return 'https://screen.yahoo.com/' + id + '.html';
-                case 'rumble':
-                    return 'https://rumble.com/' + id + '.html';
                 case 'vine':
                     return 'https://vine.co/v/' + id;
                 case 'vzaar':
@@ -1221,8 +1212,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             this.dataFromText = function(text) {
                 var parsedUrl = c6UrlParser(text),
                     urlService = (parsedUrl.hostname.match(
-                        new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|aol|yahoo|' +
-                            'rumble|vine|vzaar\\.tv|wistia|jwplatform|vidyard')
+                        new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|' +
+                            'vine|vzaar\\.tv|wistia|jwplatform|vidyard')
                     ) || [])[0],
                     embedService = (text.match(
                         new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|jwplatform|' +
@@ -1256,17 +1247,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             },
                             'dai.ly': function(url) {
                                 return url.pathname.replace(/^\//, '');
-                            },
-                            aol: function(url) {
-                                return (url.pathname.match(/[^\/]+$/) || [null])[0];
-                            },
-                            yahoo: function(url) {
-                                return (url.pathname
-                                    .match(/[^/]+(?=(\.html))/) || [null])[0];
-                            },
-                            rumble: function(url) {
-                                return (url.pathname
-                                    .match(/[^/]+(?=(\.html))/) || [null])[0];
                             },
                             vine: function(url) {
                                 return (url.pathname
@@ -1365,26 +1345,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
 
             this.embedIdFromVideoId = function(service, videoid) {
-                switch (service) {
-                case 'rumble':
-                    return videoid.match(/^[^-]+/)[0]
-                        .replace(/^v/, '8.');
-                default:
-                    return videoid;
-                }
+                return videoid;
             };
 
             this.embedCodeFromData = function(service, id) {
-                function aolSrc(id) {
-                    return 'http://pshared.5min.com/Scripts/PlayerSeed.js?' +
-                        'sid=281&width=560&height=450&playList=' + (id.match(/\d+$/) || [])[0];
-                }
-
-                function yahooSrc(id) {
-                    return 'https://screen.yahoo.com/' + id + '.html?' +
-                        'format=embed';
-                }
-
                 function vineSrc(id) {
                     return 'https://vine.co/v/' + id + '/embed/simple';
                 }
@@ -1402,26 +1366,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 }
 
                 switch (service) {
-                case 'aol':
-                    return [
-                        '<div style="text-align:center">',
-                        '    <script src="' + aolSrc(id) + '"></script>',
-                        '    <br/>',
-                        '</div>'
-                    ].join('\n');
-                case 'yahoo':
-                    return [
-                        '<iframe width="100%"',
-                        '    height="100%"',
-                        '    scrolling="no"',
-                        '    frameborder="0"',
-                        '    src="' + yahooSrc(id) + '"',
-                        '    allowfullscreen="true"',
-                        '    mozallowfullscreen="true"',
-                        '    webkitallowfullscreen="true"',
-                        '    allowtransparency="true">',
-                        '</iframe>'
-                    ].join('\n');
                 case 'vine':
                     return '<iframe' +
                                ' src="' + vineSrc(id) + '"' +
@@ -2054,7 +1998,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             var self = this,
                 app = c6State.get('Application'),
-                application = c6State.get(app.name);
+                application = c6State.get(app.name),
+                MiniReelState = c6State.get('MiniReel');
 
             function generateId(prefix) {
                 return prefix + '-' +
@@ -2084,7 +2029,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             }
 
             function makeCard(rawData, base) {
-                var template, dataTemplates, articleDataTemplate,
+                var template, dataTemplates,
                     imageDataTemplate, videoDataTemplate,
                     instagramDataTemplate,
                     card = base || {
@@ -2107,16 +2052,14 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'youtube':
                         case 'vimeo':
                         case 'dailymotion':
-                        case 'rumble':
                         case 'adUnit':
-                        case 'embedded':
                         case 'vine':
                         case 'vzaar':
                         case 'wistia':
                         case 'jwplayer':
                         case 'vidyard':
-                            return 'video' + ((card.modules.indexOf('ballot') > -1) ?
-                                'Ballot' : '');
+                        case 'videoBallot':
+                            return 'video';
                         default:
                             return card.type || null;
 
@@ -2138,16 +2081,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             card.sponsored ? 'Sponsored' : null,
                             (function() {
                                 switch (this.type) {
-                                case 'article':
-                                    return 'Article';
                                 case 'image':
                                     return 'Image';
                                 case 'instagram':
                                     return 'Instagram';
                                 case 'video':
                                     return 'Video';
-                                case 'videoBallot':
-                                    return 'Video + Questionnaire';
                                 case 'ad':
                                     return 'Advertisement';
                                 case 'links':
@@ -2156,10 +2095,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     return 'Intro';
                                 case 'recap':
                                     return 'Recap';
-                                case 'text':
-                                    return 'Text';
-                                case 'displayAd':
-                                    return 'Display Ad';
                                 case 'wildcard':
                                     return 'Sponsored Card Placeholder';
 
@@ -2174,11 +2109,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     view: function() {
                         switch (this.type) {
                         case 'video':
-                        case 'videoBallot':
                             return 'video';
-                        case 'displayAd':
-                            return 'display_ad';
-
                         default:
                             return this.type;
                         }
@@ -2209,12 +2140,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return (card.thumbs && card.thumbs.large) || null;
                     },
                     links: function(card) {
-                        switch (card.type) {
-                        case 'displayAd':
-                            return {};
-                        default:
-                            return card.links || {};
-                        }
+                        return card.links || {};
                     },
                     shareLinks: function(card) {
                         var result = { };
@@ -2229,19 +2155,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return result;
                     },
                     params: copy({})
-                };
-
-                // articleDataTemplate: this is the base template for all
-                // article cards.
-                articleDataTemplate = {
-                    src: copy(null),
-                    thumbUrl: function(data) {
-                        if(data.thumbs) {
-                            return data.thumbs.large;
-                        } else {
-                            return null;
-                        }
-                    }
                 };
 
                 // imageDataTemplate: this is the base template for all
@@ -2298,7 +2211,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         var type = card.type;
 
                         return data.service ||
-                            (type.search(/^(youtube|dailymotion|vimeo|adUnit|rumble)$/) > -1 ?
+                            (type.search(/^(youtube|dailymotion|vimeo|adUnit)$/) > -1 ?
                                 type : null);
                     },
                     videoid: function(data, key, card) {
@@ -2308,8 +2221,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 vast: data.vast,
                                 vpaid: data.vpaid
                             });
-                        case 'rumble':
-                            return data.siteid || null;
                         default:
                             return data.videoid || null;
                         }
@@ -2337,18 +2248,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 // card's data, the current property key and a reference to
                 // the card.
                 dataTemplates = {
-                    article: articleDataTemplate,
                     image: imageDataTemplate,
                     instagram: instagramDataTemplate,
                     video: videoDataTemplate,
-                    videoBallot: extend(ngCopy(videoDataTemplate), {
-                        ballot: function(data, key, card) {
-                            return card.ballot || {
-                                prompt: null,
-                                choices: []
-                            };
-                        }
-                    }),
                     ad: {
                         autoplay: value(true),
                         source: copy(null),
@@ -2363,10 +2265,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     },
                     links: {
                         links: copy([])
-                    },
-                    text: {},
-                    displayAd: {
-                        size: value('300x250')
                     },
                     recap: {},
                     wildcard: {}
@@ -2392,11 +2290,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 return card;
             }
 
-            this.modeCategoryOf = function(minireel, categories) {
+            this.modeCategoryOf = function(minireel/*, categories*/) {
+                var categories = arguments[1] || (MiniReelState.cModel || { data: {} }).data.modes;
                 var result = {},
                     modeValue = minireel && minireel.data.mode;
 
-                forEach(categories || [], function(category) {
+                forEach(categories, function(category) {
                     forEach(category.modes, function(mode) {
                         if (mode.value === modeValue) {
                             result = category;
@@ -2407,8 +2306,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 return result;
             };
 
-            this.modeDataOf = function(minireel, categories) {
+            this.modeDataOf = function(minireel/*, categories*/) {
+                var categories = arguments[1] || (MiniReelState.cModel || { data: {} }).data.modes;
                 var result;
+
+                if (!minireel) { return undefined; }
 
                 forEach(categories, function(category) {
                     forEach(category.modes, function(mode) {
@@ -2455,56 +2357,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     id: generateId('rc'),
                     type: type
                 });
-            };
-
-            function shouldHaveDisplayAd(card, enabling) {
-                if ((/text|links|displayAd/).test(card.type)) { return false; }
-
-                if (!!card.placementId) { return true; }
-
-                if (card.sponsored || card.type === 'adUnit') { return false; }
-
-                return enabling;
-            }
-
-            function enableModule(card, module) {
-                var modules = card.modules || [];
-
-                if (modules.indexOf(module) > -1) { return; }
-
-                modules.push(module);
-            }
-
-            function disableModule(card, module) {
-                if (!card.modules) { return; }
-
-                card.modules = card.modules.filter(function(cardModule) {
-                    return cardModule !== module;
-                });
-            }
-
-            this.enableDisplayAds = function(minireel) {
-                minireel.data.deck.forEach(function(card) {
-                    if (shouldHaveDisplayAd(card, true)) {
-                        enableModule(card, 'displayAd');
-                    } else {
-                        disableModule(card, 'displayAd');
-                    }
-                });
-
-                return minireel;
-            };
-
-            this.disableDisplayAds = function(minireel) {
-                minireel.data.deck.forEach(function(card) {
-                    if (shouldHaveDisplayAd(card, false)) {
-                        enableModule(card, 'displayAd');
-                    } else {
-                        disableModule(card, 'displayAd');
-                    }
-                });
-
-                return minireel;
             };
 
             this.enablePreview = function(minireel) {
@@ -2558,16 +2410,32 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
             };
 
             this.convertForEditor = function(minireel, target) {
+                var self = this;
+
                 function convertDeck(minireel) {
                     return $q.all(minireel.data.deck.
                         filter(function(card) {
-                            return card.type !== 'ad' && card.type !== 'recap';
+                            return !(
+                                /^(ad|displayAd|recap|text|article|rumble|embedded)$/
+                            ).test(card.type);
                         })
                         .map(self.convertCardForEditor));
                 }
 
                 function convertMinireel(deck) {
                     var model = target || {};
+                    var modeData = self.modeDataOf(minireel) || {};
+                    var mode = (modeData.deprecated ? (modeData.replacement || (function() {
+                            var modes = self.modeCategoryOf(minireel).modes;
+
+                            var length = modes.length, index = 0;
+                            for (; index < length; index++) {
+                                if (!modes[index].deprecated) {
+                                    return modes[index].value;
+                                }
+                            }
+                        }())) : modeData.value) ||
+                        SettingsService.getReadOnly('MR::org').minireelDefaults.mode;
 
                     // Make sure the target is empty
                     forEach(target, function(value, key) {
@@ -2576,7 +2444,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                     model.data = {
                         title: minireel.data.title,
-                        mode: minireel.data.mode,
+                        mode: mode,
                         branding: minireel.data.branding,
                         autoplay: minireel.data.autoplay,
                         autoadvance: minireel.data.autoadvance,
@@ -2591,15 +2459,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             { splash: null },
                         splash: minireel.data.splash ||
                             { ratio: '3-2', source: 'generated', theme: 'img-text-overlay' },
-                        deck: deck,
-                        ads: minireel.data.deck
-                            .reduce(function(ads, card, index) {
-                                if (card.ad) {
-                                    ads[index] = card;
-                                }
-
-                                return ads;
-                            }, {})
+                        deck: deck
                     };
 
                     // Loop through the experience and copy everything but
@@ -2680,19 +2540,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             this.convertCardForPlayer = function(card, _minireel) {
                 var dataTemplates, cardBases, cardType, dataType,
-                    org = application.cModel.org,
                     minireel = _minireel || {
                         data: {
                             mode: null,
                             deck: []
                         }
                     },
-                    displayAdsEnabled = (minireel &&
-                        minireel.data.adConfig &&
-                        minireel.data.adConfig.display.enabled) ||
-                        (org &&
-                        org.adConfig &&
-                        org.adConfig.display.enabled),
                     newCard = {
                         data: {}
                     };
@@ -2704,10 +2557,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         return 'YouTube';
                     case 'dailymotion':
                         return 'DailyMotion';
-                    case 'aol':
-                        return 'AOL On';
-                    case 'yahoo':
-                        return 'Yahoo! Screen';
                     case 'getty':
                         return 'gettyimages';
                     case 'jwplayer':
@@ -2726,7 +2575,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     case 'image':
                         return 'image';
                     case 'video':
-                    case 'videoBallot':
                         return 'video';
                     default:
                         return card.type;
@@ -2736,15 +2584,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 function getDataType(card) {
                     switch (card.type) {
                     case 'video':
-                    case 'videoBallot':
-                        switch (card.data.service) {
-                        case 'yahoo':
-                        case 'aol':
-                            return 'embedded';
-                        default:
-                            return card.data.service;
-                        }
-                        break;
+                        return card.data.service;
                     default:
                         return card.type;
                     }
@@ -2813,34 +2653,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     };
                 }
 
-                function articleThumbsValue() {
-                    return function(data) {
-                        return OpenGraphService.getData(data.src)
-                            .then(function(ogData) {
-                                if(ogData.images &&
-                                   ogData.images.length > 0 &&
-                                   ogData.images[0].value) {
-                                    var thumbUrl = ogData.images[0].value;
-                                    return {
-                                        small: thumbUrl,
-                                        large: thumbUrl
-                                    };
-                                } else {
-                                    return {
-                                        small: null,
-                                        large: null
-                                    };
-                                }
-                            })
-                            .catch(function() {
-                                return {
-                                    small: null,
-                                    large: null
-                                };
-                            });
-                    };
-                }
-
                 function instagramThumbsValue() {
                     return function(data) {
                         return ThumbnailService.getThumbsFor('instagram', data.id)
@@ -2892,10 +2704,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 }
 
                 dataTemplates = {
-                    article: {
-                        src: copy(null),
-                        thumbs: articleThumbsValue()
-                    },
                     image: {
                         imageid: function(data) {
                             if(data.service === 'web') {
@@ -2967,23 +2775,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         thumbs: videoThumbsValue(),
                         moat: copy(null)
                     },
-                    rumble: {
-                        hideSource: hideSourceValue(),
-                        autoplay: copy(null),
-                        autoadvance: copy(null),
-                        skip: skipValue(),
-                        start: trimmer(),
-                        end: trimmer(),
-                        siteid: function(data) {
-                            return data.videoid;
-                        },
-                        videoid: function(data) {
-                            return VideoService.embedIdFromVideoId('rumble', data.videoid);
-                        },
-                        href: hrefValue(),
-                        thumbs: videoThumbsValue(),
-                        moat: copy(null)
-                    },
                     adUnit: {
                         hideSource: hideSourceValue(),
                         autoplay: copy(null),
@@ -2997,22 +2788,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return (fromJson(data.videoid) || {}).vpaid;
                         },
                         thumbs: value(null),
-                        moat: copy(null)
-                    },
-                    embedded: {
-                        hideSource: hideSourceValue(),
-                        autoplay: copy(null),
-                        autoadvance: copy(null),
-                        skip: skipValue(),
-                        start: trimmer(),
-                        end: trimmer(),
-                        service: copy(),
-                        videoid: copy(null),
-                        code: function(data) {
-                            return VideoService.embedCodeFromData(data.service, data.videoid);
-                        },
-                        href: hrefValue(),
-                        thumbs: videoThumbsValue(),
                         moat: copy(null)
                     },
                     vine: {
@@ -3078,9 +2853,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     links: {
                         links: copy([])
                     },
-                    displayAd: {
-                        size: copy('300x250')
-                    },
                     default: {
                         moat: copy(),
                         autoplay: copy(),
@@ -3091,26 +2863,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 };
 
                 cardBases = {
-                    article: {
-                        id: copy(),
-                        type: value('article'),
-                        title: copy(null),
-                        note: value(null),
-                        modules: value([]),
-                        placementId: copy(null),
-                        templateUrl: copy(null),
-                        sponsored: copy(false),
-                        campaign: copy(),
-                        collateral: copy(),
-                        links: copy(),
-                        params: copy(),
-                        thumbs: function(card) {
-                            return (card.thumb || null) && {
-                                small: card.thumb,
-                                large: card.thumb
-                            };
-                        }
-                    },
                     image: {
                         id: copy(),
                         type: value('image'),
@@ -3147,32 +2899,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             };
                         }
                     },
-                    text: {
-                        id: copy(),
-                        type: copy(),
-                        title: copy(null),
-                        note: copy(null),
-                        modules: value([]),
-                        placementId: copy(null),
-                        templateUrl: copy(null),
-                        sponsored: copy(false),
-                        campaign: copy(),
-                        collateral: copy(),
-                        links: copy(),
-                        params: copy()
-                    },
                     video: {
                         id: copy(),
                         type: function(card) {
-                            var service = card.data.service;
-
-                            switch (service) {
-                            case 'yahoo':
-                            case 'aol':
-                                return 'embedded';
-                            default:
-                                return service || card.type;
-                            }
+                            return card.data.service || card.type;
                         },
                         title: copy(null),
                         note: copy(null),
@@ -3181,14 +2911,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         },
                         modules: function(card) {
                             var modules = {
-                                'ballot': function() { return card.type === 'videoBallot'; },
-                                'displayAd': function() {
-                                    var shouldAlwaysHaveDisplayAd = !!card.placementId,
-                                        canHaveDisplayAd = displayAdsEnabled &&
-                                            !card.sponsored && card.data.service !== 'adUnit';
-
-                                    return shouldAlwaysHaveDisplayAd || canHaveDisplayAd;
-                                },
                                 'post': function() {
                                     return minireel.data.deck.length === 1 || card.data.survey;
                                 }
@@ -3240,7 +2962,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         id: copy(),
                         type: value('ad'),
                         ad: value(true),
-                        modules: value(['displayAd']),
+                        modules: value([]),
                         placementId: copy(null)
                     },
                     links: {
@@ -3263,11 +2985,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return 'Recap of ' + minireel.data.title;
                         },
                         note: copy(),
-                        modules: function(card) {
-                            return (card.placementId || (displayAdsEnabled && !card.sponsored)) ?
-                                ['displayAd'] :
-                                [];
-                        },
+                        modules: copy([]),
                         placementId: copy(null),
                         templateUrl: copy(null),
                         sponsored: copy(false),
@@ -3275,34 +2993,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         collateral: copy(),
                         links: copy(),
                         params: copy()
-                    },
-                    displayAd: {
-                        id: copy(),
-                        type: value('displayAd'),
-                        title: copy(null),
-                        note: copy(null),
-                        modules: value([]),
-                        placementId: copy(null),
-                        templateUrl: copy(null),
-                        sponsored: copy(false),
-                        campaign: copy(),
-                        collateral: copy(),
-                        links: function() {
-                            return minireel.data.links;
-                        },
-                        thumbs: function() {
-                            var logo = minireel.data.collateral.logo;
-
-                            return {
-                                small: logo,
-                                large: logo
-                            };
-                        },
-                        params: function() {
-                            return {
-                                sponsor: minireel.data.params.sponsor
-                            };
-                        }
                     },
                     wildcard: {
                         id: copy(),
@@ -3375,12 +3065,6 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 }
 
                 function convertMinireel(deck) {
-                    forEach(minireel.data.ads, function(card, _index) {
-                        var index = parseInt(_index);
-
-                        deck.splice(index, 0, card);
-                    });
-
                     target = target || {};
 
                     forEach(minireel, function(value, key) {

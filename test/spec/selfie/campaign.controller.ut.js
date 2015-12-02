@@ -315,8 +315,6 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         SelfieCampaignCtrl.validation.budget = true;
                         expect(SelfieCampaignCtrl.validation.sections.section6).toBe(true);
 
-                        expect(SelfieCampaignCtrl.validation.sections.section7).toBe(false);
-                        cState.campaign.paymentMethod = 'pay-123';
                         expect(SelfieCampaignCtrl.validation.sections.section7).toBe(true);
 
                         expect(SelfieCampaignCtrl.validation.sections.section8).toBe(true);

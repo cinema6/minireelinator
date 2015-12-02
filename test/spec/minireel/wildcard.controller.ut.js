@@ -396,80 +396,6 @@ define(['app', 'minireel/mixins/WizardController', 'angular'], function(appModul
                         });
                     });
 
-                    describe('article tab', function() {
-                        function validArticleModel() {
-                            return WildcardCtrl._private.validTabModel('MR:Wildcard.Article');
-                        }
-
-                        it('should be false if there is no data property', function() {
-                            WildcardCtrl.model = {
-                                title: 'Title'
-                            };
-                            expect(validArticleModel()).toBe(false);
-                        });
-
-                        it('should be true if src and title are not empty strings', function() {
-                            WildcardCtrl.model = {
-                                title: 'Title',
-                                data: {
-                                    src: 'http://www.cinema6.com'
-                                }
-                            };
-                            expect(validArticleModel()).toBe(true);
-                        });
-
-                        it('should be false if either the src or title are an empty string', function() {
-                            WildcardCtrl.model = {
-                                title: 'Title',
-                                data: {
-                                    src: ''
-                                }
-                            };
-                            expect(validArticleModel()).toBe(false);
-                            WildcardCtrl.model = {
-                                title: '',
-                                data: {
-                                    src: 'http://www.cinema6.com'
-                                }
-                            };
-                            expect(validArticleModel()).toBe(false);
-                        });
-
-                        it('should be false if either the src or title are null', function() {
-                            WildcardCtrl.model = {
-                                title: 'Title',
-                                data: {
-                                    src: null
-                                }
-                            };
-                            expect(validArticleModel()).toBe(false);
-                            WildcardCtrl.model = {
-                                title: null,
-                                data: {
-                                    src: 'http://www.cinema6.com'
-                                }
-                            };
-                            expect(validArticleModel()).toBe(false);
-                        });
-
-                        it('should be false if either the src or title are undefined', function() {
-                            WildcardCtrl.model = {
-                                title: 'Title',
-                                data: {
-                                    src: undefined
-                                }
-                            };
-                            expect(validArticleModel()).toBe(false);
-                            WildcardCtrl.model = {
-                                title: undefined,
-                                data: {
-                                    src: 'http://www.cinema6.com'
-                                }
-                            };
-                            expect(validArticleModel()).toBe(false);
-                        });
-                    });
-
                     describe('branding tab', function() {
                         function validBrandingModel() {
                             return WildcardCtrl._private.validTabModel('MR:Wildcard.Branding');
@@ -549,22 +475,6 @@ define(['app', 'minireel/mixins/WizardController', 'angular'], function(appModul
                 });
 
                 describe('tabsForCardType(type)', function() {
-                    it('should return tabs for an article card', function() {
-                        var result = WildcardCtrl._private.tabsForCardType('article');
-                        expect(result).toEqual([
-                            {
-                                name: 'Webpage Content',
-                                sref: 'MR:Wildcard.Article',
-                                required: true
-                            },
-                            {
-                                name: 'Thumbnail Content',
-                                sref: 'MR:Wildcard.Thumbs',
-                                required: false
-                            }
-                        ]);
-                    });
-
                     it('should return tabs for an instagram card', function() {
                         var result = WildcardCtrl._private.tabsForCardType('instagram');
                         expect(result).toEqual([

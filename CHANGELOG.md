@@ -1,8 +1,22 @@
 # MiniReelinator
 
+* *[v1.28.1.rc1]*
+  * [DESIGN]: Added styles for campaign confirmation modal
+
+## v1.28.0 (December 1, 2015)
 * *[v1.28.0.rc1]*
   * [DESIGN]: Updated styles for titles on create/manage campaign, settings and interests
   * [DESIGN]: Added styles for datepickers and character limit counter
+  * [DEPRECATION]: Remove the lightbox with playlist player
+  * [DEPRECATION]: Remove support for ballots where the results are
+    shown to the user
+  * [DEPRECATION]: Remove support for text-only cards
+  * [DEPRECATION]: Remove support for website (article) cards
+  * [DEPRECATION]: Remove support for videos from rumble.com
+  * [DEPRECATION]: Remove support for videos from AOL On
+  * [DEPRECATION]: Remove support for videos from Yahoo! Screen
+  * [FIX]: Do not require payment method for submitting campaign
+* *[/v1.28.0.rc1]*
 
 ## v1.27.0 (November 24, 2015)
 * *[v1.27.0.rc1]*

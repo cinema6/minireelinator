@@ -58,7 +58,7 @@
                 });
 
                 it('should return a new card', function() {
-                    expect(MiniReelService.createCard).toHaveBeenCalledWith('videoBallot');
+                    expect(MiniReelService.createCard).toHaveBeenCalledWith('video');
                     expect(result).toBe(card);
                 });
             });
@@ -78,7 +78,7 @@
                         delete user.permissions.campaigns;
 
                         $rootScope.$apply(function() {
-                            NewCardState.afterModel(MiniReelService.createCard('videoBallot'), {
+                            NewCardState.afterModel(MiniReelService.createCard('video'), {
                                 insertAt: 2
                             }).then(success, failure);
                         });
@@ -98,7 +98,7 @@
                         user.permissions.campaigns = {};
 
                         $rootScope.$apply(function() {
-                            NewCardState.afterModel(MiniReelService.createCard('videoBallot')).then(success, failure);
+                            NewCardState.afterModel(MiniReelService.createCard('video')).then(success, failure);
                         });
                     });
 
