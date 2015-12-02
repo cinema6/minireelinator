@@ -217,15 +217,17 @@ function( angular , select2 , braintree ) {
                             minDate = pad(now.getMonth() + 1) +
                                 '/' + pad(now.getDate()) +
                                 '/' + now.getFullYear();
+
+                            return minDate;
                         }
 
-                        return minDate;
+                        return scope.minDate;
                     }
 
                     $element.datepicker({
-                        defaultDate: scope.defaultDate,
+                        defaultDate: scope.defaultDate || null,
                         minDate: scope.minDate || 0,
-                        maxDate: scope.maxDate,
+                        maxDate: scope.maxDate || null,
                         changeMonth: false,
                         numberOfMonths: 1,
                         prevText: '',
@@ -236,7 +238,7 @@ function( angular , select2 , braintree ) {
 
                             // update the options based on current selections
                             $element.datepicker('option', 'minDate', getMin() || 0);
-                            $element.datepicker('option', 'maxDate', scope.maxDate);
+                            $element.datepicker('option', 'maxDate', scope.maxDate || null);
 
                             $timeout(function() {
                                 var $picker = $('#ui-datepicker-div'),

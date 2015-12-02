@@ -768,8 +768,8 @@ function( angular , c6State  , PaginatedListState                    ,
             }, watchForPreview);
         }])
 
-        .controller('SelfieFlightDateController', ['$scope',
-        function                                  ( $scope ) {
+        .controller('SelfieFlightDatesController', ['$scope',
+        function                                   ( $scope ) {
             var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
                 originalCampaign = SelfieCampaignCtrl.originalCampaign,
                 campaign = SelfieCampaignCtrl.campaign,
@@ -805,7 +805,8 @@ function( angular , c6State  , PaginatedListState                    ,
             Object.defineProperties(this, {
                 validStartDate: {
                     get: function() {
-                        var startDate = this.startDate && new Date(this.startDate);
+                        var startDate = this.startDate && new Date(this.startDate),
+                            endDate = this.endDate && new Date(this.endDate);
 
                         // need this in case user chooses today.
                         // set to end of day so startDate > now
@@ -814,7 +815,8 @@ function( angular , c6State  , PaginatedListState                    ,
                         }
 
                         return !startDate || !this.editableStartDate ||
-                            (startDate && startDate instanceof Date && startDate > now);
+                            (startDate && startDate instanceof Date && startDate > now &&
+                                (!endDate || (endDate && startDate < endDate)));
                     }
                 },
                 validEndDate: {
