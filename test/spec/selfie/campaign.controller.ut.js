@@ -1180,6 +1180,22 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
                         expect($scope.$broadcast).toHaveBeenCalledWith('loadPreview');
                     });
+
+                    it('startDate should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.card.campaign.startDate = '2016-08-05T15:38:55.613Z';
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                    });
+
+                    it('endDate should trigger an autosave', function() {
+                        $scope.$apply(function() {
+                            SelfieCampaignCtrl.card.campaign.endDate = '2016-08-05T15:38:55.613Z';
+                        });
+
+                        expect(SelfieCampaignCtrl.autoSave).toHaveBeenCalled();
+                    });
                 });
             });
         });

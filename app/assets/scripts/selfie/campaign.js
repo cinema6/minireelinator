@@ -718,12 +718,15 @@ function( angular , c6State  , PaginatedListState                    ,
 
             // watch for saving only
             $scope.$watch(function() {
-                var campaign = SelfieCampaignCtrl.campaign || {};
+                var campaign = SelfieCampaignCtrl.campaign || {},
+                    card = SelfieCampaignCtrl.card;
 
                 return [
                     campaign.pricing,
                     campaign.targeting,
-                    campaign.paymentMethod
+                    campaign.paymentMethod,
+                    card.campaign.endDate,
+                    card.campaign.startDate
                 ];
             }, function(params, oldParams) {
                 if (params === oldParams) { return; }
@@ -763,6 +766,104 @@ function( angular , c6State  , PaginatedListState                    ,
                     data.service,
                 ];
             }, watchForPreview);
+        }])
+
+        .controller('SelfieFlightDatesController', ['$scope',
+        function                                   ( $scope ) {
+            var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+                originalCampaign = SelfieCampaignCtrl.originalCampaign,
+                campaign = SelfieCampaignCtrl.campaign,
+                card = SelfieCampaignCtrl.card,
+                campaignHash = card.campaign;
+
+            var now = new Date().getTime();
+
+            function pad(num) {
+                var norm = Math.abs(Math.floor(num));
+                return (norm < 10 ? '0' : '') + norm;
+            }
+
+            function fromISO(string) {
+                if (!string) { return; }
+
+                var date = new Date(string);
+
+                return pad(date.getMonth() + 1) +
+                    '/' + pad(date.getDate()) +
+                    '/' + date.getFullYear();
+            }
+
+            function toISO(type, string) {
+                if (!string) { return; }
+
+                var date = new Date(string);
+
+                date.setHours.apply(date, (type === 'start' ? [0,1] : [23,59]));
+
+                return date.toISOString();
+            }
+
+            Object.defineProperties(this, {
+                validStartDate: {
+                    get: function() {
+                        var startDate = this.startDate && new Date(this.startDate),
+                            endDate = this.endDate && new Date(this.endDate);
+
+                        // need this in case user chooses today.
+                        // set to end of day so startDate > now
+                        if (startDate) {
+                            startDate.setHours(23,59);
+                        }
+                        if (endDate) {
+                            endDate.setHours(23,59);
+                        }
+
+                        return !startDate || !this.editableStartDate ||
+                            (startDate && startDate instanceof Date && startDate > now &&
+                                (!endDate || (endDate && startDate <= endDate)));
+                    }
+                },
+                validEndDate: {
+                    get: function() {
+                        var startDate = this.startDate && new Date(this.startDate),
+                            endDate = this.endDate && new Date(this.endDate);
+
+                        // need this in case user chooses today.
+                        // set to end of day so endDate > now
+                        if (endDate) {
+                            endDate.setHours(23,59);
+                        }
+
+                        return !endDate || (endDate && endDate instanceof Date && endDate > now &&
+                            (!startDate || (startDate && endDate > startDate)));
+                    }
+                },
+                editableStartDate: {
+                    get: function() {
+                        var startDate = campaignHash.startDate && new Date(campaignHash.startDate);
+
+                        return (!startDate || startDate > now) ||
+                            (!campaign.status || campaign.status === 'draft' ||
+                                originalCampaign.status === 'pending');
+                    }
+                },
+                canShowError: {
+                    get: function() {
+                        return originalCampaign.status !== 'pending' || this.startDateBlur;
+                    }
+                }
+            });
+
+            this.startDate = fromISO(campaignHash.startDate);
+            this.endDate = fromISO(campaignHash.endDate);
+            this.startDateBlur = false;
+
+            this.setDates = function() {
+                campaignHash.startDate = this.startDate && this.validStartDate ?
+                    toISO('start', this.startDate) : campaignHash.startDate;
+                campaignHash.endDate = this.endDate && this.validEndDate ?
+                    toISO('end', this.endDate) : campaignHash.endDate;
+            };
         }])
 
         .controller('SelfieCampaignSponsorController', ['$scope','CollateralService',

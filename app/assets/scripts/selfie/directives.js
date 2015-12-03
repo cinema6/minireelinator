@@ -1,4 +1,4 @@
-define( ['angular','select2','braintree'],
+define( ['angular','select2','braintree','jqueryui'],
 function( angular , select2 , braintree ) {
     'use strict';
 
@@ -188,6 +188,73 @@ function( angular , select2 , braintree ) {
                             $element.addClass('ui--hasError');
                         } else {
                             $element.removeClass('ui--hasError');
+                        }
+                    });
+                }
+            };
+        }])
+
+        .directive('datepicker', ['$timeout',
+        function                 ( $timeout ) {
+            return {
+                restrict: 'A',
+                scope: {
+                    minDate: '=',
+                    maxDate: '=',
+                    defaultDate: '='
+                },
+                link: function(scope, $element) {
+                    function pad(num) {
+                        var norm = Math.abs(Math.floor(num));
+                        return (norm < 10 ? '0' : '') + norm;
+                    }
+
+                    function getMin() {
+                        var now = new Date(),
+                            minDate = scope.minDate && new Date(scope.minDate);
+
+                        if (minDate && minDate < now) {
+                            minDate = pad(now.getMonth() + 1) +
+                                '/' + pad(now.getDate()) +
+                                '/' + now.getFullYear();
+
+                            return minDate;
+                        }
+
+                        return scope.minDate;
+                    }
+
+                    $element.datepicker({
+                        defaultDate: scope.defaultDate || null,
+                        minDate: scope.minDate || 0,
+                        maxDate: scope.maxDate || null,
+                        changeMonth: false,
+                        numberOfMonths: 1,
+                        prevText: '',
+                        nextText: '',
+                        onClose: function() {
+                            // this is needed because sometimes
+                            // the datepicker plugin changes the
+                            // date programmatically and ng-change
+                            // doesn't pick up on it
+                            $element.trigger('change');
+                        },
+                        beforeShow: function() {
+                            var left = $element.offset().left,
+                                inputWidth = $element.outerWidth();
+
+                            // update the options based on current selections
+                            $element.datepicker('option', 'minDate', getMin() || 0);
+                            $element.datepicker('option', 'maxDate', scope.maxDate || null);
+
+                            $timeout(function() {
+                                var $picker = $('#ui-datepicker-div'),
+                                    pickerWidth = $picker.outerWidth(),
+                                    offset = left + ((inputWidth - pickerWidth) / 2);
+
+                                // center the datepicker
+                                $picker.css('left', offset);
+                            });
                         }
                     });
                 }
