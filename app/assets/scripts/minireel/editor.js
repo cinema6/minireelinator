@@ -2153,6 +2153,36 @@ VideoCardController           , c6embed) {
             };
         }])
 
+        .directive('instagramPlayer', ['InstagramService',
+        function                      ( InstagramService ) {
+            return {
+                restrict: 'E',
+                scope: {
+                    videoid: '@'
+                },
+                link: function(scope, $element) {
+                    function loadPreview(videoid) {
+                        if(!videoid) { return; }
+
+                        $element.empty();
+                        InstagramService.getEmbedInfo(videoid).then(function(info) {
+                            if(info.type === 'video') {
+                                var video = angular.element('<video></video>');
+                                video.attr('src', info.src);
+                                video.attr('controls', true);
+                                video.attr('width', '100%');
+                                video.attr('height', '100%');
+                                $element.append(video);
+                            }
+                        });
+                        $element.addClass('instagramVideoPreview');
+                    }
+
+                    scope.$watch('videoid', loadPreview);
+                }
+            };
+        }])
+
         .directive('videoPreview', ['c6UrlMaker','$timeout','VideoService',
         function                   ( c6UrlMaker , $timeout , VideoService ) {
             return {
@@ -2257,7 +2287,7 @@ VideoCardController           , c6embed) {
                     scope.disableTrimmer = function() {
                         return (scope.service === 'vine' || scope.service === 'vzaar' ||
                             scope.service === 'wistia' || scope.service === 'jwplayer' ||
-                            scope.service === 'vidyard');
+                            scope.service === 'vidyard' || scope.service === 'instagram');
                     };
 
                     Object.defineProperties(scope, {

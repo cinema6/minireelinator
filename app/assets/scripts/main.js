@@ -18,6 +18,7 @@
             c6uilib: 'https://lib.cinema6.com/c6ui/v3.7.4-0-g734d5f3/c6uilib.min',
             c6log: 'https://lib.cinema6.com/c6ui/v3.7.4-0-g734d5f3/c6log.min',
             c6embed: 'https://lib.cinema6.com/c6embed/v1/app.min',
+            metagetta: 'https://lib.cinema6.com/metagetta/v0.2.0-0-g8b51280/metagetta.min',
             braintree: 'https://js.braintreegateway.com/v2/braintree'
         },
         shim: {
