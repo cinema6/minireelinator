@@ -793,11 +793,12 @@ function( angular , c6State  , PaginatedListState                    ,
                     '/' + date.getFullYear();
             }
 
-            function toISO(string) {
+            function toISO(type, string) {
                 if (!string) { return; }
 
                 var date = new Date(string);
-                date.setHours(23,59);
+
+                type === 'start' ? date.setHours(0,1) : date.setHours(23,59);
 
                 return date.toISOString();
             }
@@ -813,10 +814,13 @@ function( angular , c6State  , PaginatedListState                    ,
                         if (startDate) {
                             startDate.setHours(23,59);
                         }
+                        if (endDate) {
+                            endDate.setHours(23,59);
+                        }
 
                         return !startDate || !this.editableStartDate ||
                             (startDate && startDate instanceof Date && startDate > now &&
-                                (!endDate || (endDate && startDate < endDate)));
+                                (!endDate || (endDate && startDate <= endDate)));
                     }
                 },
                 validEndDate: {
@@ -838,21 +842,27 @@ function( angular , c6State  , PaginatedListState                    ,
                     get: function() {
                         var startDate = campaignHash.startDate && new Date(campaignHash.startDate);
 
-                        return (!startDate || startDate > now) &&
+                        return (!startDate || startDate > now) ||
                             (!campaign.status || campaign.status === 'draft' ||
                                 originalCampaign.status === 'pending');
+                    }
+                },
+                canShowError: {
+                    get: function() {
+                        return originalCampaign.status !== 'pending' || this.startDateBlur;
                     }
                 }
             });
 
             this.startDate = fromISO(campaignHash.startDate);
             this.endDate = fromISO(campaignHash.endDate);
+            this.startDateBlur = false;
 
             this.setDates = function() {
                 campaignHash.startDate = this.startDate && this.validStartDate ?
-                    toISO(this.startDate) : campaignHash.startDate;
+                    toISO('start', this.startDate) : campaignHash.startDate;
                 campaignHash.endDate = this.endDate && this.validEndDate ?
-                    toISO(this.endDate) : campaignHash.endDate;
+                    toISO('end', this.endDate) : campaignHash.endDate;
             };
         }])
 

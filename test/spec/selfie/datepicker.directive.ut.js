@@ -94,20 +94,20 @@ define(['app','angular'], function(appModule, angular) {
 
                 beforeShow();
 
-                expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', laterDateMin);
-                expect($input.datepicker).toHaveBeenCalledWith('option', 'maxDate', evenLaterDateMax);
+                expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', laterDate);
+                expect($input.datepicker).toHaveBeenCalledWith('option', 'maxDate', evenLaterDate);
             });
 
-            it('should ensure that minDate is never earlier than tomorrow', function() {
+            it('should ensure that minDate is never earlier than today', function() {
                 var now = new Date(),
-                    tomorrow = pad(now.getMonth() + 1) + '/' + pad(now.getDate() + 1) + '/' + now.getFullYear();
+                    today = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + now.getFullYear();
 
                 $scope.minDate = '01/01/2000';
                 $scope.$digest();
 
                 beforeShow();
 
-                expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', tomorrow);
+                expect($input.datepicker).toHaveBeenCalledWith('option', 'minDate', today);
             });
 
             it('should calculate and set the datepicker position', function() {

@@ -83,6 +83,7 @@ define(['app'], function(appModule) {
                         expect(SelfieFlightDatesCtrl.validStartDate).toBe(false);
 
                         campaign.status = 'active';
+                        card.campaign.startDate = earlierDate;
                         expect(SelfieFlightDatesCtrl.validStartDate).toBe(true);
                     });
                 });
@@ -98,6 +99,7 @@ define(['app'], function(appModule) {
                         expect(SelfieFlightDatesCtrl.validStartDate).toBe(false);
 
                         campaign.status = 'active';
+                        card.campaign.startDate = earlierDate;
                         expect(SelfieFlightDatesCtrl.validStartDate).toBe(true);
                     });
                 });
@@ -119,6 +121,14 @@ define(['app'], function(appModule) {
                 describe('when start date is today', function() {
                     it('should be true', function() {
                         SelfieFlightDatesCtrl.startDate = today;
+                        expect(SelfieFlightDatesCtrl.validStartDate).toBe(true);
+                    });
+                });
+
+                describe('when start date and end date are today', function() {
+                    it('should be true', function() {
+                        SelfieFlightDatesCtrl.startDate = today;
+                        SelfieFlightDatesCtrl.endDate = today;
                         expect(SelfieFlightDatesCtrl.validStartDate).toBe(true);
                     });
                 });
@@ -233,7 +243,7 @@ define(['app'], function(appModule) {
                             campaign.status = 'paused';
                             campaign.cards[0].campaign.startDate = undefined;
 
-                            expect(SelfieFlightDatesCtrl.editableStartDate).toBe(false);
+                            expect(SelfieFlightDatesCtrl.editableStartDate).toBe(true);
                         });
                     });
 
@@ -241,6 +251,15 @@ define(['app'], function(appModule) {
                         it('should be true', function() {
                             campaign.status = 'paused';
                             campaign.cards[0].campaign.startDate = laterDate;
+
+                            expect(SelfieFlightDatesCtrl.editableStartDate).toBe(true);
+                        });
+                    });
+
+                    describe('when start date is earlier than now', function() {
+                        it('should be false', function() {
+                            campaign.status = 'paused';
+                            campaign.cards[0].campaign.startDate = earlierDate;
 
                             expect(SelfieFlightDatesCtrl.editableStartDate).toBe(false);
                         });
@@ -269,6 +288,20 @@ define(['app'], function(appModule) {
                     compileCtrl();
 
                     expect(SelfieFlightDatesCtrl.endDate).toEqual('06/26/2016');
+                });
+            });
+
+            describe('canShowError', function() {
+                it('should be false if campaign is pending and user has not entered and then left the start date picker', function() {
+                    expect(SelfieFlightDatesCtrl.canShowError).toBe(true);
+
+                    originalCampaign.status = 'pending';
+
+                    expect(SelfieFlightDatesCtrl.canShowError).toBe(false);
+
+                    SelfieFlightDatesCtrl.startDateBlur = true;
+
+                    expect(SelfieFlightDatesCtrl.canShowError).toBe(true);
                 });
             });
         });
