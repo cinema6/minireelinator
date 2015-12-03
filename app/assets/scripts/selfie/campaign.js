@@ -481,11 +481,11 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignController', ['$scope','$log','c6State','cState','cinema6','$q',
-                                                 'c6Debounce','c6AsyncQueue','CampaignService',
-                                                 'ConfirmDialogService','SelfieCampaignSummaryService',
+                                                 'c6Debounce','c6AsyncQueue','ConfirmDialogService',
+                                                 'CampaignService','SelfieCampaignSummaryService',
         function                                ( $scope , $log , c6State , cState , cinema6 , $q ,
-                                                  c6Debounce , c6AsyncQueue , CampaignService ,
-                                                  ConfirmDialogService , SelfieCampaignSummaryService ) {
+                                                  c6Debounce , c6AsyncQueue , ConfirmDialogService ,
+                                                  CampaignService , SelfieCampaignSummaryService ) {
             var SelfieCampaignCtrl = this,
                 queue = c6AsyncQueue();
 
@@ -772,7 +772,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 card = SelfieCampaignCtrl.card,
                 campaignHash = card.campaign;
 
-            var now = new Date().getTime();
+            var now = new Date();
 
             function pad(num) {
                 var norm = Math.abs(Math.floor(num));
@@ -846,6 +846,19 @@ function( angular , c6State  , PaginatedListState                    ,
                 canShowError: {
                     get: function() {
                         return originalCampaign.status !== 'pending' || this.startDateBlur;
+                    }
+                },
+                imminentStartDate: {
+                    get: function() {
+                        var start = this.startDate && new Date(this.startDate),
+                            end = this.endDate && new Date(this.endDate),
+                            today = now.getDate(),
+                            tomorrow = today + 1;
+
+                        return (start && start instanceof Date &&
+                            (start.getDate() === today || start.getDate() === tomorrow)) ||
+                                (end && end instanceof Date &&
+                                    (end.getDate() === today || end.getDate() === tomorrow));
                     }
                 }
             });
