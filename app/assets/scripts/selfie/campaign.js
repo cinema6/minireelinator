@@ -641,11 +641,7 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.submit = function() {
-                var isDraft = cState._campaign.status === 'draft',
-                    draftText = 'Are you sure you want to submit your campaign for approval? ' +
-                        'It may take up to 24 hours for your campaign to become active.',
-                    activeText = 'Are you sure you want to submit these changes for approval? ' +
-                        'It may take up to 24 hours for them to take effect.';
+                var isDraft = cState._campaign.status === 'draft';
 
                 if (!SelfieCampaignCtrl.canSubmit) {
                     SelfieCampaignCtrl.validation.show = true;
@@ -859,9 +855,9 @@ function( angular , c6State  , PaginatedListState                    ,
             this.startDateBlur = false;
 
             this.setDates = function() {
-                campaignHash.startDate = this.startDate && this.validStartDate ?
+                campaignHash.startDate = this.validStartDate ?
                     toISO('start', this.startDate) : campaignHash.startDate;
-                campaignHash.endDate = this.endDate && this.validEndDate ?
+                campaignHash.endDate = this.validEndDate ?
                     toISO('end', this.endDate) : campaignHash.endDate;
             };
         }])

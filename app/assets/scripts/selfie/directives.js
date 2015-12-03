@@ -1112,7 +1112,10 @@ function( angular , select2 , braintree ) {
 
             this.display = function(dialogModel) {
                 var campaign = dialogModel.campaign,
-                    interests = dialogModel.interests;
+                    interests = dialogModel.interests,
+                    schema = dialogModel.schema;
+
+                if (!campaign || !interests || !schema) { return; }
 
                 extend(model, dialogModel);
 
@@ -1120,7 +1123,7 @@ function( angular , select2 , braintree ) {
                 model.demographics = generateDemo(campaign);
                 model.duration = generateDuration(campaign);
                 model.geo = generateGeo(campaign);
-                model.cpv = CampaignService.getCpv(campaign, model.schema);
+                model.cpv = CampaignService.getCpv(campaign, schema);
 
                 model.show = true;
             };

@@ -309,7 +309,7 @@ define(['app'], function(appModule) {
         describe('methods', function() {
             describe('setDates()', function() {
                 describe('when start date is not set', function() {
-                    it('should do nothing', function() {
+                    it('should remove the start date on the card', function() {
                         SelfieFlightDatesCtrl.startDate = undefined;
 
                         SelfieFlightDatesCtrl.setDates();
@@ -320,7 +320,7 @@ define(['app'], function(appModule) {
 
                         SelfieFlightDatesCtrl.setDates();
 
-                        expect(card.campaign.startDate).toEqual('2016-06-26T04:59:00.000Z');
+                        expect(card.campaign.startDate).toEqual(undefined);
                     });
                 });
 
@@ -351,7 +351,7 @@ define(['app'], function(appModule) {
                 });
 
                 describe('when end date is not set', function() {
-                    it('should do nothing', function() {
+                    it('should remove any end date on the card', function() {
                         SelfieFlightDatesCtrl.endDate = undefined;
 
                         SelfieFlightDatesCtrl.setDates();
@@ -362,7 +362,7 @@ define(['app'], function(appModule) {
 
                         SelfieFlightDatesCtrl.setDates();
 
-                        expect(card.campaign.endDate).toEqual('2016-06-26T04:59:00.000Z');
+                        expect(card.campaign.endDate).toEqual(undefined);
                     });
                 });
 
