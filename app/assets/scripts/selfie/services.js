@@ -42,6 +42,12 @@ function( angular , c6uilib ) {
                 return app.cModel;
             }
 
+            function getPrice(booleanArray, price) {
+                return !!booleanArray.filter(function(bool) {
+                    return !!bool;
+                }).length ? price : 0;
+            }
+
             this.create = function(campaign) {
                 var user = getAppUser(),
                     advertiser = user.advertiser,
@@ -185,6 +191,32 @@ function( angular , c6uilib ) {
                     .then(function(response) {
                         return !!response.data.length;
                     });
+            };
+
+            this.getCpv = function(campaign, schema) {
+                var targeting = campaign.targeting,
+                    interests = targeting.interests,
+                    demos = targeting.demographics,
+                    geos = targeting.geo,
+                    cost = schema.pricing.cost,
+
+                    basePrice = cost.__base,
+                    pricePerGeo = cost.__pricePerGeo,
+                    pricePerDemo = cost.__pricePerDemo,
+                    priceForInterests = cost.__priceForInterests,
+
+                    hasInterests = interests.length,
+                    hasStates = geos.states.length,
+                    hasDmas = geos.dmas.length,
+                    hasAge = demos.age.length,
+                    hasIncome = demos.income.length,
+                    hasGender = demos.gender.length,
+
+                    geoPrice = getPrice([hasStates, hasDmas], pricePerGeo),
+                    demoPrice = getPrice([hasAge, hasIncome, hasGender], pricePerDemo),
+                    interestsPrice = getPrice([hasInterests], priceForInterests);
+
+                return basePrice + geoPrice + demoPrice + interestsPrice;
             };
 
             /* Creates a diff summary of two campaigns with special handling for the first entry in

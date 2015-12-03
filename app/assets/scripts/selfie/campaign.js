@@ -669,6 +669,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 SelfieCampaignSummaryService.display({
                     campaign: this.campaign,
                     interests: this.categories,
+                    schema: this.schema,
 
                     onCancel: function() {
                         return SelfieCampaignSummaryService.close();
@@ -683,25 +684,6 @@ function( angular , c6State  , PaginatedListState                    ,
                             .catch(handleError);
                     })
                 });
-
-                // ConfirmDialogService.display({
-                //     prompt: isDraft ? draftText : activeText,
-                //     affirm: 'Yes',
-                //     cancel: 'Cancel',
-
-                //     onCancel: function() {
-                //         return ConfirmDialogService.close();
-                //     },
-                //     onAffirm: queue.debounce(function() {
-                //         ConfirmDialogService.close();
-
-                //         return (isDraft ? saveCampaign() : $q.when(SelfieCampaignCtrl.campaign))
-                //             .then(createUpdateRequest)
-                //             .then(setPending)
-                //             .then(returnToDashboard)
-                //             .catch(handleError);
-                //     })
-                // });
             };
 
             // debounce the auto-save

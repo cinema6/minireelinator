@@ -629,8 +629,8 @@ function( angular , select2 , braintree ) {
             };
         }])
 
-        .controller('SelfieBudgetController', ['$scope',
-        function                              ( $scope ) {
+        .controller('SelfieBudgetController', ['$scope','CampaignService',
+        function                              ( $scope , CampaignService ) {
             var SelfieBudgetCtrl = this,
                 campaign = $scope.campaign,
                 validation = $scope.validation || {},
@@ -638,17 +638,7 @@ function( angular , select2 , braintree ) {
                 pricing = schema.pricing,
                 budgetMin = pricing.budget.__min,
                 budgetMax = pricing.budget.__max,
-                limitMinPercent = pricing.dailyLimit.__percentMin,
-                basePrice = pricing.cost.__base,
-                pricePerGeo = pricing.cost.__pricePerGeo,
-                pricePerDemo = pricing.cost.__pricePerDemo,
-                priceForInterests = pricing.cost.__priceForInterests;
-
-            function getPrice(booleanArray, price) {
-                return !!booleanArray.filter(function(bool) {
-                    return !!bool;
-                }).length ? price : 0;
-            }
+                limitMinPercent = pricing.dailyLimit.__percentMin;
 
             this.budget = campaign.pricing.budget || null;
             this.limit = campaign.pricing.dailyLimit || null;
@@ -661,17 +651,7 @@ function( angular , select2 , braintree ) {
             Object.defineProperties(this, {
                 cpv: {
                     get: function() {
-                        var hasInterests = campaign.targeting.interests.length,
-                            hasStates = campaign.targeting.geo.states.length,
-                            hasDmas = campaign.targeting.geo.dmas.length,
-                            hasAge = campaign.targeting.demographics.age.length,
-                            hasIncome = campaign.targeting.demographics.income.length,
-                            hasGender = campaign.targeting.demographics.gender.length,
-                            geoPrice = getPrice([hasStates, hasDmas], pricePerGeo),
-                            demoPrice = getPrice([hasAge, hasIncome, hasGender], pricePerDemo),
-                            interestsPrice = getPrice([hasInterests], priceForInterests);
-
-                        return basePrice + geoPrice + demoPrice + interestsPrice;
+                        return CampaignService.getCpv(campaign, schema);
                     }
                 },
                 validBudget: {
@@ -982,8 +962,80 @@ function( angular , select2 , braintree ) {
             };
         }])
 
-        .service('SelfieCampaignSummaryService', [function() {
+        .service('SelfieCampaignSummaryService', ['CampaignService',
+        function                                 ( CampaignService ) {
             var model = {};
+
+            function pad(num) {
+                var norm = Math.abs(Math.floor(num));
+                return (norm < 10 ? '0' : '') + norm;
+            }
+
+            function formatDate(iso) {
+                var date = new Date(iso);
+
+                return pad(date.getMonth() + 1) +
+                    '/' + pad(date.getDate()) +
+                    '/' + date.getFullYear();
+            }
+
+            function generateInterests(campaign, interests) {
+                return interests.filter(function(interest) {
+                    return campaign.targeting.interests.indexOf(interest.id) > -1;
+                }).map(function(interest) {
+                    return interest.label;
+                }).join(', ');
+            }
+
+            function generateDemo(campaign) {
+                var demographics = campaign.targeting.demographics,
+                    demoModel = [];
+
+                forEach(demographics, function(demo, type) {
+                    if (demo.length) {
+                        demoModel.push({
+                            name: type.slice(0, 1).toUpperCase() + type.slice(1),
+                            list: demo.join(', ')
+                        });
+                    }
+                });
+
+                return demoModel;
+            }
+
+            function generateGeo(campaign) {
+                var geo = campaign.targeting.geo,
+                    geoModel = [];
+
+                forEach(geo, function(geo, type) {
+                    if (geo.length) {
+                        geoModel.push({
+                            name: type === 'dmas' ? 'DMA' :
+                                type.slice(0, 1).toUpperCase() + type.slice(1),
+                            list: geo.join(', ')
+                        });
+                    }
+                });
+
+                return geoModel;
+            }
+
+            function generateDuration(campaign) {
+                var startDate = campaign.cards[0].campaign.startDate,
+                    endDate = campaign.cards[0].campaign.endDate;
+
+                if (!startDate && !endDate) {
+                    return 'Once approved, run until stopped.';
+                }
+                if (!endDate) {
+                    return formatDate(startDate) + ' until stopped.';
+                }
+                if (!startDate) {
+                    return 'Once approved until ' + formatDate(endDate);
+                }
+
+                return formatDate(startDate) + ' to ' + formatDate(endDate);
+            }
 
             Object.defineProperty(this, 'model', {
                 get: function() {
@@ -992,6 +1044,17 @@ function( angular , select2 , braintree ) {
             });
 
             this.display = function(dialogModel) {
+                var campaign = dialogModel.campaign,
+                    interests = dialogModel.interests;
+
+                extend(model, dialogModel);
+
+                model.interests = generateInterests(campaign, interests);
+                model.demographics = generateDemo(campaign);
+                model.duration = generateDuration(campaign);
+                model.geo = generateGeo(campaign);
+                model.cpv = CampaignService.getCpv(campaign, model.schema);
+
                 model.show = true;
             };
 

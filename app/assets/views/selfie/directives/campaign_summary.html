@@ -15,19 +15,20 @@
                 <div class="reviewOrder__head">
                     <div class="grid grid--center">
                         <div class="reviewOrder__item text--center">
-                            <h2><span class="orderItem__label text--small">Campaign Name </span><span class="orderItem__title tk--hdr">Doritos Winter Campaign</span></h2>
+                            <h2><span class="orderItem__label text--small">Campaign Name </span><span class="orderItem__title tk--hdr">{{model.campaign.name}}</span></h2>
                         </div>
                         <div class="reviewOrder__item text--center">
-                            <span class="orderItem__label">Duration</span><span class="orderItem__title tk--hdr"> 11/30/2015 to 12/30/2015</span>
+                            <span class="orderItem__label">Duration</span>
+                            <span class="orderItem__title tk--hdr"> {{model.duration}}</span>
                         </div>
                         <div class="reviewOrder__item text--center">
-                            <span class="orderItem__label">Total Budget </span><span class="orderItem__title tk--hdr">$5,000</span>
+                            <span class="orderItem__label">Total Budget </span><span class="orderItem__title tk--hdr">${{model.campaign.pricing.budget}}</span>
+                        </div>
+                        <div class="reviewOrder__item text--center" ng-show="model.campaign.pricing.dailyLimit">
+                            <span class="orderItem__label">Daily Spend </span><span class="orderItem__title tk--hdr">${{model.campaign.pricing.dailyLimit}}</span>
                         </div>
                         <div class="reviewOrder__item text--center">
-                            <span class="orderItem__label">Daily Spend </span><span class="orderItem__title tk--hdr">$250</span>
-                        </div>
-                        <div class="reviewOrder__item text--center">
-                            <span class="orderItem__label">Estimated Views </span><span class="orderItem__title tk--hdr">50,000</span>
+                            <span class="orderItem__label">Estimated Views </span><span class="orderItem__title tk--hdr">{{(model.campaign.pricing.budget / model.cpv) | number:0}}</span>
                         </div>
                     </div>
                     <div class="grid">
@@ -35,31 +36,28 @@
                             <ul>
 
                             <li>
-                            <div class="grid__item two-thirds orderItem__title">Base CPV</div><!-- --><div class="grid__item one-third"><div class="orderItem__cost text--right">$0.05</div></div>
+                                <div class="grid__item two-thirds orderItem__title">Base CPV</div><!-- --><div class="grid__item one-third"><div class="orderItem__cost text--right">${{model.schema.pricing.cost.__base | number}}</div></div>
                             </li>
 
-                            <li>
-                            <div class="grid__item two-thirds orderItem__title">Interests</div><!--
-                            --><div class="grid__item one-third"><div class="orderItem__cost text--right">$0.01</div></div>
-                            <div class="grid__item one-whole orderItem__label text--small">Interests: Arts and Entertainment, Business, Cars, Sports, Education, News, Finance, Hobbies, DIY, Crafts, Photography</div>
+                            <li ng-show="model.interests">
+                                <div class="grid__item two-thirds orderItem__title">Interests</div><!--
+                                --><div class="grid__item one-third"><div class="orderItem__cost text--right">${{model.schema.pricing.cost.__priceForInterests | number}}</div></div>
+                                <div class="grid__item one-whole orderItem__label text--small">Interests: {{model.interests}}</div>
+                            </li>
+                            <li ng-show="model.demographics.length">
+                                <div class="grid__item two-thirds orderItem__title">Demographics</div><!--
+                                --><div class="grid__item one-third"><div class="orderItem__cost text--right">${{model.schema.pricing.cost.__pricePerDemo | number}}</div></div>
+                                <div class="grid__item one-whole orderItem__label text--small" ng-repeat="demo in model.demographics">{{demo.name}}: {{demo.list}}</div>
+                            </li>
+                            <li ng-show="model.geo.length">
+                                <div class="grid__item two-thirds orderItem__title">Location</div><!--
+                                --><div class="grid__item one-third"><div class="orderItem__cost text--right">${{model.schema.pricing.cost.__pricePerGeo | number}}</div></div>
+                                <div class="grid__item one-whole orderItem__label text--small" ng-repeat="geo in model.geo">{{geo.name}}: {{geo.list}}</div>
                             </li>
                             <li>
-                            <div class="grid__item two-thirds orderItem__title">Demographics</div><!--
-                            --><div class="grid__item one-third"><div class="orderItem__cost text--right">$0.01</div></div>
-                            <div class="grid__item one-whole orderItem__label text--small">Age: 18-24, 25-34, 35-44</div>
-                            <div class="grid__item one-whole orderItem__label text--small">Gender: Female</div>
-                            <div class="grid__item one-whole orderItem__label text--small">Income: $50,000-$75,000, $75,000-$99,000</div>
-                            </li>
-                            <li>
-                            <div class="grid__item two-thirds orderItem__title">Location</div><!--
-                            --><div class="grid__item one-third"><div class="orderItem__cost text--right">$0.01</div></div>
-                            <div class="grid__item one-whole orderItem__label text--small">State: New Jersey, New York, Florida</div>
-                            <div class="grid__item one-whole orderItem__label text--small">DMA: Atlanta, Philadelhpia, Greater NYC</div>
-                            </li>
-                            <li>
-                            <div class="grid__item two-thirds orderItem__title">Total CPV</div><!--
-                            --><div class="grid__item one-third"><div class="orderItem__cost--total text--right">$0.09</div></div>
-                            </li>
+                                <div class="grid__item two-thirds orderItem__title">Total CPV</div><!--
+                                --><div class="grid__item one-third"><div class="orderItem__cost--total text--right">${{model.cpv | number:2}}</div></div>
+                                </li>
                             </ul>
                         </div>
                     </div>
