@@ -102,7 +102,7 @@ define(['app'], function(appModule) {
             });
 
             describe('cpv', function() {
-                it('should add $.01 each for interests, states, DMAs, age, gender, income', function() {
+                it('should add $.01 each for demo, location, interests', function() {
                     expect(num(SelfieBudgetCtrl.cpv)).toBe(0.05);
 
                     campaign.targeting.geo.states.push('Arizona');
@@ -115,43 +115,43 @@ define(['app'], function(appModule) {
 
                     campaign.targeting.geo.dmas.push('Chicago');
 
-                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.07);
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.06);
 
                     campaign.targeting.geo.dmas.push('New York City');
 
-                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.07);
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.06);
 
                     campaign.targeting.interests.push('comedy');
 
-                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.08);
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.07);
 
                     campaign.targeting.interests.push('entertainment');
 
-                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.08);
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.07);
 
                     campaign.targeting.demographics.age.push('18-24');
 
-                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.09);
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.08);
 
                     campaign.targeting.demographics.age.push('25-40');
 
-                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.09);
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.08);
 
                     campaign.targeting.demographics.income.push('20,000-50,000');
 
-                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.10);
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.08);
 
                     campaign.targeting.demographics.income.push('120,000-150,000');
 
-                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.10);
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.08);
 
                     campaign.targeting.demographics.gender.push('Male');
 
-                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.11);
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.08);
 
                     campaign.targeting.demographics.gender.push('Male');
 
-                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.11);
+                    expect(num(SelfieBudgetCtrl.cpv)).toBe(0.08);
                 });
             });
 

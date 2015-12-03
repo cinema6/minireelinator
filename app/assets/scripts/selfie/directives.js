@@ -645,9 +645,9 @@ function( angular , select2 , braintree ) {
                 priceForInterests = pricing.cost.__priceForInterests;
 
             function getPrice(booleanArray, price) {
-                return booleanArray.filter(function(bool) {
+                return !!booleanArray.filter(function(bool) {
                     return !!bool;
-                }).length * price;
+                }).length ? price : 0;
             }
 
             this.budget = campaign.pricing.budget || null;
