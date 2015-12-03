@@ -1,0 +1,50 @@
+<div class="grid__item two-thirds" ng-controller="SelfieFlightDatesController as SelfieFlightDatesCtrl">
+    <section class="formSection__group formSection__group--sub">
+
+        <h1 class="formSection__title">
+            <span class="formSection__titleText tk--hdr">Set Your Timeline</span>
+        </h1>
+        <p class="formSection__introText">Choose your start and end dates</p>
+
+        <div class="form__items">
+
+            <fieldset class="form__item form__item--shortInput" ng-class="{'ui--hasError': !SelfieFlightDatesCtrl.validStartDate &&  SelfieFlightDatesCtrl.canShowError }">
+                <input datepicker c6-fill-check min-date="null" max-date="SelfieFlightDatesCtrl.endDate" default-date="null" alt-field="_startdate" class="form__textBox form__textBox--units form__fillCheck" type="text" id="startdate" ng-model="SelfieFlightDatesCtrl.startDate" ng-change="SelfieFlightDatesCtrl.setDates()" ng-disabled="!SelfieFlightDatesCtrl.editableStartDate" ng-blur="SelfieFlightDatesCtrl.startDateBlur = true">
+                <label class="form__label" for="c6-sponsor-name">
+                    <i class="fa fa-times ui--error"></i> 
+                    Start date
+                </label>
+                <div class="form__helpBox form__helpBox--right">
+                    <div class="form__helpText">
+                        This is when your campaign would start.
+                    </div>
+                </div>
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Invalid start date
+                    </p>
+                </div>
+            </fieldset>
+
+            <fieldset class="form__item form__item--shortInput" ng-class="{'ui--hasError': !SelfieFlightDatesCtrl.validEndDate }">
+                <input datepicker c6-fill-check min-date="SelfieFlightDatesCtrl.startDate" max-date="null" default-date="'+1m'" alt-field="_enddate" class="form__textBox form__textBox--units form__fillCheck" type="text" id="enddate" ng-model="SelfieFlightDatesCtrl.endDate" ng-change="SelfieFlightDatesCtrl.setDates()">
+                <label class="form__label" for="c6-sponsor-name">
+                    <i class="fa fa-times ui--error"></i> 
+                    End date
+                </label>
+                <div class="form__helpBox form__helpBox--right">
+                    <div class="form__helpText">
+                        This is when your campaign would end.
+                    </div>
+                </div>
+                <div class="form__errorBox">
+                    <p class="form__errorMsg">
+                        <i class="fa fa-exclamation-triangle"></i> Invalid end date
+                    </p>
+                </div>
+            </fieldset>
+
+        </div>
+    </section><!--.formSection__group-->
+
+</div><!--.grid__item-->

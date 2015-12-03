@@ -7,6 +7,7 @@
         paths: {
             async: 'lib/async',
             jquery: 'https://lib.cinema6.com/jquery/2.0.3-0-gf576d00/jquery.min',
+            jqueryui: 'lib/jquery-ui.min',
             hammer: 'https://lib.cinema6.com/hammer.js/1.1.3-0-gc6a0b6f/hammer.min',
             modernizr: 'https://lib.cinema6.com/modernizr/modernizr.custom.71747',
             youtube: 'lib/youtube',
