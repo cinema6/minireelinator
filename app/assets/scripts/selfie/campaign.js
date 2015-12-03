@@ -798,7 +798,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 var date = new Date(string);
 
-                type === 'start' ? date.setHours(0,1) : date.setHours(23,59);
+                date.setHours.apply(date, (type === 'start' ? [0,1] : [23,59]));
 
                 return date.toISOString();
             }
