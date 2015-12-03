@@ -59,6 +59,12 @@
                                 --><div class="grid__item one-third"><div class="orderItem__cost--total text--right">${{model.cpv | number:2}}</div></div>
                                 </li>
                             </ul>
+                            <p class="text--center" ng-if="!model.campaign.status || model.campaign.status === 'draft'">
+                                Note: It may take up to 24 hours for your campaign to become active.
+                            </p>
+                            <p class="text--center" ng-if="model.campaign.status && model.campaign.status !== 'draft'">
+                                Note: It may take up to 24 hours for your changes to be approved.
+                            </p>
                         </div>
                     </div>
                 </div>
