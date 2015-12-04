@@ -773,6 +773,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 campaignHash = card.campaign;
 
             var now = new Date();
+            now.setHours(0,0,1);
 
             function pad(num) {
                 var norm = Math.abs(Math.floor(num));
@@ -845,7 +846,9 @@ function( angular , c6State  , PaginatedListState                    ,
                 },
                 canShowError: {
                     get: function() {
-                        return originalCampaign.status !== 'pending' || this.startDateBlur;
+                        return !originalCampaign.status ||
+                            originalCampaign.status === 'draft' ||
+                            this.hasChanged;
                     }
                 },
                 imminentDates: {
@@ -855,19 +858,26 @@ function( angular , c6State  , PaginatedListState                    ,
                             today = now.getDate(),
                             tomorrow = today + 1;
 
-                        return this.editableStartDate && ((start && start instanceof Date &&
+                        return this.editableStartDate && this.validStartDate && this.validEndDate &&
+                            ((start && start instanceof Date &&
                             (start.getDate() === today || start.getDate() === tomorrow)) ||
-                                (end && end instanceof Date &&
-                                    (end.getDate() === today || end.getDate() === tomorrow)));
+                            (end && end instanceof Date &&
+                            (end.getDate() === today || end.getDate() === tomorrow)));
                     }
                 }
             });
 
             this.startDate = fromISO(campaignHash.startDate);
             this.endDate = fromISO(campaignHash.endDate);
-            this.startDateBlur = false;
+            this.hasChanged = false;
+            this.isPending = originalCampaign.status === 'pending';
 
             this.setDates = function() {
+                if (this.startDate !== fromISO(campaignHash.startDate) ||
+                    this.endDate !== fromISO(campaignHash.endDate)) {
+                    this.hasChanged = true;
+                }
+
                 campaignHash.startDate = this.validStartDate ?
                     toISO('start', this.startDate) : campaignHash.startDate;
                 campaignHash.endDate = this.validEndDate ?

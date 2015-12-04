@@ -19,6 +19,7 @@ define(['app'], function(appModule) {
             evenLaterDate,
             earlierDate,
             today,
+            tomorrow,
             now;
 
         function compileCtrl() {
@@ -58,6 +59,7 @@ define(['app'], function(appModule) {
 
             now = new Date();
             today = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + now.getFullYear();
+            tomorrow = pad(now.getMonth() + 1) + '/' + pad(now.getDate() + 1) + '/' + now.getFullYear();
             earlierDate = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + (now.getFullYear() - 1);
             laterDate = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + (now.getFullYear() + 1);
             evenLaterDate = pad(now.getMonth() + 1) + '/' + pad(now.getDate()) + '/' + (now.getFullYear() + 2);
@@ -292,16 +294,88 @@ define(['app'], function(appModule) {
             });
 
             describe('canShowError', function() {
-                it('should be false if campaign is pending and user has not entered and then left the start date picker', function() {
-                    expect(SelfieFlightDatesCtrl.canShowError).toBe(true);
+                describe('when original campaign has no status', function() {
+                    it('should be true', function() {
+                        originalCampaign.status = undefined;
+                        expect(SelfieFlightDatesCtrl.canShowError).toBe(true);
+                    });
+                });
 
-                    originalCampaign.status = 'pending';
+                describe('when original campaign status is draft', function() {
+                    it('should be true', function() {
+                        originalCampaign.status = 'draft';
+                        expect(SelfieFlightDatesCtrl.canShowError).toBe(true);
+                    });
+                });
 
-                    expect(SelfieFlightDatesCtrl.canShowError).toBe(false);
+                describe('when a date has changed', function() {
+                    it('should be true', function() {
+                        originalCampaign.status = 'pending';
+                        expect(SelfieFlightDatesCtrl.canShowError).toBe(false);
 
-                    SelfieFlightDatesCtrl.startDateBlur = true;
+                        SelfieFlightDatesCtrl.hasChanged = true;
+                        expect(SelfieFlightDatesCtrl.canShowError).toBe(true);
+                    });
+                });
 
-                    expect(SelfieFlightDatesCtrl.canShowError).toBe(true);
+                describe('when campaign status is active or pending', function() {
+                    it('should false until a date has changed', function() {
+                        originalCampaign.status = 'pending';
+                        expect(SelfieFlightDatesCtrl.canShowError).toBe(false);
+                        originalCampaign.status = 'active';
+                        expect(SelfieFlightDatesCtrl.canShowError).toBe(false);
+                        originalCampaign.status = 'paused';
+                        expect(SelfieFlightDatesCtrl.canShowError).toBe(false);
+
+                        SelfieFlightDatesCtrl.hasChanged = true;
+                        expect(SelfieFlightDatesCtrl.canShowError).toBe(true);
+                    });
+                });
+            });
+
+            describe('imminentDates', function() {
+                describe('when start date is today or tomorrow', function() {
+                    it('should be true', function() {
+                        expect(SelfieFlightDatesCtrl.imminentDates).toBeFalsy();
+
+                        campaign.status = 'draft';
+                        SelfieFlightDatesCtrl.startDate = today;
+                        expect(SelfieFlightDatesCtrl.imminentDates).toBe(true);
+                        SelfieFlightDatesCtrl.startDate = tomorrow;
+                        expect(SelfieFlightDatesCtrl.imminentDates).toBe(true);
+                    });
+
+                    it('should be false if end date is invalid', function() {
+                        campaign.status = 'draft';
+                        SelfieFlightDatesCtrl.endDate = earlierDate;
+
+                        SelfieFlightDatesCtrl.startDate = today;
+                        expect(SelfieFlightDatesCtrl.imminentDates).toBe(false);
+                        SelfieFlightDatesCtrl.startDate = tomorrow;
+                        expect(SelfieFlightDatesCtrl.imminentDates).toBe(false);
+                    });
+                });
+
+                describe('when end date is today or tomorrow', function() {
+                    it('should be true', function() {
+                        expect(SelfieFlightDatesCtrl.imminentDates).toBeFalsy();
+
+                        campaign.status = 'draft';
+                        SelfieFlightDatesCtrl.endDate = today;
+                        expect(SelfieFlightDatesCtrl.imminentDates).toBe(true);
+                        SelfieFlightDatesCtrl.endDate = tomorrow;
+                        expect(SelfieFlightDatesCtrl.imminentDates).toBe(true);
+                    });
+
+                    it('should be false if start date is invalid', function() {
+                        campaign.status = 'draft';
+                        SelfieFlightDatesCtrl.startDate = earlierDate;
+
+                        SelfieFlightDatesCtrl.endDate = today;
+                        expect(SelfieFlightDatesCtrl.imminentDates).toBe(false);
+                        SelfieFlightDatesCtrl.endDate = tomorrow;
+                        expect(SelfieFlightDatesCtrl.imminentDates).toBe(false);
+                    });
                 });
             });
         });
@@ -309,6 +383,17 @@ define(['app'], function(appModule) {
         describe('methods', function() {
             describe('setDates()', function() {
                 describe('when start date is not set', function() {
+                    it('should set hasChanged flag', function() {
+                        card.campaign.startDate = '2016-06-26T04:59:00.000Z';
+                        SelfieFlightDatesCtrl.startDate = undefined;
+
+                        expect(SelfieFlightDatesCtrl.hasChanged).toBe(false);
+
+                        SelfieFlightDatesCtrl.setDates();
+
+                        expect(SelfieFlightDatesCtrl.hasChanged).toBe(true);
+                    });
+
                     it('should remove the start date on the card', function() {
                         SelfieFlightDatesCtrl.startDate = undefined;
 
@@ -325,6 +410,16 @@ define(['app'], function(appModule) {
                 });
 
                 describe('when start date is set', function() {
+                    it('should set hasChanged flag', function() {
+                        SelfieFlightDatesCtrl.startDate = laterDate;
+
+                        expect(SelfieFlightDatesCtrl.hasChanged).toBe(false);
+
+                        SelfieFlightDatesCtrl.setDates();
+
+                        expect(SelfieFlightDatesCtrl.hasChanged).toBe(true);
+                    });
+
                     describe('when start date is valid', function() {
                         it('should set the date on the card', function() {
                             SelfieFlightDatesCtrl.startDate = laterDate;
@@ -351,6 +446,17 @@ define(['app'], function(appModule) {
                 });
 
                 describe('when end date is not set', function() {
+                    it('should set hasChanged flag', function() {
+                        card.campaign.endDate = '2016-06-26T04:59:00.000Z';
+                        SelfieFlightDatesCtrl.endDate = undefined;
+
+                        expect(SelfieFlightDatesCtrl.hasChanged).toBe(false);
+
+                        SelfieFlightDatesCtrl.setDates();
+
+                        expect(SelfieFlightDatesCtrl.hasChanged).toBe(true);
+                    });
+
                     it('should remove any end date on the card', function() {
                         SelfieFlightDatesCtrl.endDate = undefined;
 
@@ -367,6 +473,16 @@ define(['app'], function(appModule) {
                 });
 
                 describe('when end date is set', function() {
+                    it('should set hasChanged flag', function() {
+                        SelfieFlightDatesCtrl.endDate = laterDate;
+
+                        expect(SelfieFlightDatesCtrl.hasChanged).toBe(false);
+
+                        SelfieFlightDatesCtrl.setDates();
+
+                        expect(SelfieFlightDatesCtrl.hasChanged).toBe(true);
+                    });
+
                     describe('when end date is valid', function() {
                         it('should set the date on the card', function() {
                             SelfieFlightDatesCtrl.endDate = laterDate;
