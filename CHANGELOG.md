@@ -4,6 +4,9 @@
   * [DESIGN]: Added styles for campaign confirmation modal
   * [FEATURE]: Add Flight Dates in campaign creator/editor view
   * [DESIGN]: Added styles for campaign stats screen
+  * [FEATURE]: Add Campaign Summary modal when submitting
+  * [FIX]: Update CPV calculations
+  * [FIX]: Show warning when choosing flight dates within the next two days
 
 ## v1.28.0 (December 1, 2015)
 * *[v1.28.0.rc1]*
