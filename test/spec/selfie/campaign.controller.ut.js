@@ -31,6 +31,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             CampaignService,
             MiniReelService,
             ConfirmDialogService,
+            SelfieCampaignSummaryService,
             SelfieCampaignCtrl;
 
         var cState,
@@ -96,6 +97,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 CampaignService = $injector.get('CampaignService');
                 MiniReelService = $injector.get('MiniReelService');
                 ConfirmDialogService = $injector.get('ConfirmDialogService');
+                SelfieCampaignSummaryService = $injector.get('SelfieCampaignSummaryService');
             });
 
             advertiser = {
@@ -411,6 +413,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                     spyOn(c6State, 'goTo');
                     spyOn(ConfirmDialogService, 'display');
+                    spyOn(SelfieCampaignSummaryService, 'display');
                     spyOn(campaign, 'pojoify').and.callThrough();
                     spyOn(cinema6.db, 'create').and.callFake(function(type, obj) {
                         updateRequest.data = obj.data;
@@ -457,12 +460,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                             SelfieCampaignCtrl.submit();
 
-                            onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
-                            onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
+                            onAffirm = SelfieCampaignSummaryService.display.calls.mostRecent().args[0].onAffirm;
+                            onCancel = SelfieCampaignSummaryService.display.calls.mostRecent().args[0].onCancel;
                         });
 
-                        it('should ask for confirmation', function() {
-                            expect(ConfirmDialogService.display).toHaveBeenCalled();
+                        it('should should the campaign summary', function() {
+                            expect(SelfieCampaignSummaryService.display).toHaveBeenCalled();
                         });
 
                         describe('onAffirm()', function() {
@@ -571,12 +574,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                                     SelfieCampaignCtrl.submit();
 
-                                    onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
-                                    onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
+                                    onAffirm = SelfieCampaignSummaryService.display.calls.mostRecent().args[0].onAffirm;
+                                    onCancel = SelfieCampaignSummaryService.display.calls.mostRecent().args[0].onCancel;
                                 });
 
-                                it('should ask for confirmation', function() {
-                                    expect(ConfirmDialogService.display).toHaveBeenCalled();
+                                it('should show the campaign summary', function() {
+                                    expect(SelfieCampaignSummaryService.display).toHaveBeenCalled();
                                 });
 
                                 describe('onAffirm()', function() {
@@ -629,12 +632,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                         saveDeferred.resolve();
                                     });
 
-                                    onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
-                                    onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
+                                    onAffirm = SelfieCampaignSummaryService.display.calls.mostRecent().args[0].onAffirm;
+                                    onCancel = SelfieCampaignSummaryService.display.calls.mostRecent().args[0].onCancel;
                                 });
 
-                                it('should ask for confirmation', function() {
-                                    expect(ConfirmDialogService.display).toHaveBeenCalled();
+                                it('should show the campaign summary', function() {
+                                    expect(SelfieCampaignSummaryService.display).toHaveBeenCalled();
                                 });
 
                                 describe('onAffirm()', function() {

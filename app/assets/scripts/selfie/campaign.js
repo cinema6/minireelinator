@@ -481,11 +481,11 @@ function( angular , c6State  , PaginatedListState                    ,
         }])
 
         .controller('SelfieCampaignController', ['$scope','$log','c6State','cState','cinema6','$q',
-                                                 'c6Debounce','c6AsyncQueue','CampaignService',
-                                                 'ConfirmDialogService',
+                                                 'c6Debounce','c6AsyncQueue','ConfirmDialogService',
+                                                 'CampaignService','SelfieCampaignSummaryService',
         function                                ( $scope , $log , c6State , cState , cinema6 , $q ,
-                                                  c6Debounce , c6AsyncQueue , CampaignService ,
-                                                  ConfirmDialogService ) {
+                                                  c6Debounce , c6AsyncQueue , ConfirmDialogService ,
+                                                  CampaignService , SelfieCampaignSummaryService ) {
             var SelfieCampaignCtrl = this,
                 queue = c6AsyncQueue();
 
@@ -641,11 +641,7 @@ function( angular , c6State  , PaginatedListState                    ,
             };
 
             this.submit = function() {
-                var isDraft = cState._campaign.status === 'draft',
-                    draftText = 'Are you sure you want to submit your campaign for approval? ' +
-                        'It may take up to 24 hours for your campaign to become active.',
-                    activeText = 'Are you sure you want to submit these changes for approval? ' +
-                        'It may take up to 24 hours for them to take effect.';
+                var isDraft = cState._campaign.status === 'draft';
 
                 if (!SelfieCampaignCtrl.canSubmit) {
                     SelfieCampaignCtrl.validation.show = true;
@@ -666,16 +662,16 @@ function( angular , c6State  , PaginatedListState                    ,
                     });
                 }
 
-                ConfirmDialogService.display({
-                    prompt: isDraft ? draftText : activeText,
-                    affirm: 'Yes',
-                    cancel: 'Cancel',
+                SelfieCampaignSummaryService.display({
+                    campaign: this.campaign,
+                    interests: this.categories,
+                    schema: this.schema,
 
                     onCancel: function() {
-                        return ConfirmDialogService.close();
+                        return SelfieCampaignSummaryService.close();
                     },
                     onAffirm: queue.debounce(function() {
-                        ConfirmDialogService.close();
+                        SelfieCampaignSummaryService.close();
 
                         return (isDraft ? saveCampaign() : $q.when(SelfieCampaignCtrl.campaign))
                             .then(createUpdateRequest)
@@ -776,7 +772,8 @@ function( angular , c6State  , PaginatedListState                    ,
                 card = SelfieCampaignCtrl.card,
                 campaignHash = card.campaign;
 
-            var now = new Date().getTime();
+            var now = new Date();
+            now.setHours(0,0,1);
 
             function pad(num) {
                 var norm = Math.abs(Math.floor(num));
@@ -849,19 +846,42 @@ function( angular , c6State  , PaginatedListState                    ,
                 },
                 canShowError: {
                     get: function() {
-                        return originalCampaign.status !== 'pending' || this.startDateBlur;
+                        return !originalCampaign.status ||
+                            originalCampaign.status === 'draft' ||
+                            this.hasChanged;
+                    }
+                },
+                imminentDates: {
+                    get: function() {
+                        var start = this.startDate,
+                            end = this.endDate,
+                            today = fromISO(now),
+                            tomorrow = new Date(now);
+
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+                        tomorrow = fromISO(tomorrow);
+
+                        return this.editableStartDate && this.validStartDate && this.validEndDate &&
+                            ((start && (start === today || start === tomorrow)) ||
+                            (end && (end === today || end === tomorrow)));
                     }
                 }
             });
 
             this.startDate = fromISO(campaignHash.startDate);
             this.endDate = fromISO(campaignHash.endDate);
-            this.startDateBlur = false;
+            this.hasChanged = false;
+            this.isPending = originalCampaign.status === 'pending';
 
             this.setDates = function() {
-                campaignHash.startDate = this.startDate && this.validStartDate ?
+                if (this.startDate !== fromISO(campaignHash.startDate) ||
+                    this.endDate !== fromISO(campaignHash.endDate)) {
+                    this.hasChanged = true;
+                }
+
+                campaignHash.startDate = this.validStartDate ?
                     toISO('start', this.startDate) : campaignHash.startDate;
-                campaignHash.endDate = this.endDate && this.validEndDate ?
+                campaignHash.endDate = this.validEndDate ?
                     toISO('end', this.endDate) : campaignHash.endDate;
             };
         }])

@@ -9,7 +9,7 @@
         <div class="form__items">
 
             <fieldset class="form__item form__item--shortInput" ng-class="{'ui--hasError': !SelfieFlightDatesCtrl.validStartDate &&  SelfieFlightDatesCtrl.canShowError }">
-                <input datepicker c6-fill-check min-date="null" max-date="SelfieFlightDatesCtrl.endDate" default-date="null" alt-field="_startdate" class="form__textBox form__textBox--units form__fillCheck" type="text" id="startdate" ng-model="SelfieFlightDatesCtrl.startDate" ng-change="SelfieFlightDatesCtrl.setDates()" ng-disabled="!SelfieFlightDatesCtrl.editableStartDate" ng-blur="SelfieFlightDatesCtrl.startDateBlur = true">
+                <input datepicker c6-fill-check min-date="null" max-date="SelfieFlightDatesCtrl.endDate" default-date="null" alt-field="_startdate" class="form__textBox form__textBox--units form__fillCheck" type="text" id="startdate" ng-model="SelfieFlightDatesCtrl.startDate" ng-change="SelfieFlightDatesCtrl.setDates()" ng-disabled="!SelfieFlightDatesCtrl.editableStartDate">
                 <label class="form__label" for="c6-sponsor-name">
                     <i class="fa fa-times ui--error"></i> 
                     Start date
@@ -45,6 +45,9 @@
             </fieldset>
 
         </div>
+
+        <p class="alertMessage alert__warning two-thirds" style="margin:0 auto;" ng-if="SelfieFlightDatesCtrl.imminentDates && (!campaign.status || campaign.status === 'draft')">Warning: once submitted, your campaign may take up to 24 hours to become active, which could effect your desired flight dates.</p>
+        <p class="alertMessage alert__warning two-thirds" style="margin:0 auto;" ng-if="SelfieFlightDatesCtrl.imminentDates && campaign.status && campaign.status !== 'draft' && !SelfieFlightDatesCtrl.isPending && SelfieFlightDatesCtrl.canShowError">Warning: changes may take up to 24 hours to become active, which could effect your desired flight dates.</p>
     </section><!--.formSection__group-->
 
 </div><!--.grid__item-->

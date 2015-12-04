@@ -9,13 +9,18 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
             CampaignService,
             NormalizationService,
             $q,
-            $httpBackend;
+            $httpBackend,
+            $filter;
 
         var dbModel,
             campaign,
             cardTemplate,
             application,
             selfie;
+
+        function num(num) {
+            return parseFloat($filter('number')(num, 2));
+        }
 
         beforeEach(function() {
             module(c6uilib.name, function($provide) {
@@ -53,6 +58,7 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                 CampaignService = $injector.get('CampaignService');
                 NormalizationService = $injector.get('NormalizationService');
                 $httpBackend = $injector.get('$httpBackend');
+                $filter = $injector.get('$filter');
 
                 spyOn(NormalizationService, 'normalize').and.callThrough();
 
@@ -564,6 +570,85 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                         expect(success).not.toHaveBeenCalled();
                         expect(failure).toHaveBeenCalled();
                     });
+                });
+            });
+
+            describe('getCpv(campaign, schema)', function() {
+                it('should add $.01 each for demo, location, interests', function() {
+                    var campaign = {
+                            targeting: {
+                                geo: {
+                                    states: [],
+                                    dmas: []
+                                },
+                                demographics: {
+                                    age: [],
+                                    income: [],
+                                    gender: []
+                                },
+                                interests: []
+                            }
+                        },
+                        schema = {
+                            pricing: {
+                                cost: {
+                                    __base: 0.05,
+                                    __pricePerGeo: 0.01,
+                                    __pricePerDemo: 0.01,
+                                    __priceForInterests: 0.01
+                                }
+                            }
+                        };
+
+                    expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.05);
+
+                    campaign.targeting.geo.states.push('Arizona');
+
+                    expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.06);
+
+                    campaign.targeting.geo.states.push('Alabama');
+
+                    expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.06);
+
+                    campaign.targeting.geo.dmas.push('Chicago');
+
+                    expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.06);
+
+                    campaign.targeting.geo.dmas.push('New York City');
+
+                    expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.06);
+
+                    campaign.targeting.interests.push('comedy');
+
+                    expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.07);
+
+                    campaign.targeting.interests.push('entertainment');
+
+                    expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.07);
+
+                    campaign.targeting.demographics.age.push('18-24');
+
+                    expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.08);
+
+                    campaign.targeting.demographics.age.push('25-40');
+
+                    expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.08);
+
+                    campaign.targeting.demographics.income.push('20,000-50,000');
+
+                    expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.08);
+
+                    campaign.targeting.demographics.income.push('120,000-150,000');
+
+                    expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.08);
+
+                    campaign.targeting.demographics.gender.push('Male');
+
+                    expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.08);
+
+                    campaign.targeting.demographics.gender.push('Male');
+
+                    expect(num(CampaignService.getCpv(campaign, schema))).toBe(0.08);
                 });
             });
 
