@@ -46,7 +46,8 @@
 
         </div>
 
-        <p class="alertMessage alert__failure two-thirds" style="margin:0 auto;" ng-if="SelfieFlightDatesCtrl.imminentStartDate">Warning: your campaign may take up to 24 hours to become active, which could effect your delivery.</p>
+        <p class="alertMessage alert__failure two-thirds" style="margin:0 auto;" ng-if="SelfieFlightDatesCtrl.imminentDates && (!campaign.status || campaign.status === 'draft')">Warning: your campaign may take up to 24 hours to become active, which could effect your delivery.</p>
+        <p class="alertMessage alert__failure two-thirds" style="margin:0 auto;" ng-if="SelfieFlightDatesCtrl.imminentDates && campaign.status && campaign.status !== 'draft' && SelfieFlightDatesCtrl.canShowError">Warning: submitted changes may take up to 24 hours to become active, which could effect your delivery.</p>
     </section><!--.formSection__group-->
 
 </div><!--.grid__item-->

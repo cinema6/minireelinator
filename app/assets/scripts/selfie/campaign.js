@@ -848,17 +848,17 @@ function( angular , c6State  , PaginatedListState                    ,
                         return originalCampaign.status !== 'pending' || this.startDateBlur;
                     }
                 },
-                imminentStartDate: {
+                imminentDates: {
                     get: function() {
                         var start = this.startDate && new Date(this.startDate),
                             end = this.endDate && new Date(this.endDate),
                             today = now.getDate(),
                             tomorrow = today + 1;
 
-                        return (start && start instanceof Date &&
+                        return this.editableStartDate && ((start && start instanceof Date &&
                             (start.getDate() === today || start.getDate() === tomorrow)) ||
                                 (end && end instanceof Date &&
-                                    (end.getDate() === today || end.getDate() === tomorrow));
+                                    (end.getDate() === today || end.getDate() === tomorrow)));
                     }
                 }
             });
