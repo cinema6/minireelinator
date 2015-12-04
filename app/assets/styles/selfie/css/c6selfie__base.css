@@ -1347,6 +1347,162 @@ fa,
                 color: #4AB8BA;
             }
 
+    /*  stats page classes        
+        ================================================ */
+
+        .statsChart__infoBox {
+            background:#fff;
+            margin:0 0 1em 0;
+            padding:1em;
+            text-align:center;
+            position:relative;
+        }
+
+        .statsChart__infoBox--views {
+            border-bottom:2px solid #00c0ff;
+        }
+
+        .statsChart__infoBox--interactions {
+            border-bottom:2px solid #ffc000;
+        }
+
+        .statsChart__infoBox--cost {
+            border-bottom:2px solid #20d783;
+        }
+
+            .stats__label {
+                font-size:1em;
+                margin:0;
+                color:#5c5c5c;
+            }
+
+            .stats__row--labels .stats__label {
+                font-weight:600;
+            }
+
+            .stats__row .stats__label {
+                float:left;
+            }
+
+            .stats__infoNumber {
+                font-size:2em;
+                margin:0;
+                font-weight:500;
+                color:#5c5c5c;
+                cursor: default;
+            }
+
+            .statsChart__infoBox--views .stats__infoNumber {
+                color:#00c0ff;
+            }
+
+            .statsChart__infoBox--interactions .stats__infoNumber {
+                color:#ffc000;
+            }
+
+            .statsChart__infoBox--cost .stats__infoNumber {
+                color:#20d783;
+            }
+
+        .statsBreakdown__group {
+            background:#fff;
+            margin:0 0 0 1.5em;
+            padding:2em 0;
+        }
+
+            .statsBreakdown__item {
+                position:relative;
+                margin:1em 0;
+            }
+
+        .stats__hdr {
+            /*font-size:2.25em;*/
+            font-weight:500;
+            color:#5c5c5c;
+            display:block;
+            background:#fff;
+            margin:1rem 0 0.25rem;
+            padding:0.125em 0 0.125em 1.5rem;
+            position:relative;
+            cursor: default;
+        } 
+            .stats__hdr--title {
+                margin: 0;
+                font-weight: 500;
+                padding: 0.125rem 0;
+            }
+        .interactions__group,
+        .quartile__group {
+            position:relative;
+        }
+            .quartile__group .helpBox--center {
+                max-width: 20rem;
+                left: -5em;
+            }
+
+            .stats__row {
+                background:#fff;
+                padding:1.25em 0 2.75em 1.5rem;
+                margin:0 0 2px 0;
+                position:relative;
+            }
+
+                .stats__rowClicks {
+                    float:right;
+                    margin:-0.5rem 1.5rem 0 0;                    
+                    font-weight:600;
+                    color:#5c5c5c;
+                    width: 3em;
+                    text-align: center;
+                }
+                .stats__rowClicks .stats__rowClicks--label {
+                    font-size: 0.75rem;
+                    line-height: 0.25em;
+                    vertical-align: middle;
+                    padding-left: 0.5em;
+                    display: block;
+                    padding-top: 0;
+                    margin-top: -5px;
+                    text-align: center;
+                }
+
+            .stats__column {
+                margin:0 1rem 0 0;
+            }
+
+            .stats__column--duration {
+                width:8rem;
+            }
+
+            .stats__column--views,
+            .stats__column--percent {
+                width:6rem;
+            }
+
+            .stats__columnGraph {
+                width:calc(100% - 24rem);
+                float:right;
+                margin-top:0.375em;
+            }
+
+                .stats__columnGraph--bar {
+                    height:0.75rem;
+                    background:#00c0ff;
+                }
+
+    /* Chart stats*/
+        .chart__wrap {
+            margin-bottom: 50px;
+        }
+        .doughnut-legend {
+            list-style-type: none;
+        }
+        .doughnut-legend li span {
+            width: 12px;
+            height: 12px;
+            display: inline-block;
+            margin-right: 10px;
+        }
 
     /*  data column classes
         ================================================ */

@@ -3,6 +3,7 @@
 * *[v1.28.1.rc1]*
   * [DESIGN]: Added styles for campaign confirmation modal
   * [FEATURE]: Add Flight Dates in campaign creator/editor view
+  * [DESIGN]: Added styles for campaign stats screen
 
 ## v1.28.0 (December 1, 2015)
 * *[v1.28.0.rc1]*
