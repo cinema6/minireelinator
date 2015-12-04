@@ -853,16 +853,17 @@ function( angular , c6State  , PaginatedListState                    ,
                 },
                 imminentDates: {
                     get: function() {
-                        var start = this.startDate && new Date(this.startDate),
-                            end = this.endDate && new Date(this.endDate),
-                            today = now.getDate(),
-                            tomorrow = today + 1;
+                        var start = this.startDate,
+                            end = this.endDate,
+                            today = fromISO(now),
+                            tomorrow = new Date(now);
+
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+                        tomorrow = fromISO(tomorrow);
 
                         return this.editableStartDate && this.validStartDate && this.validEndDate &&
-                            ((start && start instanceof Date &&
-                            (start.getDate() === today || start.getDate() === tomorrow)) ||
-                            (end && end instanceof Date &&
-                            (end.getDate() === today || end.getDate() === tomorrow)));
+                            ((start && (start === today || start === tomorrow)) ||
+                            (end && (end === today || end === tomorrow)));
                     }
                 }
             });
