@@ -1370,11 +1370,21 @@ fa,
             border-bottom:2px solid #20d783;
         }
 
-            .stats__label {
+            .stats__label, .stats__icon {
                 font-size:1em;
                 margin:0;
                 color:#5c5c5c;
             }
+                .stats__icon i.fa {
+                    font-size: 1.5em;
+                    line-height: 2.5em;
+                    border: 2px solid #119DA4;
+                    width: 2.5em;
+                    height: 2.5em;
+                    border-radius: 50%;
+                    color: #fff;
+                    background: #119DA4;
+                }
 
             .stats__row--labels .stats__label {
                 font-weight:600;
@@ -1388,7 +1398,7 @@ fa,
                 font-size:2em;
                 margin:0;
                 font-weight:500;
-                color:#5c5c5c;
+                color:#119DA4;
                 cursor: default;
             }
 
@@ -1451,7 +1461,7 @@ fa,
                     float:right;
                     margin:-0.5rem 1.5rem 0 0;                    
                     font-weight:600;
-                    color:#5c5c5c;
+                    color:#119DA4;
                     width: 3em;
                     text-align: center;
                 }
