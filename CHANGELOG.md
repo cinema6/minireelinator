@@ -1,6 +1,7 @@
 # MiniReelinator
 
 * *[v1.28.1.rc1]*
+  * [FEATURE]: Show start and end dates in the admin tab
   * [FEATURE]: Add support for Instagram video-only cards
   * [DESIGN]: Added styles for campaign confirmation modal
   * [FEATURE]: Add Flight Dates in campaign creator/editor view

@@ -1209,7 +1209,9 @@ function( angular , select2 , braintree ) {
                     'user': 'User ID',
                     'org': 'Organization ID',
                     'lastUpdated': 'Last Updated',
-                    'updateRequest': 'Update Request ID'
+                    'updateRequest': 'Update Request ID',
+                    'startDate': 'Start Date',
+                    'endDate': 'End Date'
                 };
                 return keysHash.split('.').reduce(function(acc, key) {
                     return acc + ' ' + (strings[key] || capitalize(key));
@@ -1253,7 +1255,7 @@ function( angular , select2 , braintree ) {
                 'id', 'type', 'title', 'note', 'thumb',
                 'data\\.(service|videoid)', 'collateral\\.logo',
                 'links.*', 'shareLinks.*',
-                'params\\.action.*', 'campaign\\.adtechName'
+                'params\\.action.*', 'campaign\\.(adtechName|startDate|endDate)'
             ];
 
             // Campaign Constants
