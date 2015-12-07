@@ -42,10 +42,15 @@ function( angular , c6uilib ,  c6Defines  ) {
                 return app.cModel;
             }
 
-            function getPrice(booleanArray, price) {
-                return !!booleanArray.filter(function(bool) {
-                    return !!bool;
-                }).length ? price : 0;
+            function getPrice(booleanArray, priceFor, pricePer) {
+                var totalFor = !!booleanArray.filter(function(bool) {
+                        return !!bool;
+                    }).length ? (priceFor || 0) : 0,
+                    totalPer = booleanArray.filter(function(bool) {
+                        return !!bool;
+                    }).length * (pricePer || 0);
+
+                return totalFor + totalPer;
             }
 
             this.create = function(campaign) {
@@ -202,7 +207,9 @@ function( angular , c6uilib ,  c6Defines  ) {
 
                     basePrice = cost.__base,
                     pricePerGeo = cost.__pricePerGeo,
+                    priceForGeo = cost.__priceForGeoTargeting,
                     pricePerDemo = cost.__pricePerDemo,
+                    priceForDemo = cost.__priceForDemoTargeting,
                     priceForInterests = cost.__priceForInterests,
 
                     hasInterests = interests.length,
@@ -212,9 +219,15 @@ function( angular , c6uilib ,  c6Defines  ) {
                     hasIncome = demos.income.length,
                     hasGender = demos.gender.length,
 
-                    geoPrice = getPrice([hasStates, hasDmas], pricePerGeo),
-                    demoPrice = getPrice([hasAge, hasIncome, hasGender], pricePerDemo),
-                    interestsPrice = getPrice([hasInterests], priceForInterests);
+                    geoPrice = getPrice(
+                        [hasStates, hasDmas], priceForGeo, pricePerGeo
+                    ),
+                    demoPrice = getPrice(
+                        [hasAge, hasIncome, hasGender], priceForDemo, pricePerDemo
+                    ),
+                    interestsPrice = getPrice(
+                        [hasInterests], priceForInterests
+                    );
 
                 return basePrice + geoPrice + demoPrice + interestsPrice;
             };
