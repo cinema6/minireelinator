@@ -1514,6 +1514,67 @@ fa,
             margin-right: 10px;
         }
 
+    /* Helpbox classes*/
+        .helpBox {
+            border-radius:6px;
+            background:#fff;
+            border:2px solid #75DBCD;
+            position: absolute;
+            padding:0.75rem;
+            font-size:0.875em;
+            z-index: 1000;
+            -webkit-box-shadow: 0 0 5px #888;
+            -moz-box-shadow: 0 0 5px #888;
+            box-shadow: 0 0 5px #888;
+            opacity:0;
+            display:none;
+        }
+
+        .stats__infoNumber:hover ~ .helpBox,
+        .stats__hdr:hover ~ .helpBox {
+            opacity:1;
+            display:block;
+        }
+
+        .helpBox:after,
+        .helpBox:before {
+            border: solid transparent;
+            content: '';
+            height: 0;
+            width: 0;
+            position: absolute;
+            pointer-events: none;
+        }
+            .helpBox:after {
+                border-color: rgba(255, 255, 255, 0);
+                border-width: 8px;
+            }
+            .helpBox:before {
+                border-color: rgba(62, 204, 255, 0);
+                border-width: 11px;
+            }
+
+        .helpBox--center {
+            left:5%; 
+            right:5%;
+            max-width:30rem;
+            margin:1em 0 0 1.5em;
+        }
+
+            .helpBox--center:after,
+            .helpBox--center:before {
+                bottom: 100%;
+                left: 50%;
+            }
+                .helpBox--center:after {
+                    border-bottom-color: #fff;
+                    margin-left: -8px;
+                }
+                .helpBox--center:before {
+                    border-bottom-color: #75DBCD;
+                    margin-left: -11px;
+                }
+
     /*  data column classes
         ================================================ */
         .sortBar__item,
@@ -4305,6 +4366,9 @@ div.tree-multiselect span.section-name {
             cursor: pointer;
             float: right;
         }
+            .ui-datepicker-prev.ui-state-disabled, .ui-datepicker-next.ui-state-disabled {
+                opacity: 0.5;
+            }
         .ui-state-default {
             color: #4AB8BA;
             transition: color 0.3s;
@@ -4314,6 +4378,22 @@ div.tree-multiselect span.section-name {
                 color: #fff;
             }
         .ui-state-highlight {
+            background: #75dbcd;
+            color: #fff;
+            border-radius: 50%;
+        }
+            .ui-state-highlight:hover:after {
+                content: 'Today';
+                position: absolute;
+                background: #333;
+                color: #fff;
+                padding: 0 0.5em;
+                margin-left: -33px;
+                margin-top: 34px;
+                border-radius: 5px;
+                line-height: 1.5em;
+            }
+        .ui-state-active {
             background: #49B8B9;
             color: #fff;
             border-radius: 50%;
@@ -4331,8 +4411,9 @@ div.tree-multiselect span.section-name {
                 display: block;
                 vertical-align: middle;
                 line-height: 2em;
-                width: 100%;
+                width: 2em;
                 height: 100%;
+                transition: none;
             }
                 .ui-datepicker-calendar td a:hover {
                     background: #75dbcd;
