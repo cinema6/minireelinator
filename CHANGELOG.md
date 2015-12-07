@@ -11,6 +11,7 @@
   * [FIX]: Update CPV calculations
   * [FIX]: Show warning when choosing flight dates within the next two days
   * [DESIGN]: Added styles for icons on stats page, updated font-awesome library
+  * [DESIGN]: Added styles for datepickers to fix IE bug and to higlight selected dates
 
 ## v1.28.0 (December 1, 2015)
 * *[v1.28.0.rc1]*
