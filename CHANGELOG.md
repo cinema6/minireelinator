@@ -7,6 +7,7 @@
   * [FEATURE]: Add Campaign Summary modal when submitting
   * [FIX]: Update CPV calculations
   * [FIX]: Show warning when choosing flight dates within the next two days
+  * [DESIGN]: Added styles for icons on stats page, updated font-awesome library
 
 ## v1.28.0 (December 1, 2015)
 * *[v1.28.0.rc1]*
