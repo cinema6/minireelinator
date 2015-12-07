@@ -1,7 +1,9 @@
 define( ['angular','ngAnimate','minireel/app','account/app','login','portal','c6uilib','c6log',
-         'c6_defines','templates','forgot_password','ui','version','selfie','selfie/app'],
+         'c6_defines','templates','forgot_password','ui','version','selfie','selfie/app',
+         'libs'],
 function( angular , ngAnimate , minireel     , account     , login , portal , c6uilib , c6log ,
-          c6Defines  , templates , forgotPassword  , ui , version , selfie , selfieApp ) {
+          c6Defines  , templates , forgotPassword  , ui , version , selfie , selfieApp,
+          libs ) {
     'use strict';
 
     var forEach = angular.forEach,
@@ -33,7 +35,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
         portal.name,
         forgotPassword.name,
         selfie.name,
-        selfieApp.name
+        selfieApp.name,
+        libs.name
     ])
         .config(['c6UrlMakerProvider',
         function( c6UrlMakerProvider ) {

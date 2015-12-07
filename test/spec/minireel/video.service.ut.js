@@ -67,6 +67,11 @@
                             expect(fromData('vidyard', 'abc-123')).toBe('http://embed.vidyard.com/share/abc-123');
                             expect(fromData('vidyard', 'abc_123')).toBe('http://embed.vidyard.com/share/abc_123');
                         });
+                        
+                        it('should create an instagram url', function() {
+                            expect(fromData('instagram', '-xCZTNtOdo')).toBe('https://instagram.com/p/-xCZTNtOdo');
+                            expect(fromData('instagram', '12345')).toBe('https://instagram.com/p/12345');
+                        });
                     });
 
                     describe('dataFromText(url)', function() {
@@ -220,6 +225,24 @@
                             };
                             expect(fromUrl(scriptEmbed)).toEqual(expected);
                             expect(fromUrl(iframeEmbed)).toEqual(expected);
+                        });
+
+                        it('should parse an Instagram url', function() {
+                            expect(fromUrl('https://www.instagram.com/p/-xCZTNtOdo/')).toEqual({
+                                service: 'instagram',
+                                id: '-xCZTNtOdo',
+                                hostname: 'www.instagram.com'
+                            });
+                        });
+                        
+                        it('should parse instagram embed codes', function() {
+                            var embedCode = '<blockquote class="instagram-media" data-instgrm-captioned data-instgrm-version="6" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:8px;"> <div style=" background:#F8F8F8; line-height:0; margin-top:40px; padding:50.0% 0; text-align:center; width:100%;"> <div style=" background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAGFBMVEUiIiI9PT0eHh4gIB4hIBkcHBwcHBwcHBydr+JQAAAACHRSTlMABA4YHyQsM5jtaMwAAADfSURBVDjL7ZVBEgMhCAQBAf//42xcNbpAqakcM0ftUmFAAIBE81IqBJdS3lS6zs3bIpB9WED3YYXFPmHRfT8sgyrCP1x8uEUxLMzNWElFOYCV6mHWWwMzdPEKHlhLw7NWJqkHc4uIZphavDzA2JPzUDsBZziNae2S6owH8xPmX8G7zzgKEOPUoYHvGz1TBCxMkd3kwNVbU0gKHkx+iZILf77IofhrY1nYFnB/lQPb79drWOyJVa/DAvg9B/rLB4cC+Nqgdz/TvBbBnr6GBReqn/nRmDgaQEej7WhonozjF+Y2I/fZou/qAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;"></div></div> <p style=" margin:8px 0 0 0; padding:0 4px;"> <a href="https://www.instagram.com/p/-xCZTNtOdo/" style=" color:#000; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none; word-wrap:break-word;" target="_blank">Kipling, Labrador Retriever/Golden Retriever mix (1 y/o), CCI Northeast Regional Center, Medford, NY • Kipling demonstrates conducting a transaction, behaving around other animals, and refusing treats from strangers. @ccicanine</a></p> <p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;">A photo posted by The Dogist (@thedogist) on <time style=" font-family:Arial,sans-serif; font-size:14px; line-height:17px;" datetime="2015-12-01T22:37:10+00:00">Dec 1, 2015 at 2:37pm PST</time></p></div></blockquote><script async defer src="//platform.instagram.com/en_US/embeds.js"></script>';
+                            var expected = {
+                                service: 'instagram',
+                                id: '-xCZTNtOdo',
+                                hostname: null
+                            };
+                            expect(fromUrl(embedCode)).toEqual(expected);
                         });
 
                         it('should return null if the url is not valid', function() {

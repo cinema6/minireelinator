@@ -1206,6 +1206,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     return 'https://content.jwplatform.com/previews/' + id;
                 case 'vidyard':
                     return 'http://embed.vidyard.com/share/' + id;
+                case 'instagram':
+                    return 'https://instagram.com/p/' + id;
                 }
             };
 
@@ -1213,11 +1215,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 var parsedUrl = c6UrlParser(text),
                     urlService = (parsedUrl.hostname.match(
                         new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|' +
-                            'vine|vzaar\\.tv|wistia|jwplatform|vidyard')
+                            'vine|vzaar\\.tv|wistia|jwplatform|vidyard|instagram')
                     ) || [])[0],
                     embedService = (text.match(
                         new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|jwplatform|' +
-                            'wistia|vzaar|vidyard')
+                            'wistia|vzaar|vidyard|instagram')
                     ) || [])[0],
                     embed = /<iframe|<script/.test(text) ? 'embed' : null,
                     type = !!urlService ? 'url' : embed,
@@ -1272,6 +1274,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 return (url.pathname
                                     .replace(/\/share\//, '')
                                     .match(/[a-zA-Z\d_-]+/) || [null])[0];
+                            },
+                            instagram: function(url) {
+                                return (url.pathname.replace(/\/p\//, '')
+                                    .match(/[\dA-z_-]+/) || [null])[0];
                             }
                         },
                         embed: {
@@ -1298,6 +1304,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             vidyard: function(embed) {
                                 return (embed.match(
                                     /play\.vidyard\.com\/([a-zA-Z\d_-]+)/) || [])[1];
+                            },
+                            instagram: function(embed) {
+                                return (embed.match(/instagram.com\/p\/([\dA-z_-]+)/) || [])[1];
                             }
                         }
                     };
@@ -2059,6 +2068,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'jwplayer':
                         case 'vidyard':
                         case 'videoBallot':
+                        case 'htmlvideo':
                             return 'video';
                         default:
                             return card.type || null;
@@ -2210,9 +2220,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     service: function(data, key, card) {
                         var type = card.type;
 
-                        return data.service ||
-                            (type.search(/^(youtube|dailymotion|vimeo|adUnit)$/) > -1 ?
-                                type : null);
+                        if(type === 'htmlvideo') {
+                            return VideoService.dataFromText(card.data.href).service;
+                        } else {
+                            return data.service ||
+                                (type.search(/^(youtube|dailymotion|vimeo|adUnit)$/) > -1 ?
+                                    type : null);
+                        }
                     },
                     videoid: function(data, key, card) {
                         switch (card.type) {
@@ -2221,6 +2235,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 vast: data.vast,
                                 vpaid: data.vpaid
                             });
+                        case 'htmlvideo':
+                            return VideoService.dataFromText(card.data.href).id;
                         default:
                             return data.videoid || null;
                         }
@@ -2584,7 +2600,13 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 function getDataType(card) {
                     switch (card.type) {
                     case 'video':
-                        return card.data.service;
+                        var service = card.data.service;
+                        if(service === 'instagram') {
+                            return 'htmlvideo';
+                        } else {
+                            return service;
+                        }
+                        break;
                     default:
                         return card.type;
                     }
@@ -2845,6 +2867,26 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         thumbs: videoThumbsValue(),
                         moat: copy(null)
                     },
+                    htmlvideo: {
+                        hideSource: hideSourceValue(),
+                        autoplay: copy(null),
+                        autoadvance: copy(null),
+                        skip: skipValue(),
+                        videoid: function(data) {
+                            switch(data.service) {
+                            case 'instagram':
+                                return InstagramService.getEmbedInfo(data.videoid)
+                                .then(function(info) {
+                                    return info.src;
+                                });
+                            default:
+                                return data.videoid;
+                            }
+                        },
+                        href: hrefValue(),
+                        thumbs: videoThumbsValue(),
+                        moat: copy(null)
+                    },
                     ad: {
                         autoplay: copy(true),
                         source: copy('cinema6'),
@@ -2902,7 +2944,11 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     video: {
                         id: copy(),
                         type: function(card) {
-                            return card.data.service || card.type;
+                            if(card.data.service === 'instagram') {
+                                return 'htmlvideo';
+                            } else {
+                                return card.data.service || card.type;
+                            }
                         },
                         title: copy(null),
                         note: copy(null),
