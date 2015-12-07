@@ -1,9 +1,20 @@
 {
   "campaignId": "c-b76ecf45af71cd",
   "summary": {
-    "impressions": 92244987,
-    "views": 5178967,
-    "clicks": 11,
-    "totalSpend": "654679.2500"
+    "impressions": 300,
+    "views": 81,
+    "totalSpend": "654.2500",
+    "linkClicks": {
+        "facebook": 5,
+        "twitter": 10,
+        "instagram": 7,
+        "website": 4,
+        "action": 9
+     },
+     "shareClicks": {
+        "facebook": 5,
+        "twitter": 10,
+        "pinterest": 7
+     }
   }
 }

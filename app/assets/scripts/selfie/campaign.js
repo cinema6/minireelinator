@@ -1325,8 +1325,8 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6','$q','c6State',
-            function                                        ( cinema6 , $q , c6State ) {
+            c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6','$q','c6State','CampaignService',
+            function                                        ( cinema6 , $q , c6State , CampaignService ) {
                 this.templateUrl = 'views/selfie/campaigns/manage.html';
                 this.controller = 'SelfieManageCampaignController';
                 this.controllerAs = 'SelfieManageCampaignCtrl';
@@ -1350,7 +1350,8 @@ function( angular , c6State  , PaginatedListState                    ,
                         }),
                         updateRequest:  updateRequest ?
                             cinema6.db.find('updateRequest', updateRequest) :
-                            null
+                            null,
+                        stats: CampaignService.getAnalytics(this.campaign.id)
                     });
                 };
 
@@ -1519,6 +1520,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.categories = model.categories;
                 this.paymentMethods = model.paymentMethods;
                 this.updateRequest = model.updateRequest;
+                this.stats = model.stats;
 
                 this._proxyCampaign = copy(cState.campaign);
             };
@@ -1585,6 +1587,37 @@ function( angular , c6State  , PaginatedListState                    ,
             c6StateProvider.state('Selfie:Manage:Campaign:Payment', [function() {
                 this.templateUrl = 'views/selfie/campaigns/manage/payment.html';
             }]);
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Manage:Campaign:Stats', [function() {
+                this.templateUrl = 'views/selfie/campaigns/manage/stats.html';
+                this.controller = 'SelfieManageCampaignStatsController';
+                this.controllerAs = 'SelfieManageCampaignStatsCtrl';
+            }]);
+        }])
+
+        .controller('SelfieManageCampaignStatsController', ['$scope',
+        function                                           ( $scope ) {
+            var SelfieManageCampaignCtrl = $scope.SelfieManageCampaignCtrl,
+                stats = SelfieManageCampaignCtrl.stats[0] || {},
+                linkClicks = (stats.summary && stats.summary.linkClicks) || [],
+                shareClicks = (stats.summary && stats.summary.shareClicks) || [];
+
+            this.totalClicks = (function() {
+                var total = 0;
+                forEach(linkClicks, function(item) { total += item; });
+                return total;
+            }());
+
+            this.totalShares = (function() {
+                var total = 0;
+                forEach(shareClicks, function(item) { total += item; });
+                return total;
+            }());
+
+            console.log(this.totalClicks, this.totalShares);
         }])
 
         .config(['c6StateProvider',
