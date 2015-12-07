@@ -1,5 +1,6 @@
 # MiniReelinator
 
+## v1.28.1 (December 7, 2015)
 * *[v1.28.1.rc1]*
   * Show warning in the admin tab if there is no payment method
   * [FEATURE]: Show start and end dates in the admin tab
@@ -13,6 +14,7 @@
   * [DESIGN]: Added styles for icons on stats page, updated font-awesome library
   * [DESIGN]: Added styles for datepickers to fix IE bug and to higlight selected dates
   * [DESIGN]: Added missing styles for stats hover/help text
+* *[/v1.28.1.rc1]*
 
 ## v1.28.0 (December 1, 2015)
 * *[v1.28.0.rc1]*
