@@ -4295,6 +4295,9 @@ div.tree-multiselect span.section-name {
             cursor: pointer;
             float: right;
         }
+            .ui-datepicker-prev.ui-state-disabled, .ui-datepicker-next.ui-state-disabled {
+                opacity: 0.5;
+            }
         .ui-state-default {
             color: #4AB8BA;
             transition: color 0.3s;
@@ -4304,6 +4307,22 @@ div.tree-multiselect span.section-name {
                 color: #fff;
             }
         .ui-state-highlight {
+            background: #75dbcd;
+            color: #fff;
+            border-radius: 50%;
+        }
+            .ui-state-highlight:hover:after {
+                content: 'Today';
+                position: absolute;
+                background: #333;
+                color: #fff;
+                padding: 0 0.5em;
+                margin-left: -33px;
+                margin-top: 34px;
+                border-radius: 5px;
+                line-height: 1.5em;
+            }
+        .ui-state-active {
             background: #49B8B9;
             color: #fff;
             border-radius: 50%;
@@ -4321,8 +4340,9 @@ div.tree-multiselect span.section-name {
                 display: block;
                 vertical-align: middle;
                 line-height: 2em;
-                width: 100%;
+                width: 2em;
                 height: 100%;
+                transition: none;
             }
                 .ui-datepicker-calendar td a:hover {
                     background: #75dbcd;
