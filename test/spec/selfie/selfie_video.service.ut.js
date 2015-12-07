@@ -1,4 +1,4 @@
-define(['app'], function(appModule) {
+define(['app', 'c6_defines'], function(appModule, c6Defines) {
     'use strict';
 
     describe('SelfieVideoService', function() {
@@ -8,10 +8,16 @@ define(['app'], function(appModule) {
             SelfieVideoService,
             YouTubeDataService,
             VimeoDataService,
-            DailymotionDataService;
+            DailymotionDataService,
+            metagetta;
 
         beforeEach(function() {
             module(appModule.name);
+
+            module(function($provide) {
+                metagetta = jasmine.createSpy();
+                $provide.value('metagetta', metagetta);
+            });
 
             inject(function($injector) {
                 $rootScope = $injector.get('$rootScope');
@@ -307,6 +313,67 @@ define(['app'], function(appModule) {
 
                         expect(success).not.toHaveBeenCalled();
                         expect(failure).toHaveBeenCalled();
+                    });
+                });
+                
+                describe('Instagram data', function() {
+                    beforeEach(function() {
+                        metagetta.and.returnValue(deferred.promise);
+                        c6Defines.kInstagramDataApiKey = 'insta_key';
+                        $rootScope.$apply(function() {
+                            statsFromService('instagram', '6DD1crjvG7');
+                        });
+                    });
+                    
+                    it('should query metagetta', function() {
+                        expect(metagetta).toHaveBeenCalledWith({
+                            type: 'instagram',
+                            id: '6DD1crjvG7',
+                            fields: ['title', 'duration', 'views', 'uri'],
+                            instagram: {
+                                key: 'insta_key'
+                            }
+                        });
+                    });
+                    
+                    it('should resolve with a data object', function() {
+                        deferred.resolve({
+                            title: 'Instagram title',
+                            duration: 10,
+                            views: 1000,
+                            uri: 'https://instagram.com/p/6DD1crjvG7'
+                        });
+                        
+                        $rootScope.$digest();
+                        
+                        expect(success).toHaveBeenCalledWith({
+                            title: 'Instagram title',
+                            duration: 10,
+                            views: 1000,
+                            href: 'https://instagram.com/p/6DD1crjvG7'
+                        });
+                        expect(failure).not.toHaveBeenCalled();
+                    });
+                    
+                    it('should reject the promise if query fails', function() {
+                        deferred.reject('epic fail');
+                        $rootScope.$digest();
+                        expect(success).not.toHaveBeenCalled();
+                        expect(failure).toHaveBeenCalledWith('epic fail');
+                    });
+                    
+                    it('should reject the promise if it is not a video', function() {
+                        deferred.resolve({
+                            description: 'Once upon a time there was an Instagram',
+                            duration: null,
+                            views: 1000,
+                            uri: 'https://instagram.com/p/6DD1crjvG7'
+                        });
+                        
+                        $rootScope.$digest();
+                        
+                        expect(success).not.toHaveBeenCalled();
+                        expect(failure).toHaveBeenCalledWith(new Error('not an Instagram video'));
                     });
                 });
             });

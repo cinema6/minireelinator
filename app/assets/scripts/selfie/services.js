@@ -1,5 +1,5 @@
-define( ['angular','c6uilib'],
-function( angular , c6uilib ) {
+define( ['angular','c6uilib', 'c6_defines'],
+function( angular , c6uilib ,  c6Defines  ) {
     'use strict';
 
     var extend = angular.extend,
@@ -327,9 +327,9 @@ function( angular , c6uilib ) {
         }])
 
         .service('SelfieVideoService', ['$http','$q','VideoService','YouTubeDataService',
-                                        'VimeoDataService','DailymotionDataService',
+                                        'VimeoDataService','DailymotionDataService', 'metagetta',
         function                       ( $http , $q , VideoService , YouTubeDataService ,
-                                         VimeoDataService , DailymotionDataService ) {
+                                         VimeoDataService , DailymotionDataService ,  metagetta ) {
             var self = this;
 
             function getJSONProp(json, prop) {
@@ -417,6 +417,27 @@ function( angular , c6uilib ) {
                                 views: data.viewsTotal,
                                 href: self.urlFromData(service, id)
                             };
+                        });
+                    },
+                    instagram: function() {
+                        return metagetta({
+                            type: service,
+                            id: id,
+                            fields: ['title', 'duration', 'views', 'uri'],
+                            instagram: {
+                                key:  c6Defines.kInstagramDataApiKey
+                            }
+                        }).then(function(result) {
+                            if(result.duration) {
+                                return {
+                                    title: result.title,
+                                    duration: result.duration,
+                                    views: result.views,
+                                    href: result.uri
+                                };
+                            } else {
+                                return $q.reject(new Error('not an Instagram video'));
+                            }
                         });
                     }
                 };

@@ -38,7 +38,11 @@ define(['app'], function(appModule) {
                     foo: 'bar',
                     cards: [
                         {
-                            title: 'original title'
+                            title: 'original title',
+                            campaign: {
+                                startDate: 'original start date',
+                                endDate: 'original end date'
+                            }
                         }
                     ],
                     adtechId: 'original id'
@@ -50,7 +54,11 @@ define(['app'], function(appModule) {
                     foo: 'derp',
                     cards: [
                         {
-                            title: 'updated title'
+                            title: 'updated title',
+                            campaign: {
+                                startDate: 'updated start date',
+                                endDate: 'updated end date'
+                            }
                         }
                     ],
                     adtechId: 'updated id'
@@ -132,6 +140,18 @@ define(['app'], function(appModule) {
                         originalValue: 'original id',
                         updatedValue: 'updated id',
                         title: 'Campaign.adtechId',
+                        editable: false
+                    },
+                    {
+                        originalValue: 'original start date',
+                        updatedValue: 'updated start date',
+                        title: 'Card.campaign.startDate',
+                        editable: false
+                    },
+                    {
+                        originalValue: 'original end date',
+                        updatedValue: 'updated end date',
+                        title: 'Card.campaign.endDate',
                         editable: false
                     }
                 ];

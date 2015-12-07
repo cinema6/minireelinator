@@ -196,8 +196,8 @@
                                 id: '5YN6a0tOc-',
                                 src: 'https://mock.instagram.com/image/5YN6a0tOc-.jpg',
                                 thumbs: {
-                                    small: 'images.instagram.com/small.jpg',
-                                    large: 'images.instagram.com/large.jpg'
+                                    small: 'images.instagram.com/5YN6a0tOc-/small.jpg',
+                                    large: 'images.instagram.com/5YN6a0tOc-/large.jpg'
                                 },
                                 href: 'https:\/\/instagram.com\/p\/5YN6a0tOc-\/',
                                 likes: '77606',
@@ -365,6 +365,38 @@
                                 thumbs: {
                                     small: 'images.vidyard.com/video/GFOy4oZge52L_NOwT2mwkw/small.jpg',
                                     large: 'images.vidyard.com/video/GFOy4oZge52L_NOwT2mwkw/large.jpg'
+                                }
+                            }
+                        },
+                        instagramVideo: {
+                            id: 'rc-e3149227e70468',
+                            type: 'htmlvideo',
+                            title: 'Insanely Instagram',
+                            note: 'This is an example of a video-only Instagram card.',
+                            source: 'Instagram',
+                            placementId: null,
+                            templateUrl: null,
+                            sponsored: false,
+                            campaign: {
+                                campaignId: null,
+                                advertiserId: null,
+                                minViewTime: null,
+                                countUrls: [],
+                                clickUrls: []
+                            },
+                            thumbs: null,
+                            collateral: {},
+                            links: {},
+                            shareLinks: {},
+                            params: {},
+                            modules: [],
+                            data: {
+                                skip: true,
+                                videoid: 'https://mock-instagram-cdn/-zNcg8AtYy.mp4',
+                                href: 'https://instagram.com/p/-zNcg8AtYy',
+                                thumbs: {
+                                    small: 'images.instagram.com/-zNcg8AtYy/small.jpg',
+                                    large: 'images.instagram.com/-zNcg8AtYy/large.jpg'
                                 }
                             }
                         }
@@ -1023,6 +1055,7 @@
                             mocks.playerCards.wistia,
                             mocks.playerCards.jwplayer,
                             mocks.playerCards.vidyard,
+                            mocks.playerCards.instagramVideo,
                             {
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
@@ -2141,7 +2174,7 @@
                             });
                         });
 
-                        it('should transpile the visyard card', function() {
+                        it('should transpile the vidyard card', function() {
                             expect(deck[16]).toEqual({
                                 data: {
                         	       skip: 'anytime',
@@ -2160,6 +2193,46 @@
                         	    type: 'video',
                         	    title: 'Vidyard Card',
                         	    note: 'Such Card, Very Vidyard',
+                        	    label: 'Video',
+                        	    view: 'video',
+                        	    ad: false,
+                        	    placementId: null,
+                        	    templateUrl: null,
+                        	    sponsored: false,
+                        	    campaign: {
+                        	        campaignId: null,
+                        	        advertiserId: null,
+                        	        minViewTime: null,
+                        	        countUrls: [],
+                        	        clickUrls: []
+                        	    },
+                        	    collateral: {},
+                        	    thumb: null,
+                        	    links: {},
+                                shareLinks: {},
+                        	    params: {}
+                            });
+                        });
+
+                        it('should transpile the instagram-video card', function() {
+                            expect(deck[17]).toEqual({
+                                data: {
+                        	        skip: 'anytime',
+                        	        controls: true,
+                        	        autoplay: null,
+                        	        autoadvance: null,
+                        	        survey: null,
+                        	        service: 'instagram',
+                                    videoid: '-zNcg8AtYy',
+                                    hostname: null,
+                        	        start: null,
+                        	        end: null,
+                        	        moat: null
+                        	    },
+                        	    id: 'rc-e3149227e70468',
+                        	    type: 'video',
+                        	    title: 'Insanely Instagram',
+                        	    note: 'This is an example of a video-only Instagram card.',
                         	    label: 'Video',
                         	    view: 'video',
                         	    ad: false,
@@ -2689,8 +2762,8 @@
                                     ));
                                 } else if(service === 'web' || service === 'instagram') {
                                     return thumbCache[key] || (thumbCache[key] = new MockThumb(
-                                        'images.' + service + '.com/small.jpg',
-                                        'images.' + service + '.com/large.jpg'
+                                        'images.' + service + '.com/' + id + '/small.jpg',
+                                        'images.' + service + '.com/' + id + '/large.jpg'
                                     ));
                                 } else {
                                     return thumbCache[key] || (thumbCache[key] = new MockThumb(
@@ -2731,6 +2804,12 @@
                                         followers: '1027481',
                                         following: '3'
                                     }
+                                });
+                            });
+                            
+                            spyOn(InstagramService, 'getEmbedInfo').and.callFake(function(id) {
+                                return $q.when({
+                                    src: 'https://mock-instagram-cdn/' + id + '.mp4'
                                 });
                             });
                         });
