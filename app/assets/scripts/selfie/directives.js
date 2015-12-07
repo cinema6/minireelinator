@@ -261,71 +261,88 @@ function( angular , select2 , braintree ) {
             };
         }])
 
-        .directive('piechart', ['$timeout',function($timeout) {
+        .directive('piechart', ['$timeout','$filter',
+        function               ( $timeout , $filter ) {
             return {
                 restrict: 'A',
                 scope: {
                     stats: '='
                 },
                 link: function(scope, $element) {
-                    var pieData = [
-                        {
-                            value : 10,
-                            color : '#bb0000',
-                            highlight : '#a30000',
-                            label : 'Youtube'
-                        },
-                        {
-                            value : 10,
-                            color : '#cb2027',
-                            highlight : '#c21e24',
-                            label : 'Pinterest'
-                        },
-                        {
-                            value: 20,
-                            color:'#3b5998',
-                            highlight : '#334D84',
-                            label: 'Facebook'
-                        },
-                        {
-                            value : 40,
-                            color : '#00aced',
-                            highlight : '#00A5E0',
-                            label : 'Twitter'
-                        },
-                        {
-                            value : 30,
-                            color : '#125688',
-                            highlight : '#10517E',
-                            label : 'Instagram'
-                        },
-                        {
-                            value : 30,
-                            color : '#039753',
-                            highlight : '#027841',
-                            label : 'Share'
-                        },
-                        {
-                            value : 30,
-                            color : '#FFC803',
-                            highlight : '#FFC803',
-                            label : 'Website'
-                        },
-                        {
-                            value : 30,
-                            color : '#FF4E03',
-                            highlight : '#F54900',
-                            label : 'Call to Action'
+                    var totalClicks = 0,
+                        totalShares = 0,
+                        pieData = [],
+                        pieSections = {
+                            youtube: {
+                                color : '#bb0000',
+                                highlight : '#a30000',
+                                label : 'Youtube'
+                            },
+                            pinterest: {
+                                color : '#cb2027',
+                                highlight : '#c21e24',
+                                label : 'Pinterest'
+                            },
+                            facebook: {
+                                color:'#3b5998',
+                                highlight : '#334D84',
+                                label: 'Facebook'
+                            },
+                            twitter: {
+                                color : '#00aced',
+                                highlight : '#00A5E0',
+                                label : 'Twitter'
+                            },
+                            instagram: {
+                                color : '#125688',
+                                highlight : '#10517E',
+                                label : 'Instagram'
+                            },
+                            share: {
+                                color : '#039753',
+                                highlight : '#027841',
+                                label : 'Share'
+                            },
+                            website: {
+                                color : '#FFC803',
+                                highlight : '#FFC803',
+                                label : 'Website'
+                            },
+                            action: {
+                                color : '#FF4E03',
+                                highlight : '#F54900',
+                                label : 'Call to Action'
+                            }
+                        };
+
+                    forEach(scope.stats.linkClicks, function(link, key) {
+                        pieSections[key].value = link;
+                        pieData.push(pieSections[key]);
+                        totalClicks += link;
+                    });
+
+                    forEach(scope.stats.shareClicks, function(share, key) {
+                        if (pieData.indexOf(pieSections.share) > -1) {
+                            pieSections.share.value += share;
+                        } else {
+                            pieSections.share.value = share;
+                            pieData.push(pieSections.share);
                         }
-                    ];
+                        totalShares += share;
+                    });
+
+                    forEach(pieData, function(item) {
+                        item.value = $filter('number')((item.value / (totalShares + totalClicks)) * 100, '2');
+                    });
+
                     // pie chart options
                     var pieOptions = {
-                         segmentShowStroke : false,
-                         animateScale : true,
-                         responsive: true,
+                        segmentShowStroke : false,
+                        animateScale : true,
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        tooltipTemplate: "<%if (label){%><%=label %>: <%}%><%= value + '%' %>"
                     };
-
-                    console.log(scope.stats);
 
                     $timeout(function() {
                         // get pie chart canvas

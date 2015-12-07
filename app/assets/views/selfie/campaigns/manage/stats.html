@@ -24,7 +24,7 @@
                 --><div class="grid__item one-fifth">
                     <div class="statsChart__infoBox">
                         <h3 class="stats__icon"><i class="fa fa-usd"></i></h3>
-                        <h1 class="stats__infoNumber tk--hdr">${{campaign.pricing.cpv}}</h1>
+                        <h1 class="stats__infoNumber tk--hdr">${{stats.totalSpend / stats.views | number:2}}</h1>
                         <h3 class="stats__label">Average CPV</h3>
                         <div class="helpBox helpBox--center">
                             <div class="helpText">
@@ -61,7 +61,7 @@
                 --><div class="grid__item one-fifth">
                     <div class="statsChart__infoBox">
                         <h3 class="stats__icon"><i class="fa fa-percent"></i></h3>
-                        <h1 class="stats__infoNumber tk--hdr">{{((SelfieManageCampaignStatsCtrl.totalClicks + SelfieManageCampaignStatsCtrl.totalShares) / stats.views) * 100 | number:0}}%</h1>
+                        <h1 class="stats__infoNumber tk--hdr">{{((SelfieManageCampaignStatsCtrl.totalClicks + SelfieManageCampaignStatsCtrl.totalShares) / stats.views) * 100 | number:2}}%</h1>
                         <h3 class="stats__label">Interaction Rate</h3>
                         <div class="helpBox helpBox--center">
                             <div class="helpText">
@@ -74,16 +74,16 @@
         </div><!--.grid__item .one-whole--><!--.grid__item .three-quarters-->
     </div>
     <div class="grid grid--center">
-        <div class="grid__item one-whole grid--center">
+        <div class="grid__item one-whole grid--center" ng-if="SelfieManageCampaignCtrl.stats[0].summary">
             <h1 class="tk--hdr text--center">Interactions</h1>
             <div class="helpBox helpBox--center">
                 <div class="formhelpText">
                     This table shows how many viewers watched what percentage of your video.
                 </div>
             </div>
-            <div class="chart__wrap grid--right grid--middle" piechart stats="SelfieManageCampaignCtrl.stats">
+            <div class="chart__wrap grid--right grid--middle" piechart stats="SelfieManageCampaignCtrl.stats[0].summary">
                 <div class="grid__item one-half">
-                    <div class="grid" style="width:300px;height:300px;">
+                    <div class="grid">
                         <canvas id="countries" width="800" height="600"></canvas>
                     </div>
                 </div><!--
@@ -109,7 +109,7 @@
                         </span>
                         <span ng-if="stats.linkClicks.action">
                             <h2 class="stats__rowClicks">{{stats.linkClicks.action}}<span ng-if="!stats.linkClicks.action">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
-                            <h2 class="stats__rowClicks">{{(stats.linkClicks.action / stats.views) * 100 | number:0}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
+                            <h2 class="stats__rowClicks">{{(stats.linkClicks.action / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
                         </span>
                     </div>
                     <div class="stats__row">
@@ -120,7 +120,7 @@
                         </span>
                         <span ng-if="stats.linkClicks.website">
                             <h2 class="stats__rowClicks">{{stats.linkClicks.website}}<span class="stats__rowClicks--label">Clicks</span></h2>
-                            <h2 class="stats__rowClicks">{{(stats.linkClicks.website / stats.views) * 100 | number:0}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
+                            <h2 class="stats__rowClicks">{{(stats.linkClicks.website / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
                         </span>
                     </div>
                 </div><!--
@@ -139,7 +139,7 @@
                         </span>
                         <span ng-if="stats.shareClicks.facebook">
                             <h2 class="stats__rowClicks">{{stats.shareClicks.facebook}}<span class="stats__rowClicks--label">Clicks</span></h2>
-                            <h2 class="stats__rowClicks">{{(stats.shareClicks.facebook / stats.views) * 100 | number:0}} <span class="text--small">%</span><span class="stats__rowClicks--label">Share Rate</span></h2>
+                            <h2 class="stats__rowClicks">{{(stats.shareClicks.facebook / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">Share Rate</span></h2>
                         </span>
                     </div>
                     <div class="stats__row">
@@ -150,7 +150,7 @@
                         </span>
                         <span ng-if="stats.shareClicks.twitter">
                             <h2 class="stats__rowClicks">{{stats.shareClicks.twitter}}<span class="stats__rowClicks--label">Clicks</span></h2>
-                            <h2 class="stats__rowClicks">{{(stats.shareClicks.twitter / stats.views) * 100 | number:0}} <span class="text--small">%</span><span class="stats__rowClicks--label">Share Rate</span></h2>
+                            <h2 class="stats__rowClicks">{{(stats.shareClicks.twitter / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">Share Rate</span></h2>
                         </span>
                     </div>
                     <div class="stats__row">
@@ -161,7 +161,7 @@
                         </span>
                         <span ng-if="stats.shareClicks.pinterest">
                             <h2 class="stats__rowClicks">{{stats.shareClicks.pinterest}}<span class="stats__rowClicks--label">Clicks</span></h2>
-                            <h2 class="stats__rowClicks">{{(stats.shareClicks.pinterest / stats.views) * 100 | number:0}} <span class="text--small">%</span><span class="stats__rowClicks--label">Share Rate</span></h2>
+                            <h2 class="stats__rowClicks">{{(stats.shareClicks.pinterest / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">Share Rate</span></h2>
                         </span>
                     </div>
                     <div class="stats__row">
@@ -172,7 +172,7 @@
                         </span>
                         <span ng-if="SelfieManageCampaignStatsCtrl.totalShares">
                             <h2 class="stats__rowClicks">{{SelfieManageCampaignStatsCtrl.totalShares}}<span class="stats__rowClicks--label">Clicks</span></h2>
-                            <h2 class="stats__rowClicks">{{(SelfieManageCampaignStatsCtrl.totalShares / stats.views) * 100 | number:0}} <span class="text--small">%</span><span class="stats__rowClicks--label">Share Rate</span></h2>
+                            <h2 class="stats__rowClicks">{{(SelfieManageCampaignStatsCtrl.totalShares / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">Share Rate</span></h2>
                         </span>
                     </div>
                 </div>
@@ -193,7 +193,7 @@
                 </span>
                 <span ng-if="stats.linkClicks.facebook">
                     <h2 class="stats__rowClicks">{{stats.linkClicks.facebook}}<span ng-if="!stats.linkClicks.facebook">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
-                    <h2 class="stats__rowClicks">{{(stats.linkClicks.facebook / stats.views) * 100 | number:0}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
+                    <h2 class="stats__rowClicks">{{(stats.linkClicks.facebook / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
                 </span>
             </div>
             <div class="stats__row">
@@ -204,7 +204,7 @@
                 </span>
                 <span ng-if="stats.linkClicks.twitter">
                     <h2 class="stats__rowClicks">{{stats.linkClicks.twitter}}<span ng-if="!stats.linkClicks.twitter">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
-                    <h2 class="stats__rowClicks">{{(stats.linkClicks.twitter / stats.views) * 100 | number:0}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
+                    <h2 class="stats__rowClicks">{{(stats.linkClicks.twitter / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
                 </span>
             </div>
             <div class="stats__row">
@@ -215,7 +215,7 @@
                 </span>
                 <span ng-if="stats.linkClicks.youtube">
                     <h2 class="stats__rowClicks">{{stats.linkClicks.youtube}}<span ng-if="!stats.linkClicks.youtube">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
-                    <h2 class="stats__rowClicks">{{(stats.linkClicks.youtube / stats.views) * 100 | number:0}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
+                    <h2 class="stats__rowClicks">{{(stats.linkClicks.youtube / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
                 </span>
             </div>
             <div class="stats__row">
@@ -226,7 +226,7 @@
                 </span>
                 <span ng-if="stats.linkClicks.pinterest">
                     <h2 class="stats__rowClicks">{{stats.linkClicks.pinterest}}<span ng-if="!stats.linkClicks.pinterest">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
-                    <h2 class="stats__rowClicks">{{(stats.linkClicks.pinterest / stats.views) * 100 | number:0}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
+                    <h2 class="stats__rowClicks">{{(stats.linkClicks.pinterest / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
                 </span>
             </div>
             <div class="stats__row">
@@ -237,7 +237,7 @@
                 </span>
                 <span ng-if="stats.linkClicks.instagram">
                     <h2 class="stats__rowClicks">{{stats.linkClicks.instagram}}<span ng-if="!stats.linkClicks.instagram">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
-                    <h2 class="stats__rowClicks">{{(stats.linkClicks.instagram / stats.views) * 100 | number:0}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
+                    <h2 class="stats__rowClicks">{{(stats.linkClicks.instagram / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
                 </span>
             </div>
             <div class="stats__row">
@@ -248,7 +248,7 @@
                 </span>
                 <span ng-if="SelfieManageCampaignStatsCtrl.totalClicks">
                     <h2 class="stats__rowClicks">{{SelfieManageCampaignStatsCtrl.totalClicks}}<span ng-if="!SelfieManageCampaignStatsCtrl.totalClicks">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
-                    <h2 class="stats__rowClicks">{{(SelfieManageCampaignStatsCtrl.totalClicks / stats.views) * 100 | number:0}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
+                    <h2 class="stats__rowClicks">{{(SelfieManageCampaignStatsCtrl.totalClicks / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
                 </span>
             </div>
         </div>

@@ -153,12 +153,9 @@ function( angular , c6uilib ,  c6Defines  ) {
             };
 
             this.getAnalytics = function(ids) {
-                var multi = (ids || '').split(',').length > 1,
-                    url = c6UrlMaker('analytics/campaigns/' + (multi ? ('?ids='+ids) : ids), 'api');
-
-                return $http.get(url)
+                return $http.get(c6UrlMaker('analytics/campaigns/?ids='+ids, 'api'))
                     .then(function(response) {
-                        return multi ? response.data : [response.data];
+                        return response.data;
                     });
             };
 

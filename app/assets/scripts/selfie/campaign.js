@@ -1360,6 +1360,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
                     this.updateRequest = model.updateRequest;
+                    this.hasStats = !!model.stats.length;
                 };
 
                 this.enter = function() {
@@ -1591,10 +1592,17 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Manage:Campaign:Stats', [function() {
+            c6StateProvider.state('Selfie:Manage:Campaign:Stats', ['c6State',
+            function                                              ( c6State ) {
                 this.templateUrl = 'views/selfie/campaigns/manage/stats.html';
                 this.controller = 'SelfieManageCampaignStatsController';
                 this.controllerAs = 'SelfieManageCampaignStatsCtrl';
+
+                this.enter = function() {
+                    if (!this.cParent.hasStats) {
+                        return c6State.goTo('Selfie:Manage:Campaign:Manage');
+                    }
+                };
             }]);
         }])
 
