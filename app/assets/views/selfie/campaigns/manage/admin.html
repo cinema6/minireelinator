@@ -14,6 +14,7 @@
                     <p ng-if="!Ctrl.showApproval" class="formSection__introText">There are no updates waiting to be approved.</p>
 
                     <div ng-if="Ctrl.showApproval">
+                        <p ng-if="!Ctrl.updatedCampaign.paymentMethod" class="grid__item grid--center"><b>There is no payment method for the proposed campaign.</b></p>
                         <selfie-campaign-updates-summary campaign="Ctrl.campaign" updated-campaign="Ctrl.updatedCampaign"></selfie-campaign-updates-summary>
                         <div class="grid__item grid--center">
                             <div class="grid__item one--whole">
