@@ -1,4 +1,4 @@
-define( ['angular','select2','braintree','jqueryui'],
+define( ['angular','select2','braintree','jqueryui','chartjs'],
 function( angular , select2 , braintree ) {
     'use strict';
 
@@ -256,6 +256,84 @@ function( angular , select2 , braintree ) {
                                 $picker.css('left', offset);
                             });
                         }
+                    });
+                }
+            };
+        }])
+
+        .directive('piechart', ['$timeout',function($timeout) {
+            return {
+                restrict: 'A',
+                scope: {
+                    stats: '='
+                },
+                link: function(scope, $element) {
+                    var pieData = [
+                        {
+                            value : 10,
+                            color : '#bb0000',
+                            highlight : '#a30000',
+                            label : 'Youtube'
+                        },
+                        {
+                            value : 10,
+                            color : '#cb2027',
+                            highlight : '#c21e24',
+                            label : 'Pinterest'
+                        },
+                        {
+                            value: 20,
+                            color:'#3b5998',
+                            highlight : '#334D84',
+                            label: 'Facebook'
+                        },
+                        {
+                            value : 40,
+                            color : '#00aced',
+                            highlight : '#00A5E0',
+                            label : 'Twitter'
+                        },
+                        {
+                            value : 30,
+                            color : '#125688',
+                            highlight : '#10517E',
+                            label : 'Instagram'
+                        },
+                        {
+                            value : 30,
+                            color : '#039753',
+                            highlight : '#027841',
+                            label : 'Share'
+                        },
+                        {
+                            value : 30,
+                            color : '#FFC803',
+                            highlight : '#FFC803',
+                            label : 'Website'
+                        },
+                        {
+                            value : 30,
+                            color : '#FF4E03',
+                            highlight : '#F54900',
+                            label : 'Call to Action'
+                        }
+                    ];
+                    // pie chart options
+                    var pieOptions = {
+                         segmentShowStroke : false,
+                         animateScale : true,
+                         responsive: true,
+                    };
+
+                    console.log(scope.stats);
+
+                    $timeout(function() {
+                        // get pie chart canvas
+                        var countries= $element.find('#countries')[0].getContext('2d');
+                        // draw pie chart
+                        var myPie = new Chart(countries).Doughnut(pieData, pieOptions);
+                        // add legend
+                        $element.find('#js-legend')[0].innerHTML = myPie.generateLegend();
                     });
                 }
             };
