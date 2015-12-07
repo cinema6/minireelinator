@@ -46,12 +46,12 @@
                             </li>
                             <li ng-show="model.demographics.length">
                                 <div class="grid__item two-thirds orderItem__title">Demographics</div><!--
-                                --><div class="grid__item one-third"><div class="orderItem__cost text--right">${{model.schema.pricing.cost.__pricePerDemo | number}}</div></div>
+                                --><div class="grid__item one-third"><div class="orderItem__cost text--right">${{model.schema.pricing.cost.__priceForDemoTargeting | number}}</div></div>
                                 <div class="grid__item one-whole orderItem__label text--small" ng-repeat="demo in model.demographics">{{demo.name}}: {{demo.list}}</div>
                             </li>
                             <li ng-show="model.geo.length">
                                 <div class="grid__item two-thirds orderItem__title">Location</div><!--
-                                --><div class="grid__item one-third"><div class="orderItem__cost text--right">${{model.schema.pricing.cost.__pricePerGeo | number}}</div></div>
+                                --><div class="grid__item one-third"><div class="orderItem__cost text--right">${{model.schema.pricing.cost.__priceForGeoTargeting | number}}</div></div>
                                 <div class="grid__item one-whole orderItem__label text--small" ng-repeat="geo in model.geo">{{geo.name}}: {{geo.list}}</div>
                             </li>
                             <li>

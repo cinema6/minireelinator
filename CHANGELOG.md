@@ -1,6 +1,9 @@
 # MiniReelinator
 
 ## v1.28.1 (December 7, 2015)
+* *[v1.28.1.rc2]*
+  * [FIX]: Update CPV calculations
+
 * *[v1.28.1.rc1]*
   * Show warning in the admin tab if there is no payment method
   * [FEATURE]: Show start and end dates in the admin tab
