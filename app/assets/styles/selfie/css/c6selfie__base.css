@@ -927,6 +927,12 @@ fa,
         z-index: -1;
         position: relative;
     }
+        .gridHolder .formSection__title {
+            padding-bottom: 0.25em;
+        }
+        .gridHolder .formSection__group--sub .formSection__title {
+            padding-bottom: 0.25em;
+        }
     @media screen and (max-width:75em) {
         .gridHolder {
             width:90%;
@@ -4344,6 +4350,14 @@ div.tree-multiselect span.section-name {
 /*  ================================================
     Datepicker styles
     ================================================ */   
+    .timeline__selectOption {
+        margin-bottom: 2em;
+    }
+        .timeline__selectOption label {
+            cursor: pointer;
+            margin-right: 1em;
+            vertical-align: text-bottom;;
+        }
     .ui-datepicker {
         background: #fff;
         padding: 0.5em;
