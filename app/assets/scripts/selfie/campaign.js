@@ -1325,8 +1325,10 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6','$q','c6State','CampaignService',
-            function                                        ( cinema6 , $q , c6State , CampaignService ) {
+            c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6','$q','c6State',
+                                                             'CampaignService',
+            function                                        ( cinema6 , $q , c6State ,
+                                                              CampaignService ) {
                 this.templateUrl = 'views/selfie/campaigns/manage.html';
                 this.controller = 'SelfieManageCampaignController';
                 this.controllerAs = 'SelfieManageCampaignCtrl';
@@ -1517,6 +1519,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.card = cState.card;
                 this.campaign = cState.campaign;
                 this.showAdminTab = cState.isAdmin;
+                this.hasStats = cState.hasStats;
 
                 this.categories = model.categories;
                 this.paymentMethods = model.paymentMethods;
@@ -1624,8 +1627,6 @@ function( angular , c6State  , PaginatedListState                    ,
                 forEach(shareClicks, function(item) { total += item; });
                 return total;
             }());
-
-            console.log(this.totalClicks, this.totalShares);
         }])
 
         .config(['c6StateProvider',

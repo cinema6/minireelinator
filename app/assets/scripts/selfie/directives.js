@@ -1,5 +1,5 @@
 define( ['angular','select2','braintree','jqueryui','chartjs'],
-function( angular , select2 , braintree ) {
+function( angular , select2 , braintree , jqueryui , Chart   ) {
     'use strict';
 
     var $ = angular.element,
@@ -321,7 +321,7 @@ function( angular , select2 , braintree ) {
                         totalClicks += link;
                     });
 
-                    forEach(scope.stats.shareClicks, function(share, key) {
+                    forEach(scope.stats.shareClicks, function(share) {
                         if (pieData.indexOf(pieSections.share) > -1) {
                             pieSections.share.value += share;
                         } else {
@@ -332,7 +332,9 @@ function( angular , select2 , braintree ) {
                     });
 
                     forEach(pieData, function(item) {
-                        item.value = $filter('number')((item.value / (totalShares + totalClicks)) * 100, '2');
+                        var percentage = (item.value / (totalShares + totalClicks)) * 100;
+
+                        item.value = $filter('number')(percentage, '2');
                     });
 
                     // pie chart options
@@ -341,7 +343,7 @@ function( angular , select2 , braintree ) {
                         animateScale : true,
                         responsive: true,
                         maintainAspectRatio: true,
-                        tooltipTemplate: "<%if (label){%><%=label %>: <%}%><%= value + '%' %>"
+                        tooltipTemplate: '<%if (label){%><%=label %>: <%}%><%= value %>%'
                     };
 
                     $timeout(function() {
