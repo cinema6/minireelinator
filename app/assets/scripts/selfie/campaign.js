@@ -767,6 +767,7 @@ function( angular , c6State  , PaginatedListState                    ,
         .controller('SelfieFlightDatesController', ['$scope',
         function                                   ( $scope ) {
             var SelfieCampaignCtrl = $scope.SelfieCampaignCtrl,
+                SelfieFlightDatesCtrl = this,
                 originalCampaign = SelfieCampaignCtrl.originalCampaign,
                 campaign = SelfieCampaignCtrl.campaign,
                 card = SelfieCampaignCtrl.card,
@@ -798,6 +799,15 @@ function( angular , c6State  , PaginatedListState                    ,
                 date.setHours.apply(date, (type === 'start' ? [0,1] : [23,59]));
 
                 return date.toISOString();
+            }
+
+            function setDatesOnCard() {
+                var self = SelfieFlightDatesCtrl;
+
+                campaignHash.startDate = self.validStartDate ?
+                    toISO('start', self.startDate) : campaignHash.startDate;
+                campaignHash.endDate = self.validEndDate ?
+                    toISO('end', self.endDate) : campaignHash.endDate;
             }
 
             Object.defineProperties(this, {
@@ -871,6 +881,7 @@ function( angular , c6State  , PaginatedListState                    ,
             this.startDate = fromISO(campaignHash.startDate);
             this.endDate = fromISO(campaignHash.endDate);
             this.hasChanged = false;
+            this.hasDates = !!this.startDate || !!this.endDate;
             this.isPending = originalCampaign.status === 'pending';
 
             this.setDates = function() {
@@ -879,10 +890,16 @@ function( angular , c6State  , PaginatedListState                    ,
                     this.hasChanged = true;
                 }
 
-                campaignHash.startDate = this.validStartDate ?
-                    toISO('start', this.startDate) : campaignHash.startDate;
-                campaignHash.endDate = this.validEndDate ?
-                    toISO('end', this.endDate) : campaignHash.endDate;
+                setDatesOnCard();
+            };
+
+            this.setTimelineOption = function() {
+                if (!this.hasDates) {
+                    campaignHash.startDate = undefined;
+                    campaignHash.endDate = undefined;
+                } else {
+                    setDatesOnCard();
+                }
             };
         }])
 
