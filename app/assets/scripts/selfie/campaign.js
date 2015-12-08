@@ -1613,8 +1613,8 @@ function( angular , c6State  , PaginatedListState                    ,
         function                                           ( $scope ) {
             var SelfieManageCampaignCtrl = $scope.SelfieManageCampaignCtrl,
                 stats = SelfieManageCampaignCtrl.stats[0] || {},
-                linkClicks = (stats.summary && stats.summary.linkClicks) || [],
-                shareClicks = (stats.summary && stats.summary.shareClicks) || [];
+                linkClicks = (stats.summary && stats.summary.linkClicks) || {},
+                shareClicks = (stats.summary && stats.summary.shareClicks) || {};
 
             this.totalClicks = (function() {
                 var total = 0;

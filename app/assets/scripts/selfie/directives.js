@@ -261,7 +261,7 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
             };
         }])
 
-        .directive('piechart', ['$timeout','$filter',
+        .directive('interactionsPiechart', ['$timeout','$filter',
         function               ( $timeout , $filter ) {
             return {
                 restrict: 'A',
@@ -348,11 +348,11 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
 
                     $timeout(function() {
                         // get pie chart canvas
-                        var countries= $element.find('#countries')[0].getContext('2d');
+                        var canvas = $element.find('canvas')[0].getContext('2d');
                         // draw pie chart
-                        var myPie = new Chart(countries).Doughnut(pieData, pieOptions);
+                        var pie = new Chart(canvas).Doughnut(pieData, pieOptions);
                         // add legend
-                        $element.find('#js-legend')[0].innerHTML = myPie.generateLegend();
+                        $element.find('#js-legend')[0].innerHTML = pie.generateLegend();
                     });
                 }
             };
