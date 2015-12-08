@@ -18,17 +18,17 @@
                             <h2><span class="orderItem__label text--small">Campaign Name </span><span class="orderItem__title tk--hdr">{{model.campaign.name}}</span></h2>
                         </div>
                         <div class="reviewOrder__item text--center">
-                            <span class="orderItem__label">Duration</span>
+                            <span class="orderItem__label text--small">Timeline</span>
                             <span class="orderItem__title tk--hdr"> {{model.duration}}</span>
                         </div>
                         <div class="reviewOrder__item text--center">
-                            <span class="orderItem__label">Total Budget </span><span class="orderItem__title tk--hdr">${{model.campaign.pricing.budget}}</span>
+                            <span class="orderItem__label text--small">Total Budget </span><span class="orderItem__title tk--hdr">${{model.campaign.pricing.budget}}</span>
                         </div>
                         <div class="reviewOrder__item text--center" ng-show="model.campaign.pricing.dailyLimit">
-                            <span class="orderItem__label">Daily Spend </span><span class="orderItem__title tk--hdr">${{model.campaign.pricing.dailyLimit}}</span>
+                            <span class="orderItem__label text--small">Daily Spend </span><span class="orderItem__title tk--hdr">${{model.campaign.pricing.dailyLimit}}</span>
                         </div>
                         <div class="reviewOrder__item text--center">
-                            <span class="orderItem__label">Estimated Views </span><span class="orderItem__title tk--hdr">{{(model.campaign.pricing.budget / model.cpv) | number:0}}</span>
+                            <span class="orderItem__label text--small">Estimated Views </span><span class="orderItem__title tk--hdr">{{(model.campaign.pricing.budget / model.cpv) | number:0}}</span>
                         </div>
                     </div>
                     <div class="grid">
@@ -72,7 +72,7 @@
         </div>
 
         <footer class="modalFooter__group">
-            <button class="btnAction btnAction btnAction--first ng-binding" ng-click="model.onCancel()" title="Cancel">Cancel</button>
+            <button class="btnAction btnAction btnAction--first ng-binding" ng-click="model.onCancel()" title="Cancel">Edit</button>
             <button ng-click="model.onAffirm()" title="Yes" class="btnAction btnAction--success btnAction--last ng-binding" type="button">Submit Campaign</button>
         </footer>
 
