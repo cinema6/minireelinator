@@ -4,9 +4,13 @@
         <h1 class="formSection__title">
             <span class="formSection__titleText tk--hdr">Set Your Timeline</span>
         </h1>
+
         <p class="formSection__introText">Choose your start and end dates</p>
 
-        <div class="form__items">
+        <input type="radio" name="hasDates" ng-model="SelfieFlightDatesCtrl.hasDates" ng-value="false" ng-change="SelfieFlightDatesCtrl.setTimelineOption()"> Start Immediately
+        <input type="radio" name="hasDates" ng-model="SelfieFlightDatesCtrl.hasDates" ng-value="true" ng-change="SelfieFlightDatesCtrl.setTimelineOption()"> Set Dates
+
+        <div class="form__items" ng-if="SelfieFlightDatesCtrl.hasDates">
 
             <fieldset class="form__item form__item--shortInput" ng-class="{'ui--hasError': !SelfieFlightDatesCtrl.validStartDate &&  SelfieFlightDatesCtrl.canShowError }">
                 <input datepicker c6-fill-check min-date="null" max-date="SelfieFlightDatesCtrl.endDate" default-date="null" alt-field="_startdate" class="form__textBox form__textBox--units form__fillCheck" type="text" id="startdate" ng-model="SelfieFlightDatesCtrl.startDate" ng-change="SelfieFlightDatesCtrl.setDates()" ng-disabled="!SelfieFlightDatesCtrl.editableStartDate">
@@ -44,10 +48,11 @@
                 </div>
             </fieldset>
 
+            <p class="alertMessage alert__warning two-thirds" style="margin:0 auto;" ng-if="SelfieFlightDatesCtrl.imminentDates && (!campaign.status || campaign.status === 'draft')">Warning: once submitted, your campaign may take up to 24 hours to become active, which could effect your desired flight dates.</p>
+            <p class="alertMessage alert__warning two-thirds" style="margin:0 auto;" ng-if="SelfieFlightDatesCtrl.imminentDates && campaign.status && campaign.status !== 'draft' && !SelfieFlightDatesCtrl.isPending && SelfieFlightDatesCtrl.canShowError">Warning: changes may take up to 24 hours to become active, which could effect your desired flight dates.</p>
+
         </div>
 
-        <p class="alertMessage alert__warning two-thirds" style="margin:0 auto;" ng-if="SelfieFlightDatesCtrl.imminentDates && (!campaign.status || campaign.status === 'draft')">Warning: once submitted, your campaign may take up to 24 hours to become active, which could effect your desired flight dates.</p>
-        <p class="alertMessage alert__warning two-thirds" style="margin:0 auto;" ng-if="SelfieFlightDatesCtrl.imminentDates && campaign.status && campaign.status !== 'draft' && !SelfieFlightDatesCtrl.isPending && SelfieFlightDatesCtrl.canShowError">Warning: changes may take up to 24 hours to become active, which could effect your desired flight dates.</p>
     </section><!--.formSection__group-->
 
 </div><!--.grid__item-->
