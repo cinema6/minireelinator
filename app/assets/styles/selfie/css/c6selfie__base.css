@@ -4362,10 +4362,20 @@ div.tree-multiselect span.section-name {
     .timeline__selectOption {
         margin-bottom: 2em;
     }
+        .timeline__selectOption input[type=radio] {
+            vertical-align: middle;
+            height: 1.5em;
+        }
+            .timeline__selectOption input[type=radio]:focus {
+                vertical-align: middle;
+                height: 1.5em;                
+            }
         .timeline__selectOption label {
             cursor: pointer;
-            margin-right: 1em;
-            vertical-align: text-bottom;
+            font-size: 1em;
+            line-height: 1.5em;
+            vertical-align: middle;
+            margin-right: 10px;
         }
     .ui-datepicker {
         background: #fff;
