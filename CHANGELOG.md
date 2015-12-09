@@ -1,8 +1,9 @@
 # MiniReelinator
 
-## v1.28.1 (December 8, 2015)
+## v1.28.1 (December 9, 2015)
 * *[v1.28.1.rc4]*
   * [DESIGN]: Fixed button alignment for flight dates and updated label
+* *[v1.28.1.rc4]*
 
 * *[v1.28.1.rc3]*
   * [DESIGN]: Fixed datepicker bottom padding issue, updated summary and submit button label
