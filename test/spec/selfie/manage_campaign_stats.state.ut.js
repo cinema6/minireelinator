@@ -31,7 +31,7 @@ define(['app'], function(appModule) {
 
                     selfieCampaignStats.enter();
 
-                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage');
+                    expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage', null, null, true);
                 });
             });
 
@@ -42,7 +42,7 @@ define(['app'], function(appModule) {
 
                     selfieCampaignStats.enter();
 
-                    expect(c6State.goTo).not.toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage');
+                    expect(c6State.goTo).not.toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage', null, null, true);
                 });
             });
         });

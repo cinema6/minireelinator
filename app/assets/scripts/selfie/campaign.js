@@ -1620,7 +1620,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.enter = function() {
                     if (!this.cParent.hasStats) {
-                        return c6State.goTo('Selfie:Manage:Campaign:Manage');
+                        return c6State.goTo('Selfie:Manage:Campaign:Manage', null, null, true);
                     }
                 };
             }]);
@@ -1663,7 +1663,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.enter = function() {
                     if (!this.cParent.isAdmin) {
-                        return c6State.goTo('Selfie:Manage:Campaign:Manage');
+                        return c6State.goTo('Selfie:Manage:Campaign:Manage', null, null, true);
                     }
                 };
             }]);
