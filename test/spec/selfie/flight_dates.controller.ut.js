@@ -293,6 +293,24 @@ define(['app'], function(appModule) {
                 });
             });
 
+            describe('hasDates', function() {
+                it('should be true when there is either a start or end date', function() {
+                    expect(SelfieFlightDatesCtrl.hasDates).toBe(false);
+
+                    card.campaign.startDate = '2016-06-26T04:59:00.000Z';
+
+                    compileCtrl();
+
+                    expect(SelfieFlightDatesCtrl.hasDates).toBe(true);
+
+                    card.campaign.endDate = '2016-06-26T04:59:00.000Z';
+
+                    compileCtrl();
+
+                    expect(SelfieFlightDatesCtrl.hasDates).toBe(true);
+                });
+            });
+
             describe('canShowError', function() {
                 describe('when original campaign has no status', function() {
                     it('should be true', function() {
@@ -504,6 +522,57 @@ define(['app'], function(appModule) {
                             SelfieFlightDatesCtrl.setDates();
 
                             expect(card.campaign.endDate).toBe(undefined);
+                        });
+                    });
+                });
+            });
+
+            describe('setTimelineOption()', function() {
+                describe('when hasDates is false', function() {
+                    it('should remove any staart and end date from the campaign', function() {
+                        card.campaign.startDate = '2016-06-26T04:59:00.000Z';
+                        card.campaign.endDate = '2016-06-26T04:59:00.000Z';
+
+                        compileCtrl();
+
+                        SelfieFlightDatesCtrl.hasDates = false;
+                        SelfieFlightDatesCtrl.setTimelineOption();
+
+                        expect(card.campaign.startDate).toBe(undefined);
+                        expect(card.campaign.endDate).toBe(undefined);
+                    });
+                });
+
+                describe('when hasDate is true', function() {
+                    describe('when there is a valid start or end date', function() {
+                        it('should put it back on the campaign', function() {
+                            card.campaign.startDate = undefined;
+                            card.campaign.endDate = undefined;
+
+                            SelfieFlightDatesCtrl.startDate = laterDate;
+                            SelfieFlightDatesCtrl.endDate = evenLaterDate;
+
+                            SelfieFlightDatesCtrl.hasDates = true;
+                            SelfieFlightDatesCtrl.setTimelineOption();
+
+                            expect(card.campaign.startDate).toEqual(jasmine.any(String));
+                            expect(card.campaign.endDate).toEqual(jasmine.any(String));
+                        });
+                    });
+
+                    describe('when there is no existing start or end date', function() {
+                        it('should do nothing', function() {
+                            card.campaign.startDate = undefined;
+                            card.campaign.endDate = undefined;
+
+                            SelfieFlightDatesCtrl.startDate = undefined;
+                            SelfieFlightDatesCtrl.endDate = undefined;
+
+                            SelfieFlightDatesCtrl.hasDates = true;
+                            SelfieFlightDatesCtrl.setTimelineOption();
+
+                            expect(card.campaign.startDate).toEqual(undefined);
+                            expect(card.campaign.endDate).toEqual(undefined);
                         });
                     });
                 });

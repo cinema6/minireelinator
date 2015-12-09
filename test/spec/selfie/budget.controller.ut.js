@@ -25,8 +25,10 @@ define(['app'], function(appModule) {
                     },
                     cost: {
                         __base: 0.05,
-                        __pricePerGeo: 0.01,
-                        __pricePerDemo: 0.01,
+                        __pricePerGeo: 0.00,
+                        __priceForGeoTargeting: 0.01,
+                        __pricePerDemo: 0.00,
+                        __priceForDemoTargeting: 0.01,
                         __priceForInterests: 0.01
                     }
                 }
