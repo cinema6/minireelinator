@@ -1343,7 +1343,9 @@ function( angular , c6State  , PaginatedListState                    ,
         .config(['c6StateProvider',
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Manage:Campaign', ['cinema6','$q','c6State',
-            function                                        ( cinema6 , $q , c6State ) {
+                                                             'CampaignService',
+            function                                        ( cinema6 , $q , c6State ,
+                                                              CampaignService ) {
                 this.templateUrl = 'views/selfie/campaigns/manage.html';
                 this.controller = 'SelfieManageCampaignController';
                 this.controllerAs = 'SelfieManageCampaignCtrl';
@@ -1367,7 +1369,8 @@ function( angular , c6State  , PaginatedListState                    ,
                         }),
                         updateRequest:  updateRequest ?
                             cinema6.db.find('updateRequest', updateRequest) :
-                            null
+                            null,
+                        stats: CampaignService.getAnalytics(this.campaign.id)
                     });
                 };
 
@@ -1376,6 +1379,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                     this.isAdmin = (user.entitlements.adminCampaigns === true);
                     this.updateRequest = model.updateRequest;
+                    this.hasStats = !!model.stats.length;
                 };
 
                 this.enter = function() {
@@ -1532,10 +1536,12 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.card = cState.card;
                 this.campaign = cState.campaign;
                 this.showAdminTab = cState.isAdmin;
+                this.hasStats = cState.hasStats;
 
                 this.categories = model.categories;
                 this.paymentMethods = model.paymentMethods;
                 this.updateRequest = model.updateRequest;
+                this.stats = model.stats;
 
                 this._proxyCampaign = copy(cState.campaign);
             };
@@ -1606,6 +1612,42 @@ function( angular , c6State  , PaginatedListState                    ,
 
         .config(['c6StateProvider',
         function( c6StateProvider ) {
+            c6StateProvider.state('Selfie:Manage:Campaign:Stats', ['c6State',
+            function                                              ( c6State ) {
+                this.templateUrl = 'views/selfie/campaigns/manage/stats.html';
+                this.controller = 'SelfieManageCampaignStatsController';
+                this.controllerAs = 'SelfieManageCampaignStatsCtrl';
+
+                this.enter = function() {
+                    if (!this.cParent.hasStats) {
+                        return c6State.goTo('Selfie:Manage:Campaign:Manage', null, null, true);
+                    }
+                };
+            }]);
+        }])
+
+        .controller('SelfieManageCampaignStatsController', ['$scope',
+        function                                           ( $scope ) {
+            var SelfieManageCampaignCtrl = $scope.SelfieManageCampaignCtrl,
+                stats = SelfieManageCampaignCtrl.stats[0] || {},
+                linkClicks = (stats.summary && stats.summary.linkClicks) || {},
+                shareClicks = (stats.summary && stats.summary.shareClicks) || {};
+
+            this.totalClicks = (function() {
+                var total = 0;
+                forEach(linkClicks, function(item) { total += item; });
+                return total;
+            }());
+
+            this.totalShares = (function() {
+                var total = 0;
+                forEach(shareClicks, function(item) { total += item; });
+                return total;
+            }());
+        }])
+
+        .config(['c6StateProvider',
+        function( c6StateProvider ) {
             c6StateProvider.state('Selfie:Manage:Campaign:Admin', ['cinema6','$q','c6State',
             function                                              ( cinema6 , $q , c6State ) {
                 this.templateUrl = 'views/selfie/campaigns/manage/admin.html';
@@ -1621,7 +1663,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
                 this.enter = function() {
                     if (!this.cParent.isAdmin) {
-                        return c6State.goTo('Selfie:Manage:Campaign:Manage');
+                        return c6State.goTo('Selfie:Manage:Campaign:Manage', null, null, true);
                     }
                 };
             }]);

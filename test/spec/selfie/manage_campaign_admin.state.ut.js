@@ -101,7 +101,7 @@ define(['app'], function(appModule) {
 
                 campaignState.enter();
 
-                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage');
+                expect(c6State.goTo).toHaveBeenCalledWith('Selfie:Manage:Campaign:Manage', null, null, true);
             });
         });
     });

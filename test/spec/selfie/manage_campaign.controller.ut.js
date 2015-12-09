@@ -36,7 +36,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             card,
             categories,
             paymentMethods,
-            updateRequest;
+            updateRequest,
+            stats;
 
         var debouncedFns;
 
@@ -132,10 +133,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             categories = [];
             paymentMethods = [];
             updateRequest = null;
+            stats = [{}];
 
             cState = {
                 campaign: campaign,
-                card: card
+                card: card,
+                hasStats: true
             };
 
             compileCtrl(cState, {
@@ -301,7 +304,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         SelfieManageCampaignCtrl.paymentMethods = null;
                         SelfieManageCampaignCtrl._proxyCampaign = null;
 
-                        SelfieManageCampaignCtrl.initWithModel({categories: categories, paymentMethods: paymentMethods, updateRequest: updateRequest});
+                        SelfieManageCampaignCtrl.initWithModel({categories: categories, paymentMethods: paymentMethods, updateRequest: updateRequest, stats: stats});
                     });
 
                     expect(SelfieManageCampaignCtrl.card).toEqual(card);
@@ -310,6 +313,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieManageCampaignCtrl.paymentMethods).toEqual(paymentMethods);
                     expect(SelfieManageCampaignCtrl.updateRequest).toEqual(updateRequest);
                     expect(SelfieManageCampaignCtrl._proxyCampaign).toEqual(copy(campaign));
+                    expect(SelfieManageCampaignCtrl.hasStats).toEqual(cState.hasStats);
+                    expect(SelfieManageCampaignCtrl.stats).toEqual(stats);
                 });
             });
 

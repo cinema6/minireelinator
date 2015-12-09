@@ -1,1 +1,256 @@
-Stats
+<div class="tabContent targeting__content container">
+    <header class="tabContent__header">
+        <h2 class="tabContent__title tk--hdr">Campaign Statistics</h2>
+        <span class="tabContent__subtitle">{{campaign.name}}</span>
+    </header>
+</div><!--.tabContent .targeting__content container-->
+
+<div class="tabContent__gridHolder" c6-alias="SelfieManageCampaignCtrl.stats[0].summary as stats">
+    <div class="grid grid--center">
+        <div class="grid__item one-whole">
+            <div class="grid">
+                <div class="grid__item one-fifth">
+                    <div class="statsChart__infoBox">
+                        <h3 class="stats__icon"><i class="fa fa-play"></i></h3>
+                        <h1 class="stats__infoNumber tk--hdr">{{stats.views | number:0}}</h1>
+                        <h3 class="stats__label">Views</h3>
+                        <div class="helpBox helpBox--center">
+                            <div class="helpText">
+                                Number of times video was played.
+                            </div>
+                        </div>
+                    </div>
+                </div><!--
+                --><div class="grid__item one-fifth">
+                    <div class="statsChart__infoBox">
+                        <h3 class="stats__icon"><i class="fa fa-usd"></i></h3>
+                        <h1 class="stats__infoNumber tk--hdr">${{stats.totalSpend / stats.views | number:2}}</h1>
+                        <h3 class="stats__label">Average CPV</h3>
+                        <div class="helpBox helpBox--center">
+                            <div class="helpText">
+                                Your total cost divided by total views
+                            </div>
+                        </div>
+                    </div>
+                </div><!--
+                --><div class="grid__item one-fifth">
+                    <div class="statsChart__infoBox">
+                        <h3 class="stats__icon"><i class="fa fa-credit-card"></i></h3>
+                        <h1 class="stats__infoNumber tk--hdr">${{stats.totalSpend | number:2}}</h1>
+                        <h3 class="stats__label">Total Cost</h3>
+
+                        <div class="helpBox helpBox--center">
+                            <div class="helpText">
+                                This is how much you have spent
+                            </div>
+                        </div>
+                    </div>
+                </div><!--
+                --><div class="grid__item one-fifth">
+                    <div class="statsChart__infoBox">
+                        <h3 class="stats__icon"><i class="fa fa-comments-o"></i></h3>
+                        <h1 class="stats__infoNumber tk--hdr">{{SelfieManageCampaignStatsCtrl.totalClicks + SelfieManageCampaignStatsCtrl.totalShares}}</h1>
+                        <h3 class="stats__label">Total Interactions</h3>
+                        <div class="helpBox helpBox--center">
+                            <div class="helpText">
+                                This is how many times users interacted with links on your ad
+                            </div>
+                        </div>
+                    </div>
+                </div><!--
+                --><div class="grid__item one-fifth">
+                    <div class="statsChart__infoBox">
+                        <h3 class="stats__icon"><i class="fa fa-percent"></i></h3>
+                        <h1 class="stats__infoNumber tk--hdr">{{((SelfieManageCampaignStatsCtrl.totalClicks + SelfieManageCampaignStatsCtrl.totalShares) / stats.views) * 100 | number:2}}%</h1>
+                        <h3 class="stats__label">Interaction Rate</h3>
+                        <div class="helpBox helpBox--center">
+                            <div class="helpText">
+                                Your total clicks divided by total views
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!--.grid__item .one-whole--><!--.grid__item .three-quarters-->
+    </div>
+    <div class="grid grid--center">
+        <div class="grid__item one-whole grid--center" ng-if="SelfieManageCampaignCtrl.stats[0].summary">
+            <h1 class="tk--hdr text--center">Interactions</h1>
+            <div class="helpBox helpBox--center">
+                <div class="formhelpText">
+                    This table shows how many viewers watched what percentage of your video.
+                </div>
+            </div>
+            <div interactions-piechart class="chart__wrap grid--right grid--middle" stats="SelfieManageCampaignCtrl.stats[0].summary">
+                <div class="grid__item one-half">
+                    <div class="grid">
+                        <canvas width="800" height="600"></canvas>
+                    </div>
+                </div><!--
+                --><div class="grid__item one-quarter">
+                    <div id="js-legend"></div>
+                </div>
+            </div>
+        </div><!--
+        --><div class="grid__item one-half interactions__group">
+            <div class="grid">
+                <div class="grid__item one-whole">
+                    <h1 class="tk--hdr stats__hdr">Website Interactions</h1>
+                    <div class="helpBox helpBox--center">
+                        <div class="formhelpText">
+                            Clicks to your main Call to Action/ Button and/or logo and sponsored links.
+                        </div>
+                    </div>
+                    <div class="stats__row">
+                        <h3 class="stats__label">Call to Action</h3>
+                        <span ng-if="!stats.linkClicks.action">
+                            <h2 class="stats__rowClicks">--</h2>
+                            <h2 class="stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="stats.linkClicks.action">
+                            <h2 class="stats__rowClicks">{{stats.linkClicks.action}}<span ng-if="!stats.linkClicks.action">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
+                            <h2 class="stats__rowClicks">{{(stats.linkClicks.action / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
+                        </span>
+                    </div>
+                    <div class="stats__row">
+                        <h3 class="stats__label">Website</h3>
+                        <span ng-if="!stats.linkClicks.website">
+                            <h2 class="stats__rowClicks">--</h2>
+                            <h2 class="stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="stats.linkClicks.website">
+                            <h2 class="stats__rowClicks">{{stats.linkClicks.website}}<span class="stats__rowClicks--label">Clicks</span></h2>
+                            <h2 class="stats__rowClicks">{{(stats.linkClicks.website / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
+                        </span>
+                    </div>
+                </div><!--
+                --><div class="grid__item one-whole">
+                    <h1 class="tk--hdr stats__hdr">Share</h1>
+                    <div class="helpBox helpBox--center">
+                        <div class="formhelpText">
+                            Social share count of your "social" link on the video card.
+                        </div>
+                    </div>
+                    <div class="stats__row">
+                        <h3 class="stats__label">Facebook</h3>
+                        <span ng-if="!stats.shareClicks.facebook">
+                            <h2 class="stats__rowClicks">--</h2>
+                            <h2 class="stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="stats.shareClicks.facebook">
+                            <h2 class="stats__rowClicks">{{stats.shareClicks.facebook}}<span class="stats__rowClicks--label">Clicks</span></h2>
+                            <h2 class="stats__rowClicks">{{(stats.shareClicks.facebook / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">Share Rate</span></h2>
+                        </span>
+                    </div>
+                    <div class="stats__row">
+                        <h3 class="stats__label">Twitter</h3>
+                        <span ng-if="!stats.shareClicks.twitter">
+                            <h2 class="stats__rowClicks">--</h2>
+                            <h2 class="stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="stats.shareClicks.twitter">
+                            <h2 class="stats__rowClicks">{{stats.shareClicks.twitter}}<span class="stats__rowClicks--label">Clicks</span></h2>
+                            <h2 class="stats__rowClicks">{{(stats.shareClicks.twitter / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">Share Rate</span></h2>
+                        </span>
+                    </div>
+                    <div class="stats__row">
+                        <h3 class="stats__label">Pinterest</h3>
+                        <span ng-if="!stats.shareClicks.pinterest">
+                            <h2 class="stats__rowClicks">--</h2>
+                            <h2 class="stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="stats.shareClicks.pinterest">
+                            <h2 class="stats__rowClicks">{{stats.shareClicks.pinterest}}<span class="stats__rowClicks--label">Clicks</span></h2>
+                            <h2 class="stats__rowClicks">{{(stats.shareClicks.pinterest / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">Share Rate</span></h2>
+                        </span>
+                    </div>
+                    <div class="stats__row">
+                        <h3 class="stats__label">Share Total</h3>
+                        <span ng-if="!SelfieManageCampaignStatsCtrl.totalShares">
+                            <h2 class="stats__rowClicks">--</h2>
+                            <h2 class="stats__rowClicks">--</h2>
+                        </span>
+                        <span ng-if="SelfieManageCampaignStatsCtrl.totalShares">
+                            <h2 class="stats__rowClicks">{{SelfieManageCampaignStatsCtrl.totalShares}}<span class="stats__rowClicks--label">Clicks</span></h2>
+                            <h2 class="stats__rowClicks">{{(SelfieManageCampaignStatsCtrl.totalShares / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">Share Rate</span></h2>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div><!--
+        --><div class="grid__item one-half interactions__group">
+            <h1 class="tk--hdr stats__hdr">Social Interactions</h1>
+            <div class="helpBox helpBox--center">
+                <div class="formhelpText">
+                    Count of users visiting your social profiles provided on the video card.
+                </div>
+            </div>
+            <div class="stats__row">
+                <h3 class="stats__label">Facebook</h3>
+                <span ng-if="!stats.linkClicks.facebook">
+                    <h2 class="stats__rowClicks">--</h2>
+                    <h2 class="stats__rowClicks">--</h2>
+                </span>
+                <span ng-if="stats.linkClicks.facebook">
+                    <h2 class="stats__rowClicks">{{stats.linkClicks.facebook}}<span ng-if="!stats.linkClicks.facebook">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
+                    <h2 class="stats__rowClicks">{{(stats.linkClicks.facebook / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
+                </span>
+            </div>
+            <div class="stats__row">
+                <h3 class="stats__label">Twitter</h3>
+                <span ng-if="!stats.linkClicks.twitter">
+                    <h2 class="stats__rowClicks">--</h2>
+                    <h2 class="stats__rowClicks">--</h2>
+                </span>
+                <span ng-if="stats.linkClicks.twitter">
+                    <h2 class="stats__rowClicks">{{stats.linkClicks.twitter}}<span ng-if="!stats.linkClicks.twitter">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
+                    <h2 class="stats__rowClicks">{{(stats.linkClicks.twitter / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
+                </span>
+            </div>
+            <div class="stats__row">
+                <h3 class="stats__label">YouTube</h3>
+                <span ng-if="!stats.linkClicks.youtube">
+                    <h2 class="stats__rowClicks">--</h2>
+                    <h2 class="stats__rowClicks">--</h2>
+                </span>
+                <span ng-if="stats.linkClicks.youtube">
+                    <h2 class="stats__rowClicks">{{stats.linkClicks.youtube}}<span ng-if="!stats.linkClicks.youtube">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
+                    <h2 class="stats__rowClicks">{{(stats.linkClicks.youtube / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
+                </span>
+            </div>
+            <div class="stats__row">
+                <h3 class="stats__label">Pinterest</h3>
+                <span ng-if="!stats.linkClicks.pinterest">
+                    <h2 class="stats__rowClicks">--</h2>
+                    <h2 class="stats__rowClicks">--</h2>
+                </span>
+                <span ng-if="stats.linkClicks.pinterest">
+                    <h2 class="stats__rowClicks">{{stats.linkClicks.pinterest}}<span ng-if="!stats.linkClicks.pinterest">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
+                    <h2 class="stats__rowClicks">{{(stats.linkClicks.pinterest / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
+                </span>
+            </div>
+            <div class="stats__row">
+                <h3 class="stats__label">Instagram</h3>
+                <span ng-if="!stats.linkClicks.instagram">
+                    <h2 class="stats__rowClicks">--</h2>
+                    <h2 class="stats__rowClicks">--</h2>
+                </span>
+                <span ng-if="stats.linkClicks.instagram">
+                    <h2 class="stats__rowClicks">{{stats.linkClicks.instagram}}<span ng-if="!stats.linkClicks.instagram">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
+                    <h2 class="stats__rowClicks">{{(stats.linkClicks.instagram / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
+                </span>
+            </div>
+            <div class="stats__row">
+                <h3 class="stats__label">Social Total</h3>
+                <span ng-if="!SelfieManageCampaignStatsCtrl.totalClicks">
+                    <h2 class="stats__rowClicks">--</h2>
+                    <h2 class="stats__rowClicks">--</h2>
+                </span>
+                <span ng-if="SelfieManageCampaignStatsCtrl.totalClicks">
+                    <h2 class="stats__rowClicks">{{SelfieManageCampaignStatsCtrl.totalClicks}}<span ng-if="!SelfieManageCampaignStatsCtrl.totalClicks">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
+                    <h2 class="stats__rowClicks">{{(SelfieManageCampaignStatsCtrl.totalClicks / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
+                </span>
+            </div>
+        </div>
+    </div><!--.grid .grid--center-->
+</div>

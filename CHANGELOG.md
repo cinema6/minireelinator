@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.29.0.rc1]*
+  * [FEATURE]: Add Campaign Stats tab in manager area
+
 ## v1.28.1 (December 9, 2015)
 * *[v1.28.1.rc4]*
   * [DESIGN]: Fixed button alignment for flight dates and updated label

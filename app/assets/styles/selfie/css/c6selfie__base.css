@@ -1519,6 +1519,10 @@ fa,
             display: inline-block;
             margin-right: 10px;
         }
+        .chart__wrap canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
 
     /* Helpbox classes*/
         .helpBox {

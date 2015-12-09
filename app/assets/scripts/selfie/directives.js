@@ -1,5 +1,5 @@
-define( ['angular','select2','braintree','jqueryui'],
-function( angular , select2 , braintree ) {
+define( ['angular','select2','braintree','jqueryui','chartjs'],
+function( angular , select2 , braintree , jqueryui , Chart   ) {
     'use strict';
 
     var $ = angular.element,
@@ -25,6 +25,8 @@ function( angular , select2 , braintree ) {
     }
 
     return angular.module('c6.app.selfie.directives', [])
+        .value('Chart', Chart)
+
         .directive('c6FillCheck', ['$timeout',
         function                  ( $timeout ) {
             return {
@@ -256,6 +258,105 @@ function( angular , select2 , braintree ) {
                                 $picker.css('left', offset);
                             });
                         }
+                    });
+                }
+            };
+        }])
+
+        .directive('interactionsPiechart', ['$timeout','$filter','Chart',
+        function                           ( $timeout , $filter , Chart ) {
+            return {
+                restrict: 'A',
+                scope: {
+                    stats: '='
+                },
+                link: function(scope, $element) {
+                    var totalClicks = 0,
+                        totalShares = 0,
+                        pieData = [],
+                        pieSections = {
+                            youtube: {
+                                color : '#bb0000',
+                                highlight : '#a30000',
+                                label : 'Youtube'
+                            },
+                            pinterest: {
+                                color : '#cb2027',
+                                highlight : '#c21e24',
+                                label : 'Pinterest'
+                            },
+                            facebook: {
+                                color:'#3b5998',
+                                highlight : '#334D84',
+                                label: 'Facebook'
+                            },
+                            twitter: {
+                                color : '#00aced',
+                                highlight : '#00A5E0',
+                                label : 'Twitter'
+                            },
+                            instagram: {
+                                color : '#125688',
+                                highlight : '#10517E',
+                                label : 'Instagram'
+                            },
+                            share: {
+                                color : '#039753',
+                                highlight : '#027841',
+                                label : 'Share'
+                            },
+                            website: {
+                                color : '#FFC803',
+                                highlight : '#FFC803',
+                                label : 'Website'
+                            },
+                            action: {
+                                color : '#FF4E03',
+                                highlight : '#F54900',
+                                label : 'Call to Action'
+                            }
+                        };
+
+                    if (!scope.stats) { return; }
+
+                    forEach(scope.stats.linkClicks, function(link, key) {
+                        pieSections[key].value = link;
+                        pieData.push(pieSections[key]);
+                        totalClicks += link;
+                    });
+
+                    forEach(scope.stats.shareClicks, function(share) {
+                        if (pieData.indexOf(pieSections.share) > -1) {
+                            pieSections.share.value += share;
+                        } else {
+                            pieSections.share.value = share;
+                            pieData.push(pieSections.share);
+                        }
+                        totalShares += share;
+                    });
+
+                    forEach(pieData, function(item) {
+                        var percentage = (item.value / (totalShares + totalClicks)) * 100;
+
+                        item.value = $filter('number')(percentage, '2');
+                    });
+
+                    // pie chart options
+                    var pieOptions = {
+                        segmentShowStroke : false,
+                        animateScale : true,
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        tooltipTemplate: '<%if (label){%><%=label %>: <%}%><%= value %>%'
+                    };
+
+                    $timeout(function() {
+                        // get pie chart canvas
+                        var canvas = $element.find('canvas')[0].getContext('2d');
+                        // draw pie chart
+                        var pie = new Chart(canvas).Doughnut(pieData, pieOptions);
+                        // add legend
+                        $element.find('#js-legend')[0].innerHTML = pie.generateLegend();
                     });
                 }
             };

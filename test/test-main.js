@@ -61,6 +61,10 @@
                 c6embed: libUrl('c6embed/v1/app'),
                 metagetta: libUrl('metagetta/v0.2.0-0-g8b51280/metagetta'),
                 braintree: 'lib/braintree',
+                chartjs: [
+                    'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min',
+                    'lib/chartjs.min'
+                ],
                 'helpers/drag': '/base/test/helpers/drag'
             },
             shim: {
