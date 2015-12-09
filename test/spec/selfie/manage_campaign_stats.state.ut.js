@@ -1,7 +1,7 @@
 define(['app'], function(appModule) {
     'use strict';
 
-    fdescribe('Selfie:Manage:Campaign:Stats State', function() {
+    describe('Selfie:Manage:Campaign:Stats State', function() {
         var $rootScope,
             c6State,
             selfieCampaignStats;

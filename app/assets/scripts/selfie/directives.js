@@ -25,6 +25,8 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
     }
 
     return angular.module('c6.app.selfie.directives', [])
+        .value('Chart', Chart)
+
         .directive('c6FillCheck', ['$timeout',
         function                  ( $timeout ) {
             return {
@@ -261,8 +263,8 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
             };
         }])
 
-        .directive('interactionsPiechart', ['$timeout','$filter',
-        function               ( $timeout , $filter ) {
+        .directive('interactionsPiechart', ['$timeout','$filter','Chart',
+        function                           ( $timeout , $filter , Chart ) {
             return {
                 restrict: 'A',
                 scope: {
@@ -314,6 +316,8 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                                 label : 'Call to Action'
                             }
                         };
+
+                    if (!scope.stats) { return; }
 
                     forEach(scope.stats.linkClicks, function(link, key) {
                         pieSections[key].value = link;

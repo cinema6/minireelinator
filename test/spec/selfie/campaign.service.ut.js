@@ -440,8 +440,8 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
 
                 describe('when fetching a single campaign', function() {
                     it('should request stats for a single campaign and return an array', function() {
-                        $httpBackend.expectGET('/api/analytics/campaigns/cam-1')
-                            .respond(200, stats[0]);
+                        $httpBackend.expectGET('/api/analytics/campaigns/?ids=cam-1')
+                            .respond(200, [stats[0]]);
 
                         CampaignService.getAnalytics('cam-1').then(success, failure);
 
@@ -452,7 +452,7 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     });
 
                     it('should reject the promise if the request fails', function() {
-                        $httpBackend.expectGET('/api/analytics/campaigns/cam-1')
+                        $httpBackend.expectGET('/api/analytics/campaigns/?ids=cam-1')
                             .respond(404, 'NOT FOUND');
 
                         CampaignService.getAnalytics('cam-1').then(success, failure);
