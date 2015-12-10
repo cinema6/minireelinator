@@ -5,6 +5,7 @@
   * Show human readable interest labels in the campaign admin tab
   * [FEATURE]: Add Campaign Stats tab in manager area
   * [FEATURE]: Enforce limits on headline, description and call to action text
+  * [DESIGN]: Updated styles to show/hide character limit text, fixed safari input issue
 * *[v1.29.0.rc1]*
 
 ## v1.28.1 (December 9, 2015)
