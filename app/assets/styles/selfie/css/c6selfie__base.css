@@ -46,6 +46,9 @@
     input[type='number'] {
         -moz-appearance:textfield;
     }
+    input {
+        -webkit-appearance: none;
+    }
 
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button {
@@ -2466,11 +2469,10 @@ fa,
                 text-align: center;
             }
             .form__label .form__counter {
-                /*display: none;*/
+                display: none;
             }
             .form__item--stackedInput .form__textBox:focus ~ .form__label .form__counter { 
-                /*display: block; change this when js is added for char count*/
-                display: none;
+                display: block;
             }
             .form__item--bigInput:first-child {
                 margin-top:1em;
@@ -2826,6 +2828,14 @@ fa,
 
         .select2-container--default .select2-search--inline .select2-search__field {
             /*display: none;*/
+            background: transparent;
+            border: none;
+            outline: 0;
+        }
+        .select2-container--default .select2-search--inline .select2-search__field:focus {
+            background: transparent;
+            border: none;
+            outline: 0;
         }
 
 
