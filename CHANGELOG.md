@@ -1,8 +1,11 @@
 # MiniReelinator
 
+## v1.29.0 (December 10, 2015)
 * *[v1.29.0.rc1]*
   * Show human readable interest labels in the campaign admin tab
   * [FEATURE]: Add Campaign Stats tab in manager area
+  * [FEATURE]: Enforce limits on headline, description and call to action text
+* *[v1.29.0.rc1]*
 
 ## v1.28.1 (December 9, 2015)
 * *[v1.28.1.rc4]*
