@@ -8,7 +8,8 @@ module.exports = {
             optimizeCss: 'standard',
             removeCombined: true,
             paths: {
-                templates: '../../../.tmp/templates'
+                templates: '../../../.tmp/templates',
+                chartjs: 'empty:'
             },
             modules: [{
                 name: 'main'
