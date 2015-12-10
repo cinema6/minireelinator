@@ -555,6 +555,9 @@ function( angular , c6State  , PaginatedListState                    ,
             // It's defined on the this Ctrl because it affects
             // multiple child Ctrls that don't know about each other
             this.disableVideoTitleOverwrite = false;
+            this.maxHeadlineLength = 40;
+            this.maxDescriptionLength = 400;
+            this.maxCallToActionLength = 25;
 
             Object.defineProperties(this, {
                 shouldSave: {
@@ -1131,10 +1134,12 @@ function( angular , c6State  , PaginatedListState                    ,
                         return SelfieVideoService.statsFromService(service, id);
                     })
                     .then(function(data) {
+                        var title = ((data || {}).title || '').slice(0, SelfieCampaignCtrl.maxHeadlineLength);
+
                         SelfieCampaignVideoCtrl.videoError = false;
                         SelfieCampaignVideoCtrl.video = data;
                         card.title = SelfieCampaignVideoCtrl.disableTitleOverwrite ?
-                            card.title : (data || {}).title;
+                            card.title : (title.length && title) || undefined;
                         card.data.service = service;
                         card.data.videoid = id;
                     })

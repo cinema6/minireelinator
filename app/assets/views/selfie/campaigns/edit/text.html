@@ -17,10 +17,10 @@
         <div class="form__items">
 
             <fieldset class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.title && SelfieCampaignCtrl.validation.show }">
-                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-title" ng-model="card.title" ng-class="{'form__fillCheck--filled' : card.title }" ng-focus="SelfieCampaignCtrl.disableVideoTitleOverwrite = 'true'">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-title" ng-model="card.title" ng-class="{'form__fillCheck--filled' : card.title }" ng-focus="SelfieCampaignCtrl.disableVideoTitleOverwrite = 'true'" maxlength="{{SelfieCampaignCtrl.maxHeadlineLength}}">
                 <label class="form__label" for="c6-video-title">
                     <i class="fa fa-times ui--error"></i>
-                    Headline<span class="text--small"> (required) </span><span class="text--small form__counter item--right">40</span>
+                    Headline<span class="text--small"> (required) </span><span class="text--small form__counter item--right">{{SelfieCampaignCtrl.maxHeadlineLength - card.title.length}}</span>
                 </label>
                 <!--<div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">
@@ -35,10 +35,10 @@
             </fieldset>
 
             <fieldset class="form__item form__item--stackedInput">
-                <textarea c6-fill-check class="form__textBox form__textArea form__textArea--large form__fillCheck" type="text" id="c6-video-description" ng-model="card.note"></textarea>
+                <textarea c6-fill-check class="form__textBox form__textArea form__textArea--large form__fillCheck" id="c6-video-description" ng-model="card.note" maxlength="{{SelfieCampaignCtrl.maxDescriptionLength}}"></textarea>
                 <label class="form__label" for="c6-video-description">
                     <i class="fa fa-times ui--error"></i>
-                    Description <span class="text--small form__counter item--right">400</span>
+                    Description <span class="text--small form__counter item--right">{{SelfieCampaignCtrl.maxDescriptionLength - card.note.length}}</span>
                 </label>
                 <!--<div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">
@@ -53,10 +53,10 @@
             </fieldset>
 
             <fieldset class="form__item form__item--stackedInput" ng-class="{'ui--hasError': !card.params.action.label && SelfieCampaignCtrl.validation.show }">
-                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-model="card.params.action.label">
+                <input c6-fill-check class="form__textBox form__fillCheck" type="text" id="c6-video-ctaText" ng-model="card.params.action.label" maxlength="{{SelfieCampaignCtrl.maxCallToActionLength}}">
                 <label class="form__label" for="c6-video-ctaText">
                     <i class="fa fa-times ui--error"></i>
-                    Call To Action Button Text <span class="text--small"> (required) </span> <span class="text--small form__counter item--right">25</span>
+                    Call To Action Button Text <span class="text--small"> (required) </span> <span class="text--small form__counter item--right">{{SelfieCampaignCtrl.maxCallToActionLength - card.params.action.label.length}}</span>
                 </label>
                 <!--<div class="form__helpBox form__helpBox--right">
                     <div class="form__helpText">

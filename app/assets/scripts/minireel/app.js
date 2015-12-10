@@ -417,6 +417,27 @@ function( angular , c6uilib , c6State  , services          , tracker          ,
             };
         }])
 
+        .directive('textarea', [function() {
+            return {
+                restrict: 'E',
+                require: '?ngModel',
+                link: function(scope, $element, attrs, ctrl) {
+                    var maxlength = parseInt(attrs.maxlength, 10);
+
+                    if (!maxlength) { return; }
+
+                    ctrl.$parsers.push(function(value) {
+                        if (value.length > maxlength) {
+                            value = value.substr(0, maxlength);
+                            ctrl.$setViewValue(value);
+                            ctrl.$render();
+                        }
+                        return value;
+                    });
+                }
+            };
+        }])
+
         .directive('c6BgImg', [function() {
             return {
                 restrict: 'AC',
