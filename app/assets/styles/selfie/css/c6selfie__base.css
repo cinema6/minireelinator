@@ -2466,7 +2466,7 @@ fa,
                 text-align: center;
             }
             .form__label .form__counter {
-                display: none;
+                /*display: none;*/
             }
             .form__item--stackedInput .form__textBox:focus ~ .form__label .form__counter { 
                 /*display: block; change this when js is added for char count*/
