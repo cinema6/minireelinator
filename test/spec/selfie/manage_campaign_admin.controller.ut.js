@@ -3,7 +3,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
     var forEach = angular.forEach,
         isObject = angular.isObject,
-        copy = angular.copy;
+        copy = angular.copy,
+        extend = angular.extend;
 
     function deepExtend(target, extension) {
         forEach(extension, function(extensionValue, prop) {
@@ -34,7 +35,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         var cState,
             campaign,
             card,
-            updateRequest;
+            updateRequest,
+            interests;
 
         var debouncedFns;
 
@@ -90,6 +92,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 c6Debounce = $injector.get('c6Debounce');
             });
 
+            interests = [
+                { id: 'cat-123', label: 'cat: meow', externalId: 'IAB-1' },
+                { id: 'cat-456', label: 'cat: purr', externalId: 'IAB-2' }
+            ];
+            spyOn(cinema6.db, 'findAll').and.returnValue($q.when(interests));
+
             spyOn(c6State, 'goTo');
 
             card = deepExtend(cinema6.db.create('card', MiniReelService.createCard('video')), {
@@ -122,7 +130,10 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 pricing: {},
                 geoTargeting: [],
                 status: 'draft',
-                appllication: 'selfie'
+                appllication: 'selfie',
+                targeting: {
+                    interests: interests
+                }
             });
             updateRequest = {
                 id: 'ur-12345',
@@ -152,19 +163,26 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                             controls: false,
                             autoplay: true,
                             skip: 30
+                        },
+                        targeting: {
+                            interests: interests
                         }
                     }],
                     pricing: {},
                     geoTargeting: [],
                     status: 'draft',
-                    appllication: 'selfie'
+                    appllication: 'selfie',
+                    targeting: {
+                        interests: ['cat-123', 'cat-456']
+                    }
                 },
                 save: jasmine.createSpy('save()').and.returnValue($q.when())
             };
 
             cState = {
                 campaign: campaign,
-                updateRequest: updateRequest
+                updateRequest: updateRequest,
+                saveUpdateRequest: jasmine.createSpy('saveUpdateRequest()').and.returnValue($q.when())
             };
 
             compileCtrl(cState, {});
@@ -175,20 +193,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         });
 
         describe('methods', function() {
-            describe('initWithModel(model)', function() {
-
+            describe('initWithModel()', function() {
                 describe('when there is an updateRequest', function() {
-                    beforeEach(function() {
-                        $scope.$apply(function() {
-                            SelfieManageCampaignAdminCtrl.initWithModel();
-                        });
-                    })
-
                     it('should set properties on the Ctrl', function() {
                         expect(SelfieManageCampaignAdminCtrl.showApproval).toBe(true);
-                        expect(SelfieManageCampaignAdminCtrl.campaign).toEqual(campaign.pojoify());
+                        expect(SelfieManageCampaignAdminCtrl.campaign).toEqual(campaign);
                         expect(SelfieManageCampaignAdminCtrl.updatedCampaign).not.toBe(campaign);
-                        expect(SelfieManageCampaignAdminCtrl.updatedCampaign).toBe(updateRequest.data);
+                        expect(SelfieManageCampaignAdminCtrl.updatedCampaign).toEqual(updateRequest.data);
                         expect(SelfieManageCampaignAdminCtrl.updatedCampaign.name).toBe('Updated Name');
                         expect(SelfieManageCampaignAdminCtrl.updatedCampaign.cards[0].title).toBe('Updated Title');
                         expect(SelfieManageCampaignAdminCtrl.previewCard).not.toBe(SelfieManageCampaignAdminCtrl.updatedCampaign.cards[0]);
@@ -201,17 +212,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     beforeEach(function() {
                         cState.updateRequest = null;
                         compileCtrl(cState, {});
-
-                        $scope.$apply(function() {
-                            SelfieManageCampaignAdminCtrl.initWithModel();
-                        });
                     })
 
                     it('should set properties on the Ctrl', function() {
                         expect(SelfieManageCampaignAdminCtrl.showApproval).toBe(false);
-                        expect(SelfieManageCampaignAdminCtrl.campaign).toEqual(campaign.pojoify());
-                        expect(SelfieManageCampaignAdminCtrl.updatedCampaign).not.toBe(campaign);
-                        expect(SelfieManageCampaignAdminCtrl.updatedCampaign).toEqual(campaign.pojoify());
+                        expect(SelfieManageCampaignAdminCtrl.campaign).toEqual(campaign);
+                        expect(SelfieManageCampaignAdminCtrl.updatedCampaign).toBe(campaign);
+                        expect(SelfieManageCampaignAdminCtrl.updatedCampaign).toEqual(campaign);
                         expect(SelfieManageCampaignAdminCtrl.previewCard).toBe(null);
                         expect(SelfieManageCampaignAdminCtrl.rejectionReason).toBe('');
                     });
@@ -223,11 +230,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     SelfieManageCampaignAdminCtrl.approveCampaign();
                     $scope.$digest();
                 });
-
+                
                 it('should update and save the updateRequest', function() {
-                    expect(updateRequest.data).toEqual(SelfieManageCampaignAdminCtrl.updatedCampaign);
-                    expect(updateRequest.status).toBe('approved');
-                    expect(updateRequest.save).toHaveBeenCalled();
+                    expect(cState.saveUpdateRequest).toHaveBeenCalledWith({
+                        data: SelfieManageCampaignAdminCtrl.updatedCampaign,
+                        status: 'approved'
+                    });
                 });
 
                 it('should redirect to the campaign dashboard', function() {
@@ -243,12 +251,13 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 });
 
                 it('should update and save the updateRequest', function() {
-                    expect(updateRequest.status).toBe('rejected');
-                    expect(updateRequest.rejectionReason).toBe('fix your campaign');
-                    expect(updateRequest.save).toHaveBeenCalled();
+                    expect(cState.saveUpdateRequest).toHaveBeenCalledWith({
+                        status: 'rejected',
+                        rejectionReason: 'fix your campaign'
+                    });
                 });
 
-                it('should redirect to teh campaign dashboard', function() {
+                it('should redirect to the campaign dashboard', function() {
                     expect(c6State.goTo).toHaveBeenCalledWith('Selfie:CampaignDashboard');
                 });
             });
@@ -285,12 +294,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             describe('for an updated card', function() {
                 beforeEach(function() {
                     spyOn(SelfieManageCampaignAdminCtrl, '_loadPreview');
-                    $scope.$apply(function() {
-                        SelfieManageCampaignAdminCtrl.updatedCampaign.cards[0].note = 'B flat';
-                    });
                 });
 
                 it('should load the card preview', function() {
+                    $scope.$apply(function() {
+                        SelfieManageCampaignAdminCtrl.updatedCampaign.cards[0].note = 'B flat';
+                    });
                     var updatedCard = SelfieManageCampaignAdminCtrl.updatedCampaign.cards[0];
                     expect(SelfieManageCampaignAdminCtrl._loadPreview).toHaveBeenCalledWith(updatedCard);
                 });

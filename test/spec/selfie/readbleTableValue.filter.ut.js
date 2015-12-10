@@ -32,4 +32,14 @@ describe('readableTableKey', function() {
     it('should make dates readable', function() {
         expect(readableTableValue('1995-06-27T00:00:00.000Z')).toMatch(/Jun (26|27), 1995 .+/);
     });
+    
+    it('should make an array of interest objects readable', function() {
+        var input = [
+            { type: 'interest', label: 'cat-123', externalId: 'IAB-1' },
+            { type: 'interest', label: 'cat-456', externalId: 'IAB-2' },
+            { type: 'interest', label: 'cat-789', externalId: 'IAB-3' }
+        ];
+        var expectedOutput = '(cat-123, IAB-1), (cat-456, IAB-2), (cat-789, IAB-3)';
+        expect(readableTableValue(input)).toBe(expectedOutput);
+    });
 });

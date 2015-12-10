@@ -257,7 +257,7 @@ module.exports = function(http) {
      **********************************************************************************************/
 
     http.whenGET('/api/content/categories', function(request) {
-        var filters = pluckExcept(request.query, ['sort']);
+        var filters = pluckExcept(request.query, ['sort', 'ids']);
         var sort = (request.query.sort || null) && request.query.sort.split(',');
 
         this.respond(200, grunt.file.expand(path.resolve(__dirname, './categories/*.json'))
@@ -266,7 +266,9 @@ module.exports = function(http) {
 
                 return extend(grunt.file.readJSON(path), { id: id });
             }).filter(function(category) {
-                return Object.keys(filters)
+                var ids = request.query.ids;
+                var containsId = (ids) ? (ids.split(',').indexOf(category.id) !== -1) : true;
+                return containsId && Object.keys(filters)
                     .every(function(key) {
                         return filters[key] === category[key];
                     });
