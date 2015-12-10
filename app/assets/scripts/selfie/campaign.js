@@ -1134,7 +1134,8 @@ function( angular , c6State  , PaginatedListState                    ,
                         return SelfieVideoService.statsFromService(service, id);
                     })
                     .then(function(data) {
-                        var title = ((data || {}).title || '').slice(0, SelfieCampaignCtrl.maxHeadlineLength);
+                        var title = ((data || {}).title || '')
+                            .slice(0, SelfieCampaignCtrl.maxHeadlineLength);
 
                         SelfieCampaignVideoCtrl.videoError = false;
                         SelfieCampaignVideoCtrl.video = data;
