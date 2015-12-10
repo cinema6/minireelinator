@@ -1322,7 +1322,7 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
 
         .filter('readableTableValue', ['$filter',
         function                      ( $filter ) {
-            return function(val) {
+            function makeReadable(val) {
                 if(val === null) {
                     return '';
                 }
@@ -1330,7 +1330,9 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                     if(val.length === 0) {
                         return '';
                     }
-                    return val.join(', ');
+                    return val.map(function(entry) {
+                        return makeReadable(entry);
+                    }).join(', ');
                 }
                 var isDate = (new Date(val) !== 'Invalid Date' && !isNaN(new Date(val)) &&
                     String(val).indexOf('-') === 4);
@@ -1338,8 +1340,14 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                     var date = new Date(val);
                     return $filter('date')(date, 'medium');
                 }
+                if(isObject(val)) {
+                    if(val.type === 'interest') {
+                        return '(' + val.label + ', ' + val.externalId + ')';
+                    }
+                }
                 return String(val);
-            };
+            }
+            return makeReadable;
         }])
 
         .controller('SelfieCampaignUpdatesSummaryController', ['$scope', 'CampaignService',

@@ -1659,16 +1659,79 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.controller = 'SelfieManageCampaignAdminController';
                 this.controllerAs = 'SelfieManageCampaignAdminCtrl';
 
+                var self = this;
                 this.campaign = null;
 
                 this.beforeModel = function() {
-                    this.campaign = this.cParent.campaign;
-                    this.updateRequest = this.cParent.updateRequest;
+                    this._campaign = this.cParent.campaign;
+                    this._updateRequest = this.cParent.updateRequest;
+                };
+
+                this.afterModel = function() {
+                    this.campaign = this._campaign.pojoify();
+                    this.updateRequest = (this._updateRequest) ? this._updateRequest.pojoify() :
+                        null;
+                    var ids = getInterests(this.campaign);
+                    if(this.updateRequest) {
+                        ids = ids.concat(getInterests(this.updateRequest.data));
+                    }
+                    if(ids.length === 0) {
+                        return;
+                    }
+                    var interestData = {};
+                    ids.forEach(function(id) {
+                        interestData[id] = undefined;
+                    });
+                    return cinema6.db.findAll('category', {
+                        ids: ids.join(',')
+                    }).then(function(data) {
+                        data.forEach(function(interest) {
+                            interestData[interest.id] = interest;
+                        });
+                        self._decorateInterests(self.campaign, interestData);
+                        if(self.updateRequest) {
+                            self._decorateInterests(self.updateRequest.data, interestData);
+                        }
+                    });
                 };
 
                 this.enter = function() {
                     if (!this.cParent.isAdmin) {
                         return c6State.goTo('Selfie:Manage:Campaign:Manage', null, null, true);
+                    }
+                };
+                
+                this.saveUpdateRequest = function(changes) {
+                    if(changes.data) {
+                        this._undecorateInterests(changes.data);
+                    }
+                    Object.keys(changes).forEach(function(prop) {
+                        self._updateRequest[prop] = changes[prop];
+                    });
+                    return this._updateRequest.save();
+                };
+                
+                function getInterests(campaign) {
+                    return (campaign && campaign.targeting && campaign.targeting.interests || []);
+                }
+
+                this._decorateInterests = function(campaign, interestData) {
+                    if(campaign.targeting && campaign.targeting.interests) {
+                        campaign.targeting.interests = campaign.targeting.interests.map(
+                            function(id) {
+                                return interestData[id];
+                            }
+                        );
+                    }
+                };
+                
+                this._undecorateInterests = function(campaign) {
+                    if(campaign.targeting && campaign.targeting.interests) {
+                        campaign.targeting.interests = campaign.targeting.interests.map(
+                            function(interest) {
+                                return interest.id;
+                            }
+                        );
                     }
                 };
             }]);
@@ -1682,36 +1745,32 @@ function( angular , c6State  , PaginatedListState                    ,
             var updateRequest;
 
             this.initWithModel = function() {
+                var campaign = cState.campaign;
                 updateRequest = cState.updateRequest;
+                var updatedCampaign = (updateRequest) ? updateRequest.data : campaign;
                 extend(self, {
-                    showApproval: false,
-                    campaign: cState.campaign.pojoify(),
-                    updatedCampaign: cState.campaign.pojoify(),
-                    previewCard: null,
+                    showApproval: !!(updateRequest),
+                    campaign: campaign,
+                    updatedCampaign: updatedCampaign,
+                    previewCard: (updateRequest) ? copy(updatedCampaign.cards[0]) : null,
                     rejectionReason: ''
                 });
-                if(updateRequest) {
-                    self.updatedCampaign = updateRequest.data;
-                    extend(self, {
-                        showApproval: true,
-                        previewCard: copy(self.updatedCampaign.cards[0])
-                    });
-                }
             };
 
             this.approveCampaign = function() {
-                updateRequest.data = self.updatedCampaign;
-                updateRequest.status = 'approved';
-                updateRequest.save().then(function() {
+                cState.saveUpdateRequest({
+                    data: self.updatedCampaign,
+                    status: 'approved'
+                }).then(function() {
                     c6State.goTo('Selfie:CampaignDashboard');
                 });
             };
 
             this.rejectCampaign = function() {
-                extend(updateRequest, {
+                cState.saveUpdateRequest({
                     status: 'rejected',
                     rejectionReason: self.rejectionReason
-                }).save().then(function() {
+                }).then(function() {
                     c6State.goTo('Selfie:CampaignDashboard');
                 });
             };
@@ -1725,7 +1784,9 @@ function( angular , c6State  , PaginatedListState                    ,
             $scope.$watch(function() {
                 return self.updatedCampaign.cards[0];
             }, function(card) {
-                self._loadPreview(card);
+                if(card) {
+                    self._loadPreview(card);
+                }
             }, true);
         }]);
 });
