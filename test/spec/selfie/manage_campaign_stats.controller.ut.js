@@ -35,10 +35,10 @@ define(['app'], function(appModule) {
         });
 
         describe('properties', function() {
-            describe('totalClicks', function() {
+            describe('totalInteractions', function() {
                 describe('when campaign has no stats', function() {
                     it('should be 0', function() {
-                        expect(SelfieManageCampaignStatsCtrl.totalClicks).toBe(0);
+                        expect(SelfieManageCampaignStatsCtrl.totalInteractions).toBe(0);
                     });
                 });
 
@@ -59,7 +59,82 @@ define(['app'], function(appModule) {
                             ]
                         });
 
-                        expect(SelfieManageCampaignStatsCtrl.totalClicks).toBe(1 + 2 + 3 + 4);
+                        expect(SelfieManageCampaignStatsCtrl.totalInteractions).toBe(1 + 2 + 3 + 4);
+                    });
+                });
+
+                describe('when campaignn has share stats', function() {
+                    it('should add them up', function() {
+                        compileCtrl({
+                            stats: [
+                                {
+                                    summary: {
+                                        shareClicks: {
+                                            facebook: 1,
+                                            twitter: 2,
+                                            pinterest: 3
+                                        }
+                                    }
+                                }
+                            ]
+                        });
+
+                        expect(SelfieManageCampaignStatsCtrl.totalInteractions).toBe(1 + 2 + 3);
+                    });
+                });
+
+                describe('when campaignn has share and link stats', function() {
+                    it('should add them up', function() {
+                        compileCtrl({
+                            stats: [
+                                {
+                                    summary: {
+                                        linkClicks: {
+                                            action: 1,
+                                            youtube: 2,
+                                            facebook: 3,
+                                            twitter: 4
+                                        },
+                                        shareClicks: {
+                                            facebook: 1,
+                                            twitter: 2,
+                                            pinterest: 3
+                                        }
+                                    }
+                                }
+                            ]
+                        });
+
+                        expect(SelfieManageCampaignStatsCtrl.totalInteractions).toBe(1 + 2 + 3 + 4 + 1 + 2 + 3);
+                    });
+                });
+            });
+            describe('totalSocialClicks', function() {
+                describe('when campaign has no stats', function() {
+                    it('should be 0', function() {
+                        expect(SelfieManageCampaignStatsCtrl.totalSocialClicks).toBe(0);
+                    });
+                });
+
+                describe('when campaignn has link stats', function() {
+                    it('should be the sum of everything except Call to Action and Website', function() {
+                        compileCtrl({
+                            stats: [
+                                {
+                                    summary: {
+                                        linkClicks: {
+                                            action: 1,
+                                            youtube: 2,
+                                            facebook: 3,
+                                            twitter: 4,
+                                            website: 5
+                                        }
+                                    }
+                                }
+                            ]
+                        });
+
+                        expect(SelfieManageCampaignStatsCtrl.totalSocialClicks).toBe(2 + 3 + 4);
                     });
                 });
             });
