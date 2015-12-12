@@ -3,6 +3,7 @@
 ## v1.29.0 (December 10, 2015)
 * *[v1.29.0.rc2]*
   * [DESIGN]: Fixed stats page formatting issue
+  * [DESIGN]: Corrected input type in css for safari border issue for targeting
 
 * *[v1.29.0.rc1]*
   * Show human readable interest labels in the campaign admin tab
