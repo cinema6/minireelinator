@@ -5,6 +5,7 @@
   * [DESIGN]: Fixed stats page formatting issue
   * [DESIGN]: Corrected input type in css for safari border issue for targeting
   * [FIX]: Exclude call-to-action and website clicks from social click totals
+* *[/v1.29.0.rc2]*
 
 * *[v1.29.0.rc1]*
   * Show human readable interest labels in the campaign admin tab
