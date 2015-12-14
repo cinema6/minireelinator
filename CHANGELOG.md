@@ -5,6 +5,8 @@
     when editing a campaign
   * [FIX]: Fix the formatting of budget, daily limit and total spend numbers in
     the campaign dashboard
+  * [REFACTOR]: Update the studio/selfie preview to use the player
+    service
 
 ## v1.29.0 (December 15, 2015)
 * *[v1.29.0.rc3]*
