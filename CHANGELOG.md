@@ -1,6 +1,6 @@
 # MiniReelinator
 
-## v1.29.0 (December 10, 2015)
+## v1.29.0 (December 14, 2015)
 * *[v1.29.0.rc2]*
   * [DESIGN]: Fixed stats page formatting issue
   * [DESIGN]: Corrected input type in css for safari border issue for targeting
