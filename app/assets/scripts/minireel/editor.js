@@ -1663,67 +1663,77 @@ VideoCardController           , c6embed) {
             };
         }])
 
-        .directive('c6Embed', ['$timeout',
-        function              ( $timeout ) {
+        .directive('c6Embed', ['MiniReelService',
+        function              ( MiniReelService ) {
+            var Player = c6embed.Player;
             var props = '[experience, active, profile, card, standalone]';
 
+            var PLAYER_STYLES = {
+                position: 'absolute',
+                top: '0px',
+                left: '0px',
+                width: '100%',
+                height: '100%',
+                zIndex: 'auto'
+            };
+
             function link(scope, $element) {
-                var settings = null;
+                var player = null;
 
                 scope.$watchCollection(props, function(vals, oldVals) {
-                    var experience = vals[0], active = vals[1], profile = vals[2], card = vals[3];
-                    var standalone = vals[4];
+                    var experience = vals[0], active = vals[1], profile = vals[2], card = vals[3],
+                        standalone = vals[4];
                     var oldExperience = oldVals[0], oldProfile = oldVals[2];
-                    var needsEmbedding = !!(
-                        (experience !== oldExperience) ||
-                        (profile !== oldProfile) ||
-                        (experience && !settings)
-                    );
 
-                    if (needsEmbedding) {
-                        settings = experience ? {
-                            experience: experience,
-                            profile: profile,
-                            standalone: standalone,
-                            allowFullscreen: (profile || {}).device !== 'phone',
-                            embed: $element[0],
-                            splashDelegate: {},
-                            config: {
-                                container: 'studio',
-                                exp: experience.id,
-                                responsive: true,
-                                title: experience.data.title
-                            }
-                        } : null;
-
-                        $element.empty();
+                    if (experience !== oldExperience || !experience || profile !== oldProfile) {
+                        $element.find('iframe').remove();
                         $element.attr('style', '');
+                        player = null;
                     }
 
-                    if (settings) {
-                        if (needsEmbedding || active) {
-                            c6embed.loadExperience(settings, !active);
-                        } else {
-                            settings.state.set('active', false);
+                    if (experience && !player) {
+                        var mode = (profile && profile.device === 'phone') ?
+                            'mobile' : experience.data.mode;
+
+                        player = new Player('/api/public/players/' + mode, {
+                            container: 'studio',
+                            context: 'studio',
+                            preview: true,
+                            standalone: standalone,
+                            branding: experience.data.branding
+                        }, { experience: experience });
+
+                        player.bootstrap($element[0], PLAYER_STYLES);
+
+                        player.session.on('responsiveStyles', function setStyles(styles) {
+                            if (player.shown) { $element.css(styles); }
+                            player.session.on('open', function() { $element.css(styles); });
+                        });
+                        player.session.on('open', function setActiveToTrue() {
+                            var modeData = MiniReelService.modeDataOf(experience);
+
+                            if (modeData && modeData.fullscreen && mode === experience.data.mode) {
+                                player.frame.style.position = 'fixed';
+                                player.frame.style.zIndex = '2147483647';
+                            }
+
+                            scope.$apply(function() { scope.active = true; });
+                        });
+                        player.session.on('close', function setActiveToFalse() {
+                            scope.$apply(function() { scope.active = false; });
+                            $element.attr('style', '');
+
+                            player.frame.style.position = PLAYER_STYLES.position;
+                            player.frame.style.zIndex = PLAYER_STYLES.zIndex;
+                        });
+                    }
+
+                    if (player) {
+                        if (active) { player.show(); } else { player.hide(); }
+
+                        if (card && active) {
+                            player.session.ping('showCard', card.id);
                         }
-                    }
-
-                    if (needsEmbedding && settings) {
-                        settings.state.observe('active', function(value, previousValue) {
-                            if (value === previousValue) { return; }
-
-                            scope.$apply(function() {
-                                scope.active = value;
-                            });
-                        });
-                    }
-
-                    if (settings && card && active) {
-                        settings.getPlayer().then(function(player) {
-                            return player.getReadySession();
-                        }).then(function(session) {
-                            $timeout(function() { session.ping('showCard', card.id); });
-                        });
                     }
                 });
             }
