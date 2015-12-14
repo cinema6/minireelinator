@@ -58,7 +58,7 @@
                 ngAnimate: libUrl('angular/v1.2.22-0-g93b0c2d/angular-animate'),
                 c6uilib: libUrl('c6ui/v3.7.4-0-g734d5f3/c6uilib'),
                 c6log: libUrl('c6ui/v3.7.4-0-g734d5f3/c6log'),
-                c6embed: libUrl('c6embed/v1/app'),
+                c6embed: libUrl('c6embed/v1/utils'),
                 metagetta: libUrl('metagetta/v0.2.0-0-g8b51280/metagetta'),
                 braintree: 'lib/braintree',
                 chartjs: [
