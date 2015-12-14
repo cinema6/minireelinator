@@ -1635,19 +1635,32 @@ function( angular , c6State  , PaginatedListState                    ,
         .controller('SelfieManageCampaignStatsController', ['$scope',
         function                                           ( $scope ) {
             var SelfieManageCampaignCtrl = $scope.SelfieManageCampaignCtrl,
+                SelfieManageCampaignStatsCtrl = this,
                 stats = SelfieManageCampaignCtrl.stats[0] || {},
                 linkClicks = (stats.summary && stats.summary.linkClicks) || {},
                 shareClicks = (stats.summary && stats.summary.shareClicks) || {};
 
-            this.totalClicks = (function() {
+            this.totalInteractions = 0;
+
+            this.totalSocialClicks = (function() {
                 var total = 0;
-                forEach(linkClicks, function(item) { total += item; });
+
+                forEach(linkClicks, function(item, key) {
+                    SelfieManageCampaignStatsCtrl.totalInteractions += item;
+
+                    if (!(/action|website/).test(key)) {
+                        total += item;
+                    }
+                });
                 return total;
             }());
 
             this.totalShares = (function() {
                 var total = 0;
-                forEach(shareClicks, function(item) { total += item; });
+                forEach(shareClicks, function(item) {
+                    SelfieManageCampaignStatsCtrl.totalInteractions += item;
+                    total += item;
+                });
                 return total;
             }());
         }])
