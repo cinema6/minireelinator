@@ -49,7 +49,7 @@
                 --><div class="grid__item one-fifth">
                     <div class="statsChart__infoBox">
                         <h3 class="stats__icon"><i class="fa fa-comments-o"></i></h3>
-                        <h1 class="stats__infoNumber tk--hdr">{{SelfieManageCampaignStatsCtrl.totalClicks + SelfieManageCampaignStatsCtrl.totalShares}}</h1>
+                        <h1 class="stats__infoNumber tk--hdr">{{SelfieManageCampaignStatsCtrl.totalInteractions}}</h1>
                         <h3 class="stats__label">Total Interactions</h3>
                         <div class="helpBox helpBox--center">
                             <div class="helpText">
@@ -61,7 +61,7 @@
                 --><div class="grid__item one-fifth">
                     <div class="statsChart__infoBox">
                         <h3 class="stats__icon"><i class="fa fa-percent"></i></h3>
-                        <h1 class="stats__infoNumber tk--hdr">{{((SelfieManageCampaignStatsCtrl.totalClicks + SelfieManageCampaignStatsCtrl.totalShares) / stats.views) * 100 | number:2}}%</h1>
+                        <h1 class="stats__infoNumber tk--hdr">{{(SelfieManageCampaignStatsCtrl.totalInteractions / stats.views) * 100 | number:2}}%</h1>
                         <h3 class="stats__label">Interaction Rate</h3>
                         <div class="helpBox helpBox--center">
                             <div class="helpText">
@@ -242,13 +242,13 @@
             </div>
             <div class="stats__row">
                 <h3 class="stats__label">Social Total</h3>
-                <span ng-if="!SelfieManageCampaignStatsCtrl.totalClicks">
+                <span ng-if="!SelfieManageCampaignStatsCtrl.totalSocialClicks">
                     <h2 class="stats__rowClicks">--</h2>
                     <h2 class="stats__rowClicks">--</h2>
                 </span>
-                <span ng-if="SelfieManageCampaignStatsCtrl.totalClicks">
-                    <h2 class="stats__rowClicks">{{SelfieManageCampaignStatsCtrl.totalClicks}}<span ng-if="!SelfieManageCampaignStatsCtrl.totalClicks">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
-                    <h2 class="stats__rowClicks">{{(SelfieManageCampaignStatsCtrl.totalClicks / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
+                <span ng-if="SelfieManageCampaignStatsCtrl.totalSocialClicks">
+                    <h2 class="stats__rowClicks">{{SelfieManageCampaignStatsCtrl.totalSocialClicks}}<span ng-if="!SelfieManageCampaignStatsCtrl.totalSocialClicks">--</span><span class="stats__rowClicks--label">Clicks</span></h2>
+                    <h2 class="stats__rowClicks">{{(SelfieManageCampaignStatsCtrl.totalSocialClicks / stats.views) * 100 | number:2}} <span class="text--small">%</span><span class="stats__rowClicks--label">CTR</span></h2>
                 </span>
             </div>
         </div>
