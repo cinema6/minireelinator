@@ -3581,6 +3581,20 @@ fa,
             right:1em;
             color:#5c5c5c;
         }
+        /*Date Range Dropdown Stats*/
+        .dateRange.action__dropdown ul ul li {
+            width: 200px;
+        }
+        .dateRange__wrap {
+            padding: 0.5em 1em 0 1em;
+            display: none;
+        }
+        .dateRange__custom:hover .dateRange__wrap {
+            display: block;
+        }
+        .dateRange__wrap .form__textBox {
+            margin-bottom: 0.5em;
+        }
 
 /*  Payment Dropdown classes
         ================================================ */

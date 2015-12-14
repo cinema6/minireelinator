@@ -2,6 +2,20 @@
     <header class="tabContent__header">
         <h2 class="tabContent__title tk--hdr">Campaign Statistics</h2>
         <span class="tabContent__subtitle">{{campaign.name}}</span>
+        <a class="action__selection" href="#">Last 7 Days</a>
+            <nav class="action__dropdown dateRange">
+                <ul>
+                  <li><a href="#"><i class="fa fa-chevron-down"></i><span class="ir">Menu</span></a>
+                    <ul>
+                      <li><a href="#">Lifetime</a></li>
+                      <li><a href="#">Yesterday</a></li>
+                      <li><a href="#">Last 7 Days <i class="action__dropdownItem--selected fa fa-check"></i></a></li>
+                      <li><a href="#">Last 30 Days</a></li>
+                      <li class="dateRange__custom"><a href="#">Custom</a><div class="dateRange__wrap"><input datepicker c6-fill-check min-date="null" max-date="SelfieFlightDatesCtrl.endDate" default-date="null" alt-field="_startdate" class="form__textBox form__textBox--units form__fillCheck" type="text" id="startdate" ng-model="SelfieFlightDatesCtrl.startDate" ng-change="SelfieFlightDatesCtrl.setDates()" ng-disabled="!SelfieFlightDatesCtrl.editableStartDate"><input datepicker c6-fill-check min-date="SelfieFlightDatesCtrl.startDate" max-date="null" default-date="'+1m'" alt-field="_enddate" class="form__textBox form__textBox--units form__fillCheck" type="text" id="enddate" ng-model="SelfieFlightDatesCtrl.endDate" ng-change="SelfieFlightDatesCtrl.setDates()"><br> <label class="action__btn action__btn--wide text--center"><span class="btn__label faa">Apply</span></label></div></li>
+                    </ul>
+                  </li>                              
+                </ul>
+            </nav>
     </header>
 </div><!--.tabContent .targeting__content container-->
 
