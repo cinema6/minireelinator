@@ -115,15 +115,23 @@ define(['app'], function(appModule) {
                     expect($http.get).not.toHaveBeenCalled();
                 });
 
-                it('should call the url every second', function() {
-                    $interval.flush(1000);
+                it('should call the url every two seconds', function() {
+                    $interval.flush(2000);
                     expect($http.get).toHaveBeenCalledWith('/api/content/job/addf1234', jasmine.objectContaining({retry:true}));
 
-                    $interval.flush(1000);
+                    $interval.flush(2000);
                     expect($http.get.calls.count()).toBe(2);
 
-                    $interval.flush(1000);
+                    $interval.flush(2000);
                     expect($http.get.calls.count()).toBe(3);
+                });
+
+                it('should time out and reject promise after 30 seconds (15 attempts, not including the first)', function() {
+                    $interval.flush(30000);
+                    expect($http.get.calls.count()).toBe(14);
+
+                    expect(success).not.toHaveBeenCalled();
+                    expect(failure).toHaveBeenCalled();
                 });
 
                 describe('when the "retry" call succeeds', function() {
@@ -219,7 +227,7 @@ define(['app'], function(appModule) {
 
                     it('should poll the url until a non-202 response is received', function() {
                         $http.get.calls.reset();
-                        $interval.flush(3000);
+                        $interval.flush(6000);
 
                         expect($http.get.calls.count()).toBe(3);
                         $http.get.calls.all().forEach(function(call) {
@@ -247,6 +255,19 @@ define(['app'], function(appModule) {
                         $httpBackend.flush();
 
                         expect(success).not.toHaveBeenCalledWith();
+                        expect(failure).toHaveBeenCalled();
+                    });
+
+                    it('should reject the promise after 30 seconds (14 attempts not including the first)', function() {
+                        $http.get.calls.reset();
+                        $interval.flush(30000);
+
+                        expect($http.get.calls.count()).toBe(14);
+                        $http.get.calls.all().forEach(function(call) {
+                            expect(call.args[0]).toBe('/api/content/job/asdf1234');
+                            expect(call.args[1]).toEqual(jasmine.objectContaining({ retry: true }));
+                        });
+                        expect(success).not.toHaveBeenCalled();
                         expect(failure).toHaveBeenCalled();
                     });
                 });

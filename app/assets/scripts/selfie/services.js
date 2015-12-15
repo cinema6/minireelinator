@@ -80,7 +80,6 @@ function( angular , c6uilib ,  c6Defines  ) {
                             autoadvance: false,
                             controls: true,
                             autoplay: true,
-                            skip: 30,
                             moat: undefined
                         }
                     }),
