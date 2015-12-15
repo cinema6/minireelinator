@@ -1401,6 +1401,7 @@ fa,
 
             .stats__row .stats__label {
                 float:left;
+                font-weight: 400;
             }
 
             .stats__infoNumber {
@@ -1436,7 +1437,7 @@ fa,
 
         .stats__hdr {
             /*font-size:2.25em;*/
-            font-weight:400;
+            font-weight:300;
             color:#5c5c5c;
             display:block;
             background:#fff;
@@ -1469,7 +1470,7 @@ fa,
                 .stats__rowClicks {
                     float:right;
                     margin:-0.5rem 1.5rem 0 0;                    
-                    font-weight:600;
+                    font-weight:400;
                     color:#119DA4;
                     min-width: 3em;
                     text-align: center;
