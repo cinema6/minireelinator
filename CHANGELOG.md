@@ -1,8 +1,15 @@
 # MiniReelinator
 
-## v1.29.0 (December 14, 2015)
+## v1.29.0 (December 15, 2015)
 * *[v1.29.0.rc3]*
   * [DESIGN]: Fixed stats page font style issue
+  * [FIX]: Stop polling for 202 results after 30 seconds
+  * [FIX]: Remove old, unsupported interests from campaigns
+  * [FIX]: Stop trimming spaces from the end of video headline, description and
+    call t0 action button text
+  * [FIX]: Stop setting Selfie campaigns to skip after 30 seconds
+  * [DESIGN]: Remove the pie chart on Stats tab
+* *[/v1.29.0.rc3]*
 
 * *[v1.29.0.rc2]*
   * [DESIGN]: Fixed stats page formatting issue
