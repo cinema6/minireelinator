@@ -56,6 +56,8 @@ function( angular , c6uilib ,  c6Defines  ) {
             this.create = function(campaign) {
                 var user = getAppUser(),
                     advertiser = user.advertiser,
+                    // the user's customer is no longer
+                    // decorated so it's just an id now
                     customerId = user.customer,
 
                     // set up a full default card in case we aren't copying

@@ -543,6 +543,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 this.findAll = function() {
                     return $http.get(url('customers'))
+                        // if the request fails just return an empty array,
+                        // this avoids breaking Campaign Manager views
+                        // after the customer service is removed
                         .then(pick('data'), function() { return []; })
                         .then(decorateAll);
                 };
@@ -556,6 +559,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 this.findQuery = function(type, query) {
                     return $http.get(url('customers'), { params: query })
+                        // if the request fails just return an empty array,
+                        // this avoids breaking Campaign Manager views
+                        // after the customer service is removed
                         .then(pick('data'), function() { return []; })
                         .then(decorateAll);
                 };
@@ -640,7 +646,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             advertiserId: campaign.advertiser.id,
 
                             customer: undefined,
-                            // only set it if we have a customer
+                            // only set it if we have a customer,
+                            // the decoration will not happen once the
+                            // customer service is removed
                             customerId: campaign.customer && campaign.customer.id,
 
                             cards: cards,
@@ -676,7 +684,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             return cinema6.db.find(type, id)
                                 .catch(function(err) {
                                     // if we're trying to fetch a customer
-                                    // then just return null, don't reject
+                                    // then just return null, don't reject.
+                                    // this will allow us to continue decoration
+                                    // once customer service is removed
                                     if (type === 'customer') {
                                         return null;
                                     } else {
@@ -702,7 +712,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         });
                     })).then(function(cards) {
                         return $q.all({
-                            // only decorate with customer if defined
+                            // only decorate with customer if defined.
+                            // if customer decoration fails we property
+                            // will be set to null instead of rejecting
+                            // the entire request
                             customer: (campaign.customerId ?
                                 getDbModel('customer')(campaign.customerId) :
                                 campaign.customerId),

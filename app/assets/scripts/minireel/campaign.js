@@ -169,8 +169,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             pricing: {},
                             status: 'active'
                         }),
-                        advertisers: cinema6.db.findAll('advertiser'),
-                        customers: cinema6.db.findAll('customer')
+                        customers: cinema6.db.findAll('customer'),
+                        // going forward the Campaign Manager will load
+                        // all advertisers as options
+                        advertisers: cinema6.db.findAll('advertiser')
                     });
                 };
             }]);
@@ -199,7 +201,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                     advertisers = this.advertisers;
 
                 // try to use the customer's advertisers first,
-                // then fall back to all advertisers,
+                // if there is no customer or the customer has
+                // not been decorated then we are no longer
+                // supporting customers, so fall back to
+                // to all advertisers, and if there are none
                 // then fall back to empty array
                 return optionsByName((customer && customer.advertisers) ||
                     (!!advertisers.length && advertisers) ||
