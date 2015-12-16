@@ -543,7 +543,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 this.findAll = function() {
                     return $http.get(url('customers'))
-                        .then(pick('data'))
+                        .then(pick('data'), function() { return []; })
                         .then(decorateAll);
                 };
 
@@ -556,7 +556,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 this.findQuery = function(type, query) {
                     return $http.get(url('customers'), { params: query })
-                        .then(pick('data'))
+                        .then(pick('data'), function() { return []; })
                         .then(decorateAll);
                 };
 

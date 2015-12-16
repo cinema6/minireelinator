@@ -169,12 +169,8 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             pricing: {},
                             status: 'active'
                         }),
-                        // fetch all advertisers
                         advertisers: cinema6.db.findAll('advertiser'),
-                        // if unable to fetch customers just return
-                        // empty array don't reject the promise
                         customers: cinema6.db.findAll('customer')
-                            .catch(function() { return []; })
                     });
                 };
             }]);
