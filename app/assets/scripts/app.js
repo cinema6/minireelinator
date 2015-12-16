@@ -640,7 +640,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             advertiserId: campaign.advertiser.id,
 
                             customer: undefined,
-                            customerId: campaign.customer.id,
+                            // only set it if we have a customer
+                            customerId: campaign.customer && campaign.customer.id,
 
                             cards: cards,
                             miniReels: campaign.miniReels.map(makeCreativeWrapper),
@@ -672,7 +673,16 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                     function getDbModel(type) {
                         return function(id) {
-                            return cinema6.db.find(type, id);
+                            return cinema6.db.find(type, id)
+                                .catch(function(err) {
+                                    // if we're trying to fetch a customer
+                                    // then just return null, don't reject
+                                    if (type === 'customer') {
+                                        return null;
+                                    } else {
+                                        return $q.reject(err);
+                                    }
+                                });
                         };
                     }
 
@@ -692,7 +702,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         });
                     })).then(function(cards) {
                         return $q.all({
-                            customer: getDbModel('customer')(campaign.customerId),
+                            // only decorate with customer if defined
+                            customer: (campaign.customerId ?
+                                getDbModel('customer')(campaign.customerId) :
+                                campaign.customerId),
                             advertiser: getDbModel('advertiser')(campaign.advertiserId),
 
                             miniReels: $q.all(campaign.miniReels.map(function(data) {

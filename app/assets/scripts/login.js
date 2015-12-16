@@ -75,16 +75,27 @@ function( angular , c6State  ) {
                     requests.push(cinema6.db.find('org', user.org));
                 }
 
-                if (user.advertiser && user.customer) {
+                if (user.advertiser) {
                     requests.push(cinema6.db.find('advertiser', user.advertiser));
-                    requests.push(cinema6.db.find('customer', user.customer));
+                }
+
+                if (user.customer) {
+                    // if we have a customer and fail to fetch it
+                    // don't reject the promise, just return undefined
+                    requests.push(cinema6.db.find('customer', user.customer)
+                        .catch(function() { return undefined; }));
                 }
 
                 return $q.all(requests)
                     .then(function(promises) {
                         user.org = promises[0];
                         user.advertiser = promises[1];
-                        user.customer = promises[2];
+
+                        if (promises[2]) {
+                            // only modify the customer prop if
+                            // we have a customer entity
+                            user.customer = promises[2];
+                        }
 
                         return cinema6.db.push('user', user.id, user);
                     });

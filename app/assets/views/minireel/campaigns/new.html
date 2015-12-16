@@ -17,12 +17,12 @@
                 <input type="text" class="forms__textField forms__textField--title" ng-model="campaign.name">
             </label>
 
-            <label>
+            <label ng-if="!!CampaignsNewCtrl.customers.length">
                 <span class="forms__name--title">Please select a customer <strong class="typo--danger">*</strong></span>
                 <c6-dropdown options="CampaignsNewCtrl.customerOptions" value="campaign.customer"></c6-dropdown>
             </label>
 
-            <label ng-if="!!campaign.customer">
+            <label ng-if="!!campaign.customer || !CampaignsNewCtrl.customers.length">
                 <span class="forms__name--title">Please select an advertiser <strong class="typo--danger">*</strong></span>
                 <c6-dropdown options="CampaignsNewCtrl.advertiserOptions" value="campaign.advertiser"></c6-dropdown>
             </label>

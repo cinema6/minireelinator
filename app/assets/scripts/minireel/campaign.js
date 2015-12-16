@@ -169,7 +169,12 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             pricing: {},
                             status: 'active'
                         }),
+                        // fetch all advertisers
+                        advertisers: cinema6.db.findAll('advertiser'),
+                        // if unable to fetch customers just return
+                        // empty array don't reject the promise
                         customers: cinema6.db.findAll('customer')
+                            .catch(function() { return []; })
                     });
                 };
             }]);
@@ -194,14 +199,21 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }
 
             c(this, 'advertiserOptions', function() {
-                var customer = this.model.customer;
+                var customer = this.model.customer,
+                    advertisers = this.advertisers;
 
-                return optionsByName(customer && customer.advertisers || [], 'advertisers');
+                // try to use the customer's advertisers first,
+                // then fall back to all advertisers,
+                // then fall back to empty array
+                return optionsByName((customer && customer.advertisers) ||
+                    (!!advertisers.length && advertisers) ||
+                    [], 'advertisers');
             }, ['CampaignsNewCtrl.model.customer']);
 
             this.initWithModel = function(model) {
                 this.model = model.campaign;
                 this.customers = model.customers;
+                this.advertisers = model.advertisers;
 
                 this.customerOptions = optionsByName(this.customers, 'customers');
             };
