@@ -315,7 +315,7 @@ define(['app', 'angular'], function(appModule, angular) {
             });
 
             describe('when customer request fails', function() {
-                it('should set campaign.customer to null and should not reject the promise', function() {
+                it('should not modify/decorate the customer property and should not reject the promise', function() {
                     cinema6.db.find.and.callFake(function(type, id) {
                         var object = (function() {
                             switch (type) {
@@ -344,7 +344,7 @@ define(['app', 'angular'], function(appModule, angular) {
 
                     var response = success.calls.mostRecent().args[0];
 
-                    expect(response.customer).toBe(null);
+                    expect(response.customer).toBe('cus-5156b33a6f834c');
                     expect(failure).not.toHaveBeenCalled();
                 });
             });

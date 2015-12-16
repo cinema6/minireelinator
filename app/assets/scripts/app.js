@@ -685,11 +685,12 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             return cinema6.db.find(type, id)
                                 .catch(function(err) {
                                     // if we're trying to fetch a customer
-                                    // then just return null, don't reject.
+                                    // then just return the id, don't reject.
                                     // this will allow us to continue decoration
-                                    // once customer service is removed
+                                    // once customer service is removed and not
+                                    // overwrite any existing customer ids
                                     if (type === 'customer') {
-                                        return null;
+                                        return id;
                                     } else {
                                         return $q.reject(err);
                                     }
