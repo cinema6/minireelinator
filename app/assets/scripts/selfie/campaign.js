@@ -1092,6 +1092,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 card = SelfieCampaignCtrl.card,
                 service = card.data.service,
                 id = card.data.videoid,
+                hostname = card.data.hostname,
                 hasExistingVideo = !!service && !!id;
 
             function handleVideoError() {
@@ -1099,7 +1100,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 SelfieCampaignVideoCtrl.video = null;
             }
 
-            this.videoUrl = SelfieVideoService.urlFromData(service, id);
+            this.videoUrl = SelfieVideoService.urlFromData(service, id, hostname);
             this.disableTrimmer = function() { return true; };
 
             Object.defineProperties(this, {
@@ -1115,7 +1116,7 @@ function( angular , c6State  , PaginatedListState                    ,
             // first figure out the service and id, then get thumbs
             // then get the stats/data about the video
             this.updateUrl = c6Debounce(function(args) {
-                var service, id,
+                var service, id, hostname,
                     url = args[0];
 
                 if (!url) {
@@ -1123,6 +1124,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     SelfieCampaignVideoCtrl.videoError = false;
                     card.data.service = null;
                     card.data.videoid = null;
+                    card.data.hostname = null;
                     return;
                 }
 
@@ -1130,6 +1132,7 @@ function( angular , c6State  , PaginatedListState                    ,
                     .then(function(data) {
                         service = data.service;
                         id = data.id;
+                        hostname = data.hostname;
 
                         return SelfieVideoService.statsFromService(service, id);
                     })
@@ -1143,6 +1146,7 @@ function( angular , c6State  , PaginatedListState                    ,
                             card.title : (title.length && title) || undefined;
                         card.data.service = service;
                         card.data.videoid = id;
+                        card.data.hostname = hostname;
                     })
                     .catch(handleVideoError);
             }, 1000);

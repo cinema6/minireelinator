@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.29.1.rc1]*
+  * [FIX]: Fix for an issue that would cause a Wistia url to incorrectly display when editing a campaign
+
 ## v1.29.0 (December 15, 2015)
 * *[v1.29.0.rc3]*
   * [DESIGN]: Fixed stats page font style issue

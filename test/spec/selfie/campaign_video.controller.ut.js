@@ -64,21 +64,22 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
         describe('properties', function() {
             describe('videoUrl', function() {
-                it('should call SelfieVideoService with service and id', function() {
+                it('should call SelfieVideoService with service, id, and hostname', function() {
                     spyOn(SelfieVideoService, 'urlFromData').and.callThrough();
 
                     compileCtrl();
 
-                    expect(SelfieVideoService.urlFromData).toHaveBeenCalledWith(undefined, undefined);
+                    expect(SelfieVideoService.urlFromData).toHaveBeenCalledWith(undefined, undefined, undefined);
                     expect(SelfieCampaignVideoCtrl.videoUrl).toEqual(undefined);
 
                     card.data.service = 'youtube';
                     card.data.videoid = '12345';
+                    card.data.hostname = 'company';
                     SelfieVideoService.urlFromData.and.returnValue('https://www.youtube.com/watch?v=12345');
 
                     compileCtrl();
 
-                    expect(SelfieVideoService.urlFromData).toHaveBeenCalledWith('youtube', '12345');
+                    expect(SelfieVideoService.urlFromData).toHaveBeenCalledWith('youtube', '12345', 'company');
                     expect(SelfieCampaignVideoCtrl.videoUrl).toEqual('https://www.youtube.com/watch?v=12345');
                 });
             });
@@ -203,7 +204,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                 $scope.$apply(function() {
                                     dataDeferred.resolve({
                                         service: 'youtube',
-                                        id: '12345'
+                                        id: '12345',
+                                        hostname: 'company'
                                     });
                                 });
                             });
@@ -255,6 +257,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                     expect(SelfieCampaignVideoCtrl.videoError).toBe(false);
                                     expect(card.data.service).toBe('youtube');
                                     expect(card.data.videoid).toBe('12345');
+                                    expect(card.data.hostname).toBe('company');
                                 });
                             });
 
