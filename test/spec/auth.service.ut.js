@@ -203,13 +203,41 @@
                     expect(failureSpy).toHaveBeenCalledWith('Unable to find user.');
                 });
 
-                it('should not call for org, advertiser or customer if not defined', function() {
+                it('should not call for org, advertiser or customer if not defined, and should not set customer prop', function() {
                     var mockUser = { id: 'userX' };
                     $httpBackend.expectPOST('/api/auth/login').respond(200,mockUser);
                     AuthService.login('userX','foobar').then(successSpy,failureSpy);
                     $httpBackend.flush();
                     expect(cinema6.db.find).not.toHaveBeenCalled();
-                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: undefined, advertiser: undefined, customer: undefined }));
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: undefined, advertiser: undefined }));
+                    expect(successSpy).toHaveBeenCalledWith(user);
+                    expect(failureSpy).not.toHaveBeenCalled();
+                });
+
+                it('should not modify the customer property if decoration request fails', function() {
+                    cinema6.db.find.and.callFake(function(args) {
+                        var response;
+
+                        switch(args) {
+                            case 'org':
+                                response = org;
+                                break;
+                            case 'advertiser':
+                                response = advertiser;
+                                break;
+                            case 'customer':
+                                return $q.reject('Not Found');
+                                break;
+                        }
+
+                        return $q.when(response);
+                    });
+                    var mockUser = { id: 'userX', customer: 'cus-123' };
+                    $httpBackend.expectPOST('/api/auth/login').respond(200,mockUser);
+                    AuthService.login('userX','foobar').then(successSpy,failureSpy);
+                    $httpBackend.flush();
+                    expect(cinema6.db.find).toHaveBeenCalledWith('customer', 'cus-123');
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: undefined, advertiser: undefined, customer: 'cus-123' }));
                     expect(successSpy).toHaveBeenCalledWith(user);
                     expect(failureSpy).not.toHaveBeenCalled();
                 });
@@ -251,18 +279,46 @@
                     AuthService.checkStatus().then(successSpy,failureSpy);
                     $httpBackend.flush();
                     expect(cinema6.db.find).toHaveBeenCalledWith('org', mockUser.org);
-                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: org, advertiser: undefined, customer: undefined }));
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: org, advertiser: undefined }));
                     expect(successSpy).toHaveBeenCalledWith(user);
                     expect(failureSpy).not.toHaveBeenCalled();
                 });
 
-                it('should not call for org, advertiser or customer if not defined', function() {
+                it('should not call for org, advertiser or customer if not defined, and should not set customer prop to undefined', function() {
                     var mockUser = { id: 'userX' };
                     $httpBackend.expectGET('/api/auth/status').respond(200,mockUser);
                     AuthService.checkStatus().then(successSpy,failureSpy);
                     $httpBackend.flush();
                     expect(cinema6.db.find).not.toHaveBeenCalled();
-                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: undefined, advertiser: undefined, customer: undefined }));
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: undefined, advertiser: undefined }));
+                    expect(successSpy).toHaveBeenCalledWith(user);
+                    expect(failureSpy).not.toHaveBeenCalled();
+                });
+
+                it('should not modify the customer property if decoration request fails', function() {
+                    cinema6.db.find.and.callFake(function(args) {
+                        var response;
+
+                        switch(args) {
+                            case 'org':
+                                response = org;
+                                break;
+                            case 'advertiser':
+                                response = advertiser;
+                                break;
+                            case 'customer':
+                                return $q.reject('Not Found');
+                                break;
+                        }
+
+                        return $q.when(response);
+                    });
+                    var mockUser = { id: 'userX', customer: 'cus-123' };
+                    $httpBackend.expectGET('/api/auth/status').respond(200,mockUser);
+                    AuthService.checkStatus().then(successSpy,failureSpy);
+                    $httpBackend.flush();
+                    expect(cinema6.db.find).toHaveBeenCalledWith('customer', 'cus-123');
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: undefined, advertiser: undefined, customer: 'cus-123' }));
                     expect(successSpy).toHaveBeenCalledWith(user);
                     expect(failureSpy).not.toHaveBeenCalled();
                 });

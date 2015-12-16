@@ -69,9 +69,7 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     advertiser: {
                         id: 'a-111'
                     },
-                    customer: {
-                        id: 'cus-111'
-                    },
+                    customer: 'cus-111',
                     company: 'My Company, Inc.'
                 };
             });
@@ -106,7 +104,7 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     it('should return a campaign with proper defaults', function() {
                         expect(result).toEqual(jasmine.objectContaining({
                             advertiserId: selfie.cModel.advertiser.id,
-                            customerId: selfie.cModel.customer.id,
+                            customerId: selfie.cModel.customer,
                             name: undefined,
                             pricing: {},
                             application: 'selfie',

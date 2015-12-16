@@ -40,7 +40,7 @@ define(['app', 'c6uilib'], function(appModule, c6uilib) {
         });
 
         describe('model()', function() {
-            var customers,
+            var customers, advertisers,
                 success, failure;
 
             beforeEach(function() {
@@ -62,10 +62,35 @@ define(['app', 'c6uilib'], function(appModule, c6uilib) {
                     }
                 ];
 
+                advertisers: [
+                    {
+                        id: 'a-a057764cb53d45'
+                    },
+                    {
+                        id: 'a-50480bdd7b3f55'
+                    },
+                    {
+                        id: 'a-676edfc8aee43c'
+                    }
+                ]
+
                 success = jasmine.createSpy('success()');
                 failure = jasmine.createSpy('failure()');
 
-                spyOn(cinema6.db, 'findAll').and.returnValue($q.when(customers));
+                spyOn(cinema6.db, 'findAll').and.callFake(function(args) {
+                    var response;
+
+                    switch(args) {
+                        case 'advertiser':
+                            response = advertisers;
+                            break;
+                        case 'customer':
+                            response = customers;
+                            break;
+                    }
+
+                    return $q.when(response);
+                });
 
                 $rootScope.$apply(function() {
                     campaignsNew.model().then(success, failure);
@@ -101,7 +126,8 @@ define(['app', 'c6uilib'], function(appModule, c6uilib) {
             it('should resolve to an object with the new campaign and categories', function() {
                 expect(success).toHaveBeenCalledWith({
                     campaign: dbModel,
-                    customers: customers
+                    customers: customers,
+                    advertisers: advertisers
                 });
             });
         });
