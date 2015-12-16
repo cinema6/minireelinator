@@ -106,7 +106,7 @@
                     expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', userJSON.advertiser);
                     expect(cinema6.db.find).toHaveBeenCalledWith('customer', userJSON.customer);
                     expect(success.calls.mostRecent().args[0].advertiser).toBe(advertiser);
-                    expect(success.calls.mostRecent().args[0].customer).toBe(customer);
+                    expect(success.calls.mostRecent().args[0].customer).toEqual(customer);
                 });
 
                 it('should resolve to the cinema6.db user model', function() {

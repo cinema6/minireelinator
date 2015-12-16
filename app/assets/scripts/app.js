@@ -649,7 +649,8 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             // only set it if we have a customer,
                             // the decoration will not happen once the
                             // customer service is removed
-                            customerId: campaign.customer && campaign.customer.id,
+                            customerId: (campaign.customer && campaign.customer.id) ||
+                                campaign.customer,
 
                             cards: cards,
                             miniReels: campaign.miniReels.map(makeCreativeWrapper),
