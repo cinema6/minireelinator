@@ -119,6 +119,14 @@ define(['app'], function(appModule) {
             expect(SelfieInterestsCtrl).toEqual(jasmine.any(Object));
         });
 
+        it('should remove any old, unused, unsupported categories/interests', function() {
+            $scope.campaign.targeting.interests.push('cat-xxxxxx');
+
+            compileCtrl();
+
+            expect($scope.campaign.targeting.interests).toEqual([]);
+        });
+
         describe('properties', function() {
             describe('tiers', function() {
                 it('should be an array of objects each containing all the interests in its tier', function() {

@@ -124,7 +124,7 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
                 });
             });
 
-            describe('urlFromData(service, id)', function() {
+            describe('urlFromData(service, id, hostname)', function() {
                 function fromData() {
                     return SelfieVideoService.urlFromData.apply(SelfieVideoService, arguments);
                 }
@@ -149,6 +149,10 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
 
                 it('should create an adUnit url', function() {
                     expect(fromData('adUnit', '{"vast":"http://vasttag.com/vast.xml"}')).toBe('http://vasttag.com/vast.xml');
+                });
+                
+                it('should create a wistia url', function() {
+                    expect(fromData('wistia', 'a401lat6bl', 'ezra.wistia.com')).toBe('https://ezra.wistia.com/medias/a401lat6bl?preview=true');
                 });
             });
 

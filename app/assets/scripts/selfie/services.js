@@ -80,7 +80,6 @@ function( angular , c6uilib ,  c6Defines  ) {
                             autoadvance: false,
                             controls: true,
                             autoplay: true,
-                            skip: 30,
                             moat: undefined
                         }
                     }),
@@ -385,10 +384,10 @@ function( angular , c6uilib ,  c6Defines  ) {
                 return $q.when(data);
             };
 
-            this.urlFromData = function(service, id) {
+            this.urlFromData = function(service, id, hostname) {
                 return service === 'adUnit' ?
                     getJSONProp(id, 'vast') :
-                    VideoService.urlFromData(service, id);
+                    VideoService.urlFromData(service, id, hostname);
             };
 
             this.statsFromService = function(service, id) {

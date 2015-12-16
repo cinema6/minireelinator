@@ -1,6 +1,26 @@
 # MiniReelinator
 
-## v1.29.0 (December 14, 2015)
+## v1.29.1 (December 16, 2015)
+* *[v1.29.1.rc1]*
+  * [FIX]: Fix for an issue that would cause a Wistia url to incorrectly display
+    when editing a campaign
+  * [FIX]: Fix the formatting of budget, daily limit and total spend numbers in
+    the campaign dashboard
+  * [REFACTOR]: Update the studio/selfie preview to use the player
+    service
+* *[/v1.29.1.rc1]*
+
+## v1.29.0 (December 15, 2015)
+* *[v1.29.0.rc3]*
+  * [DESIGN]: Fixed stats page font style issue
+  * [FIX]: Stop polling for 202 results after 30 seconds
+  * [FIX]: Remove old, unsupported interests from campaigns
+  * [FIX]: Stop trimming spaces from the end of video headline, description and
+    call to action button text
+  * [FIX]: Stop setting Selfie campaigns to skip after 30 seconds
+  * [DESIGN]: Remove the pie chart on Stats tab
+* *[/v1.29.0.rc3]*
+
 * *[v1.29.0.rc2]*
   * [DESIGN]: Fixed stats page formatting issue
   * [DESIGN]: Corrected input type in css for safari border issue for targeting

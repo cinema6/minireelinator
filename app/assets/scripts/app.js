@@ -95,7 +95,17 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                         if (!isRetry && status === 202 && data.url) {
                             $injector.invoke(['$http', function($http) {
+                                var attempts = 0;
+
                                 checkAgain = $interval(function() {
+                                    attempts++;
+
+                                    if (attempts >= 15) {
+                                        deferred.reject('Request timed out.');
+                                        $interval.cancel(checkAgain);
+                                        return;
+                                    }
+
                                     $http.get(data.url, {retry: true})
                                         .then(function(resp) {
                                             if (resp.status !== 202) {
@@ -106,7 +116,7 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                                             deferred.reject(err);
                                             $interval.cancel(checkAgain);
                                         });
-                                }, 1000);
+                                }, 2000);
                             }]);
                         } else {
                             deferred.resolve(response);

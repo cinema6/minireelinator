@@ -515,7 +515,10 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
         function                                 ( $scope ) {
             var campaign = $scope.campaign,
                 categories = $scope.categories,
-                schema = $scope.schema;
+                schema = $scope.schema,
+                categoryIds = categories.map(function(category) {
+                    return category.id;
+                });
 
             function filterOut(needles, haystack) {
                 needles = isArray(needles) ? needles : [needles];
@@ -688,6 +691,12 @@ function( angular , select2 , braintree , jqueryui , Chart   ) {
                     this.toggleTier(tier);
                 }
             };
+
+            // remove any old, unused categories from interest array
+            campaign.targeting.interests = campaign.targeting.interests
+                .filter(function(interest) {
+                    return categoryIds.indexOf(interest) > -1;
+                });
 
             this.tiers = generateInterestTiers(categories);
             this.priceForInterests = schema.pricing.cost.__priceForInterests;

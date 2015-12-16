@@ -146,7 +146,6 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                             autoadvance: false,
                             controls: true,
                             autoplay: true,
-                            skip: 30,
                             moat: undefined
                         }));
                     });
