@@ -188,7 +188,7 @@ module.exports = function(http) {
                     var ids = request.query.ids,
                         idArray = (ids || '').split(',');
 
-                    return !ids || idArray.indexOf(card.id) > -1;
+                    return ids === undefined || idArray.indexOf(card.id) > -1;
                 }).map(function(card) {
                     var fields = request.query.fields,
                         fieldsArray = (fields || '').split(','),
