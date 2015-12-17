@@ -543,7 +543,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 this.findAll = function() {
                     return $http.get(url('customers'))
-                        .then(pick('data'))
+                        // if the request fails just return an empty array,
+                        // this avoids breaking Campaign Manager views
+                        // after the customer service is removed
+                        .then(pick('data'), function() { return []; })
                         .then(decorateAll);
                 };
 
@@ -556,7 +559,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                 this.findQuery = function(type, query) {
                     return $http.get(url('customers'), { params: query })
-                        .then(pick('data'))
+                        // if the request fails just return an empty array,
+                        // this avoids breaking Campaign Manager views
+                        // after the customer service is removed
+                        .then(pick('data'), function() { return []; })
                         .then(decorateAll);
                 };
 
@@ -640,7 +646,12 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             advertiserId: campaign.advertiser.id,
 
                             customer: undefined,
-                            customerId: campaign.customer.id,
+                            // if it's been decorated then use the id,
+                            // otherwise use the undecorated id (which
+                            // could be null or undefined once the customer
+                            // service is removed)
+                            customerId: (campaign.customer && campaign.customer.id) ||
+                                campaign.customer,
 
                             cards: cards,
                             miniReels: campaign.miniReels.map(makeCreativeWrapper),
@@ -672,7 +683,19 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
 
                     function getDbModel(type) {
                         return function(id) {
-                            return cinema6.db.find(type, id);
+                            return cinema6.db.find(type, id)
+                                .catch(function(err) {
+                                    // if we're trying to fetch a customer
+                                    // then just return the id, don't reject.
+                                    // this will allow us to continue decoration
+                                    // once customer service is removed and not
+                                    // overwrite any existing customer ids
+                                    if (type === 'customer') {
+                                        return id;
+                                    } else {
+                                        return $q.reject(err);
+                                    }
+                                });
                         };
                     }
 
@@ -692,7 +715,13 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                         });
                     })).then(function(cards) {
                         return $q.all({
-                            customer: getDbModel('customer')(campaign.customerId),
+                            // only decorate with customer if defined.
+                            // if customer decoration fails the property
+                            // will be set to the existing customer id
+                            // instead of rejecting the entire request
+                            customer: (campaign.customerId ?
+                                getDbModel('customer')(campaign.customerId) :
+                                campaign.customerId),
                             advertiser: getDbModel('advertiser')(campaign.advertiserId),
 
                             miniReels: $q.all(campaign.miniReels.map(function(data) {

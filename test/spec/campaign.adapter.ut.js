@@ -281,6 +281,87 @@ define(['app', 'angular'], function(appModule, angular) {
                 expect(campaign.staticCardMap[0].cards[2].wildcard).toBe(campaign.cards[1]);
                 expect(campaign.staticCardMap[1].cards[0].wildcard).toBe(campaign.cards[1]);
             });
+
+            describe('when advertiser decoration fails', function() {
+                it('shoudl reject the promise', function() {
+                    cinema6.db.find.and.callFake(function(type, id) {
+                        var object = (function() {
+                            switch (type) {
+                            case 'experience':
+                                return minireels[id];
+                            case 'card':
+                                return cards[id];
+                            case 'advertiser':
+                                return undefined;
+                            case 'customer':
+                                return undefined;
+                            default:
+                                return undefined;
+                            }
+                        }());
+
+                        return object ? $q.when(object) : $q.reject({
+                            data: '404 NOT FOUND',
+                            code: 404
+                        });
+                    });
+
+                    $rootScope.$apply(function() {
+                        adapter.decorateCampaign(campaign).then(success, failure);
+                    });
+
+                    expect(failure).toHaveBeenCalled();
+                });
+            });
+
+            describe('when customer request fails', function() {
+                it('should not modify/decorate the customer property and should not reject the promise', function() {
+                    cinema6.db.find.and.callFake(function(type, id) {
+                        var object = (function() {
+                            switch (type) {
+                            case 'experience':
+                                return minireels[id];
+                            case 'card':
+                                return cards[id];
+                            case 'advertiser':
+                                return advertisers[id];
+                            case 'customer':
+                                return undefined;
+                            default:
+                                return undefined;
+                            }
+                        }());
+
+                        return object ? $q.when(object) : $q.reject({
+                            data: '404 NOT FOUND',
+                            code: 404
+                        });
+                    });
+
+                    $rootScope.$apply(function() {
+                        adapter.decorateCampaign(campaign).then(success, failure);
+                    });
+
+                    var response = success.calls.mostRecent().args[0];
+
+                    expect(response.customer).toBe('cus-5156b33a6f834c');
+                    expect(failure).not.toHaveBeenCalled();
+                });
+            });
+
+            describe('when there is no customer', function() {
+                it('should not request a customer', function() {
+                    cinema6.db.find.calls.reset();
+
+                    campaign.customerId = null;
+
+                    $rootScope.$apply(function() {
+                        adapter.decorateCampaign(campaign).then(success, failure);
+                    });
+
+                    expect(cinema6.db.find).not.toHaveBeenCalledWith('customer', null);
+                });
+            });
         });
 
         describe('findAll(type)', function() {

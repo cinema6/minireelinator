@@ -245,6 +245,8 @@ module.exports = function(http) {
      **********************************************************************************************/
 
     http.whenGET('/api/account/customers', function(request) {
+        // return this.respond(404, 'Not Found');
+
         this.respond(200, grunt.file.expand(path.resolve(__dirname, './customers/*.json'))
             .map(function(path) {
                 var id = path.match(/[^\/]+(?=\.json)/)[0];
@@ -262,6 +264,8 @@ module.exports = function(http) {
         var id = idFromPath(request.pathname),
             filePath = objectPath('customers', id),
             customer = grunt.file.exists(filePath) ? grunt.file.readJSON(filePath) : null;
+
+        // return this.respond(404, 'NOT FOUND');
 
         if (customer) {
             this.respond(200, extend(customer, { id: id }));
