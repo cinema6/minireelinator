@@ -239,8 +239,21 @@ function( angular , c6State  , PaginatedListState                    ,
         function( c6StateProvider ) {
             c6StateProvider.state('Selfie:NewCampaign', ['cinema6','c6State','CampaignService',
             function                                    ( cinema6 , c6State , CampaignService ) {
+                this.beforeModel = function() {
+                    var cState = this,
+                        user = c6State.get('Selfie').cModel,
+                        org = user.org.id;
+
+                    this.user = user;
+
+                    return cinema6.db.findAll('advertiser', {org: org})
+                        .then(function(advertisers) {
+                            cState.advertiser = advertisers[0];
+                        });
+                };
+
                 this.model = function() {
-                    return CampaignService.create();
+                    return CampaignService.create(null, this.user, this.advertiser);
                 };
 
                 this.afterModel = function(campaign) {
@@ -273,12 +286,16 @@ function( angular , c6State  , PaginatedListState                    ,
                             campaign.id + ':' + campaign.updateRequest :
                             null;
 
-                    this.campaign = CampaignService.normalize(campaign);
-
-                    return (id ? cinema6.db.find('updateRequest', id) : $q.when(null))
-                        .then(function(updateRequest) {
-                            cState.updateRequest = updateRequest;
-                        });
+                    return $q.all({
+                        updateRequest: (id ? cinema6.db.find('updateRequest', id) : $q.when(null)),
+                        user: cinema6.db.find('user', campaign.user),
+                        advertiser: cinema6.db.find('advertiser', campaign.advertiserId)
+                    }).then(function(promises) {
+                        cState.updateRequest = promises.updateRequest;
+                        cState.user = promises.user;
+                        cState.advertiser = promises.advertiser;
+                        cState.campaign = CampaignService.normalize(campaign, promises.user);
+                    });
                 };
 
                 this.enter = function() {
@@ -358,15 +375,17 @@ function( angular , c6State  , PaginatedListState                    ,
 
                     // these are always necessary
                     this.card = this.campaign.cards[0];
-                    this.advertiser = SelfieState.cModel.advertiser;
+                    this.advertiser = this.cParent.advertiser;
                     this.isCreator = !this.campaign.user ||
                         this.campaign.user === SelfieState.cModel.id;
+
+                    this.user = this.cParent.user;
                 };
 
                 this.model = function() {
                     return $q.all({
                         categories: cinema6.db.findAll('category', {type: 'interest'}),
-                        logos: SelfieLogoService.getLogos(),
+                        logos: SelfieLogoService.getLogos(this.campaign.org || this.user.org.id),
                         paymentMethods: cinema6.db.findAll('paymentMethod', {
                             org: this.campaign.org || SelfieState.cModel.org.id
                         })
@@ -622,6 +641,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.advertiser = cState.advertiser;
                 this.schema = cState.schema;
                 this.isCreator = cState.isCreator;
+                this.user = cState.user;
 
                 this._proxyCard = copy(this.card);
                 this._proxyCampaign = copy(this.campaign);
@@ -689,7 +709,7 @@ function( angular , c6State  , PaginatedListState                    ,
             this.autoSave = c6Debounce(SelfieCampaignCtrl.save, 5000);
 
             this.copy = queue.debounce(function() {
-                return CampaignService.create(this.campaign)
+                return CampaignService.create(this.campaign, this.user, this.advertiser)
                     .save().then(function(campaign) {
                         return c6State.goTo('Selfie:EditCampaign', [campaign]);
                     }).catch(handleError);
@@ -1340,8 +1360,14 @@ function( angular , c6State  , PaginatedListState                    ,
                 };
 
                 this.afterModel = function(campaign) {
-                    this.campaign = CampaignService.normalize(campaign);
-                    this.card = campaign.cards[0];
+                    var cState = this;
+
+                    return cinema6.db.find('user', campaign.user)
+                        .then(function(user) {
+                            cState.campaign = CampaignService.normalize(campaign, user);
+                            cState.card = campaign.cards[0];
+                            cState.user = user;
+                        });
                 };
 
                 this.enter = function() {
@@ -1366,6 +1392,7 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.beforeModel = function() {
                     this.card = this.cParent.card;
                     this.campaign = this.cParent.campaign;
+                    this.user = this.cParent.user;
                 };
 
                 this.model = function() {
@@ -1380,7 +1407,8 @@ function( angular , c6State  , PaginatedListState                    ,
                         updateRequest:  updateRequest ?
                             cinema6.db.find('updateRequest', updateRequest) :
                             null,
-                        stats: CampaignService.getAnalytics(this.campaign.id)
+                        stats: CampaignService.getAnalytics(this.campaign.id),
+                        advertiser: cinema6.db.find('advertiser', this.campaign.advertiserId)
                     });
                 };
 
@@ -1547,11 +1575,13 @@ function( angular , c6State  , PaginatedListState                    ,
                 this.campaign = cState.campaign;
                 this.showAdminTab = cState.isAdmin;
                 this.hasStats = cState.hasStats;
+                this.user = cState.user;
 
                 this.categories = model.categories;
                 this.paymentMethods = model.paymentMethods;
                 this.updateRequest = model.updateRequest;
                 this.stats = model.stats;
+                this.advertiser = model.advertiser;
 
                 this._proxyCampaign = copy(cState.campaign);
             };
@@ -1595,7 +1625,7 @@ function( angular , c6State  , PaginatedListState                    ,
             }, this);
 
             this.copy = queue.debounce(function() {
-                return CampaignService.create(this.campaign.pojoify())
+                return CampaignService.create(this.campaign.pojoify(), this.user, this.advertiser)
                     .save().then(function(campaign) {
                         return c6State.goTo('Selfie:EditCampaign', [campaign]);
                     });
