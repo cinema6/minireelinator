@@ -1,5 +1,8 @@
 # MiniReelinator
 
+* *[v1.30.0.rc1]*
+  * Prepare Campaign Manager and Selfie for the removal of Customer entity
+
 ## v1.29.1 (December 16, 2015)
 * *[v1.29.1.rc1]*
   * [FIX]: Fix for an issue that would cause a Wistia url to incorrectly display
