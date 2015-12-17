@@ -1,6 +1,7 @@
 # MiniReelinator
 
 * *[v1.30.0.rc1]*
+  * [FEATURE] Add support for Brightcove videos
   * Prepare Campaign Manager and Selfie for the removal of Customer entity
 
 ## v1.29.1 (December 16, 2015)
