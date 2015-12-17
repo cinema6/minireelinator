@@ -270,6 +270,18 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                         expect(result).toEqual(dbModel);
                     });
                 });
+
+                describe('when user.customer is an object', function() {
+                    it('should handle the id', function() {
+                        selfie.cModel.customer = {
+                            id: 'cus-999'
+                        };
+
+                        var result = CampaignService.create();
+
+                        expect(result.customerId).toEqual('cus-999')
+                    });
+                });
             });
 
             describe('normalize(campaign)', function() {
