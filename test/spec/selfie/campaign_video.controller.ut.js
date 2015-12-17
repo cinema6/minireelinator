@@ -64,12 +64,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
         describe('properties', function() {
             describe('videoUrl', function() {
-                it('should call SelfieVideoService with service, id, and hostname', function() {
+                it('should call SelfieVideoService with service, id, and data', function() {
                     spyOn(SelfieVideoService, 'urlFromData').and.callThrough();
 
                     compileCtrl();
 
-                    expect(SelfieVideoService.urlFromData).toHaveBeenCalledWith(undefined, undefined, undefined);
+                    expect(SelfieVideoService.urlFromData).toHaveBeenCalledWith(undefined, undefined, {});
                     expect(SelfieCampaignVideoCtrl.videoUrl).toEqual(undefined);
 
                     card.data.service = 'youtube';
@@ -79,7 +79,11 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                     compileCtrl();
 
-                    expect(SelfieVideoService.urlFromData).toHaveBeenCalledWith('youtube', '12345', 'company');
+                    expect(SelfieVideoService.urlFromData).toHaveBeenCalledWith('youtube', '12345', {
+                        service: 'youtube',
+                        videoid: '12345',
+                        hostname: 'company'
+                    });
                     expect(SelfieCampaignVideoCtrl.videoUrl).toEqual('https://www.youtube.com/watch?v=12345');
                 });
             });
@@ -205,7 +209,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                                     dataDeferred.resolve({
                                         service: 'youtube',
                                         id: '12345',
-                                        hostname: 'company'
+                                        data: {
+                                            hostname: 'company'
+                                        }
                                     });
                                 });
                             });
