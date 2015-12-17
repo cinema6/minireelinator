@@ -1,6 +1,8 @@
-define ([],
-function() {
+define (['angular'],
+function( angular ) {
     'use strict';
+
+    var extend = angular.extend;
 
     VideoCardController.$inject = ['VideoService'];
     function VideoCardController  ( VideoService ) {
@@ -11,24 +13,24 @@ function() {
                 enumerable: true,
                 configurable: true,
                 get: function() {
-                    var service = this.model.data.service,
-                        id = this.model.data.videoid,
-                        hostname = this.model.data.hostname;
+                    var data = this.model.data,
+                        service = data.service,
+                        id = data.videoid;
 
-                    return VideoService.urlFromData(service, id, hostname) || val;
+                    return VideoService.urlFromData(service, id, data) || val;
                 },
                 set: function(value) {
                     var info = VideoService.dataFromText(value) || {
                         service: null,
                         id: null,
-                        hostname: null
+                        data: { }
                     };
 
                     val = value;
 
                     this.model.data.service = info.service;
                     this.model.data.videoid = info.id;
-                    this.model.data.hostname = info.hostname;
+                    extend(this.model.data, info.data);
                 }
             });
         }.call(this));

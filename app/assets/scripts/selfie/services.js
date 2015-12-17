@@ -386,10 +386,10 @@ function( angular , c6uilib ,  c6Defines  ) {
                 return $q.when(data);
             };
 
-            this.urlFromData = function(service, id, hostname) {
+            this.urlFromData = function(service, id, data) {
                 return service === 'adUnit' ?
                     getJSONProp(id, 'vast') :
-                    VideoService.urlFromData(service, id, hostname);
+                    VideoService.urlFromData(service, id, data);
             };
 
             this.statsFromService = function(service, id) {
