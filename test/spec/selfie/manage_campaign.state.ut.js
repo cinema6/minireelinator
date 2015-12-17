@@ -17,7 +17,9 @@ define(['app'], function(appModule) {
             campaign,
             paymentMethods,
             updateRequest,
-            stats;
+            stats,
+            user,
+            advertiser;
 
         beforeEach(function() {
             module(appModule.name);
@@ -44,6 +46,7 @@ define(['app'], function(appModule) {
                 ];
                 campaign = {
                     id: 'cam-123',
+                    advertiserId: 'a-123',
                     cards: [],
                     links: {}
                 };
@@ -70,6 +73,13 @@ define(['app'], function(appModule) {
                     }
                 };
                 stats = [];
+                user = {
+                    id: 'u-123',
+                    org: 'o-123'
+                };
+                advertiser = {
+                    id: 'a-123'
+                };
 
                 selfieState = c6State.get('Selfie');
                 selfieState.cModel = {
@@ -105,58 +115,138 @@ define(['app'], function(appModule) {
             it('should put the card and campaign on the state object', function() {
                 campaignState.cParent.campaign = campaign;
                 campaignState.cParent.card = card;
+                campaignState.cParent.user = user;
 
                 campaignState.beforeModel();
 
                 expect(campaignState.card).toEqual(card);
                 expect(campaignState.campaign).toEqual(campaign);
+                expect(campaignState.user).toEqual(user);
             });
         });
 
         describe('model()', function() {
-            var success, failure;
+            var success, failure, updateRequestDeferred, advertiserDeferred, paymentMethodsDeferred, statsDeferred;
 
             beforeEach(function() {
                 success = jasmine.createSpy('success()');
                 failure = jasmine.createSpy('failure()');
-                spyOn(cinema6.db, 'findAll').and.returnValue($q.when(paymentMethods));
-                spyOn(cinema6.db, 'find').and.returnValue($q.when(updateRequest));
-                spyOn(CampaignService, 'getAnalytics').and.returnValue($q.when(stats))
+                updateRequestDeferred = $q.defer();
+                advertiserDeferred = $q.defer();
+                paymentMethodsDeferred = $q.defer();
+                statsDeferred = $q.defer();
+
+                spyOn(cinema6.db, 'findAll').and.returnValue(paymentMethodsDeferred.promise);
+                spyOn(cinema6.db, 'find').and.callFake(function(type) {
+                    var response;
+
+                    switch(type) {
+                        case 'updateRequest':
+                            response = updateRequestDeferred.promise;
+                            break;
+                        case 'advertiser':
+                            response = advertiserDeferred.promise;
+                            break;
+                    }
+
+                    return response;
+                });
+                spyOn(CampaignService, 'getAnalytics').and.returnValue(statsDeferred.promise);
 
                 campaignState.campaign = campaign;
                 campaign.org = 'o-999';
             });
 
             describe('when the campaign has an updateRequest', function() {
-                it('should find the updateRequest and the paymentMethods for the org of the campaign creator', function() {
+                beforeEach(function() {
                     campaign.updateRequest = 'ur-123';
 
                     $rootScope.$apply(function() {
                         campaignState.model().then(success, failure);
                     });
+                });
+
+                it('should find the updateRequest, the stats, and the advertiser and paymentMethods for the org of the campaign creator', function() {
                     expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod', {org: 'o-999'});
                     expect(cinema6.db.find).toHaveBeenCalledWith('updateRequest', 'cam-123:ur-123');
+                    expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', campaign.advertiserId);
                     expect(CampaignService.getAnalytics).toHaveBeenCalledWith(campaign.id);
-                    expect(success).toHaveBeenCalledWith({
-                        paymentMethods: paymentMethods,
-                        updateRequest: updateRequest,
-                        stats: stats
+                });
+
+                describe('when the requests are successful', function() {
+                    it('should return the model object', function() {
+                        $rootScope.$apply(function() {
+                            updateRequestDeferred.resolve(updateRequest);
+                            paymentMethodsDeferred.resolve(paymentMethods);
+                            statsDeferred.resolve(stats);
+                            advertiserDeferred.resolve(advertiser);
+                        });
+
+                        expect(success).toHaveBeenCalledWith({
+                            paymentMethods: paymentMethods,
+                            updateRequest: updateRequest,
+                            stats: stats,
+                            advertiser: advertiser
+                        });
+                    });
+                });
+
+                describe('when any request fails', function() {
+                    it('should trigger failure', function() {
+                        $rootScope.$apply(function() {
+                            updateRequestDeferred.resolve(updateRequest);
+                            paymentMethodsDeferred.resolve(paymentMethods);
+                            statsDeferred.resolve(stats);
+                            advertiserDeferred.reject('Not Found');
+                        });
+
+                        expect(success).not.toHaveBeenCalled();
+                        expect(failure).toHaveBeenCalled();
                     });
                 });
             });
 
             describe('when the campaign does not have an updateRequest', function() {
-                it('should find the paymentMethods for the org of the campaign creator', function() {
+                beforeEach(function() {
                     $rootScope.$apply(function() {
                         campaignState.model().then(success, failure);
                     });
+                });
+
+                it('should find the paymentMethods for the org of the campaign creator', function() {
                     expect(cinema6.db.findAll).toHaveBeenCalledWith('paymentMethod', {org: 'o-999'});
-                    expect(cinema6.db.find).not.toHaveBeenCalled();
+                    expect(cinema6.db.find).not.toHaveBeenCalledWith('updateRequest', jasmine.any(String));
+                    expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', campaign.advertiserId);
                     expect(CampaignService.getAnalytics).toHaveBeenCalledWith(campaign.id);
-                    expect(success).toHaveBeenCalledWith({
-                        paymentMethods: paymentMethods,
-                        updateRequest: null,
-                        stats: stats
+                });
+
+                describe('when the requests are successful', function() {
+                    it('should return the model object', function() {
+                        $rootScope.$apply(function() {
+                            paymentMethodsDeferred.resolve(paymentMethods);
+                            statsDeferred.resolve(stats);
+                            advertiserDeferred.resolve(advertiser);
+                        });
+
+                        expect(success).toHaveBeenCalledWith({
+                            paymentMethods: paymentMethods,
+                            updateRequest: null,
+                            stats: stats,
+                            advertiser: advertiser
+                        });
+                    });
+                });
+
+                describe('when any request fails', function() {
+                    it('should trigger failure', function() {
+                        $rootScope.$apply(function() {
+                            paymentMethodsDeferred.resolve(paymentMethods);
+                            statsDeferred.resolve(stats);
+                            advertiserDeferred.reject('Not Found');
+                        });
+
+                        expect(success).not.toHaveBeenCalled();
+                        expect(failure).toHaveBeenCalled();
                     });
                 });
             });

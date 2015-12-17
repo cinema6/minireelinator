@@ -40,7 +40,8 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             categories,
             logos,
             paymentMethods,
-            advertiser;
+            advertiser,
+            user;
 
         var saveCampaignDeferred,
             debouncedFns;
@@ -159,12 +160,16 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     default: true
                 }
             ];
+            user = {
+                id: 'u-123'
+            };
 
             cState = {
                 _campaign: campaign,
                 campaign: campaign.pojoify(),
                 card: campaign.cards[0],
                 advertiser: advertiser,
+                user: user,
                 saveCampaign: jasmine.createSpy('cState.saveCampaign()'),
                 saveUpdateRequest: jasmine.createSpy('cState.saveUpdateRequest()')
             };
@@ -362,6 +367,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     expect(SelfieCampaignCtrl._proxyCard).toEqual(copy(cState.card));
                     expect(SelfieCampaignCtrl._proxyCampaign).toEqual(copy(cState.campaign));
                     expect(SelfieCampaignCtrl.originalCampaign).toEqual(campaign);
+                    expect(SelfieCampaignCtrl.user).toEqual(user);
                 });
             });
 
@@ -732,6 +738,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 beforeEach(function() {
                     newCampaignDeferred = $q.defer();
 
+                    SelfieCampaignCtrl.user = user;
+                    SelfieCampaignCtrl.advertiser = advertiser;
+
                     spyOn(c6State, 'goTo');
                     spyOn(CampaignService, 'create').and.callFake(function(_campaign) {
                         newCampaign = angular.copy(_campaign);
@@ -748,7 +757,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 });
 
                 it('should create a new campaign with the current campaign', function() {
-                    expect(CampaignService.create).toHaveBeenCalledWith(SelfieCampaignCtrl.campaign);
+                    expect(CampaignService.create).toHaveBeenCalledWith(SelfieCampaignCtrl.campaign, user, advertiser);
                 });
 
                 it('should save the new campaign', function() {

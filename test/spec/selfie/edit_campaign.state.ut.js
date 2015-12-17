@@ -9,7 +9,8 @@ define(['app'], function(appModule) {
             editCampaignState,
             CampaignService;
 
-        var card, campaign;
+        var card, campaign,
+            advertiser, user, updateRequest;
 
         beforeEach(function() {
             module(appModule.name);
@@ -35,7 +36,24 @@ define(['app'], function(appModule) {
             campaign = {
                 id: 'cam-c3fd97889f4fb9',
                 name: '$$$',
+                user: 'u-123',
+                advertiserId: 'a-123',
                 cards: [card]
+            };
+
+            user = {
+                id: 'u-123'
+            };
+
+            advertiser = {
+                id: 'a-123'
+            };
+
+            updateRequest = {
+                id: 'ur-123',
+                data: {
+                    id: 'cam-123'
+                }
             };
 
             spyOn(CampaignService, 'normalize').and.returnValue(campaign);
@@ -77,35 +95,40 @@ define(['app'], function(appModule) {
         });
 
         describe('afterModel()', function() {
-            it('should normalize the campaign', function() {
-                $rootScope.$apply(function() {
-                    editCampaignState.afterModel(campaign);
-                });
+            var success, failure, updateRequestDeferred, userDeferred, advertiserDeferred;
 
-                expect(CampaignService.normalize).toHaveBeenCalled();
-                expect(editCampaignState.campaign).toEqual(campaign);
+            beforeEach(function() {
+                success = jasmine.createSpy('success()');
+                failure = jasmine.createSpy('failure()');
+                updateRequestDeferred = $q.defer();
+                userDeferred = $q.defer();
+                advertiserDeferred = $q.defer();
+
+                spyOn(cinema6.db, 'find').and.callFake(function(type) {
+                    var response;
+
+                    switch(type) {
+                        case 'updateRequest':
+                            response = updateRequestDeferred.promise;
+                            break;
+                        case 'user':
+                            response = userDeferred.promise;
+                            break;
+                        case 'advertiser':
+                            response = advertiserDeferred.promise;
+                            break;
+                    }
+
+                    return response;
+                });
             });
 
             describe('when the campaign has an update request', function() {
-                var success, failure, updateRequestDeferred, updateRequest;
-
                 beforeEach(function() {
-                    success = jasmine.createSpy('success()');
-                    failure = jasmine.createSpy('failure()');
-                    updateRequestDeferred = $q.defer();
-                    updateRequest = {
-                        id: 'ur-123',
-                        data: {
-                            id: 'cam-123'
-                        }
-                    };
-
-                    spyOn(cinema6.db, 'find').and.returnValue(updateRequestDeferred.promise);
-
                     campaign.updateRequest = 'ur-123';
 
                     $rootScope.$apply(function() {
-                        editCampaignState.afterModel(campaign);
+                        editCampaignState.afterModel(campaign).then(success, failure);
                     });
                 });
 
@@ -113,26 +136,92 @@ define(['app'], function(appModule) {
                     expect(cinema6.db.find).toHaveBeenCalledWith('updateRequest', 'cam-c3fd97889f4fb9:ur-123');
                 });
 
-                describe('when the update request is found', function() {
-                    it('should put it on the cState', function() {
+                it('should find the user and advertiser', function() {
+                    expect(cinema6.db.find).toHaveBeenCalledWith('user', 'u-123');
+                    expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', 'a-123');
+                });
+
+                describe('when the requests are successful', function() {
+                    beforeEach(function() {
                         $rootScope.$apply(function() {
                             updateRequestDeferred.resolve(updateRequest);
+                            userDeferred.resolve(user);
+                            advertiserDeferred.resolve(advertiser);
+                        });
+                    });
+
+                    it('should put it on the cState', function() {
+                        expect(editCampaignState.updateRequest).toEqual(updateRequest);
+                        expect(editCampaignState.user).toEqual(user);
+                        expect(editCampaignState.advertiser).toEqual(advertiser);
+                    });
+
+                    it('should normalize the campaign', function() {
+                        expect(CampaignService.normalize).toHaveBeenCalled();
+                        expect(editCampaignState.campaign).toEqual(campaign);
+                    });
+                });
+
+                describe('when any request fails', function() {
+                    it('should trigger failure', function() {
+                        $rootScope.$apply(function() {
+                            updateRequestDeferred.resolve(updateRequest);
+                            userDeferred.resolve(user);
+                            advertiserDeferred.reject('Not Found');
                         });
 
-                        expect(editCampaignState.updateRequest).toEqual(updateRequest);
+                        expect(success).not.toHaveBeenCalled();
+                        expect(failure).toHaveBeenCalled();
                     });
                 });
             });
 
             describe('when the campaign has no pending updateRequest', function() {
-                it('should not put any update request on the cState', function() {
-                    spyOn(cinema6.db, 'find');
+                beforeEach(function() {
                     $rootScope.$apply(function() {
-                        editCampaignState.afterModel(campaign);
+                        editCampaignState.afterModel(campaign).then(success, failure);
+                    });
+                });
+
+                it('should find the user and advertiser', function() {
+                    expect(cinema6.db.find).toHaveBeenCalledWith('user', 'u-123');
+                    expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', 'a-123');
+                });
+
+                it('should not put any update request on the cState', function() {
+                    expect(cinema6.db.find).not.toHaveBeenCalledWith('updateRequest', jasmine.any(String));
+                });
+
+                describe('when the requests are successful', function() {
+                    beforeEach(function() {
+                        $rootScope.$apply(function() {
+                            userDeferred.resolve(user);
+                            advertiserDeferred.resolve(advertiser);
+                        });
                     });
 
-                    expect(cinema6.db.find).not.toHaveBeenCalled();
-                    expect(editCampaignState.updateRequest).toBe(null);
+                    it('should put it on the cState', function() {
+                        expect(editCampaignState.updateRequest).toEqual(null);
+                        expect(editCampaignState.user).toEqual(user);
+                        expect(editCampaignState.advertiser).toEqual(advertiser);
+                    });
+
+                    it('should normalize the campaign', function() {
+                        expect(CampaignService.normalize).toHaveBeenCalled();
+                        expect(editCampaignState.campaign).toEqual(campaign);
+                    });
+                });
+
+                describe('when any request fails', function() {
+                    it('should trigger failure', function() {
+                        $rootScope.$apply(function() {
+                            userDeferred.resolve(user);
+                            advertiserDeferred.reject('Not Found');
+                        });
+
+                        expect(success).not.toHaveBeenCalled();
+                        expect(failure).toHaveBeenCalled();
+                    });
                 });
             });
         });

@@ -1,7 +1,7 @@
 define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModule, c6uilib) {
     'use strict';
 
-    describe('CampaignService', function() {
+    fdescribe('CampaignService', function() {
         var $rootScope,
             cinema6,
             c6State,
