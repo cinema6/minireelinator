@@ -646,9 +646,10 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                             advertiserId: campaign.advertiser.id,
 
                             customer: undefined,
-                            // only set it if we have a customer,
-                            // the decoration will not happen once the
-                            // customer service is removed
+                            // if it's been decorated then use the id,
+                            // otherwise use the undecorated id (which
+                            // could be null or undefined once the customer
+                            // service is removed)
                             customerId: (campaign.customer && campaign.customer.id) ||
                                 campaign.customer,
 
@@ -715,9 +716,9 @@ function( angular , ngAnimate , minireel     , account     , login , portal , c6
                     })).then(function(cards) {
                         return $q.all({
                             // only decorate with customer if defined.
-                            // if customer decoration fails we property
-                            // will be set to null instead of rejecting
-                            // the entire request
+                            // if customer decoration fails the property
+                            // will be set to the existing customer id
+                            // instead of rejecting the entire request
                             customer: (campaign.customerId ?
                                 getDbModel('customer')(campaign.customerId) :
                                 campaign.customerId),

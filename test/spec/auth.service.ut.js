@@ -203,13 +203,13 @@
                     expect(failureSpy).toHaveBeenCalledWith('Unable to find user.');
                 });
 
-                it('should not call for org, advertiser or customer if not defined, and should not set customer prop', function() {
+                it('should not call for org, advertiser or customer if not defined', function() {
                     var mockUser = { id: 'userX' };
                     $httpBackend.expectPOST('/api/auth/login').respond(200,mockUser);
                     AuthService.login('userX','foobar').then(successSpy,failureSpy);
                     $httpBackend.flush();
                     expect(cinema6.db.find).not.toHaveBeenCalled();
-                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: undefined, advertiser: undefined }));
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: undefined, advertiser: undefined, customer: undefined }));
                     expect(successSpy).toHaveBeenCalledWith(user);
                     expect(failureSpy).not.toHaveBeenCalled();
                 });
@@ -279,18 +279,18 @@
                     AuthService.checkStatus().then(successSpy,failureSpy);
                     $httpBackend.flush();
                     expect(cinema6.db.find).toHaveBeenCalledWith('org', mockUser.org);
-                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: org, advertiser: undefined }));
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: org, advertiser: undefined, customer: undefined }));
                     expect(successSpy).toHaveBeenCalledWith(user);
                     expect(failureSpy).not.toHaveBeenCalled();
                 });
 
-                it('should not call for org, advertiser or customer if not defined, and should not set customer prop to undefined', function() {
+                it('should not call for org, advertiser or customer if not defined', function() {
                     var mockUser = { id: 'userX' };
                     $httpBackend.expectGET('/api/auth/status').respond(200,mockUser);
                     AuthService.checkStatus().then(successSpy,failureSpy);
                     $httpBackend.flush();
                     expect(cinema6.db.find).not.toHaveBeenCalled();
-                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: undefined, advertiser: undefined }));
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: undefined, advertiser: undefined, customer: undefined }));
                     expect(successSpy).toHaveBeenCalledWith(user);
                     expect(failureSpy).not.toHaveBeenCalled();
                 });
