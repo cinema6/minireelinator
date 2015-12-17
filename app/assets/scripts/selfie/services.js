@@ -53,9 +53,9 @@ function( angular , c6uilib ,  c6Defines  ) {
                 return totalFor + totalPer;
             }
 
-            this.create = function(campaign) {
-                var user = getAppUser(),
-                    advertiser = user.advertiser,
+            this.create = function(campaign, user, advertiser) {
+                var _user = user || getAppUser(),
+                    _advertiser = advertiser || {},
                     // the user's customer is no longer
                     // decorated so it's just an id now
                     customerId = user.customer,
@@ -65,11 +65,11 @@ function( angular , c6uilib ,  c6Defines  ) {
                     card = deepExtend(rawCard, {
                         sponsored: true,
                         collateral: {
-                            logo: advertiser.defaultLogos && advertiser.defaultLogos.square ?
-                                advertiser.defaultLogos.square :
+                            logo: _advertiser.defaultLogos && _advertiser.defaultLogos.square ?
+                                _advertiser.defaultLogos.square :
                                 undefined
                         },
-                        links: advertiser.defaultLinks || {},
+                        links: _advertiser.defaultLinks || {},
                         shareLinks: {},
                         params: {
                             ad: true,
@@ -92,7 +92,7 @@ function( angular , c6uilib ,  c6Defines  ) {
                     // this sets up only the necessary campaign props that should
                     // be copied or initialized
                     campaignTemplate = {
-                        advertiserId: copy(advertiser.id),
+                        advertiserId: copy(_advertiser.id),
                         customerId: copy(customerId),
                         name: function(base) {
                             if (base.name) {
@@ -101,7 +101,7 @@ function( angular , c6uilib ,  c6Defines  ) {
                         },
                         pricing: copy({}),
                         application: value('selfie'),
-                        advertiserDisplayName: copy(user.company),
+                        advertiserDisplayName: copy(_user.company),
                         paymentMethod: copy(),
                         targeting: {
                             geo: {
@@ -136,11 +136,11 @@ function( angular , c6uilib ,  c6Defines  ) {
                 return newCampaign;
             };
 
-            this.normalize = function(campaign) {
-                var user = getAppUser(),
+            this.normalize = function(campaign, user) {
+                var _user = user || getAppUser(),
                     template = {
                         pricing: copy({}),
-                        advertiserDisplayName: copy(user.company),
+                        advertiserDisplayName: copy(_user.company),
                         targeting: {
                             geo: {
                                 states: copy([]),
@@ -502,10 +502,10 @@ function( angular , c6uilib ,  c6Defines  ) {
                 }, []);
             }
 
-            this.getLogos = function() {
+            this.getLogos = function(org) {
                 var SelfieState = c6State.get('Selfie'),
                     query = {
-                        org: SelfieState.cModel.org.id,
+                        org: org || SelfieState.cModel.org.id,
                         statuses: 'active,paused,error',
                         sort: 'lastUpdated,-1',
                         application: 'selfie',
