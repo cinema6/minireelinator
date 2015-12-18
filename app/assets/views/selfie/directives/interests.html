@@ -17,7 +17,7 @@
                     <span ng-show="!show" class="collapse-section"><i class="fa fa-plus-circle"></i></span>
                 </div>
         </div>
-        <div class="selections">
+        <div class="selections" ng-show="show">
             <div ng-show="show" class="section sectionNested" ng-repeat="tier in SelfieInterestsCtrl.tiers">
                 <div class="title">
                     <span ng-click="tier.show = !tier.show" ng-show="tier.show && tier.children" class="collapse-section"><i class="fa fa-minus-circle"></i></span>

@@ -3140,7 +3140,7 @@ fa,
     @media screen and (max-width:75em) {
         .adPreview__desktop {
             width:100%;
-            background-color:#e1e1e1;
+            background-color:#fff;
             position:relative;
             min-height:26em;
         }
@@ -3583,11 +3583,29 @@ fa,
             color:#5c5c5c;
         }
         /*Date Range Dropdown Stats*/
+        .dateRange.action__dropdown ul li {
+            cursor: pointer;
+        }
+            .dateRange.action__dropdown ul li button.action__btn {
+                text-align: center;
+            }
+            .dateRange.action__dropdown ul li button.action__btn:hover {
+                background-color: #0E7D81;
+                color: #fff;
+            }
+            
+        .dateRange .dateRange__selected {
+            display: block;
+            font-weight: normal;
+        }
         .dateRange.action__dropdown ul ul li {
             width: 200px;
         }
+            .dateRange.action__dropdown ul ul li a {
+                display: block;
+            }
         .dateRange__wrap {
-            padding: 0.5em 1em 0 1em;
+            padding: 0.5em 1em 0.125em 1em;
             display: none;
         }
         .dateRange__custom:hover .dateRange__wrap {
@@ -3595,6 +3613,7 @@ fa,
         }
         .dateRange__wrap .form__textBox {
             margin-bottom: 0.5em;
+            text-align: center;
         }
 
 /*  Payment Dropdown classes
@@ -4503,4 +4522,48 @@ div.tree-multiselect span.section-name {
         span.ui-icon.ui-icon-circle-triangle-e:before {
             content: '\f138';
             font-family: 'FontAwesome';
+        }
+    /* Create Campaign Styles*/
+    .campaignWrap {
+        background: #fff;
+        padding: 1em;
+        margin-top: 6em;
+    }
+        .campaignWrap .form__textBox {
+            border-bottom: 2px solid #fff;
+        }
+        .campaignWrap .select2-container--default .select2-selection--single, 
+        .campaignWrap .select2-container--default .select2-selection--multiple {
+            border-bottom: 2px solid #fff;
+        }
+        .campaignWrap .tree-multiselect .section.sectionHead {
+            border-bottom: 2px solid #fff;
+        }
+        .campaignWrap .tree-multiselect .section.sectionHead.in--focus {
+            border-bottom: 2px solid #49B8B9;
+        }
+        .campaignWrap .pmtDropdown__btn, .pmtDropdown__btn:focus {
+            border-bottom: 2px solid #fff;
+        }
+        .campaignWrap .selections {
+            border: 1px solid #eee;
+        }
+        .campaignWrap .ui__tab {
+            background: #eee;
+        }
+        .campaignWrap .ui__tab--active, 
+        .campaignWrap .ui__tab--active:focus {
+            background: #fff;
+        }
+            .campaignWrap .ui__tab--active,
+            .campaignWrap .ui__tab--active:focus {
+                -moz-box-shadow: 0 -2px 1px 0 rgba(0,0,0,.14),0 -2px 1px -2px rgba(0,0,0,.2),0 -3px 3px 0 rgba(0,0,0,.12);
+                -webkit-box-shadow: 0 -2px 1px 0 rgba(0,0,0,.14),0 -2px 1px -2px rgba(0,0,0,.2),0 -3px 3px 0 rgba(0,0,0,.12);
+                box-shadow: 0 -2px 1px 0 rgba(0,0,0,.14),0 -2px 1px -2px rgba(0,0,0,.2),0 -3px 3px 0 rgba(0,0,0,.12);
+            }
+            .campaignWrap .tree-multiselect>.selections>.section {
+                border-right: 1px solid #eee;
+            }
+        .campaignWrap .form__item--bigInput .form__label {
+            top: 1.125em;
         }
