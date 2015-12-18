@@ -1,5 +1,9 @@
 # MiniReelinator
 
+* *[v1.30.0.rc2]*
+  * Handle users with no advertiser and customer ids
+  * When editing a campaign load the creator's advertiser and logos based on org
+
 ## v1.30.0 (December 17, 2015)
 * *[v1.30.0.rc2]*
   * [FIX]: Fix for an issue where Selfie campaigns were incorrectly saving customer id

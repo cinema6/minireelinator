@@ -37,7 +37,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             categories,
             paymentMethods,
             updateRequest,
-            stats;
+            stats,
+            user,
+            advertiser;
 
         var debouncedFns;
 
@@ -134,6 +136,12 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
             paymentMethods = [];
             updateRequest = null;
             stats = [{}];
+            user = {
+                id: 'u-123'
+            };
+            advertiser = {
+                id: 'a-123'
+            };
 
             cState = {
                 campaign: campaign,
@@ -304,7 +312,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                         SelfieManageCampaignCtrl.paymentMethods = null;
                         SelfieManageCampaignCtrl._proxyCampaign = null;
 
-                        SelfieManageCampaignCtrl.initWithModel({categories: categories, paymentMethods: paymentMethods, updateRequest: updateRequest, stats: stats});
+                        SelfieManageCampaignCtrl.initWithModel({categories: categories, paymentMethods: paymentMethods, updateRequest: updateRequest, stats: stats, advertiser: advertiser});
                     });
 
                     expect(SelfieManageCampaignCtrl.card).toEqual(card);
@@ -663,6 +671,9 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                 beforeEach(function() {
                     newCampaignDeferred = $q.defer();
 
+                    SelfieManageCampaignCtrl.user = user;
+                    SelfieManageCampaignCtrl.advertiser = advertiser;
+
                     spyOn(c6State, 'goTo');
                     spyOn(campaign, 'pojoify').and.callThrough();
                     spyOn(CampaignService, 'create').and.callFake(function(_campaign) {
@@ -681,7 +692,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
 
                 it('should create a new campaign with a pojoified campaign', function() {
                     expect(SelfieManageCampaignCtrl.campaign.pojoify).toHaveBeenCalled();
-                    expect(CampaignService.create).toHaveBeenCalledWith(SelfieManageCampaignCtrl.campaign.pojoify());
+                    expect(CampaignService.create).toHaveBeenCalledWith(SelfieManageCampaignCtrl.campaign.pojoify(), user, advertiser);
                 });
 
                 it('should save the new campaign', function() {

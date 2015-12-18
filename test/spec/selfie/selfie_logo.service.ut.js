@@ -148,7 +148,7 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
         });
 
         describe('methods', function() {
-            describe('getLogos()', function() {
+            describe('getLogos(org)', function() {
                 var success, failure;
 
                 beforeEach(function() {
@@ -164,6 +164,17 @@ define(['app','c6uilib'], function(appModule, c6uilib) {
                     SelfieLogoService.getLogos().then(success, failure);
 
                     $httpBackend.flush();
+                });
+
+                describe('when an org is passed in', function() {
+                    it('should query by that org', function() {
+                        var org = 'o-99999';
+
+                        $httpBackend.expectGET('/api/campaigns?application=selfie&fields=cards&limit=50&org='+org+'&skip=0&sort=lastUpdated,-1&statuses=active,paused,error')
+                            .respond(200, campaigns);
+
+                        SelfieLogoService.getLogos(org);
+                    });
                 });
 
                 describe('when campaigns are found', function() {

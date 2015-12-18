@@ -6,6 +6,7 @@ module.exports = function(http) {
 
     var fn = require('../utils/fn'),
         db = require('../utils/db'),
+        pluckExcept = fn.pluckExcept,
         idFromPath = db.idFromPath,
         extend = fn.extend,
         genId = require('../../tasks/resources/helpers').genId;
@@ -215,17 +216,26 @@ module.exports = function(http) {
      **********************************************************************************************/
 
     http.whenGET('/api/account/advrs', function(request) {
-        this.respond(200, grunt.file.expand(path.resolve(__dirname, './advertisers/*.json'))
-            .map(function(path) {
-                var id = path.match(/[^\/]+(?=\.json)/)[0];
+        var filters = pluckExcept(request.query, ['orgs']),
+            advertisers = grunt.file.expand(path.resolve(__dirname, './advertisers/*.json'))
+                .map(function(path) {
+                    var id = path.match(/[^\/]+(?=\.json)/)[0];
 
-                return extend(grunt.file.readJSON(path), { id: id });
-            }).filter(function(card) {
-                return Object.keys(request.query)
-                    .every(function(key) {
-                        return request.query[key] === card[key];
-                    });
-            }));
+                    return extend(grunt.file.readJSON(path), { id: id });
+                })
+                .filter(function(advr) {
+                    return Object.keys(request.query)
+                        .every(function(key) {
+                            return request.query[key] === advr[key];
+                        });
+                })
+                .filter(function(advr) {
+                    var org = request.query.org;
+
+                    return !org || advr.org === org;
+                });
+
+        this.respond(200, advertisers);
     });
 
     http.whenGET('/api/account/advrs/**', function(request) {
