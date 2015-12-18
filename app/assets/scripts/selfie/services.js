@@ -58,7 +58,7 @@ function( angular , c6uilib ,  c6Defines  ) {
                     _advertiser = advertiser || {},
                     // the user's customer is no longer
                     // decorated so it's just an id now
-                    customerId = user.customer,
+                    customerId = _user.customer,
 
                     // set up a full default card in case we aren't copying
                     rawCard = MiniReelService.createCard('video'),

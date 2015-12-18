@@ -1,7 +1,7 @@
 define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModule, c6uilib) {
     'use strict';
 
-    fdescribe('CampaignService', function() {
+    describe('CampaignService', function() {
         var $rootScope,
             cinema6,
             c6State,
@@ -16,7 +16,9 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
             campaign,
             cardTemplate,
             application,
-            selfie;
+            selfie,
+            user,
+            advertiser;
 
         function num(num) {
             return parseFloat($filter('number')(num, 2));
@@ -62,6 +64,19 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
 
                 spyOn(NormalizationService, 'normalize').and.callThrough();
 
+                user = {
+                    id: 'u-123',
+                    customer: 'cus-123',
+                    advertiser: {
+                        id: 'a-123'
+                    },
+                    company: 'Best Company Ever'
+                };
+
+                advertiser = {
+                    id: 'a-123'
+                };
+
                 application = c6State.get('Application');
                 application.name = 'Selfie';
                 selfie = c6State.get('Selfie');
@@ -80,12 +95,12 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
         });
 
         describe('methods', function() {
-            describe('create(campaign)', function() {
+            describe('create(campaign, user, advertiser)', function() {
                 describe('when creating a new campaign', function() {
                     var result, cardResult;
 
                     beforeEach(function() {
-                        result = CampaignService.create();
+                        result = CampaignService.create(null, null, advertiser);
                         cardResult = result.cards[0];
                     });
 
@@ -98,12 +113,12 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     });
 
                     it('should normalize the new campaign with the DB Model as the target', function() {
-                        expect(NormalizationService.normalize).toHaveBeenCalledWith(jasmine.any(Object), undefined, dbModel);
+                        expect(NormalizationService.normalize).toHaveBeenCalledWith(jasmine.any(Object), null, dbModel);
                     });
 
                     it('should return a campaign with proper defaults', function() {
                         expect(result).toEqual(jasmine.objectContaining({
-                            advertiserId: selfie.cModel.advertiser.id,
+                            advertiserId: advertiser.id,
                             customerId: selfie.cModel.customer,
                             name: undefined,
                             pricing: {},
@@ -270,9 +285,17 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                         expect(result).toEqual(dbModel);
                     });
                 });
+
+                describe('when passing in a user', function() {
+                    it('should use that data', function() {
+                        var result = CampaignService.create(null, user, advertiser);
+
+                        expect(result.advertiserDisplayName).toEqual(user.company);
+                    });
+                });
             });
 
-            describe('normalize(campaign)', function() {
+            describe('normalize(campaign, user)', function() {
                 var campaign;
 
                 beforeEach(function() {
@@ -293,6 +316,14 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     var result = CampaignService.normalize(campaign);
 
                     expect(result.advertiserDisplayName).toBe('My Company, Inc.');
+                });
+
+                describe('when passing in a user', function() {
+                    it('should use that user data', function() {
+                        var result = CampaignService.normalize(campaign, user);
+
+                        expect(result.advertiserDisplayName).toEqual(user.company);
+                    });
                 });
             });
 
