@@ -1,0 +1,13 @@
+{
+    "adtechId": "12345678",
+    "name": "Prudential",
+    "defaultLinks": {
+        "Facebook": "https://www.facebook.com/PrudentialBYC",
+        "Twitter": "https://twitter.com/prudentialbyc",
+        "Instagram": "https://www.instagram.com/prudential"
+    },
+    "defaultLogos": {
+        "square": "https://scontent-lga3-1.cdninstagram.com/hphotos-xtf1/t51.2885-19/11849441_1671713146392717_1696863672_a.jpg"
+    },
+    "org": "o-e4e8b0f244bafc"
+}

@@ -169,7 +169,10 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
                             pricing: {},
                             status: 'active'
                         }),
-                        customers: cinema6.db.findAll('customer')
+                        customers: cinema6.db.findAll('customer'),
+                        // going forward the Campaign Manager will load
+                        // all advertisers as options
+                        advertisers: cinema6.db.findAll('advertiser')
                     });
                 };
             }]);
@@ -194,14 +197,24 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }
 
             c(this, 'advertiserOptions', function() {
-                var customer = this.model.customer;
+                var customer = this.model.customer,
+                    advertisers = this.advertisers;
 
-                return optionsByName(customer && customer.advertisers || [], 'advertisers');
+                // try to use the customer's advertisers first,
+                // if there is no customer or the customer has
+                // not been decorated then we are no longer
+                // supporting customers, so fall back to
+                // to all advertisers, and if there are none
+                // then fall back to empty array
+                return optionsByName((customer && customer.advertisers) ||
+                    (!!advertisers.length && advertisers) ||
+                    [], 'advertisers');
             }, ['CampaignsNewCtrl.model.customer']);
 
             this.initWithModel = function(model) {
                 this.model = model.campaign;
                 this.customers = model.customers;
+                this.advertisers = model.advertisers;
 
                 this.customerOptions = optionsByName(this.customers, 'customers');
             };

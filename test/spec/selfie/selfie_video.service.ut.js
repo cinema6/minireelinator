@@ -152,7 +152,17 @@ define(['app', 'c6_defines'], function(appModule, c6Defines) {
                 });
                 
                 it('should create a wistia url', function() {
-                    expect(fromData('wistia', 'a401lat6bl', 'ezra.wistia.com')).toBe('https://ezra.wistia.com/medias/a401lat6bl?preview=true');
+                    expect(fromData('wistia', 'a401lat6bl', {
+                        hostname: 'ezra.wistia.com'
+                    })).toBe('https://ezra.wistia.com/medias/a401lat6bl?preview=true');
+                });
+                
+                it('should create a brightcove url', function() {
+                    expect(fromData('brightcove', '4655415742001', {
+                        accountid: '4652941506001',
+                        playerid: '71cf5be9-7515-44d8-bb99-29ddc6224ff8',
+                        embedid: 'default'
+                    })).toBe('https://players.brightcove.net/4652941506001/71cf5be9-7515-44d8-bb99-29ddc6224ff8_default/index.html?videoId=4655415742001');
                 });
             });
 

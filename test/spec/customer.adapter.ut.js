@@ -75,7 +75,6 @@ define(['app', 'angular'], function(appModule, angular) {
 
         describe('findAll(type)', function() {
             var customers;
-
             var marker;
 
             beforeEach(function() {
@@ -89,22 +88,40 @@ define(['app', 'angular'], function(appModule, angular) {
                     });
 
                 spyOn(adapter, 'decorate').and.callFake(identity);
-
-                $httpBackend.expectGET('/api/account/customers')
-                    .respond(200, customers);
-
-                adapter.findAll('customer').then(success, failure);
-
-                $httpBackend.flush();
             });
 
-            it('should return all of the customers', function() {
-                expect(success).toHaveBeenCalledWith(customers);
+            describe('when request is successful', function() {
+                beforeEach(function() {
+                    $httpBackend.expectGET('/api/account/customers')
+                        .respond(200, customers);
+
+                    adapter.findAll('customer').then(success, failure);
+
+                    $httpBackend.flush();
+                });
+
+                it('should return all of the customers', function() {
+                    expect(success).toHaveBeenCalledWith(customers);
+                });
+
+                it('should decorate all of the customers', function() {
+                    customers.forEach(function(customer) {
+                        expect(adapter.decorate).toHaveBeenCalledWith(customer);
+                    });
+                });
             });
 
-            it('should decorate all of the customers', function() {
-                customers.forEach(function(customer) {
-                    expect(adapter.decorate).toHaveBeenCalledWith(customer);
+            describe('when request fails', function() {
+                it('should resovle with empty array of request fails', function() {
+                    $httpBackend.expectGET('/api/account/customers')
+                        .respond(404, 'Not Found');
+
+                    adapter.findAll('customer').then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(failure).not.toHaveBeenCalled();
+                    expect(success).toHaveBeenCalledWith([]);
                 });
             });
         });
@@ -151,25 +168,46 @@ define(['app', 'angular'], function(appModule, angular) {
                     });
 
                 spyOn(adapter, 'decorate').and.callFake(identity);
-
-                $httpBackend.expectGET('/api/account/customers?foo=bar&name=yahoo')
-                    .respond(200, customers);
-
-                adapter.findQuery('customer', {
-                    foo: 'bar',
-                    name: 'yahoo'
-                }).then(success, failure);
-
-                $httpBackend.flush();
             });
 
-            it('should return the customers', function() {
-                expect(success).toHaveBeenCalledWith(customers);
+            describe('when request succeeds', function() {
+                beforeEach(function() {
+                    $httpBackend.expectGET('/api/account/customers?foo=bar&name=yahoo')
+                        .respond(200, customers);
+
+                    adapter.findQuery('customer', {
+                        foo: 'bar',
+                        name: 'yahoo'
+                    }).then(success, failure);
+
+                    $httpBackend.flush();
+                });
+
+                it('should return the customers', function() {
+                    expect(success).toHaveBeenCalledWith(customers);
+                });
+
+                it('should decorate all of the customers', function() {
+                    customers.forEach(function(customer) {
+                        expect(adapter.decorate).toHaveBeenCalledWith(customer);
+                    });
+                });
             });
 
-            it('should decorate all of the customers', function() {
-                customers.forEach(function(customer) {
-                    expect(adapter.decorate).toHaveBeenCalledWith(customer);
+            describe('when request fails', function() {
+                it('should return an empty array instead of rejecting the promise', function() {
+                    $httpBackend.expectGET('/api/account/customers?foo=bar&name=yahoo')
+                        .respond(404, 'Not Found');
+
+                    adapter.findQuery('customer', {
+                        foo: 'bar',
+                        name: 'yahoo'
+                    }).then(success, failure);
+
+                    $httpBackend.flush();
+
+                    expect(failure).not.toHaveBeenCalled();
+                    expect(success).toHaveBeenCalledWith([]);
                 });
             });
         });

@@ -69,22 +69,28 @@ function( angular , c6State  ) {
             }
 
             function handleAuthSuccess(user) {
-                var requests = [];
+                var requests = {};
 
                 if (user.org) {
-                    requests.push(cinema6.db.find('org', user.org));
+                    requests.org = cinema6.db.find('org', user.org);
                 }
 
-                if (user.advertiser && user.customer) {
-                    requests.push(cinema6.db.find('advertiser', user.advertiser));
-                    requests.push(cinema6.db.find('customer', user.customer));
+                if (user.advertiser) {
+                    requests.advertiser = cinema6.db.find('advertiser', user.advertiser);
+                }
+
+                if (user.customer) {
+                    // if we have a customer and fail to fetch it
+                    // don't reject the promise, just return the original id
+                    requests.customer = cinema6.db.find('customer', user.customer)
+                        .catch(function() { return user.customer; });
                 }
 
                 return $q.all(requests)
                     .then(function(promises) {
-                        user.org = promises[0];
-                        user.advertiser = promises[1];
-                        user.customer = promises[2];
+                        user.org = promises.org;
+                        user.advertiser = promises.advertiser;
+                        user.customer = promises.customer;
 
                         return cinema6.db.push('user', user.id, user);
                     });

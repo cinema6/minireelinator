@@ -9,7 +9,7 @@ define(['app'], function(appModule) {
             manageCampaignState,
             CampaignService;
 
-        var card, campaign;
+        var card, campaign, user;
 
         beforeEach(function() {
             module(appModule.name);
@@ -34,8 +34,14 @@ define(['app'], function(appModule) {
 
             campaign = {
                 id: 'cam-c3fd97889f4fb9',
+                user: 'u-123',
                 name: '$$$',
                 cards: [card]
+            };
+
+            user = {
+                id: 'u-123',
+                org: 'o-123'
             };
 
             spyOn(CampaignService, 'normalize').and.returnValue(campaign);
@@ -78,21 +84,49 @@ define(['app'], function(appModule) {
         });
 
         describe('afterModel()', function() {
-            it('should normalize the campaign and put it on the state', function() {
-                $rootScope.$apply(function() {
-                    manageCampaignState.afterModel(campaign);
-                });
+            var success, failure, userDeferred;
 
-                expect(CampaignService.normalize).toHaveBeenCalled();
-                expect(manageCampaignState.campaign).toEqual(campaign);
+            beforeEach(function() {
+                success = jasmine.createSpy('success()');
+                failure = jasmine.createSpy('failure()');
+                userDeferred = $q.defer();
+
+                spyOn(cinema6.db, 'find').and.returnValue(userDeferred.promise);
+
+                $rootScope.$apply(function() {
+                    manageCampaignState.afterModel(campaign).then(success, failure);
+                });
             });
 
-            it('should put the card on the state object', function() {
-                $rootScope.$apply(function() {
-                    manageCampaignState.afterModel(campaign);
+            it('should find the campaign user', function() {
+                expect(cinema6.db.find).toHaveBeenCalledWith('user', campaign.user);
+            });
+
+            describe('when the user is found', function() {
+                beforeEach(function() {
+                    $rootScope.$apply(function() {
+                        userDeferred.resolve(user);
+                    });
                 });
 
-                expect(manageCampaignState.card).toEqual(card);
+                it('should normalize the campaign and put it on the state', function() {
+                    expect(CampaignService.normalize).toHaveBeenCalled();
+                    expect(manageCampaignState.campaign).toEqual(campaign);
+                });
+
+                it('should put the card on the state object', function() {
+                    expect(manageCampaignState.card).toEqual(card);
+                });
+            });
+
+            describe('when the user is not found', function() {
+                it('should trigger failure', function() {
+                    $rootScope.$apply(function() {
+                        userDeferred.reject('Not Found');
+                    });
+
+                    expect(failure).toHaveBeenCalled();
+                });
             });
         });
 
