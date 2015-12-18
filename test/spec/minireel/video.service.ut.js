@@ -19,7 +19,7 @@
 
             describe('@public', function() {
                 describe('methods', function() {
-                    describe('urlFromData(service, id)', function() {
+                    describe('urlFromData(service, id, data)', function() {
                         function fromData() {
                             return VideoService.urlFromData.apply(VideoService, arguments);
                         }
@@ -53,8 +53,8 @@
                         });
 
                         it('should create a wistia url', function() {
-                            expect(fromData('wistia', '12345', 'cinema6.wistia.com')).toBe('https://cinema6.wistia.com/medias/12345?preview=true');
-                            expect(fromData('wistia', '12345', 'home.wistia.com')).toBe('https://home.wistia.com/medias/12345?preview=true');
+                            expect(fromData('wistia', '12345', { hostname: 'cinema6.wistia.com' })).toBe('https://cinema6.wistia.com/medias/12345?preview=true');
+                            expect(fromData('wistia', '12345', { hostname: 'home.wistia.com' })).toBe('https://home.wistia.com/medias/12345?preview=true');
                         });
 
                         it('should create a jwplayer url', function() {
@@ -72,6 +72,14 @@
                             expect(fromData('instagram', '-xCZTNtOdo')).toBe('https://instagram.com/p/-xCZTNtOdo');
                             expect(fromData('instagram', '12345')).toBe('https://instagram.com/p/12345');
                         });
+                        
+                        it('should create a brightcove url', function() {
+                            expect(fromData('brightcove', '4655415742001', {
+                                accountid: '4652941506001',
+                                playerid: '71cf5be9-7515-44d8-bb99-29ddc6224ff8',
+                                embedid: 'default'
+                            })).toBe('https://players.brightcove.net/4652941506001/71cf5be9-7515-44d8-bb99-29ddc6224ff8_default/index.html?videoId=4655415742001');
+                        });
                     });
 
                     describe('dataFromText(url)', function() {
@@ -83,7 +91,7 @@
                             expect(fromUrl('https://www.youtube.com/watch?v=jFJUz1DO20Q&list=PLFD1E8B0910A73A12&index=11')).toEqual({
                                 service: 'youtube',
                                 id: 'jFJUz1DO20Q',
-                                hostname: 'www.youtube.com'
+                                data: { }
                             });
                         });
 
@@ -91,7 +99,7 @@
                             expect(fromUrl('https://www.youtube.com/watch?v=jFJUz1DO20Q&list=PLFD1E8B0910A73A12&index=11')).toEqual({
                                 service: 'youtube',
                                 id: 'jFJUz1DO20Q',
-                                hostname: 'www.youtube.com'
+                                data: { }
                             });
                         });
 
@@ -99,7 +107,7 @@
                             expect(fromUrl('<iframe width="560" height="315" src="https://www.youtube.com/embed/jFJUz1DO20Q?list=PLFD1E8B0910A73A12" frameborder="0" allowfullscreen></iframe>')).toEqual({
                                 service: 'youtube',
                                 id: 'jFJUz1DO20Q',
-                                hostname: null
+                                data: { }
                             });
                         });
 
@@ -107,7 +115,7 @@
                             expect(fromUrl('http://vimeo.com/89495751')).toEqual({
                                 service: 'vimeo',
                                 id: '89495751',
-                                hostname: 'vimeo.com'
+                                data: { }
                             });
                         });
 
@@ -115,7 +123,7 @@
                             expect(fromUrl('<iframe src="https://player.vimeo.com/video/89495751?color=ffffff" width="500" height="192" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="https://vimeo.com/89495751">molt.</a> from <a href="https://vimeo.com/user13462546">▲Bipolar Spider▲</a> on <a href="https://vimeo.com">Vimeo</a>.</p>')).toEqual({
                                 service: 'vimeo',
                                 id: '89495751',
-                                hostname: null
+                                data: { }
                             });
                         });
 
@@ -123,7 +131,7 @@
                             expect(fromUrl('http://www.dailymotion.com/video/x120oui_vincent-and-the-doctor-vincent-van-gogh-visits-the-museum-doctor-who-museum-scene_shortfilms?search_algo=2')).toEqual({
                                 service: 'dailymotion',
                                 id: 'x120oui',
-                                hostname: 'www.dailymotion.com'
+                                data: { }
                             });
                         });
 
@@ -131,7 +139,7 @@
                             expect(fromUrl('http://dai.ly/x120oui')).toEqual({
                                 service: 'dailymotion',
                                 id: 'x120oui',
-                                hostname: 'dai.ly'
+                                data: { }
                             });
                         });
 
@@ -139,7 +147,7 @@
                             expect(fromUrl('<iframe frameborder="0" width="480" height="270" src="//www.dailymotion.com/embed/video/x120oui" allowfullscreen></iframe><br /><a href="http://www.dailymotion.com/video/x120oui_vincent-van-gogh-visits-the-museum-doctor-who-museum-scene-vincent-and-the-doctor_shortfilms" target="_blank">Vincent van Gogh visits the Museum (Doctor Who...</a> <i>by <a href="http://www.dailymotion.com/PuertoLibre" target="_blank">PuertoLibre</a></i>')).toEqual({
                                 service: 'dailymotion',
                                 id: 'x120oui',
-                                hostname: null
+                                data: { }
                             });
                         });
 
@@ -147,7 +155,7 @@
                             expect(fromUrl('https://vine.co/v/12345')).toEqual({
                                 service: 'vine',
                                 id: '12345',
-                                hostname: 'vine.co'
+                                data: { }
                             });
                         });
 
@@ -155,7 +163,7 @@
                             expect(fromUrl('http://vzaar.tv/1380051')).toEqual({
                                 service: 'vzaar',
                                 id: '1380051',
-                                hostname: 'vzaar.tv'
+                                data: { }
                             });
                         });
 
@@ -163,7 +171,9 @@
                             expect(fromUrl('https://cinema6.wistia.com/medias/12345')).toEqual({
                                 service: 'wistia',
                                 id: '12345',
-                                hostname: 'cinema6.wistia.com'
+                                data: {
+                                    hostname: 'cinema6.wistia.com'
+                                }
                             });
                         });
 
@@ -171,7 +181,7 @@
                             expect(fromUrl('https://content.jwplatform.com/previews/iGznZrKK-n5DiyUyn')).toEqual({
                                 service: 'jwplayer',
                                 id: 'iGznZrKK-n5DiyUyn',
-                                hostname: 'content.jwplatform.com'
+                                data: { }
                             });
                         });
 
@@ -181,7 +191,7 @@
                             var expected = {
                                 service: 'jwplayer',
                                 id: 'iGznZrKK-n5DiyUyn',
-                                hostname: null
+                                data: { }
                             };
                             expect(fromUrl(scriptEmbed)).toEqual(expected);
                             expect(fromUrl(iframeEmbed)).toEqual(expected);
@@ -192,7 +202,7 @@
                             var expected = {
                                 service: 'wistia',
                                 id: '9iqvphjp4u',
-                                hostname: null
+                                data: { }
                             };
                             expect(fromUrl(inlineEmbed)).toEqual(expected);
                         });
@@ -202,7 +212,7 @@
                             var expected = {
                                 service: 'vzaar',
                                 id: '5700429',
-                                hostname: null
+                                data: { }
                             };
                             expect(fromUrl(embedCode)).toEqual(expected);
                         });
@@ -211,7 +221,7 @@
                             expect(fromUrl('http://embed.vidyard.com/share/Eu6TAcwwJZaHDlfiJTsW-A')).toEqual({
                                 service: 'vidyard',
                                 id: 'Eu6TAcwwJZaHDlfiJTsW-A',
-                                hostname: 'embed.vidyard.com'
+                                data: { }
                             });
                         });
 
@@ -221,7 +231,7 @@
                             var expected = {
                                 service: 'vidyard',
                                 id: 'Eu6TAcwwJZaHDlfiJTs_W-A',
-                                hostname: null
+                                data: { }
                             };
                             expect(fromUrl(scriptEmbed)).toEqual(expected);
                             expect(fromUrl(iframeEmbed)).toEqual(expected);
@@ -231,7 +241,7 @@
                             expect(fromUrl('https://www.instagram.com/p/-xCZTNtOdo/')).toEqual({
                                 service: 'instagram',
                                 id: '-xCZTNtOdo',
-                                hostname: 'www.instagram.com'
+                                data: { }
                             });
                         });
                         
@@ -240,9 +250,51 @@
                             var expected = {
                                 service: 'instagram',
                                 id: '-xCZTNtOdo',
-                                hostname: null
+                                data: { }
                             };
                             expect(fromUrl(embedCode)).toEqual(expected);
+                        });
+
+                        it('should parse a brightcove url', function() {
+                            var url = 'http://players.brightcove.net/4652941506001/71cf5be9-7515-44d8-bb99-29ddc6224ff8_default/index.html?videoId=4655415742001';
+                            var expected = {
+                                service: 'brightcove',
+                                id: '4655415742001',
+                                data: {
+                                    accountid: '4652941506001',
+                                    playerid: '71cf5be9-7515-44d8-bb99-29ddc6224ff8',
+                                    embedid: 'default'
+                                }
+                            };
+                            expect(fromUrl(url)).toEqual(expected);
+                        });
+
+                        it('should parse a brightcove standard embed code', function() {
+                            var embed = '<iframe src=\'//players.brightcove.net/4652941506001/default_default/index.html?videoId=4655415742001\' allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>';
+                            var expected = {
+                                service: 'brightcove',
+                                id: '4655415742001',
+                                data: {
+                                    accountid: '4652941506001',
+                                    playerid: 'default',
+                                    embedid: 'default'
+                                }
+                            };
+                            expect(fromUrl(embed)).toEqual(expected);
+                        });
+                        
+                        it('should parse a brightcove advanced embed code', function() {
+                            var embed = '<video\n  data-video-id="4655415742001"\n  data-account="4652941506001"\n  data-player="default"\n  data-embed="default"\n  class="video-js" controls></video>\n<script src="//players.brightcove.net/4652941506001/default_default/index.min.js"></script>';
+                            var expected = {
+                                service: 'brightcove',
+                                id: '4655415742001',
+                                data: {
+                                    accountid: '4652941506001',
+                                    playerid: 'default',
+                                    embedid: 'default'
+                                }
+                            };
+                            expect(fromUrl(embed)).toEqual(expected);
                         });
 
                         it('should return null if the url is not valid', function() {
@@ -254,7 +306,9 @@
                             expect(fromUrl('http://www.youtube.c')).toBeNull();
                             expect(fromUrl('http://www.vzaar.t/123')).toBeNull();
                             expect(fromUrl('http://www.jwplayer.com/123')).toBeNull();
-                            expect(fromUrl('http://embed.vidyard.com/Eu6TAcwwJZaHDlfiJTsW-A'));
+                            expect(fromUrl('http://embed.vidyard.com/Eu6TAcwwJZaHDlfiJTsW-A')).toBeNull();
+                            expect(fromUrl('http://players.brightcove.net/INVALID/71cf5be9-7515-44d8-bb99-29ddc6224ff8_default/index.html?videoId=123')).toBeNull();
+                            expect(fromUrl('http://players.brightcove.net/4652941506001/71cf5be9-7515-44d8-bb99-29ddc6224ff8_default/index.html?videoId=INVALID')).toBeNull();
                         });
                     });
 

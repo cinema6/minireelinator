@@ -1,7 +1,14 @@
 # MiniReelinator
 
+## v1.30.0 (December 17, 2015)
+* *[v1.30.0.rc2]*
+  * [FIX]: Fix for an issue where Selfie campaigns were incorrectly saving customer id
+* *[/v1.30.0.rc2]*
+
 * *[v1.30.0.rc1]*
+  * [FEATURE] Add support for Brightcove videos
   * Prepare Campaign Manager and Selfie for the removal of Customer entity
+* *[/v1.30.0.rc1]*
 
 ## v1.29.1 (December 16, 2015)
 * *[v1.29.1.rc1]*

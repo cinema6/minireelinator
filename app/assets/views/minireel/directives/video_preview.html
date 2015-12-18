@@ -6,6 +6,7 @@
         <jw-player ng-switch-when="jwplayer" id="preview" videoid="{{videoid}}"></jw-player>
         <vidyard-player ng-switch-when="vidyard" id="preview" videoid="{{videoid}}"></vidyard-player>
         <instagram-player ng-switch-when="instagram" id="preview" videoid="{{videoid}}"></instagram-player>
+        <brightcove-player ng-switch-when="brightcove" id="preview" videoid="{{videoid}}" accountid="{{videodata.accountid}}" playerid="{{videodata.playerid}}" embedid="{{videodata.embedid}}"></brightcove-player>
         <embedded-player class="embeddedPlayer--{{service}}" ng-switch-default code="{{embedCode}}" controls></embedded-player>
     </div>
 </div>
