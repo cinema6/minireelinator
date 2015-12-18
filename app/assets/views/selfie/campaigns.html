@@ -32,7 +32,7 @@
                 </form>
             </div><!--
         --><div class="grid__item one-third itemActions__group text--right">
-               <button c6-sref="Selfie:NewCampaign" c6-params="{}" title="New Campaign" class="action__btn action__btn--small" type="button" ng-if="SelfieCtrl.model.advertiser">
+               <button ng-if="SelfieCampaignsCtrl.hasAdvertisers" c6-sref="Selfie:NewCampaign" c6-params="{}" title="New Campaign" class="action__btn action__btn--small" type="button" ng-if="SelfieCtrl.model.advertiser">
                 <i class="fa fa-plus"></i>
                     New Campaign
                 </button>
@@ -76,10 +76,10 @@
         <li class="campaign__item--empty text--center" ng-if="!campaigns.length">
             <i class="fa fa-file-video-o huge--icon"></i>
             <h2 class="tk--hdr">You don't have any campaigns!</h2>
-            <h1 class="tk--hdr">Let's get you started...</h1>
+            <h1 class="tk--hdr" ng-if="SelfieCampaignsCtrl.hasAdvertisers">Let's get you started...</h1>
             <div>
 
-            <button c6-sref="Selfie:NewCampaign" c6-params="{}" class="action__btn action__btn--small"><i class="fa fa-plus"></i> Create A Campaign</button><br>
+            <button ng-if="SelfieCampaignsCtrl.hasAdvertisers" c6-sref="Selfie:NewCampaign" c6-params="{}" class="action__btn action__btn--small"><i class="fa fa-plus"></i> Create A Campaign</button><br>
             <!-- <a href="support.html">Need Help?</a> --> <!-- replace this link with actual support link -->
             </div>
         </li>

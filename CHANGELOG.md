@@ -1,6 +1,10 @@
 # MiniReelinator
 
 ## v1.30.1 (December 18, 2015)
+* *[v1.30.1.rc2]*
+  * [FIX]: Hide New Campaign button if user has no advertisers
+* *[/v1.30.1.rc2]*
+
 * *[v1.30.1.rc1]*
   * Handle users with no advertiser and customer ids
   * When editing a campaign load the creator's advertiser and logos based on org

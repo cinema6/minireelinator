@@ -15,8 +15,19 @@ function( angular , c6State  , PaginatedListState                    ,
     return angular.module('c6.app.selfie.campaign', [c6State.name])
         .config(['c6StateProvider',
         function( c6StateProvider ) {
-            c6StateProvider.state('Selfie:CampaignDashboard', ['c6State',
-            function                                          ( c6State ) {
+            c6StateProvider.state('Selfie:CampaignDashboard', ['c6State','cinema6',
+            function                                          ( c6State , cinema6 ) {
+                this.beforeModel = function() {
+                    var cState = this,
+                        user = c6State.get('Selfie').cModel,
+                        org = user.org.id;
+
+                    cinema6.db.findAll('advertiser', {org: org})
+                        .then(function(advertisers) {
+                            cState.hasAdvertisers = !!advertisers.length;
+                        });
+                };
+
                 this.enter = function() {
                     c6State.goTo('Selfie:Campaigns');
                 };
@@ -170,6 +181,7 @@ function( angular , c6State  , PaginatedListState                    ,
 
             this.initWithModel = function(model) {
                 this.model = model;
+                this.hasAdvertisers = cState.cParent.hasAdvertisers;
 
                 addMetaData();
                 model.on('PaginatedListHasUpdated', addMetaData);
