@@ -32,7 +32,7 @@
                 </form>
             </div><!--
         --><div class="grid__item one-third itemActions__group text--right">
-               <button c6-sref="Selfie:NewCampaign" c6-params="{}" title="New Campaign" class="action__btn action__btn--small" type="button">
+               <button c6-sref="Selfie:NewCampaign" c6-params="{}" title="New Campaign" class="action__btn action__btn--small" type="button" ng-if="SelfieCtrl.model.advertiser">
                 <i class="fa fa-plus"></i>
                     New Campaign
                 </button>

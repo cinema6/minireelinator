@@ -106,7 +106,7 @@
                     expect(cinema6.db.find).toHaveBeenCalledWith('advertiser', userJSON.advertiser);
                     expect(cinema6.db.find).toHaveBeenCalledWith('customer', userJSON.customer);
                     expect(success.calls.mostRecent().args[0].advertiser).toBe(advertiser);
-                    expect(success.calls.mostRecent().args[0].customer).toBe(customer);
+                    expect(success.calls.mostRecent().args[0].customer).toEqual(customer);
                 });
 
                 it('should resolve to the cinema6.db user model', function() {
@@ -213,6 +213,34 @@
                     expect(successSpy).toHaveBeenCalledWith(user);
                     expect(failureSpy).not.toHaveBeenCalled();
                 });
+
+                it('should not modify the customer property if decoration request fails', function() {
+                    cinema6.db.find.and.callFake(function(args) {
+                        var response;
+
+                        switch(args) {
+                            case 'org':
+                                response = org;
+                                break;
+                            case 'advertiser':
+                                response = advertiser;
+                                break;
+                            case 'customer':
+                                return $q.reject('Not Found');
+                                break;
+                        }
+
+                        return $q.when(response);
+                    });
+                    var mockUser = { id: 'userX', customer: 'cus-123' };
+                    $httpBackend.expectPOST('/api/auth/login').respond(200,mockUser);
+                    AuthService.login('userX','foobar').then(successSpy,failureSpy);
+                    $httpBackend.flush();
+                    expect(cinema6.db.find).toHaveBeenCalledWith('customer', 'cus-123');
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: undefined, advertiser: undefined, customer: 'cus-123' }));
+                    expect(successSpy).toHaveBeenCalledWith(user);
+                    expect(failureSpy).not.toHaveBeenCalled();
+                });
             });
 
             describe('checkStatus method', function(){
@@ -263,6 +291,34 @@
                     $httpBackend.flush();
                     expect(cinema6.db.find).not.toHaveBeenCalled();
                     expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: undefined, advertiser: undefined, customer: undefined }));
+                    expect(successSpy).toHaveBeenCalledWith(user);
+                    expect(failureSpy).not.toHaveBeenCalled();
+                });
+
+                it('should not modify the customer property if decoration request fails', function() {
+                    cinema6.db.find.and.callFake(function(args) {
+                        var response;
+
+                        switch(args) {
+                            case 'org':
+                                response = org;
+                                break;
+                            case 'advertiser':
+                                response = advertiser;
+                                break;
+                            case 'customer':
+                                return $q.reject('Not Found');
+                                break;
+                        }
+
+                        return $q.when(response);
+                    });
+                    var mockUser = { id: 'userX', customer: 'cus-123' };
+                    $httpBackend.expectGET('/api/auth/status').respond(200,mockUser);
+                    AuthService.checkStatus().then(successSpy,failureSpy);
+                    $httpBackend.flush();
+                    expect(cinema6.db.find).toHaveBeenCalledWith('customer', 'cus-123');
+                    expect(cinema6.db.push).toHaveBeenCalledWith('user', mockUser.id, extend(mockUser, { org: undefined, advertiser: undefined, customer: 'cus-123' }));
                     expect(successSpy).toHaveBeenCalledWith(user);
                     expect(failureSpy).not.toHaveBeenCalled();
                 });

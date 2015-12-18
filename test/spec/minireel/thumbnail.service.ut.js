@@ -421,9 +421,11 @@
                                 expect(failure).toHaveBeenCalled();
                             });
                         });
-
                     });
 
+                    describe('fetchBrightcoveThumbs(id, data)', function() {
+                        
+                    });
                 });
             });
 

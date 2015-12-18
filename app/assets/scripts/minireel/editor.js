@@ -2193,6 +2193,41 @@ VideoCardController           , c6embed) {
             };
         }])
 
+        .directive('brightcovePlayer', [function() {
+            return {
+                restrict: 'E',
+                scope: {
+                    videoid: '@',
+                    accountid: '@',
+                    playerid: '@',
+                    embedid: '@'
+                },
+                link: function(scope, $element) {
+                    function loadPreview(videoid, accountid, playerid, embedid) {
+                        if(!(videoid && accountid && playerid && embedid)) { return; }
+                        
+                        $element.empty();
+                        var iframe = angular.element('<iframe></iframe>');
+                        iframe.attr('src', '//players.brightcove.net/' + accountid + '/' +
+                            playerid + '_' + embedid + '/index.html?videoId=' + videoid);
+                        iframe.attr('allowfullscreen', '');
+                        iframe.attr('webkitallowfullscreen', '');
+                        iframe.attr('mozallowfullscreen', '');
+                        iframe.attr('style', 'width: 100%; height: 100%; position: absolute;' +
+                            ' top: 0px; bottom: 0px; right: 0px; left: 0px;');
+                        $element.append(iframe);
+                        $element.addClass('brightcovePreview');
+                    }
+
+                    scope.$watch(function() {
+                        return scope.videoid + scope.accountid + scope.playerid + scope.embedid;
+                    }, function() {
+                        loadPreview(scope.videoid, scope.accountid, scope.playerid, scope.embedid);
+                    });
+                }
+            };
+        }])
+
         .directive('videoPreview', ['c6UrlMaker','$timeout','VideoService',
         function                   ( c6UrlMaker , $timeout , VideoService ) {
             return {
@@ -2201,6 +2236,7 @@ VideoCardController           , c6embed) {
                 scope: {
                     service: '@',
                     videoid: '@',
+                    videodata: '=',
                     start: '=',
                     end: '=',
                     disableTrimmer: '&'
