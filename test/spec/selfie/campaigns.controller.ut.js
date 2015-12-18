@@ -33,6 +33,9 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
 
                 campaigns = c6State.get('Selfie:Campaigns');
                 campaigns.isAdmin = false;
+                campaigns.cParent = {
+                    hasAdvertisers: false
+                };
 
                 spyOn(cinema6.db, 'findAll').and.returnValue((function() {
                     var items = [];
@@ -251,6 +254,18 @@ define(['app','minireel/mixins/PaginatedListController'], function(appModule, Pa
                     SelfieCampaignsCtrl.initWithModel(model);
 
                     expect(SelfieCampaignsCtrl.model).toEqual(model);
+                });
+
+                it('should put the hasAdvertisers flag on the Ctrl', function() {
+                    SelfieCampaignsCtrl.initWithModel(model);
+
+                    expect(SelfieCampaignsCtrl.hasAdvertisers).toEqual(false);
+
+                    campaigns.cParent.hasAdvertisers = true;
+
+                    SelfieCampaignsCtrl.initWithModel(model);
+
+                    expect(SelfieCampaignsCtrl.hasAdvertisers).toEqual(true);
                 });
 
                 it('should add the filters to the Ctrl', function() {
