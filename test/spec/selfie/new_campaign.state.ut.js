@@ -29,9 +29,6 @@ define(['app'], function(appModule) {
                     advertiser: {
                         id: 'a-123'
                     },
-                    customer: {
-                        id: 'cus-123'
-                    },
                     org: {
                         id: 'o-123',
                         name: 'My Org'

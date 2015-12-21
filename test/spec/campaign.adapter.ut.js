@@ -67,14 +67,13 @@ define(['app', 'angular'], function(appModule, angular) {
 
         describe('decorateCampaign(campaign)', function() {
             var campaign,
-                advertiserId, customerId, sponsoredMiniReels, sponsoredCards,
-                minireels, cards, advertisers, customers;
+                advertiserId, sponsoredMiniReels, sponsoredCards,
+                minireels, cards, advertisers;
 
             beforeEach(function() {
                 campaign = {
                     id: 'c-c66191ccc3eb37',
                     advertiserId: 'a-3f7cf5012b15b4',
-                    customerId: 'cus-5156b33a6f834c',
                     miniReels: [
                         {
                             endDate: '2015-03-04T19:54:09.397Z',
@@ -115,7 +114,6 @@ define(['app', 'angular'], function(appModule, angular) {
                 };
 
                 advertiserId = campaign.advertiserId;
-                customerId = campaign.customerId;
                 sponsoredMiniReels = campaign.miniReels.slice().map(function(item) { return copy(item); });
                 sponsoredCards = campaign.cards.slice().map(function(item) { return copy(item); });
 
@@ -123,13 +121,6 @@ define(['app', 'angular'], function(appModule, angular) {
                     'a-3f7cf5012b15b4': {
                         id: 'a-3f7cf5012b15b4',
                         name: 'Toyota'
-                    }
-                };
-
-                customers = {
-                    'cus-5156b33a6f834c': {
-                        id: 'cus-5156b33a6f834c',
-                        name: 'Sterling Cooper Draper Pryce'
                     }
                 };
 
@@ -199,8 +190,6 @@ define(['app', 'angular'], function(appModule, angular) {
                             return cards[id];
                         case 'advertiser':
                             return advertisers[id];
-                        case 'customer':
-                            return customers[id];
                         default:
                             return undefined;
                         }
@@ -227,7 +216,6 @@ define(['app', 'angular'], function(appModule, angular) {
 
             it('should decorate references to minireels with actual objects', function() {
                 expect(campaign.advertiser).toBe(advertisers[advertiserId]);
-                expect(campaign.customer).toBe(customers[customerId]);
                 expect(campaign.miniReels).toEqual(sponsoredMiniReels.map(function(data) {
                     return {
                         endDate: data.endDate && new Date(data.endDate),
@@ -293,8 +281,6 @@ define(['app', 'angular'], function(appModule, angular) {
                                 return cards[id];
                             case 'advertiser':
                                 return undefined;
-                            case 'customer':
-                                return undefined;
                             default:
                                 return undefined;
                             }
@@ -311,55 +297,6 @@ define(['app', 'angular'], function(appModule, angular) {
                     });
 
                     expect(failure).toHaveBeenCalled();
-                });
-            });
-
-            describe('when customer request fails', function() {
-                it('should not modify/decorate the customer property and should not reject the promise', function() {
-                    cinema6.db.find.and.callFake(function(type, id) {
-                        var object = (function() {
-                            switch (type) {
-                            case 'experience':
-                                return minireels[id];
-                            case 'card':
-                                return cards[id];
-                            case 'advertiser':
-                                return advertisers[id];
-                            case 'customer':
-                                return undefined;
-                            default:
-                                return undefined;
-                            }
-                        }());
-
-                        return object ? $q.when(object) : $q.reject({
-                            data: '404 NOT FOUND',
-                            code: 404
-                        });
-                    });
-
-                    $rootScope.$apply(function() {
-                        adapter.decorateCampaign(campaign).then(success, failure);
-                    });
-
-                    var response = success.calls.mostRecent().args[0];
-
-                    expect(response.customer).toBe('cus-5156b33a6f834c');
-                    expect(failure).not.toHaveBeenCalled();
-                });
-            });
-
-            describe('when there is no customer', function() {
-                it('should not request a customer', function() {
-                    cinema6.db.find.calls.reset();
-
-                    campaign.customerId = null;
-
-                    $rootScope.$apply(function() {
-                        adapter.decorateCampaign(campaign).then(success, failure);
-                    });
-
-                    expect(cinema6.db.find).not.toHaveBeenCalledWith('customer', null);
                 });
             });
         });
@@ -535,10 +472,6 @@ define(['app', 'angular'], function(appModule, angular) {
                         id: 'a-94b3a91e07a8c1',
                         name: 'Coca-Cola'
                     },
-                    customer: {
-                        id: 'cus-1e061e7a787603',
-                        name: 'Sterling Cooper Draper Pryce'
-                    },
                     miniReels: [
                         {
                             endDate: new Date().toISOString(),
@@ -591,9 +524,8 @@ define(['app', 'angular'], function(appModule, angular) {
                     return $q.when(playerCard);
                 });
 
-                postData = without(['advertiser', 'customer'], extend(campaign, {
+                postData = without(['advertiser'], extend(campaign, {
                     advertiserId: campaign.advertiser.id,
-                    customerId: campaign.customer.id,
                     miniReels: campaign.miniReels.map(function(data) {
                         return {
                             endDate: data.endDate,
@@ -679,7 +611,6 @@ define(['app', 'angular'], function(appModule, angular) {
                     id: 'c-2d56941fa19b69',
                     created: '2014-12-01T23:26:46.182Z',
                     advertiserId: 'a-6d54ea5400aa8e',
-                    customerId: 'cus-1e061e7a787603',
                     miniReels: [
                         {
                             endDate: new Date().toISOString(),

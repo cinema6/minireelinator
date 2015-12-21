@@ -43,8 +43,7 @@ define(['app'], function(appModule) {
                 user = {
                     email: 'josh@cinema6.com',
                     org: 'o-123',
-                    advertiser: 'a-123',
-                    customer: 'cus-123'
+                    advertiser: 'a-123'
                 };
 
                 success = jasmine.createSpy('success');

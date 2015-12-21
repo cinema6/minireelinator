@@ -1,6 +1,11 @@
 # MiniReelinator
 
 ## v1.30.1 (December 18, 2015)
+* *[v1.30.1.rc3]*
+  * [DESIGN]: Moved flight dates underneath the budget section
+  * Remove all references to customers in the Studio and Selfie
+* *[/v1.30.1.rc3]*
+
 * *[v1.30.1.rc2]*
   * [FIX]: Hide New Campaign button if user has no advertisers
 * *[/v1.30.1.rc2]*

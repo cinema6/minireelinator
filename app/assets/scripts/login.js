@@ -79,18 +79,10 @@ function( angular , c6State  ) {
                     requests.advertiser = cinema6.db.find('advertiser', user.advertiser);
                 }
 
-                if (user.customer) {
-                    // if we have a customer and fail to fetch it
-                    // don't reject the promise, just return the original id
-                    requests.customer = cinema6.db.find('customer', user.customer)
-                        .catch(function() { return user.customer; });
-                }
-
                 return $q.all(requests)
                     .then(function(promises) {
                         user.org = promises.org;
                         user.advertiser = promises.advertiser;
-                        user.customer = promises.customer;
 
                         return cinema6.db.push('user', user.id, user);
                     });

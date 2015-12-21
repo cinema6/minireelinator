@@ -77,7 +77,6 @@ define(['app', 'angular'], function(appModule, angular) {
                 campaign = {
                     id: 'c-c66191ccc3eb37',
                     advertiserId: 'a-3f7cf5012b15b4',
-                    customerId: 'cus-5156b33a6f834c',
                     cards: [
                         {
                             endDate: null,
@@ -301,8 +300,7 @@ define(['app', 'angular'], function(appModule, angular) {
                     categories: [],
                     pricing: {},
                     geoTargeting: [],
-                    advertiserId: 'a-3f7cf5012b15b4',
-                    customerId: 'cus-5156b33a6f834c',
+                    advertiserId: 'a-3f7cf5012b15b4'
                 };
 
                 response = extend(campaign, {
@@ -384,7 +382,6 @@ define(['app', 'angular'], function(appModule, angular) {
                     id: 'c-2d56941fa19b69',
                     created: '2014-12-01T23:26:46.182Z',
                     advertiserId: 'a-6d54ea5400aa8e',
-                    customerId: 'cus-1e061e7a787603',
                     cards: [
                         {
                             endDate: new Date().toISOString(),
