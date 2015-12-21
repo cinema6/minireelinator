@@ -1,5 +1,10 @@
 # MiniReelinator
 
+* *[v1.30.2.rc1]*
+  * [DESIGN]: Added html/css for multi date stats dropdown
+  * [DESIGN]: Updated form fields border styles
+  * [DESIGN]: Updated background for the create/edit campaign screen
+
 ## v1.30.1 (December 18, 2015)
 * *[v1.30.1.rc3]*
   * [DESIGN]: Moved flight dates underneath the budget section
