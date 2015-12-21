@@ -4528,6 +4528,10 @@ div.tree-multiselect span.section-name {
         background: #fff;
         padding: 1em;
         margin-top: 6em;
+        width: 90%;
+        max-width: 84em;
+        margin-left: auto;
+        margin-right: auto;
     }
         .campaignWrap .form__textBox {
             border-bottom: 2px solid #fff;
@@ -4542,8 +4546,14 @@ div.tree-multiselect span.section-name {
         .campaignWrap .tree-multiselect .section.sectionHead.in--focus {
             border-bottom: 2px solid #49B8B9;
         }
-        .campaignWrap .pmtDropdown__btn, .pmtDropdown__btn:focus {
+        .campaignWrap .pmtDropdown__btn {
             border-bottom: 2px solid #fff;
+        }
+            .campaignWrap .pmtDropdown__btn:focus {
+                border-bottom: 2px solid #49B8B9;
+            }
+        .campaignWrap .pmtDropdown__menu {
+            border: 1px solid #eee;
         }
         .campaignWrap .selections {
             border: 1px solid #eee;
@@ -4566,4 +4576,9 @@ div.tree-multiselect span.section-name {
             }
         .campaignWrap .form__item--bigInput .form__label {
             top: 1.125em;
+        }
+        .gridHolder__wrap {
+            max-width: 64em;
+            margin-left: auto;
+            margin-right: auto;
         }
