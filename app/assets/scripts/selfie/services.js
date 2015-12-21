@@ -56,9 +56,6 @@ function( angular , c6uilib ,  c6Defines  ) {
             this.create = function(campaign, user, advertiser) {
                 var _user = user || getAppUser(),
                     _advertiser = advertiser || {},
-                    // the user's customer is no longer
-                    // decorated so it's just an id now
-                    customerId = _user.customer,
 
                     // set up a full default card in case we aren't copying
                     rawCard = MiniReelService.createCard('video'),
@@ -93,7 +90,6 @@ function( angular , c6uilib ,  c6Defines  ) {
                     // be copied or initialized
                     campaignTemplate = {
                         advertiserId: copy(_advertiser.id),
-                        customerId: copy(customerId),
                         name: function(base) {
                             if (base.name) {
                                 return base.name + ' (Copy)';

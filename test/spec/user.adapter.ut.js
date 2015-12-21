@@ -380,9 +380,6 @@
                         advertiser: {
                             id: 'a-1234'
                         },
-                        customer: {
-                            id: 'cus-1234'
-                        },
                         email: "josh@cinema6.com",
                         status: "active",
                         access: "public",
@@ -406,7 +403,6 @@
                         lastUpdated: 'fkdsjfkd',
                         user: 'e2e-user',
                         advertiser: 'a-1234',
-                        customer: 'cus-1234'
                     }).respond(response);
 
                     adapter.update('user', copy(model)).then(success);

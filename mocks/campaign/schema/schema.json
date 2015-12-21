@@ -16,11 +16,6 @@
         "__unchangeable":true,
         "__type":"string"
     },
-    "customerId":{
-        "__allowed":false,
-        "__unchangeable":true,
-        "__type":"string"
-    },
     "paymentMethod":{
         "__allowed":true,
         "__type":"string"
