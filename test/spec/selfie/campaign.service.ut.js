@@ -66,7 +66,6 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
 
                 user = {
                     id: 'u-123',
-                    customer: 'cus-123',
                     advertiser: {
                         id: 'a-123'
                     },
@@ -84,7 +83,6 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     advertiser: {
                         id: 'a-111'
                     },
-                    customer: 'cus-111',
                     company: 'My Company, Inc.'
                 };
             });
@@ -119,7 +117,6 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                     it('should return a campaign with proper defaults', function() {
                         expect(result).toEqual(jasmine.objectContaining({
                             advertiserId: advertiser.id,
-                            customerId: selfie.cModel.customer,
                             name: undefined,
                             pricing: {},
                             application: 'selfie',
@@ -176,7 +173,6 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                             id: 'cam-1234',
                             name: 'My Great Campaign',
                             advertiserId: 'a-1234',
-                            customerId: 'cus-1234',
                             pricing: {
                                 budget: 1000,
                                 dailyLimit: 100
@@ -275,7 +271,6 @@ define(['app', 'minireel/services', 'c6uilib'], function(appModule, servicesModu
                         expect(result.pricing).toEqual(existingCampaign.pricing);
                         expect(result.advertiserDisplayName).toEqual(existingCampaign.advertiserDisplayName);
                         expect(result.advertiserId).toEqual(existingCampaign.advertiserId);
-                        expect(result.customerId).toEqual(existingCampaign.customerId);
 
                         expect(result.name).toEqual(existingCampaign.name + ' (Copy)');
                         expect(result.application).toEqual('selfie');
