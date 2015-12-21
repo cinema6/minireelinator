@@ -174,10 +174,9 @@ function( angular , c6State  , PaginatedListState          , PaginatedListContro
             }]);
         }])
 
-        .controller('CampaignsNewController', ['$scope','c6State','c6Computed','c6AsyncQueue',
-        function                              ( $scope , c6State , c6Computed , c6AsyncQueue ) {
-            var c = c6Computed($scope),
-                queue = c6AsyncQueue(),
+        .controller('CampaignsNewController', ['$scope','c6State','c6AsyncQueue',
+        function                              ( $scope , c6State , c6AsyncQueue ) {
+            var queue = c6AsyncQueue(),
                 MiniReelCtrl = $scope.MiniReelCtrl;
 
             function optionsByName(items, type) {
