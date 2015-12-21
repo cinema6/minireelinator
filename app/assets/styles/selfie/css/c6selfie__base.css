@@ -2480,7 +2480,7 @@ fa,
 
             .form__item--bigInput .form__textBox {
                 text-align: center;
-                font-size:1.5em;
+                font-size:1.25em;
                 margin:0.5rem 0 0 0;
                 padding-top:0.5rem; padding-bottom:0.6875rem;
             }
@@ -4395,7 +4395,6 @@ div.tree-multiselect span.section-name {
     .ui-datepicker {
         background: #fff;
         z-index: 1 !important;
-        border: 1px solid #ddd;
         box-shadow: 0 0 10px #ccc;
     }
         .ui-datepicker-header {
