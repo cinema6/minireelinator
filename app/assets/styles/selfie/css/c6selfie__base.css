@@ -2869,7 +2869,7 @@ fa,
             cursor: pointer;
             display: inline-block;
             font-weight: bold;
-            margin-right: 2px;
+            margin-right: 4px;
         }
 
 /*  ================================================
@@ -4274,8 +4274,9 @@ div.tree-multiselect span.section-name {
         }
         div.tree-multiselect > div.selected div.item {
             padding: 2px 5px;
-            border-radius: 0;
-            background: #f5f5f5;
+            border-radius: 2px;
+            background: #D2F2EE;
+            color: #49B8B9;
             padding-top: 14px;
             position: relative;
             /*display: inline-block;
@@ -4296,9 +4297,10 @@ div.tree-multiselect span.section-name {
                 }
         div.tree-multiselect span.remove-selected {
             background: transparent;
-            color: #1c1c1c;
-            float: right;
-            margin-left: 10px;
+            color: #409091;
+            font-weight: bold;
+            float: left;
+            margin-left: 5px;
             margin-top: -8px;
         }
         div.tree-multiselect span.section-name {
@@ -4306,6 +4308,7 @@ div.tree-multiselect span.section-name {
             position: absolute;
             display: block;
             top: 3px;
+            left: 2.5em;
             color: #888;
         }
     div.tree-multiselect div.title>span.collapse-section {
@@ -4389,7 +4392,6 @@ div.tree-multiselect span.section-name {
         }
     .tree-multiselect>.selected .item {
         background: #fff;
-        border: 1px solid #ccc;
         padding: 2px 5px;
         border-radius: 0;
     }
