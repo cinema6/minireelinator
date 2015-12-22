@@ -2329,7 +2329,36 @@ fa,
             margin-top:2.3125em;
         }
 
+    /* custom radio buttons */
+    input[type="radio"] {
+      display: none;
+    }
 
+    input[type="radio"] + label {
+      color: #4c4c4c;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+    }
+
+    input[type="radio"] + label span.radio__input {
+      box-shadow: 0 0 0 2px #cccccc;
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      margin: -1px 7px 0 0;
+      vertical-align: middle;
+      cursor: pointer;
+      border-radius: 50%;
+    }
+
+    input[type="radio"] + label span.radio__input {
+      border: 4px solid #ffffff;
+      background-color: #ffffff;
+    }
+
+    input[type="radio"]:checked + label span.radio__input {
+      background-color: #49B8B9;
+    }
 
     .formSection__title {
         font-size: 1em;
