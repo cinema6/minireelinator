@@ -5,6 +5,7 @@
   * [DESIGN]: Updated form fields border styles
   * [DESIGN]: Updated background for the create/edit campaign screen
   * [DESIGN]: Added custom radio buttons
+  * [DESIGN]: Updated the preview size on manage campaigns
 
 ## v1.30.1 (December 18, 2015)
 * *[v1.30.1.rc3]*
