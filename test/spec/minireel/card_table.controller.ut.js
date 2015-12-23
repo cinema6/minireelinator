@@ -211,7 +211,10 @@
                                 videoid: 'abc123'
                             }
                         })).toBe(thumbs);
-                        expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', 'abc123');
+                        expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('youtube', 'abc123', {
+                            service: 'youtube',
+                            videoid: 'abc123'
+                        });
 
                         expect(CardTableCtrl.getThumbs({
                             data: {
@@ -219,7 +222,10 @@
                                 videoid: '12345'
                             }
                         })).toBe(thumbs);
-                        expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('vimeo', '12345');
+                        expect(ThumbnailService.getThumbsFor).toHaveBeenCalledWith('vimeo', '12345', {
+                            service: 'vimeo',
+                            videoid: '12345'
+                        });
                     });
                 });
 

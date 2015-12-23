@@ -482,7 +482,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     var service = data.service || card.type;
                                     var id = data.videoid || data.imageid || data.id;
 
-                                    return ThumbnailService.getThumbsFor(service, id)
+                                    return ThumbnailService.getThumbsFor(service, id, data)
                                         .ensureFulfillment();
                                 }
                             })).then(function map(thumbs) {
@@ -1095,7 +1095,17 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     });
             };
 
-            this.getThumbsFor = function(service, id) {
+            _private.fetchKalturaThumbs = function(videoid, partnerid) {
+                function getThumb(width) {
+                    return 'https://cdnapisec.kaltura.com/p/' + partnerid + '/thumbnail/entry_id/' + videoid + '/width/' + width;
+                };
+                return {
+                    small: getThumb(270),
+                    large: getThumb(540)
+                };
+            };
+
+            this.getThumbsFor = function(service, id, data) {
                 var key = service + ':' + id;
                 return cache.get(key) ||
                     cache.put(key, (function() {
@@ -1122,6 +1132,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                             return new ThumbModel($q.when(_private.fetchJWPlayerThumbs(id)));
                         case 'vine':
                             return new ThumbModel(_private.fetchOpenGraphThumbs(service, id));
+                        case 'kaltura':
+                            return new ThumbModel($q.when(_private.fetchKalturaThumbs(id, data.partnerid)))
                         default:
                             return new ThumbModel($q.when({
                                 small: null,
@@ -2753,7 +2765,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 function videoThumbsValue() {
                     return function(data) {
-                        return ThumbnailService.getThumbsFor(data.service, data.videoid)
+                        return ThumbnailService.getThumbsFor(data.service, data.videoid, data)
                             .ensureFulfillment()
                             .then(function(thumbs) {
                                 return {
@@ -2775,7 +2787,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     };
                                 });
                         } else {
-                            return ThumbnailService.getThumbsFor(data.service, data.imageid)
+                            return ThumbnailService.getThumbsFor(data.service, data.imageid, data)
                                 .ensureFulfillment()
                                 .then(function(thumbs) {
                                     return {
@@ -2789,7 +2801,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
                 function instagramThumbsValue() {
                     return function(data) {
-                        return ThumbnailService.getThumbsFor('instagram', data.id)
+                        return ThumbnailService.getThumbsFor('instagram', data.id, data)
                             .ensureFulfillment()
                             .then(function(thumbs) {
                                 return {

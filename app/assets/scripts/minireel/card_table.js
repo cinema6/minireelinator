@@ -716,7 +716,7 @@ function( angular , c6uilib , services          , c6Drag           ) {
                 var service = data.service || card.type;
                 var id = data.videoid || data.imageid || data.id;
 
-                return ThumbnailService.getThumbsFor(service, id);
+                return ThumbnailService.getThumbsFor(service, id, data);
             };
 
             this.setScrollerFullWidth = function(width) {
