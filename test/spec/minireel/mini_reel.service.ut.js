@@ -435,6 +435,41 @@
                                     large: 'images.brightcove.com/video/4655415742001/large.jpg'
                                 }
                             }
+                        },
+                        kaltura: {
+                            id: 'rc-3739123c133da1',
+                            type: 'kaltura',
+                            title: 'Kaltura Card',
+                            note: 'Krazy Kool Kaltura',
+                            source: 'Kaltura',
+                            placementId: null,
+                            templateUrl: null,
+                            sponsored: false,
+                            campaign: {
+                                campaignId: null,
+                                advertiserId: null,
+                                minViewTime: null,
+                                countUrls: [],
+                                clickUrls: []
+                            },
+                            thumbs: null,
+                            collateral: {},
+                            links: {},
+                            shareLinks: {},
+                            params: {},
+                            modules: [],
+                            data: {
+                                skip: true,
+                                service: 'kaltura',
+                                videoid: '1_dsup2iqd',
+                                playerid: '32334692',
+                                partnerid: '2054981',
+                                href: 'https://www.kaltura.com/index.php/extwidget/preview/partner_id/2054981/uiconf_id/32334692/entry_id/1_dsup2iqd/embed/iframe',
+                                thumbs: {
+                                    small: 'images.kaltura.com/video/1_dsup2iqd/small.jpg',
+                                    large: 'images.kaltura.com/video/1_dsup2iqd/large.jpg'
+                                }
+                            }
                         }
                     }
                 };
@@ -1093,6 +1128,7 @@
                             mocks.playerCards.vidyard,
                             mocks.playerCards.instagramVideo,
                             mocks.playerCards.brightcove,
+                            mocks.playerCards.kaltura,
                             {
                                 id: 'rc-b74a127991ee75',
                                 type: 'recap',
@@ -1331,6 +1367,7 @@
                                     hostname: null,
                                     playerid: null,
                                     accountid: null,
+                                    partnerid: null,
                                     embedid: null,
                                     start: null,
                                     end: null,
@@ -2037,6 +2074,7 @@
                                     hostname: null,
                                     playerid: null,
                                     accountid: null,
+                                    partnerid: null,
                                     embedid: null,
                         	        start: null,
                         	        end: null,
@@ -2110,6 +2148,7 @@
                                     hostname: null,
                                     playerid: null,
                                     accountid: null,
+                                    partnerid: null,
                                     embedid: null,
                         	        start: null,
                         	        end: null,
@@ -2153,6 +2192,7 @@
                                     hostname: 'cinema6.wistia.com',
                                     playerid: null,
                                     accountid: null,
+                                    partnerid: null,
                                     embedid: null,
                         	        start: null,
                         	        end: null,
@@ -2196,6 +2236,7 @@
                                     hostname: null,
                                     playerid: null,
                                     accountid: null,
+                                    partnerid: null,
                                     embedid: null,
                         	        start: null,
                         	        end: null,
@@ -2239,6 +2280,7 @@
                                     hostname: null,
                                     playerid: null,
                                     accountid: null,
+                                    partnerid: null,
                                     embedid: null,
                         	        start: null,
                         	        end: null,
@@ -2282,6 +2324,7 @@
                                     hostname: null,
                                     playerid: null,
                                     accountid: null,
+                                    partnerid: null,
                                     embedid: null,
                         	        start: null,
                         	        end: null,
@@ -2325,6 +2368,7 @@
                                     hostname: null,
                                     playerid: '71cf5be9-7515-44d8-bb99-29ddc6224ff8',
                                     accountid: '4652941506001',
+                                    partnerid: null,
                                     embedid: 'default',
                         	        start: null,
                         	        end: null,
@@ -2334,6 +2378,50 @@
                         	    type: 'video',
                         	    title: 'Brightcove Card',
                         	    note: 'Brrrr Brightcove',
+                        	    label: 'Video',
+                        	    view: 'video',
+                        	    ad: false,
+                        	    placementId: null,
+                        	    templateUrl: null,
+                        	    sponsored: false,
+                        	    campaign: {
+                        	        campaignId: null,
+                        	        advertiserId: null,
+                        	        minViewTime: null,
+                        	        countUrls: [],
+                        	        clickUrls: []
+                        	    },
+                        	    collateral: {},
+                        	    thumb: null,
+                        	    links: {},
+                                shareLinks: {},
+                        	    params: {}
+                            });
+                        });
+                        
+                        it('should transpile the kaltura card', function() {
+                            expect(deck[19]).toEqual({
+                                data: {
+                        	        skip: 'anytime',
+                        	        controls: true,
+                        	        autoplay: null,
+                        	        autoadvance: null,
+                        	        survey: null,
+                        	        service: 'kaltura',
+                                    videoid: '1_dsup2iqd',
+                                    hostname: null,
+                                    playerid: '32334692',
+                                    accountid: null,
+                                    partnerid: '2054981',
+                                    embedid: null,
+                        	        start: null,
+                        	        end: null,
+                        	        moat: null
+                        	    },
+                        	    id: 'rc-3739123c133da1',
+                        	    type: 'video',
+                                title: 'Kaltura Card',
+                                note: 'Krazy Kool Kaltura',
                         	    label: 'Video',
                         	    view: 'video',
                         	    ad: false,
@@ -2390,6 +2478,7 @@
                                     hostname: null,
                                     playerid: null,
                                     accountid: null,
+                                    partnerid: null,
                                     embedid: null,
                                     start: 10,
                                     end: 40,
@@ -2435,6 +2524,7 @@
                                     hostname: null,
                                     playerid: null,
                                     accountid: null,
+                                    partnerid: null,
                                     embedid: null,
                                     start: null,
                                     end: null,
@@ -2476,6 +2566,7 @@
                                     hostname: null,
                                     playerid: null,
                                     accountid: null,
+                                    partnerid: null,
                                     embedid: null,
                                     start: undefined,
                                     end: undefined,
@@ -2540,6 +2631,7 @@
                                     hostname: null,
                                     playerid: null,
                                     accountid: null,
+                                    partnerid: null,
                                     embedid: null,
                                     start: 0,
                                     end: 40,
@@ -2584,6 +2676,7 @@
                                     hostname: null,
                                     playerid: null,
                                     accountid: null,
+                                    partnerid: null,
                                     embedid: null,
                                     start: null,
                                     end: null,

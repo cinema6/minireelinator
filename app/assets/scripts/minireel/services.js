@@ -1097,8 +1097,9 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
 
             _private.fetchKalturaThumbs = function(videoid, partnerid) {
                 function getThumb(width) {
-                    return 'https://cdnapisec.kaltura.com/p/' + partnerid + '/thumbnail/entry_id/' + videoid + '/width/' + width;
-                };
+                    return 'https://cdnapisec.kaltura.com/p/' + partnerid +
+                        '/thumbnail/entry_id/' + videoid + '/width/' + width;
+                }
                 return {
                     small: getThumb(270),
                     large: getThumb(540)
@@ -1133,7 +1134,8 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'vine':
                             return new ThumbModel(_private.fetchOpenGraphThumbs(service, id));
                         case 'kaltura':
-                            return new ThumbModel($q.when(_private.fetchKalturaThumbs(id, data.partnerid)))
+                            return new ThumbModel($q.when(_private.fetchKalturaThumbs(id,
+                                data.partnerid)));
                         default:
                             return new ThumbModel($q.when({
                                 small: null,
@@ -2190,6 +2192,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         case 'videoBallot':
                         case 'htmlvideo':
                         case 'brightcove':
+                        case 'kaltura':
                             return 'video';
                         default:
                             return card.type || null;
@@ -2376,6 +2379,7 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                     playerid: copy(null),
                     embedid: copy(null),
                     accountid: copy(null),
+                    partnerid: copy(null),
                     start: trimmer(),
                     end: trimmer(),
                     moat: copy(null)
@@ -3021,6 +3025,19 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                         accountid: copy(null),
                         playerid: copy(null),
                         embedid: copy(null),
+                        href: hrefValue(),
+                        thumbs: videoThumbsValue(),
+                        moat: copy(null)
+                    },
+                    kaltura: {
+                        hideSource: hideSourceValue(),
+                        autoplay: copy(null),
+                        autoadvance: copy(null),
+                        skip: skipValue(),
+                        service: copy(),
+                        videoid: copy(null),
+                        partnerid: copy(null),
+                        playerid: copy(null),
                         href: hrefValue(),
                         thumbs: videoThumbsValue(),
                         moat: copy(null)
