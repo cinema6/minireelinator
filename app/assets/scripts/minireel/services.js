@@ -1211,6 +1211,10 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 case 'brightcove':
                     return 'https://players.brightcove.net/' + data.accountid + '/' +
                         data.playerid + '_' + data.embedid + '/index.html?videoId=' + id;
+                case 'kaltura':
+                    return 'https://www.kaltura.com/index.php/extwidget/preview/partner_id/' +
+                        data.partnerid + '/uiconf_id/' + data.playerid + '/entry_id/' + id +
+                        '/embed/iframe';
                 }
             };
 
@@ -1218,11 +1222,12 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                 var parsedUrl = c6UrlParser(text),
                     urlService = (parsedUrl.hostname.match(
                         new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|' +
-                            'vine|vzaar\\.tv|wistia|jwplatform|vidyard|instagram|brightcove')
+                            'vine|vzaar\\.tv|wistia|jwplatform|vidyard|instagram|brightcove|' +
+                            'kaltura')
                     ) || [])[0],
                     embedService = (text.match(
                         new RegExp('youtube|youtu\\.be|dailymotion|dai\\.ly|vimeo|jwplatform|' +
-                            'wistia|vzaar|vidyard|instagram|brightcove')
+                            'wistia|vzaar|vidyard|instagram|brightcove|kaltura')
                     ) || [])[0],
                     embed = /<iframe|<script/.test(text) ? 'embed' : null,
                     type = !!urlService ? 'url' : embed,
@@ -1313,6 +1318,16 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                 } else {
                                     return null;
                                 }
+                            },
+                            kaltura: function(url) {
+                                var dataMatch = url.pathname.match(new RegExp('\\/index\\.php\\/' +
+                                    'extwidget\\/preview\\/partner_id\\/(\\d+)\\/uiconf_id\\/' +
+                                    '(\\d+)\\/entry_id\\/([^\\/]+)\\/embed'));
+                                return (dataMatch) ? {
+                                    partnerid: dataMatch[1],
+                                    playerid: dataMatch[2],
+                                    id: dataMatch[3]
+                                } : null;
                             }
                         },
                         embed: {
@@ -1386,6 +1401,18 @@ function( angular , c6uilib , cryptojs , c6Defines  ) {
                                     return result;
                                 }
                                 return null;
+                            },
+                            kaltura: function(embed) {
+                                var partnerMatch = embed.match(/partner_id\/(\d+)/);
+                                var playerMatch = embed.match(/uiconf_id\/(\d+)/);
+                                var idMatch = embed.match(/entry_id=([^&]+)&/) ||
+                                    embed.match(/entry_id":\s*"([^"]+)"/) ||
+                                    embed.match(/entry_id\/([^\/"]+)/);
+                                return (partnerMatch && playerMatch && idMatch) ? {
+                                    partnerid: partnerMatch[1],
+                                    playerid: playerMatch[1],
+                                    id: idMatch[1]
+                                } : null;
                             }
                         }
                     };
